@@ -1,0 +1,362 @@
+SERGE LOG
+ 
+ User:Serge
+ Date :2016-12-06
+
+ Recherche ACTU autorisée
+ Recherche SCIENCE autorisée
+ Recherche BREVETS activée
+ 
+ Timestamp :1481033790.45
+ Last launch :1481033649.83
+ 
+
+
+ Recherche des actualités 
+
+
+ nombre total de sources :5
+ 
+http://rss.sciam.com/basic-science
+Content-Type: text/xml; charset=UTF-8
+Last-Modified: Tue, 06 Dec 2016 13:50:05 GMT
+Date: Tue, 06 Dec 2016 14:16:30 GMT
+Expires: Tue, 06 Dec 2016 14:16:30 GMT
+Cache-Control: private, max-age=0
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Server: GSE
+Accept-Ranges: none
+Vary: Accept-Encoding
+Transfer-Encoding: chunked
+Connection: close
+
+nombre de mots-clés :7
+nombre d'article :25
+More Science from Scientific American| Statut : pas d'article 
+http://www.nextinpact.com/rss/news.xml
+Date: Tue, 06 Dec 2016 14:16:31 GMT
+Content-Type: application/rss+xml; charset=utf-8
+Content-Length: 45585
+Connection: close
+Set-Cookie: __cfduid=d97e0a516f5cf13e3c80828907bbe7ef31481033791; expires=Wed, 06-Dec-17 14:16:31 GMT; path=/; domain=.nextinpact.com; HttpOnly
+Cache-Control: public, max-age=63616630670
+Expires: Tue, 06 Dec 2016 14:17:50 GMT
+Last-Modified: Tue, 06 Dec 2016 14:15:50 GMT
+Vary: *
+X-AspNetMvc-Version: 5.2
+X-AspNet-Version: 4.0.30319
+X-Powered-By: ASP.NET
+Set-Cookie: ARRAffinity=8a5f2937d2e7972fb3bf8e6360bcb99aabe4851aab3b61d06c3e8aeb2784ed64;Path=/;Domain=www.nextinpact.com
+Server: cloudflare-nginx
+CF-RAY: 30d05b2a71b23c59-CDG
+
+nombre de mots-clés :7
+nombre d'article :30
+Next INpact – Actualités| Statut : pas d'article 
+http://www.futura-sciences.com/rss/espace/actualites.xml
+Server: Apache
+Cache-Control: max-age=18000, public
+Pragma: public
+Expires: Tue, 06 Dec 2016 17:04:07 GMT
+ETag: "2eb08272a3daaae860b1a69fe900d303-gzip"
+Vary: Accept-Encoding
+Content-Type: application/xml; charset=UTF-8
+X-Varnish: 2534736
+Via: 1.1 varnish-v4
+X-Served-By: antares
+Transfer-Encoding: chunked
+Date: Tue, 06 Dec 2016 14:16:31 GMT
+X-Varnish: 1850698849 1850481059
+Age: 8031
+Via: 1.1 varnish
+Connection: close
+X-Varnish-Cache: HIT
+
+nombre de mots-clés :7
+nombre d'article :20
+Les dernières actualités de Futura-Espace| Statut : pas d'article 
+https://www.technologyreview.com/stories.rss
+Server: Cowboy
+Connection: close
+Vary: origin,accept-encoding
+Access-Control-Allow-Origin: *
+Access-Control-Max-Age: 86400
+Access-Control-Allow-Methods: GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS
+Access-Control-Allow-Headers: Authorization,Content-Type,If-None-Match
+Access-Control-Expose-Headers: WWW-Authenticate,Server-Authorization
+Cache-Control: no-cache
+Content-Type: application/rss+xml; charset=utf-8
+Content-Length: 12280
+Accept-Ranges: bytes
+Date: Tue, 06 Dec 2016 14:16:32 GMT
+Via: 1.1 vegur
+
+nombre de mots-clés :7
+nombre d'article :20
+New on MIT Technology Review| Statut : pas d'article 
+http://www.usinenouvelle.com/rss/
+Date: Tue, 06 Dec 2016 14:16:32 GMT
+Content-Type: text/xml; charset=utf-8
+Transfer-Encoding: chunked
+Connection: close
+Set-Cookie: __cfduid=d31b9e479d8db97cdc3bba990b955fdd41481033792; expires=Wed, 06-Dec-17 14:16:32 GMT; path=/; domain=.usinenouvelle.com; HttpOnly
+Vary: User-Agent,Accept-Encoding
+Set-Cookie: ps=shd2n5isrvjjg007mankrulen7; path=/
+Expires: Thu, 19 Nov 1981 08:52:00 GMT
+Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+Pragma: no-cache
+Set-Cookie: usnhap=anubis; path=/
+Server: cloudflare-nginx
+CF-RAY: 30d05b3442f80902-CDG
+
+nombre de mots-clés :7
+nombre d'article :47
+UsineNouvelle - Actualités A la une| Statut : pas d'article 
+
+
+ Recherches des contenus scientifiques 
+
+nombre de mots-clés :7
+SpaceX
+http://export.arxiv.org/api/query?search_query=all:SpaceX
+
+Date: Tue, 06 Dec 2016 14:16:33 GMT
+Server: Apache
+Access-control-allow-origin: *
+Vary: Accept-Encoding,User-Agent
+Connection: close
+Transfer-Encoding: chunked
+Content-Type: application/atom+xml; charset=UTF-8
+
+ 
+fusée
+http://export.arxiv.org/api/query?search_query=all:fusée
+
+Date: Tue, 06 Dec 2016 14:16:33 GMT
+Server: Apache
+Access-control-allow-origin: *
+Vary: Accept-Encoding,User-Agent
+Connection: close
+Transfer-Encoding: chunked
+Content-Type: application/atom+xml; charset=UTF-8
+
+ 
+void_query :1Attention le flux de :<addinfourl at 140012996666288 whose fp = None>est vide vous devriez changer vos paramètres de recherche
+Airbus Safran Launchers
+http://export.arxiv.org/api/query?search_query=all:Airbus Safran Launchers
+
+Date: Tue, 06 Dec 2016 14:16:34 GMT
+Server: Apache
+Access-control-allow-origin: *
+Vary: Accept-Encoding,User-Agent
+Connection: close
+Content-Type: application/atom+xml; charset=UTF-8
+
+ 
+drone
+http://export.arxiv.org/api/query?search_query=all:drone
+
+Date: Tue, 06 Dec 2016 14:16:34 GMT
+Server: Apache
+Access-control-allow-origin: *
+Vary: Accept-Encoding,User-Agent
+Connection: close
+Transfer-Encoding: chunked
+Content-Type: application/atom+xml; charset=UTF-8
+
+ 
+tesla
+http://export.arxiv.org/api/query?search_query=all:tesla
+
+Date: Tue, 06 Dec 2016 14:16:35 GMT
+Server: Apache
+Access-control-allow-origin: *
+Vary: Accept-Encoding,User-Agent
+Connection: close
+Transfer-Encoding: chunked
+Content-Type: application/atom+xml; charset=UTF-8
+
+ 
+station spatiale
+http://export.arxiv.org/api/query?search_query=all:station spatiale
+
+Date: Tue, 06 Dec 2016 14:16:36 GMT
+Server: Apache
+Access-control-allow-origin: *
+Vary: Accept-Encoding,User-Agent
+Connection: close
+Content-Type: application/atom+xml; charset=UTF-8
+
+ 
+start-up
+http://export.arxiv.org/api/query?search_query=all:start-up
+
+Date: Tue, 06 Dec 2016 14:16:37 GMT
+Server: Apache
+Access-control-allow-origin: *
+Vary: Accept-Encoding,User-Agent
+Connection: close
+Transfer-Encoding: chunked
+Content-Type: application/atom+xml; charset=UTF-8
+
+ 
+
+
+ Recherche des Brevets 
+
+
+ Option INVENTEUR activée
+ Option KEYWORD activée
+ Option CLASSE activéeFire
+https://patentscope.wipo.int/search/rss.jsf?query=EN_TI%3A%28Fire%29+OR+EN_AB%3A%28Fire%29+&office=&rss=true&sortOption=Pub+Date+Desc
+Date: Tue, 06 Dec 2016 14:16:37 GMT
+Server: Apache-Coyote/1.1
+X-UA-Compatible: IE=11
+Cache-Control: max-age=3600, max-age=10800
+Cache-Control: must-revalidate
+Content-Type: text/xml;charset=UTF-8
+Set-Cookie: JSESSIONID=6C4D40634DC01A16D90A22879ED43269.wapp1nA; Path=/search
+Expires: Tue, 06 Dec 2016 17:16:36 GMT
+Access-Control-Allow-Origin: http://www.wipo.int
+Connection: close
+Transfer-Encoding: chunked
+
+nombre d'article :300
+ 
+Fire+Detection
+https://patentscope.wipo.int/search/rss.jsf?query=EN_TI%3A%28Fire+Detection%29+OR+EN_AB%3A%28Fire+Detection%29+&office=&rss=true&sortOption=Pub+Date+Desc
+Date: Tue, 06 Dec 2016 14:16:38 GMT
+Server: Apache-Coyote/1.1
+X-UA-Compatible: IE=11
+Cache-Control: max-age=3600, max-age=10800
+Cache-Control: must-revalidate
+Content-Type: text/xml;charset=UTF-8
+Set-Cookie: JSESSIONID=99CD8904DC8521ED4B78981C5EB4E775.wapp1nA; Path=/search
+Expires: Tue, 06 Dec 2016 17:16:37 GMT
+Access-Control-Allow-Origin: http://www.wipo.int
+Connection: close
+Transfer-Encoding: chunked
+
+nombre d'article :300
+ 
+rockets
+https://patentscope.wipo.int/search/rss.jsf?query=EN_TI%3A%28rockets%29+OR+EN_AB%3A%28rockets%29+&office=&rss=true&sortOption=Pub+Date+Desc
+Date: Tue, 06 Dec 2016 14:16:38 GMT
+Server: Apache-Coyote/1.1
+X-UA-Compatible: IE=11
+Cache-Control: max-age=3600, max-age=10800
+Cache-Control: must-revalidate
+Content-Type: text/xml;charset=UTF-8
+Set-Cookie: JSESSIONID=E94A78421421A0D7829A5F3A8D48C163.wapp1nA; Path=/search
+Expires: Tue, 06 Dec 2016 17:16:38 GMT
+Access-Control-Allow-Origin: http://www.wipo.int
+Connection: close
+Transfer-Encoding: chunked
+
+nombre d'article :300
+ 
+onboard+electronics
+https://patentscope.wipo.int/search/rss.jsf?query=EN_TI%3A%28onboard+electronics%29+OR+EN_AB%3A%28onboard+electronics%29+&office=&rss=true&sortOption=Pub+Date+Desc
+Date: Tue, 06 Dec 2016 14:16:40 GMT
+Server: Apache-Coyote/1.1
+X-UA-Compatible: IE=11
+Cache-Control: max-age=3600, max-age=10800
+Cache-Control: must-revalidate
+Content-Type: text/xml;charset=UTF-8
+Set-Cookie: JSESSIONID=0F6038F24CDE15289E259651F7B391C5.wapp1nA; Path=/search
+Expires: Tue, 06 Dec 2016 17:16:39 GMT
+Access-Control-Allow-Origin: http://www.wipo.int
+Connection: close
+Transfer-Encoding: chunked
+
+nombre d'article :300
+ 
+Airbus
+https://patentscope.wipo.int/search/rss.jsf?query=PA%3A%28Airbus%29+OR+IN%3A%28Airbus%29+&office=&rss=true&sortOption=Pub+Date+Desc
+Date: Tue, 06 Dec 2016 14:16:40 GMT
+Server: Apache-Coyote/1.1
+X-UA-Compatible: IE=11
+Cache-Control: max-age=3600, max-age=10800
+Cache-Control: must-revalidate
+Content-Type: text/xml;charset=UTF-8
+Set-Cookie: JSESSIONID=9CCB9E10FB3A86D3CAFAB4F55469EEF1.wapp1nA; Path=/search
+Expires: Tue, 06 Dec 2016 17:16:40 GMT
+Access-Control-Allow-Origin: http://www.wipo.int
+Connection: close
+Transfer-Encoding: chunked
+
+nombre d'article :300
+ 
+Boeing
+https://patentscope.wipo.int/search/rss.jsf?query=PA%3A%28Boeing%29+OR+IN%3A%28Boeing%29+&office=&rss=true&sortOption=Pub+Date+Desc
+Date: Tue, 06 Dec 2016 14:16:41 GMT
+Server: Apache-Coyote/1.1
+X-UA-Compatible: IE=11
+Cache-Control: max-age=3600, max-age=10800
+Cache-Control: must-revalidate
+Content-Type: text/xml;charset=UTF-8
+Set-Cookie: JSESSIONID=E99B2509CCDCA4DCAFD8CAE674329848.wapp1nA; Path=/search
+Expires: Tue, 06 Dec 2016 17:16:40 GMT
+Access-Control-Allow-Origin: http://www.wipo.int
+Connection: close
+Transfer-Encoding: chunked
+
+nombre d'article :300
+ 
+Airbus+Safran+launchers
+https://patentscope.wipo.int/search/rss.jsf?query=PA%3A%28Airbus+Safran+launchers%29+OR+IN%3A%28Airbus+Safran+launchers%29+&office=&rss=true&sortOption=Pub+Date+Desc
+Date: Tue, 06 Dec 2016 14:16:41 GMT
+Server: Apache-Coyote/1.1
+X-UA-Compatible: IE=11
+Cache-Control: max-age=3600, max-age=10800
+Cache-Control: must-revalidate
+Content-Type: text/xml;charset=UTF-8
+Set-Cookie: JSESSIONID=2261DFB80415E1753648D44FF6A42980.wapp1nA; Path=/search
+Expires: Tue, 06 Dec 2016 17:16:41 GMT
+Access-Control-Allow-Origin: http://www.wipo.int
+Connection: close
+Transfer-Encoding: chunked
+
+nombre d'article :6
+ 
+B64D
+https://patentscope.wipo.int/search/rss.jsf?query=IC%3AB64D+&office=&rss=true&sortOption=Pub+Date+Desc
+Date: Tue, 06 Dec 2016 14:16:41 GMT
+Server: Apache-Coyote/1.1
+X-UA-Compatible: IE=11
+Cache-Control: max-age=3600, max-age=10800
+Cache-Control: must-revalidate
+Content-Type: text/xml;charset=UTF-8
+Set-Cookie: JSESSIONID=6CB8F7776757BEEF091ABCF9B85E0CFB.wapp1nA; Path=/search
+Expires: Tue, 06 Dec 2016 17:16:41 GMT
+Access-Control-Allow-Origin: http://www.wipo.int
+Connection: close
+Transfer-Encoding: chunked
+
+B64D
+ nombre d'article :300
+ 
+Ta+mA+re+en+short
+https://patentscope.wipo.int/search/rss.jsf?query=IC%3ATa+mA+re+en+short+&office=&rss=true&sortOption=Pub+Date+Desc
+Date: Tue, 06 Dec 2016 14:16:41 GMT
+Server: Apache-Coyote/1.1
+X-UA-Compatible: IE=11
+Cache-Control: max-age=3600, max-age=10800
+Cache-Control: must-revalidate
+Content-Type: text/xml;charset=UTF-8
+Content-Length: 727
+Set-Cookie: JSESSIONID=5F40B26784D49C760E4F4273026460D9.wapp2nB; Path=/search
+Expires: Tue, 06 Dec 2016 17:16:42 GMT
+Access-Control-Allow-Origin: http://www.wipo.int
+Connection: close
+
+Ta+mA+re+en+short
+ nombre d'article :0
+ 
+void_query :1Attention le flux de :<addinfourl at 140012995616640 whose fp = None>est vide ; vous devriez changer vos paramètres de recherche
+ Suppression de l'ancien NewsletterLog 
+copie de Newsletter.txt en un nouveau fichier NewsletterLog.txt 
+
+ Temps d'exécution : 12.920897007
+Ecriture du timestamps en fin de recherche dans le Timelog 
