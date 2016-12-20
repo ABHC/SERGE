@@ -1066,14 +1066,13 @@ database = MySQLdb.connect(host="localhost", user="root", passwd=passSQL, db="Ca
 
 """Appel à la table rss_serge"""
 call_rss= database.cursor()
-call_rss.execute("SELECT link FROM rss_serge WHERE active >= 1")
+call_rss.execute("SELECT link, owners FROM rss_serge WHERE active >= 1")
 rows = call_rss.fetchall()
 call_rss.close()
 
 sources_actu_list=[]  
 
 for row in rows :
-	field = row[0].strip()
 	sources_actu_list.append(field)
 
 print ("sources_actu_list :")###
@@ -1084,15 +1083,14 @@ print sources_actu_list ###
 ######### ACTU
 """Appel à la table keywords_actu_serge et à la fonction Veille"""
 call_actu= database.cursor()
-call_actu.execute("SELECT keyword FROM keyword_actu_serge WHERE active >= 1")
+call_actu.execute("SELECT keyword, owners FROM keyword_actu_serge WHERE active >= 1")
 rows = call_actu.fetchall()
 call_actu.close()
 
 keywords_actu_list_all=[]  # Enregistrement des keywords ACTU dans une liste. 
 
 for row in rows :
-	field = row[0].strip()
-	keywords_actu_list_all.append(field)
+	keywords_actu_list_all.append(row)
 
 print ("keywords_actu_list_all :")###
 print keywords_actu_list_all ###
