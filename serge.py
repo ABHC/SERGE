@@ -1062,6 +1062,23 @@ database = MySQLdb.connect(host="localhost", user="root", passwd=passSQL, db="Ca
 
 ######### RECHERCHE
 
+######### SOURCES
+
+"""Appel à la table rss_serge"""
+call_rss= database.cursor()
+call_rss.execute("SELECT link FROM rss_serge WHERE active >= 1")
+rows = call_rss.fetchall()
+call_rss.close()
+
+sources_actu_list=[]  
+
+for row in rows :
+	field = row[0].strip()
+	sources_actu_list.append(field)
+
+print ("sources_actu_list :")###
+print sources_actu_list ###
+
 ######### Appel aux tables catégorielle de type keywords_*_serge
 
 ######### ACTU
