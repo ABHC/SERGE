@@ -1,5 +1,0 @@
-http://rss.sciam.com/basic-science
-http://www.nextinpact.com/rss/news.xml
-http://www.futura-sciences.com/rss/espace/actualites.xml
-https://www.technologyreview.com/stories.rss
-http://www.usinenouvelle.com/rss/

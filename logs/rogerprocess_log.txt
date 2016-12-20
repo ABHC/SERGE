@@ -1,6 +1,6 @@
 SERGE LOG
  
- User:Serge
+ User:roger
  Date :2016-12-13
 
  Recherche ACTU désactivée
@@ -17,5 +17,5 @@ SERGE LOG
  Suppression de l'ancien NewsletterLog 
 copie de Newsletter.txt en un nouveau fichier NewsletterLog.txt 
 
- Temps d'exécution : 0.000366926193237
+ Temps d'exécution : 0.000702857971191
 Ecriture du timestamps en fin de recherche dans le Timelog 
