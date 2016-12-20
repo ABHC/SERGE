@@ -6,6 +6,7 @@ import os
 import time
 import re
 import sys #voir la documentation : https://docs.python.org/2/library/sys.html
+import MySQLdb #Paquet MySQL
 
 sys.path.insert(0, "modules/UFP/feedparser")
 sys.path.insert(1, "modules/UFP/feedparser")
@@ -23,7 +24,6 @@ from shutil import copyfile
 def Last_Research ():
 	"""Fonction d'extraction de la dernière date de recherche pour n'envoyer que des informations nouvelles"""
 
-	"""On ouvre la liste des sources pour chaque utilisateur pour en extraire tous les utilisateurs enregistrés"""
 	try:
 		timelog=open("logs/timelog.txt","r")
 		last_launch=timelog.read()
@@ -125,7 +125,7 @@ def multi_keywords (user):
 		keywords_list=[]
 		list_range_max=0 
 
-		"""On établit une liste des sources"""
+		"""On établit une liste des keywords"""
 		for keyword in userkeywords :
 			if keyword !="\n":
 				keyword = keyword.decode("latin-1")
@@ -140,6 +140,53 @@ def multi_keywords (user):
 	except: 
 		LOG.write("le fichier keywords/"+user+"_keywords.txt est manquant \n \n")
 
+
+def Permission(n) :
+
+	query_actu = "SELECT permission_actu FROM users_table_serge WHERE id LIKE %s"
+	query_science = "SELECT permission_science FROM users_table_serge WHERE id LIKE %s"
+	query_patents = "SELECT permission_patents FROM users_table_serge WHERE id LIKE %s"
+
+	query_patents_class = "SELECT permission_patents_class FROM users_table_serge WHERE id LIKE %s"
+	query_patents_inventor = "SELECT permission_patents_inventor FROM users_table_serge WHERE id LIKE %s"
+	query_patents_key = "SELECT permission_patents_key FROM users_table_serge WHERE id LIKE %s"	
+
+	call_users= database.cursor()
+	
+	call_users.execute(query_actu, (n,)) 
+	permission_actu = call_users.fetchone()
+	permission_actu = int(permission_actu[0])	
+
+	call_users.execute(query_science, (n,))
+	permission_science = call_users.fetchone()
+	permission_science = int(permission_science[0])
+
+	call_users.execute(query_patents, (n,))
+	permission_patents= call_users.fetchone()
+	permission_patents = int(permission_patents[0])	
+
+	if permission_patents == 0 :
+		call_users.execute(query_patents_class, (n,))
+		permission_patents_class = call_users.fetchone()
+		permission_patents_class = int(permission_patents_class[0])
+
+		call_users.execute(query_patents_inventor, (n,))
+		permission_patents_inventor = call_users.fetchone()
+		permission_patents_inventor = int(permission_patents_inventor[0])
+
+		call_users.execute(query_patents_inventor, (n,))
+		permission_patents_key = call_users.fetchone()
+		permission_patents_key = int(permission_patents_key[0])
+
+	call_users.close()
+
+	if permission_patents == 0 :
+		permission_list =[permission_actu, permission_science, permission_patents, permission_patents_class, permission_patents_inventor, permission_patents_key]
+
+	else : 
+		permission_list =[permission_actu, permission_science, permission_patents]
+
+	return permission_list
 	
 def Permission_Patents (user):
 	########### Recherche de BREVETS
@@ -999,108 +1046,774 @@ def Mail(user):
 	server.sendmail(fromaddr, toaddr, text)
 	server.quit()
 
+
 ######### MAIN 
 
-"""Suppression de Newsletter.txt préventive si il y a eu une erreur au lancement précédant"""
-try: 
-	os.remove("Newsletter.txt")
-except :
-	pass
+now=time.time()
+last_launch = Last_Research()
+jour = unicode(datetime.date.today())
+
+######### Connexion à la base de données CairnDevices
+
+passSQL = open("permission/password.txt", "r")
+passSQL = passSQL.read().strip()
+
+database = MySQLdb.connect(host="localhost", user="root", passwd=passSQL, db="CairnDevices", use_unicode=1, charset="utf8")
+
+######### RECHERCHE
+
+######### Appel aux tables catégorielle de type keywords_*_serge
+
+######### ACTU
+"""Appel à la table keywords_actu_serge et à la fonction Veille"""
+call_actu= database.cursor()
+call_actu.execute("SELECT keyword FROM keyword_actu_serge WHERE active >= 1")
+rows = call_actu.fetchall()
+call_actu.close()
+
+keywords_actu_list_all=[]  # Enregistrement des keywords ACTU dans une liste. 
+
+for row in rows :
+	field = row[0].strip()
+	keywords_actu_list_all.append(field)
+
+print ("keywords_actu_list_all :")###
+print keywords_actu_list_all ###
+
+#Veille(keywords_actu_list_all, last_launch) # Appel de la fonction veille 
+
+######### SCIENCE
+"""Appel à la table keywords_science_serge et à la fonction Arxiv"""
+call_science= database.cursor()
+call_science.execute("SELECT keyword FROM keyword_science_serge WHERE active >= 1")
+rows = call_science.fetchall()
+call_science.close()
+
+keywords_science_list_all=[]  # Enregistrement des keywords SCIENCE dans une liste. 
+
+for row in rows :
+	field = row[0].strip()
+	keywords_science_list_all.append(field) 
+
+print ("keywords_science_list_all :")###
+print (keywords_science_list_all) ###
+
+#Arxiv(keywords_science_list_all, last_launch) # Appel de la fonction Arxiv
+
+######### PATENTS
+"""Appel aux tables keywords_Patents_*_serge et à la fonction Patents"""
+call_patents_class= database.cursor()
+call_patents_class.execute("SELECT keyword FROM keyword_patents_class_serge WHERE active >= 1")
+rows = call_patents_class.fetchall()
+call_patents_class.close()
+
+keywords_patents_class_list_all=[]  # Enregistrement des keywords PATENTS CLASS dans une liste. 
+
+for row in rows :
+	field = row[0].strip()
+	keywords_patents_class_list_all.append(field) 
+
+print ("keywords_patents_class_list_all :")###
+print (keywords_patents_class_list_all) ###
+
+call_patents_inventor= database.cursor()
+call_patents_inventor.execute("SELECT keyword FROM keyword_patents_inventor_serge WHERE active >= 1")
+rows = call_patents_inventor.fetchall()
+call_patents_class.close()
+
+keywords_patents_inventor_list_all=[]  # Enregistrement des keywords PATENTS INVENTOR dans une liste. 
+
+for row in rows :
+	field = row[0].strip()	
+	keywords_patents_inventor_list_all.append(field) 
+
+print ("keywords_patents_inventor_list_all :")###
+print (keywords_patents_inventor_list_all) ###
+
+call_patents_key= database.cursor()
+call_patents_key.execute("SELECT keyword FROM keyword_patents_key_serge WHERE active >= 1")
+rows = call_patents_key.fetchall()
+call_patents_key.close()
+
+keywords_patents_key_list_all=[]  # Enregistrement des keywords PATENTS KEY dans une liste. 
+
+for row in rows :
+	field = row[0].strip()
+	keywords_patents_key_list_all.append(field) 
+
+print ("keywords_patents_key_list_all :")###
+print (keywords_patents_key_list_all) ###
+
+#Patents(keywords_patents_class_list_all, keywords_patents_inventor_list_all, keywords_patents_key_list_all, last_launch) # Appel de la fonction Patents
+
+
+######### AFFECTATION
+
+print ("\n AFFECTATION TESTS \n")
+
+"""Affectation aux utilisateurs diposant de la condition link limit"""
+call_users= database.cursor()
+call_users.execute("SELECT users FROM users_table_serge") 
+rows = call_users.fetchall()
+call_users.close()
+
+user_list_all=[]  # Enregistrement des utilisateur dans une liste. 
+
+for row in rows :
+	field = row[0].strip()
+	user_list_all.append(field) 
+
+print ("user_list_all :")###
+print (user_list_all) ###
+
+n=1
+
+for user in user_list_all:
+	n=str(n)
+	print ("\nUSER : " + n) ###
+	user_id_comma="%," + n + ",%"
+
+	permission_list = Permission(n)
+	print permission_list ###
+
+	######### ACTU PERMISSION STATE
+	permission_actu = permission_list[0]
+	print permission_actu ###
+
+	if permission_actu == 0 :
+
+		######### ACTU QUERY
+		print ("Recherche ACTU activée") ###
+		
+		query = "SELECT result_actu_serge.link FROM result_actu_serge INNER JOIN keyword_actu_serge ON result_actu_serge.keyword_id = keyword_actu_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
+
+		call_links_actu=database.cursor()
+		call_links_actu.execute(query, (user_id_comma, user_id_comma))
+		rows = call_links_actu.fetchall()
+		call_links_actu.close()
 	
-try: 
-	os.remove("identity_error.txt")
-except :
-	pass
+		not_send_links_actu_list=[]  # Enregistrement des liens non envoyés dans une liste. 
+
+		for row in rows :
+			field = row[0].strip()
+			not_send_links_actu_list.append(field)
 	
-try: 
-	os.remove("permission_error.txt")
-except :
-	pass
+		print ("not_send_links_actu_list :")###
+		print (not_send_links_actu_list) ###
+		print ("LIENS ACTU NON ENVOYÉS : "+ str(len(not_send_links_actu_list))) ###
+
+	######### SCIENCE PERMISSION STATE
+	permission_science = permission_list[1]
+	print permission_science ###
+	
+	if permission_science == 0 :	
+
+		######### SCIENCE QUERY
+		print ("Recherche SCIENCE activée") ###		
+
+		query = "SELECT result_science_serge.link FROM result_science_serge INNER JOIN keyword_science_serge ON result_science_serge.keyword_id = keyword_science_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
+
+		call_links_science=database.cursor()
+		call_links_science.execute(query, (user_id_comma, user_id_comma))
+		rows = call_links_science.fetchall()
+		call_links_science.close()
+
+		not_send_links_science_list=[]  # Enregistrement des liens non envoyés dans une liste. 
+
+		for row in rows :
+			field = row[0].strip()
+			not_send_links_science_list.append(field)
+	
+		print ("not_send_links_science_list :")###
+		print (not_send_links_science_list) ###
+		print ("LIENS SCIENCE NON ENVOYÉS : "+ str(len(not_send_links_science_list))) ###
+
+	######### PATENTS PERMISSION STATE
+	permission_patents = permission_list[2]
+	print permission_patents ###
+	
+	if permission_patents == 0 :	
+
+		######### PATENTS CLASS PERMISSION STATE
+		permission_patents_class = permission_list[3]
+		print permission_patents_class ###
+	
+		if permission_patents_class == 0 :	
+
+			######### PATENTS CLASS QUERY
+			print ("Recherche PATENTS CLASS activée") ###
+
+			query = "SELECT result_patents_class_serge.link FROM result_patents_class_serge INNER JOIN keyword_patents_class_serge ON result_patents_class_serge.keyword_id = keyword_patents_class_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
+
+			call_links_patents_class=database.cursor()
+			call_links_patents_class.execute(query, (user_id_comma, user_id_comma))
+			rows = call_links_patents_class.fetchall()
+			call_links_patents_class.close()
+
+			not_send_links_patents_class_list=[]  # Enregistrement des liens non envoyés dans une liste. 
+
+			for row in rows :
+				field = row[0].strip()
+				not_send_links_patents_class_list.append(field)
+	
+			print ("not_send_links_patents_class_list :")###
+			print (not_send_links_patents_class_list) ###
+			print ("LIENS PATENTS CLASS NON ENVOYÉS : "+ str(len(not_send_links_patents_class_list))) ###
+
+		######### PATENTS INVENTOR PERMISSION STATE
+		permission_patents_inventor = permission_list[4]
+		print permission_patents_inventor ###
+
+		if permission_patents_inventor == 0 :
+
+			######### PATENTS INVENTOR QUERY
+			print ("Recherche PATENTS INVENTOR activée") ###
+
+			query = "SELECT result_patents_inventor_serge.link FROM result_patents_inventor_serge INNER JOIN keyword_patents_inventor_serge ON result_patents_inventor_serge.keyword_id = keyword_patents_inventor_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
+
+			call_links_patents_inventor=database.cursor()
+			call_links_patents_inventor.execute(query, (user_id_comma, user_id_comma))
+			rows = call_links_patents_inventor.fetchall()
+			call_links_patents_inventor.close()
+
+			not_send_links_patents_inventor_list=[]  # Enregistrement des liens non envoyés dans une liste. 
+
+			for row in rows :
+				field = row[0].strip()
+				not_send_links_patents_inventor_list.append(field)
+	
+			print ("not_send_links_patents_inventor_list :")###
+			print (not_send_links_patents_inventor_list) ###
+			print ("LIENS PATENTS INVENTOR NON ENVOYÉS : "+ str(len(not_send_links_patents_inventor_list))) ###
+
+		######### PATENTS KEY PERMISSION STATE
+		permission_patents_key = permission_list[5]
+		print permission_patents_key ###
+
+		if permission_patents_key == 0 :
+
+			######### PATENTS KEY QUERY
+			print ("Recherche PATENTS KEY activée") ###
+
+			query = "SELECT result_patents_key_serge.link FROM result_patents_key_serge INNER JOIN keyword_patents_key_serge ON result_patents_key_serge.keyword_id = keyword_patents_key_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
+
+			call_links_patents_key=database.cursor()
+			call_links_patents_key.execute(query, (user_id_comma, user_id_comma))
+			rows = call_links_patents_key.fetchall()
+			call_links_patents_key.close()
+
+			not_send_links_patents_key_list=[]  # Enregistrement des liens non envoyés dans une liste. 
+
+			for row in rows :
+				field = row[0].strip()
+				not_send_links_patents_key_list.append(field)
+	
+			print ("not_send_links_patents_key_list :")###
+			print (not_send_links_patents_key_list) ###
+			print ("LIENS PATENTS KEY NON ENVOYÉS : "+ str(len(not_send_links_patents_key_list))) ###	
+
+	######### SEND CONDITION QUERY
+
+	not_send_actu = len(not_send_links_actu_list)
+	not_send_science = len(not_send_links_science_list)
+	not_send_patents_class = len(not_send_links_patents_class_list)
+	not_send_patents_inventor = len(not_send_links_patents_inventor_list)
+	not_send_patents_key = len(not_send_links_patents_key_list)
+
+	if permission_patents == 1:
+		not_send = not_send_actu + not_send_science
+	else : 
+		not_send = not_send_actu + not_send_science + not_send_patents_class + not_send_patents_inventor + not_send_patents_key 
+
+	print ("TOTAL LIENS NON ENVOYÉS : "+ str(not_send)) ###
+
+	query= "SELECT send_condition FROM users_table_serge WHERE id = %s" #On regarde la condition d'envoi 
+
+	call_users= database.cursor()
+	call_users.execute(query, (n))
+	condition = call_users.fetchone()
+	call_users.close()
+	
+	print ("Condition :" + str(condition[0]))
+	
+	######### FREQUENCY CONDITION
+	if condition[0] == "freq":
+		try: 
+			os.remove("Newsletter.txt")
+		except :
+			pass		
+
+		query = "SELECT frequency FROM users_table_serge WHERE id = %s"
+
+		call_users= database.cursor()
+		call_users.execute(query, (n))
+		frequency = call_users.fetchone()
+		call_users.close()
+
+		frequency = frequency[0]
+		print ("Fréquence de l'utilisateur :"+ str(frequency))###
+
+		interval = now-last_launch
+		print ("Intervalle de temps :"+ str(interval))###
+		
+		if interval >= frequency : 
+			print ("Fréquence atteinte") ###
+			
+			######### ECRITURE FICHIER TRANSITOIRE
+			newsletter = open("Newsletter.txt", "a")
+			newsletter.write ("Bonjour " +user.encode("utf_8")+", voici votre veille technologique et industrielle du "+jour+" : \n" + "\n \n")
+
+			######### ECRITURE ACTU
+			if permission_actu == 0 :
+				if not_send_actu > 0 :
+					newsletter.write("ACTUALITÉS\n\n")
+
+				query = "SELECT result_actu_serge.title FROM result_actu_serge INNER JOIN keyword_actu_serge ON result_actu_serge.keyword_id = keyword_actu_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
+
+				call_title_actu=database.cursor()
+				call_title_actu.execute(query, (user_id_comma, user_id_comma))
+				rows = call_title_actu.fetchall()
+				call_title_actu.close()
+			
+				not_send_titles_actu_list=[]  # Enregistrement des titres non envoyés dans une liste. 
+
+				for row in rows :
+					field = row[0].strip()
+					not_send_titles_actu_list.append(field)
+
+				print ("not_send_titles_actu_list :")###
+				print (not_send_titles_actu_list) ###
+
+				index=0
+	
+				while index < not_send_actu:
+					newsletter.write(not_send_titles_actu_list[index])
+					newsletter.write("\n")
+					newsletter.write(not_send_links_actu_list[index])
+					newsletter.write("\n\n")
+					index=index+1
+
+			######### ECRITURE SCIENCE
+			if permission_science == 0 :
+				if not_send_science > 0 :
+					newsletter.write("PUBLICATIONS SCIENTIFIQUES\n\n")
+
+				query = "SELECT result_science_serge.title FROM result_science_serge INNER JOIN keyword_science_serge ON result_science_serge.keyword_id = keyword_science_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
+
+				call_title_science=database.cursor()
+				call_title_science.execute(query, (user_id_comma, user_id_comma))
+				rows = call_title_science.fetchall()
+				call_title_science.close()
+			
+				not_send_titles_science_list=[]  # Enregistrement des titres non envoyés dans une liste. 
+
+				for row in rows :
+					field = row[0].strip()
+					not_send_titles_science_list.append(field)
+
+				print ("not_send_titles_science_list :")###
+				print (not_send_titles_science_list) ###
+
+				index=0
+
+				while index < not_send_science:
+					newsletter.write(not_send_titles_science_list[index])
+					newsletter.write("\n")
+					newsletter.write(not_send_links_actu_list[index])
+					newsletter.write("\n\n")
+					index=index+1		
+		
+			######### ECRITURE PATENTS
+			if permission_patents == 0 :
+				if not_send_patents_class > 0 :
+					newsletter.write("BREVETS\n\n")	
+				elif not_send_patents_inventor > 0 :
+					newsletter.write("BREVETS\n\n")	
+				elif not_send_patents_key > 0 :
+					newsletter.write("BREVETS\n\n")		
+
+				######### CLASS
+				if permission_patents_class == 0 :
+
+					query = "SELECT result_patents_class_serge.title FROM result_patents_class_serge INNER JOIN keyword_patents_class_serge ON result_patents_class_serge.keyword_id = keyword_patents_class_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
+
+					call_title_patents=database.cursor()
+					call_title_patents.execute(query, (user_id_comma, user_id_comma))
+					rows = call_title_patents.fetchall()
+					call_title_patents.close()
+			
+					not_send_titles_patents_class_list=[]  # Enregistrement des titres non envoyés dans une liste. 
+
+					for row in rows :
+						field = row[0].strip()
+						not_send_titles_patents_class_list.append(field)
+
+					print ("not_send_titles_patents_class_list :")###
+					print (not_send_titles_patents_class_list) ###
+
+					index=0
+		
+					while index < not_send_patents_class:
+						newsletter.write(not_send_titles_patents_class_list[index])
+						newsletter.write("\n")
+						newsletter.write(not_send_links_patents_class_list[index])
+						newsletter.write("\n\n")
+						index=index+1	
+
+				######### INVENTOR
+				if permission_patents_inventor == 0 :
+
+					query = "SELECT result_patents_inventor_serge.title FROM result_patents_inventor_serge INNER JOIN keyword_patents_inventor_serge ON result_patents_inventor_serge.keyword_id = keyword_patents_inventor_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
+
+					call_title_patents=database.cursor()
+					call_title_patents.execute(query, (user_id_comma, user_id_comma))
+					rows = call_title_patents.fetchall()
+					call_title_patents.close()
+			
+					not_send_titles_patents_inventor_list=[]  # Enregistrement des titres non envoyés dans une liste. 
+	
+					for row in rows :
+						field = row[0].strip()
+						not_send_titles_patents_inventor_list.append(field)
+
+					print ("not_send_titles_patents_inventor_list :")###
+					print (not_send_titles_patents_inventor_list) ###
+
+					index=0
+		
+					while index < not_send_patents_inventor:
+						newsletter.write(not_send_titles_patents_inventor_list[index])
+						newsletter.write("\n")
+						newsletter.write(not_send_links_patents_inventor_list[index])
+						newsletter.write("\n\n")
+						index=index+1
+
+				######### KEY
+				if permission_patents_key == 0 :
+
+					query = "SELECT result_patents_key_serge.title FROM result_patents_key_serge INNER JOIN keyword_patents_key_serge ON result_patents_key_serge.keyword_id = keyword_patents_key_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
+
+					call_title_patents=database.cursor()
+					call_title_patents.execute(query, (user_id_comma, user_id_comma))
+					rows = call_title_patents.fetchall()
+					call_title_patents.close()
+			
+					not_send_titles_patents_key_list=[]  # Enregistrement des titres non envoyés dans une liste. 
+
+					for row in rows :
+						field = row[0].strip()
+						not_send_titles_patents_key_list.append(field)
+
+					print ("not_send_titles_patents_key_list :")###
+					print (not_send_titles_patents_key_list) ###
+
+					index=0
+			
+					while index < not_send_patents_key:
+						newsletter.write(not_send_titles_patents_key_list[index])
+						newsletter.write("\n")
+						newsletter.write(not_send_links_patents_key_list[index])
+						newsletter.write("\n\n")
+						index=index+1
+
+		else :
+			print ("fréquence non atteinte") ### 
+			### inscrire dans le fichier de log
+				
+	
+	######### LINK LIMIT CONDITION
+	if condition[0] == "link_limit":
+		try: 
+			os.remove("Newsletter.txt")
+		except :
+			pass
+
+		query= "SELECT link_limit FROM users_table_serge WHERE id = %s" #On vérifie le nombre de lien non envoyés 
+
+		call_users= database.cursor()
+		call_users.execute(query, (n))
+		limit = call_users.fetchone()
+		call_users.close()
+
+		print ("LIMITE DE LIENS :" + str(limit[0]))###
+		
+		if not_send <= limit: 
+			print ("INFERIEUR\n") ###
+			### inscrire dans le fichier de log
+	
+		if not_send >= limit:
+			print ("SUPERIEUR\n") ###
+
+			######### ECRITURE FICHIER TRANSITOIRE
+			newsletter = open("Newsletter.txt", "a")
+			newsletter.write ("Bonjour " +user.encode("utf_8")+", voici votre veille technologique et industrielle du "+jour+" : \n" + "\n \n")
+
+			######### ECRITURE ACTU
+			if permission_actu == 0 :
+				if not_send_actu > 0 :
+					newsletter.write("ACTUALITÉS\n\n")
+
+				query = "SELECT result_actu_serge.title FROM result_actu_serge INNER JOIN keyword_actu_serge ON result_actu_serge.keyword_id = keyword_actu_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
+
+				call_title_actu=database.cursor()
+				call_title_actu.execute(query, (user_id_comma, user_id_comma))
+				rows = call_title_actu.fetchall()
+				call_title_actu.close()
+			
+				not_send_titles_actu_list=[]  # Enregistrement des titres non envoyés dans une liste. 
+
+				for row in rows :
+					field = row[0].strip()
+					not_send_titles_actu_list.append(field)
+
+				print ("not_send_titles_actu_list :")###
+				print (not_send_titles_actu_list) ###
+
+				index=0
+	
+				while index < not_send_actu:
+					newsletter.write(not_send_titles_actu_list[index])
+					newsletter.write("\n")
+					newsletter.write(not_send_links_actu_list[index])
+					newsletter.write("\n\n")
+					index=index+1
+
+			######### ECRITURE SCIENCE
+			if permission_science == 0 :
+				if not_send_science > 0 :
+					newsletter.write("PUBLICATIONS SCIENTIFIQUES\n\n")
+
+				query = "SELECT result_science_serge.title FROM result_science_serge INNER JOIN keyword_science_serge ON result_science_serge.keyword_id = keyword_science_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
+
+				call_title_science=database.cursor()
+				call_title_science.execute(query, (user_id_comma, user_id_comma))
+				rows = call_title_science.fetchall()
+				call_title_science.close()
+			
+				not_send_titles_science_list=[]  # Enregistrement des titres non envoyés dans une liste. 
+
+				for row in rows :
+					field = row[0].strip()
+					not_send_titles_science_list.append(field)
+
+				print ("not_send_titles_science_list :")###
+				print (not_send_titles_science_list) ###
+
+				index=0
+
+				while index < not_send_science:
+					newsletter.write(not_send_titles_science_list[index])
+					newsletter.write("\n")
+					newsletter.write(not_send_links_actu_list[index])
+					newsletter.write("\n\n")
+					index=index+1		
+		
+			######### ECRITURE PATENTS
+			if permission_patents == 0 :
+				if not_send_patents_class > 0 :
+					newsletter.write("BREVETS\n\n")	
+				elif not_send_patents_inventor > 0 :
+					newsletter.write("BREVETS\n\n")	
+				elif not_send_patents_key > 0 :
+					newsletter.write("BREVETS\n\n")		
+
+				######### CLASS
+				if permission_patents_class == 0 :
+
+					query = "SELECT result_patents_class_serge.title FROM result_patents_class_serge INNER JOIN keyword_patents_class_serge ON result_patents_class_serge.keyword_id = keyword_patents_class_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
+
+					call_title_patents=database.cursor()
+					call_title_patents.execute(query, (user_id_comma, user_id_comma))
+					rows = call_title_patents.fetchall()
+					call_title_patents.close()
+			
+					not_send_titles_patents_class_list=[]  # Enregistrement des titres non envoyés dans une liste. 
+
+					for row in rows :
+						field = row[0].strip()
+						not_send_titles_patents_class_list.append(field)
+
+					print ("not_send_titles_patents_class_list :")###
+					print (not_send_titles_patents_class_list) ###
+
+					index=0
+		
+					while index < not_send_patents_class:
+						newsletter.write(not_send_titles_patents_class_list[index])
+						newsletter.write("\n")
+						newsletter.write(not_send_links_patents_class_list[index])
+						newsletter.write("\n\n")
+						index=index+1	
+
+				######### INVENTOR
+				if permission_patents_inventor == 0 :
+
+					query = "SELECT result_patents_inventor_serge.title FROM result_patents_inventor_serge INNER JOIN keyword_patents_inventor_serge ON result_patents_inventor_serge.keyword_id = keyword_patents_inventor_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
+
+					call_title_patents=database.cursor()
+					call_title_patents.execute(query, (user_id_comma, user_id_comma))
+					rows = call_title_patents.fetchall()
+					call_title_patents.close()
+			
+					not_send_titles_patents_inventor_list=[]  # Enregistrement des titres non envoyés dans une liste. 
+	
+					for row in rows :
+						field = row[0].strip()
+						not_send_titles_patents_inventor_list.append(field)
+
+					print ("not_send_titles_patents_inventor_list :")###
+					print (not_send_titles_patents_inventor_list) ###
+
+					index=0
+		
+					while index < not_send_patents_inventor:
+						newsletter.write(not_send_titles_patents_inventor_list[index])
+						newsletter.write("\n")
+						newsletter.write(not_send_links_patents_inventor_list[index])
+						newsletter.write("\n\n")
+						index=index+1
+
+				######### KEY
+				if permission_patents_key == 0 :
+
+					query = "SELECT result_patents_key_serge.title FROM result_patents_key_serge INNER JOIN keyword_patents_key_serge ON result_patents_key_serge.keyword_id = keyword_patents_key_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
+
+					call_title_patents=database.cursor()
+					call_title_patents.execute(query, (user_id_comma, user_id_comma))
+					rows = call_title_patents.fetchall()
+					call_title_patents.close()
+			
+					not_send_titles_patents_key_list=[]  # Enregistrement des titres non envoyés dans une liste. 
+
+					for row in rows :
+						field = row[0].strip()
+						not_send_titles_patents_key_list.append(field)
+
+					print ("not_send_titles_patents_key_list :")###
+					print (not_send_titles_patents_key_list) ###
+
+					index=0
+			
+					while index < not_send_patents_key:
+						newsletter.write(not_send_titles_patents_key_list[index])
+						newsletter.write("\n")
+						newsletter.write(not_send_links_patents_key_list[index])
+						newsletter.write("\n\n")
+						index=index+1
+	
+	######### WEB CONDITION
+	if condition[0] == "web":
+		print("break")
+			
+	n=int(n) #COMPTEUR
+	n=n+1 #INCREMENTATION COMPTEUR
+
+
+#######################################################################################################################################
+
+#OLD MAIN : Section in re-construction 
+
+#"""Suppression de Newsletter.txt préventive si il y a eu une erreur au lancement précédant"""
+#try: 
+	#os.remove("Newsletter.txt")
+#except :
+	#pass
+	
+#try: 
+	#os.remove("identity_error.txt")
+#except :
+	#pass
+	
+#try: 
+	#os.remove("permission_error.txt")
+#except :
+	#pass
 
 ######### définition des variables
 
-""""Définition des variables liés au temps ; Appel de la fonction Last_Research"""
-jour = unicode(datetime.date.today())
-now_tot=time.time()
-last_launch = Last_Research()
+#""""Définition des variables liés au temps ; Appel de la fonction Last_Research"""
+#now_tot=time.time()
+#last_launch = Last_Research()
 
-"""Appel de la fonction multi_users"""
-users = multi_users()
+#"""Appel de la fonction multi_users"""
+#users = multi_users()
 
-"""On commence le processus de recherche en parcourant la liste des utilisateurs"""		
-for user in users:
+#"""On commence le processus de recherche en parcourant la liste des utilisateurs"""		
+#for user in users:
 	
-	user=user.strip()
+	#user=user.strip()
 
-	"""Suppression de l'ancien LOG"""
-	try :
-		os.remove("logs/"+user.encode("utf_8")+"process_log.txt") # on supprime l'ancien log
-	except:
-		ERID = open("identity_error.txt", "a") 
-		ERID.write("Votre fichier process log n'existe pas")
-		ERID.close()
+	#"""Suppression de l'ancien LOG"""
+	#try :
+		#os.remove("logs/"+user.encode("utf_8")+"process_log.txt") # on supprime l'ancien log
+	#except:
+		#ERID = open("identity_error.txt", "a") 
+		#ERID.write("Votre fichier process log n'existe pas")
+		#ERID.close()
 	
-	"""Ouverture du nouveau LOG"""
-	LOG = open("logs/"+user.encode("utf_8")+"process_log.txt", "w") 	
-	LOG.write ("SERGE LOG\n \n User:" +user.encode("utf_8")+"\n Date :"+jour+"\n")
+	#"""Ouverture du nouveau LOG"""
+	#LOG = open("logs/"+user.encode("utf_8")+"process_log.txt", "w") 	
+	#LOG.write ("SERGE LOG\n \n User:" +user.encode("utf_8")+"\n Date :"+jour+"\n")
 
-	now=time.time()
-	permissionVeille = Permission_Veille(user)
-	permissionArxiv = Permission_Arxiv(user)
-	permissionPatents = Permission_Patents(user)
+	#now_user=time.time()
+	#permissionVeille = Permission_Veille(user)
+	#permissionArxiv = Permission_Arxiv(user)
+	#permissionPatents = Permission_Patents(user)
 		
-	LOG.write("\n \n Timestamp :" +str(now)+"\n Last launch :" +str(last_launch)+ "\n \n")
+	#LOG.write("\n \n Timestamp :" +str(now_user)+"\n Last launch :" +str(last_launch)+ "\n \n")
 	
-	"""On ouvre le fichier Newsletter.txt qui va récolter le flux. Ce fichier sera ensuite lu par les fonction d'envoi par mail et d'envoi sur le serveur"""
-	newsletter = open("Newsletter.txt", "a") 
-	newsletter.write ("Bonjour " +user.encode("utf_8")+", voici votre veille technologique et industrielle du "+jour+" : \n" + "\n \n")
+	#"""On ouvre le fichier Newsletter.txt qui va récolter le flux. Ce fichier sera ensuite lu par les fonction d'envoi par mail et d'envoi sur le serveur"""
+	#newsletter = open("Newsletter.txt", "a") 
+	#newsletter.write ("Bonjour " +user.encode("utf_8")+", voici votre veille technologique et industrielle du "+jour+" : \n" + "\n \n")
 	
-	proceed = 0 #Variable d'autorisation de la recherche de contenu si égale à 1
+	#proceed = 0 #Variable d'autorisation de la recherche de contenu si égale à 1
 		
-	"""On exécute la fonction de recherche ACTU"""
-	if permissionVeille == 1 :
-		Veille(user, last_launch)
+	#"""On exécute la fonction de recherche ACTU"""
+	#if permissionVeille == 1 :
+		#Veille(user, last_launch)
 	
-	"""On exécute la fonction de recherche SCIENCE"""
-	if permissionArxiv == 1 :
-		Arxiv (user,last_launch)
+	#"""On exécute la fonction de recherche SCIENCE"""
+	#if permissionArxiv == 1 :
+		#Arxiv (user,last_launch)
 	
-	"""On exécute la fonction de recherche de BREVETS (OMPI/WIPO)"""
-	if permissionPatents == 1 :
-		Patents(user, last_launch)
+	#"""On exécute la fonction de recherche de BREVETS (OMPI/WIPO)"""
+	#if permissionPatents == 1 :
+		#Patents(user, last_launch)
 	
-	nowplus=time.time()
-	processing_time = nowplus - now
-	newsletter.write("Temps de recherche : "+str(processing_time)+"s\n \n") 
+	#nowplus=time.time()
+	#processing_time = nowplus - now_user
+	#newsletter.write("Temps de recherche : "+str(processing_time)+"s\n \n") 
 	
-	newsletter.write ("Bonne journée " +user.encode("utf_8")+", \n \n SERGE")
-	newsletter.close()
+	#newsletter.write ("Bonne journée " +user.encode("utf_8")+", \n \n SERGE")
+	#newsletter.close()
 		
 	#Mail(user) 
+	#"""Appel de la fonction multi_users""" ####Test de la fonction mutual research
+	#mutual_keywords = Mutual_ACTU()
 		
 	#envoie le mail en lisant Newsletter.txt
 	
-	os.remove("logs/NewsletterLog.txt")
-	LOG.write("\n Suppression de l'ancien NewsletterLog \n")
-	copyfile("Newsletter.txt","logs/NewsletterLog.txt") #copie Newsletter.txt en fichier NewsletterLog.txt
-	LOG.write("copie de Newsletter.txt en un nouveau fichier NewsletterLog.txt \n")
-	os.remove("Newsletter.txt")
+	#os.remove("logs/NewsletterLog.txt")
+	#LOG.write("\n Suppression de l'ancien NewsletterLog \n")
+	#copyfile("Newsletter.txt","logs/NewsletterLog.txt") #copie Newsletter.txt en fichier NewsletterLog.txt
+	#LOG.write("copie de Newsletter.txt en un nouveau fichier NewsletterLog.txt \n")
+	#os.remove("Newsletter.txt")
 	
-	nowplus_tot=time.time()
-	processing_time = nowplus_tot - now_tot
+	#nowplus_tot=time.time()
+	#processing_time = nowplus_tot - now_tot
 	#print processing_time
-	LOG.write("\n Temps d'exécution : "+str(processing_time)+"\n")
+	#LOG.write("\n Temps d'exécution : "+str(processing_time)+"\n")
 	
-	try:
-		os.remove("identity_error.txt") # on supprime l'ancien log
-	except:
-		pass
+	#try:
+		#os.remove("identity_error.txt") # on supprime l'ancien log
+	#except:
+		#pass
 	
-	timelog=open("logs/timelog.txt", "w")
-	now = unicode(now)
-	timelog.write(now)
-	LOG.write("Ecriture du timestamps en fin de recherche dans le Timelog \n")
-	timelog.close()	
+	#timelog=open("logs/timelog.txt", "w")
+	#now = unicode(now)
+	#timelog.write(now)
+	#LOG.write("Ecriture du timestamps en fin de recherche dans le Timelog \n")
+	#timelog.close()	
 	
-	LOG.close()
+	#LOG.close()
 	
