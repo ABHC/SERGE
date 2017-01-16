@@ -20,7 +20,6 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from shutil import copyfile
 
-
 def Last_Research ():
 	"""Fonction d'extraction de la dernière date de recherche pour n'envoyer que des informations nouvelles"""
 
@@ -28,13 +27,13 @@ def Last_Research ():
 		timelog=open("logs/timelog.txt","r")
 		last_launch=timelog.read()
 		timelog.close()
-	except: 
+	except:
 		PERLOG=open("permission_error.txt", "a")
 		PERLOG.write("le fichier logs/timelog.txt est manquant \n \n")
 		PERLOG.close()
-		
-	last_launch=float(last_launch)		
-	
+
+	last_launch=float(last_launch)
+
 	return last_launch
 
 def sans_accent_maj(ch):
@@ -49,7 +48,7 @@ def sans_accent_maj(ch):
             r += carnorm[0]
         else:
             r += car
-    return r       
+    return r
 
 def sans_accent_min(ch):
     """Supprime les éventuels accents sur les minuscules de la chaine ch
@@ -65,97 +64,22 @@ def sans_accent_min(ch):
             r += car
     return r
 
-	
-def multi_users ():
-	"""Fonction de lectures des identifiants de chaque utilisateur enregistré"""
-
-	try :
-		"""On ouvre la liste des utilisateurs pour en extraire tous les utilisateurs enregistrés"""
-		userlist=open("userlist/userlist.txt","r")
-
-		users=[]
-
-		"""On établit une liste des utilisateurs"""
-		for user in userlist :
-			if user !="\n":
-				if "\n" in user:
-					user=user.replace("\n", "")
-					users.append(user)
-				else:
-					users.append(user)
-			
-		userlist.close()
-		return users
-		
-	except :
-		LOG.write("le fichier userlist/userlist.txt est manquant \n \n")
-
-def multi_sources (user):
-	"""Fonction de lectures des données utilisateurs | On définit la fonction qui permet d'explorer toutes les sources sélectionnées"""
-
-	try :
-		"""On ouvre la liste des sources pour chaque utilisateur pour en extraire tous les utilisateurs enregistrés"""
-		usersources=open("sources/"+user+"_sources.txt","r")
-
-		sources_list=[]
-		list_range_max=0 
-
-		"""On établit une liste des sources"""
-		for link in usersources :
-			if link !="\n":
-				sources_list.append(link)
-				list_range_max +=1 
-	
-		#LOG.write(link)	
-		LOG.write("\n nombre total de sources :"+str(list_range_max)+"\n \n")		
-	
-		usersources.close()
-		return sources_list
-		
-	except: 
-		LOG.write("le fichier sources/"+user+"_sources.txt est manquant \n \n")
-		
-def multi_keywords (user):
-	"""Fonction de lectures des données utilisateurs"""
-
-	try :
-		"""On ouvre la liste des mots-clés de l'utilisateur pour les extraire"""
-		userkeywords=open("keywords/"+user+"_keywords.txt","r")
-
-		keywords_list=[]
-		list_range_max=0 
-
-		"""On établit une liste des keywords"""
-		for keyword in userkeywords :
-			if keyword !="\n":
-				keyword = keyword.decode("latin-1")
-				keywords_list.append(keyword)
-				list_range_max +=1 
-		
-		LOG.write("nombre de mots-clés :"+str(list_range_max)+"\n")		
-	
-		userkeywords.close()
-		return keywords_list
-	
-	except: 
-		LOG.write("le fichier keywords/"+user+"_keywords.txt est manquant \n \n")
-
 
 def Permission(n) :
 
-	query_actu = "SELECT permission_actu FROM users_table_serge WHERE id LIKE %s"
+	query_news = "SELECT permission_news FROM users_table_serge WHERE id LIKE %s"
 	query_science = "SELECT permission_science FROM users_table_serge WHERE id LIKE %s"
 	query_patents = "SELECT permission_patents FROM users_table_serge WHERE id LIKE %s"
 
 	query_patents_class = "SELECT permission_patents_class FROM users_table_serge WHERE id LIKE %s"
 	query_patents_inventor = "SELECT permission_patents_inventor FROM users_table_serge WHERE id LIKE %s"
-	query_patents_key = "SELECT permission_patents_key FROM users_table_serge WHERE id LIKE %s"	
+	query_patents_key = "SELECT permission_patents_key FROM users_table_serge WHERE id LIKE %s"
 
 	call_users= database.cursor()
-	
-	call_users.execute(query_actu, (n,)) 
-	permission_actu = call_users.fetchone()
-	permission_actu = int(permission_actu[0])	
+
+	call_users.execute(query_news, (n,))
+	permission_news = call_users.fetchone()
+	permission_news = int(permission_news[0])
 
 	call_users.execute(query_science, (n,))
 	permission_science = call_users.fetchone()
@@ -163,7 +87,7 @@ def Permission(n) :
 
 	call_users.execute(query_patents, (n,))
 	permission_patents= call_users.fetchone()
-	permission_patents = int(permission_patents[0])	
+	permission_patents = int(permission_patents[0])
 
 	if permission_patents == 0 :
 		call_users.execute(query_patents_class, (n,))
@@ -181,375 +105,458 @@ def Permission(n) :
 	call_users.close()
 
 	if permission_patents == 0 :
-		permission_list =[permission_actu, permission_science, permission_patents, permission_patents_class, permission_patents_inventor, permission_patents_key]
+		permission_list =[permission_news, permission_science, permission_patents, permission_patents_class, permission_patents_inventor, permission_patents_key]
 
-	else : 
-		permission_list =[permission_actu, permission_science, permission_patents]
+	else :
+		permission_list =[permission_news, permission_science, permission_patents]
 
 	return permission_list
-	
-def Permission_Patents (user):
-	########### Recherche de BREVETS
 
-	"""On ouvre le fichier permission"""
-	try :
-		userPATpermission=open("permission/patents_permission/"+user+"_patents_permission.txt","r")
-	except:
-		PERLOG=open("permission_error.txt", "a")
-		PERLOG.write("le fichier permission/patents_permission/"+user+"_patents_permission.txt est manquant \n \n")
-		PERLOG.close()
 
-	"""On établit la permission"""
-	autorisation = 0
+def Newscast(last_launch):
 
-        contenu = userPATpermission.read().strip().lower()
+	#LOG.write("\n")
+	#LOG.write("\n Recherche des actualités \n")
+	#LOG.write("\n")
+	"""Recherche source par source pour éviter les trop nombreuses connection à l'hôte"""
 
-	if contenu == "oui" or contenu == "yes" :	
-		autorisation = 1
-		LOG.write("\n Recherche BREVETS activée")
-	elif contenu == "non" or contenu == "no" :
-		LOG.write("\n Recherche BREVETS désactivée")
-	else :
-        	LOG.write("\n Données anormales dans le fichier "+user+"_patents_permission.txt")
-	
-	userPATpermission.close()
+	new_article = 0
 
-	return autorisation
+	######### CALL TO TABLE rss_serge
 
-def Permission_AI (user):
-	"""Fonction de lectures des données utilisateurs"""
+	call_rss= database.cursor()
+	call_rss.execute("SELECT link, id FROM rss_serge WHERE active >= 1")
+	rows = call_rss.fetchall()
+	call_rss.close()
+
+	sources_news_list=[]
+
+	for row in rows :
+		sources_news_list.append(row)
+
+	########### LINK & ID_RSS EXTRACTION
+
+	for couple_sources_news in sources_news_list:
+		link = couple_sources_news[0].strip()
+		id_rss=couple_sources_news[1]
+		id_rss= str(id_rss)
+
+		id_rss_comma="%," + id_rss + ",%"
+
+		######### CALL TO TABLE keywords_news_serge
+
+		query = "SELECT keyword FROM keyword_news_serge WHERE id_source LIKE %s AND active > 0"
+
+		call_news= database.cursor()
+		call_news.execute(query, (id_rss_comma,))
+		rows = call_news.fetchall()
+		call_news.close()
+
+		keywords_news_list=[]
+
+		for row in rows :
+			field = row[0].strip()
+			keywords_news_list.append(field)  # Enregistrement des keywords NEWS dans une liste.
+
+		#break ###
+
+		########### LINK CONNEXION
+
+		try :
+			req = urllib2.Request(link, headers={'User-Agent' : "Magic Browser"})
+			print ("Go to : "+link) ###
+			rss = urllib2.urlopen(req)
+			#LOG.write (link+"\n")
+			header = rss.headers
+			#LOG.write(str(header)+"\n") #affichage des paramètres de connexion
+		except urllib2.HTTPError:
+			print ("HTTP ERROR")
+			#link = link.replace("http://", "")
+			#newsletter.write ("Erreur dans l'accès à "+link+" (protocole HTTP)\n")
+			#newsletter.write ("Veuillez vérifier la validité du Flux \n \n")
+			#rss = 0
+		except urllib2.HTTPSError:
+			print ("HTTPS ERROR")
+			#link = link.replace("https://", "")
+			#newsletter.write ("Erreur dans l'accès à "+link+" (protocole HTTPS) \n")
+			#newsletter.write ("Veuillez vérifier la validité du Flux \n \n")
+			#rss = 0
+		except:
+			print ("UNKNOWN CONNEXION ERROR")
+			#newsletter.write ("Erreur dans l'accès à "+link+"\n")
+			#newsletter.write ("Erreur inconnue \n \n")
+			#rss = 0
+		#except:
+			#pass
+
+
+		########### RSS PARSING
+
+		try :
+			xmldoc = feedparser.parse(rss) #type propre à feedparser
+		except :
+			#LOG.write("Erreur au niveau de l'URL")
+			print ("Parsing error")###
+
+		########### RSS ANALYZE
+
+		"""Universal Feedparser crée une liste dans qui répertorie chaque article, cette liste est la liste entries[n] qui comprends n+1 entrées (les liste sont numérotées à partir de 0). Python ne peut aller au delà de cette taille n-1. Il faut donc d'abord chercher la taille de la liste avec la fonction len"""
+
+		source_title = xmldoc.feed.title
+		rangemax = len(xmldoc.entries)
+		range = 0 #on initialise la variable range qui va servir pour pointer les articles
+
+		#print ("Boucle sur le keyword : " + keyword) ##
+		#print("id_rss :" + id_rss)
+		#print("id_source :" + id_source)
+
+		for keyword in keywords_news_list :
+
+			print ("Boucle sur le keyword : " + keyword) ##
+
+			while range < rangemax:
+
+				"""On définit les variables que l'on affectent aux commandes de Universal Feedparser"""
+				post_title = xmldoc.entries[range].title
+				post_description = xmldoc.entries[range].description
+				post_link = xmldoc.entries[range].link
+				post_date = xmldoc.entries[range].published_parsed
+				post_date = time.mktime(post_date)
+
+				print ("Recherche sur le keyword : " + keyword) ###
+
+				post_title = post_title.strip()
+				post_description = post_description.strip()
+
+				"""Variables de recherche pour une recherche en ignorant la casse"""
+				post_title_lower = post_title.lower()
+				post_description_lower = post_description.lower()
+				keyword_lower = keyword.lower()
+
+				"""Variables de recherche pour une recherche en ignorant les accents inexistants pour cause de majuscule"""
+				post_title_sans_accent = sans_accent_maj(post_title_lower)
+				post_description_sans_accent = sans_accent_maj(post_description_lower)
+				keyword_sans_accent = sans_accent_maj(keyword)
+
+				if keyword_lower in post_title_lower and post_date >= last_launch:
+					#newsletter.write(post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
+					new_article += 1
+					break #les commandes break permettent que l'information ne s'affiche qu'une seule fois si il y a plusieurs keywords détectées dans l'entrée
+
+				elif keyword_lower in post_description_lower and post_date >= last_launch:
+					#newsletter.write (post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
+					new_article += 1
+					break
+
+				elif keyword_sans_accent in post_title_sans_accent and post_date >= last_launch:
+					#newsletter.write(post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
+					new_article += 1
+					break
+
+				elif keyword_sans_accent in post_description_sans_accent and post_date >= last_launch:
+					#newsletter.write(post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
+					new_article += 1
+					break
+
+				range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
+
+			range = 0
+			print ("Articles trouvés : "+str(new_article)+"\n")
+			#if new_article == 0:
+				#newsletter.write ("Aucun nouvel article dans vos centres d'intérêts.\n \n")
+
+
+def Patents(last_launch, WIPO_languages): #implémentation des db et de la nouvelle gestion des
+	"""Fonction de recherche des derniers brevets publiés par l'OMPI/WIPO"""
+	#LOG.write("\n")
+  	#LOG.write("\n Recherche des Brevets \n")
+  	#LOG.write("\n")
+
+  	########### Recherche par mots-clés
+
+  	######### CALL TO TABLE keyword_patents_key_serge (All languages supported by WIPO)
+
+	for language in WIPO_languages :
+
+		print language ###
+		language_comma ="%," + language + ",%"
+
+		query = "SELECT keyword FROM keyword_patents_key_serge WHERE active >= 1 and language LIKE %s"
+
+		call_patents_key= database.cursor()
+		call_patents_key.execute(query, (language_comma,))
+		rows = call_patents_key.fetchall()
+		call_patents_key.close()
+
+		keywords_patents_key_list=[]  # Enregistrement des keywords PATENTS KEY dans une liste.
+
+		for row in rows :
+			field = row[0].strip()
+			keywords_patents_key_list.append(field)
+
+		for KEY in keywords_patents_key_list:
+   			KEY=KEY.strip().encode("utf-8")
+   			HTML_KEY=urllib2.quote(KEY, safe='')
+			HTML_KEY=HTML_KEY.replace("%20", "+")
+			print HTML_KEY ###
+
+			link = ('https://patentscope.wipo.int/search/rss.jsf?query='+language.encode("utf-8")+'_TI%3A%28'+HTML_KEY.encode("utf-8")+'%29+OR+'+language.encode("utf-8")+'_AB%3A%28'+HTML_KEY.encode("utf-8")+'%29+&office=&rss=true&sortOption=Pub+Date+Desc')
+			
+			try :
+				WIPO = urllib2.urlopen(link)
+				print (link)###
+			except : 
+				print ("UNKNOWN CONNEXION ERROR")###			
+			
+			"""On fait un renvoi au LOG des données de connexion"""
+			#LOG.write(KEY+"\n")
+			#LOG.write(link+"\n")
+			#header = WIPO.headers
+			#LOG.write(str(header)+"\n") #on peut faire afficher les données de connexion à la page grâce à cette commande
+		
+			if (WIPO) :
+				xmldoc = feedparser.parse(WIPO)
+				range = 0
+				rangemax = len(xmldoc.entries)
+				#LOG.write("nombre d'article :"+unicode(rangemax)+"\n \n")
+				new_patent = 0
+
+				if (xmldoc) :
+					
+					if rangemax ==0:
+						print ("VOID QUERY\n")###
+						#LOG.write("void_query :"+unicode(void_query))
+						#LOG.write ("Attention le flux de :" +str(WIPO)+ "est vide ; vous devriez changer vos paramètres de recherche"+"\n")
+
+					else:
+						while range < rangemax:
+							post_title = xmldoc.entries[range].title
+							post_description = xmldoc.entries[range].description
+							post_link = xmldoc.entries[range].link
+							post_date = xmldoc.entries[range].published_parsed
+							post_date = time.mktime(post_date)
+							post_date >= last_launch
+
+							if post_date >= last_launch:
+								#newsletter.write (post_title.encode("utf_8")+"\n"+post_link.encode("utf_8") +"\n"+"\n")
+								new_patent += 1
+
+							range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
+						print (str(new_patent)+"\n")###
+
+				else:
+					#LOG.write("\n Erreur : Le flux RSS n'est pas accessible")
+					print ("RSS ERROR")###
+			else:
+				#LOG.write("\n Erreur au niveau de l'URL")
+				print ("UNKNOWN CONNEXION ERROR")###
 
 	########### Recherche par nom d'inventeur et de mandataire
-	"""On ouvre le fichier permission"""
-	try :
-		userAIpermission=open("permission/patents_permission/aipermission/"+user+"_AI_permission.txt","r")
-	except:
-		PERLOG=open("permission_error.txt", "a")
-		PERLOG.write("le fichier permission/patents_permission/aipermission/"+user+"_AI_permission.txt est manquant \n \n")
-		PERLOG.close()
 
-	"""On établit la permission"""
-	autorisation = 0
+	######### CALL TO TABLE keyword_patents_inventor_serge
+	call_patents_inventor= database.cursor()
+	call_patents_inventor.execute("SELECT keyword FROM keyword_patents_inventor_serge WHERE active >= 1")
+	rows = call_patents_inventor.fetchall()
+	call_patents_inventor.close()
 
-        contenu = userAIpermission.read().strip().lower()
+  	keywords_patents_inventor_list=[]  # Enregistrement des keywords PATENTS INVENTOR dans une liste.
 
-	if contenu == "oui" or contenu == "yes" :	
-		autorisation = 1
-		LOG.write("\n Option INVENTEUR activée")
-	elif contenu == "non" or contenu == "no" :
-		LOG.write("\n Option INVENTEUR désactivée")
-	else :
-        	LOG.write("\n Données anormales dans le fichier "+user+"_AI_permission.txt")
-	
-	userAIpermission.close()
+  	for row in rows :
+    		field = row[0].strip()
+    		keywords_patents_inventor_list.append(field)
 
-	return autorisation
-	
-def Permission_KEY (user):
-	"""Fonction de lectures des données utilisateurs"""
+	for AI in keywords_patents_inventor_list :
+		AI=AI.strip().encode("utf-8")
+   		HTML_AI=urllib2.quote(AI, safe='')
+		HTML_AI=HTML_AI.replace("%20", "+")
+		print HTML_AI ###
 
-	########### Recherche par KEYWORD
-	"""On ouvre le fichier permission"""
-	try:
-		userKEYpermission=open("permission/patents_permission/keypermission/"+user+"_KEY_permission.txt","r")
-	except:
-		PERLOG=open("permission_error.txt", "a")
-		PERLOG.write("le fichier permission/patents_permission/keypermission/"+user+"_KEY_permission.txt est manquant \n \n")
-		PERLOG.close()
+		link = ('https://patentscope.wipo.int/search/rss.jsf?query=PA%3A%28'+HTML_AI.encode("utf-8")+'%29+OR+IN%3A%28'+HTML_AI.encode("utf-8")+'%29+&office=&rss=true&sortOption=Pub+Date+Desc')
 
-	"""On établit la permission"""
-	autorisation = 0
+		try :
+			WIPO = urllib2.urlopen(link)
+			print (link)###
+		except : 
+			print ("UNKNOWN CONNEXION ERROR")
 
-        contenu = userKEYpermission.read().strip().lower()
+		"""On fait un renvoi au LOG des données de connexion"""
+		#LOG.write(AI.encode("utf-8")+"\n")
+		#LOG.write(link+"\n")
+		#header = WIPO.headers
+		#LOG.write(str(header)+"\n") #on peut faire afficher les données de connexion à la page grâce à cette commande
 
-	if contenu == "oui" or contenu == "yes" :	
-		autorisation = 1
-		LOG.write("\n Option KEYWORD activée")
-	elif contenu == "non" or contenu == "no" :
-		LOG.write("\n Option KEYWORD désactivée")
-	else :
-        	LOG.write("\n Données anormales dans le fichier "+user+"_KEY_permission.txt")
-	
-	userKEYpermission.close()
+		if (WIPO) :
+			xmldoc = feedparser.parse(WIPO)
+			range = 0
+			rangemax = len(xmldoc.entries)
+			#LOG.write("nombre d'article :"+unicode(rangemax)+"\n \n")
+			new_patent = 0 ###
 
-	return autorisation
-		
-def Permission_IPC (user):
-	########### Recherche par CLASSE de brevet
+			if (xmldoc) :
 
-	"""On ouvre le fichier permission"""
-	try:
-		userIPCpermission=open("permission/patents_permission/classpermission/"+user+"_class_permission.txt","r")
-	except:
-		PERLOG=open("permission_error.txt", "a")
-		PERLOG.write("le fichier permission/patents_permission/classpermission/"+user+"_class_permission.txt est manquant \n \n")
-		PERLOG.close()
+				if rangemax ==0:
+					print ("VOID QUERY\n")###
+					#LOG.write("void_query :"+unicode(void_query))
+					#LOG.write ("Attention le flux de :" +str(WIPO)+ "est vide ; vous devriez changer vos paramètres de recherche"+"\n")
 
-	"""On établit la permission"""
-	autorisation = 0
+				else:
+					while range < rangemax:
 
-        contenu = userIPCpermission.read().strip().lower()
+						post_title = xmldoc.entries[range].title
+						post_description = xmldoc.entries[range].description
+						post_link = xmldoc.entries[range].link
+						post_date = xmldoc.entries[range].published_parsed
+						post_date = time.mktime(post_date)
+						post_date >= last_launch
 
-	if contenu == "oui" or contenu == "yes" :	
-		autorisation = 1
-		LOG.write("\n Option CLASSE activée")
-	elif contenu == "non" or contenu == "no" :
-		LOG.write("\n Option CLASSE désactivée")
-	else :
-        	LOG.write("\n Données anormales dans le fichier "+user+"_class_permission.txt")
-	
-	userIPCpermission.close()
+						if post_date >= last_launch:
+							#newsletter.write (post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
+							new_patent += 1 ###
 
-	return autorisation
+						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
+					print (str(new_patent)+"\n")###
 
-def Permission_Arxiv (user):
-	########### Autorisation de la recherche SCIENCE
-
-	"""On ouvre le fichier permission"""
-	try:
-		userArxivpermission=open("permission/science_permission/"+user+"_Arxiv_permission.txt","r")
-	except:
-		PERLOG=open("permission_error.txt", "a")
-		PERLOG.write("le fichier permission/science_permission/"+user+"_Arxiv_permission.txt est manquant \n \n")
-		PERLOG.close()
-
-	"""On établit la permission"""
-	autorisation = 0
-
-        contenu = userArxivpermission.read().strip().lower()
-
-	if contenu == "oui" or contenu == "yes" :	
-		autorisation = 1
-		LOG.write("\n Recherche SCIENCE autorisée")
-	elif contenu == "non" or contenu == "no" :
-		LOG.write("\n Recherche SCIENCE désactivée")
-	else :
-        	LOG.write("\n Données anormales dans le fichier "+user+"_Arxiv_permission.txt")
-	
-	userArxivpermission.close()
-
-	return autorisation
-	
-def Permission_Veille (user):
-	########### Autorisation de la recherche ACTU
-
-	"""On ouvre le fichier permission"""
-	try:
-		userVeillepermission=open("permission/actu_permission/"+user+"_Veille_permission.txt","r")
-	except: 
-		PERLOG=open("permission_error.txt", "a")
-		PERLOG.write("le fichier permission/actu_permission/"+user+"_Veille_permission.txt est manquant \n \n")
-		PERLOG.close()
-
-	"""On établit la permission"""
-	autorisation = 0
-
-        contenu = userVeillepermission.read().strip().lower()
-
-	if contenu == "oui" or contenu == "yes" :	
-		autorisation = 1
-		LOG.write("\n Recherche ACTU autorisée")
-	elif contenu == "non" or contenu == "no" :
-		LOG.write("\n Recherche ACTU désactivée")
-	else :
-        	LOG.write("\n Données anormales dans le fichier "+user+"_Veille_permission.txt")
-
-	
-	userVeillepermission.close()
-
-	return autorisation
-
-def Patents_KEY (user) :
-	"""Fonction de lectures des données utilisateurs"""
-	
-	########### Recherche par mots-clés
-	"""On ouvre la liste des mots-clés brevets de l'utilisateur pour les extraire"""
-	try:
-		userpatentsKEY=open("searchpatents/patentskey/"+user+"_patents_keywords.txt","r")
-	except:
-		LOG.write("le fichier searchpatents/patentskey/"+user+"_patents_keywords.txt est manquant \n \n")
-	
-	patents_KEY_list=[]
-
-	"""On établit une liste des mots-clés brevets"""
-	for KEY in userpatentsKEY :
-		if KEY !="\n":
-			patents_KEY_list.append(KEY)
-	
-	userpatentsKEY.close()
-		
-	return patents_KEY_list
-
-def Patents_KEY_FR (user) :
-	"""Fonction de lectures des données utilisateurs"""
-	
-	########### Recherche par mots-clés
-	"""On ouvre la liste des mots-clés brevets de l'utilisateur pour les extraire"""
-	try:
-		userpatentsKEY_FR=open("searchpatents/patentskey/"+user+"_patents_keywords_fr.txt","r")
-	except:
-		LOG.write("le fichier searchpatents/patentskey/"+user+"_patents_keywords_fr.txt est manquant \n \n")
-		
-	patents_KEY_FR_list=[]
-
-	"""On établit une liste des mots-clés brevets"""
-	for KEY in userpatentsKEY_FR :
-		if KEY !="\n":
-			KEY = KEY.decode("latin-1")
-			patents_KEY_FR_list.append(KEY)
-	
-	userpatentsKEY_FR.close()
-		
-	return patents_KEY_FR_list
-	
-def Patents_AI (user):
-	"""Fonction de lectures des données utilisateurs"""
-
-	########### Recherche par nom d'inventeur et de mandataire
-	"""On ouvre la liste des noms d'inventeurs et mandataires de brevets que l'utilisateur suit pour les extraire"""
-	try :
-		userpatentsAI=open("searchpatents/patentsai/"+user+"_patents_applicants_inventors.txt","r")
-	except:
-		LOG.write("le fichier searchpatents/patentsai/"+user+"_patents_applicants_inventors.txt est manquant \n \n")
-	
-	patents_AI_list=[]
-
-	"""On établit une liste des inventeurs et mandataires de brevets"""
-	for AI in userpatentsAI :
-		if AI !="\n":
-			AI = AI.decode("latin-1")
-			patents_AI_list.append(AI)
-				
-	userpatentsAI.close()
-	
-	return patents_AI_list
-	
-def Patents_IPC (user):
-	"""Fonction de lectures des données utilisateurs"""
+			else:
+				#LOG.write("\n Erreur : Le flux RSS n'est pas accessible")
+				print ("RSS ERROR")###
+		else:
+			#LOG.write("\n Erreur au niveau de l'URL")
+			print ("UNKNOWN CONNEXION ERROR")###
 
 	########### Recherche par classification IPC (International Patent Classification)
-	"""On ouvre la liste des noms d'inventeurs et mandataires de brevets que l'utilisateur suit pour les extraire"""
-	try:
-		userpatentsIPC=open("searchpatents/patentsclass/"+user+"_patents_classification.txt","r")
-	except:
-		LOG.write("le fichier searchpatents/patentsclass/"+user+"_patents_classification.txt est manquant \n \n")
-		
-	patents_IPC_list=[]
 
-	"""On établit une liste des inventeurs et mandataires de brevets"""
-	for IPC in userpatentsIPC :
-		if IPC !="\n":
-			IPC = IPC.decode("latin-1")
-			patents_IPC_list.append(IPC)
+  	######### CALL TO TABLE keyword_patents_class_serge
+	call_patents_class= database.cursor()
+	call_patents_class.execute("SELECT keyword FROM keyword_patents_class_serge WHERE active >= 1")
+	rows = call_patents_class.fetchall()
+	call_patents_class.close()
 
-	userpatentsIPC.close()
-	
-	return patents_IPC_list
+	keywords_patents_class_list=[]  # Enregistrement des keywords PATENTS CLASS dans une liste.
 
-	
-def Veille(user, last_launch): 
-	"""La fonction de veille est la fonction qui récupère les liens de la liste les liens de chasue utilisateur, s'y rend et cherche dans la page si les keywords present dans la liste de chaque utilisateur s'y trouvent. Dans ce cas elle imprime les imdormations dans le fichier Newsletter.txt"""
-	
-	LOG.write("\n")
-	LOG.write("\n Recherche des actualités \n")
-	LOG.write("\n")
+  	for row in rows :
+    		field = row[0].strip()
+    		keywords_patents_class_list.append(field)
 
-	""" On récupère la liste des sources de l'utilisateur, que l'on parcours"""
-	sources_list = multi_sources(user)
-	
-	new_article = 0
-	
-	newsletter.write ("Dernières Actualités :\n" + "\n")
-	
-	for link in sources_list:
-	
-		link=link.strip()
-		
+	for IPC in keywords_patents_class_list:
+		IPC=IPC.strip().encode("utf-8")
+   		HTML_IPC=urllib2.quote(IPC, safe='')
+		HTML_IPC=HTML_IPC.replace("%20", "+")
+		print HTML_IPC ###
+
+		link = ('https://patentscope.wipo.int/search/rss.jsf?query=IC%3A'+HTML_IPC.encode("utf-8")+'+&office=&rss=true&sortOption=Pub+Date+Desc')
 		try :
-			req = urllib2.Request(link, headers={'User-Agent' : "Magic Browser"}) 
-			rss = urllib2.urlopen(req) 
-			LOG.write (link+"\n")
-			header = rss.headers
-			LOG.write(str(header)+"\n") #affichage des paramètres de connexion
-		except urllib2.HTTPError: 
-			link = link.replace("http://", "")
-			newsletter.write ("Erreur dans l'accès à "+link+" (protocole HTTP)\n")
-			newsletter.write ("Veuillez vérifier la validité du Flux \n \n")
-			rss = 0
-		except urllib2.HTTPSError: 
-			link = link.replace("https://", "")
-			newsletter.write ("Erreur dans l'accès à "+link+" (protocole HTTPS) \n")
-			newsletter.write ("Veuillez vérifier la validité du Flux \n \n")
-			rss = 0
-		except: 
-			newsletter.write ("Erreur dans l'accès à "+link+"\n")
-			newsletter.write ("Erreur inconnue \n \n")
-			rss = 0
-	
-		"""Après les sources on récupère les mots clés"""
-		keywords_list = multi_keywords(user) # On affecte la liste des mots clés à la variables en amont des boucles pour ne pas provoquer de calcul supplémentaire
-	
-		"""Si on dispose du RSS on analyse le code source"""
-		if (rss != 0): 
-			xmldoc = feedparser.parse(rss) #type propre à feedparser
-			if (xmldoc) :
-				source_title = xmldoc.feed.title
-		
-				"""Universal Feedparser crée une liste dans qui répertorie chaque article, cette liste est la liste entries[n] qui comprends n+1 entrées (les liste sont numérotées à partir de 0). Python ne peut aller au delà de cette taille n-1. Il faut donc d'abord cherche la taille de la liste avec la fonction len"""  
-				range = 0 #on initialise la variable range qui va servir pour pointer les articles 
-				rangemax = len(xmldoc.entries)
-				LOG.write ("nombre d'article :"+unicode(rangemax)+"\n") 
-					
-				"""On initialise une boucle while qui va parcourir une première fois la liste pour rechercher titres, description, lien, etc .... Si c'est le cas on va écrire le nom du programme. Sinon on va forcer le compteur pour éviter la seconde boucle"""
-			
-				count_key =0
-			
-				while range < rangemax:
-					"""On définit les variables que l'on affectent aux commandes de Universal Feedparser hors de la boucle veille car on doit les donner plusieurs fois"""
-					post_title = xmldoc.entries[range].title #type unicode
-					post_description = xmldoc.entries[range].description #type unicode
-					post_link = xmldoc.entries[range].link #type unicode
-					post_date = xmldoc.entries[range].published_parsed #type unicode
-					post_date = time.mktime(post_date) #type float
-				
-					""" On récupère la liste des keywords de l'utilisateur, que l'on parcours"""
-					for keyword in keywords_list:
-						
-						keyword = keyword.strip()
-						post_title = post_title.strip()
-						post_description = post_description.strip()
-						
-						"""On définit les variables de recherche pour une recherche en ignorant la casse"""
-						post_title_lower = post_title.lower()
-						post_description_lower = post_description.lower()
-						keyword_lower = keyword.lower()
-				
-						"""On définit les variables de recherche pour une recherche en ignorant les accents inexistants pour cause de majuscule"""
-						post_title_sans_accent = sans_accent_maj(post_title_lower)
-						post_description_sans_accent = sans_accent_maj(post_description_lower)
-						keyword_sans_accent = sans_accent_maj(keyword)
-					
-						if keyword_lower in post_title_lower and post_date >= last_launch:
-							count_key +=1
-						elif keyword_lower in post_description_lower and post_date >= last_launch:
-							count_key +=1
-						elif keyword_sans_accent in post_title_sans_accent and post_date >= last_launch:
-							count_key +=1
-						elif keyword_sans_accent in post_description_sans_accent and post_date >= last_launch:
-							count_key +=1
-			
-					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
+			WIPO = urllib2.urlopen(link)
+			print (link)###
+		except : 
+			print ("UNKNOWN CONNEXION ERROR")
 
-				if count_key !=0:
-					newsletter.write (source_title.encode("utf_8") + "\n" + "\n")
-					LOG.write(source_title.encode("utf-8")+"| Statut : du contenu potentiellement intéressant à été trouvé \n \n")
-					range = 0
-					rangemax = len(xmldoc.entries)
-				elif count_key ==0:
-					LOG.write(source_title.encode("utf-8")+"| Statut : pas d'article \n")
+		"""On fait un renvoi au LOG des données de connexion"""
+		#LOG.write(IPC+"\n")
+		#LOG.write(link+"\n")
+		#header = WIPO.headers
+		#LOG.write(str(header)+"\n") #on peut faire afficher les données de connexion à la page grâce à cette commande
+
+		"""Si on dispose du RSS on analyse le code source"""
+		if (WIPO) :
+			xmldoc = feedparser.parse(WIPO)
+			range = 0
+			rangemax = len(xmldoc.entries)
+			#LOG.write(IPC)
+			#LOG.write("\n nombre d'article :"+unicode(rangemax)+"\n \n")
+			new_patent = 0 ###
 			
-				"""Même boucle que la précédent mais celle ci sert à écrire les titres et les liens des articles dans le fichier"""
+			if (xmldoc) :
+
+				if rangemax ==0:
+					print ("VOID QUERY\n")###
+					#LOG.write("void_query :"+unicode(void_query))
+					#LOG.write ("Attention le flux de :" +str(WIPO)+ "est vide ; vous devriez changer vos paramètres de recherche")
+
+				else:
+					while range < rangemax:
+
+						post_title = xmldoc.entries[range].title
+						post_description = xmldoc.entries[range].description
+						post_link = xmldoc.entries[range].link
+						post_date = xmldoc.entries[range].published_parsed
+						post_date = time.mktime(post_date)
+						post_date >= last_launch
+
+						if post_date >= last_launch:
+							#newsletter.write (post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
+							new_patent += 1###
+
+						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
+					print (str(new_patent)+"\n")###
+			else:
+				#LOG.write("\n Erreur : Le flux RSS n'est pas accessible")
+				print ("RSS ERROR")###
+		else:
+			#LOG.write("\n Erreur au niveau de l'URL")
+			print ("UNKNOWN CONNEXION ERROR")###
 			
+
+
+def Science (last_launch):
+	"""Fonction de recherche des derniers articles scientifiques publiés par arxiv.org"""
+
+	######### Recherche SCIENCE
+
+	"""On utilise la Search API d'arXiv pour rechercher du contenu scientifique. Contrairement à la boucle de veille on doit injecter les keyword directement dans la requête de la search API qui va nous retourner un résultat sous forme de flux RSS que l'on pourra lire"""
+
+	#LOG.write("\n")
+	#LOG.write("\n Recherches des contenus scientifiques \n")
+	#LOG.write("\n")
+	print ("RECHERCHE SCIENCE") ###
+
+	######### CALL TO TABLE keywords_science_serge
+	call_science= database.cursor()
+	call_science.execute("SELECT keyword FROM keyword_science_serge WHERE active >= 1")
+	rows = call_science.fetchall()
+	call_science.close()
+
+	keywords_science_list=[]  # Enregistrement des keywords SCIENCE dans une liste.
+
+	for row in rows :
+		field = row[0].strip()
+		keywords_science_list.append(field)
+
+	new_article=0
+	void_query = 0
+
+	for keyword in keywords_science_list:
+
+		keyword = sans_accent_maj(keyword).strip()
+		print ("Recherche sur le keyword : " + keyword) ###
+		link = ('http://export.arxiv.org/api/query?search_query=all:'+keyword.encode("utf-8")+"\n")
+
+		try :
+			arxiv_API = urllib2.urlopen(link)
+		except :
+			pass
+			print ("\nARXIV CONNECTION ERROR\n")
+
+		"""On fait un renvoi au LOG des données de connexion"""
+		#LOG.write (keyword.encode("utf-8")+"\n")
+		#LOG.write (link+"\n")
+		#header = arxiv_API.headers
+		#LOG.write(str(header)+"\n \n") #on peut faire afficher les données de connexion à la page grâce à cette commande
+
+		try :
+			xmldoc = feedparser.parse(arxiv_API)
+		except :
+			print ("\nARXIV XML ERROR\n")
+
+		range = 0
+		rangemax = len(xmldoc.entries)
+
+		if (xmldoc) :
+			if rangemax ==0:
+				void_query +=1
+				#LOG.write("void_query :"+unicode(void_query))
+				#LOG.write ("Attention le flux de :" +str(arxiv_API)+ "est vide vous devriez changer vos paramètres de recherche"+"\n")
+
+			else:
 				while range < rangemax:
 					"""On définit les variables que l'on affectent aux commandes de Universal Feedparser hors de la boucle veille car on doit les donner plusieurs fois"""
 					post_title = xmldoc.entries[range].title
@@ -557,460 +564,21 @@ def Veille(user, last_launch):
 					post_link = xmldoc.entries[range].link
 					post_date = xmldoc.entries[range].published_parsed
 					post_date = time.mktime(post_date)
-				
-					""" On récupère la liste des keywords de l'utilisateur, que l'on parcours"""	
-					for keyword in keywords_list:
-					
-						keyword = keyword.strip()
-						post_title = post_title.strip()
-						post_description = post_description.strip()
-						
-						"""On définit les variables de recherche pour une recherche en ignorant la casse"""
-						post_title_lower = post_title.lower()
-						post_description_lower = post_description.lower()
-						keyword_lower = keyword.lower()
-				
-						"""On définit les variables de recherche pour une recherche en ignorant les accents inexistants pour cause de majuscule"""
-						post_title_sans_accent = sans_accent_maj(post_title_lower)
-						post_description_sans_accent = sans_accent_maj(post_description_lower)
-						keyword_sans_accent = sans_accent_maj(keyword)
-			
-						if keyword_lower in post_title_lower and post_date >= last_launch:
-							newsletter.write(post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
-							new_article += 1
-							break #les commandes break permettent que l'information ne s'affiche qu'une seule fois si il y a plusieurs keywords détectées dans l'entrée
-			
-						elif keyword_lower in post_description_lower and post_date >= last_launch:
-							newsletter.write (post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
-							new_article += 1
-							break
-				
-						elif keyword_sans_accent in post_title_sans_accent and post_date >= last_launch:
-							newsletter.write(post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
-							new_article += 1
-							break
-					
-						elif keyword_sans_accent in post_description_sans_accent and post_date >= last_launch:
-							newsletter.write(post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
-							new_article += 1
-							break
-							
+					post_date >= last_launch
+
+					if post_date >= last_launch:
+						#newsletter.write (post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
+						new_article += 1
+
 					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
-			
-			else:
-				LOG.write("Erreur : Le flux RSS n'est pas accessible") 
-		else: 
-			LOG.write("Erreur au niveau de l'URL")
-			
-	if new_article == 0:
-		newsletter.write ("Aucun nouvel article dans vos centres d'intérêts.\n \n")
-	
-def Patents(user, last_launch):
-	"""Fonction de recherche des derniers brevets publiés par l'OMPI/WIPO"""
-	
-	LOG.write("\n")
-	LOG.write("\n Recherche des Brevets \n")
-	LOG.write("\n")
-	
-	######### Appel aux fonctions inféodés et déclarations de variables
-	
-	"""On récupère les permissions"""
-	permissionAI = Permission_AI(user)
-	permissionKEY = Permission_KEY(user)
-	permissionIPC = Permission_IPC(user)
-	
-	
-	patents_KEY_list = Patents_KEY(user)
-	patents_KEY_FR_list = Patents_KEY_FR(user)
-	patents_AI_list = Patents_AI(user)
-	patents_IPC_list = Patents_IPC(user)
-	
-	newsletter.write("------------------------------------------------------------------------------------")
-	newsletter.write("\n \n")
-	newsletter.write("Brevets récents :\n \n")
-	
-	jumpline="\n"
-	txt_space=" "
-	accent1="é"
-	accent2="è"
-	accent3="ê"
-	accent4="î"
-	accent5="à"
-	accent6="ù"
-	accent7="ï"
-	accent8="ü"
-	void_query = 0
-	new_patent = 0
-	
-	"""on encode les accents en utf-8 pour usage ultérieur"""
-	accent1=accent1.decode("utf-8")
-	accent2=accent2.decode("utf-8")
-	accent3=accent3.decode("utf-8")
-	accent4=accent4.decode("utf-8")
-	accent5=accent5.decode("utf-8")
-	accent6=accent6.decode("utf-8")
-	accent7=accent7.decode("utf-8")
-	accent8=accent8.decode("utf-8")
-	
-	########### Recherche par mots-clés EN ANGLAIS
-	
-	"""On exécute la fonction de recherche de BREVETS option KEYWORD en anglais"""
-	if permissionKEY == 1 :
-		for KEY in patents_KEY_list:
-			KEY= unicode(KEY)
-			KEY=KEY.strip()
 
-			if txt_space in KEY:
-				KEY=KEY.replace(" ", "+")
-			
-			link = ('https://patentscope.wipo.int/search/rss.jsf?query=EN_TI%3A%28'+KEY.encode("utf-8")+'%29+OR+EN_AB%3A%28'+KEY.encode("utf-8")+'%29+&office=&rss=true&sortOption=Pub+Date+Desc')
-			WIPO = urllib2.urlopen(link)
-			
-			"""On fait un renvoi au LOG des données de connexion""" 
-			LOG.write(KEY+"\n")
-			LOG.write(link+"\n")
-			header = WIPO.headers
-			LOG.write(str(header)+"\n") #on peut faire afficher les données de connexion à la page grâce à cette commande
-		
-			"""Si on dispose du RSS on analyse le code source"""
-			if (WIPO) : 
-				xmldoc = feedparser.parse(WIPO)
-				range = 0
-				rangemax = len(xmldoc.entries)
-				LOG.write("nombre d'article :"+unicode(rangemax)+"\n \n")
-				
-				if (xmldoc) :
-					"""On ouvre le fichier Newsletter.txt qui va récolter le flux. Ce fichier sera ensuite lu par les fonction d'envoi par mail et d'envoir sur le serveur"""
-					
-					if rangemax ==0:
-						void_query +=1
-						LOG.write("void_query :"+unicode(void_query))
-						LOG.write ("Attention le flux de :" +str(WIPO)+ "est vide ; vous devriez changer vos paramètres de recherche"+"\n")
-						
-					else:
-						while range < rangemax:
-							"""On définit les variables que l'on affectent aux commandes de Universal Feedparser hors de la boucle veille car on doit les donner plusieurs fois"""
-							post_title = xmldoc.entries[range].title
-							post_description = xmldoc.entries[range].description
-							post_link = xmldoc.entries[range].link
-							post_date = xmldoc.entries[range].published_parsed
-							post_date = time.mktime(post_date)
-							post_date >= last_launch
-							
-							if post_date >= last_launch:
-								newsletter.write (post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
-								new_patent += 1
-							
-							range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur	
-						
-				else:
-					LOG.write("\n Erreur : Le flux RSS n'est pas accessible") 
-			else: 
-				LOG.write("\n Erreur au niveau de l'URL")
+		#else:
+			#LOG.write("Erreur : Le flux RSS n'est pas accessible")
 
-	########### Recherche par mots-clés EN FRANCAIS
-	
-	"""On exécute la fonction de recherche de BREVETS option KEYWORD en français"""
-	if permissionKEY == 1 :
-		for KEY in patents_KEY_FR_list:
-			
-			KEY=KEY.strip()
+	#if new_article == 0 :
+		#newsletter.write ("Aucune nouvelle publication dans vos centres d'intérêts\n \n")
 
-			if txt_space in KEY:
-				KEY=KEY.replace(" ", "+")
-			
-			if accent1 in KEY:
-				KEY=KEY.replace(accent1, "%C3%A9")
-				
-			if accent2 in KEY:
-				KEY=KEY.replace(accent2, "%C3%A8")
-			
-			if accent3 in KEY:
-				KEY=KEY.replace(accent3, "%C3%AA")
-				
-			if accent4 in KEY:
-				KEY=KEY.replace(accent4, "%C3%AE")
-				
-			if accent5 in KEY:
-				KEY=KEY.replace(accent5, "%C3%A0")
-				
-			if accent6 in KEY:
-				KEY=KEY.replace(accent6, "%C3%B9")
-				
-			if accent7 in KEY:
-				KEY=KEY.replace(accent7, "%C3%AF")
-				
-			if accent8 in KEY:
-				KEY=KEY.replace(accent8, "%C3%BC")
-			
-			KEY= unicode(KEY)
-			
-			link = ('https://patentscope.wipo.int/search/rss.jsf?query=FR_TI%3A%28'+KEY.encode("utf-8")+'%29+OR+FR_AB%3A%28'+KEY.encode("utf-8")+'%29+&office=&rss=true&sortOption=Pub+Date+Desc')
-			WIPO = urllib2.urlopen(link)
-			
-			"""On fait un renvoi au LOG des données de connexion""" 
-			LOG.write(KEY.encode("utf-8")+"\n")
-			LOG.write(link+"\n")
-			header = WIPO.headers
-			LOG.write(str(header)+"\n") #on peut faire afficher les données de connexion à la page grâce à cette commande
-		
-			"""Si on dispose du RSS on analyse le code source"""
-			if (WIPO) : 
-				xmldoc = feedparser.parse(WIPO)
-				range = 0
-				rangemax = len(xmldoc.entries)
-				LOG.write("nombre d'article :"+unicode(rangemax)+"\n \n")
-				
-				if (xmldoc) :
-					"""On ouvre le fichier Newsletter.txt qui va récolter le flux. Ce fichier sera ensuite lu par les fonction d'envoi par mail et d'envoir sur le serveur"""
-					
-					if rangemax ==0:
-						void_query +=1
-						LOG.write("void_query :"+unicode(void_query))
-						LOG.write ("Attention le flux de :" +str(WIPO)+ "est vide ; vous devriez changer vos paramètres de recherche"+"\n")
-						
-					else:
-						while range < rangemax:
-							"""On définit les variables que l'on affectent aux commandes de Universal Feedparser hors de la boucle veille car on doit les donner plusieurs fois"""
-							post_title = xmldoc.entries[range].title
-							post_description = xmldoc.entries[range].description
-							post_link = xmldoc.entries[range].link
-							post_date = xmldoc.entries[range].published_parsed
-							post_date = time.mktime(post_date)
-							post_date >= last_launch
-							
-							if post_date >= last_launch:
-								newsletter.write (post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
-								new_patent += 1
-							
-							range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur	
-						
-				else:
-					LOG.write("\n Erreur : Le flux RSS n'est pas accessible") 
-			else: 
-				LOG.write("\n Erreur au niveau de l'URL")
-		
-				
-	########### Recherche par nom d'inventeur et de mandataire
-	
-	"""On exécute la fonction de recherche de BREVETS option INVENTEUR"""
-	if permissionAI == 1 :
-		for AI in patents_AI_list:
-			AI=unicode(AI)
-			AI = sans_accent_maj(AI)
-			AI = sans_accent_min(AI)
-			AI=AI.strip()
 
-			if txt_space in AI:
-				AI=AI.replace(" ", "+")
-				
-			if accent1 in AI:
-				AI=AI.replace(accent1, "%C3%A9")
-				
-			if accent2 in AI:
-				AI=AI.replace(accent2, "%C3%A8")
-			
-			if accent3 in AI:
-				AI=AI.replace(accent3, "%C3%AA")
-				
-			if accent4 in AI:
-				AI=AI.replace(accent4, "%C3%AE")
-				
-			if accent5 in AI:
-				AI=AI.replace(accent5, "%C3%A0")
-				
-			if accent6 in AI:
-				AI=AI.replace(accent6, "%C3%B9")
-			
-			if accent7 in AI:
-				AI=AI.replace(accent7, "%C3%AF")
-				
-			if accent8 in AI:
-				AI=AI.replace(accent8, "%C3%BC")
-			
-			AI= unicode(AI)
-		
-			link = ('https://patentscope.wipo.int/search/rss.jsf?query=PA%3A%28'+AI.encode("utf-8")+'%29+OR+IN%3A%28'+AI.encode("utf-8")+'%29+&office=&rss=true&sortOption=Pub+Date+Desc')
-			WIPO = urllib2.urlopen(link)
-		
-			"""On fait un renvoi au LOG des données de connexion"""
-			LOG.write(AI.encode("utf-8")+"\n")
-			LOG.write(link+"\n")
-			header = WIPO.headers
-			LOG.write(str(header)+"\n") #on peut faire afficher les données de connexion à la page grâce à cette commande
-			
-			"""Si on dispose du RSS on analyse le code source"""
-			if (WIPO) : 
-				xmldoc = feedparser.parse(WIPO)
-				range = 0
-				rangemax = len(xmldoc.entries)
-				LOG.write("nombre d'article :"+unicode(rangemax)+"\n \n")
-			
-				if (xmldoc) :
-					"""On ouvre le fichier Newsletter.txt qui va récolter le flux. Ce fichier sera ensuite lu par les fonction d'envoi par mail et d'envoir sur le serveur"""
-					
-					if rangemax ==0:
-						void_query +=1
-						LOG.write("void_query :"+unicode(void_query))
-						LOG.write ("Attention le flux de :" +str(WIPO)+ "est vide ; vous devriez changer vos paramètres de recherche"+"\n")
-						
-					else:
-						while range < rangemax:
-							"""On définit les variables que l'on affectent aux commandes de Universal Feedparser hors de la boucle veille car on doit les donner plusieurs fois"""
-							post_title = xmldoc.entries[range].title
-							post_description = xmldoc.entries[range].description
-							post_link = xmldoc.entries[range].link
-							post_date = xmldoc.entries[range].published_parsed
-							post_date = time.mktime(post_date)
-							post_date >= last_launch
-							
-							if post_date >= last_launch:
-								newsletter.write (post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
-								new_patent += 1
-							
-							range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur	
-						
-				else:
-					LOG.write("\n Erreur : Le flux RSS n'est pas accessible") 
-			else: 
-				LOG.write("\n Erreur au niveau de l'URL")
-		
-	########### Recherche par classification IPC (International Patent Classification)
-
-	"""On exécute la fonction de recherche de BREVETS option CLASSE"""
-	if permissionIPC == 1 :
-		for IPC in patents_IPC_list:
-			IPC=unicode(IPC)
-			IPC = sans_accent_maj(IPC)
-			IPC = sans_accent_min(IPC)
-			IPC=IPC.strip()
-
-			if txt_space in IPC:
-				IPC=IPC.replace(" ", "+")
-
-			link = ('https://patentscope.wipo.int/search/rss.jsf?query=IC%3A'+IPC.encode("utf-8")+'+&office=&rss=true&sortOption=Pub+Date+Desc')
-			WIPO = urllib2.urlopen(link)
-				
-			"""On fait un renvoi au LOG des données de connexion"""
-			LOG.write(IPC+"\n")
-			LOG.write(link+"\n")
-			header = WIPO.headers
-			LOG.write(str(header)+"\n") #on peut faire afficher les données de connexion à la page grâce à cette commande
-
-			"""Si on dispose du RSS on analyse le code source"""
-			if (WIPO) : 
-				xmldoc = feedparser.parse(WIPO)
-				range = 0
-				rangemax = len(xmldoc.entries)
-				LOG.write(IPC)
-				LOG.write("\n nombre d'article :"+unicode(rangemax)+"\n \n")
-			
-				if (xmldoc) :
-					"""On ouvre le fichier Newsletter.txt qui va récolter le flux. Ce fichier sera ensuite lu par les fonction d'envoi par mail et d'envoir sur le serveur"""
-					
-					if rangemax ==0:
-						void_query +=1
-						LOG.write("void_query :"+unicode(void_query))
-						LOG.write ("Attention le flux de :" +str(WIPO)+ "est vide ; vous devriez changer vos paramètres de recherche")
-						
-					else:
-						while range < rangemax:
-							"""On définit les variables que l'on affectent aux commandes de Universal Feedparser hors de la boucle veille car on doit les donner plusieurs fois"""
-							post_title = xmldoc.entries[range].title
-							post_description = xmldoc.entries[range].description
-							post_link = xmldoc.entries[range].link
-							post_date = xmldoc.entries[range].published_parsed
-							post_date = time.mktime(post_date)
-							post_date >= last_launch
-							
-							if post_date >= last_launch:
-								newsletter.write (post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
-								new_patent += 1
-							
-							range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur				
-				else:
-					LOG.write("\n Erreur : Le flux RSS n'est pas accessible") 
-			else: 
-				LOG.write("\n Erreur au niveau de l'URL")
-				
-	if new_patent == 0 :		
-		newsletter.write ("Aucune nouvelle publication dans vos centres d'intérêts\n \n")
-	
-	newsletter.write ("\n")
-			
-def Arxiv (user, last_launch):
-	"""Fonction de recherche des derniers articles scientifiques publiés par arxiv.org"""	
-
-	######### Recherche SCIENCE
-	
-	"""On utilise la Search API d'arXiv pour rechercher du contenu scientifique. Contrairement à la boucle de veille on doit injecter les keyword directement dans la requête de la search API qui va nous retourner un résultat sous forme de flux RSS que l'on pourra lire"""
-	
-	LOG.write("\n")
-	LOG.write("\n Recherches des contenus scientifiques \n")
-	LOG.write("\n")
-	
-	keywords_list = multi_keywords(user) # La recherche se fait aussi sur les auteurs donc attention aux mots clés
-	
-	newsletter.write("------------------------------------------------------------------------------------")
-	newsletter.write("\n \n")
-	newsletter.write("Les Publications Scientifiques de ArXiv.org :\n \n")
-	
-	new_article=0
-	void_query = 0
-	
-	for keyword in keywords_list:
-		keyword = sans_accent_maj(keyword)
-		
-		keyword=keyword.strip()
-		
-		link = ('http://export.arxiv.org/api/query?search_query=all:'+keyword.encode("utf-8")+"\n")	
-		arxiv_API = urllib2.urlopen(link)
-		
-		"""On fait un renvoi au LOG des données de connexion"""
-		LOG.write (keyword.encode("utf-8")+"\n")
-		LOG.write (link+"\n")
-		header = arxiv_API.headers
-		LOG.write(str(header)+"\n \n") #on peut faire afficher les données de connexion à la page grâce à cette commande
-
-		"""Si on dispose du RSS on analyse le code source"""
-		if (arxiv_API) : 
-			xmldoc = feedparser.parse(arxiv_API)
-			range = 0
-			rangemax = len(xmldoc.entries)
-			if (xmldoc) :
-				"""On ouvre le fichier Newsletter.txt qui va récolter le flux. Ce fichier sera ensuite lu par les fonction d'envoi par mail et d'envoir sur le serveur"""
-					
-				if rangemax ==0:
-					void_query +=1
-					LOG.write("void_query :"+unicode(void_query))
-					LOG.write ("Attention le flux de :" +str(arxiv_API)+ "est vide vous devriez changer vos paramètres de recherche"+"\n")
-						
-				else:
-					while range < rangemax:
-						"""On définit les variables que l'on affectent aux commandes de Universal Feedparser hors de la boucle veille car on doit les donner plusieurs fois"""
-						post_title = xmldoc.entries[range].title
-						post_description = xmldoc.entries[range].description
-						post_link = xmldoc.entries[range].link
-						post_date = xmldoc.entries[range].published_parsed
-						post_date = time.mktime(post_date)
-						post_date >= last_launch
-							
-						if post_date >= last_launch:
-							newsletter.write (post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
-							new_article += 1
-							
-						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur	
-	
-			else:
-				LOG.write("Erreur : Le flux RSS n'est pas accessible") 
-			
-		else: 
-			LOG.write("Erreur au niveau de l'URL")
-		
-	if new_article == 0 :		
-		newsletter.write ("Aucune nouvelle publication dans vos centres d'intérêts\n \n")		
-
-		
 def Mail(user):
 	"""Fonction d'envoie de la newsletter par mail"""
 
@@ -1019,23 +587,23 @@ def Mail(user):
 	adr_mail = usermail.read()
 	LOG.write(adr_mail)
 	usermail.close
-	
+
 	"""Fonction d'envoi de mail"""
-	fromaddr = 'combe.alexandre@cairn-devices.eu' 
-	toaddr = adr_mail 
-		
+	fromaddr = 'combe.alexandre@cairn-devices.eu'
+	toaddr = adr_mail
+
 	"""On veux transférer le contenu du fichier texte DANS le mail"""
-	newsletter = open("Newsletter.txt", "r") 
+	newsletter = open("Newsletter.txt", "r")
 	msg = MIMEText(newsletter.read())
 	newsletter.close()
-		
+
 	msg['From'] = fromaddr
 	msg['To'] = toaddr
 	msg['Subject'] = "[SERGE] Veille Industrielle et Technologique"
- 
+
 	#body = "YOUR MESSAGE HERE"
 	#msg.attach(MIMEText(body, 'plain'))
- 
+
 	server = smtplib.SMTP('smtp.cairn-devices.eu', 25)
 	server.starttls()
 	passmail=open("userlist/pass/passmail.txt","r")
@@ -1047,11 +615,12 @@ def Mail(user):
 	server.quit()
 
 
-######### MAIN 
+######### MAIN
 
 now=time.time()
 last_launch = Last_Research()
 jour = unicode(datetime.date.today())
+WIPO_languages = ["ZH", "DA", "EN", "FR", "DE", "HE", "IT", "JA", "KO", "PL", "PT", "RU", "ES", "SV", "VN"]
 
 ######### Connexion à la base de données CairnDevices
 
@@ -1060,123 +629,38 @@ passSQL = passSQL.read().strip()
 
 database = MySQLdb.connect(host="localhost", user="root", passwd=passSQL, db="CairnDevices", use_unicode=1, charset="utf8")
 
+######### NOMBRE D'UTILISATEURS
+
+call_users= database.cursor()
+call_users.execute("SELECT COUNT(id) FROM users_table_serge")
+max_users = call_users.fetchone()
+call_users.close()
+
+max_users = int(max_users[0])
+print ("Max Users : " + str(max_users)+"\n")
+
 ######### RECHERCHE
 
-######### SOURCES
+Newscast(last_launch) # Appel de la fonction Newscast
 
-"""Appel à la table rss_serge"""
-call_rss= database.cursor()
-call_rss.execute("SELECT link, owners FROM rss_serge WHERE active >= 1")
-rows = call_rss.fetchall()
-call_rss.close()
+Science(last_launch) # Appel de la fonction Science
 
-sources_actu_list=[]  
+Patents(last_launch, WIPO_languages) # Appel de la fonction Patents
 
-for row in rows :
-	sources_actu_list.append(field)
-
-print ("sources_actu_list :")###
-print sources_actu_list ###
-
-######### Appel aux tables catégorielle de type keywords_*_serge
-
-######### ACTU
-"""Appel à la table keywords_actu_serge et à la fonction Veille"""
-call_actu= database.cursor()
-call_actu.execute("SELECT keyword, owners FROM keyword_actu_serge WHERE active >= 1")
-rows = call_actu.fetchall()
-call_actu.close()
-
-keywords_actu_list_all=[]  # Enregistrement des keywords ACTU dans une liste. 
-
-for row in rows :
-	keywords_actu_list_all.append(row)
-
-print ("keywords_actu_list_all :")###
-print keywords_actu_list_all ###
-
-#Veille(keywords_actu_list_all, last_launch) # Appel de la fonction veille 
-
-######### SCIENCE
-"""Appel à la table keywords_science_serge et à la fonction Arxiv"""
-call_science= database.cursor()
-call_science.execute("SELECT keyword FROM keyword_science_serge WHERE active >= 1")
-rows = call_science.fetchall()
-call_science.close()
-
-keywords_science_list_all=[]  # Enregistrement des keywords SCIENCE dans une liste. 
-
-for row in rows :
-	field = row[0].strip()
-	keywords_science_list_all.append(field) 
-
-print ("keywords_science_list_all :")###
-print (keywords_science_list_all) ###
-
-#Arxiv(keywords_science_list_all, last_launch) # Appel de la fonction Arxiv
-
-######### PATENTS
-"""Appel aux tables keywords_Patents_*_serge et à la fonction Patents"""
-call_patents_class= database.cursor()
-call_patents_class.execute("SELECT keyword FROM keyword_patents_class_serge WHERE active >= 1")
-rows = call_patents_class.fetchall()
-call_patents_class.close()
-
-keywords_patents_class_list_all=[]  # Enregistrement des keywords PATENTS CLASS dans une liste. 
-
-for row in rows :
-	field = row[0].strip()
-	keywords_patents_class_list_all.append(field) 
-
-print ("keywords_patents_class_list_all :")###
-print (keywords_patents_class_list_all) ###
-
-call_patents_inventor= database.cursor()
-call_patents_inventor.execute("SELECT keyword FROM keyword_patents_inventor_serge WHERE active >= 1")
-rows = call_patents_inventor.fetchall()
-call_patents_class.close()
-
-keywords_patents_inventor_list_all=[]  # Enregistrement des keywords PATENTS INVENTOR dans une liste. 
-
-for row in rows :
-	field = row[0].strip()	
-	keywords_patents_inventor_list_all.append(field) 
-
-print ("keywords_patents_inventor_list_all :")###
-print (keywords_patents_inventor_list_all) ###
-
-call_patents_key= database.cursor()
-call_patents_key.execute("SELECT keyword FROM keyword_patents_key_serge WHERE active >= 1")
-rows = call_patents_key.fetchall()
-call_patents_key.close()
-
-keywords_patents_key_list_all=[]  # Enregistrement des keywords PATENTS KEY dans une liste. 
-
-for row in rows :
-	field = row[0].strip()
-	keywords_patents_key_list_all.append(field) 
-
-print ("keywords_patents_key_list_all :")###
-print (keywords_patents_key_list_all) ###
-
-#Patents(keywords_patents_class_list_all, keywords_patents_inventor_list_all, keywords_patents_key_list_all, last_launch) # Appel de la fonction Patents
-
-
-######### AFFECTATION
+######### AFFECTATION ## A Revoir  : Merge des appels à la base de données pour faire la liste des liens
 
 print ("\n AFFECTATION TESTS \n")
 
-"""Affectation aux utilisateurs diposant de la condition link limit"""
 call_users= database.cursor()
-call_users.execute("SELECT users FROM users_table_serge") 
+call_users.execute("SELECT users FROM users_table_serge")
 rows = call_users.fetchall()
 call_users.close()
 
-user_list_all=[]  # Enregistrement des utilisateur dans une liste. 
+user_list_all=[]  # Enregistrement des utilisateur dans une liste.
 
 for row in rows :
 	field = row[0].strip()
-	user_list_all.append(field) 
+	user_list_all.append(field)
 
 print ("user_list_all :")###
 print (user_list_all) ###
@@ -1189,174 +673,261 @@ for user in user_list_all:
 	user_id_comma="%," + n + ",%"
 
 	permission_list = Permission(n)
-	print permission_list ###
+	#print permission_list ###
 
-	######### ACTU PERMISSION STATE
-	permission_actu = permission_list[0]
-	print permission_actu ###
+	######### NEWS PERMISSION STATE
+	permission_news = permission_list[0]
+	#print permission_news ###
 
-	if permission_actu == 0 :
+	if permission_news == 0 :
 
-		######### ACTU QUERY
-		print ("Recherche ACTU activée") ###
-		
-		query = "SELECT result_actu_serge.link FROM result_actu_serge INNER JOIN keyword_actu_serge ON result_actu_serge.keyword_id = keyword_actu_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
+		######### RESULTS NEWS
+		print ("Recherche NEWS activée") ###
 
-		call_links_actu=database.cursor()
-		call_links_actu.execute(query, (user_id_comma, user_id_comma))
-		rows = call_links_actu.fetchall()
-		call_links_actu.close()
-	
-		not_send_links_actu_list=[]  # Enregistrement des liens non envoyés dans une liste. 
+		######### NEWS LINKS QUERY
+		query = "SELECT result_news_serge.link FROM result_news_serge INNER JOIN keyword_news_serge ON result_news_serge.keyword_id = keyword_news_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)"
+
+		call_links_news=database.cursor()
+		call_links_news.execute(query, (user_id_comma, user_id_comma))
+		rows = call_links_news.fetchall()
+		call_links_news.close()
+
+		not_send_links_news_list=[]  # Enregistrement des liens non envoyés dans une liste.
 
 		for row in rows :
 			field = row[0].strip()
-			not_send_links_actu_list.append(field)
-	
-		print ("not_send_links_actu_list :")###
-		print (not_send_links_actu_list) ###
-		print ("LIENS ACTU NON ENVOYÉS : "+ str(len(not_send_links_actu_list))) ###
+			not_send_links_news_list.append(field)
+
+		#print ("not_send_links_news_list :")###
+		#print (not_send_links_news_list) ###
+		#print ("LIENS NEWS NON ENVOYÉS : "+ str(len(not_send_links_news_list))) ###
+
+		######### NEWS TITLES QUERY
+		query = "SELECT result_news_serge.title FROM result_news_serge INNER JOIN keyword_news_serge ON result_news_serge.keyword_id = keyword_news_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)"
+
+		call_title_news=database.cursor()
+		call_title_news.execute(query, (user_id_comma, user_id_comma))
+		rows = call_title_news.fetchall()
+		call_title_news.close()
+
+		not_send_titles_news_list=[]  # Enregistrement des titres non envoyés dans une liste.
+
+		for row in rows :
+			field = row[0].strip()
+			not_send_titles_news_list.append(field)
+
+			#print ("not_send_titles_news_list :")###
+			#print (not_send_titles_news_list) ###
+
 
 	######### SCIENCE PERMISSION STATE
 	permission_science = permission_list[1]
-	print permission_science ###
-	
-	if permission_science == 0 :	
+	#print permission_science ###
 
-		######### SCIENCE QUERY
-		print ("Recherche SCIENCE activée") ###		
+	if permission_science == 0 :
 
-		query = "SELECT result_science_serge.link FROM result_science_serge INNER JOIN keyword_science_serge ON result_science_serge.keyword_id = keyword_science_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
+		######### RESULTS SCIENCE
+		print ("Recherche SCIENCE activée") ###
+
+		######### SCIENCE LINKS QUERY
+		query = "SELECT result_science_serge.link FROM result_science_serge INNER JOIN keyword_science_serge ON result_science_serge.keyword_id = keyword_science_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)"
 
 		call_links_science=database.cursor()
 		call_links_science.execute(query, (user_id_comma, user_id_comma))
 		rows = call_links_science.fetchall()
 		call_links_science.close()
 
-		not_send_links_science_list=[]  # Enregistrement des liens non envoyés dans une liste. 
+		not_send_links_science_list=[]  # Enregistrement des liens non envoyés dans une liste.
 
 		for row in rows :
 			field = row[0].strip()
 			not_send_links_science_list.append(field)
-	
-		print ("not_send_links_science_list :")###
-		print (not_send_links_science_list) ###
-		print ("LIENS SCIENCE NON ENVOYÉS : "+ str(len(not_send_links_science_list))) ###
+
+		#print ("not_send_links_science_list :")###
+		#print (not_send_links_science_list) ###
+		#print ("LIENS SCIENCE NON ENVOYÉS : "+ str(len(not_send_links_science_list))) ###
+
+		######### SCIENCE TITLES QUERY
+		query = "SELECT result_science_serge.title FROM result_science_serge INNER JOIN keyword_science_serge ON result_science_serge.keyword_id = keyword_science_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)"
+
+		call_title_science=database.cursor()
+		call_title_science.execute(query, (user_id_comma, user_id_comma))
+		rows = call_title_science.fetchall()
+		call_title_science.close()
+
+		not_send_titles_science_list=[]  # Enregistrement des titres non envoyés dans une liste.
+
+		for row in rows :
+			field = row[0].strip()
+			not_send_titles_science_list.append(field)
+
+		#print ("not_send_titles_science_list :")###
+		#print (not_send_titles_science_list) ###
+
 
 	######### PATENTS PERMISSION STATE
 	permission_patents = permission_list[2]
-	print permission_patents ###
-	
-	if permission_patents == 0 :	
+	#print permission_patents ###
+
+	if permission_patents == 0 :
 
 		######### PATENTS CLASS PERMISSION STATE
 		permission_patents_class = permission_list[3]
-		print permission_patents_class ###
-	
-		if permission_patents_class == 0 :	
+		#print permission_patents_class ###
 
-			######### PATENTS CLASS QUERY
+		if permission_patents_class == 0 :
+
+			######### RESULTS PATENTS CLASS
 			print ("Recherche PATENTS CLASS activée") ###
 
-			query = "SELECT result_patents_class_serge.link FROM result_patents_class_serge INNER JOIN keyword_patents_class_serge ON result_patents_class_serge.keyword_id = keyword_patents_class_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
+			######### PATENTS CLASS LINKS QUERY
+			query = "SELECT result_patents_class_serge.link FROM result_patents_class_serge INNER JOIN keyword_patents_class_serge ON result_patents_class_serge.keyword_id = keyword_patents_class_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)"
 
 			call_links_patents_class=database.cursor()
 			call_links_patents_class.execute(query, (user_id_comma, user_id_comma))
 			rows = call_links_patents_class.fetchall()
 			call_links_patents_class.close()
 
-			not_send_links_patents_class_list=[]  # Enregistrement des liens non envoyés dans une liste. 
+			not_send_links_patents_class_list=[]  # Enregistrement des liens non envoyés dans une liste.
 
 			for row in rows :
 				field = row[0].strip()
 				not_send_links_patents_class_list.append(field)
-	
-			print ("not_send_links_patents_class_list :")###
-			print (not_send_links_patents_class_list) ###
-			print ("LIENS PATENTS CLASS NON ENVOYÉS : "+ str(len(not_send_links_patents_class_list))) ###
+
+			#print ("not_send_links_patents_class_list :")###
+			#print (not_send_links_patents_class_list) ###
+			#print ("LIENS PATENTS CLASS NON ENVOYÉS : "+ str(len(not_send_links_patents_class_list))) ###
+
+			######### PATENTS CLASS TITLES QUERY
+
+			query = "SELECT result_patents_class_serge.title FROM result_patents_class_serge INNER JOIN keyword_patents_class_serge ON result_patents_class_serge.keyword_id = keyword_patents_class_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)"
+
+			call_title_patents=database.cursor()
+			call_title_patents.execute(query, (user_id_comma, user_id_comma))
+			rows = call_title_patents.fetchall()
+			call_title_patents.close()
+
+			not_send_titles_patents_class_list=[]  # Enregistrement des titres non envoyés dans une liste.
+
+			for row in rows :
+				field = row[0].strip()
+				not_send_titles_patents_class_list.append(field)
+
+			#print ("TITRES PATENTS CLASS NON ENVOYÉS : "+ str(len(not_send_titles_patents_class_list))) ###
 
 		######### PATENTS INVENTOR PERMISSION STATE
 		permission_patents_inventor = permission_list[4]
-		print permission_patents_inventor ###
+		#print permission_patents_inventor ###
 
 		if permission_patents_inventor == 0 :
 
-			######### PATENTS INVENTOR QUERY
+			######### RESULTS PATENTS INVENTOR
 			print ("Recherche PATENTS INVENTOR activée") ###
 
-			query = "SELECT result_patents_inventor_serge.link FROM result_patents_inventor_serge INNER JOIN keyword_patents_inventor_serge ON result_patents_inventor_serge.keyword_id = keyword_patents_inventor_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
+			######### PATENTS INVENTOR LINKS QUERY
+			query = "SELECT result_patents_inventor_serge.link FROM result_patents_inventor_serge INNER JOIN keyword_patents_inventor_serge ON result_patents_inventor_serge.keyword_id = keyword_patents_inventor_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)"
 
 			call_links_patents_inventor=database.cursor()
 			call_links_patents_inventor.execute(query, (user_id_comma, user_id_comma))
 			rows = call_links_patents_inventor.fetchall()
 			call_links_patents_inventor.close()
 
-			not_send_links_patents_inventor_list=[]  # Enregistrement des liens non envoyés dans une liste. 
+			not_send_links_patents_inventor_list=[]  # Enregistrement des liens non envoyés dans une liste.
 
 			for row in rows :
 				field = row[0].strip()
 				not_send_links_patents_inventor_list.append(field)
-	
-			print ("not_send_links_patents_inventor_list :")###
-			print (not_send_links_patents_inventor_list) ###
-			print ("LIENS PATENTS INVENTOR NON ENVOYÉS : "+ str(len(not_send_links_patents_inventor_list))) ###
+
+			#print ("LIENS PATENTS INVENTOR NON ENVOYÉS : "+ str(len(not_send_links_patents_inventor_list))) ###
+
+			######### PATENTS INVENTOR TITLES QUERY
+			query = "SELECT result_patents_inventor_serge.title FROM result_patents_inventor_serge INNER JOIN keyword_patents_inventor_serge ON result_patents_inventor_serge.keyword_id = keyword_patents_inventor_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)"
+
+			call_title_patents=database.cursor()
+			call_title_patents.execute(query, (user_id_comma, user_id_comma))
+			rows = call_title_patents.fetchall()
+			call_title_patents.close()
+
+			not_send_titles_patents_inventor_list=[]  # Enregistrement des titres non envoyés dans une liste.
+
+			for row in rows :
+				field = row[0].strip()
+				not_send_titles_patents_inventor_list.append(field)
+
+			#print ("TITRES PATENTS INVENTOR NON ENVOYÉS : "+ str(len(not_send_titles_patents_inventor_list))) ###
+
 
 		######### PATENTS KEY PERMISSION STATE
 		permission_patents_key = permission_list[5]
-		print permission_patents_key ###
+		#print permission_patents_key ###
 
 		if permission_patents_key == 0 :
 
-			######### PATENTS KEY QUERY
+			######### RESULTS PATENTS KEY
 			print ("Recherche PATENTS KEY activée") ###
 
-			query = "SELECT result_patents_key_serge.link FROM result_patents_key_serge INNER JOIN keyword_patents_key_serge ON result_patents_key_serge.keyword_id = keyword_patents_key_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
+			######### PATENTS KEY LINKS QUERY
+			query = "SELECT result_patents_key_serge.link FROM result_patents_key_serge INNER JOIN keyword_patents_key_serge ON result_patents_key_serge.keyword_id = keyword_patents_key_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)"
 
 			call_links_patents_key=database.cursor()
 			call_links_patents_key.execute(query, (user_id_comma, user_id_comma))
 			rows = call_links_patents_key.fetchall()
 			call_links_patents_key.close()
 
-			not_send_links_patents_key_list=[]  # Enregistrement des liens non envoyés dans une liste. 
+			not_send_links_patents_key_list=[]  # Enregistrement des liens non envoyés dans une liste.
 
 			for row in rows :
 				field = row[0].strip()
 				not_send_links_patents_key_list.append(field)
-	
-			print ("not_send_links_patents_key_list :")###
-			print (not_send_links_patents_key_list) ###
-			print ("LIENS PATENTS KEY NON ENVOYÉS : "+ str(len(not_send_links_patents_key_list))) ###	
+
+			#print ("LIENS PATENTS KEY NON ENVOYÉS : "+ str(len(not_send_links_patents_key_list))) ###
+
+			######### PATENTS KEY TITLES QUERY
+			query = "SELECT result_patents_key_serge.title FROM result_patents_key_serge INNER JOIN keyword_patents_key_serge ON result_patents_key_serge.keyword_id = keyword_patents_key_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)"
+
+			call_title_patents=database.cursor()
+			call_title_patents.execute(query, (user_id_comma, user_id_comma))
+			rows = call_title_patents.fetchall()
+			call_title_patents.close()
+
+			not_send_titles_patents_key_list=[]  # Enregistrement des titres non envoyés dans une liste.
+
+			for row in rows :
+				field = row[0].strip()
+				not_send_titles_patents_key_list.append(field)
+
+			#print ("TITRES PATENTS KEY NON ENVOYÉS : "+ str(len(not_send_titles_patents_key_list))) ###
 
 	######### SEND CONDITION QUERY
 
-	not_send_actu = len(not_send_links_actu_list)
+	not_send_news = len(not_send_links_news_list)
 	not_send_science = len(not_send_links_science_list)
 	not_send_patents_class = len(not_send_links_patents_class_list)
 	not_send_patents_inventor = len(not_send_links_patents_inventor_list)
 	not_send_patents_key = len(not_send_links_patents_key_list)
 
 	if permission_patents == 1:
-		not_send = not_send_actu + not_send_science
-	else : 
-		not_send = not_send_actu + not_send_science + not_send_patents_class + not_send_patents_inventor + not_send_patents_key 
+		not_send = not_send_news + not_send_science
+	else :
+		not_send = not_send_news + not_send_science + not_send_patents_class + not_send_patents_inventor + not_send_patents_key
 
-	print ("TOTAL LIENS NON ENVOYÉS : "+ str(not_send)) ###
+	#print ("TOTAL LIENS NON ENVOYÉS : "+ str(not_send)) ###
 
-	query= "SELECT send_condition FROM users_table_serge WHERE id = %s" #On regarde la condition d'envoi 
+	query= "SELECT send_condition FROM users_table_serge WHERE id = %s" #On regarde la condition d'envoi
 
 	call_users= database.cursor()
 	call_users.execute(query, (n))
 	condition = call_users.fetchone()
 	call_users.close()
-	
+
 	print ("Condition :" + str(condition[0]))
-	
+
 	######### FREQUENCY CONDITION
 	if condition[0] == "freq":
-		try: 
+		try:
 			os.remove("Newsletter.txt")
 		except :
-			pass		
+			pass
 
 		query = "SELECT frequency FROM users_table_serge WHERE id = %s"
 
@@ -1370,132 +941,66 @@ for user in user_list_all:
 
 		interval = now-last_launch
 		print ("Intervalle de temps :"+ str(interval))###
-		
-		if interval >= frequency : 
+
+		if interval >= frequency :
 			print ("Fréquence atteinte") ###
-			
+
 			######### ECRITURE FICHIER TRANSITOIRE
 			newsletter = open("Newsletter.txt", "a")
 			newsletter.write ("Bonjour " +user.encode("utf_8")+", voici votre veille technologique et industrielle du "+jour+" : \n" + "\n \n")
 
-			######### ECRITURE ACTU
-			if permission_actu == 0 :
-				if not_send_actu > 0 :
+			######### ECRITURE NEWS
+			if permission_news == 0 :
+				if not_send_news > 0 :
 					newsletter.write("ACTUALITÉS\n\n")
 
-				query = "SELECT result_actu_serge.title FROM result_actu_serge INNER JOIN keyword_actu_serge ON result_actu_serge.keyword_id = keyword_actu_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
+					index=0
 
-				call_title_actu=database.cursor()
-				call_title_actu.execute(query, (user_id_comma, user_id_comma))
-				rows = call_title_actu.fetchall()
-				call_title_actu.close()
-			
-				not_send_titles_actu_list=[]  # Enregistrement des titres non envoyés dans une liste. 
-
-				for row in rows :
-					field = row[0].strip()
-					not_send_titles_actu_list.append(field)
-
-				print ("not_send_titles_actu_list :")###
-				print (not_send_titles_actu_list) ###
-
-				index=0
-	
-				while index < not_send_actu:
-					newsletter.write(not_send_titles_actu_list[index])
-					newsletter.write("\n")
-					newsletter.write(not_send_links_actu_list[index])
-					newsletter.write("\n\n")
-					index=index+1
+					while index < not_send_news:
+						newsletter.write(not_send_titles_news_list[index])
+						newsletter.write("\n")
+						newsletter.write(not_send_links_news_list[index])
+						newsletter.write("\n\n")
+						index=index+1
 
 			######### ECRITURE SCIENCE
 			if permission_science == 0 :
 				if not_send_science > 0 :
 					newsletter.write("PUBLICATIONS SCIENTIFIQUES\n\n")
 
-				query = "SELECT result_science_serge.title FROM result_science_serge INNER JOIN keyword_science_serge ON result_science_serge.keyword_id = keyword_science_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
-
-				call_title_science=database.cursor()
-				call_title_science.execute(query, (user_id_comma, user_id_comma))
-				rows = call_title_science.fetchall()
-				call_title_science.close()
-			
-				not_send_titles_science_list=[]  # Enregistrement des titres non envoyés dans une liste. 
-
-				for row in rows :
-					field = row[0].strip()
-					not_send_titles_science_list.append(field)
-
-				print ("not_send_titles_science_list :")###
-				print (not_send_titles_science_list) ###
-
 				index=0
 
 				while index < not_send_science:
 					newsletter.write(not_send_titles_science_list[index])
 					newsletter.write("\n")
-					newsletter.write(not_send_links_actu_list[index])
+					newsletter.write(not_send_links_science_list[index])
 					newsletter.write("\n\n")
-					index=index+1		
-		
+					index=index+1
+
 			######### ECRITURE PATENTS
 			if permission_patents == 0 :
 				if not_send_patents_class > 0 :
-					newsletter.write("BREVETS\n\n")	
+					newsletter.write("BREVETS\n\n")
 				elif not_send_patents_inventor > 0 :
-					newsletter.write("BREVETS\n\n")	
+					newsletter.write("BREVETS\n\n")
 				elif not_send_patents_key > 0 :
-					newsletter.write("BREVETS\n\n")		
+					newsletter.write("BREVETS\n\n")
 
 				######### CLASS
 				if permission_patents_class == 0 :
-
-					query = "SELECT result_patents_class_serge.title FROM result_patents_class_serge INNER JOIN keyword_patents_class_serge ON result_patents_class_serge.keyword_id = keyword_patents_class_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
-
-					call_title_patents=database.cursor()
-					call_title_patents.execute(query, (user_id_comma, user_id_comma))
-					rows = call_title_patents.fetchall()
-					call_title_patents.close()
-			
-					not_send_titles_patents_class_list=[]  # Enregistrement des titres non envoyés dans une liste. 
-
-					for row in rows :
-						field = row[0].strip()
-						not_send_titles_patents_class_list.append(field)
-
-					print ("not_send_titles_patents_class_list :")###
-					print (not_send_titles_patents_class_list) ###
-
 					index=0
-		
+
 					while index < not_send_patents_class:
 						newsletter.write(not_send_titles_patents_class_list[index])
 						newsletter.write("\n")
 						newsletter.write(not_send_links_patents_class_list[index])
 						newsletter.write("\n\n")
-						index=index+1	
+						index=index+1
 
 				######### INVENTOR
 				if permission_patents_inventor == 0 :
-
-					query = "SELECT result_patents_inventor_serge.title FROM result_patents_inventor_serge INNER JOIN keyword_patents_inventor_serge ON result_patents_inventor_serge.keyword_id = keyword_patents_inventor_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
-
-					call_title_patents=database.cursor()
-					call_title_patents.execute(query, (user_id_comma, user_id_comma))
-					rows = call_title_patents.fetchall()
-					call_title_patents.close()
-			
-					not_send_titles_patents_inventor_list=[]  # Enregistrement des titres non envoyés dans une liste. 
-	
-					for row in rows :
-						field = row[0].strip()
-						not_send_titles_patents_inventor_list.append(field)
-
-					print ("not_send_titles_patents_inventor_list :")###
-					print (not_send_titles_patents_inventor_list) ###
-
 					index=0
-		
+
 					while index < not_send_patents_inventor:
 						newsletter.write(not_send_titles_patents_inventor_list[index])
 						newsletter.write("\n")
@@ -1505,25 +1010,8 @@ for user in user_list_all:
 
 				######### KEY
 				if permission_patents_key == 0 :
-
-					query = "SELECT result_patents_key_serge.title FROM result_patents_key_serge INNER JOIN keyword_patents_key_serge ON result_patents_key_serge.keyword_id = keyword_patents_key_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
-
-					call_title_patents=database.cursor()
-					call_title_patents.execute(query, (user_id_comma, user_id_comma))
-					rows = call_title_patents.fetchall()
-					call_title_patents.close()
-			
-					not_send_titles_patents_key_list=[]  # Enregistrement des titres non envoyés dans une liste. 
-
-					for row in rows :
-						field = row[0].strip()
-						not_send_titles_patents_key_list.append(field)
-
-					print ("not_send_titles_patents_key_list :")###
-					print (not_send_titles_patents_key_list) ###
-
 					index=0
-			
+
 					while index < not_send_patents_key:
 						newsletter.write(not_send_titles_patents_key_list[index])
 						newsletter.write("\n")
@@ -1532,18 +1020,18 @@ for user in user_list_all:
 						index=index+1
 
 		else :
-			print ("fréquence non atteinte") ### 
+			print ("fréquence non atteinte") ###
 			### inscrire dans le fichier de log
-				
-	
+
+
 	######### LINK LIMIT CONDITION
 	if condition[0] == "link_limit":
-		try: 
+		try:
 			os.remove("Newsletter.txt")
 		except :
 			pass
 
-		query= "SELECT link_limit FROM users_table_serge WHERE id = %s" #On vérifie le nombre de lien non envoyés 
+		query= "SELECT link_limit FROM users_table_serge WHERE id = %s" #On vérifie le nombre de lien non envoyés
 
 		call_users= database.cursor()
 		call_users.execute(query, (n))
@@ -1551,11 +1039,11 @@ for user in user_list_all:
 		call_users.close()
 
 		print ("LIMITE DE LIENS :" + str(limit[0]))###
-		
-		if not_send <= limit: 
+
+		if not_send <= limit:
 			print ("INFERIEUR\n") ###
 			### inscrire dans le fichier de log
-	
+
 		if not_send >= limit:
 			print ("SUPERIEUR\n") ###
 
@@ -1563,33 +1051,17 @@ for user in user_list_all:
 			newsletter = open("Newsletter.txt", "a")
 			newsletter.write ("Bonjour " +user.encode("utf_8")+", voici votre veille technologique et industrielle du "+jour+" : \n" + "\n \n")
 
-			######### ECRITURE ACTU
-			if permission_actu == 0 :
-				if not_send_actu > 0 :
+			######### ECRITURE NEWS
+			if permission_news == 0 :
+				if not_send_news > 0 :
 					newsletter.write("ACTUALITÉS\n\n")
 
-				query = "SELECT result_actu_serge.title FROM result_actu_serge INNER JOIN keyword_actu_serge ON result_actu_serge.keyword_id = keyword_actu_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
-
-				call_title_actu=database.cursor()
-				call_title_actu.execute(query, (user_id_comma, user_id_comma))
-				rows = call_title_actu.fetchall()
-				call_title_actu.close()
-			
-				not_send_titles_actu_list=[]  # Enregistrement des titres non envoyés dans une liste. 
-
-				for row in rows :
-					field = row[0].strip()
-					not_send_titles_actu_list.append(field)
-
-				print ("not_send_titles_actu_list :")###
-				print (not_send_titles_actu_list) ###
-
 				index=0
-	
-				while index < not_send_actu:
-					newsletter.write(not_send_titles_actu_list[index])
+
+				while index < not_send_news:
+					newsletter.write(not_send_titles_news_list[index])
 					newsletter.write("\n")
-					newsletter.write(not_send_links_actu_list[index])
+					newsletter.write(not_send_links_news_list[index])
 					newsletter.write("\n\n")
 					index=index+1
 
@@ -1598,89 +1070,39 @@ for user in user_list_all:
 				if not_send_science > 0 :
 					newsletter.write("PUBLICATIONS SCIENTIFIQUES\n\n")
 
-				query = "SELECT result_science_serge.title FROM result_science_serge INNER JOIN keyword_science_serge ON result_science_serge.keyword_id = keyword_science_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
-
-				call_title_science=database.cursor()
-				call_title_science.execute(query, (user_id_comma, user_id_comma))
-				rows = call_title_science.fetchall()
-				call_title_science.close()
-			
-				not_send_titles_science_list=[]  # Enregistrement des titres non envoyés dans une liste. 
-
-				for row in rows :
-					field = row[0].strip()
-					not_send_titles_science_list.append(field)
-
-				print ("not_send_titles_science_list :")###
-				print (not_send_titles_science_list) ###
-
 				index=0
 
 				while index < not_send_science:
 					newsletter.write(not_send_titles_science_list[index])
 					newsletter.write("\n")
-					newsletter.write(not_send_links_actu_list[index])
+					newsletter.write(not_send_links_news_list[index])
 					newsletter.write("\n\n")
-					index=index+1		
-		
+					index=index+1
+
 			######### ECRITURE PATENTS
 			if permission_patents == 0 :
 				if not_send_patents_class > 0 :
-					newsletter.write("BREVETS\n\n")	
+					newsletter.write("BREVETS\n\n")
 				elif not_send_patents_inventor > 0 :
-					newsletter.write("BREVETS\n\n")	
+					newsletter.write("BREVETS\n\n")
 				elif not_send_patents_key > 0 :
-					newsletter.write("BREVETS\n\n")		
+					newsletter.write("BREVETS\n\n")
 
 				######### CLASS
 				if permission_patents_class == 0 :
-
-					query = "SELECT result_patents_class_serge.title FROM result_patents_class_serge INNER JOIN keyword_patents_class_serge ON result_patents_class_serge.keyword_id = keyword_patents_class_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
-
-					call_title_patents=database.cursor()
-					call_title_patents.execute(query, (user_id_comma, user_id_comma))
-					rows = call_title_patents.fetchall()
-					call_title_patents.close()
-			
-					not_send_titles_patents_class_list=[]  # Enregistrement des titres non envoyés dans une liste. 
-
-					for row in rows :
-						field = row[0].strip()
-						not_send_titles_patents_class_list.append(field)
-
-					print ("not_send_titles_patents_class_list :")###
-					print (not_send_titles_patents_class_list) ###
-
 					index=0
-		
+
 					while index < not_send_patents_class:
 						newsletter.write(not_send_titles_patents_class_list[index])
 						newsletter.write("\n")
 						newsletter.write(not_send_links_patents_class_list[index])
 						newsletter.write("\n\n")
-						index=index+1	
+						index=index+1
 
 				######### INVENTOR
 				if permission_patents_inventor == 0 :
-
-					query = "SELECT result_patents_inventor_serge.title FROM result_patents_inventor_serge INNER JOIN keyword_patents_inventor_serge ON result_patents_inventor_serge.keyword_id = keyword_patents_inventor_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
-
-					call_title_patents=database.cursor()
-					call_title_patents.execute(query, (user_id_comma, user_id_comma))
-					rows = call_title_patents.fetchall()
-					call_title_patents.close()
-			
-					not_send_titles_patents_inventor_list=[]  # Enregistrement des titres non envoyés dans une liste. 
-	
-					for row in rows :
-						field = row[0].strip()
-						not_send_titles_patents_inventor_list.append(field)
-
-					print ("not_send_titles_patents_inventor_list :")###
-					print (not_send_titles_patents_inventor_list) ###
-
 					index=0
-		
+
 					while index < not_send_patents_inventor:
 						newsletter.write(not_send_titles_patents_inventor_list[index])
 						newsletter.write("\n")
@@ -1690,56 +1112,39 @@ for user in user_list_all:
 
 				######### KEY
 				if permission_patents_key == 0 :
-
-					query = "SELECT result_patents_key_serge.title FROM result_patents_key_serge INNER JOIN keyword_patents_key_serge ON result_patents_key_serge.keyword_id = keyword_patents_key_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)" 
-
-					call_title_patents=database.cursor()
-					call_title_patents.execute(query, (user_id_comma, user_id_comma))
-					rows = call_title_patents.fetchall()
-					call_title_patents.close()
-			
-					not_send_titles_patents_key_list=[]  # Enregistrement des titres non envoyés dans une liste. 
-
-					for row in rows :
-						field = row[0].strip()
-						not_send_titles_patents_key_list.append(field)
-
-					print ("not_send_titles_patents_key_list :")###
-					print (not_send_titles_patents_key_list) ###
-
 					index=0
-			
+
 					while index < not_send_patents_key:
 						newsletter.write(not_send_titles_patents_key_list[index])
 						newsletter.write("\n")
 						newsletter.write(not_send_links_patents_key_list[index])
 						newsletter.write("\n\n")
 						index=index+1
-	
+
 	######### WEB CONDITION
 	if condition[0] == "web":
 		print("break")
-			
+
 	n=int(n) #COMPTEUR
 	n=n+1 #INCREMENTATION COMPTEUR
 
 
 #######################################################################################################################################
 
-#OLD MAIN : Section in re-construction 
+#OLD MAIN : Section in re-construction
 
 #"""Suppression de Newsletter.txt préventive si il y a eu une erreur au lancement précédant"""
-#try: 
+#try:
 	#os.remove("Newsletter.txt")
 #except :
 	#pass
-	
-#try: 
+
+#try:
 	#os.remove("identity_error.txt")
 #except :
 	#pass
-	
-#try: 
+
+#try:
 	#os.remove("permission_error.txt")
 #except :
 	#pass
@@ -1753,82 +1158,82 @@ for user in user_list_all:
 #"""Appel de la fonction multi_users"""
 #users = multi_users()
 
-#"""On commence le processus de recherche en parcourant la liste des utilisateurs"""		
+#"""On commence le processus de recherche en parcourant la liste des utilisateurs"""
 #for user in users:
-	
+
 	#user=user.strip()
 
 	#"""Suppression de l'ancien LOG"""
 	#try :
 		#os.remove("logs/"+user.encode("utf_8")+"process_log.txt") # on supprime l'ancien log
 	#except:
-		#ERID = open("identity_error.txt", "a") 
+		#ERID = open("identity_error.txt", "a")
 		#ERID.write("Votre fichier process log n'existe pas")
 		#ERID.close()
-	
+
 	#"""Ouverture du nouveau LOG"""
-	#LOG = open("logs/"+user.encode("utf_8")+"process_log.txt", "w") 	
+	#LOG = open("logs/"+user.encode("utf_8")+"process_log.txt", "w")
 	#LOG.write ("SERGE LOG\n \n User:" +user.encode("utf_8")+"\n Date :"+jour+"\n")
 
 	#now_user=time.time()
 	#permissionVeille = Permission_Veille(user)
 	#permissionArxiv = Permission_Arxiv(user)
 	#permissionPatents = Permission_Patents(user)
-		
+
 	#LOG.write("\n \n Timestamp :" +str(now_user)+"\n Last launch :" +str(last_launch)+ "\n \n")
-	
+
 	#"""On ouvre le fichier Newsletter.txt qui va récolter le flux. Ce fichier sera ensuite lu par les fonction d'envoi par mail et d'envoi sur le serveur"""
-	#newsletter = open("Newsletter.txt", "a") 
+	#newsletter = open("Newsletter.txt", "a")
 	#newsletter.write ("Bonjour " +user.encode("utf_8")+", voici votre veille technologique et industrielle du "+jour+" : \n" + "\n \n")
-	
+
 	#proceed = 0 #Variable d'autorisation de la recherche de contenu si égale à 1
-		
-	#"""On exécute la fonction de recherche ACTU"""
+
+	#"""On exécute la fonction de recherche NEWS"""
 	#if permissionVeille == 1 :
 		#Veille(user, last_launch)
-	
+
 	#"""On exécute la fonction de recherche SCIENCE"""
 	#if permissionArxiv == 1 :
 		#Arxiv (user,last_launch)
-	
+
 	#"""On exécute la fonction de recherche de BREVETS (OMPI/WIPO)"""
 	#if permissionPatents == 1 :
 		#Patents(user, last_launch)
-	
+
 	#nowplus=time.time()
 	#processing_time = nowplus - now_user
-	#newsletter.write("Temps de recherche : "+str(processing_time)+"s\n \n") 
-	
+	#newsletter.write("Temps de recherche : "+str(processing_time)+"s\n \n")
+
 	#newsletter.write ("Bonne journée " +user.encode("utf_8")+", \n \n SERGE")
 	#newsletter.close()
-		
-	#Mail(user) 
+
+	#Mail(user)
 	#"""Appel de la fonction multi_users""" ####Test de la fonction mutual research
-	#mutual_keywords = Mutual_ACTU()
-		
+	#mutual_keywords = Mutual_NEWS()
+
 	#envoie le mail en lisant Newsletter.txt
-	
+
 	#os.remove("logs/NewsletterLog.txt")
 	#LOG.write("\n Suppression de l'ancien NewsletterLog \n")
 	#copyfile("Newsletter.txt","logs/NewsletterLog.txt") #copie Newsletter.txt en fichier NewsletterLog.txt
 	#LOG.write("copie de Newsletter.txt en un nouveau fichier NewsletterLog.txt \n")
 	#os.remove("Newsletter.txt")
-	
+
 	#nowplus_tot=time.time()
 	#processing_time = nowplus_tot - now_tot
 	#print processing_time
 	#LOG.write("\n Temps d'exécution : "+str(processing_time)+"\n")
-	
+
 	#try:
 		#os.remove("identity_error.txt") # on supprime l'ancien log
 	#except:
 		#pass
-	
+
 	#timelog=open("logs/timelog.txt", "w")
 	#now = unicode(now)
 	#timelog.write(now)
 	#LOG.write("Ecriture du timestamps en fin de recherche dans le Timelog \n")
-	#timelog.close()	
-	
+	#timelog.close()
+
 	#LOG.close()
-	
+

@@ -27,10 +27,22 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `rss_serge` (
+  `id` int(11) NOT NULL,
   `link` text COLLATE utf8_unicode_ci NOT NULL,
   `owners` text COLLATE utf8_unicode_ci NOT NULL,
   `active` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Contenu de la table `rss_serge`
+--
+
+INSERT INTO `rss_serge` (`id`, `link`, `owners`, `active`) VALUES
+(1, 'http://feeds.harvardbusiness.org/harvardbusiness', ',3,', 1),
+(2, 'http://www.futura-sciences.com/rss/espace/actualites.xml', ',1,2,', 2),
+(3, 'http://www.numerama.com/feed/', ',1,2,3,', 3),
+(4, 'https://www.kickstarter.com/projects/feed.atom', ',2,3,', 2),
+(5, 'https://www.technologyreview.com/stories.rss', ',2,', 1);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

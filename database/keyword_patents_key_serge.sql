@@ -29,6 +29,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `keyword_patents_key_serge` (
   `id` int(11) NOT NULL,
   `keyword` text COLLATE utf8_unicode_ci NOT NULL,
+  `language` text COLLATE utf8_unicode_ci NOT NULL,
   `owners` text COLLATE utf8_unicode_ci NOT NULL,
   `active` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -37,8 +38,13 @@ CREATE TABLE `keyword_patents_key_serge` (
 -- Contenu de la table `keyword_patents_key_serge`
 --
 
-INSERT INTO `keyword_patents_key_serge` (`id`, `keyword`, `owners`, `active`) VALUES
-(1, 'Laptop', ',1,2,', 2);
+INSERT INTO `keyword_patents_key_serge` (`id`, `keyword`, `language`, `owners`, `active`) VALUES
+(1, 'Laptop', ',EN,', ',1,2,', 2),
+(2, 'machine learning', ',EN,FR,', ',2,', 1),
+(3, 'modulaire', ',EN,', ',1,2,', 2),
+(4, 'Une éolienne à noël', ',FR,', ',1,2,', 2);
+
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

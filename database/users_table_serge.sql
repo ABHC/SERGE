@@ -34,7 +34,7 @@ CREATE TABLE `users_table_serge` (
   `frequency` int(11) DEFAULT NULL,
   `send_condition` text COLLATE utf8_unicode_ci NOT NULL,
   `link_limit` int(11) DEFAULT NULL,
-  `permission_actu` tinyint(1) NOT NULL,
+  `permission_news` tinyint(1) NOT NULL,
   `permission_science` tinyint(1) NOT NULL,
   `permission_patents_class` tinyint(1) NOT NULL,
   `permission_patents_inventor` tinyint(1) NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE `users_table_serge` (
 -- Contenu de la table `users_table_serge`
 --
 
-INSERT INTO `users_table_serge` (`id`, `users`, `email`, `last_mail`, `frequency`, `send_condition`, `link_limit`, `permission_actu`, `permission_science`, `permission_patents_class`, `permission_patents_inventor`, `permission_patents_key`, `permission_patents`) VALUES
+INSERT INTO `users_table_serge` (`id`, `users`, `email`, `last_mail`, `frequency`, `send_condition`, `link_limit`, `permission_news`, `permission_science`, `permission_patents_class`, `permission_patents_inventor`, `permission_patents_key`, `permission_patents`) VALUES
 (1, 'Alexandre', 'X@serge.com ', 0, 43200, 'freq', NULL, 0, 0, 0, 0, 0, 0),
 (2, 'Gspohu', 'GS@serge.com', 0, NULL, 'link_limit', 50, 0, 0, 1, 1, 0, 0),
 (3, 'al_53', 'al@serge.com', NULL, 3600, 'freq', NULL, 0, 1, 1, 1, 1, 1);
