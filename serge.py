@@ -20,6 +20,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from shutil import copyfile
 
+
 def Last_Research ():
 	"""Fonction d'extraction de la dernière date de recherche pour n'envoyer que des informations nouvelles"""
 
@@ -211,16 +212,27 @@ def Newscast(last_launch):
 		#print("id_source :" + id_source)
 
 		for keyword in keywords_news_list :
+			
+			"""Keyword ID Retrieval"""
+			query = ("SELECT id FROM keyword_news_serge WHERE keyword = %s")
 
-			print ("Boucle sur le keyword : " + keyword) ##
+			call_news= database.cursor()
+			call_news.execute(query, (keyword, ))
+			rows = call_news.fetchone()
+			call_rss.close()
 
-			while range < rangemax:
+			keyword_id=rows[0]
+			print ("Boucle sur le keyword : " + keyword+"("+str(keyword_id)+")") ###
 
+			while range < rangemax: 
+
+				#A découper dans une sous fonction Analyse(xmldoc, last_launch)
 				"""On définit les variables que l'on affectent aux commandes de Universal Feedparser"""
 				post_title = xmldoc.entries[range].title
 				post_description = xmldoc.entries[range].description
 				post_link = xmldoc.entries[range].link
 				post_date = xmldoc.entries[range].published_parsed
+				human_date = time.strftime("%d/%m/%Y %H:%M", post_date)
 				post_date = time.mktime(post_date)
 
 				print ("Recherche sur le keyword : " + keyword) ###
@@ -238,32 +250,72 @@ def Newscast(last_launch):
 				post_description_sans_accent = sans_accent_maj(post_description_lower)
 				keyword_sans_accent = sans_accent_maj(keyword)
 
+				article=(post_title, post_link, human_date, id_rss, keyword_id)
+
 				if keyword_lower in post_title_lower and post_date >= last_launch:
-					#newsletter.write(post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
-					new_article += 1
+					query = ("INSERT INTO result_news_serge " "(title, link, date, id_source, keyword_id) " "VALUES (%s, %s, %s, %s, %s)")
+					
+					########### DATABASE INSERTION
+					insert_news= database.cursor()
+					try : 
+						insert_news.execute(query, article)						
+						database.commit()
+					except : 
+						database.rollback()
+					insert_news.close()
+
+					new_article += 1 ###				
 					break #les commandes break permettent que l'information ne s'affiche qu'une seule fois si il y a plusieurs keywords détectées dans l'entrée
 
 				elif keyword_lower in post_description_lower and post_date >= last_launch:
-					#newsletter.write (post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
-					new_article += 1
+					query = ("INSERT INTO result_news_serge " "(title, link, date, id_source, keyword_id) " "VALUES (%s, %s, %s, %s, %s)")
+
+					########### DATABASE INSERT
+					insert_news= database.cursor()
+					try : 
+						insert_news.execute(query, article)						
+						database.commit()
+					except : 
+						database.rollback()
+					insert_news.close()
+
+					new_article += 1 ###
 					break
 
 				elif keyword_sans_accent in post_title_sans_accent and post_date >= last_launch:
-					#newsletter.write(post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
-					new_article += 1
+					query = ("INSERT INTO result_news_serge " "(title, link, date, id_source, keyword_id) " "VALUES (%s, %s, %s, %s, %s)")
+
+					########### DATABASE INSERT
+					insert_news= database.cursor()
+					try : 
+						insert_news.execute(query, article)						
+						database.commit()
+					except : 
+						database.rollback()
+					insert_news.close()
+
+					new_article += 1 ###				
 					break
 
 				elif keyword_sans_accent in post_description_sans_accent and post_date >= last_launch:
-					#newsletter.write(post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
-					new_article += 1
+					query = ("INSERT INTO result_news_serge " "(title, link, date, id_source, keyword_id) " "VALUES (%s, %s, %s, %s, %s)")
+
+					########### DATABASE INSERT
+					insert_news= database.cursor()
+					try : 
+						insert_news.execute(query, article)						
+						database.commit()
+					except : 
+						database.rollback()
+					insert_news.close()
+
+					new_article += 1 ###
 					break
 
 				range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
 			range = 0
 			print ("Articles trouvés : "+str(new_article)+"\n")
-			#if new_article == 0:
-				#newsletter.write ("Aucun nouvel article dans vos centres d'intérêts.\n \n")
 
 
 def Patents(last_launch, WIPO_languages): #implémentation des db et de la nouvelle gestion des
@@ -563,6 +615,7 @@ def Science (last_launch):
 					post_description = xmldoc.entries[range].description
 					post_link = xmldoc.entries[range].link
 					post_date = xmldoc.entries[range].published_parsed
+					human_time = post_date
 					post_date = time.mktime(post_date)
 					post_date >= last_launch
 
@@ -643,9 +696,9 @@ print ("Max Users : " + str(max_users)+"\n")
 
 Newscast(last_launch) # Appel de la fonction Newscast
 
-Science(last_launch) # Appel de la fonction Science
+#Science(last_launch) # Appel de la fonction Science
 
-Patents(last_launch, WIPO_languages) # Appel de la fonction Patents
+#Patents(last_launch, WIPO_languages) # Appel de la fonction Patents
 
 ######### AFFECTATION ## A Revoir  : Merge des appels à la base de données pour faire la liste des liens
 
@@ -1064,6 +1117,9 @@ for user in user_list_all:
 					newsletter.write(not_send_links_news_list[index])
 					newsletter.write("\n\n")
 					index=index+1
+
+				######### Brouillon news
+				#newsletter.write(post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
 
 			######### ECRITURE SCIENCE
 			if permission_science == 0 :
