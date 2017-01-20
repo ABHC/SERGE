@@ -29,9 +29,10 @@ def lastResearch ():
 		last_launch=timelog.read()
 		timelog.close()
 	except:
-		PERLOG=open("permission_error.txt", "a")
-		PERLOG.write("le fichier logs/timelog.txt est manquant \n \n")
-		PERLOG.close()
+		print "TIMELOG DON'T EXIST"
+		#LOG=open("permission_error.txt", "a")
+		#LOG.write("logs/timelog.txt don't exist \n \n")
+		#LOG.close()
 
 	last_launch=float(last_launch)
 
@@ -114,12 +115,6 @@ def permission(register) :
 	return permission_list
 
 def highwayToMail(permission_patents, not_send_links_news_list, not_send_links_science_list, not_send_links_patents_class_list, not_send_links_patents_inventor_list, not_send_links_patents_key_list) :
-
-	######### CLEANING OF THE DIRECTORY
-	try:
-		os.remove("Newsletter.txt")
-	except :
-		pass
 
 	######### NUMBER OF LINKS IN EACH CATEGORY
 	not_send_news = len(not_send_links_news_list)
@@ -861,12 +856,11 @@ def mail(register, user):
 	server.sendmail(fromaddr, toaddr, text)
 	server.quit()
 
-######### TODO Fonction update du send_status
-def stairwayToUpdate (register, not_send_links_news_list) :
+
+def stairwayToUpdate (register, not_send_links_news_list, not_send_links_science_list, not_send_links_patents_class_list, not_send_links_patents_inventor_list, not_send_links_patents_key_list ) :
 
 	######### SEND_STATUS UPDATE IN result_news_serge
 	for link in not_send_links_news_list :
-		print not_send_links_news_list
 		query = ("SELECT send_status FROM result_news_serge WHERE link = %s")
 
 		call_news= database.cursor()
@@ -874,11 +868,8 @@ def stairwayToUpdate (register, not_send_links_news_list) :
 		row = call_news.fetchone()
 
 		send_status = row[0]
-		print send_status
 		register_comma = register+","
-		print register_comma ###
 		register_comma2 = ","+register+","
-		print register_comma2 ###
 
 		if register_comma2 not in send_status :
 			complete_status = send_status+register_comma
@@ -901,9 +892,153 @@ def stairwayToUpdate (register, not_send_links_news_list) :
 
 		call_news.close()
 
+	######### SEND_STATUS UPDATE IN result_science_serge
+	for link in not_send_links_science_list :
+		query = ("SELECT send_status FROM result_science_serge WHERE link = %s")
+
+		call_science= database.cursor()
+		call_science.execute(query, (link,))
+		row = call_science.fetchone()
+
+		send_status = row[0]
+		print send_status
+		register_comma = register+","
+		print register_comma ###
+		register_comma2 = ","+register+","
+		print register_comma2 ###
+
+		if register_comma2 not in send_status :
+			complete_status = send_status+register_comma
+			print complete_status ###
+
+			update = ("UPDATE result_science_serge SET send_status = %s WHERE link = %s")
+
+			try :
+				call_science.execute(update, (complete_status, link))
+				database.commit()
+			except :
+				database.rollback()
+				print "ROLLBACK" ###
+
+		elif register_comma2 in send_status :
+			print "DEJA ENVOYÉ" ###
+
+		else :
+			print "WARNING UNKNOWN ERROR" ###
+
+		call_science.close()
+
+	######### SEND_STATUS UPDATE IN result_patents_class_serge
+	for link in not_send_links_patents_class_list :
+		query = ("SELECT send_status FROM result_patents_class_serge WHERE link = %s")
+
+		call_patents_class= database.cursor()
+		call_patents_class.execute(query, (link,))
+		row = call_patents_class.fetchone()
+
+		send_status = row[0]
+		print send_status
+		register_comma = register+","
+		print register_comma ###
+		register_comma2 = ","+register+","
+		print register_comma2 ###
+
+		if register_comma2 not in send_status :
+			complete_status = send_status+register_comma
+			print complete_status ###
+
+			update = ("UPDATE result_patents_class_serge SET send_status = %s WHERE link = %s")
+
+			try :
+				call_patents_class.execute(update, (complete_status, link))
+				database.commit()
+			except :
+				database.rollback()
+				print "ROLLBACK" ###
+
+		elif register_comma2 in send_status :
+			print "DEJA ENVOYÉ" ###
+
+		else :
+			print "WARNING UNKNOWN ERROR" ###
+
+		call_patents_class.close()
+
+	######### SEND_STATUS UPDATE IN result_patents_inventor_serge
+	for link in not_send_links_patents_inventor_list :
+		query = ("SELECT send_status FROM result_patents_inventor_serge WHERE link = %s")
+
+		call_patents_inventor= database.cursor()
+		call_patents_inventor.execute(query, (link,))
+		row = call_patents_inventor.fetchone()
+
+		send_status = row[0]
+		print send_status
+		register_comma = register+","
+		print register_comma ###
+		register_comma2 = ","+register+","
+		print register_comma2 ###
+
+		if register_comma2 not in send_status :
+			complete_status = send_status+register_comma
+			print complete_status ###
+
+			update = ("UPDATE result_patents_inventor_serge SET send_status = %s WHERE link = %s")
+
+			try :
+				call_patents_inventor.execute(update, (complete_status, link))
+				database.commit()
+			except :
+				database.rollback()
+				print "ROLLBACK" ###
+
+		elif register_comma2 in send_status :
+			print "DEJA ENVOYÉ" ###
+
+		else :
+			print "WARNING UNKNOWN ERROR" ###
+
+		call_patents_inventor.close()
+
+	######### SEND_STATUS UPDATE IN result_patents_key_serge
+	for link in not_send_links_patents_key_list :
+		query = ("SELECT send_status FROM result_patents_key_serge WHERE link = %s")
+
+		call_patents_key= database.cursor()
+		call_patents_key.execute(query, (link,))
+		row = call_patents_key.fetchone()
+
+		send_status = row[0]
+		print send_status
+		register_comma = register+","
+		print register_comma ###
+		register_comma2 = ","+register+","
+		print register_comma2 ###
+
+		if register_comma2 not in send_status :
+			complete_status = send_status+register_comma
+			print complete_status ###
+
+			update = ("UPDATE result_patents_key_serge SET send_status = %s WHERE link = %s")
+
+			try :
+				call_patents_key.execute(update, (complete_status, link))
+				database.commit()
+			except :
+				database.rollback()
+				print "ROLLBACK" ###
+
+		elif register_comma2 in send_status :
+			print "DEJA ENVOYÉ" ###
+
+		else :
+			print "WARNING UNKNOWN ERROR" ###
+
+		call_patents_key.close()
+
+
 
 ######### MAIN #TODO fractionner le main en fonctions
-
 now=time.time()
 last_launch = lastResearch()
 jour = unicode(datetime.date.today())
@@ -1236,7 +1371,7 @@ for user in user_list_all:
 			mail(register, user)
 
 			######### CALL TO stairwayToUpdate FUNCTION
-			#stairwayToUpdate (register, not_send_links_news_list)
+			stairwayToUpdate (register, not_send_links_news_list, not_send_links_science_list, not_send_links_patents_class_list, not_send_links_patents_inventor_list, not_send_links_patents_key_list)
 
 		elif interval >= frequency and not_send != 0 :
 			print ("Fréquence atteinte mais aucune récupération") ###
@@ -1265,6 +1400,9 @@ for user in user_list_all:
 			######### CALL TO MAIL FUNCTION
 			mail(register, user)
 
+			######### CALL TO stairwayToUpdate FUNCTION
+			stairwayToUpdate (register, not_send_links_news_list, not_send_links_science_list, not_send_links_patents_class_list, not_send_links_patents_inventor_list, not_send_links_patents_key_list)
+
 		elif not_send < limit:
 			print ("INFERIEUR\n") ###
 			### inscrire dans le fichier de log
@@ -1288,111 +1426,15 @@ for user in user_list_all:
 	register=int(register) #COMPTEUR
 	register=register+1 #INCREMENTATION COMPTEUR
 
-#TODO supprimer l'ancien main
-#######################################################################################################################################
+	######### CLEANING OF THE DIRECTORY
+	try:
+		os.remove("Newsletter.txt")
+	except :
+		pass
 
-#OLD MAIN : Section in re-construction
-
-#"""Suppression de Newsletter.txt préventive si il y a eu une erreur au lancement précédant"""
-#try:
-	#os.remove("Newsletter.txt")
-#except :
-	#pass
-
-#try:
-	#os.remove("identity_error.txt")
-#except :
-	#pass
-
-#try:
-	#os.remove("permission_error.txt")
-#except :
-	#pass
-
-######### définition des variables
-
-#""""Définition des variables liés au temps ; Appel de la fonction Last_Research"""
-#now_tot=time.time()
-#last_launch = Last_Research()
-
-#"""Appel de la fonction multi_users"""
-#users = multi_users()
-
-#"""On commence le processus de recherche en parcourant la liste des utilisateurs"""
-#for user in users:
-
-	#user=user.strip()
-
-	#"""Suppression de l'ancien LOG"""
-	#try :
-		#os.remove("logs/"+user.encode("utf_8")+"process_log.txt") # on supprime l'ancien log
-	#except:
-		#ERID = open("identity_error.txt", "a")
-		#ERID.write("Votre fichier process log n'existe pas")
-		#ERID.close()
-
-	#"""Ouverture du nouveau LOG"""
-	#LOG = open("logs/"+user.encode("utf_8")+"process_log.txt", "w")
-	#LOG.write ("SERGE LOG\n \n User:" +user.encode("utf_8")+"\n Date :"+jour+"\n")
-
-	#now_user=time.time()
-	#permissionVeille = Permission_Veille(user)
-	#permissionArxiv = Permission_Arxiv(user)
-	#permissionPatents = Permission_Patents(user)
-
-	#LOG.write("\n \n Timestamp :" +str(now_user)+"\n Last launch :" +str(last_launch)+ "\n \n")
-
-	#"""On ouvre le fichier Newsletter.txt qui va récolter le flux. Ce fichier sera ensuite lu par les fonction d'envoi par mail et d'envoi sur le serveur"""
-	#newsletter = open("Newsletter.txt", "a")
-	#newsletter.write ("Bonjour " +user.encode("utf_8")+", voici votre veille technologique et industrielle du "+jour+" : \n" + "\n \n")
-
-	#proceed = 0 #Variable d'autorisation de la recherche de contenu si égale à 1
-
-	#"""On exécute la fonction de recherche NEWS"""
-	#if permissionVeille == 1 :
-		#Veille(user, last_launch)
-
-	#"""On exécute la fonction de recherche SCIENCE"""
-	#if permissionArxiv == 1 :
-		#Arxiv (user,last_launch)
-
-	#"""On exécute la fonction de recherche de BREVETS (OMPI/WIPO)"""
-	#if permissionPatents == 1 :
-		#Patents(user, last_launch)
-
-	#nowplus=time.time()
-	#processing_time = nowplus - now_user
-	#newsletter.write("Temps de recherche : "+str(processing_time)+"s\n \n")
-
-	#newsletter.write ("Bonne journée " +user.encode("utf_8")+", \n \n SERGE")
-	#newsletter.close()
-
-	#Mail(user)
-	#"""Appel de la fonction multi_users""" ####Test de la fonction mutual research
-	#mutual_keywords = Mutual_NEWS()
-
-	#envoie le mail en lisant Newsletter.txt
-
-	#os.remove("logs/NewsletterLog.txt")
-	#LOG.write("\n Suppression de l'ancien NewsletterLog \n")
-	#copyfile("Newsletter.txt","logs/NewsletterLog.txt") #copie Newsletter.txt en fichier NewsletterLog.txt
-	#LOG.write("copie de Newsletter.txt en un nouveau fichier NewsletterLog.txt \n")
-	#os.remove("Newsletter.txt")
-
-	#nowplus_tot=time.time()
-	#processing_time = nowplus_tot - now_tot
-	#print processing_time
-	#LOG.write("\n Temps d'exécution : "+str(processing_time)+"\n")
-
-	#try:
-		#os.remove("identity_error.txt") # on supprime l'ancien log
-	#except:
-		#pass
-
-	#timelog=open("logs/timelog.txt", "w")
-	#now = unicode(now)
-	#timelog.write(now)
-	#LOG.write("Ecriture du timestamps en fin de recherche dans le Timelog \n")
-	#timelog.close()
-
-	#LOG.close()
+######### TIMESTAMPS UPDATE
+timelog=open("logs/timelog.txt", "w")
+now = unicode(now)
+timelog.write(now)
+#LOG.write("Ecriture du timestamps en fin de recherche dans le Timelog \n")
+timelog.close()
