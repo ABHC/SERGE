@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `result_news_serge` (
   `title` text COLLATE utf8_unicode_ci NOT NULL,
   `link` text COLLATE utf8_unicode_ci NOT NULL,
-  `send_status` text COLLATE utf8_unicode_ci DEFAULT NULL,
+  `send_status` VARCHAR(21800) COLLATE utf8_unicode_ci DEFAULT ',0,',
   `date` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `id_source` int(11) NOT NULL,
   `keyword_id` int(11) NOT NULL

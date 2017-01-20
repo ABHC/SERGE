@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""SERGE (Serge Explore Research and Generate Emails/Serge explore recherche et génère des emails) est un outil de veille industrielle et technologique"""
+"""SERGE (Serge Explore Research and Generate Emails/Serge explore recherche et génère des emails) est un outil de veille industrielle et technologique""" #TODO décider d'une approche logique de commentaires en suivant les standards python
 
 import os
 import time
@@ -21,7 +21,7 @@ from email.mime.text import MIMEText
 from shutil import copyfile
 
 
-def Last_Research ():
+def lastResearch ():
 	"""Fonction d'extraction de la dernière date de recherche pour n'envoyer que des informations nouvelles"""
 
 	try:
@@ -66,7 +66,7 @@ def sans_accent_min(ch):
     return r
 
 
-def Permission(n) :
+def permission(register) :
 
 	query_news = "SELECT permission_news FROM users_table_serge WHERE id LIKE %s"
 	query_science = "SELECT permission_science FROM users_table_serge WHERE id LIKE %s"
@@ -78,28 +78,28 @@ def Permission(n) :
 
 	call_users= database.cursor()
 
-	call_users.execute(query_news, (n,))
+	call_users.execute(query_news, (register,))
 	permission_news = call_users.fetchone()
 	permission_news = int(permission_news[0])
 
-	call_users.execute(query_science, (n,))
+	call_users.execute(query_science, (register,))
 	permission_science = call_users.fetchone()
 	permission_science = int(permission_science[0])
 
-	call_users.execute(query_patents, (n,))
+	call_users.execute(query_patents, (register,))
 	permission_patents= call_users.fetchone()
 	permission_patents = int(permission_patents[0])
 
 	if permission_patents == 0 :
-		call_users.execute(query_patents_class, (n,))
+		call_users.execute(query_patents_class, (register,))
 		permission_patents_class = call_users.fetchone()
 		permission_patents_class = int(permission_patents_class[0])
 
-		call_users.execute(query_patents_inventor, (n,))
+		call_users.execute(query_patents_inventor, (register,))
 		permission_patents_inventor = call_users.fetchone()
 		permission_patents_inventor = int(permission_patents_inventor[0])
 
-		call_users.execute(query_patents_inventor, (n,))
+		call_users.execute(query_patents_inventor, (register,))
 		permission_patents_key = call_users.fetchone()
 		permission_patents_key = int(permission_patents_key[0])
 
@@ -113,13 +113,39 @@ def Permission(n) :
 
 	return permission_list
 
+def highwayToMail(permission_patents, not_send_links_news_list, not_send_links_science_list, not_send_links_patents_class_list, not_send_links_patents_inventor_list, not_send_links_patents_key_list) :
 
-def Newscast(last_launch):
+	######### CLEANING OF THE DIRECTORY
+	try:
+		os.remove("Newsletter.txt")
+	except :
+		pass
+
+	######### NUMBER OF LINKS IN EACH CATEGORY
+	not_send_news = len(not_send_links_news_list)
+	not_send_science = len(not_send_links_science_list)
+	not_send_patents_class = len(not_send_links_patents_class_list)
+	not_send_patents_inventor = len(not_send_links_patents_inventor_list)
+	not_send_patents_key = len(not_send_links_patents_key_list)
+
+	if permission_patents == 1:
+		not_send = not_send_news + not_send_science
+	else :
+		not_send = not_send_news + not_send_science + not_send_patents_class + not_send_patents_inventor + not_send_patents_key
+
+	highway =[not_send_news, not_send_science, not_send_patents_class, not_send_patents_inventor, not_send_patents_key, not_send]
+
+	print ("NON ENVOYÉ : "+str(not_send))###
+
+	return highway
+
+
+def newscast(last_launch):
 
 	#LOG.write("\n")
 	#LOG.write("\n Recherche des actualités \n")
 	#LOG.write("\n")
-	"""Recherche source par source pour éviter les trop nombreuses connection à l'hôte"""
+	"""Recherche source par source pour éviter les trop nombreuses connections à l'hôte"""
 
 	new_article = 0
 
@@ -212,21 +238,21 @@ def Newscast(last_launch):
 		#print("id_source :" + id_source)
 
 		for keyword in keywords_news_list :
-			
+
 			"""Keyword ID Retrieval"""
 			query = ("SELECT id FROM keyword_news_serge WHERE keyword = %s")
 
 			call_news= database.cursor()
 			call_news.execute(query, (keyword, ))
 			rows = call_news.fetchone()
-			call_rss.close()
+			call_news.close()
 
 			keyword_id=rows[0]
 			print ("Boucle sur le keyword : " + keyword+"("+str(keyword_id)+")") ###
 
-			while range < rangemax: 
+			while range < rangemax:
 
-				#A découper dans une sous fonction Analyse(xmldoc, last_launch)
+				#TODO A découper dans une sous fonction Analyse(xmldoc, last_launch)
 				"""On définit les variables que l'on affectent aux commandes de Universal Feedparser"""
 				post_title = xmldoc.entries[range].title
 				post_description = xmldoc.entries[range].description
@@ -253,60 +279,64 @@ def Newscast(last_launch):
 				article=(post_title, post_link, human_date, id_rss, keyword_id)
 
 				if keyword_lower in post_title_lower and post_date >= last_launch:
-					query = ("INSERT INTO result_news_serge " "(title, link, date, id_source, keyword_id) " "VALUES (%s, %s, %s, %s, %s)")
-					
+					query = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
+
 					########### DATABASE INSERTION
 					insert_news= database.cursor()
-					try : 
-						insert_news.execute(query, article)						
+					try :
+						insert_news.execute(query, article)
 						database.commit()
-					except : 
+					except :
 						database.rollback()
+						print "ROLLBACK" ###
 					insert_news.close()
 
-					new_article += 1 ###				
+					new_article += 1 ###
 					break #les commandes break permettent que l'information ne s'affiche qu'une seule fois si il y a plusieurs keywords détectées dans l'entrée
 
 				elif keyword_lower in post_description_lower and post_date >= last_launch:
-					query = ("INSERT INTO result_news_serge " "(title, link, date, id_source, keyword_id) " "VALUES (%s, %s, %s, %s, %s)")
+					query = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
 
 					########### DATABASE INSERT
 					insert_news= database.cursor()
-					try : 
-						insert_news.execute(query, article)						
+					try :
+						insert_news.execute(query, article)
 						database.commit()
-					except : 
+					except :
 						database.rollback()
+						print "ROLLBACK" ###
 					insert_news.close()
 
 					new_article += 1 ###
 					break
 
 				elif keyword_sans_accent in post_title_sans_accent and post_date >= last_launch:
-					query = ("INSERT INTO result_news_serge " "(title, link, date, id_source, keyword_id) " "VALUES (%s, %s, %s, %s, %s)")
+					query = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
 
 					########### DATABASE INSERT
 					insert_news= database.cursor()
-					try : 
-						insert_news.execute(query, article)						
+					try :
+						insert_news.execute(query, article)
 						database.commit()
-					except : 
+					except :
 						database.rollback()
+						print "ROLLBACK" ###
 					insert_news.close()
 
-					new_article += 1 ###				
+					new_article += 1 ###
 					break
 
 				elif keyword_sans_accent in post_description_sans_accent and post_date >= last_launch:
-					query = ("INSERT INTO result_news_serge " "(title, link, date, id_source, keyword_id) " "VALUES (%s, %s, %s, %s, %s)")
+					query = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
 
 					########### DATABASE INSERT
 					insert_news= database.cursor()
-					try : 
-						insert_news.execute(query, article)						
+					try :
+						insert_news.execute(query, article)
 						database.commit()
-					except : 
+					except :
 						database.rollback()
+						print "ROLLBACK" ###
 					insert_news.close()
 
 					new_article += 1 ###
@@ -318,19 +348,10 @@ def Newscast(last_launch):
 			print ("Articles trouvés : "+str(new_article)+"\n")
 
 
-def Patents(last_launch, WIPO_languages): #implémentation des db et de la nouvelle gestion des
-	"""Fonction de recherche des derniers brevets publiés par l'OMPI/WIPO"""
-	#LOG.write("\n")
-  	#LOG.write("\n Recherche des Brevets \n")
-  	#LOG.write("\n")
-
-  	########### Recherche par mots-clés
-
-  	######### CALL TO TABLE keyword_patents_key_serge (All languages supported by WIPO)
-
+def researchPatentsByKey(last_launch, WIPO_languages):
+	########### Recherche par mots-clés
+	######### CALL TO TABLE keyword_patents_key_serge (All languages supported by WIPO)
 	for language in WIPO_languages :
-
-		print language ###
 		language_comma ="%," + language + ",%"
 
 		query = "SELECT keyword FROM keyword_patents_key_serge WHERE active >= 1 and language LIKE %s"
@@ -346,26 +367,27 @@ def Patents(last_launch, WIPO_languages): #implémentation des db et de la nouve
 			field = row[0].strip()
 			keywords_patents_key_list.append(field)
 
+		######### KEYWORD EXTRACTION + HTML TRANSFORMATION
 		for KEY in keywords_patents_key_list:
-   			KEY=KEY.strip().encode("utf-8")
-   			HTML_KEY=urllib2.quote(KEY, safe='')
+			KEY=KEY.strip().encode("utf-8")
+			HTML_KEY=urllib2.quote(KEY, safe='')
 			HTML_KEY=HTML_KEY.replace("%20", "+")
 			print HTML_KEY ###
 
 			link = ('https://patentscope.wipo.int/search/rss.jsf?query='+language.encode("utf-8")+'_TI%3A%28'+HTML_KEY.encode("utf-8")+'%29+OR+'+language.encode("utf-8")+'_AB%3A%28'+HTML_KEY.encode("utf-8")+'%29+&office=&rss=true&sortOption=Pub+Date+Desc')
-			
+
 			try :
 				WIPO = urllib2.urlopen(link)
 				print (link)###
-			except : 
-				print ("UNKNOWN CONNEXION ERROR")###			
-			
+			except :
+				print ("UNKNOWN CONNEXION ERROR")###
+
 			"""On fait un renvoi au LOG des données de connexion"""
 			#LOG.write(KEY+"\n")
 			#LOG.write(link+"\n")
 			#header = WIPO.headers
 			#LOG.write(str(header)+"\n") #on peut faire afficher les données de connexion à la page grâce à cette commande
-		
+
 			if (WIPO) :
 				xmldoc = feedparser.parse(WIPO)
 				range = 0
@@ -374,23 +396,47 @@ def Patents(last_launch, WIPO_languages): #implémentation des db et de la nouve
 				new_patent = 0
 
 				if (xmldoc) :
-					
+
 					if rangemax ==0:
 						print ("VOID QUERY\n")###
 						#LOG.write("void_query :"+unicode(void_query))
 						#LOG.write ("Attention le flux de :" +str(WIPO)+ "est vide ; vous devriez changer vos paramètres de recherche"+"\n")
 
 					else:
+						"""Keyword ID Retrieval"""
+						query = ("SELECT id FROM keyword_patents_key_serge WHERE keyword = %s")
+
+						call_patent= database.cursor()
+						call_patent.execute(query, (KEY, ))
+						rows = call_patent.fetchone()
+						call_patent.close()
+
+						keyword_id=rows[0]
+
 						while range < rangemax:
 							post_title = xmldoc.entries[range].title
 							post_description = xmldoc.entries[range].description
 							post_link = xmldoc.entries[range].link
 							post_date = xmldoc.entries[range].published_parsed
+							human_date = time.strftime("%d/%m/%Y %H:%M", post_date)
 							post_date = time.mktime(post_date)
 							post_date >= last_launch
 
+							patent=(post_title, post_link, human_date, keyword_id)
+
 							if post_date >= last_launch:
-								#newsletter.write (post_title.encode("utf_8")+"\n"+post_link.encode("utf_8") +"\n"+"\n")
+								query = ("INSERT INTO result_patents_key_serge(title, link, date, keyword_id) VALUES(%s, %s, %s, %s)")
+
+								########### DATABASE INSERT
+								insert_patents= database.cursor()
+								try :
+									insert_patents.execute(query, patent)
+									database.commit()
+								except :
+									database.rollback()
+									print "ROLLBACK" ###
+								insert_patents.close()
+
 								new_patent += 1
 
 							range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
@@ -403,6 +449,8 @@ def Patents(last_launch, WIPO_languages): #implémentation des db et de la nouve
 				#LOG.write("\n Erreur au niveau de l'URL")
 				print ("UNKNOWN CONNEXION ERROR")###
 
+
+def researchPatentsByInventor(last_launch):
 	########### Recherche par nom d'inventeur et de mandataire
 
 	######### CALL TO TABLE keyword_patents_inventor_serge
@@ -428,7 +476,7 @@ def Patents(last_launch, WIPO_languages): #implémentation des db et de la nouve
 		try :
 			WIPO = urllib2.urlopen(link)
 			print (link)###
-		except : 
+		except :
 			print ("UNKNOWN CONNEXION ERROR")
 
 		"""On fait un renvoi au LOG des données de connexion"""
@@ -452,17 +500,40 @@ def Patents(last_launch, WIPO_languages): #implémentation des db et de la nouve
 					#LOG.write ("Attention le flux de :" +str(WIPO)+ "est vide ; vous devriez changer vos paramètres de recherche"+"\n")
 
 				else:
-					while range < rangemax:
+					"""Keyword ID Retrieval"""
+					query = ("SELECT id FROM keyword_patents_inventor_serge WHERE keyword = %s")
 
+					call_patent= database.cursor()
+					call_patent.execute(query, (AI, ))
+					rows = call_patent.fetchone()
+					call_patent.close()
+
+					keyword_id=rows[0]
+
+					while range < rangemax:
 						post_title = xmldoc.entries[range].title
 						post_description = xmldoc.entries[range].description
 						post_link = xmldoc.entries[range].link
 						post_date = xmldoc.entries[range].published_parsed
+						human_date = time.strftime("%d/%m/%Y %H:%M", post_date)
 						post_date = time.mktime(post_date)
 						post_date >= last_launch
 
+						patent=(post_title, post_link, human_date, keyword_id)
+
 						if post_date >= last_launch:
-							#newsletter.write (post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
+							query = ("INSERT INTO result_patents_inventor_serge(title, link, date, keyword_id) VALUES(%s, %s, %s, %s)")
+
+							########### DATABASE INSERT
+							insert_patents= database.cursor()
+							try :
+								insert_patents.execute(query, patent)
+								database.commit()
+							except :
+								database.rollback()
+								print "ROLLBACK" ###
+							insert_patents.close()
+
 							new_patent += 1 ###
 
 						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
@@ -475,6 +546,8 @@ def Patents(last_launch, WIPO_languages): #implémentation des db et de la nouve
 			#LOG.write("\n Erreur au niveau de l'URL")
 			print ("UNKNOWN CONNEXION ERROR")###
 
+
+def researchPatentsByClass(last_launch):
 	########### Recherche par classification IPC (International Patent Classification)
 
   	######### CALL TO TABLE keyword_patents_class_serge
@@ -499,7 +572,7 @@ def Patents(last_launch, WIPO_languages): #implémentation des db et de la nouve
 		try :
 			WIPO = urllib2.urlopen(link)
 			print (link)###
-		except : 
+		except :
 			print ("UNKNOWN CONNEXION ERROR")
 
 		"""On fait un renvoi au LOG des données de connexion"""
@@ -516,7 +589,7 @@ def Patents(last_launch, WIPO_languages): #implémentation des db et de la nouve
 			#LOG.write(IPC)
 			#LOG.write("\n nombre d'article :"+unicode(rangemax)+"\n \n")
 			new_patent = 0 ###
-			
+
 			if (xmldoc) :
 
 				if rangemax ==0:
@@ -525,17 +598,40 @@ def Patents(last_launch, WIPO_languages): #implémentation des db et de la nouve
 					#LOG.write ("Attention le flux de :" +str(WIPO)+ "est vide ; vous devriez changer vos paramètres de recherche")
 
 				else:
-					while range < rangemax:
+					"""Keyword ID Retrieval"""
+					query = ("SELECT id FROM keyword_patents_class_serge WHERE keyword = %s")
 
+					call_patent= database.cursor()
+					call_patent.execute(query, (IPC, ))
+					rows = call_patent.fetchone()
+					call_patent.close()
+
+					keyword_id=rows[0]
+
+					while range < rangemax:
 						post_title = xmldoc.entries[range].title
 						post_description = xmldoc.entries[range].description
 						post_link = xmldoc.entries[range].link
 						post_date = xmldoc.entries[range].published_parsed
+						human_date = time.strftime("%d/%m/%Y %H:%M", post_date)
 						post_date = time.mktime(post_date)
 						post_date >= last_launch
 
+						patent=(post_title, post_link, human_date, keyword_id)
+
 						if post_date >= last_launch:
-							#newsletter.write (post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
+							query = ("INSERT INTO result_patents_class_serge(title, link, date, keyword_id) VALUES(%s, %s, %s, %s)")
+
+							########### DATABASE INSERT
+							insert_patents= database.cursor()
+							try :
+								insert_patents.execute(query, patent)
+								database.commit()
+							except :
+								database.rollback()
+								print "ROLLBACK" ###
+							insert_patents.close()
+
 							new_patent += 1###
 
 						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
@@ -546,10 +642,9 @@ def Patents(last_launch, WIPO_languages): #implémentation des db et de la nouve
 		else:
 			#LOG.write("\n Erreur au niveau de l'URL")
 			print ("UNKNOWN CONNEXION ERROR")###
-			
 
 
-def Science (last_launch):
+def science (last_launch):
 	"""Fonction de recherche des derniers articles scientifiques publiés par arxiv.org"""
 
 	######### Recherche SCIENCE
@@ -573,14 +668,12 @@ def Science (last_launch):
 		field = row[0].strip()
 		keywords_science_list.append(field)
 
-	new_article=0
-	void_query = 0
-
 	for keyword in keywords_science_list:
 
 		keyword = sans_accent_maj(keyword).strip()
 		print ("Recherche sur le keyword : " + keyword) ###
 		link = ('http://export.arxiv.org/api/query?search_query=all:'+keyword.encode("utf-8")+"\n")
+		print link ###
 
 		try :
 			arxiv_API = urllib2.urlopen(link)
@@ -604,24 +697,45 @@ def Science (last_launch):
 
 		if (xmldoc) :
 			if rangemax ==0:
-				void_query +=1
+				print ("VOID QUERY\n")###
 				#LOG.write("void_query :"+unicode(void_query))
 				#LOG.write ("Attention le flux de :" +str(arxiv_API)+ "est vide vous devriez changer vos paramètres de recherche"+"\n")
 
 			else:
+				"""Keyword ID Retrieval"""
+				query = ("SELECT id FROM keyword_science_serge WHERE keyword = %s")
+
+				call_science= database.cursor()
+				call_science.execute(query, (keyword, ))
+				rows = call_science.fetchone()
+				call_science.close()
+
+				keyword_id=rows[0]
+
 				while range < rangemax:
 					"""On définit les variables que l'on affectent aux commandes de Universal Feedparser hors de la boucle veille car on doit les donner plusieurs fois"""
 					post_title = xmldoc.entries[range].title
 					post_description = xmldoc.entries[range].description
 					post_link = xmldoc.entries[range].link
 					post_date = xmldoc.entries[range].published_parsed
-					human_time = post_date
+					human_date = time.strftime("%d/%m/%Y %H:%M", post_date)
 					post_date = time.mktime(post_date)
 					post_date >= last_launch
 
+					paper=(post_title, post_link, human_date, keyword_id)
+
 					if post_date >= last_launch:
-						#newsletter.write (post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
-						new_article += 1
+						query = ("INSERT INTO result_science_serge(title, link, date, keyword_id) VALUES(%s, %s, %s, %s)")
+
+						########### DATABASE INSERT
+						insert_patents= database.cursor()
+						try :
+							insert_patents.execute(query, paper)
+							database.commit()
+						except :
+							database.rollback()
+							print "ROLLBACK" ###
+						insert_patents.close()
 
 					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
@@ -632,18 +746,97 @@ def Science (last_launch):
 		#newsletter.write ("Aucune nouvelle publication dans vos centres d'intérêts\n \n")
 
 
-def Mail(user):
-	"""Fonction d'envoie de la newsletter par mail"""
+def newsletter (user, permission_news, permission_science, permission_patents, permission_patents_key, permission_patents_class, permission_patents_inventor, not_send_links_news_list, not_send_titles_news_list, not_send_links_science_list, not_send_titles_science_list, not_send_links_patents_key_list, not_send_titles_patents_key_list, not_send_links_patents_inventor_list, not_send_titles_patents_inventor_list, not_send_links_patents_class_list, not_send_titles_patents_class_list, not_send_news, not_send_science, not_send_patents_class, not_send_patents_inventor, not_send_patents_key) :
 
-	"""On ouvre le fichier contenant l'adresse mail de l'utilisateur pour la récupérer et l'enregistrer dans une variable"""
-	usermail=open("mails/"+user+"_mail.txt","r")
-	adr_mail = usermail.read()
-	LOG.write(adr_mail)
-	usermail.close
+	#print ("TOTAL LIENS NON ENVOYÉS : "+ str(not_send)) ###
 
-	"""Fonction d'envoi de mail"""
-	fromaddr = 'combe.alexandre@cairn-devices.eu'
-	toaddr = adr_mail
+	######### ECRITURE FICHIER TRANSITOIRE
+	newsletter = open("Newsletter.txt", "a")
+	newsletter.write ("Bonjour " +user.encode("utf_8")+", voici votre veille technologique et industrielle du "+jour+" : \n" + "\n \n")
+
+	index=0
+
+	######### ECRITURE NEWS
+	if permission_news == 0 :
+		if not_send_news > 0 :
+			newsletter.write("ACTUALITÉS\n\n")
+
+			while index < not_send_news:
+				newsletter.write(not_send_titles_news_list[index].encode("utf_8")+"\n")
+				newsletter.write(not_send_links_news_list[index].encode("utf_8")+"\n\n")
+				index=index+1
+
+	index=0
+
+	######### ECRITURE SCIENCE
+	if permission_science == 0 :
+		if not_send_science > 0 :
+			newsletter.write("PUBLICATIONS SCIENTIFIQUES\n\n")
+
+		while index < not_send_science:
+			newsletter.write(not_send_titles_science_list[index]+"\n")
+			newsletter.write(not_send_links_science_list[index]+"\n\n")
+			index=index+1
+
+	index=0
+
+	######### ECRITURE PATENTS
+	if permission_patents == 0 :
+		if not_send_patents_class > 0 :
+			newsletter.write("BREVETS\n\n")
+		elif not_send_patents_inventor > 0 :
+			newsletter.write("BREVETS\n\n")
+		elif not_send_patents_key > 0 :
+			newsletter.write("BREVETS\n\n")
+
+		######### CLASS
+		if permission_patents_class == 0 :
+
+			while index < not_send_patents_class:
+				newsletter.write(not_send_titles_patents_class_list[index]+"\n")
+				newsletter.write(not_send_links_patents_class_list[index]+"\n\n")
+				index=index+1
+
+		index=0
+
+		######### INVENTOR
+		if permission_patents_inventor == 0 :
+
+			while index < not_send_patents_inventor:
+				newsletter.write(not_send_titles_patents_inventor_list[index]+"\n")
+				newsletter.write(not_send_links_patents_inventor_list[index]+"\n\n")
+				index=index+1
+
+		index=0
+
+		######### KEY
+		if permission_patents_key == 0 :
+
+			while index < not_send_patents_key:
+				newsletter.write(not_send_titles_patents_key_list[index]+"\n")
+				newsletter.write(not_send_links_patents_key_list[index]+"\n\n")
+				index=index+1
+
+	newsletter.write ("Bonne journée "+user.encode("utf_8")+"\n \n")
+	newsletter.write ("SERGE")
+
+
+def mail(register, user):
+
+	######### SERGE MAIL
+	sergemail=open("permission/sergemail.txt","r")
+	fromaddr = sergemail.read().strip()
+	sergemail.close
+
+	######### ADRESSES RECOVERY
+	query= "SELECT email FROM users_table_serge WHERE id = %s" #On regarde la condition d'envoi
+
+	call_users= database.cursor()
+	call_users.execute(query, (register))
+	row = call_users.fetchone()
+	call_users.close()
+
+	toaddr = row[0]
 
 	"""On veux transférer le contenu du fichier texte DANS le mail"""
 	newsletter = open("Newsletter.txt", "r")
@@ -657,21 +850,62 @@ def Mail(user):
 	#body = "YOUR MESSAGE HERE"
 	#msg.attach(MIMEText(body, 'plain'))
 
-	server = smtplib.SMTP('smtp.cairn-devices.eu', 25)
-	server.starttls()
-	passmail=open("userlist/pass/passmail.txt","r")
-	mdp_mail=passamil.read()
+	passmail=open("permission/passmail.txt","r")
+	mdp_mail=passmail.read().strip()
 	passmail.close()
+
+	server = smtplib.SMTP('smtp.cairn-devices.eu', 5025)
+	server.starttls()
 	server.login(fromaddr, mdp_mail) #mot de passe
 	text = msg.as_string()
 	server.sendmail(fromaddr, toaddr, text)
 	server.quit()
 
+######### TODO Fonction update du send_status
+def stairwayToUpdate (register, not_send_links_news_list) :
 
-######### MAIN
+	######### SEND_STATUS UPDATE IN result_news_serge
+	for link in not_send_links_news_list :
+		print not_send_links_news_list
+		query = ("SELECT send_status FROM result_news_serge WHERE link = %s")
+
+		call_news= database.cursor()
+		call_news.execute(query, (link,))
+		row = call_news.fetchone()
+
+		send_status = row[0]
+		print send_status
+		register_comma = register+","
+		print register_comma ###
+		register_comma2 = ","+register+","
+		print register_comma2 ###
+
+		if register_comma2 not in send_status :
+			complete_status = send_status+register_comma
+			print complete_status ###
+
+			update = ("UPDATE result_news_serge SET send_status = %s WHERE link = %s")
+
+			try :
+				call_news.execute(update, (complete_status, link))
+				database.commit()
+			except :
+				database.rollback()
+				print "ROLLBACK" ###
+
+		elif register_comma2 in send_status :
+			print "DEJA ENVOYÉ" ###
+
+		else :
+			print "WARNING UNKNOWN ERROR" ###
+
+		call_news.close()
+
+
+######### MAIN #TODO fractionner le main en fonctions
 
 now=time.time()
-last_launch = Last_Research()
+last_launch = lastResearch()
 jour = unicode(datetime.date.today())
 WIPO_languages = ["ZH", "DA", "EN", "FR", "DE", "HE", "IT", "JA", "KO", "PL", "PT", "RU", "ES", "SV", "VN"]
 
@@ -694,13 +928,17 @@ print ("Max Users : " + str(max_users)+"\n")
 
 ######### RECHERCHE
 
-Newscast(last_launch) # Appel de la fonction Newscast
+newscast(last_launch) # Appel de la fonction Newscast
 
-#Science(last_launch) # Appel de la fonction Science
+science(last_launch) # Appel de la fonction Science
 
-#Patents(last_launch, WIPO_languages) # Appel de la fonction Patents
+researchPatentsByKey(last_launch, WIPO_languages) # Appel de la fonction Patents 1
 
-######### AFFECTATION ## A Revoir  : Merge des appels à la base de données pour faire la liste des liens
+researchPatentsByInventor(last_launch) # Appel de la fonction Patents 2
+
+researchPatentsByClass(last_launch) # Appel de la fonction Patents 3
+
+######### AFFECTATION ## TODO revoir la structure pour la disséquer en fonctions
 
 print ("\n AFFECTATION TESTS \n")
 
@@ -718,14 +956,14 @@ for row in rows :
 print ("user_list_all :")###
 print (user_list_all) ###
 
-n=1
+register=1
 
 for user in user_list_all:
-	n=str(n)
-	print ("\nUSER : " + n) ###
-	user_id_comma="%," + n + ",%"
+	register=str(register)
+	print ("\nUSER : " + register) ###
+	user_id_comma="%," + register + ",%"
 
-	permission_list = Permission(n)
+	permission_list = permission(register)
 	#print permission_list ###
 
 	######### NEWS PERMISSION STATE
@@ -951,25 +1189,23 @@ for user in user_list_all:
 
 			#print ("TITRES PATENTS KEY NON ENVOYÉS : "+ str(len(not_send_titles_patents_key_list))) ###
 
+	######### CALL TO highwayToMail FUNCTION
+	highway = highwayToMail(permission_patents, not_send_links_news_list, not_send_links_science_list, not_send_links_patents_class_list, not_send_links_patents_inventor_list, not_send_links_patents_key_list)
+
+	######### NUMBER OF LINKS IN EACH CATEGORY
+	not_send_news = highway[0]
+	not_send_science = highway[1]
+	not_send_patents_class = highway[2]
+	not_send_patents_inventor = highway[3]
+	not_send_patents_key = highway[4]
+
+	not_send = highway[5]
+
 	######### SEND CONDITION QUERY
-
-	not_send_news = len(not_send_links_news_list)
-	not_send_science = len(not_send_links_science_list)
-	not_send_patents_class = len(not_send_links_patents_class_list)
-	not_send_patents_inventor = len(not_send_links_patents_inventor_list)
-	not_send_patents_key = len(not_send_links_patents_key_list)
-
-	if permission_patents == 1:
-		not_send = not_send_news + not_send_science
-	else :
-		not_send = not_send_news + not_send_science + not_send_patents_class + not_send_patents_inventor + not_send_patents_key
-
-	#print ("TOTAL LIENS NON ENVOYÉS : "+ str(not_send)) ###
-
 	query= "SELECT send_condition FROM users_table_serge WHERE id = %s" #On regarde la condition d'envoi
 
 	call_users= database.cursor()
-	call_users.execute(query, (n))
+	call_users.execute(query, (register))
 	condition = call_users.fetchone()
 	call_users.close()
 
@@ -977,15 +1213,10 @@ for user in user_list_all:
 
 	######### FREQUENCY CONDITION
 	if condition[0] == "freq":
-		try:
-			os.remove("Newsletter.txt")
-		except :
-			pass
-
 		query = "SELECT frequency FROM users_table_serge WHERE id = %s"
 
 		call_users= database.cursor()
-		call_users.execute(query, (n))
+		call_users.execute(query, (register))
 		frequency = call_users.fetchone()
 		call_users.close()
 
@@ -995,196 +1226,69 @@ for user in user_list_all:
 		interval = now-last_launch
 		print ("Intervalle de temps :"+ str(interval))###
 
-		if interval >= frequency :
+		if interval >= frequency and not_send != 0 :
 			print ("Fréquence atteinte") ###
 
-			######### ECRITURE FICHIER TRANSITOIRE
-			newsletter = open("Newsletter.txt", "a")
-			newsletter.write ("Bonjour " +user.encode("utf_8")+", voici votre veille technologique et industrielle du "+jour+" : \n" + "\n \n")
+			######### CALL TO NEWSLETTER FUNCTION
+			newsletter(user, permission_news, permission_science, permission_patents, permission_patents_key, permission_patents_class, permission_patents_inventor, not_send_links_news_list, not_send_titles_news_list, not_send_links_science_list, not_send_titles_science_list, not_send_links_patents_key_list, not_send_titles_patents_key_list, not_send_links_patents_inventor_list, not_send_titles_patents_inventor_list, not_send_links_patents_class_list, not_send_titles_patents_class_list, not_send_news, not_send_science, not_send_patents_class, not_send_patents_inventor, not_send_patents_key)
 
-			######### ECRITURE NEWS
-			if permission_news == 0 :
-				if not_send_news > 0 :
-					newsletter.write("ACTUALITÉS\n\n")
+			######### CALL TO MAIL FUNCTION
+			mail(register, user)
 
-					index=0
+			######### CALL TO stairwayToUpdate FUNCTION
+			#stairwayToUpdate (register, not_send_links_news_list)
 
-					while index < not_send_news:
-						newsletter.write(not_send_titles_news_list[index])
-						newsletter.write("\n")
-						newsletter.write(not_send_links_news_list[index])
-						newsletter.write("\n\n")
-						index=index+1
-
-			######### ECRITURE SCIENCE
-			if permission_science == 0 :
-				if not_send_science > 0 :
-					newsletter.write("PUBLICATIONS SCIENTIFIQUES\n\n")
-
-				index=0
-
-				while index < not_send_science:
-					newsletter.write(not_send_titles_science_list[index])
-					newsletter.write("\n")
-					newsletter.write(not_send_links_science_list[index])
-					newsletter.write("\n\n")
-					index=index+1
-
-			######### ECRITURE PATENTS
-			if permission_patents == 0 :
-				if not_send_patents_class > 0 :
-					newsletter.write("BREVETS\n\n")
-				elif not_send_patents_inventor > 0 :
-					newsletter.write("BREVETS\n\n")
-				elif not_send_patents_key > 0 :
-					newsletter.write("BREVETS\n\n")
-
-				######### CLASS
-				if permission_patents_class == 0 :
-					index=0
-
-					while index < not_send_patents_class:
-						newsletter.write(not_send_titles_patents_class_list[index])
-						newsletter.write("\n")
-						newsletter.write(not_send_links_patents_class_list[index])
-						newsletter.write("\n\n")
-						index=index+1
-
-				######### INVENTOR
-				if permission_patents_inventor == 0 :
-					index=0
-
-					while index < not_send_patents_inventor:
-						newsletter.write(not_send_titles_patents_inventor_list[index])
-						newsletter.write("\n")
-						newsletter.write(not_send_links_patents_inventor_list[index])
-						newsletter.write("\n\n")
-						index=index+1
-
-				######### KEY
-				if permission_patents_key == 0 :
-					index=0
-
-					while index < not_send_patents_key:
-						newsletter.write(not_send_titles_patents_key_list[index])
-						newsletter.write("\n")
-						newsletter.write(not_send_links_patents_key_list[index])
-						newsletter.write("\n\n")
-						index=index+1
+		elif interval >= frequency and not_send != 0 :
+			print ("Fréquence atteinte mais aucune récupération") ###
 
 		else :
 			print ("fréquence non atteinte") ###
 			### inscrire dans le fichier de log
 
-
 	######### LINK LIMIT CONDITION
 	if condition[0] == "link_limit":
-		try:
-			os.remove("Newsletter.txt")
-		except :
-			pass
-
 		query= "SELECT link_limit FROM users_table_serge WHERE id = %s" #On vérifie le nombre de lien non envoyés
 
 		call_users= database.cursor()
-		call_users.execute(query, (n))
+		call_users.execute(query, (register))
 		limit = call_users.fetchone()
 		call_users.close()
 
 		print ("LIMITE DE LIENS :" + str(limit[0]))###
 
-		if not_send <= limit:
-			print ("INFERIEUR\n") ###
-			### inscrire dans le fichier de log
-
-		if not_send >= limit:
+		if not_send >= limit :
 			print ("SUPERIEUR\n") ###
 
-			######### ECRITURE FICHIER TRANSITOIRE
-			newsletter = open("Newsletter.txt", "a")
-			newsletter.write ("Bonjour " +user.encode("utf_8")+", voici votre veille technologique et industrielle du "+jour+" : \n" + "\n \n")
+			######### CALL TO NEWSLETTER FUNCTION
+			newsletter(user, permission_news, permission_science, permission_patents, permission_patents_key, permission_patents_class, permission_patents_inventor, not_send_links_news_list, not_send_titles_news_list, not_send_links_science_list, not_send_titles_science_list, not_send_links_patents_key_list, not_send_titles_patents_key_list, not_send_links_patents_inventor_list, not_send_titles_patents_inventor_list, not_send_links_patents_class_list, not_send_titles_patents_class_list, not_send_news, not_send_science, not_send_patents_class, not_send_patents_inventor, not_send_patents_key)
 
-			######### ECRITURE NEWS
-			if permission_news == 0 :
-				if not_send_news > 0 :
-					newsletter.write("ACTUALITÉS\n\n")
+			######### CALL TO MAIL FUNCTION
+			mail(register, user)
 
-				index=0
-
-				while index < not_send_news:
-					newsletter.write(not_send_titles_news_list[index])
-					newsletter.write("\n")
-					newsletter.write(not_send_links_news_list[index])
-					newsletter.write("\n\n")
-					index=index+1
-
-				######### Brouillon news
-				#newsletter.write(post_title.encode("utf_8") + "\n" + post_link.encode("utf_8") + "\n" + "\n")
-
-			######### ECRITURE SCIENCE
-			if permission_science == 0 :
-				if not_send_science > 0 :
-					newsletter.write("PUBLICATIONS SCIENTIFIQUES\n\n")
-
-				index=0
-
-				while index < not_send_science:
-					newsletter.write(not_send_titles_science_list[index])
-					newsletter.write("\n")
-					newsletter.write(not_send_links_news_list[index])
-					newsletter.write("\n\n")
-					index=index+1
-
-			######### ECRITURE PATENTS
-			if permission_patents == 0 :
-				if not_send_patents_class > 0 :
-					newsletter.write("BREVETS\n\n")
-				elif not_send_patents_inventor > 0 :
-					newsletter.write("BREVETS\n\n")
-				elif not_send_patents_key > 0 :
-					newsletter.write("BREVETS\n\n")
-
-				######### CLASS
-				if permission_patents_class == 0 :
-					index=0
-
-					while index < not_send_patents_class:
-						newsletter.write(not_send_titles_patents_class_list[index])
-						newsletter.write("\n")
-						newsletter.write(not_send_links_patents_class_list[index])
-						newsletter.write("\n\n")
-						index=index+1
-
-				######### INVENTOR
-				if permission_patents_inventor == 0 :
-					index=0
-
-					while index < not_send_patents_inventor:
-						newsletter.write(not_send_titles_patents_inventor_list[index])
-						newsletter.write("\n")
-						newsletter.write(not_send_links_patents_inventor_list[index])
-						newsletter.write("\n\n")
-						index=index+1
-
-				######### KEY
-				if permission_patents_key == 0 :
-					index=0
-
-					while index < not_send_patents_key:
-						newsletter.write(not_send_titles_patents_key_list[index])
-						newsletter.write("\n")
-						newsletter.write(not_send_links_patents_key_list[index])
-						newsletter.write("\n\n")
-						index=index+1
+		elif not_send < limit:
+			print ("INFERIEUR\n") ###
+			### inscrire dans le fichier de log
 
 	######### WEB CONDITION
 	if condition[0] == "web":
 		print("break")
 
-	n=int(n) #COMPTEUR
-	n=n+1 #INCREMENTATION COMPTEUR
+	######### RESULTS LISTS RESET
+	not_send_links_news_list=[]
+	not_send_titles_news_list=[]
+	not_send_links_science_list=[]
+	not_send_titles_science_list =[]
+	not_send_links_patents_key_list=[]
+	not_send_titles_patents_key_list=[]
+	not_send_links_patents_class_list=[]
+	not_send_titles_patents_class_list=[]
+	not_send_links_patents_inventor_list=[]
+	not_send_titles_patents_inventor_list=[]
 
+	register=int(register) #COMPTEUR
+	register=register+1 #INCREMENTATION COMPTEUR
 
+#TODO supprimer l'ancien main
 #######################################################################################################################################
 
 #OLD MAIN : Section in re-construction
@@ -1292,4 +1396,3 @@ for user in user_list_all:
 	#timelog.close()
 
 	#LOG.close()
-

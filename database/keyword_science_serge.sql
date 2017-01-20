@@ -39,7 +39,8 @@ CREATE TABLE `keyword_science_serge` (
 
 INSERT INTO `keyword_science_serge` (`id`, `keyword`, `owners`, `active`) VALUES
 (1,'polymere', ',1,2,', 2),
-(2,'battery', ',1,2,', 2);
+(2,'battery', ',1,2,', 2),
+(3,'AI', ',1,2,', 2);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

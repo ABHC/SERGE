@@ -29,7 +29,8 @@ SET time_zone = "+00:00";
 CREATE TABLE `result_patents_class_serge` (
   `title` text COLLATE utf8_unicode_ci NOT NULL,
   `link` text COLLATE utf8_unicode_ci NOT NULL,
-  `send_status` text COLLATE utf8_unicode_ci NOT NULL,
+  `send_status` VARCHAR(21800) COLLATE utf8_unicode_ci DEFAULT ',0,',
+  `date` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `keyword_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
