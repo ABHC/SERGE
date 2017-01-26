@@ -100,7 +100,7 @@ def permission(register) :
 		permission_patents_inventor = call_users.fetchone()
 		permission_patents_inventor = int(permission_patents_inventor[0])
 
-		call_users.execute(query_patents_inventor, (register,))
+		call_users.execute(query_patents_key, (register,))
 		permission_patents_key = call_users.fetchone()
 		permission_patents_key = int(permission_patents_key[0])
 
@@ -116,6 +116,12 @@ def permission(register) :
 
 def highwayToMail(permission_patents, not_send_links_news_list, not_send_links_science_list, not_send_links_patents_class_list, not_send_links_patents_inventor_list, not_send_links_patents_key_list) :
 
+	#print not_send_titles_news_list
+	#print not_send_titles_science_list
+	#print not_send_titles_patents_key_list
+	#print not_send_titles_patents_inventor_list
+	#print not_send_titles_patents_class_list
+
 	######### NUMBER OF LINKS IN EACH CATEGORY
 	not_send_news = len(not_send_links_news_list)
 	not_send_science = len(not_send_links_science_list)
@@ -130,7 +136,7 @@ def highwayToMail(permission_patents, not_send_links_news_list, not_send_links_s
 
 	highway =[not_send_news, not_send_science, not_send_patents_class, not_send_patents_inventor, not_send_patents_key, not_send]
 
-	print ("NON ENVOYÉ : "+str(not_send))###
+	#print ("NON ENVOYÉ : "+str(not_send))###
 
 	return highway
 
@@ -191,156 +197,295 @@ def newscast(last_launch):
 			#LOG.write (link+"\n")
 			header = rss.headers
 			#LOG.write(str(header)+"\n") #affichage des paramètres de connexion
+			rss_error = 0
 		except urllib2.HTTPError:
 			print ("HTTP ERROR")
 			#link = link.replace("http://", "")
 			#newsletter.write ("Erreur dans l'accès à "+link+" (protocole HTTP)\n")
 			#newsletter.write ("Veuillez vérifier la validité du Flux \n \n")
-			#rss = 0
+			rss_error = 1
 		except urllib2.HTTPSError:
 			print ("HTTPS ERROR")
 			#link = link.replace("https://", "")
 			#newsletter.write ("Erreur dans l'accès à "+link+" (protocole HTTPS) \n")
 			#newsletter.write ("Veuillez vérifier la validité du Flux \n \n")
-			#rss = 0
+			rss_error = 1
 		except:
 			print ("UNKNOWN CONNEXION ERROR")
 			#newsletter.write ("Erreur dans l'accès à "+link+"\n")
 			#newsletter.write ("Erreur inconnue \n \n")
-			#rss = 0
+			rss_error = 1
 		#except:
 			#pass
 
+		if rss_error == 0 :
 
-		########### RSS PARSING
+			########### RSS PARSING
+			try :
+				xmldoc = feedparser.parse(rss) #type propre à feedparser
+			except :
+				#LOG.write("Erreur au niveau de l'URL")
+				print ("Parsing error")###
 
-		try :
-			xmldoc = feedparser.parse(rss) #type propre à feedparser
-		except :
-			#LOG.write("Erreur au niveau de l'URL")
-			print ("Parsing error")###
+			########### RSS ANALYZE
+			"""Universal Feedparser crée une liste dans qui répertorie chaque article, cette liste est la liste entries[n] qui comprends n+1 entrées (les liste sont numérotées à partir de 0). Python ne peut aller au delà de cette taille n-1. Il faut donc d'abord chercher la taille de la liste avec la fonction len"""
 
-		########### RSS ANALYZE
+			try :
+				source_title = xmldoc.feed.title
+			except :
+				print "FEED TITLE ERROR" ###
+				pass
 
-		"""Universal Feedparser crée une liste dans qui répertorie chaque article, cette liste est la liste entries[n] qui comprends n+1 entrées (les liste sont numérotées à partir de 0). Python ne peut aller au delà de cette taille n-1. Il faut donc d'abord chercher la taille de la liste avec la fonction len"""
+			rangemax = len(xmldoc.entries)
+			range = 0 #on initialise la variable range qui va servir pour pointer les articles
 
-		source_title = xmldoc.feed.title
-		rangemax = len(xmldoc.entries)
-		range = 0 #on initialise la variable range qui va servir pour pointer les articles
+			#print ("Boucle sur le keyword : " + keyword) ##
+			#print("id_rss :" + id_rss)
+			#print("id_source :" + id_source)
 
-		#print ("Boucle sur le keyword : " + keyword) ##
-		#print("id_rss :" + id_rss)
-		#print("id_source :" + id_source)
+			for keyword in keywords_news_list :
 
-		for keyword in keywords_news_list :
+				"""Keyword ID Retrieval"""
+				query = ("SELECT id FROM keyword_news_serge WHERE keyword = %s")
 
-			"""Keyword ID Retrieval"""
-			query = ("SELECT id FROM keyword_news_serge WHERE keyword = %s")
+				call_news= database.cursor()
+				call_news.execute(query, (keyword, ))
+				rows = call_news.fetchone()
+				call_news.close()
 
-			call_news= database.cursor()
-			call_news.execute(query, (keyword, ))
-			rows = call_news.fetchone()
-			call_news.close()
+				keyword_id=rows[0]
+				print ("Boucle sur le keyword : " + keyword+"("+str(keyword_id)+")") ###
 
-			keyword_id=rows[0]
-			print ("Boucle sur le keyword : " + keyword+"("+str(keyword_id)+")") ###
+				while range < rangemax:
 
-			while range < rangemax:
-
-				#TODO A découper dans une sous fonction Analyse(xmldoc, last_launch)
-				"""On définit les variables que l'on affectent aux commandes de Universal Feedparser"""
-				post_title = xmldoc.entries[range].title
-				post_description = xmldoc.entries[range].description
-				post_link = xmldoc.entries[range].link
-				post_date = xmldoc.entries[range].published_parsed
-				human_date = time.strftime("%d/%m/%Y %H:%M", post_date)
-				post_date = time.mktime(post_date)
-
-				print ("Recherche sur le keyword : " + keyword) ###
-
-				post_title = post_title.strip()
-				post_description = post_description.strip()
-
-				"""Variables de recherche pour une recherche en ignorant la casse"""
-				post_title_lower = post_title.lower()
-				post_description_lower = post_description.lower()
-				keyword_lower = keyword.lower()
-
-				"""Variables de recherche pour une recherche en ignorant les accents inexistants pour cause de majuscule"""
-				post_title_sans_accent = sans_accent_maj(post_title_lower)
-				post_description_sans_accent = sans_accent_maj(post_description_lower)
-				keyword_sans_accent = sans_accent_maj(keyword)
-
-				article=(post_title, post_link, human_date, id_rss, keyword_id)
-
-				if keyword_lower in post_title_lower and post_date >= last_launch:
-					query = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
-
-					########### DATABASE INSERTION
-					insert_news= database.cursor()
+					#TODO A découper dans une sous fonction Analyse(xmldoc, last_launch)
+					"""On définit les variables que l'on affectent aux commandes de Universal Feedparser"""
 					try :
-						insert_news.execute(query, article)
-						database.commit()
+						post_title = xmldoc.entries[range].title
+						post_description = xmldoc.entries[range].description
+						post_link = xmldoc.entries[range].link
+						post_date = xmldoc.entries[range].published_parsed
+						human_date = time.strftime("%d/%m/%Y %H:%M", post_date)
+						post_date = time.mktime(post_date)
 					except :
-						database.rollback()
-						print "ROLLBACK" ###
-					insert_news.close()
+						print "BEACON ERROR IN THE FLUX" ###
+						pass
+						break
 
-					new_article += 1 ###
-					break #les commandes break permettent que l'information ne s'affiche qu'une seule fois si il y a plusieurs keywords détectées dans l'entrée
+					post_title = post_title.strip()
+					post_description = post_description.strip()
 
-				elif keyword_lower in post_description_lower and post_date >= last_launch:
-					query = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
+					"""Variables de recherche pour une recherche en ignorant la casse"""
+					post_title_lower = post_title.lower()
+					post_description_lower = post_description.lower()
+					keyword_lower = keyword.lower()
 
-					########### DATABASE INSERT
-					insert_news= database.cursor()
-					try :
-						insert_news.execute(query, article)
-						database.commit()
-					except :
-						database.rollback()
-						print "ROLLBACK" ###
-					insert_news.close()
+					"""Variables de recherche pour une recherche en ignorant les accents inexistants pour cause de majuscule"""
+					post_title_sans_accent = sans_accent_maj(post_title_lower)
+					post_description_sans_accent = sans_accent_maj(post_description_lower)
+					keyword_sans_accent = sans_accent_maj(keyword)
 
-					new_article += 1 ###
-					break
+					keyword_id_comma2 = ","+str(keyword_id)+","
+					article=(post_title, post_link, human_date, id_rss, keyword_id_comma2)
 
-				elif keyword_sans_accent in post_title_sans_accent and post_date >= last_launch:
-					query = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
+					if keyword_lower in post_title_lower and post_date >= last_launch:
 
-					########### DATABASE INSERT
-					insert_news= database.cursor()
-					try :
-						insert_news.execute(query, article)
-						database.commit()
-					except :
-						database.rollback()
-						print "ROLLBACK" ###
-					insert_news.close()
+						########### DATABASE CHECKING
+						query = ("SELECT keyword_id FROM result_news_serge WHERE link = %s")
 
-					new_article += 1 ###
-					break
+						call_result_news= database.cursor()
+						call_result_news.execute(query, (post_link, ))
+						field_id_key = call_result_news.fetchone()
+						call_result_news.close()
 
-				elif keyword_sans_accent in post_description_sans_accent and post_date >= last_launch:
-					query = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
+						print field_id_key###
 
-					########### DATABASE INSERT
-					insert_news= database.cursor()
-					try :
-						insert_news.execute(query, article)
-						database.commit()
-					except :
-						database.rollback()
-						print "ROLLBACK" ###
-					insert_news.close()
+						########### DATABASE INSERTION
+						if field_id_key == None :
+							print "INSERTION"###
+							query = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
 
-					new_article += 1 ###
-					break
+							insert_news= database.cursor()
+							try :
+								insert_news.execute(query, article)
+								database.commit()
+							except :
+								database.rollback()
+								print "ROLLBACK" ###
+							insert_news.close()
 
-				range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
+							new_article += 1 ###
 
-			range = 0
-			print ("Articles trouvés : "+str(new_article)+"\n")
+						########### DATABASE UPDATE
+						else :
+							print "DOUBLON"###
+							field_id_key = field_id_key[0]
+							keyword_id_comma = str(keyword_id)+","
+
+							if keyword_id_comma2 not in field_id_key :
+								complete_keyword_id = field_id_key+keyword_id_comma
+
+								update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
+
+								update_keyword_id= database.cursor()
+								try :
+									update_keyword_id.execute(update, (complete_keyword_id, post_link))
+									database.commit()
+								except :
+									database.rollback()
+									print "ROLLBACK" ###
+								update_keyword_id.close()
+
+						break #les commandes break permettent que l'information ne s'affiche qu'une seule fois si il y a plusieurs keywords détectées dans l'entrée
+
+					elif keyword_lower in post_description_lower and post_date >= last_launch:
+						########### DATABASE CHECKING
+						query = ("SELECT keyword_id FROM result_news_serge WHERE link = %s")
+
+						call_result_news= database.cursor()
+						call_result_news.execute(query, (post_link, ))
+						field_id_key = call_result_news.fetchone()
+						call_result_news.close()
+
+						print field_id_key###
+
+						########### DATABASE INSERT
+						if field_id_key == None :
+							query = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
+
+							insert_news= database.cursor()
+							try :
+								insert_news.execute(query, article)
+								database.commit()
+							except :
+								database.rollback()
+								print "ROLLBACK" ###
+							insert_news.close()
+
+							new_article += 1 ###
+
+						########### DATABASE UPDATE
+						else :
+							print "DOUBLON"###
+							field_id_key = field_id_key[0]
+							keyword_id_comma = str(keyword_id)+","
+
+							if keyword_id_comma2 not in field_id_key :
+								complete_keyword_id = field_id_key+keyword_id_comma
+
+								update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
+
+								update_keyword_id= database.cursor()
+								try :
+									update_keyword_id.execute(update, (complete_keyword_id, post_link))
+									database.commit()
+								except :
+									database.rollback()
+									print "ROLLBACK" ###
+								update_keyword_id.close()
+
+						break
+
+					elif keyword_sans_accent in post_title_sans_accent and post_date >= last_launch:
+						########### DATABASE CHECKING
+						query = ("SELECT keyword_id FROM result_news_serge WHERE link = %s")
+
+						call_result_news= database.cursor()
+						call_result_news.execute(query, (post_link, ))
+						field_id_key = call_result_news.fetchone()
+						call_result_news.close()
+
+						print field_id_key###
+
+						########### DATABASE INSERT
+						if field_id_key == None :
+							query = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
+
+							insert_news= database.cursor()
+							try :
+								insert_news.execute(query, article)
+								database.commit()
+							except :
+								database.rollback()
+								print "ROLLBACK" ###
+							insert_news.close()
+
+							new_article += 1 ###
+
+						########### DATABASE UPDATE
+						else :
+							print "DOUBLON"###
+							field_id_key = field_id_key[0]
+							keyword_id_comma = str(keyword_id)+","
+
+							if keyword_id_comma2 not in field_id_key :
+								complete_keyword_id = field_id_key+keyword_id_comma
+
+								update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
+
+								update_keyword_id= database.cursor()
+								try :
+									update_keyword_id.execute(update, (complete_keyword_id, post_link))
+									database.commit()
+								except :
+									database.rollback()
+									print "ROLLBACK" ###
+								update_keyword_id.close()
+
+						break
+
+					elif keyword_sans_accent in post_description_sans_accent and post_date >= last_launch:
+						########### DATABASE CHECKING
+						query = ("SELECT keyword_id FROM result_news_serge WHERE link = %s")
+
+						call_result_news= database.cursor()
+						call_result_news.execute(query, (post_link, ))
+						field_id_key = call_result_news.fetchone()
+						call_result_news.close()
+
+						print field_id_key###
+
+						########### DATABASE INSERT
+						if field_id_key == None :
+							query = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
+
+							insert_news= database.cursor()
+							try :
+								insert_news.execute(query, article)
+								database.commit()
+							except :
+								database.rollback()
+								print "ROLLBACK" ###
+							insert_news.close()
+
+							new_article += 1 ###
+
+						########### DATABASE UPDATE
+						else :
+							print "DOUBLON"###
+							field_id_key = field_id_key[0]
+							keyword_id_comma = str(keyword_id)+","
+
+							if keyword_id_comma2 not in field_id_key :
+								complete_keyword_id = field_id_key+keyword_id_comma
+
+								update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
+
+								update_keyword_id= database.cursor()
+								try :
+									update_keyword_id.execute(update, (complete_keyword_id, post_link))
+									database.commit()
+								except :
+									database.rollback()
+									print "ROLLBACK" ###
+								update_keyword_id.close()
+
+						break
+
+					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
+
+				range = 0
+				print ("Articles trouvés : "+str(new_article)+"\n")
 
 
 def researchPatentsByKey(last_launch, WIPO_languages):
@@ -417,22 +562,52 @@ def researchPatentsByKey(last_launch, WIPO_languages):
 							post_date = time.mktime(post_date)
 							post_date >= last_launch
 
-							patent=(post_title, post_link, human_date, keyword_id)
+							keyword_id_comma2 = ","+str(keyword_id)+","
+							patent=(post_title, post_link, human_date, keyword_id_comma2)
+
+							query = ("SELECT keyword_id FROM result_patents_key_serge WHERE link = %s")
+
+							call_result_patents_key= database.cursor()
+							call_result_patents_key.execute(query, (post_link, ))
+							field_id_key = call_result_patents_key.fetchone()
+							call_result_patents_key.close()
 
 							if post_date >= last_launch:
-								query = ("INSERT INTO result_patents_key_serge(title, link, date, keyword_id) VALUES(%s, %s, %s, %s)")
 
 								########### DATABASE INSERT
-								insert_patents= database.cursor()
-								try :
-									insert_patents.execute(query, patent)
-									database.commit()
-								except :
-									database.rollback()
-									print "ROLLBACK" ###
-								insert_patents.close()
+								if field_id_key == None :
+									query = ("INSERT INTO result_patents_key_serge(title, link, date, keyword_id) VALUES(%s, %s, %s, %s)")
 
-								new_patent += 1
+									insert_patents= database.cursor()
+									try :
+										insert_patents.execute(query, patent)
+										database.commit()
+									except :
+										database.rollback()
+										print "ROLLBACK" ###
+									insert_patents.close()
+
+									new_patent += 1
+
+								########### DATABASE UPDATE
+								else :
+									print "DOUBLON"###
+									field_id_key = field_id_key[0]
+									keyword_id_comma = str(keyword_id)+","
+
+									if keyword_id_comma2 not in field_id_key :
+										complete_keyword_id = field_id_key+keyword_id_comma
+
+										update = ("UPDATE result_patents_key_serge SET keyword_id = %s WHERE link = %s")
+
+										update_keyword_id= database.cursor()
+										try :
+											update_keyword_id.execute(update, (complete_keyword_id, post_link))
+											database.commit()
+										except :
+											database.rollback()
+											print "ROLLBACK" ###
+										update_keyword_id.close()
 
 							range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 						print (str(new_patent)+"\n")###
@@ -514,22 +689,52 @@ def researchPatentsByInventor(last_launch):
 						post_date = time.mktime(post_date)
 						post_date >= last_launch
 
-						patent=(post_title, post_link, human_date, keyword_id)
+						keyword_id_comma2 = ","+str(keyword_id)+","
+						patent=(post_title, post_link, human_date, keyword_id_comma2)
+
+						query = ("SELECT keyword_id FROM result_patents_inventor_serge WHERE link = %s")
+
+						call_result_patents_inventor= database.cursor()
+						call_result_patents_inventor.execute(query, (post_link, ))
+						field_id_key = call_result_patents_inventor.fetchone()
+						call_result_patents_inventor.close()
 
 						if post_date >= last_launch:
-							query = ("INSERT INTO result_patents_inventor_serge(title, link, date, keyword_id) VALUES(%s, %s, %s, %s)")
 
 							########### DATABASE INSERT
-							insert_patents= database.cursor()
-							try :
-								insert_patents.execute(query, patent)
-								database.commit()
-							except :
-								database.rollback()
-								print "ROLLBACK" ###
-							insert_patents.close()
+							if field_id_key == None :
+								query = ("INSERT INTO result_patents_inventor_serge(title, link, date, keyword_id) VALUES(%s, %s, %s, %s)")
 
-							new_patent += 1 ###
+								insert_patents= database.cursor()
+								try :
+									insert_patents.execute(query, patent)
+									database.commit()
+								except :
+									database.rollback()
+									print "ROLLBACK" ###
+								insert_patents.close()
+
+								new_patent += 1 ###
+
+							########### DATABASE UPDATE
+							else :
+								print "DOUBLON"###
+								field_id_key = field_id_key[0]
+								keyword_id_comma = str(keyword_id)+","
+
+								if keyword_id_comma2 not in field_id_key :
+									complete_keyword_id = field_id_key+keyword_id_comma
+
+									update = ("UPDATE result_patents_inventor_serge SET keyword_id = %s WHERE link = %s")
+
+									update_keyword_id= database.cursor()
+									try :
+										update_keyword_id.execute(update, (complete_keyword_id, post_link))
+										database.commit()
+									except :
+										database.rollback()
+										print "ROLLBACK" ###
+									update_keyword_id.close()
 
 						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 					print (str(new_patent)+"\n")###
@@ -612,22 +817,52 @@ def researchPatentsByClass(last_launch):
 						post_date = time.mktime(post_date)
 						post_date >= last_launch
 
-						patent=(post_title, post_link, human_date, keyword_id)
+						keyword_id_comma2 = ","+str(keyword_id)+","
+						patent=(post_title, post_link, human_date, keyword_id_comma2)
+
+						query = ("SELECT keyword_id FROM result_patents_class_serge WHERE link = %s")
+
+						call_result_patents_class= database.cursor()
+						call_result_patents_class.execute(query, (post_link, ))
+						field_id_key = call_result_patents_class.fetchone()
+						call_result_patents_class.close()
 
 						if post_date >= last_launch:
-							query = ("INSERT INTO result_patents_class_serge(title, link, date, keyword_id) VALUES(%s, %s, %s, %s)")
 
 							########### DATABASE INSERT
-							insert_patents= database.cursor()
-							try :
-								insert_patents.execute(query, patent)
-								database.commit()
-							except :
-								database.rollback()
-								print "ROLLBACK" ###
-							insert_patents.close()
+							if field_id_key == None :
+								query = ("INSERT INTO result_patents_class_serge(title, link, date, keyword_id) VALUES(%s, %s, %s, %s)")
 
-							new_patent += 1###
+								insert_patents= database.cursor()
+								try :
+									insert_patents.execute(query, patent)
+									database.commit()
+								except :
+									database.rollback()
+									print "ROLLBACK" ###
+								insert_patents.close()
+
+								new_patent += 1###
+
+							########### DATABASE UPDATE
+							else :
+								print "DOUBLON"###
+								field_id_key = field_id_key[0]
+								keyword_id_comma = str(keyword_id)+","
+
+								if keyword_id_comma2 not in field_id_key :
+									complete_keyword_id = field_id_key+keyword_id_comma
+
+									update = ("UPDATE result_patents_class_serge SET keyword_id = %s WHERE link = %s")
+
+									update_keyword_id= database.cursor()
+									try :
+										update_keyword_id.execute(update, (complete_keyword_id, post_link))
+										database.commit()
+									except :
+										database.rollback()
+										print "ROLLBACK" ###
+									update_keyword_id.close()
 
 						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 					print (str(new_patent)+"\n")###
@@ -717,20 +952,50 @@ def science (last_launch):
 					post_date = time.mktime(post_date)
 					post_date >= last_launch
 
-					paper=(post_title, post_link, human_date, keyword_id)
+					keyword_id_comma2 = ","+str(keyword_id)+","
+					paper=(post_title, post_link, human_date, keyword_id_comma2)
+
+					query = ("SELECT keyword_id FROM result_science_serge WHERE link = %s")
+
+					call_result_science= database.cursor()
+					call_result_science.execute(query, (post_link, ))
+					field_id_key = call_result_science.fetchone()
+					call_result_science.close()
 
 					if post_date >= last_launch:
-						query = ("INSERT INTO result_science_serge(title, link, date, keyword_id) VALUES(%s, %s, %s, %s)")
 
 						########### DATABASE INSERT
-						insert_patents= database.cursor()
-						try :
-							insert_patents.execute(query, paper)
-							database.commit()
-						except :
-							database.rollback()
-							print "ROLLBACK" ###
-						insert_patents.close()
+						if field_id_key == None :
+							query = ("INSERT INTO result_science_serge(title, link, date, keyword_id) VALUES(%s, %s, %s, %s)")
+
+							insert_patents= database.cursor()
+							try :
+								insert_patents.execute(query, paper)
+								database.commit()
+							except :
+								database.rollback()
+								print "ROLLBACK" ###
+							insert_patents.close()
+
+						########### DATABASE UPDATE
+						else :
+							print "DOUBLON"###
+							field_id_key = field_id_key[0]
+							keyword_id_comma = str(keyword_id)+","
+
+							if keyword_id_comma2 not in field_id_key :
+								complete_keyword_id = field_id_key+keyword_id_comma
+
+								update = ("UPDATE result_science_serge SET keyword_id = %s WHERE link = %s")
+
+								update_keyword_id= database.cursor()
+								try :
+									update_keyword_id.execute(update, (complete_keyword_id, post_link))
+									database.commit()
+								except :
+									database.rollback()
+									print "ROLLBACK" ###
+								update_keyword_id.close()
 
 					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
@@ -740,10 +1005,15 @@ def science (last_launch):
 	#if new_article == 0 :
 		#newsletter.write ("Aucune nouvelle publication dans vos centres d'intérêts\n \n")
 
+#TODO Option 1 rangement de mail (par source) : faire une une fonction s'éxécutant en début de programme pour récupérer tous les titres de flux dont le champ name est vide et les insérer dans la base de données avant l'éxécution du coeur de programme
 
+#TODO Option 2 rangement de mail par mot-clés : On récupère les mots clés de l'utilisateur en cours. On fait une boucle sur la liste pour récupérer tous les liens non envoyés correspondant à cette source (impression au passage du mots clés et des liens non envoyés correspondant)
+
+#TODO Créer 2 fonctions Newsletter différentes pour chacune des options. La bonne fonction se déclenchera après vérification de l'option de l'utilisateur dans la base users_table_serge
 def newsletter (user, permission_news, permission_science, permission_patents, permission_patents_key, permission_patents_class, permission_patents_inventor, not_send_links_news_list, not_send_titles_news_list, not_send_links_science_list, not_send_titles_science_list, not_send_links_patents_key_list, not_send_titles_patents_key_list, not_send_links_patents_inventor_list, not_send_titles_patents_inventor_list, not_send_links_patents_class_list, not_send_titles_patents_class_list, not_send_news, not_send_science, not_send_patents_class, not_send_patents_inventor, not_send_patents_key) :
 
 	#print ("TOTAL LIENS NON ENVOYÉS : "+ str(not_send)) ###
+	print ("NEWSLETTER TO "+user)###
 
 	######### ECRITURE FICHIER TRANSITOIRE
 	newsletter = open("Newsletter.txt", "a")
@@ -814,9 +1084,16 @@ def newsletter (user, permission_news, permission_science, permission_patents, p
 
 	newsletter.write ("Bonne journée "+user.encode("utf_8")+"\n \n")
 	newsletter.write ("SERGE")
+	newsletter.close
 
+	#newsletter = open("Newsletter.txt", "r")
+	#verif= newsletter.readlines()
+	#print verif
+	#newsletter.close
 
 def mail(register, user):
+
+	print ("MAIL to "+user)
 
 	######### SERGE MAIL
 	sergemail=open("permission/sergemail.txt","r")
@@ -832,6 +1109,7 @@ def mail(register, user):
 	call_users.close()
 
 	toaddr = row[0]
+	print toaddr
 
 	"""On veux transférer le contenu du fichier texte DANS le mail"""
 	newsletter = open("Newsletter.txt", "r")
@@ -857,7 +1135,7 @@ def mail(register, user):
 	server.quit()
 
 
-def stairwayToUpdate (register, not_send_links_news_list, not_send_links_science_list, not_send_links_patents_class_list, not_send_links_patents_inventor_list, not_send_links_patents_key_list ) :
+def stairwayToUpdate (register, not_send_links_news_list, not_send_links_science_list, not_send_links_patents_class_list, not_send_links_patents_inventor_list, not_send_links_patents_key_list, now) :
 
 	######### SEND_STATUS UPDATE IN result_news_serge
 	for link in not_send_links_news_list :
@@ -873,7 +1151,6 @@ def stairwayToUpdate (register, not_send_links_news_list, not_send_links_science
 
 		if register_comma2 not in send_status :
 			complete_status = send_status+register_comma
-			print complete_status ###
 
 			update = ("UPDATE result_news_serge SET send_status = %s WHERE link = %s")
 
@@ -884,8 +1161,9 @@ def stairwayToUpdate (register, not_send_links_news_list, not_send_links_science
 				database.rollback()
 				print "ROLLBACK" ###
 
-		elif register_comma2 in send_status :
-			print "DEJA ENVOYÉ" ###
+		elif register_comma2 in send_status : ###
+			pass
+			#print "DEJA ENVOYÉ" ###
 
 		else :
 			print "WARNING UNKNOWN ERROR" ###
@@ -901,15 +1179,11 @@ def stairwayToUpdate (register, not_send_links_news_list, not_send_links_science
 		row = call_science.fetchone()
 
 		send_status = row[0]
-		print send_status
 		register_comma = register+","
-		print register_comma ###
 		register_comma2 = ","+register+","
-		print register_comma2 ###
 
 		if register_comma2 not in send_status :
 			complete_status = send_status+register_comma
-			print complete_status ###
 
 			update = ("UPDATE result_science_serge SET send_status = %s WHERE link = %s")
 
@@ -921,7 +1195,8 @@ def stairwayToUpdate (register, not_send_links_news_list, not_send_links_science
 				print "ROLLBACK" ###
 
 		elif register_comma2 in send_status :
-			print "DEJA ENVOYÉ" ###
+			pass
+			#print "DEJA ENVOYÉ" ###
 
 		else :
 			print "WARNING UNKNOWN ERROR" ###
@@ -937,15 +1212,11 @@ def stairwayToUpdate (register, not_send_links_news_list, not_send_links_science
 		row = call_patents_class.fetchone()
 
 		send_status = row[0]
-		print send_status
 		register_comma = register+","
-		print register_comma ###
 		register_comma2 = ","+register+","
-		print register_comma2 ###
 
 		if register_comma2 not in send_status :
 			complete_status = send_status+register_comma
-			print complete_status ###
 
 			update = ("UPDATE result_patents_class_serge SET send_status = %s WHERE link = %s")
 
@@ -957,7 +1228,8 @@ def stairwayToUpdate (register, not_send_links_news_list, not_send_links_science
 				print "ROLLBACK" ###
 
 		elif register_comma2 in send_status :
-			print "DEJA ENVOYÉ" ###
+			pass
+			#print "DEJA ENVOYÉ" ###
 
 		else :
 			print "WARNING UNKNOWN ERROR" ###
@@ -973,15 +1245,11 @@ def stairwayToUpdate (register, not_send_links_news_list, not_send_links_science
 		row = call_patents_inventor.fetchone()
 
 		send_status = row[0]
-		print send_status
 		register_comma = register+","
-		print register_comma ###
 		register_comma2 = ","+register+","
-		print register_comma2 ###
 
 		if register_comma2 not in send_status :
 			complete_status = send_status+register_comma
-			print complete_status ###
 
 			update = ("UPDATE result_patents_inventor_serge SET send_status = %s WHERE link = %s")
 
@@ -993,7 +1261,8 @@ def stairwayToUpdate (register, not_send_links_news_list, not_send_links_science
 				print "ROLLBACK" ###
 
 		elif register_comma2 in send_status :
-			print "DEJA ENVOYÉ" ###
+			pass
+			#print "DEJA ENVOYÉ" ###
 
 		else :
 			print "WARNING UNKNOWN ERROR" ###
@@ -1009,15 +1278,11 @@ def stairwayToUpdate (register, not_send_links_news_list, not_send_links_science
 		row = call_patents_key.fetchone()
 
 		send_status = row[0]
-		print send_status
 		register_comma = register+","
-		print register_comma ###
 		register_comma2 = ","+register+","
-		print register_comma2 ###
 
 		if register_comma2 not in send_status :
 			complete_status = send_status+register_comma
-			print complete_status ###
 
 			update = ("UPDATE result_patents_key_serge SET send_status = %s WHERE link = %s")
 
@@ -1029,16 +1294,39 @@ def stairwayToUpdate (register, not_send_links_news_list, not_send_links_science
 				print "ROLLBACK" ###
 
 		elif register_comma2 in send_status :
-			print "DEJA ENVOYÉ" ###
+			pass
+			#print "DEJA ENVOYÉ" ###
 
 		else :
 			print "WARNING UNKNOWN ERROR" ###
 
 		call_patents_key.close()
 
+	######### USER last_mail FIELD UPDATE
+	update = "UPDATE users_table_serge SET last_mail = %s WHERE id = %s"
+
+	call_users= database.cursor()
+
+	try :
+		call_users.execute(update, (now, register))
+		database.commit()
+	except :
+		database.rollback()
+		print "ROLLBACK" ###
+
+	call_users.close()
+
 
 
 ######### MAIN #TODO fractionner le main en fonctions
+
+######### CLEANING OF THE DIRECTORY
+try:
+	os.remove("Newsletter.txt")
+except :
+	pass
+
+######### TIME AND LANGUAGES VARIABLES DECLARATION
 now=time.time()
 last_launch = lastResearch()
 jour = unicode(datetime.date.today())
@@ -1098,8 +1386,29 @@ for user in user_list_all:
 	print ("\nUSER : " + register) ###
 	user_id_comma="%," + register + ",%"
 
+	######### SET ID LISTS FOR KEYWORDS AND SOURCES
+	id_keywords_news_list=[]
+	id_keywords_science_list=[]
+	id_keywords_patents_key_list=[]
+	id_keywords_patents_class_list=[]
+	id_keywords_patents_inventor_list=[]
+
+	id_sources_news_list=[]
+
+	######### SET RESULTS LISTS
+	not_send_links_news_list=[]
+	not_send_titles_news_list=[]
+	not_send_links_science_list=[]
+	not_send_titles_science_list =[]
+	not_send_links_patents_key_list=[]
+	not_send_titles_patents_key_list=[]
+	not_send_links_patents_class_list=[]
+	not_send_titles_patents_class_list=[]
+	not_send_links_patents_inventor_list=[]
+	not_send_titles_patents_inventor_list=[]
+
 	permission_list = permission(register)
-	#print permission_list ###
+	print permission_list ###
 
 	######### NEWS PERMISSION STATE
 	permission_news = permission_list[0]
@@ -1110,40 +1419,70 @@ for user in user_list_all:
 		######### RESULTS NEWS
 		print ("Recherche NEWS activée") ###
 
-		######### NEWS LINKS QUERY
-		query = "SELECT result_news_serge.link FROM result_news_serge INNER JOIN keyword_news_serge ON result_news_serge.keyword_id = keyword_news_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)"
+		######### KEYWORDS ID NEWS QUERY
+		query_id=("SELECT id FROM keyword_news_serge WHERE (owners LIKE %s AND active > 0)")
 
-		call_links_news=database.cursor()
-		call_links_news.execute(query, (user_id_comma, user_id_comma))
-		rows = call_links_news.fetchall()
-		call_links_news.close()
-
-		not_send_links_news_list=[]  # Enregistrement des liens non envoyés dans une liste.
+		call_id_news=database.cursor()
+		call_id_news.execute(query_id, (user_id_comma, ))
+		rows = call_id_news.fetchall()
+		call_id_news.close()
 
 		for row in rows :
-			field = row[0].strip()
-			not_send_links_news_list.append(field)
+			field = row[0]
+			id_keywords_news_list.append(field)
 
-		#print ("not_send_links_news_list :")###
-		#print (not_send_links_news_list) ###
-		#print ("LIENS NEWS NON ENVOYÉS : "+ str(len(not_send_links_news_list))) ###
+		######### SOURCES ID NEWS QUERY
+		query_id_sources=("SELECT id FROM rss_serge WHERE (owners LIKE %s AND active > 0)")
+
+		call_id_rss=database.cursor()
+		call_id_rss.execute(query_id_sources, (user_id_comma, ))
+		rows = call_id_rss.fetchall()
+		call_id_rss.close()
+
+		for row in rows :
+			field = row[0]
+			id_sources_news_list.append(field)
+
+		######### NEWS LINKS QUERY
+		for publisher in id_sources_news_list :
+
+			for identificator in id_keywords_news_list :
+				identificator_comma = ","+str(identificator)+","
+
+				query_links=("SELECT link FROM result_news_serge WHERE (send_status NOT LIKE %s AND keyword_id LIKE %s AND id_source = %s)")
+
+				call_links_news=database.cursor()
+				call_links_news.execute(query_links, (user_id_comma, identificator_comma, publisher))
+				rows = call_links_news.fetchall()
+				call_links_news.close()
+
+				for row in rows :
+					field = row[0].strip()
+					not_send_links_news_list.append(field)
+
+					#print ("not_send_links_news_list :")###
+					#print (not_send_links_news_list) ###
+					#print ("LIENS NEWS NON ENVOYÉS : "+ str(len(not_send_links_news_list))) ###
 
 		######### NEWS TITLES QUERY
-		query = "SELECT result_news_serge.title FROM result_news_serge INNER JOIN keyword_news_serge ON result_news_serge.keyword_id = keyword_news_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)"
+		for publisher in id_sources_news_list :
 
-		call_title_news=database.cursor()
-		call_title_news.execute(query, (user_id_comma, user_id_comma))
-		rows = call_title_news.fetchall()
-		call_title_news.close()
+			for identificator in id_keywords_news_list :
+				identificator_comma = ","+str(identificator)+","
 
-		not_send_titles_news_list=[]  # Enregistrement des titres non envoyés dans une liste.
+				query_titles=("SELECT title FROM result_news_serge WHERE (send_status NOT LIKE %s AND keyword_id LIKE %s AND id_source = %s)")
 
-		for row in rows :
-			field = row[0].strip()
-			not_send_titles_news_list.append(field)
+				call_title_news=database.cursor()
+				call_title_news.execute(query_titles, (user_id_comma, identificator_comma, publisher))
+				rows = call_title_news.fetchall()
+				call_title_news.close()
 
-			#print ("not_send_titles_news_list :")###
-			#print (not_send_titles_news_list) ###
+				for row in rows :
+					field = row[0].strip()
+					not_send_titles_news_list.append(field)
+
+					#print ("not_send_titles_news_list :")###
+					#print (not_send_titles_news_list) ###
 
 
 	######### SCIENCE PERMISSION STATE
@@ -1155,45 +1494,61 @@ for user in user_list_all:
 		######### RESULTS SCIENCE
 		print ("Recherche SCIENCE activée") ###
 
-		######### SCIENCE LINKS QUERY
-		query = "SELECT result_science_serge.link FROM result_science_serge INNER JOIN keyword_science_serge ON result_science_serge.keyword_id = keyword_science_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)"
+		######### KEYWORDS ID SCIENCE QUERY
+		query_id=("SELECT id FROM keyword_science_serge WHERE (owners LIKE %s AND active > 0)")
 
-		call_links_science=database.cursor()
-		call_links_science.execute(query, (user_id_comma, user_id_comma))
-		rows = call_links_science.fetchall()
-		call_links_science.close()
-
-		not_send_links_science_list=[]  # Enregistrement des liens non envoyés dans une liste.
+		call_id_science=database.cursor()
+		call_id_science.execute(query_id, (user_id_comma, ))
+		rows = call_id_science.fetchall()
+		call_id_science.close()
 
 		for row in rows :
-			field = row[0].strip()
-			not_send_links_science_list.append(field)
+			field = row[0]
+			id_keywords_science_list.append(field)
 
-		#print ("not_send_links_science_list :")###
-		#print (not_send_links_science_list) ###
-		#print ("LIENS SCIENCE NON ENVOYÉS : "+ str(len(not_send_links_science_list))) ###
+		######### SCIENCE LINKS QUERY
+		for identificator in id_keywords_science_list :
+			identificator_comma = ","+str(identificator)+","
+
+			query_links=("SELECT link FROM result_science_serge WHERE (send_status NOT LIKE %s AND keyword_id LIKE %s)")
+
+			call_links_science=database.cursor()
+			call_links_science.execute(query_links, (user_id_comma, identificator_comma))
+			rows = call_links_science.fetchall()
+			call_links_science.close()
+
+			for row in rows :
+				field = row[0].strip()
+				not_send_links_science_list.append(field)
+
+			#print ("not_send_links_science_list :")###
+			#print (not_send_links_science_list) ###
+			#print ("LIENS SCIENCE NON ENVOYÉS : "+ str(len(not_send_links_science_list))) ###
 
 		######### SCIENCE TITLES QUERY
-		query = "SELECT result_science_serge.title FROM result_science_serge INNER JOIN keyword_science_serge ON result_science_serge.keyword_id = keyword_science_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)"
+		for identificator in id_keywords_science_list :
+			identificator_comma = ","+str(identificator)+","
 
-		call_title_science=database.cursor()
-		call_title_science.execute(query, (user_id_comma, user_id_comma))
-		rows = call_title_science.fetchall()
-		call_title_science.close()
+			query_titles=("SELECT title FROM result_science_serge WHERE (send_status NOT LIKE %s AND keyword_id LIKE %s)")
 
-		not_send_titles_science_list=[]  # Enregistrement des titres non envoyés dans une liste.
+			call_title_science=database.cursor()
+			call_title_science.execute(query_titles, (user_id_comma, identificator_comma))
+			rows = call_title_science.fetchall()
+			call_title_science.close()
 
-		for row in rows :
-			field = row[0].strip()
-			not_send_titles_science_list.append(field)
+			not_send_titles_science_list=[]  # Enregistrement des titres non envoyés dans une liste.
 
-		#print ("not_send_titles_science_list :")###
-		#print (not_send_titles_science_list) ###
+			for row in rows :
+				field = row[0].strip()
+				not_send_titles_science_list.append(field)
+
+			#print ("not_send_titles_science_list :")###
+			#print (not_send_titles_science_list) ###
 
 
 	######### PATENTS PERMISSION STATE
 	permission_patents = permission_list[2]
-	#print permission_patents ###
+	#print "permission BREVETS : "+str(permission_patents) ###
 
 	if permission_patents == 0 :
 
@@ -1206,40 +1561,55 @@ for user in user_list_all:
 			######### RESULTS PATENTS CLASS
 			print ("Recherche PATENTS CLASS activée") ###
 
-			######### PATENTS CLASS LINKS QUERY
-			query = "SELECT result_patents_class_serge.link FROM result_patents_class_serge INNER JOIN keyword_patents_class_serge ON result_patents_class_serge.keyword_id = keyword_patents_class_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)"
+			######### KEYWORDS ID PATENTS CLASS QUERY
+			query_id=("SELECT id FROM keyword_patents_class_serge WHERE (owners LIKE %s AND active > 0)")
 
-			call_links_patents_class=database.cursor()
-			call_links_patents_class.execute(query, (user_id_comma, user_id_comma))
-			rows = call_links_patents_class.fetchall()
-			call_links_patents_class.close()
-
-			not_send_links_patents_class_list=[]  # Enregistrement des liens non envoyés dans une liste.
+			call_id_patents_class=database.cursor()
+			call_id_patents_class.execute(query_id, (user_id_comma, ))
+			rows = call_id_patents_class.fetchall()
+			call_id_patents_class.close()
 
 			for row in rows :
-				field = row[0].strip()
-				not_send_links_patents_class_list.append(field)
+				field = row[0]
+				id_keywords_patents_class_list.append(field)
+
+			######### PATENTS CLASS LINKS QUERY
+			for identificator in id_keywords_patents_class_list :
+				identificator_comma = ","+str(identificator)+","
+
+				query_links=("SELECT link FROM result_patents_class_serge WHERE (send_status NOT LIKE %s AND keyword_id LIKE %s)")
+
+				call_links_patents_class=database.cursor()
+				call_links_patents_class.execute(query_links, (user_id_comma, identificator_comma))
+				rows = call_links_patents_class.fetchall()
+				call_links_patents_class.close()
+
+				for row in rows :
+					field = row[0].strip()
+					not_send_links_patents_class_list.append(field)
 
 			#print ("not_send_links_patents_class_list :")###
 			#print (not_send_links_patents_class_list) ###
 			#print ("LIENS PATENTS CLASS NON ENVOYÉS : "+ str(len(not_send_links_patents_class_list))) ###
 
 			######### PATENTS CLASS TITLES QUERY
+			for identificator in id_keywords_patents_class_list :
+				identificator_comma = ","+str(identificator)+","
 
-			query = "SELECT result_patents_class_serge.title FROM result_patents_class_serge INNER JOIN keyword_patents_class_serge ON result_patents_class_serge.keyword_id = keyword_patents_class_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)"
+				query_titles=("SELECT title FROM result_patents_class_serge WHERE (send_status NOT LIKE %s AND keyword_id LIKE %s)")
 
-			call_title_patents=database.cursor()
-			call_title_patents.execute(query, (user_id_comma, user_id_comma))
-			rows = call_title_patents.fetchall()
-			call_title_patents.close()
+				call_title_patents=database.cursor()
+				call_title_patents.execute(query_titles, (user_id_comma, identificator_comma))
+				rows = call_title_patents.fetchall()
+				call_title_patents.close()
 
-			not_send_titles_patents_class_list=[]  # Enregistrement des titres non envoyés dans une liste.
+				not_send_titles_patents_class_list=[]  # Enregistrement des titres non envoyés dans une liste.
 
-			for row in rows :
-				field = row[0].strip()
-				not_send_titles_patents_class_list.append(field)
+				for row in rows :
+					field = row[0].strip()
+					not_send_titles_patents_class_list.append(field)
 
-			#print ("TITRES PATENTS CLASS NON ENVOYÉS : "+ str(len(not_send_titles_patents_class_list))) ###
+				#print ("TITRES PATENTS CLASS NON ENVOYÉS : "+ str(len(not_send_titles_patents_class_list))) ###
 
 		######### PATENTS INVENTOR PERMISSION STATE
 		permission_patents_inventor = permission_list[4]
@@ -1250,37 +1620,53 @@ for user in user_list_all:
 			######### RESULTS PATENTS INVENTOR
 			print ("Recherche PATENTS INVENTOR activée") ###
 
-			######### PATENTS INVENTOR LINKS QUERY
-			query = "SELECT result_patents_inventor_serge.link FROM result_patents_inventor_serge INNER JOIN keyword_patents_inventor_serge ON result_patents_inventor_serge.keyword_id = keyword_patents_inventor_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)"
+			######### KEYWORDS ID PATENTS INVENTOR QUERY
+			query_id=("SELECT id FROM keyword_patents_inventor_serge WHERE (owners LIKE %s AND active > 0)")
 
-			call_links_patents_inventor=database.cursor()
-			call_links_patents_inventor.execute(query, (user_id_comma, user_id_comma))
-			rows = call_links_patents_inventor.fetchall()
-			call_links_patents_inventor.close()
-
-			not_send_links_patents_inventor_list=[]  # Enregistrement des liens non envoyés dans une liste.
+			call_id_patents_inventor=database.cursor()
+			call_id_patents_inventor.execute(query_id, (user_id_comma, ))
+			rows = call_id_patents_inventor.fetchall()
+			call_id_patents_inventor.close()
 
 			for row in rows :
-				field = row[0].strip()
-				not_send_links_patents_inventor_list.append(field)
+				field = row[0]
+				id_keywords_patents_inventor_list.append(field)
+
+			######### PATENTS INVENTOR LINKS QUERY
+			for identificator in id_keywords_patents_inventor_list :
+				identificator_comma = ","+str(identificator)+","
+
+				query_links=("SELECT link FROM result_patents_inventor_serge WHERE (send_status NOT LIKE %s AND keyword_id LIKE %s)")
+
+				call_links_patents_inventor=database.cursor()
+				call_links_patents_inventor.execute(query_links, (user_id_comma, identificator_comma))
+				rows = call_links_patents_inventor.fetchall()
+				call_links_patents_inventor.close()
+
+				for row in rows :
+					field = row[0].strip()
+					not_send_links_patents_inventor_list.append(field)
 
 			#print ("LIENS PATENTS INVENTOR NON ENVOYÉS : "+ str(len(not_send_links_patents_inventor_list))) ###
 
 			######### PATENTS INVENTOR TITLES QUERY
-			query = "SELECT result_patents_inventor_serge.title FROM result_patents_inventor_serge INNER JOIN keyword_patents_inventor_serge ON result_patents_inventor_serge.keyword_id = keyword_patents_inventor_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)"
+			for identificator in id_keywords_patents_inventor_list :
+				identificator_comma = ","+str(identificator)+","
 
-			call_title_patents=database.cursor()
-			call_title_patents.execute(query, (user_id_comma, user_id_comma))
-			rows = call_title_patents.fetchall()
-			call_title_patents.close()
+				query_titles=("SELECT title FROM result_patents_inventor_serge WHERE (send_status NOT LIKE %s AND keyword_id LIKE %s)")
 
-			not_send_titles_patents_inventor_list=[]  # Enregistrement des titres non envoyés dans une liste.
+				call_title_patents=database.cursor()
+				call_title_patents.execute(query_titles, (user_id_comma, identificator_comma))
+				rows = call_title_patents.fetchall()
+				call_title_patents.close()
 
-			for row in rows :
-				field = row[0].strip()
-				not_send_titles_patents_inventor_list.append(field)
+				not_send_titles_patents_inventor_list=[]  # Enregistrement des titres non envoyés dans une liste.
 
-			#print ("TITRES PATENTS INVENTOR NON ENVOYÉS : "+ str(len(not_send_titles_patents_inventor_list))) ###
+				for row in rows :
+					field = row[0].strip()
+					not_send_titles_patents_inventor_list.append(field)
+
+				#print ("TITRES PATENTS INVENTOR NON ENVOYÉS : "+ str(len(not_send_titles_patents_inventor_list))) ###
 
 
 		######### PATENTS KEY PERMISSION STATE
@@ -1292,35 +1678,49 @@ for user in user_list_all:
 			######### RESULTS PATENTS KEY
 			print ("Recherche PATENTS KEY activée") ###
 
-			######### PATENTS KEY LINKS QUERY
-			query = "SELECT result_patents_key_serge.link FROM result_patents_key_serge INNER JOIN keyword_patents_key_serge ON result_patents_key_serge.keyword_id = keyword_patents_key_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)"
+			######### KEYWORDS ID PATENTS INVENTOR QUERY
+			query_id=("SELECT id FROM keyword_patents_key_serge WHERE (owners LIKE %s AND active > 0)")
 
-			call_links_patents_key=database.cursor()
-			call_links_patents_key.execute(query, (user_id_comma, user_id_comma))
-			rows = call_links_patents_key.fetchall()
-			call_links_patents_key.close()
-
-			not_send_links_patents_key_list=[]  # Enregistrement des liens non envoyés dans une liste.
+			call_id_patents_key=database.cursor()
+			call_id_patents_key.execute(query_id, (user_id_comma, ))
+			rows = call_id_patents_key.fetchall()
+			call_id_patents_key.close()
 
 			for row in rows :
-				field = row[0].strip()
-				not_send_links_patents_key_list.append(field)
+				field = row[0]
+				id_keywords_patents_key_list.append(field)
+
+			######### PATENTS KEY LINKS QUERY
+			for identificator in id_keywords_patents_key_list :
+				identificator_comma = ","+str(identificator)+","
+
+				query_links=("SELECT link FROM result_patents_key_serge WHERE (send_status NOT LIKE %s AND keyword_id LIKE %s)")
+
+				call_links_patents_key=database.cursor()
+				call_links_patents_key.execute(query_links, (user_id_comma, identificator_comma))
+				rows = call_links_patents_key.fetchall()
+				call_links_patents_key.close()
+
+				for row in rows :
+					field = row[0].strip()
+					not_send_links_patents_key_list.append(field)
 
 			#print ("LIENS PATENTS KEY NON ENVOYÉS : "+ str(len(not_send_links_patents_key_list))) ###
 
 			######### PATENTS KEY TITLES QUERY
-			query = "SELECT result_patents_key_serge.title FROM result_patents_key_serge INNER JOIN keyword_patents_key_serge ON result_patents_key_serge.keyword_id = keyword_patents_key_serge.id WHERE (owners LIKE %s AND send_status NOT LIKE %s)"
+			for identificator in id_keywords_patents_key_list :
+				identificator_comma = ","+str(identificator)+","
 
-			call_title_patents=database.cursor()
-			call_title_patents.execute(query, (user_id_comma, user_id_comma))
-			rows = call_title_patents.fetchall()
-			call_title_patents.close()
+				query_titles=("SELECT title FROM result_patents_key_serge WHERE (send_status NOT LIKE %s AND keyword_id LIKE %s)")
 
-			not_send_titles_patents_key_list=[]  # Enregistrement des titres non envoyés dans une liste.
+				call_title_patents=database.cursor()
+				call_title_patents.execute(query_titles, (user_id_comma, identificator_comma))
+				rows = call_title_patents.fetchall()
+				call_title_patents.close()
 
-			for row in rows :
-				field = row[0].strip()
-				not_send_titles_patents_key_list.append(field)
+				for row in rows :
+					field = row[0].strip()
+					not_send_titles_patents_key_list.append(field)
 
 			#print ("TITRES PATENTS KEY NON ENVOYÉS : "+ str(len(not_send_titles_patents_key_list))) ###
 
@@ -1333,8 +1733,9 @@ for user in user_list_all:
 	not_send_patents_class = highway[2]
 	not_send_patents_inventor = highway[3]
 	not_send_patents_key = highway[4]
-
 	not_send = highway[5]
+
+	print ("NON ENVOYÉ : "+str(not_send))###
 
 	######### SEND CONDITION QUERY
 	query= "SELECT send_condition FROM users_table_serge WHERE id = %s" #On regarde la condition d'envoi
@@ -1348,17 +1749,22 @@ for user in user_list_all:
 
 	######### FREQUENCY CONDITION
 	if condition[0] == "freq":
-		query = "SELECT frequency FROM users_table_serge WHERE id = %s"
+		query_freq = "SELECT frequency FROM users_table_serge WHERE id = %s"
+		query_last_mail = "SELECT last_mail FROM users_table_serge WHERE id = %s"
 
 		call_users= database.cursor()
-		call_users.execute(query, (register))
+		call_users.execute(query_freq, (register))
 		frequency = call_users.fetchone()
+		call_users.execute(query_last_mail, (register))
+		last_mail = call_users.fetchone()
 		call_users.close()
 
 		frequency = frequency[0]
 		print ("Fréquence de l'utilisateur :"+ str(frequency))###
 
-		interval = now-last_launch
+		last_mail = last_mail[0]
+
+		interval = now-last_mail
 		print ("Intervalle de temps :"+ str(interval))###
 
 		if interval >= frequency and not_send != 0 :
@@ -1371,7 +1777,7 @@ for user in user_list_all:
 			mail(register, user)
 
 			######### CALL TO stairwayToUpdate FUNCTION
-			stairwayToUpdate (register, not_send_links_news_list, not_send_links_science_list, not_send_links_patents_class_list, not_send_links_patents_inventor_list, not_send_links_patents_key_list)
+			stairwayToUpdate (register, not_send_links_news_list, not_send_links_science_list, not_send_links_patents_class_list, not_send_links_patents_inventor_list, not_send_links_patents_key_list, now)
 
 		elif interval >= frequency and not_send != 0 :
 			print ("Fréquence atteinte mais aucune récupération") ###
@@ -1390,6 +1796,7 @@ for user in user_list_all:
 		call_users.close()
 
 		print ("LIMITE DE LIENS :" + str(limit[0]))###
+		limit = limit[0]
 
 		if not_send >= limit :
 			print ("SUPERIEUR\n") ###
@@ -1401,7 +1808,7 @@ for user in user_list_all:
 			mail(register, user)
 
 			######### CALL TO stairwayToUpdate FUNCTION
-			stairwayToUpdate (register, not_send_links_news_list, not_send_links_science_list, not_send_links_patents_class_list, not_send_links_patents_inventor_list, not_send_links_patents_key_list)
+			stairwayToUpdate (register, not_send_links_news_list, not_send_links_science_list, not_send_links_patents_class_list, not_send_links_patents_inventor_list, not_send_links_patents_key_list, now)
 
 		elif not_send < limit:
 			print ("INFERIEUR\n") ###
@@ -1410,18 +1817,6 @@ for user in user_list_all:
 	######### WEB CONDITION
 	if condition[0] == "web":
 		print("break")
-
-	######### RESULTS LISTS RESET
-	not_send_links_news_list=[]
-	not_send_titles_news_list=[]
-	not_send_links_science_list=[]
-	not_send_titles_science_list =[]
-	not_send_links_patents_key_list=[]
-	not_send_titles_patents_key_list=[]
-	not_send_links_patents_class_list=[]
-	not_send_titles_patents_class_list=[]
-	not_send_links_patents_inventor_list=[]
-	not_send_titles_patents_inventor_list=[]
 
 	register=int(register) #COMPTEUR
 	register=register+1 #INCREMENTATION COMPTEUR
