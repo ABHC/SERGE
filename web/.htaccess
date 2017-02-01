@@ -1,0 +1,15 @@
+Options +FollowSymlinks
+ErrorDocument 404 /erreur404.php
+ErrorDocument 403 /erreur403.php
+ErrorDocument 401 /erreur401.php
+
+RewriteEngine on
+
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php [L]
+
+php_value upload_max_filesize 200M
+php_value post_max_size 200M
+
+php_value max_execution_time 2000
+php_value max_input_time 2000
