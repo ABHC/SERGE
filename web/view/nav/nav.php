@@ -1,25 +1,36 @@
 <div class="nav">
-	<div class="navBlock">
-		<div class="navResultSergeLogo">
-		</div>
+	<div class="navlogo">
+		<a class="navCairnDevicesLogo" href="result">
+		</a>
 		<a class="navTitle" href="result">
-			Your monitoring result
+			Serge by Cairn Devices
 		</a>
 	</div>
 
-	<div class="navBlock">
-		<div class="navSergeSettingLogo">
-		</div>
-		<a class="navTitle" href="setting">
-			Serge setting
+	<div class="navBlockContainer">
+		<a class="navBlock active" href="result">
+			<div class="navResultSergeLogo">
+			</div>
+			<div class="navTitle" >
+				Result
+			</div>
+		</a>
+
+		<a class="navBlock" href="wiki">
+			<div class="navWikiLogo">
+			</div>
+			<div class="navTitle" >
+				Wiki
+			</div>
+		</a>
+
+		<a class="navBlock" href="setting">
+			<div class="navSergeSettingLogo">
+			</div>
+			<div class="navTitle" >
+				Settings
+			</div>
 		</a>
 	</div>
 
-	<div class="navBlock">
-		<div class="navWikiLogo">
-		</div>
-		<a class="navTitle" href="wiki">
-			Wiki
-		</a>
-	</div>
 </div>
