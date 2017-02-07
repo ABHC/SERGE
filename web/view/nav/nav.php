@@ -8,7 +8,7 @@
 	</div>
 
 	<div class="navBlockContainer">
-		<a class="navBlock active" href="result">
+		<a class="navBlock active" href="result"><!-- TODO Mettre le active ne variable php -->
 			<div class="navResultSergeLogo">
 			</div>
 			<div class="navTitle" >
