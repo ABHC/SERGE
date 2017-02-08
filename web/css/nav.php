@@ -30,7 +30,8 @@ include_once('../model/design.php');
 	align-items: center;
 	padding-right: 10px;
 	flex: 1;
-	background-color: rgba(42, 42, 42, 0.8);
+	background-color: rgba(0, 0, 0, 0.5);
+	border-bottom: 1px solid rgba(255,255,255,0.25);
 	text-decoration: none;
 	min-width: 150px;
 }
@@ -39,6 +40,7 @@ include_once('../model/design.php');
 {
 	background: none;
 	color: rgb(255, 255, 255);
+	border-bottom: 1px solid rgba(255,255,255,0);
 }
 
 .navCairnDevicesLogo
@@ -95,7 +97,8 @@ include_once('../model/design.php');
 	justify-content: flex-start;
 	align-items: center;
 	flex: 1;
-	background-color: rgba(42, 42, 42, 0.8);
+	background-color: rgba(0, 0, 0, 0.5);
+	border-bottom: 1px solid rgba(255,255,255,0.25);
 	text-decoration: none;
 }
 
@@ -103,4 +106,5 @@ include_once('../model/design.php');
 {
 	background: none;
 	color: rgb(255, 255, 255);
+	border-bottom: none;
 }

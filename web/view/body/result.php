@@ -23,99 +23,99 @@
 		<table cellpadding="0" cellspacing="0" border="0">
 			<tbody>
 				<tr>
-					<td>Les chiens sont'ils vos ancêtres ?</td>
+					<td><a href="lelien">Les chiens sont'ils vos ancêtres ?</a></td>
 					<td>Génétique</td>
-					<td>Leschiensontdesoreilles.net</td>
+					<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
 					<td>15/09/2049</td>
 					<td>Sent</td>
 					<td>Not read</td>
 					<td><a href="link?link" class="wikiLogo"><img src="../images/iconWikiWB.png"/></a></td>
 				</tr>
 				<tr>
-					<td>Les chiens sont'ils vos ancêtres ?</td>
+					<td><a href="lelien">Les chiens sont'ils vos ancêtres ?</a></td>
 					<td>Génétique</td>
-					<td>Leschiensontdesoreilles.net</td>
+					<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
 					<td>15/09/2049</td>
 					<td>Sent</td>
 					<td>Not read</td>
 					<td><a href="link?link" class="wikiLogo"><img src="../images/iconWikiWB.png"/></a></td>
 				</tr>
 				<tr>
-					<td>Les chiens sont'ils vos ancêtres ?</td>
+					<td><a href="lelien">Les chiens sont'ils vos ancêtres ?</a></td>
 					<td>Génétique</td>
-					<td>Leschiensontdesoreilles.net</td>
+					<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
 					<td>15/09/2049</td>
 					<td>Sent</td>
 					<td>Not read</td>
 					<td><a href="link?link" class="wikiLogo"><img src="../images/iconWikiWB.png"/></a></td>
 				</tr>
 				<tr>
-					<td>Les chiens sont'ils vos ancêtres ?</td>
+					<td><a href="lelien">Les chiens sont'ils vos ancêtres ?</a></td>
 					<td>Génétique</td>
-					<td>Leschiensontdesoreilles.net</td>
+					<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
 					<td>15/09/2049</td>
 					<td>Sent</td>
 					<td>Not read</td>
 					<td><a href="link?link" class="wikiLogo"><img src="../images/iconWikiWB.png"/></a></td>
 				</tr>
 				<tr>
-					<td>Les chiens sont'ils vos ancêtres ?</td>
+					<td><a href="lelien">Les chiens sont'ils vos ancêtres ?</a></td>
 					<td>Génétique</td>
-					<td>Leschiensontdesoreilles.net</td>
+					<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
 					<td>15/09/2049</td>
 					<td>Sent</td>
 					<td>Not read</td>
 					<td><a href="link?link" class="wikiLogo"><img src="../images/iconWikiWB.png"/></a></td>
 				</tr>
 				<tr>
-					<td>Les chiens sont'ils vos ancêtres ?</td>
+					<td><a href="lelien">Les chiens sont'ils vos ancêtres ?</a></td>
 					<td>Génétique</td>
-					<td>Leschiensontdesoreilles.net</td>
+					<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
 					<td>15/09/2049</td>
 					<td>Sent</td>
 					<td>Not read</td>
 					<td><a href="link?link" class="wikiLogo"><img src="../images/iconWikiWB.png"/></a></td>
 				</tr>
 				<tr>
-					<td>Les chiens sont'ils vos ancêtres ?</td>
+					<td><a href="lelien">Les chiens sont'ils vos ancêtres ?</a></td>
 					<td>Génétique</td>
-					<td>Leschiensontdesoreilles.net</td>
+					<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
 					<td>15/09/2049</td>
 					<td>Sent</td>
 					<td>Not read</td>
 					<td><a href="link?link" class="wikiLogo"><img src="../images/iconWikiWB.png"/></a></td>
 				</tr>
 				<tr>
-					<td>Les chiens sont'ils vos ancêtres ?</td>
+					<td><a href="lelien">Les chiens sont'ils vos ancêtres ?</a></td>
 					<td>Génétique</td>
-					<td>Leschiensontdesoreilles.net</td>
+					<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
 					<td>15/09/2049</td>
 					<td>Sent</td>
 					<td>Not read</td>
 					<td><a href="link?link" class="wikiLogo"><img src="../images/iconWikiWB.png"/></a></td>
 				</tr>
 				<tr>
-					<td>Les chiens sont'ils vos ancêtres ?</td>
+					<td><a href="lelien">Les chiens sont'ils vos ancêtres ?</a></td>
 					<td>Génétique</td>
-					<td>Leschiensontdesoreilles.net</td>
+					<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
 					<td>15/09/2049</td>
 					<td>Sent</td>
 					<td>Not read</td>
 					<td><a href="link?link" class="wikiLogo"><img src="../images/iconWikiWB.png"/></a></td>
 				</tr>
 				<tr>
-					<td>Les chiens sont'ils vos ancêtres ?</td>
+					<td><a href="lelien">Les chiens sont'ils vos ancêtres ?</a></td>
 					<td>Génétique</td>
-					<td>Leschiensontdesoreilles.net</td>
+					<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
 					<td>15/09/2049</td>
 					<td>Sent</td>
 					<td>Not read</td>
 					<td><a href="link?link" class="wikiLogo"><img src="../images/iconWikiWB.png"/></a></td>
 				</tr>
 				<tr>
-					<td>Les chiens sont'ils vos ancêtres ?</td>
+					<td><a href="lelien">Les chiens sont'ils vos ancêtres ?</a></td>
 					<td>Génétique</td>
-					<td>Leschiensontdesoreilles.net</td>
+					<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
 					<td>15/09/2049</td>
 					<td>Sent</td>
 					<td>Not read</td>
@@ -123,5 +123,19 @@
 				</tr>
 			</tbody>
 		</table>
+	</div>
+	<div class="pages">
+		<a href="result?page=1" class="pageNumber">
+			1
+		</a>
+		<a href="result?page=2" class="pageNumber">
+			2
+		</a>
+		<a href="result?page=3" class="pageNumber">
+			3
+		</a>
+		<a href="result?page=4" class="pageNumber">
+			4
+		</a>
 	</div>
 </div>

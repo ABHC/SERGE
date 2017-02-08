@@ -78,7 +78,7 @@ table
 	overflow-x: auto;
 	margin-top: 0px;
 	border: 1px solid rgba(255,255,255,0.1);
-	margin-bottom: 100px;
+	margin-bottom: 40px;
 }
 
 th
@@ -121,6 +121,12 @@ td
 	border-bottom: solid 1px rgba(255,255,255,0.1);
 }
 
+td a
+{
+	text-decoration: none;
+	color: #fff;
+}
+
 td:nth-child(1)
 {
 	width: 27%;
@@ -149,6 +155,33 @@ a.wikiLogo img
 tr:nth-child(2n)
 {
 	background-color: rgba(255,255,255,0.08);
+}
+
+.pages
+{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	align-items: center;
+}
+
+.pageNumber
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 30px;
+	height: 30px;
+	margin-left: 10px;
+	margin-right: 10px;
+	color: #fff;
+	background-color: rgba(0, 0, 0, 0.5);
+	border: 1px solid rgba(255,255,255,0.15);
+}
+
+a.pageNumber
+{
+	text-decoration: none;
 }
 
 <?php
