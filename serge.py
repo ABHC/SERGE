@@ -296,7 +296,7 @@ def permission(register) :
 
 	return permission_list
 
-#TODO Traiter les tags (balise <category>) dans la fonction newscast
+
 def newscast(last_launch):
 	"""Function for last news research :
 		- sources retrieval
@@ -409,30 +409,69 @@ def newscast(last_launch):
 
 				while range < rangemax:
 
-					#TODO A découper dans une sous fonction Analyse(xmldoc, last_launch)
-					"""On définit les variables que l'on affectent aux commandes de Universal Feedparser"""
+					#TODO A découper dans une sous fonction Analyse(xmldoc, last_launch) ??
+					########### MANDATORY UNIVERSAL FEED PARSER VARIABLES
 					try :
 						post_title = xmldoc.entries[range].title
-						post_description = xmldoc.entries[range].description
-						post_link = xmldoc.entries[range].link
-						post_date = xmldoc.entries[range].published_parsed
-						human_date = time.strftime("%d/%m/%Y %H:%M", post_date)
-						post_date = time.mktime(post_date)
-					except :
-						print "BEACON ERROR IN THE FLUX" ###
-						print traceback.format_exc()
+					except AttributeError :
+						logger_error.warning("BEACON ERROR : missing <title> in "+link)
+						logger_error.warning(traceback.format_exc())
 						pass
 						break
 
-					post_title = post_title.strip()
-					post_description = post_description.strip()
+					try :
+						post_description = xmldoc.entries[range].description
+					except AttributeError :
+						logger_error.warning("BEACON ERROR : missing <description> in "+link)
+						logger_error.warning(traceback.format_exc())
+						pass
+						break
 
-					"""Variables de recherche pour une recherche en ignorant la casse"""
-					post_title_lower = post_title.lower()
-					post_description_lower = post_description.lower()
-					keyword_lower = keyword.lower()
+					try :
+						post_link = xmldoc.entries[range].link
+					except AttributeError :
+						logger_error.warning("BEACON ERROR : missing <link> in "+link)
+						logger_error.warning(traceback.format_exc())
+						pass
+						break
 
-					"""Variables de recherche pour une recherche en ignorant les accents inexistants pour cause de majuscule"""
+					try :
+						post_date = xmldoc.entries[range].published_parsed
+					except AttributeError :
+						logger_error.warning("BEACON ERROR : missing <description> in "+link)
+						logger_error.warning(traceback.format_exc())
+						pass
+						break
+
+					########### OPTIONNAL UNIVERSAL FEED PARSER VARIABLE
+					tags_list_lower = []
+					tags_list_sans_accent = []
+
+					try :
+						post_tags = xmldoc.entries[range].tags
+					except AttributeError :
+						logger_info.info("BEACON INFO : no <category> in "+link)
+						post_tags = None
+						pass
+
+					if post_tags != None :
+						tagdex = 0
+						while tagdex < len(post_tags) :
+							tags_list_lower.append(xmldoc.entries[range].tags[tagdex].term.lower())
+							tagdex = tagdex+1
+
+						for tag in tags_list_lower :
+							tag = sans_accent_maj(tag)
+							tags_list_sans_accent.append(tag)
+
+					########### DATA PROCESSING
+					human_date = time.strftime("%d/%m/%Y %H:%M", post_date)
+					post_date = time.mktime(post_date)
+
+					post_title_lower = post_title.strip().lower()
+					post_description_lower = post_description.strip().lower()
+					keyword_lower = keyword.strip().lower()
+
 					post_title_sans_accent = sans_accent_maj(post_title_lower)
 					post_description_sans_accent = sans_accent_maj(post_description_lower)
 					keyword_sans_accent = sans_accent_maj(keyword)
@@ -440,7 +479,7 @@ def newscast(last_launch):
 					keyword_id_comma2 = ","+str(keyword_id)+","
 					article=(post_title, post_link, human_date, id_rss, keyword_id_comma2)
 
-					if keyword_lower in post_title_lower and post_date >= last_launch:
+					if (keyword_lower in post_title_lower or keyword_lower in post_description_lower or keyword_lower in tags_list_lower) and post_date >= last_launch:
 
 						########### DATABASE CHECKING
 						query = ("SELECT keyword_id FROM result_news_serge WHERE link = %s")
@@ -492,7 +531,8 @@ def newscast(last_launch):
 
 						break #les commandes break permettent que l'information ne s'affiche qu'une seule fois si il y a plusieurs keywords détectées dans l'entrée
 
-					elif keyword_lower in post_description_lower and post_date >= last_launch:
+					elif (keyword_sans_accent in post_title_sans_accent or keyword_sans_accent in post_description_sans_accent or keyword_sans_accent in tags_list_sans_accent) and post_date >= last_launch:
+
 						########### DATABASE CHECKING
 						query = ("SELECT keyword_id FROM result_news_serge WHERE link = %s")
 
@@ -542,57 +582,8 @@ def newscast(last_launch):
 
 						break
 
-					elif keyword_sans_accent in post_title_sans_accent and post_date >= last_launch:
-						########### DATABASE CHECKING
-						query = ("SELECT keyword_id FROM result_news_serge WHERE link = %s")
+					elif keyword_lower == ":all" and post_date >= last_launch:
 
-						call_result_news= database.cursor()
-						call_result_news.execute(query, (post_link, ))
-						field_id_key = call_result_news.fetchone()
-						call_result_news.close()
-
-						print field_id_key###
-
-						########### DATABASE INSERT
-						if field_id_key == None :
-							query = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
-
-							insert_news= database.cursor()
-							try :
-								insert_news.execute(query, article)
-								database.commit()
-							except :
-								database.rollback()
-								print "ROLLBACK" ###
-								logger_error.error("ROLLBACK")
-							insert_news.close()
-
-							new_article += 1 ###
-
-						########### DATABASE UPDATE
-						else :
-							print "DOUBLON"###
-							field_id_key = field_id_key[0]
-							keyword_id_comma = str(keyword_id)+","
-
-							if keyword_id_comma2 not in field_id_key :
-								complete_keyword_id = field_id_key+keyword_id_comma
-
-								update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
-
-								update_keyword_id= database.cursor()
-								try :
-									update_keyword_id.execute(update, (complete_keyword_id, post_link))
-									database.commit()
-								except :
-									database.rollback()
-									print "ROLLBACK" ###
-									logger_error.error("ROLLBACK")
-								update_keyword_id.close()
-
-						break
-
-					elif keyword_sans_accent in post_description_sans_accent and post_date >= last_launch:
 						########### DATABASE CHECKING
 						query = ("SELECT keyword_id FROM result_news_serge WHERE link = %s")
 
