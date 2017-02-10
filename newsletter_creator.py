@@ -244,15 +244,12 @@ def newsletterByKeyword (user, jour, permission_news, permission_science, permis
 		if pending_patents > 0 :
 			newsletter.write("""<br/><br/><b>BREVETS</b><br/>""")
 
-			print "SORTED"
-			print sorted(patent_master_queries_list, key= lambda query_field : query_field[0])
 			######### ECRITURE QUERY FOR PATENTS
 			for couple_query_attribute in sorted(patent_master_queries_list, key= lambda query_field : query_field[0]) :
 				plain_query = couple_query_attribute[0]
 				query_attribute = ","+str(couple_query_attribute[1])+","
 				process_result_list = []
 				index = 0
-				print "ON EXAMINE LES BREVETS"
 
 				while index < pending_patents:
 					patents_attributes = not_send_patents_list[index]

@@ -22,6 +22,9 @@ import feedparser #voir la documentation : https://pythonhosted.org/feedparser/
 import datetime #voir la documentation : https://docs.python.org/2/library/datetime.html
 import unicodedata #voir la documentation : https://docs.python.org/2/library/unicodedata.html
 import smtplib #voir la documentation : https://docs.python.org/2.7/library/smtplib.html
+import traceback
+import logging
+from logging.handlers import RotatingFileHandler
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from shutil import copyfile
@@ -30,20 +33,47 @@ from shutil import copyfile
 import newsletter_creator
 
 
+######### LOGGER CONFIG
+formatter_error = logging.Formatter("%(asctime)s -- %(levelname)s -- %(message)s")
+formatter_info = logging.Formatter("%(asctime)s -- %(levelname)s -- %(message)s")
+
+logger_error = logging.getLogger("error_log")
+handler_error = logging.handlers.RotatingFileHandler("logs/serge_error_log.txt", mode="a", maxBytes= 10000, backupCount= 1 , encoding="utf-8")
+handler_error.setFormatter(formatter_error)
+logger_error.setLevel(logging.ERROR)
+logger_error.addHandler(handler_error)
+
+logger_info = logging.getLogger("info_log")
+handler_info = logging.handlers.RotatingFileHandler("logs/serge_info_log.txt", mode="a", maxBytes= 5000000, backupCount= 1,encoding="utf-8")
+handler_info.setFormatter(formatter_info)
+logger_info.setLevel(logging.INFO)
+logger_info.addHandler(handler_info)
+
+logger_error.info("SERGE ERROR LOG")
+logger_info.info("SERGE INFO LOG ")
+
+
+def cemeteriesOfErrors(*exc_info):
+	colderror = ("".join(traceback.format_exception(*exc_info)))
+	logger_error.critical(colderror+"\n\n")
+	logger_error.critical("SERGE END : CRITICAL FAILURE\n")
+
 def lastResearch ():
 	"""Fonction d'extraction de la dernière date de recherche pour n'envoyer que des informations nouvelles"""
 
 	try:
-		timelog=open("logs/timelog.txt","r")
-		last_launch=timelog.read()
-		timelog.close()
+		call_time= database.cursor()
+		call_time.execute("SELECT timestamps FROM time_serge WHERE name = 'timelog'")
+		last_launch = call_time.fetchone()
+		call_time.close()
+
+		last_launch=float(last_launch[0])
+
 	except:
 		print "TIMELOG DON'T EXIST"
 		#LOG=open("permission_error.txt", "a")
 		#LOG.write("logs/timelog.txt don't exist \n \n")
 		#LOG.close()
-
-	last_launch=float(last_launch)
 
 	return last_launch
 
@@ -75,7 +105,9 @@ def sans_accent_min(ch):
             r += car
     return r
 
+
 def ofSourceAndName (now):
+	logger_info.info("\n######### Feed titles retrieval (ofSourceAndName function) :\n\n")
 
 	######### NUMBER OF SOURCES
 	call_rss= database.cursor()
@@ -84,22 +116,25 @@ def ofSourceAndName (now):
 	call_rss.close()
 
 	max_rss = int(max_rss[0])
-	print ("Max RSS : " + str(max_rss)+"\n")
+	logger_info.info("Max RSS : " + str(max_rss)+"\n")
 
 	######### LAST BIMENSUAL RESEARCH
-	try:
-		bimensual = open("logs/feedtitles_refresh_log.txt", "r")
-		last_refresh=bimensual.read()
-		bimensual.close()
-	except:
-		print "FEEDTITLES REFRESH LOG DON'T EXIST"
+	try :
+		call_time= database.cursor()
+		call_time.execute("SELECT timestamps FROM time_serge WHERE name = 'feedtitles_refresh'")
+		last_refresh = call_time.fetchone()
+		call_time.close()
+
+		last_refresh=float(last_refresh[0])
+	except :
+		print "FEEDTITLES REFRESH DON'T EXIST"
 		#LOG=open("permission_error.txt", "a")
 		#LOG.write("logs/timelog.txt don't exist \n \n")
 		#LOG.close()
 
 	######### SEARCH FOR SOURCE NAME
 	num = 1
-	interval = (float(now)-float(last_refresh))
+	interval = (float(now)-last_refresh)
 
 	######### BIMENSUAL REFRESH
 	if interval >= 5097600 :
@@ -116,28 +151,22 @@ def ofSourceAndName (now):
 
 			try :
 				req = urllib2.Request(link, headers={'User-Agent' : "Magic Browser"})
-				print ("Go to : "+link) ###
 				rss = urllib2.urlopen(req)
-				#LOG.write (link+"\n")
+				logger_info.info (link+"\n")
 				header = rss.headers
-				#LOG.write(str(header)+"\n") #affichage des paramètres de connexion
+				logger_info.info("HEADER :\n"+str(header)+"\n\n") #affichage des paramètres de connexion
 				rss_error = 0
 			except urllib2.HTTPError:
 				print ("HTTP ERROR")
-				#link = link.replace("http://", "")
-				#newsletter.write ("Erreur dans l'accès à "+link+" (protocole HTTP)\n")
-				#newsletter.write ("Veuillez vérifier la validité du Flux \n \n")
+				link = link.replace("http://", "")
+				logger_info.warning ("Error in the access "+link+" (HTTP protocol error)\n")
+				logger_info.warning ("Please check the availability of the feed \n \n")
 				rss_error = 1
 			except urllib2.HTTPSError:
 				print ("HTTPS ERROR")
-				#link = link.replace("https://", "")
-				#newsletter.write ("Erreur dans l'accès à "+link+" (protocole HTTPS) \n")
-				#newsletter.write ("Veuillez vérifier la validité du Flux \n \n")
-				rss_error = 1
-			except:
-				print ("UNKNOWN CONNEXION ERROR")
-				#newsletter.write ("Erreur dans l'accès à "+link+"\n")
-				#newsletter.write ("Erreur inconnue \n \n")
+				link = link.replace("https://", "")
+				logger_info.warning ("Error in the access "+link+" (HTTPS protocol error) \n")
+				logger_info.warning ("Please check the availability of the feed\n \n")
 				rss_error = 1
 
 			if rss_error == 0 :
@@ -146,14 +175,13 @@ def ofSourceAndName (now):
 				try :
 					xmldoc = feedparser.parse(rss) #type propre à feedparser
 				except :
-					#LOG.write("Erreur au niveau de l'URL")
-					print ("Parsing error")###
+					logger_error.error("PARSING ERROR IN :"+link+"\n")
 
 				########### SOURCE TITLE RETRIEVAL
 				try :
 					source_title = xmldoc.feed.title
 				except :
-					print "FEED TITLE ERROR" ###
+					logger_info.warning("NO TITLE IN :"+link+"\n")
 					pass
 
 				update = ("UPDATE rss_serge SET name = %s WHERE id = %s")
@@ -165,15 +193,18 @@ def ofSourceAndName (now):
 				except :
 					database.rollback()
 					print "ROLLBACK" ###
+					logger_error.error("ROLLBACK")
 				update_rss.close()
 
 			num = num+1
 
-		bimensual=open("logs/feedtitles_refresh_log.txt", "w")
+		LOG.write("timesptamps update for refreshing feedtitles \n")
 		now = unicode(now)
-		bimensual.write(now)
-		#LOG.write("Ecriture du timestamps en fin de recherche dans le Timelog \n")
-		bimensual.close()
+		update = ("UPDATE time_serge SET timestamps = %s WHERE name = 'feedtitles_refresh'")
+
+		call_time= database.cursor()
+		call_time.execute(update, (now, ))
+		call_time.close()
 
 	######### USUAL RESEARCH
 	else :
@@ -194,28 +225,22 @@ def ofSourceAndName (now):
 
 				try :
 					req = urllib2.Request(link, headers={'User-Agent' : "Magic Browser"})
-					print ("Go to : "+link) ###
 					rss = urllib2.urlopen(req)
-					#LOG.write (link+"\n")
+					logger_info.info (link+"\n")
 					header = rss.headers
-					#LOG.write(str(header)+"\n") #affichage des paramètres de connexion
+					logger_info.info("HEADER :\n"+str(header)+"\n\n") #affichage des paramètres de connexion
 					rss_error = 0
 				except urllib2.HTTPError:
 					print ("HTTP ERROR")
-					#link = link.replace("http://", "")
-					#newsletter.write ("Erreur dans l'accès à "+link+" (protocole HTTP)\n")
-					#newsletter.write ("Veuillez vérifier la validité du Flux \n \n")
+					link = link.replace("http://", "")
+					logger_info.warning ("Error in the access "+link+" (HTTP protocol error)\n")
+					logger_info.warning ("Please check the availability of the feed \n \n")
 					rss_error = 1
 				except urllib2.HTTPSError:
 					print ("HTTPS ERROR")
-					#link = link.replace("https://", "")
-					#newsletter.write ("Erreur dans l'accès à "+link+" (protocole HTTPS) \n")
-					#newsletter.write ("Veuillez vérifier la validité du Flux \n \n")
-					rss_error = 1
-				except:
-					print ("UNKNOWN CONNEXION ERROR")
-					#newsletter.write ("Erreur dans l'accès à "+link+"\n")
-					#newsletter.write ("Erreur inconnue \n \n")
+					link = link.replace("https://", "")
+					logger_info.warning ("Error in the access "+link+" (HTTPS protocol error) \n")
+					logger_info.warning ("Please check the availability of the feed\n \n")
 					rss_error = 1
 
 				if rss_error == 0 :
@@ -224,14 +249,13 @@ def ofSourceAndName (now):
 					try :
 						xmldoc = feedparser.parse(rss) #type propre à feedparser
 					except :
-						#LOG.write("Erreur au niveau de l'URL")
-						print ("Parsing error")###
+						logger_error.error("PARSING ERROR IN :"+link+"\n")
 
 					########### SOURCE TITLE RETRIEVAL
 					try :
 						source_title = xmldoc.feed.title
 					except :
-						print "FEED TITLE ERROR" ###
+						logger_info.warning("NO TITLE IN :"+link+"\n") ###
 						pass
 
 					update = ("UPDATE rss_serge SET name = %s WHERE id = %s")
@@ -242,7 +266,7 @@ def ofSourceAndName (now):
 						database.commit()
 					except :
 						database.rollback()
-						print "ROLLBACK" ###
+						logger_error.error("ROLLBACK") ###
 					update_rss.close()
 
 			num = num+1
@@ -272,13 +296,17 @@ def permission(register) :
 
 	return permission_list
 
-
+#TODO Traiter les tags (balise <category>) dans la fonction newscast
 def newscast(last_launch):
+	"""Function for last news research :
+		- sources retrieval
+		- sources specifical keywords retrieval
+		- connexion to sources one by one
+		- research of the keywords in the xml beacons <title> and <description>
+		- if serge find a news this one is added to the database
+		- if the news is already saved in the database serge continue to search other news"""
 
-	#LOG.write("\n")
-	#LOG.write("\n Recherche des actualités \n")
-	#LOG.write("\n")
-	"""Recherche source par source pour éviter les trop nombreuses connections à l'hôte"""
+	logger_info.info("\n\n######### Last News Research (newscast function) : \n\n")
 
 	new_article = 0
 
@@ -326,29 +354,22 @@ def newscast(last_launch):
 			req = urllib2.Request(link, headers={'User-Agent' : "Magic Browser"})
 			print ("Go to : "+link) ###
 			rss = urllib2.urlopen(req)
-			#LOG.write (link+"\n")
+			logger_info.info (link+"\n")
 			header = rss.headers
-			#LOG.write(str(header)+"\n") #affichage des paramètres de connexion
+			logger_info.info("HEADER :\n"+str(header)+"\n\n") #affichage des paramètres de connexion
 			rss_error = 0
 		except urllib2.HTTPError:
 			print ("HTTP ERROR")
-			#link = link.replace("http://", "")
-			#newsletter.write ("Erreur dans l'accès à "+link+" (protocole HTTP)\n")
-			#newsletter.write ("Veuillez vérifier la validité du Flux \n \n")
+			link = link.replace("http://", "")
+			logger_info.warning ("Error in the access "+link+" (HTTP protocol error)\n")
+			logger_info.warning ("Please check the availability of the feed \n \n")
 			rss_error = 1
 		except urllib2.HTTPSError:
 			print ("HTTPS ERROR")
-			#link = link.replace("https://", "")
-			#newsletter.write ("Erreur dans l'accès à "+link+" (protocole HTTPS) \n")
-			#newsletter.write ("Veuillez vérifier la validité du Flux \n \n")
+			link = link.replace("https://", "")
+			logger_info.warning ("Error in the access "+link+" (HTTPS protocol error) \n")
+			logger_info.warning ("Please check the availability of the feed\n \n")
 			rss_error = 1
-		except:
-			print ("UNKNOWN CONNEXION ERROR")
-			#newsletter.write ("Erreur dans l'accès à "+link+"\n")
-			#newsletter.write ("Erreur inconnue \n \n")
-			rss_error = 1
-		#except:
-			#pass
 
 		if rss_error == 0 :
 
@@ -356,8 +377,7 @@ def newscast(last_launch):
 			try :
 				xmldoc = feedparser.parse(rss) #type propre à feedparser
 			except :
-				#LOG.write("Erreur au niveau de l'URL")
-				print ("Parsing error")###
+				logger_error.error("PARSING ERROR IN :"+link+"\n")
 
 			########### RSS ANALYZE
 			"""Universal Feedparser crée une liste dans qui répertorie chaque article, cette liste est la liste entries[n] qui comprends n+1 entrées (les liste sont numérotées à partir de 0). Python ne peut aller au delà de cette taille n-1. Il faut donc d'abord chercher la taille de la liste avec la fonction len"""
@@ -365,8 +385,7 @@ def newscast(last_launch):
 			try :
 				source_title = xmldoc.feed.title
 			except :
-				print "FEED TITLE ERROR" ###
-				pass
+				logger_info.warning("NO TITLE IN :"+link+"\n")
 
 			rangemax = len(xmldoc.entries)
 			range = 0 #on initialise la variable range qui va servir pour pointer les articles
@@ -401,6 +420,7 @@ def newscast(last_launch):
 						post_date = time.mktime(post_date)
 					except :
 						print "BEACON ERROR IN THE FLUX" ###
+						print traceback.format_exc()
 						pass
 						break
 
@@ -444,6 +464,7 @@ def newscast(last_launch):
 							except :
 								database.rollback()
 								print "ROLLBACK" ###
+								logger_error.error("ROLLBACK")
 							insert_news.close()
 
 							new_article += 1 ###
@@ -466,6 +487,7 @@ def newscast(last_launch):
 								except :
 									database.rollback()
 									print "ROLLBACK" ###
+									logger_error.error("ROLLBACK")
 								update_keyword_id.close()
 
 						break #les commandes break permettent que l'information ne s'affiche qu'une seule fois si il y a plusieurs keywords détectées dans l'entrée
@@ -492,6 +514,7 @@ def newscast(last_launch):
 							except :
 								database.rollback()
 								print "ROLLBACK" ###
+								logger_error.error("ROLLBACK")
 							insert_news.close()
 
 							new_article += 1 ###
@@ -514,6 +537,7 @@ def newscast(last_launch):
 								except :
 									database.rollback()
 									print "ROLLBACK" ###
+									logger_error.error("ROLLBACK")
 								update_keyword_id.close()
 
 						break
@@ -540,6 +564,7 @@ def newscast(last_launch):
 							except :
 								database.rollback()
 								print "ROLLBACK" ###
+								logger_error.error("ROLLBACK")
 							insert_news.close()
 
 							new_article += 1 ###
@@ -562,6 +587,7 @@ def newscast(last_launch):
 								except :
 									database.rollback()
 									print "ROLLBACK" ###
+									logger_error.error("ROLLBACK")
 								update_keyword_id.close()
 
 						break
@@ -588,6 +614,7 @@ def newscast(last_launch):
 							except :
 								database.rollback()
 								print "ROLLBACK" ###
+								logger_error.error("ROLLBACK")
 							insert_news.close()
 
 							new_article += 1 ###
@@ -610,6 +637,7 @@ def newscast(last_launch):
 								except :
 									database.rollback()
 									print "ROLLBACK" ###
+									logger_error.error("ROLLBACK")
 								update_keyword_id.close()
 
 						break
@@ -621,6 +649,15 @@ def newscast(last_launch):
 
 
 def Patents(last_launch):
+	"""Function for last patents research :
+		- wipo query retrieval
+		- URL re-building with wipo query
+		- connexion to sources one by one
+		- research of the keywords in the xml beacons <title> and <description>
+		- if serge find a news this one is added to the database
+		- if the news is already saved in the database serge continue to search other news"""
+
+	logger_info.info("\n\n######### Last Patents Research (patents function) : \n\n")
 
 	######### CALL TO TABLE queries_wipo
 	call_patents_key= database.cursor()
@@ -646,29 +683,28 @@ def Patents(last_launch):
 
 		try :
 			WIPO = urllib2.urlopen(link)
-			print (link)###
 		except :
-			print ("UNKNOWN CONNEXION ERROR")###
+			logger_error.warning("UNKNOWN CONNEXION ERROR")###
 
 		"""On fait un renvoi au LOG des données de connexion"""
-		#LOG.write(KEY+"\n")
-		#LOG.write(link+"\n")
-		#header = WIPO.headers
-		#LOG.write(str(header)+"\n") #on peut faire afficher les données de connexion à la page grâce à cette commande
+		logger_info.info(query_wipo+"\n")
+		logger_info.info(link+"\n")
+		header = WIPO.headers
+		logger_info.info("HEADER :\n"+str(header))
+
 
 		if (WIPO) :
 			xmldoc = feedparser.parse(WIPO)
 			range = 0
 			rangemax = len(xmldoc.entries)
-			#LOG.write("nombre d'article :"+unicode(rangemax)+"\n \n")
+			logger_info.info("numbers of patents :"+unicode(rangemax)+"\n \n")
 			new_patent = 0
 
 			if (xmldoc) :
 
 				if rangemax ==0:
 					print ("VOID QUERY\n")###
-					#LOG.write("void_query :"+unicode(void_query))
-					#LOG.write ("Attention le flux de :" +str(WIPO)+ "est vide ; vous devriez changer vos paramètres de recherche"+"\n")
+					logger_info.info("void_query\n")
 
 				else:
 					while range < rangemax:
@@ -737,23 +773,25 @@ def Patents(last_launch):
 					print (str(new_patent)+"\n")###
 
 			else:
-				#LOG.write("\n Erreur : Le flux RSS n'est pas accessible")
+				logger_info.warning("\n Error : the feed is unavailable")
 				print ("RSS ERROR")###
 		else:
-			#LOG.write("\n Erreur au niveau de l'URL")
+			logger_error.warning("\n UNKNOWN CONNEXION ERROR")
 			print ("UNKNOWN CONNEXION ERROR")###
 
 
 def science (last_launch):
-	"""Fonction de recherche des derniers articles scientifiques publiés par arxiv.org"""
+	"""Fonction de recherche des derniers articles scientifiques publiés par arxiv.org :
+		- keywords retrieval
+		- URL re-building with keywords
+		- connexion to sources one by one with the arxiv API
+		- research of the keywords in the xml beacons <title> and <description>
+		- if serge find a paper this one is added to the database
+		- if the paper is already saved in the database serge continue to search other papers"""
 
 	######### Recherche SCIENCE
+	logger_info.info("\n\n######### Last Scientific papers on Arxiv.org (science function) : \n\n")
 
-	"""On utilise la Search API d'arXiv pour rechercher du contenu scientifique. Contrairement à la boucle de veille on doit injecter les keyword directement dans la requête de la search API qui va nous retourner un résultat sous forme de flux RSS que l'on pourra lire"""
-
-	#LOG.write("\n")
-	#LOG.write("\n Recherches des contenus scientifiques \n")
-	#LOG.write("\n")
 	print ("RECHERCHE SCIENCE") ###
 
 	######### CALL TO TABLE keywords_science_serge
@@ -782,10 +820,10 @@ def science (last_launch):
 			print ("\nARXIV CONNECTION ERROR\n")
 
 		"""On fait un renvoi au LOG des données de connexion"""
-		#LOG.write (keyword.encode("utf-8")+"\n")
-		#LOG.write (link+"\n")
-		#header = arxiv_API.headers
-		#LOG.write(str(header)+"\n \n") #on peut faire afficher les données de connexion à la page grâce à cette commande
+		logger_info.info (keyword.encode("utf-8")+"\n")
+		logger_info.info (link+"\n")
+		header = arxiv_API.headers
+		logger_info.info("HEADER :\n"+str(header)+"\n\n") #on peut faire afficher les données de connexion à la page grâce à cette commande
 
 		try :
 			xmldoc = feedparser.parse(arxiv_API)
@@ -797,9 +835,7 @@ def science (last_launch):
 
 		if (xmldoc) :
 			if rangemax ==0:
-				print ("VOID QUERY\n")###
-				#LOG.write("void_query :"+unicode(void_query))
-				#LOG.write ("Attention le flux de :" +str(arxiv_API)+ "est vide vous devriez changer vos paramètres de recherche"+"\n")
+				logger_info.info("VOID QUERY :"+link+"\n\n")
 
 			else:
 				"""Keyword ID Retrieval"""
@@ -869,8 +905,8 @@ def science (last_launch):
 
 					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
-		#else:
-			#LOG.write("Erreur : Le flux RSS n'est pas accessible")
+		else:
+			logger_info.warning("Error : the feed is unavailable")
 
 	#if new_article == 0 :
 		#newsletter.write ("Aucune nouvelle publication dans vos centres d'intérêts\n \n")
@@ -1044,34 +1080,38 @@ def stairwayToUpdate (register, not_send_news_list, not_send_science_list, not_s
 
 ######### MAIN #TODO fractionner le main en fonctions
 
+######### ERROR HOOK DEPLOYMENT
+sys.excepthook = cemeteriesOfErrors
+
 ######### CLEANING OF THE DIRECTORY
 try:
 	os.remove("Newsletter.html")
 except :
 	pass
 
-######### TIME AND LANGUAGES VARIABLES DECLARATION
-now=time.time()
-last_launch = lastResearch()
-jour = unicode(datetime.date.today())
-WIPO_languages = ["ZH", "DA", "EN", "FR", "DE", "HE", "IT", "JA", "KO", "PL", "PT", "RU", "ES", "SV", "VN"]
-
 ######### Connexion à la base de données CairnDevices
-
 passSQL = open("permission/password.txt", "r")
 passSQL = passSQL.read().strip()
 
 database = MySQLdb.connect(host="localhost", user="root", passwd=passSQL, db="CairnDevices", use_unicode=1, charset="utf8")
 
-######### NOMBRE D'UTILISATEURS
+######### TIME AND LANGUAGES VARIABLES DECLARATION
+now=time.time()
+last_launch = lastResearch()
+jour = unicode(datetime.date.today())
+logger_info.info(time.asctime(time.gmtime(now))+"\n")
 
+WIPO_languages = ["ZH", "DA", "EN", "FR", "DE", "HE", "IT", "JA", "KO", "PL", "PT", "RU", "ES", "SV", "VN"]
+
+
+######### NOMBRE D'UTILISATEURS
 call_users= database.cursor()
 call_users.execute("SELECT COUNT(id) FROM users_table_serge")
 max_users = call_users.fetchone()
 call_users.close()
 
 max_users = int(max_users[0])
-print ("Max Users : " + str(max_users)+"\n")
+logger_info.info("\nMax Users : " + str(max_users)+"\n")
 
 ######### RSS SERGE UPDATE
 ofSourceAndName (now)
@@ -1455,8 +1495,15 @@ for user in user_list_all:
 		pass
 
 ######### TIMESTAMPS UPDATE
-timelog=open("logs/timelog.txt", "w")
 now = unicode(now)
-timelog.write(now)
-#LOG.write("Ecriture du timestamps en fin de recherche dans le Timelog \n")
-timelog.close()
+update = ("UPDATE time_serge SET timestamps = %s WHERE name = 'timelog'")
+
+call_time= database.cursor()
+call_time.execute(update, (now, ))
+call_time.close()
+
+the_end = time.time()
+harder_better_faster_stronger = (the_end - float(now))
+
+logger_info.info("Timelog timestamp update")
+logger_info.info("SERGE END : NOMINAL EXECUTION ("+str(harder_better_faster_stronger)+" sec)\n")
