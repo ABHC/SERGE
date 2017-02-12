@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 ######### ECRITURE FICHIER TRANSITOIRE
-#TODO mettre les majuscules sur la premiere lettre des titres des brevets 
+#TODO mettre les majuscules sur la premiere lettre des titres des brevets
 
 import os
 import time
@@ -9,7 +9,7 @@ import sys #voir la documentation : https://docs.python.org/2/library/sys.html
 import unicodedata #voir la documentation : https://docs.python.org/2/library/unicodedata.html
 
 #TODO refonte des élement envoyés aux fonctions
-def newsletterByType (user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, jour) :
+def newsletterByType (user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, jour) : # [Audit][REVIEW] gestion des espaces
 
 	######### TODAY IS THE DAY
 	#jour = unicode(datetime.date.today())
@@ -39,11 +39,12 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 
 <div style="width: 80%;margin-left: auto;margin-right: auto;">""".format(user.encode("utf_8"), jour))
 
-	index=0
+	index=0# [Audit][REVIEW] Espace autour de l'opérateur
 
 	######### ECRITURE NEWS
-	if permission_news == 0 :
-		if pending_news > 0 :
+	# [Audit][REVIEW] Pourquoi deux if de suite et pas if permission_news == 0 and pending_news > 0:
+	if permission_news == 0 :# [Audit][REVIEW] Espace avant :
+		if pending_news > 0 :# [Audit][REVIEW] gestion des espaces
 			newsletter.write("""<div style="width: 80%;margin-left: auto;margin-right: auto;">
 					<br/><br/><b>ACTUALITÉS</b><br/>""")
 
@@ -53,13 +54,13 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 				newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 					•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 				</p>""".format(news_attributes[0].strip().encode("utf_8"), news_attributes[1].strip().encode("utf_8")))
-				index=index+1
+				index=index+1# [Audit][REVIEW] gestion des espaces
 
-	index=0
+	index=0# [Audit][REVIEW] gestion des espaces
 
 	######### ECRITURE SCIENCE
-	if permission_science == 0 :
-		if pending_science > 0 :
+	if permission_science == 0 :# [Audit][REVIEW] gestion des espaces
+		if pending_science > 0 :# [Audit][REVIEW] gestion des espaces
 			newsletter.write("""<div style="width: 80%;margin-left: auto;margin-right: auto;">
 					<br/><br/><b>PUBLICATIONS SCIENTIFIQUES</b><br/>""")
 
@@ -69,13 +70,14 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 			newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 				•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 			</p>""".format(science_attributes[0].strip().encode("utf_8"), science_attributes[1].strip().encode("utf_8")))
-			index=index+1
+			index=index+1# [Audit][REVIEW] gestion des espaces
 
-	index=0
+	index=0# [Audit][REVIEW] gestion des espaces
 
 	######### ECRITURE PATENTS
-	if permission_patents == 0 :
-		if pending_patents > 0 :
+	# [Audit][REVIEW] Pourquoi deux if et pas if permission_patents == 0 and pending_patents > 0:
+	if permission_patents == 0 :# [Audit][REVIEW] gestion des espaces
+		if pending_patents > 0 :# [Audit][REVIEW] gestion des espaces
 			newsletter.write("""<div style="width: 80%;margin-left: auto;margin-right: auto;">
 					<br/><br/><b>BREVETS</b><br/>""")
 
@@ -85,9 +87,9 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 				newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 					•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 				</p>""".format(patents_attributes[0].strip().encode("utf_8"), patents_attributes[1].strip().encode("utf_8").lower()))
-				index=index+1
+				index=index+1# [Audit][REVIEW] gestion des espaces
 
-	index=0
+	index=0# [Audit][REVIEW] gestion des espaces
 
 	######### GOODBYE
 	newsletter.write("""</div>
@@ -142,7 +144,7 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 	newsletter.close
 
 
-def newsletterByKeyword (user, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list) :
+def newsletterByKeyword (user, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list) :# [Audit][REVIEW] gestion des espaces
 
 	######### TODAY IS THE DAY
 	#jour = unicode(datetime.date.today())
@@ -171,15 +173,16 @@ def newsletterByKeyword (user, jour, permission_news, permission_science, permis
 
 	<div style="width: 80%;margin-left: auto;margin-right: auto;">""".format(user.encode("utf_8"), jour))
 
-	index=0
+	index=0# [Audit][REVIEW] gestion des espaces
 
 	######### ECRITURE NEWS
-	if permission_news == 0 :
-		if pending_news > 0 :
+	# [Audit][REVIEW] Pourquoi deux if de suite et pas if permission_news == 0 and pending_news > 0:
+	if permission_news == 0 :# [Audit][REVIEW] gestion des espaces
+		if pending_news > 0 :# [Audit][REVIEW] gestion des espaces
 			newsletter.write("""<br/><br/><b>ACTUALITÉS</b><br/>""")
 
 			######### ECRITURE KEYWORDS FOR NEWS
-			for couple_word_attribute in sorted(newswords_list, key= lambda newswords_field : newswords_field[0]) :
+			for couple_word_attribute in sorted(newswords_list, key= lambda newswords_field : newswords_field[0]) :# [Audit][REVIEW] gestion des espaces
 				word = couple_word_attribute[0].strip().encode("utf_8")
 				word_attribute = ","+str(couple_word_attribute[1])+","
 				process_result_list = []
@@ -192,28 +195,29 @@ def newsletterByKeyword (user, jour, permission_news, permission_science, permis
 						process_result = (news_attributes[0].strip().encode("utf_8"), news_attributes[1].strip().encode("utf_8"))
 						process_result_list.append(process_result)
 
-					index=index+1
+					index=index+1# [Audit][REVIEW] gestion des espaces
 
 				elements = len(process_result_list)
 
-				if elements > 0 :
+				if elements > 0 :# [Audit][REVIEW] gestion des espaces
 					newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(word))
 
-					for couple_results in process_result_list :
+					for couple_results in process_result_list :# [Audit][REVIEW] gestion des espaces
 						newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 							•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 						</p>""".format(couple_results[0], couple_results[1]))
 
 
-	index=0
+	index=0# [Audit][REVIEW] gestion des espaces et surement trop de saut de ligne
 
 	######### ECRITURE SCIENCE
-	if permission_science == 0 :
-		if pending_science > 0 :
+	# [Audit][REVIEW] Pourquoi deux if de suite et pas if permission_science == 0 and pending_science > 0:
+	if permission_science == 0 :# [Audit][REVIEW] gestion des espaces
+		if pending_science > 0 :# [Audit][REVIEW] gestion des espaces
 			newsletter.write("""<br/><br/><b>PUBLICATIONS SCIENTIFIQUES</b><br/>""")
 
 			######### ECRITURE KEYWORDS FOR SCIENCE
-			for couple_word_attribute in sorted(sciencewords_list, key= lambda sciencewords_field : sciencewords_field[0]) :
+			for couple_word_attribute in sorted(sciencewords_list, key= lambda sciencewords_field : sciencewords_field[0]) :# [Audit][REVIEW] gestion des espaces
 				word = couple_word_attribute[0].strip().encode("utf_8")
 				word_attribute = ","+str(couple_word_attribute[1])+","
 				process_result_list = []
@@ -222,18 +226,18 @@ def newsletterByKeyword (user, jour, permission_news, permission_science, permis
 				while index < pending_science:
 					science_attributes = not_send_science_list[index]
 
-					if word_attribute in science_attributes[2] and science_attributes[0] not in process_result_list :
+					if word_attribute in science_attributes[2] and science_attributes[0] not in process_result_list :# [Audit][REVIEW] gestion des espaces
 						process_result = (science_attributes[0].strip().encode("utf_8"), science_attributes[1].strip().encode("utf_8"))
 						process_result_list.append(process_result)
 
-					index=index+1
+					index=index+1# [Audit][REVIEW] gestion des espaces
 
 				elements = len(process_result_list)
 
-				if elements > 0 :
+				if elements > 0 :# [Audit][REVIEW] gestion des espaces
 					newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(word))
 
-					for couple_results in process_result_list :
+					for couple_results in process_result_list :# [Audit][REVIEW] gestion des espaces
 						newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 							•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 						</p>""".format(couple_results[0], couple_results[1]))
@@ -241,12 +245,13 @@ def newsletterByKeyword (user, jour, permission_news, permission_science, permis
 	index = 0
 
 	######### ECRITURE PATENTS
-	if permission_patents == 0 :
-		if pending_patents > 0 :
+	# [Audit][REVIEW] Pourquoi deux if de suite et pas if permission_patents == 0 and if pending_patents > 0:
+	if permission_patents == 0 :# [Audit][REVIEW] gestion des espaces
+		if pending_patents > 0 :# [Audit][REVIEW] gestion des espaces
 			newsletter.write("""<br/><br/><b>BREVETS</b><br/>""")
 
 			######### ECRITURE QUERY FOR PATENTS
-			for couple_query_attribute in sorted(patent_master_queries_list, key= lambda query_field : query_field[0]) :
+			for couple_query_attribute in sorted(patent_master_queries_list, key= lambda query_field : query_field[0]) :# [Audit][REVIEW] gestion des espaces
 				plain_query = couple_query_attribute[0]
 				query_attribute = ","+str(couple_query_attribute[1])+","
 				process_result_list = []
@@ -259,14 +264,14 @@ def newsletterByKeyword (user, jour, permission_news, permission_science, permis
 						process_result = (patents_attributes[0].strip().encode("utf_8"), patents_attributes[1].strip().encode("utf_8"))
 						process_result_list.append(process_result)
 
-					index=index+1
+					index=index+1# [Audit][REVIEW] gestion des espaces
 
 				elements = len(process_result_list)
 
-				if elements > 0 :
+				if elements > 0 :# [Audit][REVIEW] gestion des espaces
 					newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(plain_query))
 
-					for couple_results in process_result_list :
+					for couple_results in process_result_list :# [Audit][REVIEW] gestion des espaces
 						newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 							•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 						</p>""".format(couple_results[0], couple_results[1].lower()))
@@ -325,7 +330,7 @@ def newsletterByKeyword (user, jour, permission_news, permission_science, permis
 
 	newsletter.close
 
-def newsletterBySource (user, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list) :
+def newsletterBySource (user, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list) :# [Audit][REVIEW] gestion des espaces
 
 	######### TODAY IS THE DAY
 	#jour = unicode(datetime.date.today())
@@ -354,15 +359,16 @@ def newsletterBySource (user, jour, permission_news, permission_science, permiss
 
 	<div style="width: 80%;margin-left: auto;margin-right: auto;">""".format(user.encode("utf_8"), jour))
 
-	index=0
+	index=0# [Audit][REVIEW] gestion des espaces
 
 	######### ECRITURE NEWS
-	if permission_news == 0 :
-		if pending_news > 0 :
+	# [Audit][REVIEW] Pourquoi deux if de suite et pas if permission_news == 0 and if pending_news > 0:
+	if permission_news == 0 :# [Audit][REVIEW] gestion des espaces
+		if pending_news > 0 :# [Audit][REVIEW] gestion des espaces
 			newsletter.write("""<br/><br/><b>ACTUALITÉS</b><br/>""")
 
 			######### ECRITURE ORIGIN FOR NEWS
-			for couple_source_attribute in sorted(news_origin_list, key= lambda news_origin_field : news_origin_field[0]) :
+			for couple_source_attribute in sorted(news_origin_list, key= lambda news_origin_field : news_origin_field[0]) :# [Audit][REVIEW] gestion des espaces
 				origin_name = couple_source_attribute[0]
 				origin_id = couple_source_attribute[1]
 				process_result_list = []
@@ -373,47 +379,48 @@ def newsletterBySource (user, jour, permission_news, permission_science, permiss
 					print origin_id
 					print news_attributes[2]
 
-					if origin_id == news_attributes[2] :
+					if origin_id == news_attributes[2] :# [Audit][REVIEW] gestion des espaces
 						print news_attributes[0] ###
 						process_result = (news_attributes[0].strip().encode("utf_8"), news_attributes[1].strip().encode("utf_8"))
 						process_result_list.append(process_result)
 
-					index=index+1
+					index=index+1# [Audit][REVIEW] gestion des espaces
 
 				elements = len(process_result_list)
 				print ("LEN : "+str(elements))
 
-				if elements > 0 :
+				if elements > 0 :# [Audit][REVIEW] gestion des espaces
 					newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(origin_name.strip().encode("utf_8")))
 
-					for couple_results in process_result_list :
+					for couple_results in process_result_list :# [Audit][REVIEW] gestion des espaces
 						newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 								•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 							</p>""".format(couple_results[0], couple_results[1]))
 
 
 
-	index=0
+	index=0# [Audit][REVIEW] gestion des espaces et surement trop de saut de lignes
 
 	######### ECRITURE SCIENCE
-	if permission_science == 0 :
-		if pending_science > 0 :
+	if permission_science == 0 :# [Audit][REVIEW] gestion des espaces
+		if pending_science > 0 :# [Audit][REVIEW] gestion des espaces
 			newsletter.write("""<br/><br/><b>PUBLICATIONS SCIENTIFIQUES</b><br/>""")
 			newsletter.write("""<br/><br/><b>Arxiv.org</b><br/>""")
 
-		while index < pending_science:
+		while index < pending_science:# [Audit][REVIEW] Vérifier indentation du while, si j'ai raison alors le if précédent doit être réduit à un if cond and cond:
 			science_attributes = not_send_science_list[index]
 
 			newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 				•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 			</p>""".format(science_attributes[0].strip().encode("utf_8"), science_attributes[1].strip().encode("utf_8")))
-			index=index+1
+			index=index+1# [Audit][REVIEW] gestion des espaces
 
-	index=0
+	index=0# [Audit][REVIEW] gestion des espaces
 
 	######### ECRITURE PATENTS
-	if permission_patents == 0 :
-		if pending_patents > 0 :
+	# [Audit][REVIEW] Pourquoi deux if et pas if permission_patents == 0 and pending_patents > 0:
+	if permission_patents == 0 :# [Audit][REVIEW] gestion des espaces
+		if pending_patents > 0 :# [Audit][REVIEW] gestion des espaces
 			newsletter.write("""<br/><br/><b>BREVETS</b><br/>""")
 			newsletter.write("""<br/><br/><b>OMPI : Organisation Mondiale de la Propriété Intellectuelle</b><br/>""")
 
@@ -423,9 +430,9 @@ def newsletterBySource (user, jour, permission_news, permission_science, permiss
 				newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 					•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 				</p>""".format(patents_attributes[0].strip().encode("utf_8"), patents_attributes[1].strip().encode("utf_8").lower()))
-				index=index+1
+				index=index+1# [Audit][REVIEW] gestion des espaces
 
-	index=0
+	index=0# [Audit][REVIEW] gestion des espaces
 
 	######### GOODBYE
 	newsletter.write("""</div>
