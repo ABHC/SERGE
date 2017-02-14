@@ -20,6 +20,7 @@ import MySQLdb #Paquet MySQL
 sys.path.insert(0, "modules/UFP/feedparser")
 sys.path.insert(1, "modules/UFP/feedparser")
 
+import requests
 import urllib2 # Voir la documentation : https://docs.python.org/2/library/urllib2.html# [Audit][REVIEW] CRITICAL securiser urlib2 ou prendre un autre module plus sécurisé http://www.levigross.com/2014/07/04/security-concerns-with-pythons-urllib-and-urllib2/ + IDEA http://stackoverflow.com/questions/7191337/python-better-network-api-than-urllib urllib3 existe et un module python du nom de request l'utilise et semble plus sécurisé http://docs.python-requests.org/en/master/
 import feedparser #voir la documentation : https://pythonhosted.org/feedparser/
 import datetime #voir la documentation : https://docs.python.org/2/library/datetime.html
@@ -156,22 +157,29 @@ def ofSourceAndName(now): #Metallica
 			link = rows[0]
 			# [Audit][REVIEW] Code dupliqué de ligne 232 à 276 : faire une fonction pour résoudre la duplication [DUPLICATION 00]
 			try:
-				req = urllib2.Request(link, headers={'User-Agent':"Magic Browser"})
-				rss = urllib2.urlopen(req)
+				req = requests.get(link, headers={'User-Agent' : "Serge Browser"})
+				req.encoding = "utf_8"
+				rss = req.text
 				logger_info.info(link+"\n")
-				header = rss.headers
+				header = req.headers
 				logger_info.info("HEADER :\n"+str(header)+"\n\n") #affichage des paramètres de connexion
 				rss_error = 0
-			except urllib2.HTTPError:
-				print ("HTTP ERROR")
+			except requests.exceptions.ConnectionError:
+				print ("CONNECTION ERROR")
 				link = link.replace("http://", "")
-				logger_info.warning("Error in the access "+link+" (HTTP protocol error)\n")
-				logger_info.warning("Please check the availability of the feed \n \n")
+				logger_info.warning("Error in the access "+link+"\n")
+				logger_info.warning("Please check the availability of the feed and the link\n \n")
 				rss_error = 1
-			except urllib2.HTTPSError:
-				print ("HTTPS ERROR")
+			except requests.exceptions.HTTPError:
+				print ("HTTP ERROR")
 				link = link.replace("https://", "")
-				logger_info.warning("Error in the access "+link+" (HTTPS protocol error) \n")
+				logger_info.warning("Error in the access "+link+" (HTTP protocol error) \n")
+				logger_info.warning("Please check the availability of the feed\n \n")
+				rss_error = 1
+			except requests.exceptions.Timeout:
+				print ("TIMEOUT")
+				link = link.replace("https://", "")
+				logger_info.warning("Error in the access "+link+" (server don't respond) \n")
 				logger_info.warning("Please check the availability of the feed\n \n")
 				rss_error = 1
 
@@ -230,22 +238,29 @@ def ofSourceAndName(now): #Metallica
 			if rss_name is None :
 
 				try:
-					req = urllib2.Request(link, headers={'User-Agent' : "Magic Browser"})
-					rss = urllib2.urlopen(req)
+					req = requests.get(link, headers={'User-Agent' : "Serge Browser"})
+					req.encoding = "utf_8"
+					rss = req.text
 					logger_info.info(link+"\n")
-					header = rss.headers
+					header = req.headers
 					logger_info.info("HEADER :\n"+str(header)+"\n\n")
 					rss_error = 0
-				except urllib2.HTTPError:
-					print ("HTTP ERROR")
+				except requests.exceptions.ConnectionError:
+					print ("CONNECTION ERROR")
 					link = link.replace("http://", "")
-					logger_info.warning("Error in the access "+link+" (HTTP protocol error)\n")
-					logger_info.warning("Please check the availability of the feed \n \n")
+					logger_info.warning("Error in the access "+link+"\n")
+					logger_info.warning("Please check the availability of the feed and the link\n \n")
 					rss_error = 1
-				except urllib2.HTTPSError:
-					print ("HTTPS ERROR")
+				except requests.exceptions.HTTPError:
+					print ("HTTP ERROR")
 					link = link.replace("https://", "")
-					logger_info.warning("Error in the access "+link+" (HTTPS protocol error) \n")
+					logger_info.warning("Error in the access "+link+" (HTTP protocol error) \n")
+					logger_info.warning("Please check the availability of the feed\n \n")
+					rss_error = 1
+				except requests.exceptions.Timeout:
+					print ("TIMEOUT")
+					link = link.replace("https://", "")
+					logger_info.warning("Error in the access "+link+" (server don't respond) \n")
 					logger_info.warning("Please check the availability of the feed\n \n")
 					rss_error = 1
 
@@ -357,23 +372,30 @@ def newscast(last_launch):
 		########### LINK CONNEXION
 		# [Audit][REVIEW] Duplication en partie de la duplication00 ligne 364 à 388, étudier si elle peut être résolue
 		try:
-			req = urllib2.Request(link, headers={'User-Agent' : "Magic Browser"})
+			req = requests.get(link, headers={'User-Agent' : "Magic Browser"})
 			print ("Go to : "+link) ###
-			rss = urllib2.urlopen(req)
+			req.encoding = "utf_8"
+			rss = req.text
 			logger_info.info(link+"\n")
-			header = rss.headers
+			header = req.headers
 			logger_info.info("HEADER :\n"+str(header)+"\n\n")
 			rss_error = 0
-		except urllib2.HTTPError:
-			print ("HTTP ERROR")
+		except requests.exceptions.ConnectionError:
+			print ("CONNECTION ERROR")
 			link = link.replace("http://", "")
-			logger_info.warning("Error in the access "+link+" (HTTP protocol error)\n")
-			logger_info.warning("Please check the availability of the feed \n \n")
+			logger_info.warning("Error in the access "+link+"\n")
+			logger_info.warning("Please check the availability of the feed and the link\n \n")
 			rss_error = 1
-		except urllib2.HTTPSError:
-			print ("HTTPS ERROR")
+		except requests.exceptions.HTTPError:
+			print ("HTTP ERROR")
 			link = link.replace("https://", "")
-			logger_info.warning("Error in the access "+link+" (HTTPS protocol error) \n")
+			logger_info.warning("Error in the access "+link+" (HTTP protocol error) \n")
+			logger_info.warning("Please check the availability of the feed\n \n")
+			rss_error = 1
+		except requests.exceptions.Timeout:
+			print ("TIMEOUT")
+			link = link.replace("https://", "")
+			logger_info.warning("Error in the access "+link+" (server don't respond) \n")
 			logger_info.warning("Please check the availability of the feed\n \n")
 			rss_error = 1
 
@@ -477,7 +499,7 @@ def newscast(last_launch):
 					keyword_id_comma2 = ","+str(keyword_id)+","
 					article = (post_title, post_link, human_date, id_rss, keyword_id_comma2)
 
-					if (keyword_lower in post_title_lower or keyword_lower in post_description_lower or keyword_lower in tags_list_lower) and post_date >= last_launch:
+					if (keyword_lower in post_title_lower or keyword_lower in post_description_lower or keyword_lower in tags_list_lower or keyword_lower == ":all") and post_date >= last_launch:
 
 						########### DATABASE CHECKING
 						query = ("SELECT keyword_id FROM result_news_serge WHERE link = %s")
@@ -528,8 +550,6 @@ def newscast(last_launch):
 									print "ROLLBACK" ###
 									logger_error.error("ROLLBACK")
 								update_keyword_id.close()
-
-						break #les commandes break permettent que l'information ne s'affiche qu'une seule fois si il y a plusieurs keywords détectées dans l'entrée
 
 					elif (keyword_sans_accent in post_title_sans_accent or keyword_sans_accent in post_description_sans_accent or keyword_sans_accent in tags_list_sans_accent) and post_date >= last_launch:
 
@@ -582,60 +602,6 @@ def newscast(last_launch):
 									logger_error.error(repr(except_type))
 								update_keyword_id.close()
 
-						break
-
-					elif keyword_lower == ":all" and post_date >= last_launch: # [Audit][REVIEW] Possible du plication du if ligne 539 si duplication  alors mettre un or keyword_lower == ":all" and post_date >= last_launch: dans le elif ligne 539
-
-						########### DATABASE CHECKING
-						query = ("SELECT keyword_id FROM result_news_serge WHERE link = %s")
-
-						call_result_news = database.cursor()
-						call_result_news.execute(query, (post_link, ))
-						field_id_key = call_result_news.fetchone()
-						call_result_news.close()
-
-						print field_id_key###
-						# [Audit][REVIEW] Duplication des ligne 502 à 541 sur les ligne 55 à 592 et 606 à 643, faire une fonction pour résoudre la duplication [DUPLICATION01]
-						########### DATABASE INSERT
-						if field_id_key is None:
-							query = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
-
-							insert_news = database.cursor()
-							try:
-								insert_news.execute(query, article)
-								database.commit()
-							except Exception, except_type:# [Audit][REVIEW] except doit avoir si possible un type https://docs.python.org/2/howto/doanddont.html + espace avant :
-								database.rollback()
-								print "ROLLBACK" ###
-								logger_error.error("ROLLBACK IN newscast FUNCTION")
-								logger_error.error(repr(except_type))
-							insert_news.close()
-
-							new_article += 1 ###
-
-						########### DATABASE UPDATE
-						else:
-							print "DOUBLON"###
-							field_id_key = field_id_key[0]
-							keyword_id_comma = str(keyword_id)+","
-
-							if keyword_id_comma2 not in field_id_key :
-								complete_keyword_id = field_id_key+keyword_id_comma
-
-								update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
-
-								update_keyword_id = database.cursor()
-								try:
-									update_keyword_id.execute(update, (complete_keyword_id, post_link))
-									database.commit()
-								except Exception, except_type:
-									database.rollback()
-									print "ROLLBACK" ###
-									logger_error.error("ROLLBACK IN newscast FUNCTION")
-									logger_error.error(repr(except_type))
-								update_keyword_id.close()
-
-						break
 
 					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
@@ -671,25 +637,28 @@ def Patents(last_launch):
 		id_query_wipo = couple_query[1]
 		query_wipo = couple_query[0]
 		query_wipo = query_wipo.strip().encode("utf-8")
-		html_query = urllib2.quote(query_wipo, safe='')
-		html_query = html_query.replace("%20", "+")
+		#html_query = urllib2.quote(query_wipo, safe='')  ###arret ici le 13/02 #TODO mise en place de requests
+		#html_query = html_query.replace("%20", "+")
 
-		link = ('https://patentscope.wipo.int/search/rss.jsf?query='+html_query+'+&office=&rss=true&sortOption=Pub+Date+Desc')
+		link = ('https://patentscope.wipo.int/search/rss.jsf?query='+query_wipo+'+&office=&rss=true&sortOption=Pub+Date+Desc')
 
 		try:
-			WIPO = urllib2.urlopen(link)
-		except Exception:
-			logger_error.warning("UNKNOWN CONNEXION ERROR")###
+			req = requests.get(link, headers={'User-Agent' : "Serge Browser"})
+			req.encoding = "utf_8"
+			rss_wipo = req.text
+		except requests.RequestException, except_type:
+			logger_error.error("CONNEXION ERROR")
+			logger_error.error(repr(except_type))
 
 		"""On fait un renvoi au LOG des données de connexion"""
 		logger_info.info(query_wipo+"\n")
 		logger_info.info(link+"\n")
-		header = WIPO.headers
+		header = req.headers
 		logger_info.info("HEADER :\n"+str(header))
 
 
-		if (WIPO):
-			xmldoc = feedparser.parse(WIPO)
+		if (rss_wipo):
+			xmldoc = feedparser.parse(rss_wipo)
 			range = 0
 			rangemax = len(xmldoc.entries)
 			logger_info.info("numbers of patents :"+unicode(rangemax)+"\n \n")
@@ -810,21 +779,23 @@ def science(last_launch):
 		keyword = sans_accent_maj(keyword).strip()
 		print ("Recherche sur le keyword : " + keyword) ###
 		link = ('http://export.arxiv.org/api/query?search_query=all:'+keyword.encode("utf-8")+"\n")
-		print link ###
 
 		try:
-			arxiv_API = urllib2.urlopen(link)
-		except Exception:
-			print ("\nARXIV CONNECTION ERROR\n")
+			req = requests.get(link, headers={'User-Agent' : "Serge Browser"})
+			req.encoding = "utf_8"
+			rss_arxiv = req.text
+		except requests.RequestException, except_type:
+			logger_error.error("CONNEXION ERROR")
+			logger_error.error(repr(except_type))
 
 		"""On fait un renvoi au LOG des données de connexion"""
 		logger_info.info(keyword.encode("utf-8")+"\n")
 		logger_info.info(link+"\n")
-		header = arxiv_API.headers
+		header = req.headers
 		logger_info.info("HEADER :\n"+str(header)+"\n\n")
 
 		try:
-			xmldoc = feedparser.parse(arxiv_API)
+			xmldoc = feedparser.parse(rss_arxiv)
 		except AttributeError:
 			print ("\nARXIV XML ERROR\n")
 
@@ -910,9 +881,6 @@ def science(last_launch):
 
 		else:
 			logger_info.warning("Error : the feed is unavailable")
-	# [Audit][REVIEW] Virer code commenté
-	#if new_article == 0 :
-		#newsletter.write ("Aucune nouvelle publication dans vos centres d'intérêts\n \n")
 
 
 def highwayToMail(register, user):
