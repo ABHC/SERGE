@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf8 -*-
 
 # [Audit][REVIEW] Le fichier est assez long, se fixer une limite de envion 1000 lignes par fichier est une bonne chose
 
@@ -7,6 +7,7 @@
 #TODO Modifier le HTML/CSS pour introduire un code couleur
 #TODO Modifier le HTML/CSS pour modifier l'emplacement du logo pour le wiki et le mettre à gauche
 #TODO Mettre des database démonstratives sur github
+#TODO faire une fonction pour vérifier l'intégrité de la base de donnée avant de faire tourner SERGE
 
 """SERGE (Serge Explore Research and Generate Emails/Serge explore recherche et génère des emails) est un outil de veille industrielle et technologique""" #TODO décider d'une approche logique de commentaires en suivant les standards python
 
@@ -42,13 +43,13 @@ formatter_error = logging.Formatter("%(asctime)s -- %(levelname)s -- %(message)s
 formatter_info = logging.Formatter("%(asctime)s -- %(levelname)s -- %(message)s")
 
 logger_error = logging.getLogger("error_log")
-handler_error = logging.handlers.RotatingFileHandler("logs/serge_error_log.txt", mode="a", maxBytes= 10000, backupCount= 1, encoding="utf-8")
+handler_error = logging.handlers.RotatingFileHandler("logs/serge_error_log.txt", mode="a", maxBytes= 10000, backupCount= 1, encoding="utf8")
 handler_error.setFormatter(formatter_error)
 logger_error.setLevel(logging.ERROR)
 logger_error.addHandler(handler_error)
 
 logger_info = logging.getLogger("info_log")
-handler_info = logging.handlers.RotatingFileHandler("logs/serge_info_log.txt", mode="a", maxBytes= 5000000, backupCount= 1, encoding="utf-8")
+handler_info = logging.handlers.RotatingFileHandler("logs/serge_info_log.txt", mode="a", maxBytes= 5000000, backupCount= 1, encoding="utf8")
 handler_info.setFormatter(formatter_info)
 logger_info.setLevel(logging.INFO)
 logger_info.addHandler(handler_info)
@@ -158,7 +159,7 @@ def ofSourceAndName(now): #Metallica
 			# [Audit][REVIEW] Code dupliqué de ligne 232 à 276 : faire une fonction pour résoudre la duplication [DUPLICATION 00]
 			try:
 				req = requests.get(link, headers={'User-Agent' : "Serge Browser"})
-				req.encoding = "utf_8"
+				req.encoding = "utf8"
 				rss = req.text
 				logger_info.info(link+"\n")
 				header = req.headers
@@ -239,7 +240,7 @@ def ofSourceAndName(now): #Metallica
 
 				try:
 					req = requests.get(link, headers={'User-Agent' : "Serge Browser"})
-					req.encoding = "utf_8"
+					req.encoding = "utf8"
 					rss = req.text
 					logger_info.info(link+"\n")
 					header = req.headers
@@ -374,7 +375,7 @@ def newscast(last_launch):
 		try:
 			req = requests.get(link, headers={'User-Agent' : "Magic Browser"})
 			print ("Go to : "+link) ###
-			req.encoding = "utf_8"
+			req.encoding = "utf8"
 			rss = req.text
 			logger_info.info(link+"\n")
 			header = req.headers
@@ -499,7 +500,7 @@ def newscast(last_launch):
 					keyword_id_comma2 = ","+str(keyword_id)+","
 					article = (post_title, post_link, human_date, id_rss, keyword_id_comma2)
 
-					if (keyword_lower in post_title_lower or keyword_lower in post_description_lower or keyword_lower in tags_list_lower or keyword_lower == ":all") and post_date >= last_launch:
+					if (keyword_lower in post_title_lower or keyword_lower in post_description_lower or keyword_lower in tags_list_lower or ":all@" in keyword_lower) and post_date >= last_launch:
 
 						########### DATABASE CHECKING
 						query = ("SELECT keyword_id FROM result_news_serge WHERE link = %s")
@@ -636,7 +637,7 @@ def Patents(last_launch):
 	for couple_query in queryception_list:
 		id_query_wipo = couple_query[1]
 		query_wipo = couple_query[0]
-		query_wipo = query_wipo.strip().encode("utf-8")
+		query_wipo = query_wipo.strip().encode("utf8")
 		#html_query = urllib2.quote(query_wipo, safe='')  ###arret ici le 13/02 #TODO mise en place de requests
 		#html_query = html_query.replace("%20", "+")
 
@@ -644,7 +645,7 @@ def Patents(last_launch):
 
 		try:
 			req = requests.get(link, headers={'User-Agent' : "Serge Browser"})
-			req.encoding = "utf_8"
+			req.encoding = "utf8"
 			rss_wipo = req.text
 		except requests.RequestException, except_type:
 			logger_error.error("CONNEXION ERROR")
@@ -778,18 +779,18 @@ def science(last_launch):
 
 		keyword = sans_accent_maj(keyword).strip()
 		print ("Recherche sur le keyword : " + keyword) ###
-		link = ('http://export.arxiv.org/api/query?search_query=all:'+keyword.encode("utf-8")+"\n")
+		link = ('http://export.arxiv.org/api/query?search_query=all:'+keyword.encode("utf8")+"\n")
 
 		try:
 			req = requests.get(link, headers={'User-Agent' : "Serge Browser"})
-			req.encoding = "utf_8"
+			req.encoding = "utf8"
 			rss_arxiv = req.text
 		except requests.RequestException, except_type:
 			logger_error.error("CONNEXION ERROR")
 			logger_error.error(repr(except_type))
 
 		"""On fait un renvoi au LOG des données de connexion"""
-		logger_info.info(keyword.encode("utf-8")+"\n")
+		logger_info.info(keyword.encode("utf8")+"\n")
 		logger_info.info(link+"\n")
 		header = req.headers
 		logger_info.info("HEADER :\n"+str(header)+"\n\n")
@@ -1058,7 +1059,7 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 ######### MAIN #TODO fractionner le main en fonctions
 
 ######### ERROR HOOK DEPLOYMENT
-sys.excepthook = cemeteriesOfErrors
+#sys.excepthook = cemeteriesOfErrors
 
 ######### CLEANING OF THE DIRECTORY
 try:
@@ -1312,11 +1313,9 @@ for user in user_list_all:
 			print ("Organisation des mails : "+mail_design[0]) ###
 			######### CALL TO NEWSLETTER FUNCTION
 			if mail_design[0] == "type":
-				print ("Organisation des mails : "+mail_design[0]) ###
 				newsletter_creator.newsletterByType(user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, jour)# [Audit][REVIEW] Peut être trop de paramètres, idée diviser la fonction
 				# [Audit][REVIEW] Duplication des lignes 1362 à 1406 sur les lignes 1434 à 1482, faire une fonction pour résoudre la duplication [DUPLICATION02]
 			elif mail_design[0] == "masterword":
-				print ("Organisation des mails : "+mail_design[0]) ###
 				query_newswords = "SELECT keyword, id FROM keyword_news_serge WHERE owners like %s and active > 0"
 				query_sciencewords = "SELECT keyword, id FROM keyword_science_serge WHERE owners like %s and active > 0"
 				query_wipo_query = "SELECT query, id FROM queries_wipo_serge WHERE owners like %s and active > 0"
@@ -1331,6 +1330,10 @@ for user in user_list_all:
 				call_words.close()
 
 				for word_and_attribute in newswords:
+					if ":all@" in word_and_attribute[0] :
+						split_word = word_and_attribute[0].replace(":","").capitalize().replace("@"," @ ").encode("utf8").split("§")[0].decode("utf8").replace(".","&#8228;")
+						word_and_attribute = (split_word,word_and_attribute[1])
+
 					newswords_list.append(word_and_attribute)
 
 				for word_and_attribute in sciencewords:
@@ -1342,7 +1345,6 @@ for user in user_list_all:
 				newsletter_creator.newsletterByKeyword(user, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list)
 
 			elif mail_design[0] == "origin":
-				print ("Organisation des mails : "+mail_design[0]) ###
 				query_news_origin = "SELECT name, id FROM rss_serge WHERE owners like %s and active > 0"
 
 				call_origin = database.cursor()
@@ -1388,13 +1390,13 @@ for user in user_list_all:
 			print ("SUPERIEUR\n") ###
 			logger_info.info("LIMIT REACHED")
 			# [Audit][REVIEW] Duplication des lignes 1362 à 1406 sur les lignes 1434 à 1482, faire une fonction pour résoudre la duplication [DUPLICATION02]
+			print ("Organisation des mails : "+mail_design[0]) ###
+
 			######### CALL TO NEWSLETTER FUNCTION
 			if mail_design[0] == "type":
-				print ("Organisation des mails : "+mail_design[0]) ###
 				newsletter_creator.newsletterByType(user, permission_news, permission_science, permission_patents, permission_patents_key, permission_patents_class, permission_patents_inventor, not_send_links_news_list, not_send_titles_news_list, not_send_links_science_list, not_send_titles_science_list, not_send_links_patents_key_list, not_send_titles_patents_key_list, not_send_links_patents_inventor_list, not_send_titles_patents_inventor_list, not_send_links_patents_class_list, not_send_titles_patents_class_list, not_send_news, not_send_science, not_send_patents_class, not_send_patents_inventor, not_send_patents_key, jour)
 
 			elif mail_design[0] == "masterword":
-				print ("Organisation des mails : "+mail_design[0]) ###
 				query_newswords = "SELECT keyword, id FROM keyword_news_serge WHERE owners like %s and active > 0"
 				query_sciencewords = "SELECT keyword, id FROM keyword_science_serge WHERE owners like %s and active > 0"
 				query_wipo_query = "SELECT query, id FROM queries_wipo_serge WHERE owners like %s and active > 0"
@@ -1409,6 +1411,10 @@ for user in user_list_all:
 				call_words.close()
 
 				for word_and_attribute in newswords:
+					if ":all@" in word_and_attribute[0] :
+						split_word = word_and_attribute[0].replace(":","").capitalize().replace("@"," @ ").encode("utf8").split("§")[0].decode("utf8").replace(".","&#8228;")
+						word_and_attribute = (split_word,word_and_attribute[1])
+
 					newswords_list.append(word_and_attribute)
 
 				for word_and_attribute in sciencewords:
@@ -1420,7 +1426,6 @@ for user in user_list_all:
 				newsletter_creator.newsletterByKeyword(user, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list)# [Audit][REVIEW] Peut être trop de paramètres, idée diviser la fonction
 
 			elif mail_design[0] == "origin":
-				print ("Organisation des mails : "+mail_design[0]) ###
 				query_news_origin = "SELECT name, id FROM rss_serge WHERE owners like %s and active > 0"
 
 				call_origin = database.cursor()

@@ -81,7 +81,7 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 
 			newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 				•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
-			</p>""".format(patents_attributes[0].strip().encode("utf_8"), patents_attributes[1].strip().encode("utf_8").lower()))
+			</p>""".format(patents_attributes[0].strip().encode("utf_8"), patents_attributes[1].strip().encode("utf_8").lower().capitalize()))
 			index = index+1
 
 	index = 0
@@ -193,7 +193,7 @@ def newsletterByKeyword (user, jour, permission_news, permission_science, permis
 			elements = len(process_result_list)
 
 			if elements > 0:
-				newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(word))
+				newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(word.capitalize()))
 
 				for couple_results in process_result_list:
 					newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
@@ -261,7 +261,7 @@ def newsletterByKeyword (user, jour, permission_news, permission_science, permis
 				for couple_results in process_result_list:
 					newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 						•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
-					</p>""".format(couple_results[0], couple_results[1].lower()))
+					</p>""".format(couple_results[0], couple_results[1].lower().capitalize()))
 
 	index = 0
 
@@ -405,7 +405,7 @@ def newsletterBySource (user, jour, permission_news, permission_science, permiss
 
 			newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 			•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
-			</p>""".format(patents_attributes[0].strip().encode("utf_8"), patents_attributes[1].strip().encode("utf_8").lower()))
+			</p>""".format(patents_attributes[0].strip().encode("utf_8"), patents_attributes[1].strip().encode("utf_8").lower().capitalize()))
 			index = index+1
 
 	index = 0
