@@ -22,7 +22,6 @@ sys.path.insert(0, "modules/UFP/feedparser")
 sys.path.insert(1, "modules/UFP/feedparser")
 
 import requests
-import urllib2 # Voir la documentation : https://docs.python.org/2/library/urllib2.html# [Audit][REVIEW] CRITICAL securiser urlib2 ou prendre un autre module plus sécurisé http://www.levigross.com/2014/07/04/security-concerns-with-pythons-urllib-and-urllib2/ + IDEA http://stackoverflow.com/questions/7191337/python-better-network-api-than-urllib urllib3 existe et un module python du nom de request l'utilise et semble plus sécurisé http://docs.python-requests.org/en/master/
 import feedparser #voir la documentation : https://pythonhosted.org/feedparser/
 import datetime #voir la documentation : https://docs.python.org/2/library/datetime.html
 import unicodedata #voir la documentation : https://docs.python.org/2/library/unicodedata.html
@@ -35,7 +34,7 @@ from email.mime.text import MIMEText
 from shutil import copyfile
 
 ######### IMPORT SERGE SPECIALS MODULES
-import newsletter_creator
+import mailer
 
 # [Audit][REVIEW][VULN] CRITICAL Vérifier que les variables récupérées dans la BDD ne peuvent s'éxcuter comme du code python (Demander à POHU des explications)
 ######### LOGGER CONFIG
@@ -250,7 +249,7 @@ def ofSourceAndName(now): #Metallica
 			print rows ###
 			link = rows[0]
 			rss_name = rows[1]
-			# [Audit][REVIEW] Code dupliqué de ligne 160 à 202 : faire une fonction pour résoudre la duplication [DUPLICATION 00]
+
 			if rss_name is None :
 
 				req_results = allRequestLong(link)
@@ -638,7 +637,6 @@ def Patents(last_launch):
 			logger_error.warning("\n UNKNOWN CONNEXION ERROR")
 
 
-
 def science(last_launch):
 	"""Fonction de recherche des derniers articles scientifiques publiés par arxiv.org :
 		- keywords retrieval
@@ -733,51 +731,6 @@ def science(last_launch):
 
 		else:
 			logger_info.warning("Error : the feed is unavailable")
-
-
-def highwayToMail(register, user):
-
-	print ("MAIL to "+user)
-
-	######### SERGE MAIL
-	sergemail = open("permission/sergemail.txt", "r")
-	fromaddr = sergemail.read().strip()
-	sergemail.close
-
-	######### ADRESSES RECOVERY
-	query= "SELECT email FROM users_table_serge WHERE id = %s" #Look on send condition
-
-	call_users= database.cursor()
-	call_users.execute(query, (register))
-	row = call_users.fetchone()
-	call_users.close()
-
-	toaddr = row[0]
-	print toaddr
-
-	"""On veux transférer le contenu du fichier texte DANS le mail"""
-	newsletter = open("Newsletter.html", "r")
-	msg = MIMEText(newsletter.read(), 'html')
-	newsletter.close()
-
-	msg['From'] = fromaddr
-	msg['To'] = toaddr
-	msg['Subject'] = "[SERGE] Veille Industrielle et Technologique"
-
-	# [Audit][REVIEW] Virer le code commenté
-	#body = "YOUR MESSAGE HERE"
-	#msg.attach(MIMEText(body, 'plain'))
-
-	passmail = open("permission/passmail.txt", "r")
-	mdp_mail = passmail.read().strip()
-	passmail.close()
-
-	server = smtplib.SMTP('smtp.cairn-devices.eu', 5025)
-	server.starttls()
-	server.login(fromaddr, mdp_mail) #mot de passe
-	text = msg.as_string()
-	server.sendmail(fromaddr, toaddr, text)
-	server.quit()
 
 
 def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now):
@@ -907,15 +860,13 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 	call_users.close()
 
 
-######### MAIN #TODO fractionner le main en fonctions
-
 ######### ERROR HOOK DEPLOYMENT
 sys.excepthook = cemeteriesOfErrors
 
 ######### CLEANING OF THE DIRECTORY
 try:
 	os.remove("Newsletter.html")
-except :# [Audit][REVIEW] except doit avoir si possible un type https://docs.python.org/2/howto/doanddont.html + espace avant :
+except OSError:
 	pass
 
 ######### Connexion à la base de données CairnDevices
@@ -1151,10 +1102,10 @@ for user in user_list_all:
 			print ("Fréquence atteinte") ###
 
 			######### CALL TO buildMail FUNCTION
-			newsletter_creator.buildMail(user, user_id_comma, register, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents)
+			mailer.buildMail(user, user_id_comma, register, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents)
 
 			######### CALL TO highwayToMail FUNCTION
-			highwayToMail(register, user)
+			mailer.highwayToMail(register, user)
 
 			######### CALL TO stairwayToUpdate FUNCTION
 			stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now)
@@ -1184,10 +1135,10 @@ for user in user_list_all:
 			logger_info.info("LIMIT REACHED")
 
 			######### CALL TO buildMail FUNCTION
-			newsletter_creator.buildMail(user, user_id_comma, register, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents)
+			mailer.buildMail(user, user_id_comma, register, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents)
 
-			######### CALL TO MAIL FUNCTION
-			highwayToMail(register, user)
+			######### CALL TO highwayToMail FUNCTION
+			mailer.highwayToMail(register, user)
 
 			######### CALL TO stairwayToUpdate FUNCTION
 			stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now)
