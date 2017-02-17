@@ -113,6 +113,44 @@ def sans_accent_min(ch):
     return r
 
 
+def allRequestLong (link):
+	"""Function for standardized requests to feed and internet pages. Name from Metallica, All Nightmare Long"""
+
+	try:
+		req = requests.get(link, headers={'User-Agent' : "Serge Browser"})
+		req.encoding = "utf8"
+		rss = req.text
+		logger_info.info(link+"\n")
+		header = req.headers
+		logger_info.info("HEADER :\n"+str(header)+"\n\n") #affichage des paramètres de connexion
+		rss_error = 0
+	except requests.exceptions.ConnectionError:
+		print ("CONNECTION ERROR")
+		link = link.replace("http://", "")
+		logger_info.warning("Error in the access "+link+"\n")
+		logger_info.warning("Please check the availability of the feed and the link\n \n")
+		rss = None
+		rss_error = 1
+	except requests.exceptions.HTTPError:
+		print ("HTTP ERROR")
+		link = link.replace("https://", "")
+		logger_info.warning("Error in the access "+link+" (HTTP protocol error) \n")
+		logger_info.warning("Please check the availability of the feed\n \n")
+		rss = None
+		rss_error = 1
+	except requests.exceptions.Timeout:
+		print ("TIMEOUT")
+		link = link.replace("https://", "")
+		logger_info.warning("Error in the access "+link+" (server don't respond) \n")
+		logger_info.warning("Please check the availability of the feed\n \n")
+		rss = None
+		rss_error = 1
+
+	req_results = (rss_error, rss)
+
+	return req_results
+
+
 def ofSourceAndName(now): #Metallica
 	logger_info.info("\n######### Feed titles retrieval (ofSourceAndName function) :\n\n")
 
@@ -156,33 +194,10 @@ def ofSourceAndName(now): #Metallica
 
 			print rows ###
 			link = rows[0]
-			# [Audit][REVIEW] Code dupliqué de ligne 232 à 276 : faire une fonction pour résoudre la duplication [DUPLICATION 00]
-			try:
-				req = requests.get(link, headers={'User-Agent' : "Serge Browser"})
-				req.encoding = "utf8"
-				rss = req.text
-				logger_info.info(link+"\n")
-				header = req.headers
-				logger_info.info("HEADER :\n"+str(header)+"\n\n") #affichage des paramètres de connexion
-				rss_error = 0
-			except requests.exceptions.ConnectionError:
-				print ("CONNECTION ERROR")
-				link = link.replace("http://", "")
-				logger_info.warning("Error in the access "+link+"\n")
-				logger_info.warning("Please check the availability of the feed and the link\n \n")
-				rss_error = 1
-			except requests.exceptions.HTTPError:
-				print ("HTTP ERROR")
-				link = link.replace("https://", "")
-				logger_info.warning("Error in the access "+link+" (HTTP protocol error) \n")
-				logger_info.warning("Please check the availability of the feed\n \n")
-				rss_error = 1
-			except requests.exceptions.Timeout:
-				print ("TIMEOUT")
-				link = link.replace("https://", "")
-				logger_info.warning("Error in the access "+link+" (server don't respond) \n")
-				logger_info.warning("Please check the availability of the feed\n \n")
-				rss_error = 1
+
+			req_results = allRequestLong(link)
+			rss_error = req_results[0]
+			rss = req_results[1]
 
 			if rss_error == 0:
 				########### RSS PARSING
@@ -238,32 +253,9 @@ def ofSourceAndName(now): #Metallica
 			# [Audit][REVIEW] Code dupliqué de ligne 160 à 202 : faire une fonction pour résoudre la duplication [DUPLICATION 00]
 			if rss_name is None :
 
-				try:
-					req = requests.get(link, headers={'User-Agent' : "Serge Browser"})
-					req.encoding = "utf8"
-					rss = req.text
-					logger_info.info(link+"\n")
-					header = req.headers
-					logger_info.info("HEADER :\n"+str(header)+"\n\n")
-					rss_error = 0
-				except requests.exceptions.ConnectionError:
-					print ("CONNECTION ERROR")
-					link = link.replace("http://", "")
-					logger_info.warning("Error in the access "+link+"\n")
-					logger_info.warning("Please check the availability of the feed and the link\n \n")
-					rss_error = 1
-				except requests.exceptions.HTTPError:
-					print ("HTTP ERROR")
-					link = link.replace("https://", "")
-					logger_info.warning("Error in the access "+link+" (HTTP protocol error) \n")
-					logger_info.warning("Please check the availability of the feed\n \n")
-					rss_error = 1
-				except requests.exceptions.Timeout:
-					print ("TIMEOUT")
-					link = link.replace("https://", "")
-					logger_info.warning("Error in the access "+link+" (server don't respond) \n")
-					logger_info.warning("Please check the availability of the feed\n \n")
-					rss_error = 1
+				req_results = allRequestLong(link)
+				rss_error = req_results[0]
+				rss = req_results[1]
 
 				if rss_error == 0 :
 
@@ -319,6 +311,55 @@ def permission(register) :
 	return permission_list
 
 
+def insertOrUpdate(query_checking, query_insertion, query_update, post_link, item, id_item_comma, id_item_comma2) :
+
+	########### DATABASE CHECKING
+	call_data_cheking = database.cursor()
+	call_data_cheking.execute(query_checking, (post_link, ))
+	field_id_item = call_data_cheking.fetchone()
+	call_data_cheking.close()
+
+	print field_id_item###
+
+	########### DATABASE INSERTION
+	if field_id_item is None:
+		print "INSERTION" ###
+
+		insert_data = database.cursor()
+		try:
+			insert_data.execute(query_insertion, item)
+			database.commit()
+		except Exception, except_type:
+			database.rollback()
+			print "ROLLBACK" ###
+			logger_error.error("ROLLBACK IN insertOrUpdate FUNCTION")
+			logger_error.error(query_insertion)
+			logger_error.error(repr(except_type))
+		insert_data.close()
+
+	########### DATABASE UPDATE
+	else:
+		print "DOUBLON"###
+		field_id_item = field_id_item[0]
+
+		if id_item_comma2 not in field_id_item:
+			complete_id = field_id_item+id_item_comma
+
+			update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
+
+			update_data = database.cursor()
+			try:
+				update_data.execute(query_update, (complete_id, post_link))
+				database.commit()
+			except Exception, except_type:
+				database.rollback()
+				print "ROLLBACK" ###
+				logger_error.error("ROLLBACK IN insertOrUpdate FUNCTION")
+				logger_error.error(query_update)
+				logger_error.error(repr(except_type))
+			update_data.close()
+
+
 def newscast(last_launch):
 	"""Function for last news research :
 		- sources retrieval
@@ -371,34 +412,9 @@ def newscast(last_launch):
 		#break ###
 
 		########### LINK CONNEXION
-		# [Audit][REVIEW] Duplication en partie de la duplication00 ligne 364 à 388, étudier si elle peut être résolue
-		try:
-			req = requests.get(link, headers={'User-Agent' : "Magic Browser"})
-			print ("Go to : "+link) ###
-			req.encoding = "utf8"
-			rss = req.text
-			logger_info.info(link+"\n")
-			header = req.headers
-			logger_info.info("HEADER :\n"+str(header)+"\n\n")
-			rss_error = 0
-		except requests.exceptions.ConnectionError:
-			print ("CONNECTION ERROR")
-			link = link.replace("http://", "")
-			logger_info.warning("Error in the access "+link+"\n")
-			logger_info.warning("Please check the availability of the feed and the link\n \n")
-			rss_error = 1
-		except requests.exceptions.HTTPError:
-			print ("HTTP ERROR")
-			link = link.replace("https://", "")
-			logger_info.warning("Error in the access "+link+" (HTTP protocol error) \n")
-			logger_info.warning("Please check the availability of the feed\n \n")
-			rss_error = 1
-		except requests.exceptions.Timeout:
-			print ("TIMEOUT")
-			link = link.replace("https://", "")
-			logger_info.warning("Error in the access "+link+" (server don't respond) \n")
-			logger_info.warning("Please check the availability of the feed\n \n")
-			rss_error = 1
+		req_results = allRequestLong(link)
+		rss_error = req_results[0]
+		rss = req_results[1]
 
 		if rss_error == 0:
 
@@ -497,117 +513,41 @@ def newscast(last_launch):
 					post_description_sans_accent = sans_accent_maj(post_description_lower)
 					keyword_sans_accent = sans_accent_maj(keyword)
 
-					keyword_id_comma2 = ","+str(keyword_id)+","
-					article = (post_title, post_link, human_date, id_rss, keyword_id_comma2)
+					id_item_comma = str(keyword_id)+","
+					id_item_comma2 = ","+str(keyword_id)+","
+					item = (post_title, post_link, human_date, id_rss, id_item_comma2)
 
 					if (keyword_lower in post_title_lower or keyword_lower in post_description_lower or keyword_lower in tags_list_lower or ":all@" in keyword_lower) and post_date >= last_launch:
 
-						########### DATABASE CHECKING
-						query = ("SELECT keyword_id FROM result_news_serge WHERE link = %s")
+						########### QUERY FOR DATABASE CHECKING
+						query_checking = ("SELECT keyword_id FROM result_news_serge WHERE link = %s")
 
-						call_result_news = database.cursor()
-						call_result_news.execute(query, (post_link, ))
-						field_id_key = call_result_news.fetchone()
-						call_result_news.close()
+						########### QUERY FOR DATABASE INSERTION
+						query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
 
-						print field_id_key###
-						# [Audit][REVIEW] Duplication des ligne 502 à 541 sur les ligne 55 à 592 et 606 à 643, faire une fonction pour résoudre la duplication [DUPLICATION01]
-						########### DATABASE INSERTION
-						if field_id_key is None:
-							print "INSERTION" ###
-							query = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
+						########### QUERY FOR DATABASE UPDATE
+						query_update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
 
-							insert_news = database.cursor()
-							try:
-								insert_news.execute(query, article)
-								database.commit()
-							except Exception, except_type:
-								database.rollback()
-								print "ROLLBACK" ###
-								logger_error.error("ROLLBACK IN newscast FUNCTION")
-								logger_error.error(repr(except_type))
-							insert_news.close()
-
-							new_article += 1 ###
-
-						########### DATABASE UPDATE
-						else:
-							print "DOUBLON"###
-							field_id_key = field_id_key[0]
-							keyword_id_comma = str(keyword_id)+","
-
-							if keyword_id_comma2 not in field_id_key:
-								complete_keyword_id = field_id_key+keyword_id_comma
-
-								update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
-
-								update_keyword_id = database.cursor()
-
-								try:
-									update_keyword_id.execute(update, (complete_keyword_id, post_link))
-									database.commit()
-								except:
-									database.rollback()
-									print "ROLLBACK" ###
-									logger_error.error("ROLLBACK")
-								update_keyword_id.close()
+						########### CALL insertOrUpdate FUNCTION
+						insertOrUpdate(query_checking, query_insertion, query_update, post_link, item, id_item_comma, id_item_comma2)
 
 					elif (keyword_sans_accent in post_title_sans_accent or keyword_sans_accent in post_description_sans_accent or keyword_sans_accent in tags_list_sans_accent) and post_date >= last_launch:
 
-						########### DATABASE CHECKING
-						query = ("SELECT keyword_id FROM result_news_serge WHERE link = %s")
+						########### QUERY FOR DATABASE CHECKING
+						query_checking = ("SELECT keyword_id FROM result_news_serge WHERE link = %s")
 
-						call_result_news = database.cursor()
-						call_result_news.execute(query, (post_link, ))
-						field_id_key = call_result_news.fetchone()
-						call_result_news.close()
+						########### QUERY FOR DATABASE INSERTION
+						query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
 
-						print field_id_key###
-						# [Audit][REVIEW] Duplication des ligne 502 à 541 sur les ligne 55 à 592 et 606 à 643, faire une fonction pour résoudre la duplication [DUPLICATION01]
-						########### DATABASE INSERT
-						if field_id_key is None:
-							query = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
+						########### QUERY FOR DATABASE UPDATE
+						query_update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
 
-							insert_news = database.cursor()
-							try:
-								insert_news.execute(query, article)
-								database.commit()
-							except Exception, except_type:
-								database.rollback()
-								print "ROLLBACK" ###
-								logger_error.error("ROLLBACK IN newscast FUNCTION")
-								logger_error.error(repr(except_type))
-							insert_news.close()
-
-							new_article += 1 ###
-
-						########### DATABASE UPDATE
-						else:
-							print "DOUBLON"###
-							field_id_key = field_id_key[0]
-							keyword_id_comma = str(keyword_id)+","
-
-							if keyword_id_comma2 not in field_id_key:
-								complete_keyword_id = field_id_key+keyword_id_comma
-
-								update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
-
-								update_keyword_id = database.cursor()
-								try:
-									update_keyword_id.execute(update, (complete_keyword_id, post_link))
-									database.commit()
-								except Exception, except_type:
-									database.rollback()
-									print "ROLLBACK" ###
-									logger_error.error("ROLLBACK IN newscast FUNCTION")
-									logger_error.error(repr(except_type))
-								update_keyword_id.close()
-
+						########### CALL insertOrUpdate FUNCTION
+						insertOrUpdate(query_checking, query_insertion, query_update, post_link, item, id_item_comma, id_item_comma2)
 
 					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
 				range = 0
-				print ("Articles trouvés : "+str(new_article)+"\n")
 
 
 def Patents(last_launch):
@@ -638,35 +578,21 @@ def Patents(last_launch):
 		id_query_wipo = couple_query[1]
 		query_wipo = couple_query[0]
 		query_wipo = query_wipo.strip().encode("utf8")
-		#html_query = urllib2.quote(query_wipo, safe='')  ###arret ici le 13/02 #TODO mise en place de requests
-		#html_query = html_query.replace("%20", "+")
 
+		logger_info.info(query_wipo+"\n")
 		link = ('https://patentscope.wipo.int/search/rss.jsf?query='+query_wipo+'+&office=&rss=true&sortOption=Pub+Date+Desc')
 
-		try:
-			req = requests.get(link, headers={'User-Agent' : "Serge Browser"})
-			req.encoding = "utf8"
-			rss_wipo = req.text
-		except requests.RequestException, except_type:
-			logger_error.error("CONNEXION ERROR")
-			logger_error.error(repr(except_type))
+		req_results = allRequestLong(link)
+		rss_error = req_results[0]
+		rss_wipo = req_results[1]
 
-		"""On fait un renvoi au LOG des données de connexion"""
-		logger_info.info(query_wipo+"\n")
-		logger_info.info(link+"\n")
-		header = req.headers
-		logger_info.info("HEADER :\n"+str(header))
-
-
-		if (rss_wipo):
+		if rss_error == 0:
 			xmldoc = feedparser.parse(rss_wipo)
 			range = 0
 			rangemax = len(xmldoc.entries)
 			logger_info.info("numbers of patents :"+unicode(rangemax)+"\n \n")
-			new_patent = 0
 
 			if (xmldoc):
-
 				if rangemax == 0:
 					print ("VOID QUERY\n")###
 					logger_info.info("void_query\n")
@@ -687,66 +613,30 @@ def Patents(last_launch):
 							post_date = time.mktime(post_date)
 
 
-						id_query_wipo_comma = str(id_query_wipo)+","
-						id_query_wipo_comma2 = ","+str(id_query_wipo)+","
-						patent = (post_title, post_link, human_date, id_query_wipo_comma2)
+						id_item_comma = str(id_query_wipo)+","
+						id_item_comma2 = ","+str(id_query_wipo)+","
+						item = (post_title, post_link, human_date, id_item_comma2)
 
-						query = ("SELECT id_query_wipo FROM result_patents_serge WHERE link = %s")
+						########### QUERY FOR DATABASE CHECKING
+						query_checking = ("SELECT id_query_wipo FROM result_patents_serge WHERE link = %s")
 
-						call_result_patents = database.cursor()
-						call_result_patents.execute(query, (post_link, ))
-						field_id_key_query = call_result_patents.fetchone()
-						call_result_patents.close()
+						########### QUERY FOR DATABASE INSERTION
+						query_insertion = ("INSERT INTO result_patents_serge(title, link, date, id_query_wipo) VALUES(%s, %s, %s, %s)")
 
-						if post_date >= last_launch:
+						########### QUERY FOR DATABASE UPDATE
+						query_update = ("UPDATE result_patents_serge SET id_query_wipo = %s WHERE link = %s")
 
-							########### DATABASE INSERT
-							if field_id_key_query is None:
-								query = ("INSERT INTO result_patents_serge(title, link, date, id_query_wipo) VALUES(%s, %s, %s, %s)")
-
-								insert_patents = database.cursor()
-								try:
-									insert_patents.execute(query, patent)
-									database.commit()
-								except Exception, except_type:
-									database.rollback()
-									print "ROLLBACK" ###
-									logger_error.error("ROLLBACK IN patents FUNCTION")
-									logger_error.error(repr(except_type))
-								insert_patents.close()
-
-								new_patent += 1
-
-							########### DATABASE UPDATE
-							else:
-								print "DOUBLON"###
-								field_id_key_query = field_id_key_query[0]
-
-								if id_query_wipo_comma2 not in field_id_key_query:
-									complete_query_wipo_id = field_id_key_query+id_query_wipo_comma
-
-									update = ("UPDATE result_patents_serge SET id_query_wipo = %s WHERE link = %s")
-
-									update_keyword_id = database.cursor()
-									try:
-										update_keyword_id.execute(update, (complete_query_wipo_id, post_link))
-										database.commit()
-									except Exception, except_type:
-										database.rollback()
-										print "ROLLBACK" ###
-										logger_error.error("ROLLBACK IN patents FUNCTION")
-										logger_error.error(repr(except_type))
-									update_keyword_id.close()
+						########### CALL insertOrUpdate FUNCTION
+						insertOrUpdate(query_checking, query_insertion, query_update, post_link, item, id_item_comma, id_item_comma2)
 
 						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
-					print (str(new_patent)+"\n")###
 
 			else:
 				logger_info.warning("\n Error : the feed is unavailable")
 				print ("RSS ERROR")###
 		else:
 			logger_error.warning("\n UNKNOWN CONNEXION ERROR")
-			print ("UNKNOWN CONNEXION ERROR")###
+
 
 
 def science(last_launch):
@@ -778,107 +668,68 @@ def science(last_launch):
 	for keyword in keywords_science_list:
 
 		keyword = sans_accent_maj(keyword).strip()
-		print ("Recherche sur le keyword : " + keyword) ###
+		logger_info.info(keyword.encode("utf8")+"\n")
+
 		link = ('http://export.arxiv.org/api/query?search_query=all:'+keyword.encode("utf8")+"\n")
 
-		try:
-			req = requests.get(link, headers={'User-Agent' : "Serge Browser"})
-			req.encoding = "utf8"
-			rss_arxiv = req.text
-		except requests.RequestException, except_type:
-			logger_error.error("CONNEXION ERROR")
-			logger_error.error(repr(except_type))
+		req_results = allRequestLong(link)
+		rss_error = req_results[0]
+		rss_arxiv = req_results[1]
 
-		"""On fait un renvoi au LOG des données de connexion"""
-		logger_info.info(keyword.encode("utf8")+"\n")
-		logger_info.info(link+"\n")
-		header = req.headers
-		logger_info.info("HEADER :\n"+str(header)+"\n\n")
+		if rss_error == 1:
+			try:
+				xmldoc = feedparser.parse(rss_arxiv)
+			except Exception, except_type:
+				xmldoc = None
+				logger_error.error("PARSING ERROR IN :"+link+"\n")
+				logger_error.error(repr(except_type))
 
-		try:
-			xmldoc = feedparser.parse(rss_arxiv)
-		except AttributeError:
-			print ("\nARXIV XML ERROR\n")
+			if xmldoc is not None:
+				range = 0
+				rangemax = len(xmldoc.entries)
+				logger_info.info("numbers of papers :"+unicode(rangemax)+"\n \n")
 
-		range = 0
-		rangemax = len(xmldoc.entries)
+				if rangemax == 0:
+					logger_info.info("VOID QUERY :"+link+"\n\n")
 
-		if (xmldoc):
-			if rangemax == 0:
-				logger_info.info("VOID QUERY :"+link+"\n\n")
+				else:
+					"""Keyword ID Retrieval"""
+					query = ("SELECT id FROM keyword_science_serge WHERE keyword = %s")
 
-			else:
-				"""Keyword ID Retrieval"""
-				query = ("SELECT id FROM keyword_science_serge WHERE keyword = %s")
+					call_science = database.cursor()
+					call_science.execute(query, (keyword, ))
+					rows = call_science.fetchone()
+					call_science.close()
 
-				call_science = database.cursor()
-				call_science.execute(query, (keyword, ))
-				rows = call_science.fetchone()
-				call_science.close()
+					keyword_id=rows[0]
 
-				keyword_id=rows[0]
+					while range < rangemax:
+						"""On définit les variables que l'on affectent aux commandes de Universal Feedparser hors de la boucle veille car on doit les donner plusieurs fois"""
+						post_title = xmldoc.entries[range].title
+						post_description = xmldoc.entries[range].description
+						post_link = xmldoc.entries[range].link
+						post_date = xmldoc.entries[range].published_parsed
+						human_date = time.strftime("%d/%m/%Y %H:%M", post_date)
+						post_date = time.mktime(post_date)
+						post_date >= last_launch
 
-				while range < rangemax:
-					"""On définit les variables que l'on affectent aux commandes de Universal Feedparser hors de la boucle veille car on doit les donner plusieurs fois"""
-					post_title = xmldoc.entries[range].title
-					post_description = xmldoc.entries[range].description
-					post_link = xmldoc.entries[range].link
-					post_date = xmldoc.entries[range].published_parsed
-					human_date = time.strftime("%d/%m/%Y %H:%M", post_date)
-					post_date = time.mktime(post_date)
-					post_date >= last_launch
+						id_item_comma = str(keyword_id)+","
+						id_item_comma2 = ","+str(keyword_id)+","
+						item = (post_title, post_link, human_date, id_item_comma2)
 
-					keyword_id_comma2 = ","+str(keyword_id)+","
-					paper = (post_title, post_link, human_date, keyword_id_comma2)
+						########### QUERY FOR DATABASE CHECKING
+						query_checking = ("SELECT keyword_id FROM result_science_serge WHERE link = %s")
 
-					query = ("SELECT keyword_id FROM result_science_serge WHERE link = %s")
+						########### QUERY FOR DATABASE INSERTION
+						query_insertion = ("INSERT INTO result_science_serge(title, link, date, keyword_id) VALUES(%s, %s, %s, %s)")
 
-					call_result_science = database.cursor()
-					call_result_science.execute(query, (post_link, ))
-					field_id_key = call_result_science.fetchone()
-					call_result_science.close()
+						########### QUERY FOR DATABASE UPDATE
+						query_update = ("UPDATE result_science_serge SET keyword_id = %s WHERE link = %s")
 
-					if post_date >= last_launch:
+						########### CALL insertOrUpdate FUNCTION
+						insertOrUpdate(query_checking, query_insertion, query_update, post_link, item, id_item_comma, id_item_comma2)
 
-						########### DATABASE INSERT
-						if field_id_key is None:
-							query = ("INSERT INTO result_science_serge(title, link, date, keyword_id) VALUES(%s, %s, %s, %s)")
-
-							insert_patents = database.cursor()
-
-							try:
-								insert_patents.execute(query, paper)
-								database.commit()
-							except Exception, except_type:
-								database.rollback()
-								print "ROLLBACK" ###
-								logger_error.error("ROLLBACK IN science FUNCTION")
-								logger_error.error(repr(except_type))
-							insert_patents.close()
-
-						########### DATABASE UPDATE
-						else:
-							print "DOUBLON"###
-							field_id_key = field_id_key[0]
-							keyword_id_comma = str(keyword_id)+","
-
-							if keyword_id_comma2 not in field_id_key :
-								complete_keyword_id = field_id_key+keyword_id_comma
-
-								update = ("UPDATE result_science_serge SET keyword_id = %s WHERE link = %s")
-
-								update_keyword_id = database.cursor()
-								try:
-									update_keyword_id.execute(update, (complete_keyword_id, post_link))
-									database.commit()
-								except Exception, except_type:
-									database.rollback()
-									print "ROLLBACK" ###
-									logger_error.error("ROLLBACK IN science FUNCTION")
-									logger_error.error(repr(except_type))
-								update_keyword_id.close()
-
-					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
+						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
 		else:
 			logger_info.warning("Error : the feed is unavailable")
@@ -1059,13 +910,13 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 ######### MAIN #TODO fractionner le main en fonctions
 
 ######### ERROR HOOK DEPLOYMENT
-#sys.excepthook = cemeteriesOfErrors
+sys.excepthook = cemeteriesOfErrors
 
 ######### CLEANING OF THE DIRECTORY
 try:
 	os.remove("Newsletter.html")
 except :# [Audit][REVIEW] except doit avoir si possible un type https://docs.python.org/2/howto/doanddont.html + espace avant :
-	pass# [Audit][REVIEW] Soit sur de l'utilité du pass
+	pass
 
 ######### Connexion à la base de données CairnDevices
 passSQL = open("permission/password.txt", "r")
@@ -1104,7 +955,7 @@ Patents(last_launch)
 
 ######### AFFECTATION ## TODO revoir la structure pour la disséquer en fonctions
 
-print ("\n AFFECTATION TESTS \n")
+print ("\n AFFECTATION TESTS \n")###
 
 call_users = database.cursor()
 call_users.execute("SELECT users FROM users_table_serge")
@@ -1140,12 +991,6 @@ for user in user_list_all:
 
 	permission_list = permission(register)
 	print permission_list ###
-
-	######### SET LISTS FOR MAIL DESIGN
-	newswords_list = []
-	sciencewords_list = []
-	patent_master_queries_list = []
-	news_origin_list = []
 
 	######### NEWS PERMISSION STATE
 	permission_news = permission_list[0]
@@ -1287,77 +1132,28 @@ for user in user_list_all:
 	if condition[0] == "freq":
 		query_freq = "SELECT frequency FROM users_table_serge WHERE id = %s"
 		query_last_mail = "SELECT last_mail FROM users_table_serge WHERE id = %s"
-		query_mail_design = "SELECT mail_design FROM users_table_serge WHERE id = %s"
 
 		call_users = database.cursor()
 		call_users.execute(query_freq, (register))
 		frequency = call_users.fetchone()
 		call_users.execute(query_last_mail, (register))
 		last_mail = call_users.fetchone()
-		call_users.execute(query_mail_design, (register))
-		mail_design = call_users.fetchone()
 		call_users.close()
 
-		print mail_design
-
 		frequency = frequency[0]
-		print ("Fréquence de l'utilisateur :"+str(frequency))
 		last_mail = last_mail[0]
 
 		interval = now-last_mail
-		print ("Intervalle de temps :"+str(interval))
+		print ("Fréquence de l'utilisateur :"+str(frequency))###
+		print ("Intervalle de temps :"+str(interval))###
 
 		if interval >= frequency and pending_all != 0:
 			print ("Fréquence atteinte") ###
 
-			print ("Organisation des mails : "+mail_design[0]) ###
-			######### CALL TO NEWSLETTER FUNCTION
-			if mail_design[0] == "type":
-				newsletter_creator.newsletterByType(user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, jour)# [Audit][REVIEW] Peut être trop de paramètres, idée diviser la fonction
-				# [Audit][REVIEW] Duplication des lignes 1362 à 1406 sur les lignes 1434 à 1482, faire une fonction pour résoudre la duplication [DUPLICATION02]
-			elif mail_design[0] == "masterword":
-				query_newswords = "SELECT keyword, id FROM keyword_news_serge WHERE owners like %s and active > 0"
-				query_sciencewords = "SELECT keyword, id FROM keyword_science_serge WHERE owners like %s and active > 0"
-				query_wipo_query = "SELECT query, id FROM queries_wipo_serge WHERE owners like %s and active > 0"
+			######### CALL TO buildMail FUNCTION
+			newsletter_creator.buildMail(user, user_id_comma, register, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents)
 
-				call_words = database.cursor()
-				call_words.execute(query_newswords, (user_id_comma, ))
-				newswords = call_words.fetchall()
-				call_words.execute(query_sciencewords, (user_id_comma, ))
-				sciencewords = call_words.fetchall()
-				call_words.execute(query_wipo_query, (user_id_comma, ))
-				patents_master_queries = call_words.fetchall()
-				call_words.close()
-
-				for word_and_attribute in newswords:
-					if ":all@" in word_and_attribute[0] :
-						split_word = word_and_attribute[0].replace(":","").capitalize().replace("@"," @ ").encode("utf8").split("§")[0].decode("utf8").replace(".","&#8228;")
-						word_and_attribute = (split_word,word_and_attribute[1])
-
-					newswords_list.append(word_and_attribute)
-
-				for word_and_attribute in sciencewords:
-					sciencewords_list.append(word_and_attribute)
-
-				for word_and_attribute in patents_master_queries :
-					patent_master_queries_list.append(word_and_attribute)
-
-				newsletter_creator.newsletterByKeyword(user, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list)
-
-			elif mail_design[0] == "origin":
-				query_news_origin = "SELECT name, id FROM rss_serge WHERE owners like %s and active > 0"
-
-				call_origin = database.cursor()
-				call_origin.execute(query_news_origin, (user_id_comma, ))
-				news_origin = call_origin.fetchall()
-				call_origin.close()
-
-				for source_and_attribute in news_origin:
-					news_origin_list.append(source_and_attribute)
-
-				newsletter_creator.newsletterBySource(user, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list)
-
-			######### CALL TO MAIL FUNCTION
+			######### CALL TO highwayToMail FUNCTION
 			highwayToMail(register, user)
 
 			######### CALL TO stairwayToUpdate FUNCTION
@@ -1374,13 +1170,10 @@ for user in user_list_all:
 	######### LINK LIMIT CONDITION
 	if condition[0] == "link_limit":
 		query = "SELECT link_limit FROM users_table_serge WHERE id = %s" #On vérifie le nombre de lien non envoyés
-		query_mail_design = "SELECT mail_design FROM users_table_serge WHERE id = %s"
 
 		call_users = database.cursor()
 		call_users.execute(query, (register))
 		limit = call_users.fetchone()
-		call_users.execute(query_mail_design, (register))
-		mail_design = call_users.fetchone()
 		call_users.close()
 
 		print ("LIMITE DE LIENS :" + str(limit[0]))###
@@ -1389,54 +1182,9 @@ for user in user_list_all:
 		if pending_all >= limit:
 			print ("SUPERIEUR\n") ###
 			logger_info.info("LIMIT REACHED")
-			# [Audit][REVIEW] Duplication des lignes 1362 à 1406 sur les lignes 1434 à 1482, faire une fonction pour résoudre la duplication [DUPLICATION02]
-			print ("Organisation des mails : "+mail_design[0]) ###
 
-			######### CALL TO NEWSLETTER FUNCTION
-			if mail_design[0] == "type":
-				newsletter_creator.newsletterByType(user, permission_news, permission_science, permission_patents, permission_patents_key, permission_patents_class, permission_patents_inventor, not_send_links_news_list, not_send_titles_news_list, not_send_links_science_list, not_send_titles_science_list, not_send_links_patents_key_list, not_send_titles_patents_key_list, not_send_links_patents_inventor_list, not_send_titles_patents_inventor_list, not_send_links_patents_class_list, not_send_titles_patents_class_list, not_send_news, not_send_science, not_send_patents_class, not_send_patents_inventor, not_send_patents_key, jour)
-
-			elif mail_design[0] == "masterword":
-				query_newswords = "SELECT keyword, id FROM keyword_news_serge WHERE owners like %s and active > 0"
-				query_sciencewords = "SELECT keyword, id FROM keyword_science_serge WHERE owners like %s and active > 0"
-				query_wipo_query = "SELECT query, id FROM queries_wipo_serge WHERE owners like %s and active > 0"
-
-				call_words = database.cursor()
-				call_words.execute(query_newswords, (user_id_comma, ))
-				newswords = call_words.fetchall()
-				call_words.execute(query_sciencewords, (user_id_comma, ))
-				sciencewords = call_words.fetchall()
-				call_words.execute(query_wipo_query, (user_id_comma, ))
-				patents_master_queries = call_words.fetchall()
-				call_words.close()
-
-				for word_and_attribute in newswords:
-					if ":all@" in word_and_attribute[0] :
-						split_word = word_and_attribute[0].replace(":","").capitalize().replace("@"," @ ").encode("utf8").split("§")[0].decode("utf8").replace(".","&#8228;")
-						word_and_attribute = (split_word,word_and_attribute[1])
-
-					newswords_list.append(word_and_attribute)
-
-				for word_and_attribute in sciencewords:
-					sciencewords_list.append(word_and_attribute)
-
-				for word_and_attribute in patents_master_queries:
-					patent_master_queries_list.append(word_and_attribute)
-
-				newsletter_creator.newsletterByKeyword(user, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list)# [Audit][REVIEW] Peut être trop de paramètres, idée diviser la fonction
-
-			elif mail_design[0] == "origin":
-				query_news_origin = "SELECT name, id FROM rss_serge WHERE owners like %s and active > 0"
-
-				call_origin = database.cursor()
-				call_origin.execute(query_news_origin, (user_id_comma, ))
-				news_origin = call_origin.fetchall()
-				call_origin.close()
-
-				for source_and_attribute in news_origin:
-					news_origin_list.append(source_and_attribute)
-
-				newsletter_creator.newsletterBySource(user, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list)
+			######### CALL TO buildMail FUNCTION
+			newsletter_creator.buildMail(user, user_id_comma, register, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents)
 
 			######### CALL TO MAIL FUNCTION
 			highwayToMail(register, user)
