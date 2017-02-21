@@ -17,24 +17,21 @@ import time
 import re
 import sys #voir la documentation : https://docs.python.org/2/library/sys.html
 import MySQLdb #Paquet MySQL
+import feedparser #voir la documentation : https://pythonhosted.org/feedparser/
+import datetime #voir la documentation : https://docs.python.org/2/library/datetime.html
+import unicodedata #voir la documentation : https://docs.python.org/2/library/unicodedata.html
+import traceback
+import logging
+from logging.handlers import RotatingFileHandler
+from shutil import copyfile
 
 sys.path.insert(0, "modules/UFP/feedparser")
 sys.path.insert(1, "modules/UFP/feedparser")
 
-import requests
-import feedparser #voir la documentation : https://pythonhosted.org/feedparser/
-import datetime #voir la documentation : https://docs.python.org/2/library/datetime.html
-import unicodedata #voir la documentation : https://docs.python.org/2/library/unicodedata.html
-import smtplib #voir la documentation : https://docs.python.org/2.7/library/smtplib.html
-import traceback
-import logging
-from logging.handlers import RotatingFileHandler
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from shutil import copyfile
-
 ######### IMPORT SERGE SPECIALS MODULES
 import mailer
+import sergenet
+import insertSQL
 
 # [Audit][REVIEW][VULN] CRITICAL Vérifier que les variables récupérées dans la BDD ne peuvent s'éxcuter comme du code python (Demander à POHU des explications)
 ######### LOGGER CONFIG
@@ -112,179 +109,6 @@ def sans_accent_min(ch):
     return r
 
 
-def allRequestLong (link):
-	"""Function for standardized requests to feed and internet pages. Name from Metallica, All Nightmare Long"""
-
-	try:
-		req = requests.get(link, headers={'User-Agent' : "Serge Browser"})
-		req.encoding = "utf8"
-		rss = req.text
-		logger_info.info(link+"\n")
-		header = req.headers
-		logger_info.info("HEADER :\n"+str(header)+"\n\n") #affichage des paramètres de connexion
-		rss_error = 0
-	except requests.exceptions.ConnectionError:
-		print ("CONNECTION ERROR")
-		link = link.replace("http://", "")
-		logger_info.warning("Error in the access "+link+"\n")
-		logger_info.warning("Please check the availability of the feed and the link\n \n")
-		rss = None
-		rss_error = 1
-	except requests.exceptions.HTTPError:
-		print ("HTTP ERROR")
-		link = link.replace("https://", "")
-		logger_info.warning("Error in the access "+link+" (HTTP protocol error) \n")
-		logger_info.warning("Please check the availability of the feed\n \n")
-		rss = None
-		rss_error = 1
-	except requests.exceptions.Timeout:
-		print ("TIMEOUT")
-		link = link.replace("https://", "")
-		logger_info.warning("Error in the access "+link+" (server don't respond) \n")
-		logger_info.warning("Please check the availability of the feed\n \n")
-		rss = None
-		rss_error = 1
-
-	req_results = (rss_error, rss)
-
-	return req_results
-
-
-def ofSourceAndName(now): #Metallica
-	logger_info.info("\n######### Feed titles retrieval (ofSourceAndName function) :\n\n")
-
-	######### NUMBER OF SOURCES
-	call_rss = database.cursor()
-	call_rss.execute("SELECT COUNT(id) FROM rss_serge")
-	max_rss = call_rss.fetchone()
-	call_rss.close()
-
-	max_rss = int(max_rss[0])
-	logger_info.info("Max RSS : " + str(max_rss)+"\n")
-
-	######### LAST BIMENSUAL RESEARCH
-	try:
-		call_time = database.cursor()
-		call_time.execute("SELECT timestamps FROM time_serge WHERE name = 'feedtitles_refresh'")
-		last_refresh = call_time.fetchone()
-		call_time.close()
-
-		last_refresh = float(last_refresh[0])
-
-	except Exception, except_type:
-		logger_error.critical("Error in ofSourceAndName function on SQL request")
-		logger_error.critical(repr(except_type))
-		sys.exit()
-
-
-	######### SEARCH FOR SOURCE NAME
-	num = 1
-	interval = float(now)-last_refresh
-
-	######### BIMENSUAL REFRESH
-	if interval >= 5097600:
-		while num <= max_rss:
-			query = "SELECT link FROM rss_serge WHERE id = %s"
-
-			call_rss = database.cursor()
-			call_rss.execute(query, (num, ))
-			rows = call_rss.fetchone()
-			call_rss.close()
-
-			print rows ###
-			link = rows[0]
-
-			req_results = allRequestLong(link)
-			rss_error = req_results[0]
-			rss = req_results[1]
-
-			if rss_error == 0:
-				########### RSS PARSING
-				try:
-					xmldoc = feedparser.parse(rss)
-				except AttributeError:
-					logger_error.error("PARSING ERROR IN :"+link+"\n")
-
-				########### SOURCE TITLE RETRIEVAL
-				try:
-					source_title = xmldoc.feed.title
-				except AttributeError:
-					logger_info.warning("NO TITLE IN :"+link+"\n")
-
-				update = ("UPDATE rss_serge SET name = %s WHERE id = %s")
-
-				update_rss = database.cursor()
-
-				try:
-					update_rss.execute(update, (source_title, num))
-					database.commit()
-				except Exception, except_type:
-					database.rollback()
-					print "ROLLBACK" ###
-					logger_error.error("ROLLBACK IN BIMENSUAL REFRESH IN ofSourceAndName")
-					logger_error.error(repr(except_type))
-				update_rss.close()
-
-			num = num+1
-
-		LOG.write("timesptamps update for refreshing feedtitles \n")
-		now = unicode(now)
-		update = ("UPDATE time_serge SET timestamps = %s WHERE name = 'feedtitles_refresh'")
-
-		call_time = database.cursor()
-		call_time.execute(update, (now, ))
-		call_time.close()
-
-	######### USUAL RESEARCH
-	else:
-		while num <= max_rss :
-
-			query = "SELECT link, name FROM rss_serge WHERE id = %s"
-
-			call_rss = database.cursor()
-			call_rss.execute(query, (num, ))
-			rows = call_rss.fetchone()
-			call_rss.close()
-
-			print rows ###
-			link = rows[0]
-			rss_name = rows[1]
-
-			if rss_name is None :
-
-				req_results = allRequestLong(link)
-				rss_error = req_results[0]
-				rss = req_results[1]
-
-				if rss_error == 0 :
-
-					########### RSS PARSING
-					try:
-						xmldoc = feedparser.parse(rss)
-					except AttributeError:
-						logger_error.error("PARSING ERROR IN :"+link+"\n")
-
-					########### SOURCE TITLE RETRIEVAL
-					try:
-						source_title = xmldoc.feed.title
-					except AttributeError:
-						logger_info.warning("NO TITLE IN :"+link+"\n") ###
-
-					update = ("UPDATE rss_serge SET name = %s WHERE id = %s")
-
-					update_rss = database.cursor()
-					try:
-						update_rss.execute(update, (source_title, num))
-						database.commit()
-					except Exception, except_type:
-						database.rollback()
-						logger_error.error("ROLLBACK IN USUAL RESEARCH IN ofSourceAndName")
-						logger_error.error(repr(except_type))
-					update_rss.close()
-
-			num = num+1
-
-
 def permission(register) :
 
 	query_news = "SELECT permission_news FROM users_table_serge WHERE id LIKE %s"
@@ -308,55 +132,6 @@ def permission(register) :
 	permission_list = [permission_news, permission_science, permission_patents]
 
 	return permission_list
-
-
-def insertOrUpdate(query_checking, query_insertion, query_update, post_link, item, id_item_comma, id_item_comma2) :
-
-	########### DATABASE CHECKING
-	call_data_cheking = database.cursor()
-	call_data_cheking.execute(query_checking, (post_link, ))
-	field_id_item = call_data_cheking.fetchone()
-	call_data_cheking.close()
-
-	print field_id_item###
-
-	########### DATABASE INSERTION
-	if field_id_item is None:
-		print "INSERTION" ###
-
-		insert_data = database.cursor()
-		try:
-			insert_data.execute(query_insertion, item)
-			database.commit()
-		except Exception, except_type:
-			database.rollback()
-			print "ROLLBACK" ###
-			logger_error.error("ROLLBACK IN insertOrUpdate FUNCTION")
-			logger_error.error(query_insertion)
-			logger_error.error(repr(except_type))
-		insert_data.close()
-
-	########### DATABASE UPDATE
-	else:
-		print "DOUBLON"###
-		field_id_item = field_id_item[0]
-
-		if id_item_comma2 not in field_id_item:
-			complete_id = field_id_item+id_item_comma
-
-			update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
-
-			update_data = database.cursor()
-			try:
-				update_data.execute(query_update, (complete_id, post_link))
-				database.commit()
-			except Exception, except_type:
-				database.rollback()
-				print "ROLLBACK" ###
-				logger_error.error("ROLLBACK IN insertOrUpdate FUNCTION")
-				logger_error.error(query_update)
-				logger_error.error(repr(except_type))
-			update_data.close()
 
 
 def newscast(last_launch):
@@ -394,24 +169,21 @@ def newscast(last_launch):
 		id_rss_comma = "%," + id_rss + ",%"
 
 		######### CALL TO TABLE keywords_news_serge
-
-		query = "SELECT keyword FROM keyword_news_serge WHERE id_source LIKE %s AND active > 0"
+		query = "SELECT keyword, owners FROM keyword_news_serge WHERE id_source LIKE %s AND active > 0"
 
 		call_news = database.cursor()
 		call_news.execute(query, (id_rss_comma,))
 		rows = call_news.fetchall()
 		call_news.close()
 
-		keywords_news_list = []
+		keywords_and_owners_news_list = []
 
 		for row in rows:
-			field = row[0].strip()
-			keywords_news_list.append(field)  # Enregistrement des keywords NEWS dans une liste.
-
-		#break ###
+			field = (row[0].strip(), row[1])
+			keywords_and_owners_news_list.append(field)
 
 		########### LINK CONNEXION
-		req_results = allRequestLong(link)
+		req_results = sergenet.allRequestLong(link, logger_info, logger_error)
 		rss_error = req_results[0]
 		rss = req_results[1]
 
@@ -435,9 +207,11 @@ def newscast(last_launch):
 			rangemax = len(xmldoc.entries)
 			range = 0 #on initialise la variable range qui va servir pour pointer les articles
 
-			for keyword in keywords_news_list:
+			for couple_keyword_owners in keywords_and_owners_news_list:
+				keyword = couple_keyword_owners[0]
+				owners = couple_keyword_owners[1]
 
-				"""Keyword ID Retrieval"""
+				########### KEYWORD ID RETRIEVAL
 				query = ("SELECT id FROM keyword_news_serge WHERE keyword = %s")
 
 				call_news = database.cursor()
@@ -514,35 +288,37 @@ def newscast(last_launch):
 
 					id_item_comma = str(keyword_id)+","
 					id_item_comma2 = ","+str(keyword_id)+","
-					item = (post_title, post_link, human_date, id_rss, id_item_comma2)
+					item = (post_title, post_link, human_date, id_rss, id_item_comma2, owners)
 
 					if (keyword_lower in post_title_lower or keyword_lower in post_description_lower or keyword_lower in tags_list_lower or ":all@" in keyword_lower) and post_date >= last_launch:
 
 						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT keyword_id FROM result_news_serge WHERE link = %s")
+						query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
 
 						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
+						query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
 
 						########### QUERY FOR DATABASE UPDATE
 						query_update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
+						query_update_owners = ("UPDATE result_news_serge SET owners = %s WHERE link = %s")
 
 						########### CALL insertOrUpdate FUNCTION
-						insertOrUpdate(query_checking, query_insertion, query_update, post_link, item, id_item_comma, id_item_comma2)
+						insertSQL.insertOrUpdate(query_checking, query_insertion, query_update, query_update_owners, post_link, item, id_item_comma, id_item_comma2, owners, logger_info, logger_error, database)
 
 					elif (keyword_sans_accent in post_title_sans_accent or keyword_sans_accent in post_description_sans_accent or keyword_sans_accent in tags_list_sans_accent) and post_date >= last_launch:
 
 						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT keyword_id FROM result_news_serge WHERE link = %s")
+						query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
 
 						########### QUERY FOR DATABASE INSERTION
 						query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
 
 						########### QUERY FOR DATABASE UPDATE
 						query_update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
+						query_update_owners = ("UPDATE result_news_serge SET owners = %s WHERE link = %s")
 
 						########### CALL insertOrUpdate FUNCTION
-						insertOrUpdate(query_checking, query_insertion, query_update, post_link, item, id_item_comma, id_item_comma2)
+						insertSQL.insertOrUpdate(query_checking, query_insertion, query_update, query_update_owners, post_link, item, id_item_comma, id_item_comma2, owners, logger_info, logger_error, database)
 
 					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
@@ -562,7 +338,7 @@ def Patents(last_launch):
 
 	######### CALL TO TABLE queries_wipo
 	call_patents_key = database.cursor()
-	call_patents_key.execute("SELECT query, id FROM queries_wipo_serge")
+	call_patents_key.execute("SELECT query, id, owners FROM queries_wipo_serge")
 	matrix_query = call_patents_key.fetchall()
 	call_patents_key.close()
 
@@ -575,13 +351,13 @@ def Patents(last_launch):
 
 	for couple_query in queryception_list:
 		id_query_wipo = couple_query[1]
-		query_wipo = couple_query[0]
-		query_wipo = query_wipo.strip().encode("utf8")
+		query_wipo = couple_query[0].strip().encode("utf8")
+		owners = couple_query[2].strip().encode("utf8")
 
 		logger_info.info(query_wipo+"\n")
 		link = ('https://patentscope.wipo.int/search/rss.jsf?query='+query_wipo+'+&office=&rss=true&sortOption=Pub+Date+Desc')
 
-		req_results = allRequestLong(link)
+		req_results = sergenet.allRequestLong(link, logger_info, logger_error)
 		rss_error = req_results[0]
 		rss_wipo = req_results[1]
 
@@ -614,19 +390,20 @@ def Patents(last_launch):
 
 						id_item_comma = str(id_query_wipo)+","
 						id_item_comma2 = ","+str(id_query_wipo)+","
-						item = (post_title, post_link, human_date, id_item_comma2)
+						item = (post_title, post_link, human_date, id_item_comma2, owners)
 
 						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT id_query_wipo FROM result_patents_serge WHERE link = %s")
+						query_checking = ("SELECT id_query_wipo, owners FROM result_patents_serge WHERE link = %s")
 
 						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_patents_serge(title, link, date, id_query_wipo) VALUES(%s, %s, %s, %s)")
+						query_insertion = ("INSERT INTO result_patents_serge(title, link, date, id_query_wipo, owners) VALUES(%s, %s, %s, %s, %s)")
 
 						########### QUERY FOR DATABASE UPDATE
 						query_update = ("UPDATE result_patents_serge SET id_query_wipo = %s WHERE link = %s")
+						query_update_owners = ("UPDATE result_news_serge SET owners = %s WHERE link = %s")
 
 						########### CALL insertOrUpdate FUNCTION
-						insertOrUpdate(query_checking, query_insertion, query_update, post_link, item, id_item_comma, id_item_comma2)
+						insertSQL.insertOrUpdate(query_checking, query_insertion, query_update, query_update_owners, post_link, item, id_item_comma, id_item_comma2, owners, logger_info, logger_error, database)
 
 						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
@@ -653,24 +430,26 @@ def science(last_launch):
 
 	######### CALL TO TABLE keywords_science_serge
 	call_science = database.cursor()
-	call_science.execute("SELECT keyword FROM keyword_science_serge WHERE active >= 1")
+	call_science.execute("SELECT keyword, owners FROM keyword_science_serge WHERE active >= 1")
 	rows = call_science.fetchall()
 	call_science.close()
 
-	keywords_science_list = []
+	keywords_and_owners_science_list = []
 
 	for row in rows:
-		field = row[0].strip()
-		keywords_science_list.append(field)
+		field = (row[0].strip(), row[1].strip)
+		keywords_and_owners_science_list.append(field)
 
-	for keyword in keywords_science_list:
+	for couple_keyword_owners in keywords_and_owners_science_list:
+		keyword = couple_keyword_owners[0]
+		owners = couple_keyword_owners[1]
 
 		keyword = sans_accent_maj(keyword).strip()
 		logger_info.info(keyword.encode("utf8")+"\n")
 
 		link = ('http://export.arxiv.org/api/query?search_query=all:'+keyword.encode("utf8")+"\n")
 
-		req_results = allRequestLong(link)
+		req_results = sergenet.allRequestLong(link, logger_info, logger_error)
 		rss_error = req_results[0]
 		rss_arxiv = req_results[1]
 
@@ -713,151 +492,25 @@ def science(last_launch):
 
 						id_item_comma = str(keyword_id)+","
 						id_item_comma2 = ","+str(keyword_id)+","
-						item = (post_title, post_link, human_date, id_item_comma2)
+						item = (post_title, post_link, human_date, id_item_comma2, owners)
 
 						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT keyword_id FROM result_science_serge WHERE link = %s")
+						query_checking = ("SELECT keyword_id, owners FROM result_science_serge WHERE link = %s")
 
 						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_science_serge(title, link, date, keyword_id) VALUES(%s, %s, %s, %s)")
+						query_insertion = ("INSERT INTO result_science_serge(title, link, date, keyword_id, owners) VALUES(%s, %s, %s, %s, %s)")
 
 						########### QUERY FOR DATABASE UPDATE
 						query_update = ("UPDATE result_science_serge SET keyword_id = %s WHERE link = %s")
+						query_update_owners = ("UPDATE result_news_serge SET owners = %s WHERE link = %s")
 
 						########### CALL insertOrUpdate FUNCTION
-						insertOrUpdate(query_checking, query_insertion, query_update, post_link, item, id_item_comma, id_item_comma2)
+						insertSQL.insertOrUpdate(query_checking, query_insertion, query_update, query_update_owners, post_link, item, id_item_comma, id_item_comma2, owners, logger_info, logger_error, database)
 
 						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
 		else:
 			logger_info.warning("Error : the feed is unavailable")
-
-
-def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now):
-
-	######### SEND_STATUS UPDATE IN result_news_serge
-	for attributes in not_send_news_list:
-		link = attributes[0]
-
-		query = ("SELECT send_status FROM result_news_serge WHERE link = %s")
-
-		call_news = database.cursor()
-		call_news.execute(query, (link,))
-		row = call_news.fetchone()
-
-		send_status = row[0]
-		register_comma = register+","
-		register_comma2 = ","+register+","
-
-		if register_comma2 not in send_status :
-			complete_status = send_status+register_comma
-
-			update = ("UPDATE result_news_serge SET send_status = %s WHERE link = %s")
-
-			try:
-				call_news.execute(update, (complete_status, link))
-				database.commit()
-			except Exception, except_type:
-				database.rollback()
-				print "ROLLBACK" ###
-				logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
-				logger_error.error(repr(except_type))
-
-		elif register_comma2 in send_status:
-			pass
-
-		else:
-			logger_error.warning("WARNING UNKNOWN ERROR") ###
-
-		call_news.close()
-
-	######### SEND_STATUS UPDATE IN result_science_serge
-	for attributes in not_send_science_list:
-		link = attributes[0]
-
-		query = ("SELECT send_status FROM result_science_serge WHERE link = %s")
-
-		call_science = database.cursor()
-		call_science.execute(query, (link,))
-		row = call_science.fetchone()
-
-		send_status = row[0]
-		register_comma = register+","
-		register_comma2 = ","+register+","
-
-		if register_comma2 not in send_status:
-			complete_status = send_status+register_comma
-
-			update = ("UPDATE result_science_serge SET send_status = %s WHERE link = %s")
-
-			try:
-				call_science.execute(update, (complete_status, link))
-				database.commit()
-			except Exception, except_type:
-				database.rollback()
-				print "ROLLBACK" ###
-				logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
-				logger_error.error(repr(except_type))
-
-		elif register_comma2 in send_status:
-			pass
-
-		else:
-			logger_error.warning("WARNING UNKNOWN ERROR")
-
-		call_science.close()
-
-	######### SEND_STATUS UPDATE IN result_patents_serge
-	for attributes in not_send_patents_list:
-		link = attributes[0]
-
-		query = ("SELECT send_status FROM result_patents_serge WHERE link = %s")
-
-		call_patents = database.cursor()
-		call_patents.execute(query, (link,))
-		row = call_patents.fetchone()
-
-		send_status = row[0]
-		register_comma = register+","
-		register_comma2 = ","+register+","
-
-		if register_comma2 not in send_status:
-			complete_status = send_status+register_comma
-
-			update = ("UPDATE result_patents_serge SET send_status = %s WHERE link = %s")
-
-			try:
-				call_patents.execute(update, (complete_status, link))
-				database.commit()
-			except Exception, except_type:
-				database.rollback()
-				print "ROLLBACK" ###
-				logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
-				logger_error.error(repr(except_type))
-
-		elif register_comma2 in send_status:
-			pass
-
-		else:
-			print "WARNING UNKNOWN ERROR" ###
-
-		call_patents.close()
-
-	######### USER last_mail FIELD UPDATE
-	update = "UPDATE users_table_serge SET last_mail = %s WHERE id = %s"
-
-	call_users = database.cursor()
-
-	try:
-		call_users.execute(update, (now, register))
-		database.commit()
-	except Exception, except_type:
-		database.rollback()
-		print "ROLLBACK" ###
-		logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
-		logger_error.error(repr(except_type))
-
-	call_users.close()
 
 
 ######### ERROR HOOK DEPLOYMENT
@@ -873,7 +526,7 @@ except OSError:
 passSQL = open("permission/password.txt", "r")
 passSQL = passSQL.read().strip()
 
-database = MySQLdb.connect(host="localhost", user="root", passwd=passSQL, db="CairnDevices", use_unicode=1, charset="utf8")# [AUDIT][REVIEW] CRITICAL n'utilise plus root pour te connecter à la BDD mais un utilisateur ici serge qui aura les accès uniquement aux tables de serge. Sinon en cas de faille dans ton programme toute les autres tables seront exposées
+database = MySQLdb.connect(host="localhost", user="SERGE", passwd=passSQL, db="CairnDevices", use_unicode=1, charset="utf8")# [AUDIT][REVIEW] CRITICAL n'utilise plus root pour te connecter à la BDD mais un utilisateur ici serge qui aura les accès uniquement aux tables de serge. Sinon en cas de faille dans ton programme toute les autres tables seront exposées
 
 ######### TIME AND LANGUAGES VARIABLES DECLARATION
 now = time.time()
@@ -894,19 +547,19 @@ max_users = int(max_users[0])
 logger_info.info("\nMax Users : " + str(max_users)+"\n")
 
 ######### RSS SERGE UPDATE
-ofSourceAndName(now)
+insertSQL.ofSourceAndName(now, logger_info, logger_error, database)
 
 ######### RECHERCHE
 
-newscast(last_launch) # Appel de la fonction Newscast
+newscast(last_launch)
 
-science(last_launch) # Appel de la fonction Science
+science(last_launch)
 
 Patents(last_launch)
 
 ######### AFFECTATION ## TODO revoir la structure pour la disséquer en fonctions
 
-print ("\n AFFECTATION TESTS \n")###
+print ("\n AFFECTATION \n")###
 
 call_users = database.cursor()
 call_users.execute("SELECT users FROM users_table_serge")
@@ -976,21 +629,16 @@ for user in user_list_all:
 			id_sources_news_list.append(field)
 
 		######### NEWS ATTRIBUTES QUERY (LINK + TITLE + ID SOURCE + KEYWORD ID)
-		for publisher in id_sources_news_list:
-			for identificator in id_keywords_news_list:
+		query_news = ("SELECT link, title, id_source, keyword_id FROM result_news_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
 
-				identificator_comma = ","+str(identificator)+","
+		call_news = database.cursor()
+		call_news.execute(query_news, (user_id_comma, user_id_comma))
+		rows = call_news.fetchall()
+		call_news.close()
 
-				query_news = ("SELECT link, title, id_source, keyword_id FROM result_news_serge WHERE (send_status NOT LIKE %s AND keyword_id LIKE %s AND id_source = %s)")
-
-				call_news = database.cursor()
-				call_news.execute(query_news, (user_id_comma, identificator_comma, publisher))
-				rows = call_news.fetchall()
-				call_news.close()
-
-				for row in rows:
-					field = [row[0], row[1], row[2], str(row[3])]
-					not_send_news_list.append(field)
+		for row in rows:
+			field = [row[0], row[1], row[2], str(row[3])]
+			not_send_news_list.append(field)
 
 	######### SCIENCE PERMISSION STATE
 	permission_science = permission_list[1]
@@ -1013,18 +661,15 @@ for user in user_list_all:
 			id_keywords_science_list.append(field)
 
 		######### SCIENCE ATTRIBUTES QUERY (LINK + TITLE + KEYWORD ID)
-		for identificator in id_keywords_science_list:
-			identificator_comma = ","+str(identificator)+","
+		query_science = ("SELECT link, title, keyword_id FROM result_science_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
 
-			query_science = ("SELECT link, title, keyword_id FROM result_science_serge WHERE (send_status NOT LIKE %s AND keyword_id LIKE %s)")
+		call_science = database.cursor()
+		call_science.execute(query_science, (user_id_comma, user_id_comma))
+		rows = call_science.fetchall()
+		call_science.close()
 
-			call_science = database.cursor()
-			call_science.execute(query_science, (user_id_comma, identificator_comma))
-			rows = call_science.fetchall()
-			call_science.close()
-
-			for row in rows:
-				not_send_science_list.append(row)
+		for row in rows:
+			not_send_science_list.append(row)
 
 	######### PATENTS PERMISSION STATE
 	permission_patents = permission_list[2]
@@ -1047,18 +692,15 @@ for user in user_list_all:
 			id_query_wipo_list.append(field)
 
 		######### PATENTS ATTRIBUTES QUERY (LINK + TITLE + ID QUERY WIPO)
-		for identificator in id_query_wipo_list:
-			identificator_comma = ","+str(identificator)+","
+		query_patents = ("SELECT link, title, id_query_wipo FROM result_patents_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
 
-			query_patents = ("SELECT link, title, id_query_wipo FROM result_patents_serge WHERE (send_status NOT LIKE %s AND id_query_wipo LIKE %s)")
+		call_patents = database.cursor()
+		call_patents.execute(query_patents, (user_id_comma, user_id_comma))
+		rows = call_patents.fetchall()
+		call_patents.close()
 
-			call_patents = database.cursor()
-			call_patents.execute(query_patents, (user_id_comma, identificator_comma))
-			rows = call_patents.fetchall()
-			call_patents.close()
-
-			for row in rows:
-				not_send_patents_list.append(row)
+		for row in rows:
+			not_send_patents_list.append(row)
 
 	######### NUMBER OF LINKS IN EACH CATEGORY
 	pending_news = len(not_send_news_list)
@@ -1102,13 +744,13 @@ for user in user_list_all:
 			print ("Fréquence atteinte") ###
 
 			######### CALL TO buildMail FUNCTION
-			mailer.buildMail(user, user_id_comma, register, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents)
+			mailer.buildMail(user, user_id_comma, register, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, database)
 
 			######### CALL TO highwayToMail FUNCTION
-			mailer.highwayToMail(register, user)
+			mailer.highwayToMail(register, user, database)
 
 			######### CALL TO stairwayToUpdate FUNCTION
-			stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now)
+			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database)
 
 		elif interval >= frequency and pending_all == 0:
 			print "Frequency reached but no pending news" ###
@@ -1135,13 +777,13 @@ for user in user_list_all:
 			logger_info.info("LIMIT REACHED")
 
 			######### CALL TO buildMail FUNCTION
-			mailer.buildMail(user, user_id_comma, register, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents)
+			mailer.buildMail(user, user_id_comma, register, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, database)
 
 			######### CALL TO highwayToMail FUNCTION
-			mailer.highwayToMail(register, user)
+			mailer.highwayToMail(register, user, database)
 
 			######### CALL TO stairwayToUpdate FUNCTION
-			stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now)
+			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database)
 
 		elif pending_all < limit:
 			print ("INFERIEUR\n") ###

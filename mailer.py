@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-######### ECRITURE FICHIER TRANSITOIRE
-#TODO mettre les majuscules sur la premiere lettre des titres des brevets
 
 import os
 import time
@@ -10,16 +8,21 @@ import MySQLdb #Paquet MySQL
 import unicodedata #voir la documentation : https://docs.python.org/2/library/unicodedata.html
 import traceback
 import logging
+import smtplib #voir la documentation : https://docs.python.org/2.7/library/smtplib.html
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from logging.handlers import RotatingFileHandler
 
-def buildMail(user, user_id_comma, register, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents):
+
+######### Connexion à la base de données CairnDevices
+passSQL = open("permission/password.txt", "r")
+passSQL = passSQL.read().strip()
+
+#database = MySQLdb.connect(host="localhost", user="root", passwd=passSQL, db="CairnDevices", use_unicode=1, charset="utf8")# [AUDIT][REVIEW] CRITICAL n'utilise plus root pour te connecter à la BDD mais un utilisateur ici serge qui aura les accès uniquement aux tables de serge. Sinon en cas de faille dans ton programme toute les autres tables seront exposées
+
+
+def buildMail(user, user_id_comma, register, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, database):
 	"""BuiltForMail retrieves mail building option  for the current user and does a pre-formatting of the mail. Then the function calls the building functions for mail."""
-
-	######### Connexion à la base de données CairnDevices
-	passSQL = open("permission/password.txt", "r")
-	passSQL = passSQL.read().strip()
-
-	database = MySQLdb.connect(host="localhost", user="root", passwd=passSQL, db="CairnDevices", use_unicode=1, charset="utf8")# [AUDIT][REVIEW] CRITICAL n'utilise plus root pour te connecter à la BDD mais un utilisateur ici serge qui aura les accès uniquement aux tables de serge. Sinon en cas de faille dans ton programme toute les autres tables seront exposées
 
 	######### SET LISTS FOR MAIL DESIGN
 	newswords_list = []
@@ -252,6 +255,7 @@ def newsletterByKeyword (user, jour, permission_news, permission_science, permis
 	<div style="width: 80%;margin-left: auto;margin-right: auto;">""".format(user.encode("utf_8"), jour, pending_all))
 
 	index = 0
+	already_in_the_list = []
 
 	######### ECRITURE NEWS
 	if permission_news == 0 and pending_news > 0:
@@ -267,9 +271,10 @@ def newsletterByKeyword (user, jour, permission_news, permission_science, permis
 			while index < pending_news:
 				news_attributes = not_send_news_list[index]
 
-				if word_attribute in news_attributes[3] and news_attributes[0] not in process_result_list:
+				if word_attribute in news_attributes[3] and news_attributes[0] not in already_in_the_list:
 					process_result = (news_attributes[0].strip().encode("utf_8"), news_attributes[1].strip().encode("utf_8"))
 					process_result_list.append(process_result)
+					already_in_the_list.append(news_attributes[0].strip().encode("utf_8"))
 
 				index = index+1
 
@@ -552,7 +557,7 @@ def newsletterBySource (user, jour, permission_news, permission_science, permiss
 	newsletter.close
 
 
-def highwayToMail(register, user):
+def highwayToMail(register, user, database):
 
 	print ("MAIL to "+user)
 
