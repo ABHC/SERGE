@@ -15,15 +15,17 @@
 import os
 import time
 import re
+from datetime import datetime
 import sys #voir la documentation : https://docs.python.org/2/library/sys.html
+import datetime #voir la documentation : https://docs.python.org/2/library/datetime.html
 import MySQLdb #Paquet MySQL
 import feedparser #voir la documentation : https://pythonhosted.org/feedparser/
-import datetime #voir la documentation : https://docs.python.org/2/library/datetime.html
 import unicodedata #voir la documentation : https://docs.python.org/2/library/unicodedata.html
 import traceback
 import logging
 from logging.handlers import RotatingFileHandler
 from shutil import copyfile
+import json
 
 sys.path.insert(0, "modules/UFP/feedparser")
 sys.path.insert(1, "modules/UFP/feedparser")
@@ -204,6 +206,12 @@ def newscast(last_launch):
 			except AttributeError:
 				logger_info.warning("NO TITLE IN :"+link+"\n")
 
+			try:
+				tag_test = xmldoc.entries[0].tags
+			except AttributeError:
+				logger_info.info("BEACON INFO : no <category> in "+link)
+				tag_test = None
+
 			rangemax = len(xmldoc.entries)
 			range = 0 #on initialise la variable range qui va servir pour pointer les articles
 
@@ -258,14 +266,10 @@ def newscast(last_launch):
 					tags_list_lower = []
 					tags_list_sans_accent = []
 
-					try:
-						post_tags = xmldoc.entries[range].tags
-					except AttributeError:
-						logger_info.info("BEACON INFO : no <category> in "+link)
-						post_tags = None
-
-					if post_tags is not None:
+					if tag_test is not None:
 						tagdex = 0
+						post_tags = xmldoc.entries[range].tags
+
 						while tagdex < len(post_tags) :
 							tags_list_lower.append(xmldoc.entries[range].tags[tagdex].term.lower())
 							tagdex = tagdex+1
@@ -325,7 +329,7 @@ def newscast(last_launch):
 				range = 0
 
 
-def Patents(last_launch):
+def patents(last_launch):
 	"""Function for last patents research :
 		- wipo query retrieval
 		- URL re-building with wipo query
@@ -347,8 +351,6 @@ def Patents(last_launch):
 	for queryception in matrix_query:
 		queryception_list.append(queryception)
 
-	print queryception_list ###
-
 	for couple_query in queryception_list:
 		id_query_wipo = couple_query[1]
 		query_wipo = couple_query[0].strip().encode("utf8")
@@ -369,13 +371,11 @@ def Patents(last_launch):
 
 			if (xmldoc):
 				if rangemax == 0:
-					print ("VOID QUERY\n")###
-					logger_info.info("void_query\n")
+					logger_info.info("VOID QUERY : "+query_wipo+"\n")
 
 				else:
 					while range < rangemax:
 						post_title = xmldoc.entries[range].title
-						post_description = xmldoc.entries[range].description
 						post_link = xmldoc.entries[range].link
 						post_date = xmldoc.entries[range].published_parsed
 
@@ -392,18 +392,20 @@ def Patents(last_launch):
 						id_item_comma2 = ","+str(id_query_wipo)+","
 						item = (post_title, post_link, human_date, id_item_comma2, owners)
 
-						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT id_query_wipo, owners FROM result_patents_serge WHERE link = %s")
+						if post_date >= last_launch:
 
-						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_patents_serge(title, link, date, id_query_wipo, owners) VALUES(%s, %s, %s, %s, %s)")
+							########### QUERY FOR DATABASE CHECKING
+							query_checking = ("SELECT id_query_wipo, owners FROM result_patents_serge WHERE link = %s")
 
-						########### QUERY FOR DATABASE UPDATE
-						query_update = ("UPDATE result_patents_serge SET id_query_wipo = %s WHERE link = %s")
-						query_update_owners = ("UPDATE result_news_serge SET owners = %s WHERE link = %s")
+							########### QUERY FOR DATABASE INSERTION
+							query_insertion = ("INSERT INTO result_patents_serge(title, link, date, id_query_wipo, owners) VALUES(%s, %s, %s, %s, %s)")
 
-						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_insertion, query_update, query_update_owners, post_link, item, id_item_comma, id_item_comma2, owners, logger_info, logger_error, database)
+							########### QUERY FOR DATABASE UPDATE
+							query_update = ("UPDATE result_patents_serge SET id_query_wipo = %s WHERE link = %s")
+							query_update_owners = ("UPDATE result_patents_serge SET owners = %s WHERE link = %s")
+
+							########### CALL insertOrUpdate FUNCTION
+							insertSQL.insertOrUpdate(query_checking, query_insertion, query_update, query_update_owners, post_link, item, id_item_comma, id_item_comma2, owners, logger_info, logger_error, database)
 
 						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
@@ -430,30 +432,34 @@ def science(last_launch):
 
 	######### CALL TO TABLE keywords_science_serge
 	call_science = database.cursor()
-	call_science.execute("SELECT keyword, owners FROM keyword_science_serge WHERE active >= 1")
+	call_science.execute("SELECT query_arxiv, query_doaj, owners FROM queries_science_serge WHERE active >= 1")
 	rows = call_science.fetchall()
 	call_science.close()
 
-	keywords_and_owners_science_list = []
+	queries_and_owners_science_list = []
 
 	for row in rows:
-		field = (row[0].strip(), row[1].strip)
-		keywords_and_owners_science_list.append(field)
+		field = (row[0].strip(), row[1].strip(), row[2].strip())
+		queries_and_owners_science_list.append(field)
 
-	for couple_keyword_owners in keywords_and_owners_science_list:
-		keyword = couple_keyword_owners[0]
-		owners = couple_keyword_owners[1]
+	for trio_queries_owners in queries_and_owners_science_list:
 
-		keyword = sans_accent_maj(keyword).strip()
-		logger_info.info(keyword.encode("utf8")+"\n")
+		query_arxiv = trio_queries_owners[0]
+		query_arxiv = sans_accent_maj(query_arxiv).strip()
+		query_doaj = trio_queries_owners[1]
+		query_doaj = sans_accent_maj(query_doaj).strip()
+		owners = trio_queries_owners[2]
 
-		link = ('http://export.arxiv.org/api/query?search_query=all:'+keyword.encode("utf8")+"\n")
+		######### RESEARCH SCIENCE ON Arxiv
+		link = ('http://export.arxiv.org/api/query?search_query='+query_arxiv.encode("utf8"))
+		logger_info.info(query_arxiv.encode("utf8")+"\n")
 
+		print ("Go to Arxiv: "+link.encode("utf8"))
 		req_results = sergenet.allRequestLong(link, logger_info, logger_error)
 		rss_error = req_results[0]
 		rss_arxiv = req_results[1]
 
-		if rss_error == 1:
+		if rss_error == 0:
 			try:
 				xmldoc = feedparser.parse(rss_arxiv)
 			except Exception, except_type:
@@ -470,48 +476,117 @@ def science(last_launch):
 					logger_info.info("VOID QUERY :"+link+"\n\n")
 
 				else:
-					"""Keyword ID Retrieval"""
-					query = ("SELECT id FROM keyword_science_serge WHERE keyword = %s")
+					"""query ID Retrieval"""
+					query = ("SELECT id FROM queries_science_serge WHERE query_arxiv = %s")
 
 					call_science = database.cursor()
-					call_science.execute(query, (keyword, ))
+					call_science.execute(query, (query_arxiv, ))
 					rows = call_science.fetchone()
 					call_science.close()
 
-					keyword_id=rows[0]
+					query_id=rows[0]
 
 					while range < rangemax:
-						"""On définit les variables que l'on affectent aux commandes de Universal Feedparser hors de la boucle veille car on doit les donner plusieurs fois"""
+						#"""On définit les variables que l'on affectent aux commandes de Universal Feedparser hors de la boucle veille car on doit les donner plusieurs fois"""
 						post_title = xmldoc.entries[range].title
-						post_description = xmldoc.entries[range].description
 						post_link = xmldoc.entries[range].link
 						post_date = xmldoc.entries[range].published_parsed
 						human_date = time.strftime("%d/%m/%Y %H:%M", post_date)
 						post_date = time.mktime(post_date)
-						post_date >= last_launch
 
-						id_item_comma = str(keyword_id)+","
-						id_item_comma2 = ","+str(keyword_id)+","
+						id_item_comma = str(query_id)+","
+						id_item_comma2 = ","+str(query_id)+","
 						item = (post_title, post_link, human_date, id_item_comma2, owners)
 
-						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT keyword_id, owners FROM result_science_serge WHERE link = %s")
+						if post_date >= last_launch:
 
-						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_science_serge(title, link, date, keyword_id, owners) VALUES(%s, %s, %s, %s, %s)")
+							########### QUERY FOR DATABASE CHECKING
+							query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
 
-						########### QUERY FOR DATABASE UPDATE
-						query_update = ("UPDATE result_science_serge SET keyword_id = %s WHERE link = %s")
-						query_update_owners = ("UPDATE result_news_serge SET owners = %s WHERE link = %s")
+							########### QUERY FOR DATABASE INSERTION
+							query_insertion = ("INSERT INTO result_science_serge(title, link, date, query_id, owners) VALUES(%s, %s, %s, %s, %s)")
 
-						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_insertion, query_update, query_update_owners, post_link, item, id_item_comma, id_item_comma2, owners, logger_info, logger_error, database)
+							########### QUERY FOR DATABASE UPDATE
+							query_update = ("UPDATE result_science_serge SET query_id = %s WHERE link = %s")
+							query_update_owners = ("UPDATE result_science_serge SET owners = %s WHERE link = %s")
+
+							########### CALL insertOrUpdate FUNCTION
+							insertSQL.insertOrUpdate(query_checking, query_insertion, query_update, query_update_owners, post_link, item, id_item_comma, id_item_comma2, owners, logger_info, logger_error, database)
 
 						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
 		else:
 			logger_info.warning("Error : the feed is unavailable")
 
+		######### RESEARCH SCIENCE ON DIRECTORY OF OPEN ACESS JOURNALS
+		link_doaj = ('https://doaj.org/api/v1/search/articles/'+query_doaj.encode("utf8")+'?pageSize=20&sort=last_updated%3Adesc')
+		logger_info.info(query_doaj.encode("utf8")+"\n")
+
+		print ("Go to DOAJ : "+link_doaj.encode("utf8"))
+		req_results = sergenet.allRequestLong(link_doaj, logger_info, logger_error)
+		rss_error = req_results[0]
+		web_doaj = req_results[1]
+
+		if rss_error == 0:
+			try:
+				data_doaj = json.loads(web_doaj)
+			except Exception, except_type:
+				data_doaj = None
+				logger_error.error("PARSING ERROR IN :"+link_doaj+"\n")
+				logger_error.error(repr(except_type))
+
+			if data_doaj is not None:
+				range = 0
+				rangemax = len(data_doaj["results"])
+				logger_info.info("numbers of papers :"+unicode(rangemax)+"\n \n")
+
+				if rangemax == 0:
+					logger_info.info("VOID QUERY :"+link_doaj+"\n\n")
+
+				else:
+					"""query ID Retrieval"""
+					query = ("SELECT id FROM queries_science_serge WHERE query_doaj = %s")
+
+					call_science = database.cursor()
+					call_science.execute(query, (query_doaj, ))
+					rows = call_science.fetchone()
+					call_science.close()
+
+					query_id=rows[0]
+
+				while range < rangemax:
+					post_title = data_doaj["results"][range]["bibjson"]["title"]
+					post_link = data_doaj["results"][range]["bibjson"]["link"][0]["url"]
+					post_date = data_doaj["results"][range]["last_updated"]
+					post_date = post_date.replace("T", " ").replace("Z", " ").strip()
+					human_date = datetime.datetime.strptime(post_date, "%Y-%m-%d %H:%M:%S")
+					post_date = human_date.timetuple()
+					post_date = time.mktime(post_date)
+					post_date >= last_launch
+
+					id_item_comma = str(query_id)+","
+					id_item_comma2 = ","+str(query_id)+","
+					item = (post_title, post_link, human_date, id_item_comma2, owners)
+
+					if post_date >= last_launch:
+
+						########### QUERY FOR DATABASE CHECKING
+						query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
+
+						########### QUERY FOR DATABASE INSERTION
+						query_insertion = ("INSERT INTO result_science_serge(title, link, date, query_id, owners) VALUES(%s, %s, %s, %s, %s)")
+
+						########### QUERY FOR DATABASE UPDATE
+						query_update = ("UPDATE result_science_serge SET query_id = %s WHERE link = %s")
+						query_update_owners = ("UPDATE result_science_serge SET owners = %s WHERE link = %s")
+
+						########### CALL insertOrUpdate FUNCTION
+						insertSQL.insertOrUpdate(query_checking, query_insertion, query_update, query_update_owners, post_link, item, id_item_comma, id_item_comma2, owners, logger_info, logger_error, database)
+
+					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
+
+		else:
+			logger_info.warning("Error : the json is unavailable")
 
 ######### ERROR HOOK DEPLOYMENT
 sys.excepthook = cemeteriesOfErrors
@@ -526,7 +601,7 @@ except OSError:
 passSQL = open("permission/password.txt", "r")
 passSQL = passSQL.read().strip()
 
-database = MySQLdb.connect(host="localhost", user="SERGE", passwd=passSQL, db="CairnDevices", use_unicode=1, charset="utf8")# [AUDIT][REVIEW] CRITICAL n'utilise plus root pour te connecter à la BDD mais un utilisateur ici serge qui aura les accès uniquement aux tables de serge. Sinon en cas de faille dans ton programme toute les autres tables seront exposées
+database = MySQLdb.connect(host="localhost", user="SERGE", passwd=passSQL, db="CairnDevices", use_unicode=1, charset="utf8")
 
 ######### TIME AND LANGUAGES VARIABLES DECLARATION
 now = time.time()
@@ -555,7 +630,7 @@ newscast(last_launch)
 
 science(last_launch)
 
-Patents(last_launch)
+patents(last_launch)
 
 ######### AFFECTATION ## TODO revoir la structure pour la disséquer en fonctions
 
@@ -649,7 +724,7 @@ for user in user_list_all:
 		print ("Recherche SCIENCE activée") ###
 
 		######### KEYWORDS ID SCIENCE QUERY
-		query_id = ("SELECT id FROM keyword_science_serge WHERE (owners LIKE %s AND active > 0)")
+		query_id = ("SELECT id FROM queries_science_serge WHERE (owners LIKE %s AND active > 0)")
 
 		call_id_science = database.cursor()
 		call_id_science.execute(query_id, (user_id_comma, ))
@@ -661,7 +736,7 @@ for user in user_list_all:
 			id_keywords_science_list.append(field)
 
 		######### SCIENCE ATTRIBUTES QUERY (LINK + TITLE + KEYWORD ID)
-		query_science = ("SELECT link, title, keyword_id FROM result_science_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
+		query_science = ("SELECT link, title, query_id FROM result_science_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
 
 		call_science = database.cursor()
 		call_science.execute(query_science, (user_id_comma, user_id_comma))

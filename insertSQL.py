@@ -205,6 +205,7 @@ def insertOrUpdate(query_checking, query_insertion, query_update, query_update_o
 				logger_error.error(repr(except_type))
 			update_data.close()
 
+		print owners
 		already_owners_list = owners.split(",")
 		split_index = 1
 
