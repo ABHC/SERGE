@@ -451,10 +451,9 @@ def science(last_launch):
 		owners = trio_queries_owners[2]
 
 		######### RESEARCH SCIENCE ON Arxiv
-		link = ('http://export.arxiv.org/api/query?search_query='+query_arxiv.encode("utf8"))
+		link = ('http://export.arxiv.org/api/query?search_query='+query_arxiv.encode("utf8")+'&sortBy=lastUpdatedDate&start=0&max_results=20')
 		logger_info.info(query_arxiv.encode("utf8")+"\n")
 
-		print ("Go to Arxiv: "+link.encode("utf8"))
 		req_results = sergenet.allRequestLong(link, logger_info, logger_error)
 		rss_error = req_results[0]
 		rss_arxiv = req_results[1]
@@ -496,7 +495,8 @@ def science(last_launch):
 
 						id_item_comma = str(query_id)+","
 						id_item_comma2 = ","+str(query_id)+","
-						item = (post_title, post_link, human_date, id_item_comma2, owners)
+						id_source = 0
+						item = (post_title, post_link, human_date, id_item_comma2, id_source, owners)
 
 						if post_date >= last_launch:
 
@@ -504,7 +504,7 @@ def science(last_launch):
 							query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
 
 							########### QUERY FOR DATABASE INSERTION
-							query_insertion = ("INSERT INTO result_science_serge(title, link, date, query_id, owners) VALUES(%s, %s, %s, %s, %s)")
+							query_insertion = ("INSERT INTO result_science_serge(title, link, date, query_id, id_source, owners) VALUES(%s, %s, %s, %s, %s, %s)")
 
 							########### QUERY FOR DATABASE UPDATE
 							query_update = ("UPDATE result_science_serge SET query_id = %s WHERE link = %s")
@@ -522,7 +522,6 @@ def science(last_launch):
 		link_doaj = ('https://doaj.org/api/v1/search/articles/'+query_doaj.encode("utf8")+'?pageSize=20&sort=last_updated%3Adesc')
 		logger_info.info(query_doaj.encode("utf8")+"\n")
 
-		print ("Go to DOAJ : "+link_doaj.encode("utf8"))
 		req_results = sergenet.allRequestLong(link_doaj, logger_info, logger_error)
 		rss_error = req_results[0]
 		web_doaj = req_results[1]
@@ -566,7 +565,8 @@ def science(last_launch):
 
 					id_item_comma = str(query_id)+","
 					id_item_comma2 = ","+str(query_id)+","
-					item = (post_title, post_link, human_date, id_item_comma2, owners)
+					id_source = 1
+					item = (post_title, post_link, human_date, id_item_comma2, id_source, owners)
 
 					if post_date >= last_launch:
 
@@ -574,7 +574,7 @@ def science(last_launch):
 						query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
 
 						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_science_serge(title, link, date, query_id, owners) VALUES(%s, %s, %s, %s, %s)")
+						query_insertion = ("INSERT INTO result_science_serge(title, link, date, query_id, id_source, owners) VALUES(%s, %s, %s, %s, %s, %s)")
 
 						########### QUERY FOR DATABASE UPDATE
 						query_update = ("UPDATE result_science_serge SET query_id = %s WHERE link = %s")
@@ -586,7 +586,7 @@ def science(last_launch):
 					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
 		else:
-			logger_info.warning("Error : the json is unavailable")
+			logger_info.warning("Error : the json API is unavailable")
 
 ######### ERROR HOOK DEPLOYMENT
 sys.excepthook = cemeteriesOfErrors
@@ -626,11 +626,11 @@ insertSQL.ofSourceAndName(now, logger_info, logger_error, database)
 
 ######### RECHERCHE
 
-newscast(last_launch)
+#newscast(last_launch)
 
 science(last_launch)
 
-patents(last_launch)
+#patents(last_launch)
 
 ######### AFFECTATION ## TODO revoir la structure pour la disséquer en fonctions
 
@@ -736,7 +736,7 @@ for user in user_list_all:
 			id_keywords_science_list.append(field)
 
 		######### SCIENCE ATTRIBUTES QUERY (LINK + TITLE + KEYWORD ID)
-		query_science = ("SELECT link, title, query_id FROM result_science_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
+		query_science = ("SELECT link, title, query_id, id_source FROM result_science_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
 
 		call_science = database.cursor()
 		call_science.execute(query_science, (user_id_comma, user_id_comma))

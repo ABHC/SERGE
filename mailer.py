@@ -30,7 +30,7 @@ def buildMail(user, user_id_comma, register, jour, permission_news, permission_s
 	patent_master_queries_list = []
 	news_origin_list = []
 
-	######### DESIGN CHOOSE BY USER
+	######### DESIGN CHOSEN BY USER
 	query_mail_design = "SELECT mail_design FROM users_table_serge WHERE id = %s"
 
 	call_users = database.cursor()
@@ -40,9 +40,25 @@ def buildMail(user, user_id_comma, register, jour, permission_news, permission_s
 
 	print ("Organisation des mails : "+mail_design[0]) ###
 
+	######### LANGUAGE CHOSEN BY USER
+	query_language = "SELECT language FROM users_table_serge WHERE id = %s"
+
+	call_users = database.cursor()
+	call_users.execute(query_language, (register))
+	language = call_users.fetchone()
+	call_users.close()
+
+	print ("Langue des mails : "+language[0]) ###
+
+	######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
+	var_FR = ["Bonjour", "voici votre veille technologique et industrielle du", "Liens", "ACTUALITÉS", "PUBLICATIONS SCIENTIFIQUES", "BREVETS", "Bonne journée"]
+	var_EN = ["Hello", "here is your news monitoring of", "Links", "NEWS", "SCIENTIFIC PUBLICATIONS", "PATENTS", "Have a good day"]
+
+	exec("translate_text"+"="+"var_"+language[0])
+
 	######### CALL TO NEWSLETTER FUNCTION
 	if mail_design[0] == "type":
-		newsletterByType(user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, jour)
+		newsletterByType(user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text,jour)
 
 	elif mail_design[0] == "masterword":
 		query_newswords = "SELECT keyword, id FROM keyword_news_serge WHERE owners like %s and active > 0"
@@ -71,7 +87,7 @@ def buildMail(user, user_id_comma, register, jour, permission_news, permission_s
 		for word_and_attribute in patents_master_queries :
 			patent_master_queries_list.append(word_and_attribute)
 
-		newsletterByKeyword(user, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list)
+		newsletterByKeyword(user, jour, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list)
 
 	elif mail_design[0] == "origin":
 		query_news_origin = "SELECT name, id FROM rss_serge WHERE owners like %s and active > 0"
@@ -84,11 +100,11 @@ def buildMail(user, user_id_comma, register, jour, permission_news, permission_s
 		for source_and_attribute in news_origin:
 			news_origin_list.append(source_and_attribute)
 
-		newsletterBySource(user, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list)
+		newsletterBySource(user, jour, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list)
 
 
 #TODO refonte des élement envoyés aux fonctions
-def newsletterByType (user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, jour):
+def newsletterByType (user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text,jour):
 
 	######### TODAY IS THE DAY
 	#jour = unicode(datetime.date.today())
@@ -117,17 +133,17 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 
 	<div style="width: 100%;height: 1px;background-color: grey;margin: 0;"><\div>
 
-	<p style="width: 85%;margin-left: auto;margin-right: auto;"> Bonjour {0}, voici votre veille technologique et industrielle du {1} :</p>
+	<p style="width: 85%;margin-left: auto;margin-right: auto;">{0} {1}, {2} {3} :</p>
 
-	<div style="float: right; color: grey; margin-top: 10px; margin-bottom: 10px;">{2} Liens</div>
+	<div style="float: right; color: grey; margin-top: 10px; margin-bottom: 10px;">{4} {5}</div>
 
-	<div style="width: 80%;margin-left: auto;margin-right: auto;">""".format(user.encode("utf_8"), jour, pending_all))
+	<div style="width: 80%;margin-left: auto;margin-right: auto;">""".format(translate_text[0], user.encode("utf_8"), translate_text[1], jour, pending_all, translate_text[2]))
 
 	index = 0
 
 	######### ECRITURE NEWS
 	if permission_news == 0 and pending_news > 0:
-		newsletter.write("""<br/><br/><b>ACTUALITÉS</b><br/>""")
+		newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(translate_text[3]))
 
 		while index < pending_news:
 			news_attributes = not_send_news_list[index]
@@ -141,7 +157,7 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 
 	######### ECRITURE SCIENCE
 	if permission_science == 0 and pending_science > 0:
-		newsletter.write("""<br/><br/><b>PUBLICATIONS SCIENTIFIQUES</b><br/>""")
+		newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(translate_text[4]))
 
 		while index < pending_science:
 			science_attributes = not_send_science_list[index]
@@ -155,7 +171,7 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 
 	######### ECRITURE PATENTS
 	if permission_patents == 0 and pending_patents > 0:
-		newsletter.write("""<br/><br/><b>BREVETS</b><br/>""")
+		newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(translate_text[5]))
 
 		while index < pending_patents:
 			patents_attributes = not_send_patents_list[index]
@@ -170,10 +186,10 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 	######### GOODBYE
 	newsletter.write("""</div>
 		<br/>
-		<p style="width: 85%;margin-left: auto;margin-right: auto;align: left;"><font color="black" >Bonne journée {0},</font></p>
+		<p style="width: 85%;margin-left: auto;margin-right: auto;align: left;"><font color="black" >{0} {1},</font></p>
 		<p style="width: 85%;margin-left: auto;margin-right: auto;"><font color="black" >SERGE</font></p><br/>
 		<br/>
-		<div style="width: 100%;height: 1px;background-color: grey;margin: 0;"></div>""".format(user))
+		<div style="width: 100%;height: 1px;background-color: grey;margin: 0;"></div>""".format(translate_text[6], user))
 
 	######### FOOTER
 	newsletter.write("""<div style="text-align: center;text-decoration: none;color: grey;margin-top: 5px;max-height: 130px;width: 100%;">
@@ -220,7 +236,7 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 	newsletter.close
 
 
-def newsletterByKeyword (user, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list):
+def newsletterByKeyword (user, jour, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list):
 
 	######### TODAY IS THE DAY
 	#jour = unicode(datetime.date.today())
@@ -248,18 +264,18 @@ def newsletterByKeyword (user, jour, permission_news, permission_science, permis
 
 	<div style="width: 100%;height: 1px;background-color: grey;margin: 0;"></div>
 
-	<p style="width: 85%;margin-left: auto;margin-right: auto;"> Bonjour {0}, voici votre veille technologique et industrielle du {1} :</p>
+	<p style="width: 85%;margin-left: auto;margin-right: auto;">{0} {1}, {2} {3} :</p>
 
-	<div style="float: right; color: grey; margin-top: 10px; margin-bottom: 10px;">{2} Liens</div>
+	<div style="float: right; color: grey; margin-top: 10px; margin-bottom: 10px;">{4} {5}</div>
 
-	<div style="width: 80%;margin-left: auto;margin-right: auto;">""".format(user.encode("utf_8"), jour, pending_all))
+	<div style="width: 80%;margin-left: auto;margin-right: auto;">""".format(translate_text[0], user.encode("utf_8"), translate_text[1], jour, pending_all, translate_text[2]))
 
 	index = 0
 	already_in_the_list = []
 
 	######### ECRITURE NEWS
 	if permission_news == 0 and pending_news > 0:
-		newsletter.write("""<br/><br/><b>ACTUALITÉS</b><br/>""")
+		newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(translate_text[3]))
 
 		######### ECRITURE KEYWORDS FOR NEWS
 		for couple_word_attribute in sorted(newswords_list, key= lambda newswords_field : newswords_field[0]):
@@ -292,7 +308,7 @@ def newsletterByKeyword (user, jour, permission_news, permission_science, permis
 
 	######### ECRITURE SCIENCE
 	if permission_science == 0 and pending_science > 0:
-		newsletter.write("""<br/><br/><b>PUBLICATIONS SCIENTIFIQUES</b><br/>""")
+		newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(translate_text[4]))
 
 		######### ECRITURE KEYWORDS FOR SCIENCE
 		for couple_word_attribute in sorted(sciencewords_list, key= lambda sciencewords_field : sciencewords_field[0]):
@@ -323,7 +339,7 @@ def newsletterByKeyword (user, jour, permission_news, permission_science, permis
 
 	######### ECRITURE PATENTS
 	if permission_patents == 0 and pending_patents > 0:
-		newsletter.write("""<br/><br/><b>BREVETS</b><br/>""")
+		newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(translate_text[5]))
 
 		######### ECRITURE QUERY FOR PATENTS
 		for couple_query_attribute in sorted(patent_master_queries_list, key= lambda query_field : query_field[0]):
@@ -356,10 +372,10 @@ def newsletterByKeyword (user, jour, permission_news, permission_science, permis
 	######### GOODBYE
 	newsletter.write("""</div>
 		<br/>
-		<p style="width: 85%;margin-left: auto;margin-right: auto;align: left;"><font color="black" >Bonne journée {0},</font></p>
+		<p style="width: 85%;margin-left: auto;margin-right: auto;align: left;"><font color="black" >{0} {1},</font></p>
 		<p style="width: 85%;margin-left: auto;margin-right: auto;"><font color="black" >SERGE</font></p><br/>
 		<br/>
-		<div style="width: 100%;height: 1px;background-color: grey;margin: 0;"></div>""".format(user))
+		<div style="width: 100%;height: 1px;background-color: grey;margin: 0;"></div>""".format(translate_text[6], user))
 
 	######### FOOTER
 	newsletter.write("""<div style="text-align: center;text-decoration: none;color: grey;margin-top: 5px;max-height: 130px;width: 100%;">
@@ -406,7 +422,7 @@ def newsletterByKeyword (user, jour, permission_news, permission_science, permis
 	newsletter.close
 
 
-def newsletterBySource (user, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list):
+def newsletterBySource (user, jour, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list):
 
 	######### TODAY IS THE DAY
 	#jour = unicode(datetime.date.today())
@@ -434,17 +450,17 @@ def newsletterBySource (user, jour, permission_news, permission_science, permiss
 
 	<div style="width: 100%;height: 1px;background-color: grey;margin: 0;"></div>
 
-	<p style="width: 85%;margin-left: auto;margin-right: auto;"> Bonjour {0}, voici votre veille technologique et industrielle du {1} :</p>
+	<p style="width: 85%;margin-left: auto;margin-right: auto;">{0} {1}, {2} {3} :</p>
 
-	<div style="float: right; color: grey; margin-top: 10px; margin-bottom: 10px;">{2} Liens</div>
+	<div style="float: right; color: grey; margin-top: 10px; margin-bottom: 10px;">{4} {5}</div>
 
-	<div style="width: 80%;margin-left: auto;margin-right: auto;">""".format(user.encode("utf8"), jour, pending_all))
+	<div style="width: 80%;margin-left: auto;margin-right: auto;">""".format(translate_text[0], user.encode("utf_8"), translate_text[1], jour, pending_all, translate_text[2]))
 
 	index = 0
 
 	######### ECRITURE NEWS
 	if permission_news == 0 and pending_news > 0:
-		newsletter.write("""<br/><br/><b>ACTUALITÉS</b><br/>""")
+		newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(translate_text[3]))
 
 		######### ECRITURE ORIGIN FOR NEWS
 		for couple_source_attribute in sorted(news_origin_list, key= lambda news_origin_field : news_origin_field[0]):
@@ -476,22 +492,71 @@ def newsletterBySource (user, jour, permission_news, permission_science, permiss
 
 	######### ECRITURE SCIENCE
 	if permission_science == 0 and pending_science > 0:
-		newsletter.write("""<br/><br/><b>PUBLICATIONS SCIENTIFIQUES</b><br/>""")
-		newsletter.write("""<br/><br/><b>Arxiv.org</b><br/>""")
+		newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(translate_text[4]))
+		new_papers = 0
 
+		######### CHECKING FOR ARXIV PAPERS
 		while index < pending_science:
 			science_attributes = not_send_science_list[index]
 
-			newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
-				•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
-			</p>""".format(science_attributes[0].strip().encode("utf8"), science_attributes[1].strip().encode("utf8")))
+			if science_attributes[3] == 0:
+				new_papers = new_papers+1
+
+			index = index+1
+
+		print ("ARXIV = " +str(new_papers))
+		if new_papers > 0:
+			newsletter.write("""<br/><br/><b>Arxiv.org</b><br/>""")
+
+		index = 0
+
+		######### ARXIV'S PAPERS WRITING
+		while index < pending_science and new_papers > 0:
+			science_attributes = not_send_science_list[index]
+
+			if science_attributes[3] == 0:
+
+				newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
+					•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
+				</p>""".format(science_attributes[0].strip().encode("utf8"), science_attributes[1].strip().encode("utf8")))
+
+			index = index+1
+
+		index = 0
+		new_papers = 0
+
+		######### CHECKING FOR DOAJ PAPERS
+		while index < pending_science:
+			science_attributes = not_send_science_list[index]
+
+			if science_attributes[3] == 1:
+				new_papers = new_papers+1
+
+			index = index+1
+
+		print ("DOAJ = " +str(new_papers))
+		if new_papers > 0:
+			newsletter.write("""<br/><br/><b>Directory Of Open Access Journals (DOAJ)</b><br/>""")
+
+		index = 0
+
+		######### DOAJ'S PAPERS WRITING
+		while index < pending_science and new_papers > 0:
+			science_attributes = not_send_science_list[index]
+
+			if science_attributes[3] == 1:
+
+				newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
+					•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
+				</p>""".format(science_attributes[0].strip().encode("utf8"), science_attributes[1].strip().encode("utf8")))
+
 			index = index+1
 
 	index = 0
 
 	######### ECRITURE PATENTS
 	if permission_patents == 0 and pending_patents > 0:
-		newsletter.write("""<br/><br/><b>BREVETS</b><br/>""")
+		newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(translate_text[5]))
 		newsletter.write("""<br/><br/><b>OMPI : Organisation Mondiale de la Propriété Intellectuelle</b><br/>""")
 
 		while index < pending_patents:
