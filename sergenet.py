@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+"""sergenet contains all the functions related to internet connexion."""
+
 ######### IMPORT CLASSICAL MODULES
 import requests
 import traceback
@@ -7,7 +9,9 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 def allRequestLong (link, logger_info, logger_error):
-	"""Function for standardized requests to feed and internet pages. Name from Metallica, All Nightmare Long"""
+	"""Function for standardized requests to feed and internet pages.
+
+	Name from Metallica, All Nightmare Long."""
 
 	try:
 		req = requests.get(link, headers={'User-Agent' : "Serge Browser"})

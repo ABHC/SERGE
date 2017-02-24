@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+"""Mailer contains all the functions related to the construction and sending of e-mails"""
+
 import os
 import time
 import re
@@ -22,7 +24,9 @@ passSQL = passSQL.read().strip()
 
 
 def buildMail(user, user_id_comma, register, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, database):
-	"""BuiltForMail retrieves mail building option  for the current user and does a pre-formatting of the mail. Then the function calls the building functions for mail."""
+	"""Function for mail pre-formatting.
+
+	   buildMail retrieves mail building option for the current user and does a pre-formatting of the mail. Then the function calls the building functions for mail."""
 
 	######### SET LISTS FOR MAIL DESIGN
 	newswords_list = []
@@ -51,8 +55,8 @@ def buildMail(user, user_id_comma, register, jour, permission_news, permission_s
 	print ("Langue des mails : "+language[0]) ###
 
 	######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
-	var_FR = ["Bonjour", "voici votre veille technologique et industrielle du", "Liens", "ACTUALITÉS", "PUBLICATIONS SCIENTIFIQUES", "BREVETS", "Bonne journée"]
-	var_EN = ["Hello", "here is your news monitoring of", "Links", "NEWS", "SCIENTIFIC PUBLICATIONS", "PATENTS", "Have a good day"]
+	var_FR = ["Bonjour", "voici votre veille technologique et industrielle du", "Liens", "ACTUALITÉS", "PUBLICATIONS SCIENTIFIQUES", "BREVETS", "Bonne journée", "Afficher sur CairnGit", "Se désinscrire", "Retrouvez SERGE sur", "Propulsé par"]
+	var_EN = ["Hello", "here is your news monitoring of", "Links", "NEWS", "SCIENTIFIC PUBLICATIONS", "PATENTS", "Have a good day", "Visualize on CairnGit", "Unsuscribe", "Find SERGE on", "Powered by"]
 
 	exec("translate_text"+"="+"var_"+language[0])
 
@@ -105,6 +109,7 @@ def buildMail(user, user_id_comma, register, jour, permission_news, permission_s
 
 #TODO refonte des élement envoyés aux fonctions
 def newsletterByType (user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text,jour):
+	"""Formatting function for emails, apply the default formatting"""
 
 	######### TODAY IS THE DAY
 	#jour = unicode(datetime.date.today())
@@ -203,13 +208,13 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 	<div style="display: inline-block;text-align: center;margin-top: 7px;max-width: 33%;">
 	<div>
 	<a style="text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;" href="https://cairngit.eu/serge">
-	Visualize on CairnGit
+	{0}
 	</a>
 	</div>
 	<br/>
 	<div>
 	<a style="text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;" href="https://cairngit.eu/unsubscribe">
-	Unsuscribe
+	{1}
 	</a>
 	</div>
 	</div>
@@ -217,26 +222,27 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 	<div style="display: inline-block;float: right;max-width: 33%;" >
 	<div style="margin:0;">
 	<a style="display: inline-block;text-align: right;text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;float: right;" href="https://github.com/ABHC/SERGE/">
-	Find Serge on
+	{2}
 	<div style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GitHub.png') no-repeat center / contain;background-size: contain;width: 5.5vw;max-width: 50px;height: 5.5vw;max-height: 50px;display: inline-block;"></div>
 	</a>
 	</div>
 
 	<div style="margin:0;">
 	<a style="display: inline-block;text-align: right; text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;float: right;" href="https://www.gnu.org/licenses/gpl-3.0.fr.html">
-	Powered by
+	{3}
 	<div style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GPLv3.png') no-repeat center / contain;background-size: contain;width: 5.5vw;max-width: 50px; height: 2.4vw;max-height: 24.8px;display: inline-block;"></div>
 	</a>
 	</div>
 	</div>
 	</div>
 	</body>
-	</html>""")
+	</html>""".format(translate_text[7], translate_text[8], translate_text[9], translate_text[10]))
 
 	newsletter.close
 
 
 def newsletterByKeyword (user, jour, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list):
+	"""Formatting function for emails, apply the formatting by keywords"""
 
 	######### TODAY IS THE DAY
 	#jour = unicode(datetime.date.today())
@@ -389,13 +395,13 @@ def newsletterByKeyword (user, jour, translate_text, permission_news, permission
 	<div style="display: inline-block;text-align: center;margin-top: 7px;max-width: 33%;">
 	<div>
 	<a style="text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;" href="https://cairngit.eu/serge">
-	Visualize on CairnGit
+	{0}
 	</a>
 	</div>
 	<br/>
 	<div>
 	<a style="text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;" href="https://cairngit.eu/unsubscribe">
-	Unsuscribe
+	{1}
 	</a>
 	</div>
 	</div>
@@ -403,26 +409,27 @@ def newsletterByKeyword (user, jour, translate_text, permission_news, permission
 	<div style="display: inline-block;float: right;max-width: 33%;" >
 	<div style="margin:0;">
 	<a style="display: inline-block;text-align: right;text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;float: right;" href="https://github.com/ABHC/SERGE/">
-	Find Serge on
+	{2}
 	<div style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GitHub.png') no-repeat center / contain;background-size: contain;width: 5.5vw;max-width: 50px;height: 5.5vw;max-height: 50px;display: inline-block;"></div>
 	</a>
 	</div>
 
 	<div style="margin:0;">
 	<a style="display: inline-block;text-align: right; text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;float: right;" href="https://www.gnu.org/licenses/gpl-3.0.fr.html">
-	Powered by
+	{3}
 	<div style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GPLv3.png') no-repeat center / contain;background-size: contain;width: 5.5vw;max-width: 50px; height: 2.4vw;max-height: 24.8px;display: inline-block;"></div>
 	</a>
 	</div>
 	</div>
 	</div>
 	</body>
-	</html>""")
+	</html>""".format(translate_text[7], translate_text[8], translate_text[9], translate_text[10]))
 
 	newsletter.close
 
 
 def newsletterBySource (user, jour, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list):
+	"""Formatting function for emails, apply the formatting by sources"""
 
 	######### TODAY IS THE DAY
 	#jour = unicode(datetime.date.today())
@@ -589,13 +596,13 @@ def newsletterBySource (user, jour, translate_text, permission_news, permission_
 	<div style="display: inline-block;text-align: center;margin-top: 7px;max-width: 33%;">
 	<div>
 	<a style="text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;" href="https://cairngit.eu/serge">
-	Visualize on CairnGit
+	{0}
 	</a>
 	</div>
 	<br/>
 	<div>
 	<a style="text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;" href="https://cairngit.eu/unsubscribe">
-	Unsuscribe
+	{1}
 	</a>
 	</div>
 	</div>
@@ -603,26 +610,27 @@ def newsletterBySource (user, jour, translate_text, permission_news, permission_
 	<div style="display: inline-block;float: right;max-width: 33%;" >
 	<div style="margin:0;">
 	<a style="display: inline-block;text-align: right;text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;float: right;" href="https://github.com/ABHC/SERGE/">
-	Find Serge on
+	{2}
 	<div style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GitHub.png') no-repeat center / contain;background-size: contain;width: 5.5vw;max-width: 50px;height: 5.5vw;max-height: 50px;display: inline-block;"></div>
 	</a>
 	</div>
 
 	<div style="margin:0;">
 	<a style="display: inline-block;text-align: right; text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;float: right;" href="https://www.gnu.org/licenses/gpl-3.0.fr.html">
-	Powered by
+	{3}
 	<div style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GPLv3.png') no-repeat center / contain;background-size: contain;width: 5.5vw;max-width: 50px; height: 2.4vw;max-height: 24.8px;display: inline-block;"></div>
 	</a>
 	</div>
 	</div>
 	</div>
 	</body>
-	</html>""")
+	</html>""".format(translate_text[7], translate_text[8], translate_text[9], translate_text[10]))
 
 	newsletter.close
 
 
 def highwayToMail(register, user, database):
+	"""Function for emails sending"""
 
 	print ("MAIL to "+user)
 

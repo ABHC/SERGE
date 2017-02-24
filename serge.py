@@ -1,15 +1,19 @@
 # -*- coding: utf8 -*-
 
-# [Audit][REVIEW] Le fichier est assez long, se fixer une limite de envion 1000 lignes par fichier est une bonne chose
-
-#TODO Mettre les commantaires en anglais
 #TODO Modifier le HTML/CSS pour mettre les query en langage humain
 #TODO Modifier le HTML/CSS pour introduire un code couleur
 #TODO Modifier le HTML/CSS pour modifier l'emplacement du logo pour le wiki et le mettre à gauche
 #TODO Mettre des database démonstratives sur github
 #TODO faire une fonction pour vérifier l'intégrité de la base de donnée avant de faire tourner SERGE
 
-"""SERGE (Serge Explore Research and Generate Emails/Serge explore recherche et génère des emails) est un outil de veille industrielle et technologique""" #TODO décider d'une approche logique de commentaires en suivant les standards python
+"""SERGE (Serge Explore Research and Generate Emails) is a tool for news and technological monitoring.
+
+SERGE exlores XML and JSON files from RSS feeds and some specificals API in order to retrieve interesting contents for users. The contents research is based on keywords or specificals queries defined by users. Links to this contents are saved on a database and can be send to the users by mail or by a webpage.
+
+SERGE's sources :
+- News : RSS feed defined by users
+- Scientific Publications : Arxiv research API (RSS) and DOAJ research API (JSON)
+- Patents : WIPO research API (RSS)"""
 
 ######### IMPORT CLASSICAL MODULES
 import os
@@ -35,7 +39,6 @@ import mailer
 import sergenet
 import insertSQL
 
-# [Audit][REVIEW][VULN] CRITICAL Vérifier que les variables récupérées dans la BDD ne peuvent s'éxcuter comme du code python (Demander à POHU des explications)
 ######### LOGGER CONFIG
 formatter_error = logging.Formatter("%(asctime)s -- %(levelname)s -- %(message)s")
 formatter_info = logging.Formatter("%(asctime)s -- %(levelname)s -- %(message)s")
@@ -57,13 +60,15 @@ logger_info.info("SERGE INFO LOG ")
 
 
 def cemeteriesOfErrors(*exc_info):
+	"""Error hook whose the purpose is to write the traceback in the error log."""
+
 	colderror = "".join(traceback.format_exception(*exc_info))
 	logger_error.critical(colderror+"\n\n")
 	logger_error.critical("SERGE END : CRITICAL FAILURE\n")
 
 
 def lastResearch():
-	"""Fonction d'extraction de la dernière date de recherche pour n'envoyer que des informations nouvelles"""
+	"""Function whose the purpose is to extract the timestamp corresponding at the last reasearch"""
 
 	try:
 		call_time = database.cursor()
@@ -82,9 +87,10 @@ def lastResearch():
 
 
 def sans_accent_maj(ch):
-    """Supprime les éventuels accents sur les majuscules de la chaine ch
-       ch doit être en unicode, et le résultat retourné est en unicode
-    """
+    """Delete all possible accents on capital letters of the ch string.
+
+	ch must be in unicode, and the result in return in unicode."""
+
     r = u""
     for car in ch:
         carnorm = unicodedata.normalize('NFKD', car)
@@ -97,9 +103,10 @@ def sans_accent_maj(ch):
 
 
 def sans_accent_min(ch):
-    """Supprime les éventuels accents sur les minuscules de la chaine ch
-       ch doit être en unicode, et le résultat retourné est en unicode
-    """
+	"""Delete all possible accents on small letters of the ch string.
+
+	ch must be in unicode, and the result in return in unicode."""
+
     r = u""
     for car in ch:
         carnorm = unicodedata.normalize('NFKD', car)
@@ -112,6 +119,7 @@ def sans_accent_min(ch):
 
 
 def permission(register) :
+	"""Function whose retrieve the user permission for news, science, or patents research"""
 
 	query_news = "SELECT permission_news FROM users_table_serge WHERE id LIKE %s"
 	query_science = "SELECT permission_science FROM users_table_serge WHERE id LIKE %s"
@@ -137,7 +145,9 @@ def permission(register) :
 
 
 def newscast(last_launch):
-	"""Function for last news research :
+	"""Function for last news on RSS feeds defined by users.
+
+		Process :
 		- sources retrieval
 		- sources specifical keywords retrieval
 		- connexion to sources one by one
@@ -330,7 +340,9 @@ def newscast(last_launch):
 
 
 def patents(last_launch):
-	"""Function for last patents research :
+	"""Function for last patents published by the World Intellectual Property Organization.
+
+		Process :
 		- wipo query retrieval
 		- URL re-building with wipo query
 		- connexion to sources one by one
@@ -417,13 +429,18 @@ def patents(last_launch):
 
 
 def science(last_launch):
-	"""Fonction de recherche des derniers articles scientifiques publiés par arxiv.org :
-		- keywords retrieval
-		- URL re-building with keywords
-		- connexion to sources one by one with the arxiv API
-		- research of the keywords in the xml beacons <title> and <description>
-		- if serge find a paper this one is added to the database
-		- if the paper is already saved in the database serge continue to search other papers"""
+	"""Function for last patents published by arxiv.org and the Directory of Open Access Journals.
+
+		Process :
+		- Queries for Arxiv and Doaj retrieval
+		- Research on Arxiv first and then DOAJ
+		- URL re-building with Arxiv query
+		- Research of last published papers related to the query at Arxiv
+		- If serge find a paper this one is added to the database
+		- If the paper is already saved in the database serge continue to search other papers
+		- URL re-building with DOAJ query
+		- Research of last published papers related to the query at DOAJ
+		- Same routine for content saving"""
 
 	######### Recherche SCIENCE
 	logger_info.info("\n\n######### Last Scientific papers on Arxiv.org (science function) : \n\n")
@@ -626,14 +643,14 @@ insertSQL.ofSourceAndName(now, logger_info, logger_error, database)
 
 ######### RECHERCHE
 
-#newscast(last_launch)
+newscast(last_launch)
 
 science(last_launch)
 
-#patents(last_launch)
+patents(last_launch)
 
-######### AFFECTATION ## TODO revoir la structure pour la disséquer en fonctions
-
+######### AFFECTATION
+logger_info.info("AFFECTATION")
 print ("\n AFFECTATION \n")###
 
 call_users = database.cursor()

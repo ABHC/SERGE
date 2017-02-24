@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+"""insertSQL contains all the functions related to the insertion of datas in SERGE database."""
+
 ######### IMPORT CLASSICAL MODULES
 import os
 import time
@@ -26,6 +28,8 @@ passSQL = passSQL.read().strip()
 
 
 def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
+	"""ofSourceAndName check the field 'name' in rss_serge and fill it if it is empty or update it"""
+
 	logger_info.info("\n######### Feed titles retrieval (ofSourceAndName function) :\n\n")
 
 	######### NUMBER OF SOURCES
@@ -161,6 +165,7 @@ def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 
 
 def insertOrUpdate(query_checking, query_insertion, query_update, query_update_owners, post_link, item, id_item_comma, id_item_comma2, owners, logger_info, logger_error, database) :
+	"""insertOrUpdate manage links insertion or data update if the link is already present."""
 
 	########### DATABASE CHECKING
 	call_data_cheking = database.cursor()
@@ -232,6 +237,7 @@ def insertOrUpdate(query_checking, query_insertion, query_update, query_update_o
 
 
 def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database):
+	"""stairwayToUpdate manage the send_status update in database."""
 
 	######### SEND_STATUS UPDATE IN result_news_serge
 	for attributes in not_send_news_list:
