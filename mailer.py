@@ -15,6 +15,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from logging.handlers import RotatingFileHandler
 
+######### IMPORT SERGE SPECIALS MODULES
+import decoder
 
 ######### Connexion à la base de données CairnDevices
 passSQL = open("permission/password.txt", "r")
@@ -81,14 +83,18 @@ def buildMail(user, user_id_comma, register, jour, permission_news, permission_s
 		for word_and_attribute in newswords:
 			if ":all@" in word_and_attribute[0] :
 				split_word = word_and_attribute[0].replace(":","").capitalize().replace("@"," @ ").encode("utf8").split("§")[0].decode("utf8").replace(".","&#8228;")
-				word_and_attribute = (split_word,word_and_attribute[1])
+				word_and_attribute = (split_word, word_and_attribute[1])
 
 			newswords_list.append(word_and_attribute)
 
 		for word_and_attribute in sciencewords:
+			human_query = decoder.decodeQuery(word_and_attribute[0])
+			word_and_attribute = (human_query, word_and_attribute[1])
 			sciencewords_list.append(word_and_attribute)
 
 		for word_and_attribute in patents_master_queries :
+			human_query = decoder.decodeQuery(word_and_attribute[0])
+			word_and_attribute = (human_query, word_and_attribute[1])
 			patent_master_queries_list.append(word_and_attribute)
 
 		newsletterByKeyword(user, jour, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list)
@@ -153,6 +159,9 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 		while index < pending_news:
 			news_attributes = not_send_news_list[index]
 
+			if news_attributes[1].isupper() is True:
+				news_attributes = (news_attributes[0], news_attributes[1].lower().capitalize())
+
 			newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 				•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 			</p>""".format(news_attributes[0].strip().encode("utf8"), news_attributes[1].strip().encode("utf_8")))
@@ -166,6 +175,9 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 
 		while index < pending_science:
 			science_attributes = not_send_science_list[index]
+
+			if science_attributes[1].isupper() is True:
+				science_attributes = (science_attributes[0], science_attributes[1].lower().capitalize())
 
 			newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 				•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
@@ -181,9 +193,12 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 		while index < pending_patents:
 			patents_attributes = not_send_patents_list[index]
 
+			if patents_attributes[1].isupper() is True:
+				patents_attributes = (patents_attributes[0], patents_attributes[1].lower().capitalize())
+
 			newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 				•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
-			</p>""".format(patents_attributes[0].strip().encode("utf_8"), patents_attributes[1].strip().encode("utf_8").lower().capitalize()))
+			</p>""".format(patents_attributes[0].strip().encode("utf_8"), patents_attributes[1].strip().encode("utf_8")))
 			index = index+1
 
 	index = 0
@@ -294,7 +309,12 @@ def newsletterByKeyword (user, jour, translate_text, permission_news, permission
 				news_attributes = not_send_news_list[index]
 
 				if word_attribute in news_attributes[3] and news_attributes[0] not in already_in_the_list:
-					process_result = (news_attributes[0].strip().encode("utf_8"), news_attributes[1].strip().encode("utf_8"))
+
+					if news_attributes[1].isupper() is True:
+						process_result = (news_attributes[0].strip().encode("utf_8"), news_attributes[1].strip().encode("utf_8").lower().capitalize())
+					else:
+						process_result = (news_attributes[0].strip().encode("utf_8"), news_attributes[1].strip().encode("utf_8"))
+
 					process_result_list.append(process_result)
 					already_in_the_list.append(news_attributes[0].strip().encode("utf_8"))
 
@@ -327,7 +347,12 @@ def newsletterByKeyword (user, jour, translate_text, permission_news, permission
 				science_attributes = not_send_science_list[index]
 
 				if word_attribute in science_attributes[2] and science_attributes[0] not in process_result_list:
-					process_result = (science_attributes[0].strip().encode("utf8"), science_attributes[1].strip().encode("utf8"))
+
+					if science_attributes[1].isupper() is True:
+						process_result = (science_attributes[0].strip().encode("utf_8"), science_attributes[1].strip().encode("utf_8").lower().capitalize())
+					else:
+						process_result = (science_attributes[0].strip().encode("utf8"), science_attributes[1].strip().encode("utf8"))
+
 					process_result_list.append(process_result)
 
 				index = index+1
@@ -358,7 +383,12 @@ def newsletterByKeyword (user, jour, translate_text, permission_news, permission
 				patents_attributes = not_send_patents_list[index]
 
 				if query_attribute in patents_attributes[2] and patents_attributes[0] not in process_result_list:
-					process_result = (patents_attributes[0].strip().encode("utf8"), patents_attributes[1].strip().encode("utf8"))
+
+					if patents_attributes[1].isupper() is True:
+						process_result = (patents_attributes[0].strip().encode("utf_8"), patents_attributes[1].strip().encode("utf_8").lower().capitalize())
+					else:
+						process_result = (patents_attributes[0].strip().encode("utf8"), patents_attributes[1].strip().encode("utf8"))
+
 					process_result_list.append(process_result)
 
 				index = index+1
@@ -371,7 +401,7 @@ def newsletterByKeyword (user, jour, translate_text, permission_news, permission
 				for couple_results in process_result_list:
 					newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 						•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
-					</p>""".format(couple_results[0], couple_results[1].lower().capitalize()))
+					</p>""".format(couple_results[0], couple_results[1]))
 
 	index = 0
 
@@ -480,7 +510,12 @@ def newsletterBySource (user, jour, translate_text, permission_news, permission_
 				news_attributes = not_send_news_list[index]
 
 				if origin_id == news_attributes[2]:
-					process_result = (news_attributes[0].strip().encode("utf8"), news_attributes[1].strip().encode("utf8"))
+
+					if news_attributes[1].isupper() is True:
+						process_result = (news_attributes[0].strip().encode("utf_8"), news_attributes[1].strip().encode("utf_8").lower().capitalize())
+					else :
+						process_result = (news_attributes[0].strip().encode("utf8"), news_attributes[1].strip().encode("utf8"))
+
 					process_result_list.append(process_result)
 
 				index = index+1
@@ -523,6 +558,9 @@ def newsletterBySource (user, jour, translate_text, permission_news, permission_
 
 			if science_attributes[3] == 0:
 
+				if science_attributes[1].isupper() is True:
+					science_attributes = (science_attributes[0], science_attributes[1].lower().capitalize(), science_attributes[2], science_attributes[3])
+
 				newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 					•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 				</p>""".format(science_attributes[0].strip().encode("utf8"), science_attributes[1].strip().encode("utf8")))
@@ -553,6 +591,9 @@ def newsletterBySource (user, jour, translate_text, permission_news, permission_
 
 			if science_attributes[3] == 1:
 
+				if science_attributes[1].isupper() is True:
+					science_attributes = (science_attributes[0], science_attributes[1].lower().capitalize(), science_attributes[2], science_attributes[3])
+
 				newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 					•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 				</p>""".format(science_attributes[0].strip().encode("utf8"), science_attributes[1].strip().encode("utf8")))
@@ -569,9 +610,12 @@ def newsletterBySource (user, jour, translate_text, permission_news, permission_
 		while index < pending_patents:
 			patents_attributes = not_send_patents_list[index]
 
+			if patents_attributes[1].isupper() is True:
+				patents_attributes = (patents_attributes[0], science_attributes[1].lower().capitalize())
+
 			newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 			•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
-			</p>""".format(patents_attributes[0].strip().encode("utf8"), patents_attributes[1].strip().encode("utf8").lower().capitalize()))
+			</p>""".format(patents_attributes[0].strip().encode("utf8"), patents_attributes[1].strip().encode("utf8")))
 			index = index+1
 
 	index = 0

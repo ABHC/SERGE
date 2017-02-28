@@ -1,6 +1,5 @@
 # -*- coding: utf8 -*-
 
-#TODO Modifier le HTML/CSS pour mettre les query en langage humain
 #TODO Modifier le HTML/CSS pour introduire un code couleur
 #TODO Modifier le HTML/CSS pour modifier l'emplacement du logo pour le wiki et le mettre à gauche
 #TODO Mettre des database démonstratives sur github
@@ -102,22 +101,6 @@ def sans_accent_maj(ch):
     return r
 
 
-def sans_accent_min(ch):
-	"""Delete all possible accents on small letters of the ch string.
-
-	ch must be in unicode, and the result in return in unicode."""
-
-    r = u""
-    for car in ch:
-        carnorm = unicodedata.normalize('NFKD', car)
-        carcat = unicodedata.category(carnorm[0])
-        if carcat != u"Lu":
-            r += carnorm[0]
-        else:
-            r += car
-    return r
-
-
 def permission(register) :
 	"""Function whose retrieve the user permission for news, science, or patents research"""
 
@@ -144,7 +127,7 @@ def permission(register) :
 	return permission_list
 
 
-def newscast(last_launch):
+def newscast(last_launch, max_users):
 	"""Function for last news on RSS feeds defined by users.
 
 		Process :
@@ -181,18 +164,18 @@ def newscast(last_launch):
 		id_rss_comma = "%," + id_rss + ",%"
 
 		######### CALL TO TABLE keywords_news_serge
-		query = "SELECT keyword, owners FROM keyword_news_serge WHERE id_source LIKE %s AND active > 0"
+		query = "SELECT id, keyword FROM keyword_news_serge WHERE id_source LIKE %s AND active > 0"
 
 		call_news = database.cursor()
 		call_news.execute(query, (id_rss_comma,))
 		rows = call_news.fetchall()
 		call_news.close()
 
-		keywords_and_owners_news_list = []
+		keywords_and_id_news_list = []
 
 		for row in rows:
-			field = (row[0].strip(), row[1])
-			keywords_and_owners_news_list.append(field)
+			field = (row[0], row[1].strip())
+			keywords_and_id_news_list.append(field)
 
 		########### LINK CONNEXION
 		req_results = sergenet.allRequestLong(link, logger_info, logger_error)
@@ -225,20 +208,42 @@ def newscast(last_launch):
 			rangemax = len(xmldoc.entries)
 			range = 0 #on initialise la variable range qui va servir pour pointer les articles
 
-			for couple_keyword_owners in keywords_and_owners_news_list:
-				keyword = couple_keyword_owners[0]
-				owners = couple_keyword_owners[1]
+			for couple_keyword_attribute in keywords_and_id_news_list:
+				keyword_id = couple_keyword_attribute[0]
+				keyword = couple_keyword_attribute[1]
+				print ("Boucle sur le keyword : " + keyword+"("+str(keyword_id)+")") ###
 
-				########### KEYWORD ID RETRIEVAL
-				query = ("SELECT id FROM keyword_news_serge WHERE keyword = %s")
+				########### OWNERS RETRIEVAL
+				query_keyword_owners = ("SELECT owners FROM keyword_news_serge WHERE keyword = %s")
+				query_source_owners = ("SELECT owners FROM rss_serge WHERE link = %s")
 
 				call_news = database.cursor()
-				call_news.execute(query, (keyword, ))
-				rows = call_news.fetchone()
+				call_news.execute(query_keyword_owners, (keyword, ))
+				keyword_owners = call_news.fetchone()
+				call_news.execute(query_source_owners, (link, ))
+				source_owners = call_news.fetchone()
 				call_news.close()
 
-				keyword_id = rows[0]
-				print ("Boucle sur le keyword : " + keyword+"("+str(keyword_id)+")") ###
+				print keyword
+				print link
+				print keyword_owners
+				print source_owners
+				keyword_owners = keyword_owners[0]
+				source_owners = source_owners[0]
+
+				owners = ","
+				owners_index = 1
+
+				while owners_index <= max_users:
+					owners_index = str(owners_index)
+
+					if owners_index in keyword_owners and owners_index in source_owners:
+						owners = owners+owners_index+","
+						print owners
+
+					owners_index = int(owners_index)
+					owners_index = owners_index+1
+
 
 				while range < rangemax:
 
@@ -379,7 +384,8 @@ def patents(last_launch):
 			xmldoc = feedparser.parse(rss_wipo)
 			range = 0
 			rangemax = len(xmldoc.entries)
-			logger_info.info("numbers of patents :"+unicode(rangemax)+"\n \n")
+			logger_info.info("Link :"+str(link))
+			logger_info.info("Patentscope RSS length :"+unicode(rangemax)+"\n \n")
 
 			if (xmldoc):
 				if rangemax == 0:
@@ -643,7 +649,7 @@ insertSQL.ofSourceAndName(now, logger_info, logger_error, database)
 
 ######### RECHERCHE
 
-newscast(last_launch)
+newscast(last_launch, max_users)
 
 science(last_launch)
 
