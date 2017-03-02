@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+#TODO traduire également en français et demander un coup de main à Ines et Annick pour l'espagnol et l'allemand. 
 
 def decodeQuery(ch):
 

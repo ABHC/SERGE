@@ -2,7 +2,6 @@
 
 #TODO Modifier le HTML/CSS pour introduire un code couleur
 #TODO Modifier le HTML/CSS pour modifier l'emplacement du logo pour le wiki et le mettre à gauche
-#TODO Mettre des database démonstratives sur github
 #TODO faire une fonction pour vérifier l'intégrité de la base de donnée avant de faire tourner SERGE
 
 """SERGE (Serge Explore Research and Generate Emails) is a tool for news and technological monitoring.
@@ -36,6 +35,7 @@ sys.path.insert(1, "modules/UFP/feedparser")
 ######### IMPORT SERGE SPECIALS MODULES
 import mailer
 import sergenet
+import failsafe
 import insertSQL
 
 ######### LOGGER CONFIG
@@ -192,8 +192,6 @@ def newscast(last_launch, max_users):
 				logger_error.error(repr(except_type))
 
 			########### RSS ANALYZE
-			"""Universal Feedparser crée une liste dans qui répertorie chaque article, cette liste est la liste entries[n] qui comprends n+1 entrées (les liste sont numérotées à partir de 0). Python ne peut aller au delà de cette taille n-1. Il faut donc d'abord chercher la taille de la liste avec la fonction len"""
-
 			try:
 				source_title = xmldoc.feed.title
 			except AttributeError:
@@ -247,7 +245,6 @@ def newscast(last_launch, max_users):
 
 				while range < rangemax:
 
-					#TODO A découper dans une sous fonction Analyse(xmldoc, last_launch) ??
 					########### MANDATORY UNIVERSAL FEED PARSER VARIABLES
 					try:
 						post_title = xmldoc.entries[range].title
@@ -355,6 +352,7 @@ def patents(last_launch):
 		- if serge find a news this one is added to the database
 		- if the news is already saved in the database serge continue to search other news"""
 
+	#WIPO_languages = ["ZH", "DA", "EN", "FR", "DE", "HE", "IT", "JA", "KO", "PL", "PT", "RU", "ES", "SV", "VN"]
 	logger_info.info("\n\n######### Last Patents Research (patents function) : \n\n")
 
 	######### CALL TO TABLE queries_wipo
@@ -498,7 +496,7 @@ def science(last_launch):
 					logger_info.info("VOID QUERY :"+link+"\n\n")
 
 				else:
-					"""query ID Retrieval"""
+					######### QUERY ID RETRIEVAL
 					query = ("SELECT id FROM queries_science_serge WHERE query_arxiv = %s")
 
 					call_science = database.cursor()
@@ -509,7 +507,6 @@ def science(last_launch):
 					query_id=rows[0]
 
 					while range < rangemax:
-						#"""On définit les variables que l'on affectent aux commandes de Universal Feedparser hors de la boucle veille car on doit les donner plusieurs fois"""
 						post_title = xmldoc.entries[range].title
 						post_link = xmldoc.entries[range].link
 						post_date = xmldoc.entries[range].published_parsed
@@ -566,7 +563,7 @@ def science(last_launch):
 					logger_info.info("VOID QUERY :"+link_doaj+"\n\n")
 
 				else:
-					"""query ID Retrieval"""
+					######### QUERY ID RETRIEVAL
 					query = ("SELECT id FROM queries_science_serge WHERE query_doaj = %s")
 
 					call_science = database.cursor()
@@ -632,10 +629,10 @@ last_launch = lastResearch()
 jour = unicode(datetime.date.today())
 logger_info.info(time.asctime(time.gmtime(now))+"\n")
 
-WIPO_languages = ["ZH", "DA", "EN", "FR", "DE", "HE", "IT", "JA", "KO", "PL", "PT", "RU", "ES", "SV", "VN"]
+######### DATABASE INTERGRITY CHECKING
+failsafe.checkMate(database, logger_info, logger_error)
 
-
-######### NOMBRE D'UTILISATEURS
+######### NUMBERS OF USERS
 call_users = database.cursor()
 call_users.execute("SELECT COUNT(id) FROM users_table_serge")
 max_users = call_users.fetchone()
@@ -647,7 +644,7 @@ logger_info.info("\nMax Users : " + str(max_users)+"\n")
 ######### RSS SERGE UPDATE
 insertSQL.ofSourceAndName(now, logger_info, logger_error, database)
 
-######### RECHERCHE
+######### RESEARCH OF LATEST NEWS, SCIENTIFIC PUBLICATIONS AND PATENTS
 
 newscast(last_launch, max_users)
 

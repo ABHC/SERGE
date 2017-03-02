@@ -113,14 +113,9 @@ def buildMail(user, user_id_comma, register, jour, permission_news, permission_s
 		newsletterBySource(user, jour, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list)
 
 
-#TODO refonte des élement envoyés aux fonctions
 def newsletterByType (user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text,jour):
 	"""Formatting function for emails, apply the default formatting"""
 
-	######### TODAY IS THE DAY
-	#jour = unicode(datetime.date.today())
-
-	#print ("TOTAL LIENS NON ENVOYÉS : "+ str(not_send)) ###
 	print ("NEWSLETTER TO "+user.encode("utf8"))###
 
 	######### PENDING LINKS
@@ -258,9 +253,6 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 
 def newsletterByKeyword (user, jour, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list):
 	"""Formatting function for emails, apply the formatting by keywords"""
-
-	######### TODAY IS THE DAY
-	#jour = unicode(datetime.date.today())
 
 	print ("NEWSLETTER TO "+user.encode("utf_8"))###
 
@@ -460,9 +452,6 @@ def newsletterByKeyword (user, jour, translate_text, permission_news, permission
 
 def newsletterBySource (user, jour, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list):
 	"""Formatting function for emails, apply the formatting by sources"""
-
-	######### TODAY IS THE DAY
-	#jour = unicode(datetime.date.today())
 
 	print ("NEWSLETTER TO "+user.encode("utf8"))###
 
@@ -694,7 +683,7 @@ def highwayToMail(register, user, database):
 	toaddr = row[0]
 	print toaddr
 
-	"""On veux transférer le contenu du fichier texte DANS le mail"""
+	######### CONTENT WRITING IN EMAIL
 	newsletter = open("Newsletter.html", "r")
 	msg = MIMEText(newsletter.read(), 'html')
 	newsletter.close()
@@ -707,6 +696,7 @@ def highwayToMail(register, user, database):
 	mdp_mail = passmail.read().strip()
 	passmail.close()
 
+	######### EMAIL SERVER CONNEXION
 	server = smtplib.SMTP('smtp.cairn-devices.eu', 5025)
 	server.starttls()
 	server.login(fromaddr, mdp_mail) #mot de passe
