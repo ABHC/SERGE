@@ -1,6 +1,6 @@
 <?php
 session_start();
-include_once('model/connexion_sql.php');
+include_once('model/connection_sql.php');
 ?>
 
 <!DOCTYPE html>
