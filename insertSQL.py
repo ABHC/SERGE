@@ -89,6 +89,7 @@ def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 					source_title = xmldoc.feed.title
 				except AttributeError:
 					logger_info.warning("NO TITLE IN :"+link+"\n")
+					source_title = None
 
 				update = ("UPDATE rss_serge SET name = %s WHERE id = %s")
 
@@ -148,6 +149,7 @@ def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 						source_title = xmldoc.feed.title
 					except AttributeError:
 						logger_info.warning("NO TITLE IN :"+link+"\n") ###
+						source_title = None
 
 					update = ("UPDATE rss_serge SET name = %s WHERE id = %s")
 

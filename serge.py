@@ -161,6 +161,7 @@ def newscast(last_launch, max_users):
 		id_rss = couple_sources_news[1]
 		id_rss = str(id_rss)
 
+
 		id_rss_comma = "%," + id_rss + ",%"
 
 		######### CALL TO TABLE keywords_news_serge
@@ -184,6 +185,8 @@ def newscast(last_launch, max_users):
 
 		if rss_error == 0:
 
+			missing_flux = False
+
 			########### RSS PARSING
 			try:
 				xmldoc = feedparser.parse(rss)
@@ -196,17 +199,23 @@ def newscast(last_launch, max_users):
 				source_title = xmldoc.feed.title
 			except AttributeError:
 				logger_info.warning("NO TITLE IN :"+link+"\n")
+				missing_flux = True
 
 			try:
 				tag_test = xmldoc.entries[0].tags
 			except AttributeError:
 				logger_info.info("BEACON INFO : no <category> in "+link)
 				tag_test = None
+			except IndexError:
+				logger_info.critical("NO ENTRIES IN :"+link+"\n")
+				missing_flux = True
 
 			rangemax = len(xmldoc.entries)
 			range = 0 #on initialise la variable range qui va servir pour pointer les articles
 
-			for couple_keyword_attribute in keywords_and_id_news_list:
+			conditions = (couple_keyword_attribute for couple_keyword_attribute in keywords_and_id_news_list if missing_flux == False)
+
+			for couple_keyword_attribute in conditions:
 				keyword_id = couple_keyword_attribute[0]
 				keyword = couple_keyword_attribute[1]
 				print ("Boucle sur le keyword : " + keyword+"("+str(keyword_id)+")") ###
