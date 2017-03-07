@@ -29,9 +29,8 @@ include_once('nav.php');
 	width: 100%;
 	height: 100vh;
 	z-index: -1;
-	background: url('../images/background/Skyscraper01.jpg') center no-repeat;
+	background: url('../images/background/Skyscrapers01.jpg') center no-repeat;
 	background-size: cover;
-	/*filter: blur(2px) grayscale(100%);*/
 }
 
 .subBackground
@@ -56,9 +55,17 @@ h1
 	margin-bottom: 15px;
 }
 
+.tableContainer
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+}
+
 table
 {
-	width:100%;
+	width: 100%;
 	table-layout: fixed;
 	word-wrap: break-word;
 	background-color: rgba(0, 0, 0, 0.45);
@@ -91,6 +98,7 @@ th
 	color: #fff;
 	text-transform: uppercase;
 	text-align: center;
+	text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
 }
 
 th a
@@ -99,7 +107,23 @@ th a
 	color: #fff;
 }
 
+.submit
+{
+	width: 20px;
+	height: 25px;
+	background: url(../images/Trash.png) center no-repeat;
+	background-size: contain;
+	border: none;
+	outline: none;
+	cursor: pointer;
+}
+
 th:nth-child(1)
+{
+	width: 40px;
+}
+
+th:nth-child(2)
 {
 	width: 27%;
 }
@@ -119,6 +143,7 @@ td
 	font-size: 12px;
 	color: #fff;
 	border-bottom: solid 1px rgba(255,255,255,0.1);
+	text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
 }
 
 td a
@@ -129,6 +154,12 @@ td a
 
 td:nth-child(1)
 {
+	width: 40px;
+}
+
+
+td:nth-child(2)
+{
 	width: 27%;
 	text-align: left;
 	padding-left: 5px;
@@ -137,6 +168,76 @@ td:nth-child(1)
 td:last-child
 {
 	width: 8%;
+}
+
+[type="checkbox"]:not(:checked),
+[type="checkbox"]:checked
+{
+	display: none;
+}
+
+[type="checkbox"]:not(:checked) + label,
+[type="checkbox"]:checked + label
+{
+	position: relative;
+	margin-left: -15px;
+	width: 10px;
+	height: 10px;
+}
+
+[type="checkbox"]:not(:checked) + label:before
+{
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 10px;
+	width: 10px;
+	border: 1px solid rgba(255,255,255, 0.15);
+	background-color: rgba(255, 255, 255, 0.15);
+	transition: all .3s;
+}
+
+
+[type="checkbox"]:checked + label:before
+{
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 10px;
+	width: 10px;
+	border: 1px solid rgba(255,255,255, 0.15);
+	background-color: rgba(255, 255, 255, 0.3);
+	transition: all .3s;
+}
+
+[type="checkbox"]:not(:checked) + label:after
+{
+	content: '';
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+
+[type="checkbox"]:checked + label:after
+{
+	content: '✓';
+	position: absolute;
+	top: -8px;
+	left: -1px;
+	font-size: 20px;
+	color: #d5d3d3;
+	text-align: center;
+}
+
+.deleteLink
+{
+	display: inline-block;
+	width: 30px;
+	height: 30px;
+	background: url(../images/TrashDesactivated.png) center no-repeat;
+	background-size: 20px;
 }
 
 a.wikiLogo
@@ -177,6 +278,7 @@ tr:nth-child(2n)
 	color: #fff;
 	background-color: rgba(0, 0, 0, 0.5);
 	border: 1px solid rgba(255,255,255,0.15);
+	text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
 }
 
 a.pageNumber
