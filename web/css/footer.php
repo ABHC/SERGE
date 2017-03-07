@@ -20,7 +20,6 @@ footer
 	margin-top: 100px;
 	background-color: rgba(0, 0, 0, 0.55);
 	border-top: 1px solid rgba(255,255,255,0.2);
-	/* background-color: #131425; */
 }
 
 .footerContainer1
@@ -65,6 +64,7 @@ footer
 	background-color: rgba(0,99,149, 0.55);
 	margin-left: 15px;
 	margin-right: 15px;
+	border: 1px solid rgba(255,255,255,0.1);
 }
 
 .subLinksContainer
@@ -110,7 +110,8 @@ footer
 	display: flex;
 	align-items: center;
 	height: 1.6vw;
-	width: 20%;
+	width: 19%;
+	margin-right: 1%;
 	margin-top: 20px;
 	padding: 3px;
 	border-radius: 0 3px 3px 0;
@@ -121,7 +122,31 @@ footer
 .copyright a
 {
 	text-decoration: none;
-	font-size: 1.4vw;
+	font-size: 1.3vw;
 	text-align: center;
 	color: rgb(255,255,255);
+}
+
+@media all and (min-width: 1200px)
+{
+	.copyright
+	{
+		display: flex;
+		align-items: center;
+		height: 23px;
+		width: 220px;
+		margin-top: 20px;
+		padding: 3px;
+		border-radius: 0 3px 3px 0;
+		border: 1px solid rgba(255,255,255, 0.1);
+		background-color: rgba(0,99,149, 0.55);
+	}
+
+	.copyright a
+	{
+		text-decoration: none;
+		font-size: 16px;
+		text-align: center;
+		color: rgb(255,255,255);
+	}
 }
