@@ -49,7 +49,7 @@ include_once('../model/design.php');
 	height: 70px;
 	margin-right: 10px;
 	margin-left: 10px;
-	background: url(../images/SERGE_logo_final_dark_background.svg) center no-repeat;
+	background: url(../images/SERGE_logo_final_dark_background.png) center no-repeat;
 	background-size: cover;
 	border-radius: 50%;
 }
