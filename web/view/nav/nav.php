@@ -1,14 +1,14 @@
 <div class="nav">
 	<div class="navlogo">
-		<a class="navCairnDevicesLogo" href="result">
+		<a class="navCairnDevicesLogo" href="index">
 		</a>
-		<a class="navTitle" href="result">
+		<a class="navTitle" href="index">
 			Serge by Cairn Devices
 		</a>
 	</div>
 
 	<div class="navBlockContainer">
-		<a class="navBlock active" href="result"><!-- TODO Mettre le active ne variable php -->
+		<a class="navBlock <?php echo $result; ?>" href="result">
 			<div class="navResultSergeLogo">
 			</div>
 			<div class="navTitle" >
@@ -16,7 +16,7 @@
 			</div>
 		</a>
 
-		<a class="navBlock" href="wiki">
+		<a class="navBlock <?php echo $wiki; ?>" href="wiki">
 			<div class="navWikiLogo">
 			</div>
 			<div class="navTitle" >
@@ -24,7 +24,7 @@
 			</div>
 		</a>
 
-		<a class="navBlock" href="setting">
+		<a class="navBlock <?php echo $setting; ?>" href="setting">
 			<div class="navSergeSettingLogo">
 			</div>
 			<div class="navTitle" >
