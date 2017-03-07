@@ -1,5 +1,4 @@
 <?php
-# TODO Gestion des erreurs
 $reponse_get_text = $bdd->query('SELECT * FROM Text_content');
 
 $cpt=0;
