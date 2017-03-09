@@ -2,7 +2,6 @@
 
 #TODO Modifier le HTML/CSS pour introduire un code couleur
 #TODO Modifier le HTML/CSS pour modifier l'emplacement du logo pour le wiki et le mettre à gauche
-#TODO faire une fonction pour vérifier l'intégrité de la base de donnée avant de faire tourner SERGE
 
 """SERGE (Serge Explore Research and Generate Emails) is a tool for news and technological monitoring.
 

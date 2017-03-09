@@ -42,6 +42,13 @@ def allRequestLong (link, logger_info, logger_error):
 		logger_info.warning("Please check the link\n \n")
 		rss = None
 		rss_error = 1
+	except requests.exceptions.MissingSchema:
+		print ("URL Required")
+		link = link.replace("https://", "")
+		logger_info.warning("Error in the access "+link+" (Link is not an URL) \n")
+		logger_info.warning("Please check the link\n \n")
+		rss = None
+		rss_error = 1
 	except requests.exceptions.TooManyRedirects:
 		print ("Too Many Redirects")
 		link = link.replace("https://", "")
