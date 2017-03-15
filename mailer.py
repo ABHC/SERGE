@@ -696,7 +696,7 @@ def highwayToMail(register, user, database):
 	try :
 		exec("translate_subject"+"="+"subject_"+user_infos[1])
 	except NameError :
-        translate_subject = subject_EN
+		translate_subject = subject_EN
 
 	######### CONTENT WRITING IN EMAIL
 	newsletter = open("Newsletter.html", "r")
