@@ -63,7 +63,7 @@ def checkMate(database, logger_info, logger_error):
 
     ######### CHECKING TABLES' NUMBER OF COLUMNS
     admin_table_serge_numbers = 3
-    keyword_news_serge_numbers = 5
+    keyword_news_serge_numbers = 4
     queries_science_serge_numbers = 5
     queries_wipo_serge_numbers = 4
     result_news_serge_numbers = 7
@@ -98,7 +98,7 @@ def checkMate(database, logger_info, logger_error):
 
     ######### CHECKING TABLES COLUMNS' NAMES
     admin_table_serge_columns = ["id", "admin", "email"]
-    keyword_news_serge_columns = ["id", "keyword", "owners", "id_source", "active"]
+    keyword_news_serge_columns = ["id", "keyword", "applicable_owners_sources", "active"]
     queries_science_serge_columns = ["id", "query_arxiv", "query_doaj", "owners", "active"]
     queries_wipo_serge_columns = ["id", "query", "owners", "active"]
     result_news_serge_columns = ["title", "link", "send_status", "date", "id_source", "keyword_id", "owners"]

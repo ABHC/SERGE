@@ -30,11 +30,15 @@ def buildMail(user, user_id_comma, register, jour, permission_news, permission_s
 
 	   buildMail retrieves mail building option for the current user and does a pre-formatting of the mail. Then the function calls the building functions for mail."""
 
-	######### SET LISTS FOR MAIL DESIGN
+	######### SET LISTS AND VARIABLES FOR MAIL DESIGN
 	newswords_list = []
 	sciencewords_list = []
 	patent_master_queries_list = []
 	news_origin_list = []
+	user_id_doubledot = user_id_comma.replace(",", "")+":"
+	user_id_doubledot_percent = "%"+user_id_doubledot+"%"
+	time_units = jour.split("-")
+	jour = time_units[2]+"/"+time_units[1]+"/"+time_units[0]
 
 	######### DESIGN CHOSEN BY USER
 	query_mail_design = "SELECT mail_design FROM users_table_serge WHERE id = %s"
@@ -60,19 +64,22 @@ def buildMail(user, user_id_comma, register, jour, permission_news, permission_s
 	var_FR = ["Bonjour", "voici votre veille technologique et industrielle du", "Liens", "ACTUALITÉS", "PUBLICATIONS SCIENTIFIQUES", "BREVETS", "Bonne journée", "Afficher sur CairnGit", "Se désinscrire", "Retrouvez SERGE sur", "Propulsé par"]
 	var_EN = ["Hello", "here is your news monitoring of", "Links", "NEWS", "SCIENTIFIC PUBLICATIONS", "PATENTS", "Have a good day", "Visualize on CairnGit", "Unsuscribe", "Find SERGE on", "Powered by"]
 
-	exec("translate_text"+"="+"var_"+language[0])
+	try :
+		exec("translate_text"+"="+"var_"+language[0])
+	except NameError :
+        translate_text = var_EN
 
 	######### CALL TO NEWSLETTER FUNCTION
 	if mail_design[0] == "type":
 		newsletterByType(user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text,jour)
 
 	elif mail_design[0] == "masterword":
-		query_newswords = "SELECT keyword, id FROM keyword_news_serge WHERE owners like %s and active > 0"
-		query_sciencewords = "SELECT query_arxiv, id FROM queries_science_serge WHERE owners like %s and active > 0"
-		query_wipo_query = "SELECT query, id FROM queries_wipo_serge WHERE owners like %s and active > 0"
+		query_newswords = "SELECT keyword, id FROM keyword_news_serge WHERE applicable_owners_sources LIKE %s AND active > 0"
+		query_sciencewords = "SELECT query_arxiv, id FROM queries_science_serge WHERE owners LIKE %s AND active > 0"
+		query_wipo_query = "SELECT query, id FROM queries_wipo_serge WHERE owners LIKE %s AND active > 0"
 
 		call_words = database.cursor()
-		call_words.execute(query_newswords, (user_id_comma, ))
+		call_words.execute(query_newswords, (user_id_doubledot_percent, ))
 		newswords = call_words.fetchall()
 		call_words.execute(query_sciencewords, (user_id_comma, ))
 		sciencewords = call_words.fetchall()
@@ -672,16 +679,24 @@ def highwayToMail(register, user, database):
 	fromaddr = sergemail.read().strip()
 	sergemail.close
 
-	######### ADRESSES RECOVERY
-	query= "SELECT email FROM users_table_serge WHERE id = %s" #Look on send condition
+	######### ADRESSES AND LANGUAGE RECOVERY
+	query= "SELECT email, language FROM users_table_serge WHERE id = %s"
 
 	call_users= database.cursor()
 	call_users.execute(query, (register))
-	row = call_users.fetchone()
+	user_infos = call_users.fetchone()
 	call_users.close()
 
-	toaddr = row[0]
-	print toaddr
+	toaddr = user_infos[0]
+
+	######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
+	subject_FR = "[SERGE] Veille Industrielle et Technologique"
+	subject_EN = "[SERGE] News monitoring and Technological watch"
+
+	try :
+		exec("translate_subject"+"="+"subject_"+user_infos[1])
+	except NameError :
+        translate_subject = subject_EN
 
 	######### CONTENT WRITING IN EMAIL
 	newsletter = open("Newsletter.html", "r")
@@ -690,7 +705,7 @@ def highwayToMail(register, user, database):
 
 	msg['From'] = fromaddr
 	msg['To'] = toaddr
-	msg['Subject'] = "[SERGE] Veille Industrielle et Technologique"
+	msg['Subject'] = translate_subject
 
 	passmail = open("permission/passmail.txt", "r")
 	mdp_mail = passmail.read().strip()

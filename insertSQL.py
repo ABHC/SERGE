@@ -173,27 +173,28 @@ def insertOrUpdate(query_checking, query_insertion, query_update, query_update_o
 	call_data_cheking = database.cursor()
 	call_data_cheking.execute(query_checking, (post_link, ))
 	checking = call_data_cheking.fetchone()
+	print ("CHECKING : "+str(checking))
 	call_data_cheking.close()
 
 	########### DATABASE INSERTION
 	if checking is None:
-		print "INSERTION" ###
-
 		insert_data = database.cursor()
+
 		try:
 			insert_data.execute(query_insertion, item)
 			database.commit()
 		except Exception, except_type:
 			database.rollback()
-			print "ROLLBACK" ###
-			logger_error.error("ROLLBACK IN insertOrUpdate FUNCTION")
+			print "ROLLBACK AT INSERTION" ###
+			print ("ITEM : "+str(item))
+			print ("LINK : "+str(post_link))
+			logger_error.error("ROLLBACK AT INSERTION IN insertOrUpdate FUNCTION")
 			logger_error.error(query_insertion)
 			logger_error.error(repr(except_type))
 		insert_data.close()
 
 	########### DATABASE UPDATE
 	else:
-		print "DOUBLON"###
 		field_id_item = checking[0]
 		item_owners = checking[1]
 
@@ -206,13 +207,12 @@ def insertOrUpdate(query_checking, query_insertion, query_update, query_update_o
 				database.commit()
 			except Exception, except_type:
 				database.rollback()
-				print "ROLLBACK" ###
-				logger_error.error("ROLLBACK IN insertOrUpdate FUNCTION")
+				print "ROLLBACK AT UPDATE" ###
+				logger_error.error("ROLLBACK AT UPDATE IN insertOrUpdate FUNCTION")
 				logger_error.error(query_update)
 				logger_error.error(repr(except_type))
 			update_data.close()
 
-		print owners
 		already_owners_list = owners.split(",")
 		split_index = 1
 
@@ -229,8 +229,8 @@ def insertOrUpdate(query_checking, query_insertion, query_update, query_update_o
 					database.commit()
 				except Exception, except_type:
 					database.rollback()
-					print "ROLLBACK" ###
-					logger_error.error("ROLLBACK IN insertOrUpdate FUNCTION")
+					print "ROLLBACK AT UPDATE" ###
+					logger_error.error("ROLLBACK AT UPDATE IN insertOrUpdate FUNCTION")
 					logger_error.error(query_update)
 					logger_error.error(repr(except_type))
 				update_data.close()

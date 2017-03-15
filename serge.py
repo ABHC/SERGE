@@ -160,14 +160,14 @@ def newscast(last_launch, max_users):
 		id_rss = couple_sources_news[1]
 		id_rss = str(id_rss)
 
-
-		id_rss_comma = "%," + id_rss + ",%"
+		id_rss_comma = "," + id_rss + ","
+		id_rss_comma_percent = "%," + id_rss + ",%"
 
 		######### CALL TO TABLE keywords_news_serge
-		query = "SELECT id, keyword FROM keyword_news_serge WHERE id_source LIKE %s AND active > 0"
+		query = "SELECT id, keyword FROM keyword_news_serge WHERE applicable_owners_sources LIKE %s AND active > 0"
 
 		call_news = database.cursor()
-		call_news.execute(query, (id_rss_comma,))
+		call_news.execute(query, (id_rss_comma_percent,))
 		rows = call_news.fetchall()
 		call_news.close()
 
@@ -212,46 +212,55 @@ def newscast(last_launch, max_users):
 			rangemax = len(xmldoc.entries)
 			range = 0 #on initialise la variable range qui va servir pour pointer les articles
 
-			conditions = (couple_keyword_attribute for couple_keyword_attribute in keywords_and_id_news_list if missing_flux == False)
+			prime_conditions = (couple_keyword_attribute for couple_keyword_attribute in keywords_and_id_news_list if missing_flux == False)
 
-			for couple_keyword_attribute in conditions:
+			for couple_keyword_attribute in prime_conditions:
 				keyword_id = couple_keyword_attribute[0]
 				keyword = couple_keyword_attribute[1]
 				print ("Boucle sur le keyword : " + keyword+"("+str(keyword_id)+")") ###
 
 				########### OWNERS RETRIEVAL
-				query_keyword_owners = ("SELECT owners FROM keyword_news_serge WHERE keyword = %s")
-				query_source_owners = ("SELECT owners FROM rss_serge WHERE link = %s")
+				query_keyword_parameters = ("SELECT applicable_owners_sources FROM keyword_news_serge WHERE keyword = %s and active > 0")
+				query_source_owners = ("SELECT owners FROM rss_serge WHERE link = %s and active > 0")
 
 				call_news = database.cursor()
-				call_news.execute(query_keyword_owners, (keyword, ))
-				keyword_owners = call_news.fetchone()
+				call_news.execute(query_keyword_parameters, (keyword, ))
+				applicable_owners_sources = call_news.fetchone()
 				call_news.execute(query_source_owners, (link, ))
 				source_owners = call_news.fetchone()
 				call_news.close()
 
-				print keyword
-				print link
-				print keyword_owners
-				print source_owners
-				keyword_owners = keyword_owners[0]
 				source_owners = source_owners[0]
+				applicable_owners_sources = applicable_owners_sources[0].split("|")
+
+				second_conditions = (couple_owners_sources for couple_owners_sources in applicable_owners_sources if id_rss_comma in couple_owners_sources )
+
+				keyword_owners = ","
+
+				for couple_owners_sources in second_conditions:
+					sorted_couple_owners_sources = couple_owners_sources.split(":")
+					sorted_owner = sorted_couple_owners_sources[0] + ","
+
+					if sorted_owner not in keyword_owners:
+						keyword_owners = keyword_owners+sorted_owner
 
 				owners = ","
 				owners_index = 1
 
 				while owners_index <= max_users:
 					owners_index = str(owners_index)
+					owners_index_comma = "," + owners_index + ","
 
-					if owners_index in keyword_owners and owners_index in source_owners:
+					if owners_index_comma in keyword_owners and owners_index_comma in source_owners:
 						owners = owners+owners_index+","
-						print owners
 
 					owners_index = int(owners_index)
 					owners_index = owners_index+1
 
+				if owners == ",":
+					owners = None
 
-				while range < rangemax:
+				while range < rangemax and range < 500:
 
 					########### MANDATORY UNIVERSAL FEED PARSER VARIABLES
 					try:
@@ -310,11 +319,11 @@ def newscast(last_launch, max_users):
 					post_description_sans_accent = sans_accent_maj(post_description_lower)
 					keyword_sans_accent = sans_accent_maj(keyword)
 
-					id_item_comma = str(keyword_id)+","
-					id_item_comma2 = ","+str(keyword_id)+","
+					id_item_comma = str(keyword_id) + ","
+					id_item_comma2 = "," + str(keyword_id) + ","
 					item = (post_title, post_link, human_date, id_rss, id_item_comma2, owners)
 
-					if (keyword_lower in post_title_lower or keyword_lower in post_description_lower or keyword_lower in tags_list_lower or ":all@" in keyword_lower) and post_date >= last_launch:
+					if (keyword_lower in post_title_lower or keyword_lower in post_description_lower or keyword_lower in tags_list_lower or ":all@" in keyword_lower) and post_date >= last_launch and owners is not None:
 
 						########### QUERY FOR DATABASE CHECKING
 						query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
@@ -329,7 +338,7 @@ def newscast(last_launch, max_users):
 						########### CALL insertOrUpdate FUNCTION
 						insertSQL.insertOrUpdate(query_checking, query_insertion, query_update, query_update_owners, post_link, item, id_item_comma, id_item_comma2, owners, logger_info, logger_error, database)
 
-					elif (keyword_sans_accent in post_title_sans_accent or keyword_sans_accent in post_description_sans_accent or keyword_sans_accent in tags_list_sans_accent) and post_date >= last_launch:
+					elif (keyword_sans_accent in post_title_sans_accent or keyword_sans_accent in post_description_sans_accent or keyword_sans_accent in tags_list_sans_accent) and post_date >= last_launch and owners is not None:
 
 						########### QUERY FOR DATABASE CHECKING
 						query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
@@ -629,7 +638,7 @@ except OSError:
 passSQL = open("permission/password.txt", "r")
 passSQL = passSQL.read().strip()
 
-database = MySQLdb.connect(host="localhost", user="SERGE", passwd=passSQL, db="CairnDevices", use_unicode=1, charset="utf8")
+database = MySQLdb.connect(host="localhost", user="SERGE", passwd=passSQL, db="CairnDevices", use_unicode=1, charset="utf8mb4")
 
 ######### TIME AND LANGUAGES VARIABLES DECLARATION
 now = time.time()
@@ -707,30 +716,6 @@ for user in user_list_all:
 		######### RESULTS NEWS
 		print ("Recherche NEWS activée") ###
 
-		######### KEYWORDS ID NEWS QUERY
-		query_id = ("SELECT id FROM keyword_news_serge WHERE (owners LIKE %s AND active > 0)")
-
-		call_id_news = database.cursor()
-		call_id_news.execute(query_id, (user_id_comma, ))
-		rows = call_id_news.fetchall()
-		call_id_news.close()
-
-		for row in rows:
-			field = row[0]
-			id_keywords_news_list.append(field)
-
-		######### SOURCES ID NEWS QUERY
-		query_id_sources = ("SELECT id FROM rss_serge WHERE (owners LIKE %s AND active > 0)")
-
-		call_id_rss = database.cursor()
-		call_id_rss.execute(query_id_sources, (user_id_comma, ))
-		rows = call_id_rss.fetchall()
-		call_id_rss.close()
-
-		for row in rows:
-			field = row[0]
-			id_sources_news_list.append(field)
-
 		######### NEWS ATTRIBUTES QUERY (LINK + TITLE + ID SOURCE + KEYWORD ID)
 		query_news = ("SELECT link, title, id_source, keyword_id FROM result_news_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
 
@@ -751,18 +736,6 @@ for user in user_list_all:
 		######### RESULTS SCIENCE
 		print ("Recherche SCIENCE activée") ###
 
-		######### KEYWORDS ID SCIENCE QUERY
-		query_id = ("SELECT id FROM queries_science_serge WHERE (owners LIKE %s AND active > 0)")
-
-		call_id_science = database.cursor()
-		call_id_science.execute(query_id, (user_id_comma, ))
-		rows = call_id_science.fetchall()
-		call_id_science.close()
-
-		for row in rows:
-			field = row[0]
-			id_keywords_science_list.append(field)
-
 		######### SCIENCE ATTRIBUTES QUERY (LINK + TITLE + KEYWORD ID)
 		query_science = ("SELECT link, title, query_id, id_source FROM result_science_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
 
@@ -781,18 +754,6 @@ for user in user_list_all:
 
 		######### RESULTS PATENTS
 		print ("Recherche PATENTS activée") ###
-
-		######### QUERY WIPO ID PATENTS QUERY
-		query_id = ("SELECT id FROM queries_wipo_serge WHERE (owners LIKE %s AND active > 0)")
-
-		call_id_patents = database.cursor()
-		call_id_patents.execute(query_id, (user_id_comma, ))
-		rows = call_id_patents.fetchall()
-		call_id_patents.close()
-
-		for row in rows:
-			field = row[0]
-			id_query_wipo_list.append(field)
 
 		######### PATENTS ATTRIBUTES QUERY (LINK + TITLE + ID QUERY WIPO)
 		query_patents = ("SELECT link, title, id_query_wipo FROM result_patents_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
@@ -815,7 +776,7 @@ for user in user_list_all:
 	print ("NON ENVOYÉ : "+str(pending_all))###
 
 	######### SEND CONDITION QUERY
-	query = "SELECT send_condition FROM users_table_serge WHERE id = %s" #look on send condtion
+	query = "SELECT send_condition FROM users_table_serge WHERE id = %s"
 
 	call_users = database.cursor()
 	call_users.execute(query, (register))
