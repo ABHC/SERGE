@@ -1,6 +1,7 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
+CREATE TABLE `queries_wipo_serge` (
   `id` int(11) NOT NULL,
   `query` text COLLATE utf8mb4_bin NOT NULL,
   `owners` text COLLATE utf8mb4_bin NOT NULL,
