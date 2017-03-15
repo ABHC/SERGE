@@ -27,14 +27,14 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `result_science_serge` (
-  `title` text COLLATE utf8_unicode_ci NOT NULL,
-  `link` text COLLATE utf8_unicode_ci NOT NULL,
-  `send_status` VARCHAR(10900) COLLATE utf8_unicode_ci DEFAULT ',0,',
-  `date` text COLLATE utf8_unicode_ci DEFAULT NULL,
+  `title` text COLLATE utf8mb4_bin NOT NULL,
+  `link` text COLLATE utf8mb4_bin NOT NULL,
+  `send_status` VARCHAR(16000) COLLATE utf8mb4_bin DEFAULT ',0,',
+  `date` text COLLATE utf8mb4_bin DEFAULT NULL,
   `id_source` int(11) NOT NULL,
-  `query_id` VARCHAR(10900) COLLATE utf8_unicode_ci DEFAULT ',0,',
-  `owners` text COLLATE utf8_unicode_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `query_id` text COLLATE utf8mb4_bin NOT NULL,
+  `owners` text COLLATE utf8mb4_bin NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

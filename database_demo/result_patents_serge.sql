@@ -27,13 +27,13 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `result_patents_serge` (
-  `title` text COLLATE utf8_unicode_ci NOT NULL,
-  `link` text COLLATE utf8_unicode_ci NOT NULL,
-  `send_status` VARCHAR(10900) COLLATE utf8_unicode_ci DEFAULT ',0,',
-  `date` text COLLATE utf8_unicode_ci DEFAULT NULL,
-  `id_query_wipo` VARCHAR(10900) COLLATE utf8_unicode_ci DEFAULT ',0,',
-  `owners` text COLLATE utf8_unicode_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `title` text COLLATE utf8mb4_bin NOT NULL,
+  `link` text COLLATE utf8mb4_bin NOT NULL,
+  `send_status` VARCHAR(16000) COLLATE utf8mb4_bin DEFAULT ',0,',
+  `date` text COLLATE utf8mb4_bin DEFAULT NULL,
+  `id_query_wipo` text COLLATE utf8mb4_bin NOT NULL,
+  `owners` text COLLATE utf8mb4_bin NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
