@@ -64,10 +64,10 @@ def buildMail(user, user_id_comma, register, jour, permission_news, permission_s
 	var_FR = ["Bonjour", "voici votre veille technologique et industrielle du", "Liens", "ACTUALITÉS", "PUBLICATIONS SCIENTIFIQUES", "BREVETS", "Bonne journée", "Afficher sur CairnGit", "Se désinscrire", "Retrouvez SERGE sur", "Propulsé par"]
 	var_EN = ["Hello", "here is your news monitoring of", "Links", "NEWS", "SCIENTIFIC PUBLICATIONS", "PATENTS", "Have a good day", "Visualize on CairnGit", "Unsuscribe", "Find SERGE on", "Powered by"]
 
-	try :
+	try:
 		exec("translate_text"+"="+"var_"+language[0])
-	except NameError :
-        translate_text = var_EN
+	except NameError:
+		translate_text = var_EN
 
 	######### CALL TO NEWSLETTER FUNCTION
 	if mail_design[0] == "type":

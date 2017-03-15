@@ -2,6 +2,8 @@
 
 #TODO Modifier le HTML/CSS pour introduire un code couleur
 #TODO Modifier le HTML/CSS pour modifier l'emplacement du logo pour le wiki et le mettre à gauche
+#TODO Insérer une sécurité sur la recupération du timestamps de la base time : si le timestamps est null insérer le timestamps actuel
+#TODO Vérifier avant l'éxécution
 
 """SERGE (Serge Explore Research and Generate Emails) is a tool for news and technological monitoring.
 
