@@ -31,9 +31,34 @@ include_once('nav.php');
 	z-index: -1;
 }
 
+.tabContainer
+{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	width: 80%;
+	margin-left: 10%;
+}
+
 .tab
 {
+	height: 60vh;
+	width: 30%;
+	background-color: rgba(0,0,0, 0.4);
+	border-radius: 3px;
+}
 
+.signet
+{
+	height: 20px;
+	width: 80px;
+	border: 1px solid rgab(255,255,255, 0.1);
+	background-color: rgba(0,99,149, 0.55);
+	margin-top: 20%;
+	border-radius: 0 3px 3px 0;
+	color: #fff;
+	padding-left: 10px;
 }
 
 <?php
