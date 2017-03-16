@@ -357,6 +357,7 @@
 						<option value="source2">lesechos</option>
 						<option value="source3">Leschiensontdesoreilles.net</option>
 					</select>
+					<span class="arrDownBorder">▾</span>
 					<input type="text" class="keywordInput" name="keyword" id="keyword" placeholder="Keyword,next keyword, ..." />
 				</div>
 			</form>
@@ -372,6 +373,7 @@
 						<option value="sourceTechnologyFR">Technology source pack [French]</option>
 						<option value="sourceSpacialFR">Spatial source pack [French]</option>
 					</select>
+					<span class="arrDownBorder">▾</span>
 					<input type="url" name="source" id="source" placeholder="Source" size="30" />
 				</div>
 			</form>
@@ -524,7 +526,38 @@
 					<input type="radio" id="condFreq" name="cond" required>
 					<label class="radio" for="condFreq"></label>
 					by frequency, every
-					<input class="number alpha" type="number" name="freq" min="2" placeholder="24"/> hours
+					<input class="number alpha" type="number" name="freq" min="2" max="500" step="2" placeholder="24"/> hours
+				</p>
+				<p>
+					<input type="radio" id="condDate" name="cond" required>
+					<label class="radio" for="condDate"></label>
+					at
+					<input class="number alpha" type="number" name="freq" min="0" max="23" step="2" placeholder="19"/> h
+					, every
+					<select class="selectCommResult" name="day">
+						<option value="business day">business day</option>
+						<option value="day">day</option>
+						<option value="monday">monday</option>
+						<option value="tuesday">tuesday</option>
+						<option value="wednesday">wednesday</option>
+						<option value="thursday">thursday</option>
+						<option value="friday">friday</option>
+						<option value="saturday">saturday</option>
+						<option value="sunday">sunday</option>
+					</select>
+					<span class="arrDown">▾</span>
+					and
+					<select class="selectCommResult" name="day">
+						<option value="none">that's all</option>
+						<option value="monday">monday</option>
+						<option value="tuesday">tuesday</option>
+						<option value="wednesday">wednesday</option>
+						<option value="thursday">thursday</option>
+						<option value="friday">friday</option>
+						<option value="saturday">saturday</option>
+						<option value="sunday">sunday</option>
+					</select>
+					<span class="arrDown">▾</span>
 				</p>
 				<h3>Sorting for links in email</h3>
 				<p>
@@ -551,6 +584,7 @@
 						<option value="sea">Sea</option>
 						<option value="random">Random</option>
 					</select>
+					<span class="arrDown">▾</span>
 				</p>
 				<h3>Privacy</h3>
 				<div class="align">
@@ -576,6 +610,7 @@
 						<option value="month">Month</option>
 						<option value="year">Year</option>
 					</select>
+					<span class="arrDown">▾</span>
 				</div>
 				<div class="centerSubmit">
 					<input alt="Add" title="Add" class="submit" type="submit" value="" />
@@ -596,6 +631,7 @@
 					<option value="jr">Journal reference</option>
 					<option value="cat">Subject categorie</option>
 				</select>
+					<span class="arrDownBorder">▾</span>
 				<input type="text" class="query" name="scienceQuery00" id="scienceQuery00" placeholder="Keyword" size="30" />
 				<div class="btnList">
 					<input type="radio" id="andOrNotand_AND00" name="andOrAndnot00">
@@ -613,6 +649,7 @@
 					<option value="jr">Journal reference</option>
 					<option value="cat">Subject categorie</option>
 				</select>
+					<span class="arrDownBorder">▾</span>
 				<input type="text" class="query" name="scienceQuery01" id="scienceQuery01" placeholder="Keyword" size="30" />
 				<div class="btnList">
 					<input type="radio" id="andOrNotand_AND01" name="andOrAndnot01">
@@ -630,6 +667,7 @@
 					<option value="jr">Journal reference</option>
 					<option value="cat">Subject categorie</option>
 				</select>
+					<span class="arrDownBorder">▾</span>
 				<input type="text" class="query" name="scienceQuery02" id="scienceQuery02" placeholder="Keyword" size="30" />
 				<input alt="Extend" title="Extend" class="extend" type="submit" id="extendScience" name="extendScience" value=">>" />
 			</div>
@@ -780,6 +818,7 @@
 					<option value="EN_AB">English abstract</option>
 					<option value="IN">Inventor</option>
 				</select>
+					<span class="arrDownBorder">▾</span>
 				<input type="text" class="query" name="patentQuery00" id="patentQuery00" placeholder="Keyword" size="30" />
 				<input type="checkbox" id="patentAndOr1">
 				<label class="andOr" for="patentAndOr1"></label>
@@ -788,6 +827,7 @@
 					<option value="EN_AB">English abstract</option>
 					<option value="IN">Inventor</option>
 				</select>
+					<span class="arrDownBorder">▾</span>
 				<input type="text" class="query" name="patentQuery01" id="patentQuery01" placeholder="Keyword" size="30" />
 				<input type="checkbox" id="patentAndOr2">
 				<label class="andOr" for="patentAndOr2"></label>
@@ -796,6 +836,7 @@
 					<option value="EN_AB">English abstract</option>
 					<option value="IN">Inventor</option>
 				</select>
+					<span class="arrDownBorder">▾</span>
 				<input type="text" class="query" name="patentQuery02" id="patentQuery02" placeholder="Keyword" size="30" />
 				<input alt="Extend" title="Extend" class="extend" type="submit" id="extend" name="extend" value=">>" />
 			</div>

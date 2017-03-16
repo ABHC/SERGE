@@ -63,28 +63,50 @@ input
 
 select
 {
+	position: relative;
 	width: calc(40% - 30px);
 	max-width: fit-content;
+	height: 26px;
+	font-size: inherit;
+	padding: 4px;
+	padding-right: 10px;
 	border-radius: 3px;
 	border: 1px solid rgba(255,255,255, 0.15);
-	padding: 4px;
-	background-color: rgba(60,60,60,0.4);
 	color: #fff;
-	height: 25px;
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	-o-appearance: none;
+	appearance: none;
+	background-color: rgba(0,0,0,0);
+	outline: none;
+	z-index: 2;
+}
+
+select:focus
+{
+	outline: none;
+}
+
+select option
+{
+	background-color: rgb(51,59,68);
+	border: none;
+	outline: none;
 }
 
 select#sourceKeyword
 {
 	width: calc(50% - 60px);
-	border-radius: 3px;
-	border: 1px solid rgba(255,255,255, 0.15);
-	padding: 4px;
 	background-color: rgba(255,89,0,0.4);
-	color: #fff;
 	height: 27px;
 	margin-left: 10px;
 	margin-right: 10px;
 	font-size: 14px;
+}
+
+select#sourceKeyword option
+{
+	background-color: rgba(131, 49, 5, 0.8);
 }
 
 h3
@@ -565,10 +587,42 @@ h2
 
 .selectCommResult
 {
+	position: relative;
+	width: fit-content;
 	max-width: fit-content;
 	font-size: inherit;
+	padding: 0;
+	padding-right: 8px;
 	border: none;
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	-o-appearance: none;
+	appearance: none;
 	background-color: rgba(0,0,0,0);
+	outline: none;
+	z-index: 2;
+}
+
+.arrDown
+{
+	position: relative;
+	font-size: 12px;
+	left: -11px;
+	bottom: 1px;
+	cursor: default;
+	z-index: 1;
+}
+
+.arrDownBorder
+{
+	display: block;
+	position: relative;
+	font-size: 12px;
+	left: -20px;
+	bottom: 1px;
+	cursor: default;
+	z-index: 1;
+	margin-right: -10px;
 }
 
 .selectCommResult:focus
@@ -901,7 +955,6 @@ input:checked + .slider:before
 .newQueryContainer *
 {
 	margin-left: 5px;
-	margin-right: 5px;
 }
 
 .newQueryContainer label.andOr
