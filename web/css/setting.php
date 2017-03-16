@@ -159,7 +159,7 @@ h3
 	width: 40%;
 	max-width: 150px;
 	height: 40px;
-	color: #fff;
+	color: rgb(230,230,230);
 	text-decoration: none;
 	text-align: center;
 	background-color: rgba(0,170,255, 0.4);
@@ -167,17 +167,29 @@ h3
 	border: 1px solid rgba(255,255,255, 0.15);
 }
 
+.buttonCreatesourcePack:hover
+{
+	background-color: rgba(0,170,255, 0.5);
+	color: #fff;
+}
+
 .buttonVisiteCommunitySourcePack
 {
 	width: 40%;
 	max-width: 150px;
 	height: 40px;
-	color: #fff;
+	color: rgb(230,230,230);
 	text-decoration: none;
 	text-align: center;
 	background-color: rgba(0,170,127,0.4);
 	border-radius: 3px;
 	border: 1px solid rgba(255,255,255, 0.15);
+}
+
+.buttonVisiteCommunitySourcePack:hover
+{
+	background-color: rgba(0,170,127,0.5);
+	color: #fff;
 }
 
 .graphContainer
@@ -870,8 +882,6 @@ input:checked + .slider:before
 [type="radio"]:not(:checked),
 [type="radio"]:checked
 {
-/*	position: absolute;
-	left: -9999px;*/
 	display: none;
 }
 
