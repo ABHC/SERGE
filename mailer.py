@@ -25,7 +25,7 @@ passSQL = passSQL.read().strip()
 #database = MySQLdb.connect(host="localhost", user="root", passwd=passSQL, db="CairnDevices", use_unicode=1, charset="utf8")# [AUDIT][REVIEW] CRITICAL n'utilise plus root pour te connecter à la BDD mais un utilisateur ici serge qui aura les accès uniquement aux tables de serge. Sinon en cas de faille dans ton programme toute les autres tables seront exposées
 
 
-def buildMail(user, user_id_comma, register, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, database):
+def buildMail(user, user_id_comma, register, pydate, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, database):
 	"""Function for mail pre-formatting.
 
 	   buildMail retrieves mail building option for the current user and does a pre-formatting of the mail. Then the function calls the building functions for mail."""
@@ -37,8 +37,8 @@ def buildMail(user, user_id_comma, register, jour, permission_news, permission_s
 	news_origin_list = []
 	user_id_doubledot = user_id_comma.replace(",", "")+":"
 	user_id_doubledot_percent = "%"+user_id_doubledot+"%"
-	time_units = jour.split("-")
-	jour = time_units[2]+"/"+time_units[1]+"/"+time_units[0]
+	time_units = pydate.split("-")
+	pydate = time_units[2]+"/"+time_units[1]+"/"+time_units[0]
 
 	######### DESIGN CHOSEN BY USER
 	query_mail_design = "SELECT mail_design FROM users_table_serge WHERE id = %s"
@@ -71,7 +71,7 @@ def buildMail(user, user_id_comma, register, jour, permission_news, permission_s
 
 	######### CALL TO NEWSLETTER FUNCTION
 	if mail_design[0] == "type":
-		newsletterByType(user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text,jour)
+		newsletterByType(user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate)
 
 	elif mail_design[0] == "masterword":
 		query_newswords = "SELECT keyword, id FROM keyword_news_serge WHERE applicable_owners_sources LIKE %s AND active > 0"
@@ -104,7 +104,7 @@ def buildMail(user, user_id_comma, register, jour, permission_news, permission_s
 			word_and_attribute = (human_query, word_and_attribute[1])
 			patent_master_queries_list.append(word_and_attribute)
 
-		newsletterByKeyword(user, jour, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list)
+		newsletterByKeyword(user, pydate, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list)
 
 	elif mail_design[0] == "origin":
 		query_news_origin = "SELECT name, id FROM rss_serge WHERE owners like %s and active > 0"
@@ -117,10 +117,10 @@ def buildMail(user, user_id_comma, register, jour, permission_news, permission_s
 		for source_and_attribute in news_origin:
 			news_origin_list.append(source_and_attribute)
 
-		newsletterBySource(user, jour, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list)
+		newsletterBySource(user, pydate, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list)
 
 
-def newsletterByType (user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text,jour):
+def newsletterByType (user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate):
 	"""Formatting function for emails, apply the default formatting"""
 
 	print ("NEWSLETTER TO "+user.encode("utf8"))###
@@ -150,7 +150,7 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 
 	<div style="float: right; color: grey; margin-top: 10px; margin-bottom: 10px;">{4} {5}</div>
 
-	<div style="width: 80%;margin-left: auto;margin-right: auto;">""".format(translate_text[0], user.encode("utf_8"), translate_text[1], jour, pending_all, translate_text[2]))
+	<div style="width: 80%;margin-left: auto;margin-right: auto;">""".format(translate_text[0], user.encode("utf_8"), translate_text[1], pydate, pending_all, translate_text[2]))
 
 	index = 0
 
@@ -258,7 +258,7 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 	newsletter.close
 
 
-def newsletterByKeyword (user, jour, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list):
+def newsletterByKeyword (user, pydate, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list):
 	"""Formatting function for emails, apply the formatting by keywords"""
 
 	print ("NEWSLETTER TO "+user.encode("utf_8"))###
@@ -288,7 +288,7 @@ def newsletterByKeyword (user, jour, translate_text, permission_news, permission
 
 	<div style="float: right; color: grey; margin-top: 10px; margin-bottom: 10px;">{4} {5}</div>
 
-	<div style="width: 80%;margin-left: auto;margin-right: auto;">""".format(translate_text[0], user.encode("utf_8"), translate_text[1], jour, pending_all, translate_text[2]))
+	<div style="width: 80%;margin-left: auto;margin-right: auto;">""".format(translate_text[0], user.encode("utf_8"), translate_text[1], pydate, pending_all, translate_text[2]))
 
 	index = 0
 	already_in_the_list = []
@@ -457,7 +457,7 @@ def newsletterByKeyword (user, jour, translate_text, permission_news, permission
 	newsletter.close
 
 
-def newsletterBySource (user, jour, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list):
+def newsletterBySource (user, pydate, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list):
 	"""Formatting function for emails, apply the formatting by sources"""
 
 	print ("NEWSLETTER TO "+user.encode("utf8"))###
@@ -487,7 +487,7 @@ def newsletterBySource (user, jour, translate_text, permission_news, permission_
 
 	<div style="float: right; color: grey; margin-top: 10px; margin-bottom: 10px;">{4} {5}</div>
 
-	<div style="width: 80%;margin-left: auto;margin-right: auto;">""".format(translate_text[0], user.encode("utf_8"), translate_text[1], jour, pending_all, translate_text[2]))
+	<div style="width: 80%;margin-left: auto;margin-right: auto;">""".format(translate_text[0], user.encode("utf_8"), translate_text[1], pydate, pending_all, translate_text[2]))
 
 	index = 0
 

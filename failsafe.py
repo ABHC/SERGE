@@ -15,13 +15,13 @@ def checkMate(database, logger_info, logger_error):
     - columns name checking in each tables"""
 
     serge = "%serge%"
-    database_name = "CairnDevices"
+    database_name = "Serge"
     tables_name_list = []
 
     ######### NUMBERS OF TABLES
     check_tables = ("SELECT count(table_name) FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = %s AND table_name LIKE %s")
     check_tables_name = ("SHOW TABLES")
-    check_numbers_columns = ("SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = %s and table_name = %s")
+    check_numbers_columns = ("SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = %s AND table_name = %s")
     check_columns_name = ("SELECT column_name FROM information_schema.columns WHERE table_schema = %s AND table_name = %s")
 
     checking = database.cursor()
@@ -29,6 +29,7 @@ def checkMate(database, logger_info, logger_error):
     num_tables = checking.fetchone()
 
     num_tables = num_tables[0]
+    print num_tables
 
     if num_tables == 10:
         logger_info.info("Number of tables : check")
@@ -71,7 +72,7 @@ def checkMate(database, logger_info, logger_error):
     result_science_serge_numbers = 7
     rss_serge_numbers = 5
     time_serge_numbers = 2
-    users_table_serge_numbers = 12
+    users_table_serge_numbers = 14
 
     for name in tables_name_list:
         checking.execute(check_numbers_columns, (database_name, name))
@@ -106,7 +107,7 @@ def checkMate(database, logger_info, logger_error):
     result_science_serge_columns = ["title", "link", "send_status", "date", "id_source", "query_id", "owners"]
     rss_serge_columns = ["id", "link", "name", "owners", "active"]
     time_serge_columns = ["name", "timestamps"]
-    users_table_serge_columns = ["id", "users", "email", "last_mail", "frequency", "send_condition", "link_limit", "mail_design", "language", "permission_news", "permission_science", "permission_patents"]
+    users_table_serge_columns = ["id", "users", "email", "last_mail", "send_condition", "frequency", "link_limit", "selected_days", "selected_hour", "mail_design", "language", "permission_news", "permission_science", "permission_patents"]
 
     for name in tables_name_list:
 

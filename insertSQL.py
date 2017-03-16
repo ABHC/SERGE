@@ -20,12 +20,6 @@ sys.path.insert(1, "modules/UFP/feedparser")
 ######### IMPORT FROM SERGE MAIN
 import sergenet
 
-######### Connexion à la base de données CairnDevices
-passSQL = open("permission/password.txt", "r")
-passSQL = passSQL.read().strip()
-
-#database = MySQLdb.connect(host="localhost", user="root", passwd=passSQL, db="CairnDevices", use_unicode=1, charset="utf8")# [AUDIT][REVIEW] CRITICAL n'utilise plus root pour te connecter à la BDD mais un utilisateur ici serge qui aura les accès uniquement aux tables de serge. Sinon en cas de faille dans ton programme toute les autres tables seront exposées
-
 
 def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 	"""ofSourceAndName check the field 'name' in rss_serge and fill it if it is empty or update it"""

@@ -18,9 +18,9 @@ SERGE's sources :
 import os
 import time
 import re
-from datetime import datetime
-import sys #voir la documentation : https://docs.python.org/2/library/sys.html
+from datetime import datetime as dt
 import datetime #voir la documentation : https://docs.python.org/2/library/datetime.html
+import sys #voir la documentation : https://docs.python.org/2/library/sys.html
 import MySQLdb #Paquet MySQL
 import feedparser #voir la documentation : https://pythonhosted.org/feedparser/
 import unicodedata #voir la documentation : https://docs.python.org/2/library/unicodedata.html
@@ -642,11 +642,19 @@ passSQL = passSQL.read().strip()
 
 database = MySQLdb.connect(host="localhost", user="Serge", passwd=passSQL, db="Serge", use_unicode=1, charset="utf8mb4")
 
-######### TIME AND LANGUAGES VARIABLES DECLARATION
-now = time.time()
-last_launch = lastResearch()
-jour = unicode(datetime.date.today())
+######### TIME VARIABLES DECLARATION
+now = time.time()                                 #NOW IS A TIMESTAMPS
+pydate = datetime.date.today()                    #PYDATE IS A DATE (YYYY-MM-DD)
+isoweekday = datetime.date.isoweekday(pydate)     #ISOWEEKDAY IS AN INTEGER BETWEEN 1 AND 7 (MONDAY=1, SUNDAY=7)
+today = ","+str(isoweekday)+","                   #TODAY IS A STRING
+current = dt.now()                                #CURRENT IS A DATE (YYYY-MM-DD hh-mm-ss.ssssss)
+hour = current.hour                               #HOUR IS AN INTEGER BETWEEN 0 AND 23
+pydate = unicode(pydate)                          #TRANSFORM PYDATE INTO UNICODE
+
 logger_info.info(time.asctime(time.gmtime(now))+"\n")
+
+######### LAST LAUNCH
+last_launch = lastResearch()
 
 ######### DATABASE INTERGRITY CHECKING
 failsafe.checkMate(database, logger_info, logger_error)
@@ -694,6 +702,7 @@ register = 1
 for user in user_list_all:
 	register = str(register)
 	print ("\nUSER : " + register) ###
+	logger_info.info("USER : " + register)
 	user_id_comma = "%," + register + ",%"
 
 	######### SET ID LISTS FOR KEYWORDS, PATENTS QUERIES AND SOURCES
@@ -808,9 +817,10 @@ for user in user_list_all:
 
 		if interval >= frequency and pending_all != 0:
 			print ("Fréquence atteinte") ###
+			logger_info.info("FREQUENCY REACHED")
 
 			######### CALL TO buildMail FUNCTION
-			mailer.buildMail(user, user_id_comma, register, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, database)
+			mailer.buildMail(user, user_id_comma, register, pydate, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, database)
 
 			######### CALL TO highwayToMail FUNCTION
 			mailer.highwayToMail(register, user, database)
@@ -824,10 +834,10 @@ for user in user_list_all:
 
 		else:
 			print "Frequency not reached" ###
-			logger_info.info("Frequency not reached")
+			logger_info.info("FREQUENCY NOT REACHED")
 
 	######### LINK LIMIT CONDITION
-	if condition[0] == "link_limit":
+	elif condition[0] == "link_limit":
 		query = "SELECT link_limit FROM users_table_serge WHERE id = %s" #On vérifie le nombre de lien non envoyés
 
 		call_users = database.cursor()
@@ -843,7 +853,7 @@ for user in user_list_all:
 			logger_info.info("LIMIT REACHED")
 
 			######### CALL TO buildMail FUNCTION
-			mailer.buildMail(user, user_id_comma, register, jour, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, database)
+			mailer.buildMail(user, user_id_comma, register, pydate, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, database)
 
 			######### CALL TO highwayToMail FUNCTION
 			mailer.highwayToMail(register, user, database)
@@ -855,8 +865,40 @@ for user in user_list_all:
 			print ("INFERIEUR\n") ###
 			logger_info.info("LIMIT NOT REACHED")
 
+	######### DEADLINE CONDITION
+	elif condition[0] == "deadline":
+		query_days = "SELECT selected_days FROM users_table_serge WHERE id = %s"
+		query_hour = "SELECT selected_hour FROM users_table_serge WHERE id = %s"
+
+		call_users = database.cursor()
+		call_users.execute(query_days, (register))
+		some_days = call_users.fetchone()
+		call_users.execute(query_hour, (register))
+		some_hour = call_users.fetchone()
+		call_users.close()
+
+		some_days = some_days[0]
+		some_hour = some_hour[0]
+
+		today = ","+str(isoweekday)+","
+
+		if today in some_days and hour == some_hour:
+			logger_info.info("GOOD DAY AND GOOD HOUR")
+
+			######### CALL TO buildMail FUNCTION
+			mailer.buildMail(user, user_id_comma, register, pydate, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, database)
+
+			######### CALL TO highwayToMail FUNCTION
+			mailer.highwayToMail(register, user, database)
+
+			######### CALL TO stairwayToUpdate FUNCTION
+			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database)
+
+		else :
+			logger_info.info("BAD DAY OR/AND BAD HOUR")
+
 	######### WEB CONDITION
-	if condition[0] == "web":
+	elif condition[0] == "web":
 		print("break")
 
 	register = int(register)
