@@ -870,8 +870,9 @@ input:checked + .slider:before
 [type="radio"]:not(:checked),
 [type="radio"]:checked
 {
-	position: absolute;
-	left: -9999px;
+/*	position: absolute;
+	left: -9999px;*/
+	display: none;
 }
 
 [type="radio"]:not(:checked) + label,
@@ -980,6 +981,13 @@ input:checked + .slider:before
 {
 	margin-right: 2px;
 	margin-left: 2px;
+}
+
+[type="radio"]:not(:checked) + .ANDOrNotand,
+[type="radio"]:not(:checked) + .andORNotand,
+[type="radio"]:not(:checked) + .andOrNOTAND
+{
+	order: -1;
 }
 
 [type="radio"]:not(:checked) + .ANDOrNotand:before
@@ -1136,21 +1144,21 @@ input:checked + .slider:before
 {
 	margin-left: 20px;
 	margin-right: 20px;
-	order: 1;
+	order: 3;
 }
 
 [type="radio"]:checked + .andORNotand
 {
 	margin-left: 20px;
 	margin-right: 20px;
-	order: 1;
+	order: 3;
 }
 
 [type="radio"]:checked + .andOrNOTAND
 {
 	margin-left: 20px;
 	margin-right: 20px;
-	order: 1;
+	order: 3;
 }
 
 .extend
