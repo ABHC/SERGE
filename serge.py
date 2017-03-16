@@ -19,11 +19,11 @@ import os
 import time
 import re
 from datetime import datetime as dt
-import datetime #voir la documentation : https://docs.python.org/2/library/datetime.html
-import sys #voir la documentation : https://docs.python.org/2/library/sys.html
-import MySQLdb #Paquet MySQL
-import feedparser #voir la documentation : https://pythonhosted.org/feedparser/
-import unicodedata #voir la documentation : https://docs.python.org/2/library/unicodedata.html
+import datetime
+import sys
+import MySQLdb
+import feedparser
+import unicodedata
 import traceback
 import logging
 from logging.handlers import RotatingFileHandler
@@ -219,7 +219,6 @@ def newscast(last_launch, max_users):
 			for couple_keyword_attribute in prime_conditions:
 				keyword_id = couple_keyword_attribute[0]
 				keyword = couple_keyword_attribute[1]
-				print ("Boucle sur le keyword : " + keyword+"("+str(keyword_id)+")") ###
 
 				########### OWNERS RETRIEVAL
 				query_keyword_parameters = ("SELECT applicable_owners_sources FROM keyword_news_serge WHERE keyword = %s and active > 0")
@@ -446,7 +445,6 @@ def patents(last_launch):
 
 			else:
 				logger_info.warning("\n Error : the feed is unavailable")
-				print ("RSS ERROR")###
 		else:
 			logger_error.warning("\n UNKNOWN CONNEXION ERROR")
 
@@ -467,8 +465,6 @@ def science(last_launch):
 
 	######### Recherche SCIENCE
 	logger_info.info("\n\n######### Last Scientific papers on Arxiv.org (science function) : \n\n")
-
-	print ("RECHERCHE SCIENCE") ###
 
 	######### CALL TO TABLE keywords_science_serge
 	call_science = database.cursor()
@@ -681,7 +677,6 @@ patents(last_launch)
 
 ######### AFFECTATION
 logger_info.info("AFFECTATION")
-print ("\n AFFECTATION \n")###
 
 call_users = database.cursor()
 call_users.execute("SELECT users FROM users_table_serge")
@@ -694,14 +689,10 @@ for row in rows:
 	field = row[0].strip()
 	user_list_all.append(field)
 
-print ("user_list_all :")###
-print (user_list_all) ###
-
 register = 1
 
 for user in user_list_all:
 	register = str(register)
-	print ("\nUSER : " + register) ###
 	logger_info.info("USER : " + register)
 	user_id_comma = "%," + register + ",%"
 
@@ -717,15 +708,12 @@ for user in user_list_all:
 	not_send_patents_list = []
 
 	permission_list = permission(register)
-	print permission_list ###
 
 	######### NEWS PERMISSION STATE
 	permission_news = permission_list[0]
 
+	######### RESULTS NEWS
 	if permission_news == 0:
-
-		######### RESULTS NEWS
-		print ("Recherche NEWS activée") ###
 
 		######### NEWS ATTRIBUTES QUERY (LINK + TITLE + ID SOURCE + KEYWORD ID)
 		query_news = ("SELECT link, title, id_source, keyword_id FROM result_news_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
@@ -742,10 +730,8 @@ for user in user_list_all:
 	######### SCIENCE PERMISSION STATE
 	permission_science = permission_list[1]
 
+	######### RESULTS SCIENCE
 	if permission_science == 0:
-
-		######### RESULTS SCIENCE
-		print ("Recherche SCIENCE activée") ###
 
 		######### SCIENCE ATTRIBUTES QUERY (LINK + TITLE + KEYWORD ID)
 		query_science = ("SELECT link, title, query_id, id_source FROM result_science_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
@@ -761,10 +747,8 @@ for user in user_list_all:
 	######### PATENTS PERMISSION STATE
 	permission_patents = permission_list[2]
 
+	######### RESULTS PATENTS
 	if permission_patents == 0:
-
-		######### RESULTS PATENTS
-		print ("Recherche PATENTS activée") ###
 
 		######### PATENTS ATTRIBUTES QUERY (LINK + TITLE + ID QUERY WIPO)
 		query_patents = ("SELECT link, title, id_query_wipo FROM result_patents_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
@@ -784,8 +768,6 @@ for user in user_list_all:
 
 	pending_all = pending_news+pending_science+pending_patents
 
-	print ("NON ENVOYÉ : "+str(pending_all))###
-
 	######### SEND CONDITION QUERY
 	query = "SELECT send_condition FROM users_table_serge WHERE id = %s"
 
@@ -793,8 +775,6 @@ for user in user_list_all:
 	call_users.execute(query, (register))
 	condition = call_users.fetchone()
 	call_users.close()
-
-	print ("Condition :" + str(condition[0]))
 
 	######### FREQUENCY CONDITION
 	if condition[0] == "freq":
@@ -812,11 +792,8 @@ for user in user_list_all:
 		last_mail = last_mail[0]
 
 		interval = now-last_mail
-		print ("Fréquence de l'utilisateur :"+str(frequency))###
-		print ("Intervalle de temps :"+str(interval))###
 
 		if interval >= frequency and pending_all != 0:
-			print ("Fréquence atteinte") ###
 			logger_info.info("FREQUENCY REACHED")
 
 			######### CALL TO buildMail FUNCTION
@@ -829,27 +806,23 @@ for user in user_list_all:
 			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database)
 
 		elif interval >= frequency and pending_all == 0:
-			print "Frequency reached but no pending news" ###
 			logger_info.info("Frequency reached but no pending news")
 
 		else:
-			print "Frequency not reached" ###
 			logger_info.info("FREQUENCY NOT REACHED")
 
 	######### LINK LIMIT CONDITION
 	elif condition[0] == "link_limit":
-		query = "SELECT link_limit FROM users_table_serge WHERE id = %s" #On vérifie le nombre de lien non envoyés
+		query = "SELECT link_limit FROM users_table_serge WHERE id = %s"
 
 		call_users = database.cursor()
 		call_users.execute(query, (register))
 		limit = call_users.fetchone()
 		call_users.close()
 
-		print ("LIMITE DE LIENS :" + str(limit[0]))###
 		limit = limit[0]
 
 		if pending_all >= limit:
-			print ("SUPERIEUR\n") ###
 			logger_info.info("LIMIT REACHED")
 
 			######### CALL TO buildMail FUNCTION
@@ -862,7 +835,6 @@ for user in user_list_all:
 			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database)
 
 		elif pending_all < limit:
-			print ("INFERIEUR\n") ###
 			logger_info.info("LIMIT NOT REACHED")
 
 	######### DEADLINE CONDITION
@@ -899,7 +871,10 @@ for user in user_list_all:
 
 	######### WEB CONDITION
 	elif condition[0] == "web":
-		print("break")
+		logger_info.info("WEB CONDITION")
+
+	else :
+		logger_info.critical("ERROR : BAD CONDITION")
 
 	register = int(register)
 	register = register+1

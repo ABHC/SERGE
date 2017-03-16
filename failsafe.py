@@ -29,7 +29,6 @@ def checkMate(database, logger_info, logger_error):
     num_tables = checking.fetchone()
 
     num_tables = num_tables[0]
-    print num_tables
 
     if num_tables == 10:
         logger_info.info("Number of tables : check")

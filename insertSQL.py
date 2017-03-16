@@ -64,7 +64,6 @@ def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 			rows = call_rss.fetchone()
 			call_rss.close()
 
-			print rows ###
 			link = rows[0]
 
 			req_results = sergenet.allRequestLong(link, logger_info, logger_error)
@@ -94,7 +93,6 @@ def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 					database.commit()
 				except Exception, except_type:
 					database.rollback()
-					print "ROLLBACK" ###
 					logger_error.error("ROLLBACK IN BIMENSUAL REFRESH IN ofSourceAndName")
 					logger_error.error(repr(except_type))
 				update_rss.close()
@@ -120,7 +118,6 @@ def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 			rows = call_rss.fetchone()
 			call_rss.close()
 
-			print rows ###
 			link = rows[0]
 			rss_name = rows[1]
 
@@ -167,7 +164,6 @@ def insertOrUpdate(query_checking, query_insertion, query_update, query_update_o
 	call_data_cheking = database.cursor()
 	call_data_cheking.execute(query_checking, (post_link, ))
 	checking = call_data_cheking.fetchone()
-	print ("CHECKING : "+str(checking))
 	call_data_cheking.close()
 
 	########### DATABASE INSERTION
@@ -179,9 +175,6 @@ def insertOrUpdate(query_checking, query_insertion, query_update, query_update_o
 			database.commit()
 		except Exception, except_type:
 			database.rollback()
-			print "ROLLBACK AT INSERTION" ###
-			print ("ITEM : "+str(item))
-			print ("LINK : "+str(post_link))
 			logger_error.error("ROLLBACK AT INSERTION IN insertOrUpdate FUNCTION")
 			logger_error.error(query_insertion)
 			logger_error.error(repr(except_type))
@@ -201,7 +194,6 @@ def insertOrUpdate(query_checking, query_insertion, query_update, query_update_o
 				database.commit()
 			except Exception, except_type:
 				database.rollback()
-				print "ROLLBACK AT UPDATE" ###
 				logger_error.error("ROLLBACK AT UPDATE IN insertOrUpdate FUNCTION")
 				logger_error.error(query_update)
 				logger_error.error(repr(except_type))
@@ -223,7 +215,6 @@ def insertOrUpdate(query_checking, query_insertion, query_update, query_update_o
 					database.commit()
 				except Exception, except_type:
 					database.rollback()
-					print "ROLLBACK AT UPDATE" ###
 					logger_error.error("ROLLBACK AT UPDATE IN insertOrUpdate FUNCTION")
 					logger_error.error(query_update)
 					logger_error.error(repr(except_type))
@@ -259,7 +250,6 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 				database.commit()
 			except Exception, except_type:
 				database.rollback()
-				print "ROLLBACK" ###
 				logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
 				logger_error.error(repr(except_type))
 
@@ -295,7 +285,6 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 				database.commit()
 			except Exception, except_type:
 				database.rollback()
-				print "ROLLBACK" ###
 				logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
 				logger_error.error(repr(except_type))
 
@@ -331,7 +320,6 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 				database.commit()
 			except Exception, except_type:
 				database.rollback()
-				print "ROLLBACK" ###
 				logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
 				logger_error.error(repr(except_type))
 
@@ -339,7 +327,7 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 			pass
 
 		else:
-			print "WARNING UNKNOWN ERROR" ###
+			logger_info.warning("UNKNOWN ERROR")
 
 		call_patents.close()
 
@@ -353,7 +341,6 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 		database.commit()
 	except Exception, except_type:
 		database.rollback()
-		print "ROLLBACK" ###
 		logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
 		logger_error.error(repr(except_type))
 

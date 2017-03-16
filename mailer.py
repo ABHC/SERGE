@@ -48,8 +48,6 @@ def buildMail(user, user_id_comma, register, pydate, permission_news, permission
 	mail_design = call_users.fetchone()
 	call_users.close()
 
-	print ("Organisation des mails : "+mail_design[0]) ###
-
 	######### LANGUAGE CHOSEN BY USER
 	query_language = "SELECT language FROM users_table_serge WHERE id = %s"
 
@@ -57,8 +55,6 @@ def buildMail(user, user_id_comma, register, pydate, permission_news, permission
 	call_users.execute(query_language, (register))
 	language = call_users.fetchone()
 	call_users.close()
-
-	print ("Langue des mails : "+language[0]) ###
 
 	######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
 	var_FR = ["Bonjour", "voici votre veille technologique et industrielle du", "Liens", "ACTUALITÉS", "PUBLICATIONS SCIENTIFIQUES", "BREVETS", "Bonne journée", "Afficher sur CairnGit", "Se désinscrire", "Retrouvez SERGE sur", "Propulsé par"]
@@ -122,8 +118,6 @@ def buildMail(user, user_id_comma, register, pydate, permission_news, permission
 
 def newsletterByType (user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate):
 	"""Formatting function for emails, apply the default formatting"""
-
-	print ("NEWSLETTER TO "+user.encode("utf8"))###
 
 	######### PENDING LINKS
 	pending_all = pending_news+pending_science+pending_patents
@@ -260,8 +254,6 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 
 def newsletterByKeyword (user, pydate, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list):
 	"""Formatting function for emails, apply the formatting by keywords"""
-
-	print ("NEWSLETTER TO "+user.encode("utf_8"))###
 
 	######### PENDING LINKS
 	pending_all = pending_news+pending_science+pending_patents
@@ -460,8 +452,6 @@ def newsletterByKeyword (user, pydate, translate_text, permission_news, permissi
 def newsletterBySource (user, pydate, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list):
 	"""Formatting function for emails, apply the formatting by sources"""
 
-	print ("NEWSLETTER TO "+user.encode("utf8"))###
-
 	######### PENDING LINKS
 	pending_all = pending_news+pending_science+pending_patents
 
@@ -542,7 +532,6 @@ def newsletterBySource (user, pydate, translate_text, permission_news, permissio
 
 			index = index+1
 
-		print ("ARXIV = " +str(new_papers))
 		if new_papers > 0:
 			newsletter.write("""<br/><br/><b>Arxiv.org</b><br/>""")
 
@@ -575,7 +564,6 @@ def newsletterBySource (user, pydate, translate_text, permission_news, permissio
 
 			index = index+1
 
-		print ("DOAJ = " +str(new_papers))
 		if new_papers > 0:
 			newsletter.write("""<br/><br/><b>Directory Of Open Access Journals (DOAJ)</b><br/>""")
 
@@ -671,8 +659,6 @@ def newsletterBySource (user, pydate, translate_text, permission_news, permissio
 
 def highwayToMail(register, user, database):
 	"""Function for emails sending"""
-
-	print ("MAIL to "+user)
 
 	######### SERGE MAIL
 	sergemail = open("permission/sergemail.txt", "r")
