@@ -2,7 +2,7 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
 CREATE TABLE `users_table_serge` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `users` text COLLATE utf8mb4_bin NOT NULL,
   `email` text COLLATE utf8mb4_bin NOT NULL,
   `last_mail` int(11) DEFAULT NULL,
@@ -15,7 +15,8 @@ CREATE TABLE `users_table_serge` (
   `language` varchar(2) COLLATE utf8mb4_bin DEFAULT 'EN',
   `permission_news` tinyint(1) NOT NULL,
   `permission_science` tinyint(1) NOT NULL,
-  `permission_patents` tinyint(1) NOT NULL
+  `permission_patents` tinyint(1) NOT NULL,
+  PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 SET NAMES utf8mb4;
