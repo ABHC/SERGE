@@ -5,6 +5,7 @@ CREATE TABLE `users_table_serge` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `users` text COLLATE utf8mb4_bin NOT NULL,
   `email` text COLLATE utf8mb4_bin NOT NULL,
+  `password` text COLLATE utf8mb4_bin NOT NULL,
   `last_mail` int(11) DEFAULT NULL,
   `send_condition` text COLLATE utf8mb4_bin NOT NULL,
   `frequency` int(11) DEFAULT NULL,
