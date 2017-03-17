@@ -146,7 +146,7 @@ def newscast(last_launch, max_users):
 	######### CALL TO TABLE rss_serge
 
 	call_rss = database.cursor()
-	call_rss.execute("SELECT link, id FROM rss_serge WHERE active >= 1")
+	call_rss.execute("SELECT link, id, etag FROM rss_serge WHERE active >= 1")
 	rows = call_rss.fetchall()
 	call_rss.close()
 
@@ -157,11 +157,12 @@ def newscast(last_launch, max_users):
 
 	########### LINK & ID_RSS EXTRACTION
 
-	for couple_sources_news in sources_news_list:
-		link = couple_sources_news[0].strip()
-		id_rss = couple_sources_news[1]
-		id_rss = str(id_rss)
+	for trio_sources_news in sources_news_list:
+		link = trio_sources_news[0].strip()
+		id_rss = trio_sources_news[1]
+		old_etag = trio_sources_news[2]
 
+		id_rss = str(id_rss)
 		id_rss_comma = "," + id_rss + ","
 		id_rss_comma_percent = "%," + id_rss + ",%"
 
@@ -183,8 +184,24 @@ def newscast(last_launch, max_users):
 		req_results = sergenet.allRequestLong(link, logger_info, logger_error)
 		rss_error = req_results[0]
 		rss = req_results[1]
+		etag = req_results[2]
 
-		if rss_error == 0:
+		########### ETAG COMPARISON
+		if etag == None:
+			etag_validation = 0
+		elif etag != old_etag:
+			etag_validation = 0
+		elif etag == old_etag:
+			etag_validation = 1
+		else :
+			etag_validation = 1
+			logger_error.critical("UNKNOWN ERROR WITH ETAG IN :"+link+"\n")
+
+		########### INSERT NEW ETAG IN RSS SERGE
+		if etag_validation == 0:
+			insertSQL.backToTheFuture(etag, link, database)
+
+		if rss_error == 0 and etag_validation == 0:
 
 			missing_flux = False
 
@@ -849,12 +866,10 @@ for user in user_list_all:
 		some_hour = call_users.fetchone()
 		call_users.close()
 
-		some_days = some_days[0]
+		some_days = str(some_days[0])
 		some_hour = some_hour[0]
 
-		today = ","+str(isoweekday)+","
-
-		if today in some_days and hour == some_hour:
+		if today in some_days and hour == some_hour and pending_all > 0:
 			logger_info.info("GOOD DAY AND GOOD HOUR")
 
 			######### CALL TO buildMail FUNCTION

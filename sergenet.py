@@ -20,6 +20,7 @@ def allRequestLong (link, logger_info, logger_error):
 		logger_info.info(link+"\n")
 		header = req.headers
 		logger_info.info("HEADER :\n"+str(header)+"\n\n") #affichage des paramètres de connexion
+		etag = req.headers.get('etag')
 		rss_error = 0
 	except requests.exceptions.ConnectionError:
 		link = link.replace("http://", "")
@@ -64,6 +65,6 @@ def allRequestLong (link, logger_info, logger_error):
 		rss = None
 		rss_error = 1
 
-	req_results = (rss_error, rss)
+	req_results = (rss_error, rss, etag)
 
 	return req_results

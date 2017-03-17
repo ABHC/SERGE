@@ -69,9 +69,9 @@ def checkMate(database, logger_info, logger_error):
     result_news_serge_numbers = 7
     result_patents_serge_numbers = 6
     result_science_serge_numbers = 7
-    rss_serge_numbers = 5
+    rss_serge_numbers = 6
     time_serge_numbers = 2
-    users_table_serge_numbers = 14
+    users_table_serge_numbers = 15
 
     for name in tables_name_list:
         checking.execute(check_numbers_columns, (database_name, name))
@@ -104,9 +104,9 @@ def checkMate(database, logger_info, logger_error):
     result_news_serge_columns = ["title", "link", "send_status", "date", "id_source", "keyword_id", "owners"]
     result_patents_serge_columns = ["title", "link", "send_status", "date", "id_query_wipo", "owners"]
     result_science_serge_columns = ["title", "link", "send_status", "date", "id_source", "query_id", "owners"]
-    rss_serge_columns = ["id", "link", "name", "owners", "active"]
+    rss_serge_columns = ["id", "link", "name", "owners", "etag", "active"]
     time_serge_columns = ["name", "timestamps"]
-    users_table_serge_columns = ["id", "users", "email", "last_mail", "send_condition", "frequency", "link_limit", "selected_days", "selected_hour", "mail_design", "language", "permission_news", "permission_science", "permission_patents"]
+    users_table_serge_columns = ["id", "users", "email", "password", "last_mail", "send_condition", "frequency", "link_limit", "selected_days", "selected_hour", "mail_design", "language", "permission_news", "permission_science", "permission_patents"]
 
     for name in tables_name_list:
 

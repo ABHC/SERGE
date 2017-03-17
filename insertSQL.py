@@ -345,3 +345,22 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 		logger_error.error(repr(except_type))
 
 	call_users.close()
+
+
+def backToTheFuture(etag, link, database):
+	"""backToTheFuture manage the etag update in database."""
+
+	######### ETAG UPDATE IN rss_serge
+	etag_update = ("UPDATE rss_serge SET etag = %s WHERE link = %s")
+
+	call_rss = database.cursor()
+
+	try:
+		call_rss.execute(etag_update, (etag, link))
+		database.commit()
+	except Exception, except_type:
+		database.rollback()
+		logger_error.error("ROLLBACK IN backToTheFuture FUNCTION")
+		logger_error.error(repr(except_type))
+
+	call_rss.close()
