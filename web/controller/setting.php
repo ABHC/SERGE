@@ -1,12 +1,12 @@
 <?php
 
-include_once('model/get_text.php');
+/*include_once('model/get_text.php');*/
 
 $setting="active";
 
-if (!isset($_SESSION['Pseudo']))
+if (!isset($_SESSION['pseudo']))
 {
-	header('Location: connexion.php?redirectFrom=setting');
+	header('Location: connection.php?redirectFrom=setting');
 }
 
 include_once('view/nav/nav.php');

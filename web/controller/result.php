@@ -1,6 +1,6 @@
 <?php
 
-include_once('model/get_text.php');
+//include_once('model/get_text.php');
 
 $result="active";
 
