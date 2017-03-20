@@ -180,28 +180,37 @@ def newscast(last_launch, max_users):
 			field = (row[0], row[1].strip())
 			keywords_and_id_news_list.append(field)
 
-		########### LINK CONNEXION
-		req_results = sergenet.allRequestLong(link, logger_info, logger_error)
-		rss_error = req_results[0]
-		rss = req_results[1]
-		etag = req_results[2]
-
 		########### ETAG COMPARISON
-		if etag == None:
-			etag_validation = 0
-		elif etag != old_etag:
-			etag_validation = 0
-		elif etag == old_etag:
-			etag_validation = 1
+		head_results = sergenet.headToEtag(link, logger_info, logger_error)
+		etag = head_results[0]
+		head_error = head_results[1]
+
+		if etag == None and head_error == False:
+			greenlight = True
+		elif etag != old_etag and head_error == False:
+			greenlight = True
+		elif etag == old_etag and head_error == False:
+			greenlight = False
+		elif head_error == True:
+			greenlight = False
 		else :
-			etag_validation = 1
+			greenlight = False
 			logger_error.critical("UNKNOWN ERROR WITH ETAG IN :"+link+"\n")
 
-		########### INSERT NEW ETAG IN RSS SERGE
-		if etag_validation == 0:
+		if greenlight == True:
+			########### INSERT NEW ETAG IN RSS SERGE
 			insertSQL.backToTheFuture(etag, link, database)
 
-		if rss_error == 0 and etag_validation == 0:
+			########### LINK CONNEXION
+			req_results = sergenet.allRequestLong(link, logger_info, logger_error)
+			rss_error = req_results[0]
+			rss = req_results[1]
+
+		elif greenlight == False:
+			rss_error = None
+
+		########### LINK CONNEXION
+		if rss_error == False and greenlight == True:
 
 			missing_flux = False
 
@@ -305,7 +314,7 @@ def newscast(last_launch, max_users):
 					try:
 						post_date = xmldoc.entries[range].published_parsed
 					except AttributeError:
-						logger_error.warning("BEACON ERROR : missing <description> in "+link)
+						logger_error.warning("BEACON ERROR : missing <date> in "+link)
 						logger_error.warning(traceback.format_exc())
 						break
 
@@ -413,7 +422,7 @@ def patents(last_launch):
 		rss_error = req_results[0]
 		rss_wipo = req_results[1]
 
-		if rss_error == 0:
+		if rss_error == False:
 			xmldoc = feedparser.parse(rss_wipo)
 			range = 0
 			rangemax = len(xmldoc.entries)
@@ -511,7 +520,7 @@ def science(last_launch):
 		rss_error = req_results[0]
 		rss_arxiv = req_results[1]
 
-		if rss_error == 0:
+		if rss_error == False:
 			try:
 				xmldoc = feedparser.parse(rss_arxiv)
 			except Exception, except_type:
@@ -578,7 +587,7 @@ def science(last_launch):
 		rss_error = req_results[0]
 		web_doaj = req_results[1]
 
-		if rss_error == 0:
+		if rss_error == False:
 			try:
 				data_doaj = json.loads(web_doaj)
 			except Exception, except_type:

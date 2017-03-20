@@ -13,42 +13,44 @@ def allCheckLong (link):
 	"""Function for standardized requests to feed and internet pages."""
 
 	try:
-		req = requests.get(link, headers={'User-Agent' : "Serge Browser"})
+		req = requests.get(link, headers={'User-Agent' : "Serge Browser"}, timeout=15)
 		req.encoding = "utf8"
 		rss = req.text
 		header = req.headers
 		rss_error = 0
 	except requests.exceptions.ConnectionError:
-		print ("CONNECTION ERROR")
-		link = link.replace("http://", "")
+		print ("connection error")
+		print ("unvalid link")
 		rss = None
 		rss_error = 1
 	except requests.exceptions.HTTPError:
-		print ("HTTP ERROR")
-		link = link.replace("https://", "")
+		print ("http error")
+		print ("unvalid link")
 		rss = None
 		rss_error = 1
 	except requests.exceptions.URLRequired:
-		print ("URL Required")
+		print ("url required")
+		print ("unvalid link")
 		rss = None
 		rss_error = 1
 	except requests.exceptions.MissingSchema:
-		print ("URL Required")
+		print ("url required")
+		print ("unvalid link")
 		rss = None
 		rss_error = 1
 	except requests.exceptions.TooManyRedirects:
-		print ("Too Many Redirects")
-		link = link.replace("https://", "")
+		print ("too many redirects")
+		print ("unvalid link")
 		rss = None
 		rss_error = 1
 	except requests.exceptions.ConnectTimeout:
-		print ("TIMEOUT")
-		link = link.replace("https://", "")
+		print ("timeout")
+		print ("unvalid link")
 		rss = None
 		rss_error = 1
 	except requests.exceptions.ReadTimeout:
-		print ("TIMEOUT")
-		link = link.replace("https://", "")
+		print ("timeout")
+		print ("unvalid link")
 		rss = None
 		rss_error = 1
 
@@ -73,30 +75,33 @@ def feedMeUp (link):
 		try:
 			xmldoc = feedparser.parse(rss)
 		except Exception, except_type:
-			print("PARSING ERROR IN :"+link+"\n")
-			print("UNVALID LINK")
-			print(repr(except_type))
+			print ("parsing error in : "+link)
+			print ("unvalid link")
 			sys.exit()
 
 		########### RSS ANALYZE
 		try:
 			source_title = xmldoc.feed.title
+			title_error = ""
 		except AttributeError:
-			print("NO TITLE IN :"+link+"\n")
+			title_error = "no title, "
 			missing_flux = True
 
 		try:
 			tag_test = xmldoc.entries[0].tags
+			entries_error = ""
 		except AttributeError:
-			print("BEACON INFO : no <category> in "+link)
 			tag_test = None
+			entries_error = ""
 		except IndexError:
-			print("NO ENTRIES IN :"+link+"\n")
+			entries_error = "no entries, "
 			missing_flux = True
 
 		if missing_flux == True:
-			print ("MISSING FLUX OR THIS IS NOT A FLUX")
-			print("UNVALID LINK")
+			flux_error = "missing_flux, "
+			complete_error = flux_error+title_error+entries_error
+			print complete_error
+			print ("unvalid link")
 			sys.exit()
 
 		rangemax = len(xmldoc.entries)
@@ -108,54 +113,59 @@ def feedMeUp (link):
 			########### MANDATORY UNIVERSAL FEED PARSER VARIABLES
 			try:
 				post_title = xmldoc.entries[range].title
+				attribute_title = ""
 			except AttributeError:
-				print("BEACON ERROR : missing <title> in "+link)
-				print("UNVALID LINK")
+				attribute_title = "missing <title>, "
 				unvalid_count = unvalid_count+1
-				print(traceback.format_exc())
 				break
 
 			try:
 				post_description = xmldoc.entries[range].description
+				attribute_description = ""
 			except AttributeError:
-				print("BEACON ERROR : missing <description> in "+link)
-				print("UNVALID LINK")
+				attribute_description = "missing <description>, "
 				unvalid_count = unvalid_count+1
-				print(traceback.format_exc())
 				break
 
 			try:
 				post_link = xmldoc.entries[range].link
+				attribute_link = ""
 			except AttributeError:
-				print("BEACON ERROR : missing <link> in "+link)
-				print("UNVALID LINK")
+				attribute_link = "missing <link>, "
 				unvalid_count = unvalid_count+1
-				print(traceback.format_exc())
 				break
 
 			try:
 				post_date = xmldoc.entries[range].published_parsed
+				attribute_date = ""
 			except AttributeError:
-				print("BEACON ERROR : missing <description> in "+link)
-				print("UNVALID LINK")
+				attribute_date = "missing <date>, "
 				unvalid_count = unvalid_count+1
-				print(traceback.format_exc())
 				break
 
 			range = range+1
 
 		if unvalid_count > 0:
-			print ("MULTIPLES ERRORS")
-			print("UNVALID LINK")
+			complete_attribute = attribute_title+attribute_description+attribute_link+attribute_date
+			print ("unvalid link")
 
 		if unvalid_count == 0:
-			print("VALID LINK")
+			print ("valid link")
 
 	elif rss_error == 1:
-		print("UNVALID LINK")
+		print ("unvalid link")
 
 ########### MAIN
-link = sys.argv[1]
-print link
+try:
+	link = sys.argv[1]
+except IndexError:
+	print ("url required")
+	sys.exit()
+
+split_link = link.split(":")
+
+if split_link[0] != "http" and split_link[0] != "https":
+	print ("url required : protocol missing")
+	sys.exit()
 
 feedMeUp(link)

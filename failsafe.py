@@ -88,6 +88,7 @@ def checkMate(database, logger_info, logger_error):
 
             if numbers_columns < expected_number:
                 logger_error.critical("Missing columns in "+name)
+                sys.exit()
             elif numbers_columns > expected_number:
                 logger_error.critical("Too much columns in "+name)
                 sys.exit()
