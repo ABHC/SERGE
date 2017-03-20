@@ -361,7 +361,7 @@
 					<input type="text" class="keywordInput" name="keyword" id="keyword" placeholder="Keyword,next keyword, ..." />
 				</div>
 			</form>
-			<form method="post" action="setting.php">
+			<form method="post" action="setting">
 				<div class="newsInput">
 					<input alt="Add" title="Add" class="submit" type="submit" value="" />
 					<select name="sourceKeyword" id="sourceKeyword">
@@ -376,6 +376,7 @@
 					<span class="arrDownBorder">▾</span>
 					<input type="url" name="source" id="source" placeholder="Source" size="30" />
 				</div>
+				<?php echo $ERROR_MESSAGE; ?>
 			</form>
 
 			<div class="inlineButton">
