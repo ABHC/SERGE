@@ -353,9 +353,21 @@
 				<div class="newsInput">
 					<input alt="Add" title="Add" class="submit" type="submit" value="" />
 					<select name="sourceKeyword" id="sourceKeyword">
-						<option value="source1">Nextinpact</option>
-						<option value="source2">lesechos</option>
-						<option value="source3">Leschiensontdesoreilles.net</option>
+						<?php
+						$reqReadOwnerSourcestmp = $reqReadOwnerSources->fetchAll();
+						foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
+						{
+							if ($ownerSourcesList['name'] == "")
+							{
+								preg_match('@^(?:http.*://)?([^/]+)@i', $ownerSourcesList['link'], $matches);
+								echo '<option value="source' . $ownerSourcesList['id'] . '">' . $matches[1] . '</option>' . PHP_EOL;
+							}
+							else
+							{
+								echo '<option value="source' . $ownerSourcesList['id'] . '">' . $ownerSourcesList['name'] . '</option>' . PHP_EOL;
+							}
+						}
+						?>
 					</select>
 					<span class="arrDownBorder">▾</span>
 					<input type="text" class="keywordInput" name="keyword" id="keyword" placeholder="Keyword,next keyword, ..." />
@@ -366,6 +378,21 @@
 					<input alt="Add" title="Add" class="submit" type="submit" value="" />
 					<select name="sourceKeyword" id="sourceKeyword">
 						<option value="inputSource">Add my own source</option>
+						<?php
+						foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
+						{
+							if ($ownerSourcesList['name'] == "")
+							{
+								preg_match('@^(?:http.*://)?([^/]+)@i', $ownerSourcesList['link'], $matches);
+								echo '<option value="source' . $ownerSourcesList['id'] . '">' . $matches[1] . '</option>' . PHP_EOL;
+							}
+							else
+							{
+								echo '<option value="source' . $ownerSourcesList['id'] . '">' . $ownerSourcesList['name'] . '</option>' . PHP_EOL;
+							}
+						}
+						$reqReadOwnerSources->closeCursor();
+						?>
 						<option value="sourceGeneralEN">General news source pack [English]</option>
 						<option value="sourceTechnologyEN">Technology source pack [English]</option>
 						<option value="sourceSpatialEN">Spatial source pack [English]</option>

@@ -9,6 +9,9 @@ if (!isset($_SESSION['pseudo']))
 	header('Location: connection.php?redirectFrom=setting');
 }
 
+# Read owner sources
+include_once('model/readOwnerSources.php');
+
 # Adding new source
 if (isset($_POST['sourceKeyword']))
 {
@@ -32,6 +35,9 @@ if (isset($_POST['sourceKeyword']))
 		$ERROR_MESSAGE = 'You must write the link of the source';
 	}
 }
+
+# Adding new keyword
+
 
 include_once('view/nav/nav.php');
 
