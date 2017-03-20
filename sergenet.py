@@ -9,6 +9,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 def headToEtag (link, logger_info, logger_error):
+	"""Function for retrieve etag"""
 
 	try:
 		etag = requests.head(link, headers={'User-Agent' : "Serge Browser"}, timeout=15).headers.get('etag')
