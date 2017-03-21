@@ -395,6 +395,34 @@
 				<a class="buttonVisiteCommunitySourcePack" href="sourcePack?action=visite">Add community source pack</a>
 			</div>
 
+			<?php
+			foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
+			{
+				if ($ownerSourcesList['name'] == "")
+				{
+					preg_match('@^(?:http.*://)?([^/]+)@i', $ownerSourcesList['link'], $matches);
+					echo '<div class="tagSource Tactive">' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '&action=del"></a>' . PHP_EOL . '<a alt="Disable" title="Disable" href="setting?source=source' . $ownerSourcesList['id'] . '&action=disable"></a>' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '">' . $matches[1] . '</a>' . PHP_EOL . '</div>' . PHP_EOL;
+				}
+				else
+				{
+					echo '<div class="tagSource Tactive">' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '&action=del"></a>' . PHP_EOL . '<a alt="Disable" title="Disable" href="setting?source=source' . $ownerSourcesList['id'] . '&action=disable"></a>' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '">' . $ownerSourcesList['name'] . '</a>' . PHP_EOL . '</div>' . PHP_EOL;
+				}
+
+				echo '<div class="keywordList">' . PHP_EOL;
+
+				foreach ($reqReadOwnerSourcesKeywordtmp as $ownerKeywordList)
+				{
+					$applicable_owners_sources = $ownerKeywordList['applicable_owners_sources'];
+
+					if (preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*," . $ownerSourcesList['id'] . ",[,0-9,]*\|/", $applicable_owners_sources))
+					{
+						echo '<div class="tag Tactive">' . PHP_EOL . '<a alt="Delete" title="Delete" href="setting?keyword=keyword' . $ownerKeywordList['id'] . '&action=del"></a>' . PHP_EOL . '<a alt="Disable" title="Disable" href="setting?keyword=keyword' . $ownerKeywordList['id'] . '&action=disable"></a>' . PHP_EOL . '<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">' . $ownerKeywordList['keyword'] . '</a>' . PHP_EOL . '</div>' .PHP_EOL;
+					}
+				}
+				echo '</div>' . PHP_EOL;
+			}
+			?>
+
 			<div class="tagSource Tactive">
 				<a href="setting?source=source&action=del"></a>
 				<a alt="Disable" title="Disable" href="setting?source=source&action=disable"></a>
@@ -643,7 +671,7 @@
 					<option value="jr">Journal reference</option>
 					<option value="cat">Subject categorie</option>
 				</select>
-					<span class="arrDownBorder">▾</span>
+				<span class="arrDownBorder">▾</span>
 				<input type="text" class="query" name="scienceQuery00" id="scienceQuery00" placeholder="Keyword" size="30" />
 				<div class="btnList">
 					<input type="radio" id="andOrNotand_AND00" name="andOrAndnot00">
@@ -661,7 +689,7 @@
 					<option value="jr">Journal reference</option>
 					<option value="cat">Subject categorie</option>
 				</select>
-					<span class="arrDownBorder">▾</span>
+				<span class="arrDownBorder">▾</span>
 				<input type="text" class="query" name="scienceQuery01" id="scienceQuery01" placeholder="Keyword" size="30" />
 				<div class="btnList">
 					<input type="radio" id="andOrNotand_AND01" name="andOrAndnot01">
@@ -679,7 +707,7 @@
 					<option value="jr">Journal reference</option>
 					<option value="cat">Subject categorie</option>
 				</select>
-					<span class="arrDownBorder">▾</span>
+				<span class="arrDownBorder">▾</span>
 				<input type="text" class="query" name="scienceQuery02" id="scienceQuery02" placeholder="Keyword" size="30" />
 				<input alt="Extend" title="Extend" class="extend" type="submit" id="extendScience" name="extendScience" value=">>" />
 			</div>
@@ -830,7 +858,7 @@
 					<option value="EN_AB">English abstract</option>
 					<option value="IN">Inventor</option>
 				</select>
-					<span class="arrDownBorder">▾</span>
+				<span class="arrDownBorder">▾</span>
 				<input type="text" class="query" name="patentQuery00" id="patentQuery00" placeholder="Keyword" size="30" />
 				<input type="checkbox" id="patentAndOr1">
 				<label class="andOr" for="patentAndOr1"></label>
@@ -839,7 +867,7 @@
 					<option value="EN_AB">English abstract</option>
 					<option value="IN">Inventor</option>
 				</select>
-					<span class="arrDownBorder">▾</span>
+				<span class="arrDownBorder">▾</span>
 				<input type="text" class="query" name="patentQuery01" id="patentQuery01" placeholder="Keyword" size="30" />
 				<input type="checkbox" id="patentAndOr2">
 				<label class="andOr" for="patentAndOr2"></label>
@@ -848,7 +876,7 @@
 					<option value="EN_AB">English abstract</option>
 					<option value="IN">Inventor</option>
 				</select>
-					<span class="arrDownBorder">▾</span>
+				<span class="arrDownBorder">▾</span>
 				<input type="text" class="query" name="patentQuery02" id="patentQuery02" placeholder="Keyword" size="30" />
 				<input alt="Extend" title="Extend" class="extend" type="submit" id="extend" name="extend" value=">>" />
 			</div>

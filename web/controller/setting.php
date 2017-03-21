@@ -11,6 +11,7 @@ if (!isset($_SESSION['pseudo']))
 
 # Read owner sources
 include_once('model/readOwnerSources.php');
+include_once('model/readOwnerSourcesKeyword.php');
 
 # Adding new source
 if (isset($_POST['sourceType']))
