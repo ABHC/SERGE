@@ -349,12 +349,11 @@
 	<div class="divRow">
 		<div class="keywordManagement">
 			<h2>News management</h2>
-			<form method="post" action="setting.php">
+			<form method="post" action="setting">
 				<div class="newsInput">
 					<input alt="Add" title="Add" class="submit" type="submit" value="" />
 					<select name="sourceKeyword" id="sourceKeyword">
 						<?php
-						$reqReadOwnerSourcestmp = $reqReadOwnerSources->fetchAll();
 						foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
 						{
 							if ($ownerSourcesList['name'] == "")
@@ -370,29 +369,14 @@
 						?>
 					</select>
 					<span class="arrDownBorder">▾</span>
-					<input type="text" class="keywordInput" name="keyword" id="keyword" placeholder="Keyword,next keyword, ..." />
+					<input type="text" class="keywordInput" name="newKeyword" id="keyword" placeholder="Keyword,next keyword, ..." />
 				</div>
 			</form>
 			<form method="post" action="setting">
 				<div class="newsInput">
 					<input alt="Add" title="Add" class="submit" type="submit" value="" />
-					<select name="sourceKeyword" id="sourceKeyword">
+					<select name="sourceType" id="sourceKeyword">
 						<option value="inputSource">Add my own source</option>
-						<?php
-						foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
-						{
-							if ($ownerSourcesList['name'] == "")
-							{
-								preg_match('@^(?:http.*://)?([^/]+)@i', $ownerSourcesList['link'], $matches);
-								echo '<option value="source' . $ownerSourcesList['id'] . '">' . $matches[1] . '</option>' . PHP_EOL;
-							}
-							else
-							{
-								echo '<option value="source' . $ownerSourcesList['id'] . '">' . $ownerSourcesList['name'] . '</option>' . PHP_EOL;
-							}
-						}
-						$reqReadOwnerSources->closeCursor();
-						?>
 						<option value="sourceGeneralEN">General news source pack [English]</option>
 						<option value="sourceTechnologyEN">Technology source pack [English]</option>
 						<option value="sourceSpatialEN">Spatial source pack [English]</option>
@@ -401,7 +385,7 @@
 						<option value="sourceSpacialFR">Spatial source pack [French]</option>
 					</select>
 					<span class="arrDownBorder">▾</span>
-					<input type="url" name="source" id="source" placeholder="Source" size="30" />
+					<input type="url" name="newSource" id="source" placeholder="Source" size="30" />
 				</div>
 				<?php echo $ERROR_MESSAGE; ?>
 			</form>

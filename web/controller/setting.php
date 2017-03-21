@@ -13,11 +13,11 @@ if (!isset($_SESSION['pseudo']))
 include_once('model/readOwnerSources.php');
 
 # Adding new source
-if (isset($_POST['sourceKeyword']))
+if (isset($_POST['sourceType']))
 {
-	if ($_POST['sourceKeyword'] == 'inputSource' AND isset($_POST['source']))
+	if ($_POST['sourceType'] == 'inputSource' AND isset($_POST['newSource']))
 	{
-		$source       = htmlspecialchars($_POST['source']);
+		$source       = htmlspecialchars($_POST['newSource']);
 		$sourceToTest = escapeshellarg($source);
 		$cmd          = '/usr/bin/python /var/www/Serge/checkfeed.py ' . $sourceToTest;
 		exec($cmd, $linkValidation, $errorInCheckfeed);
@@ -37,7 +37,13 @@ if (isset($_POST['sourceKeyword']))
 }
 
 # Adding new keyword
+if (isset($_POST['sourceKeyword']) AND isset($_POST['newKeyword']))
+{
+	$sourceId = preg_replace('/[^0-9]/', '', htmlspecialchars($_POST['sourceKeyword']));
+	$newKeyword  = htmlspecialchars($_POST['newKeyword']);
 
+	include_once('model/addNewKeyword.php');
+}
 
 include_once('view/nav/nav.php');
 
