@@ -1,7 +1,7 @@
 <?php
 // Check if source is already in bdd
 $userId = '%,' . $_SESSION['id'] . ',%';
-$reqReadOwnerSources = $bdd->prepare('SELECT link, name, id FROM rss_serge WHERE owners LIKE :user');
+$reqReadOwnerSources = $bdd->prepare('SELECT link, name, id FROM rss_serge WHERE owners LIKE :user ORDER BY name');
 $reqReadOwnerSources->execute(array(
 	'user' => $userId));
 	$reqReadOwnerSourcestmp = $reqReadOwnerSources->fetchAll();
