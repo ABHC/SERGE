@@ -8,8 +8,20 @@ $req->execute(array(
 
 if (!$result)
 {
-	// Adding new source
-	$applicable_owners_sources = '|' . $_SESSION['id'] . ':,' . $sourceId . ',|';
+	if ($sourceId == '00')
+	{
+		$applicable_owners_sources = '|' . $_SESSION['id'] . ':,';
+		foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
+		{
+			$applicable_owners_sources = $applicable_owners_sources . $ownerSourcesList['id'] . ',';
+		}
+		$applicable_owners_sources = $applicable_owners_sources . '|';
+	}
+	else
+	{
+		$applicable_owners_sources = '|' . $_SESSION['id'] . ':,' . $sourceId . ',|';
+	}
+	// Adding new keyword
 	$active = 1;
 	$req = $bdd->prepare('INSERT INTO keyword_news_serge (keyword, applicable_owners_sources, active) VALUES (:newKeyword, :applicable_owners_sources, :active)');
 	$req->execute(array(
@@ -30,14 +42,29 @@ else
 	{
 		preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*,\|/", $applicable_owners_sources, $userApplicable_owners_sources);
 
-		if (preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*," . $sourceId . ",[,0-9,]*\|/", $applicable_owners_sources))
+		if (preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*," . $sourceId . ",[,0-9,]*\|/", $applicable_owners_sources) AND $sourceId != '00')
 		{
 			$ERROR_MESSAGE = 'The keyword for this source was already in the database';
 		}
 		else
 		{
 			// Add source in the end of source list for current user
-			$newSourceForAdding = ',' . $sourceId . ',|';
+			if ($sourceId == '00')
+			{
+				$newSourceForAdding = ',';
+				foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
+				{
+					if (!preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*," . $ownerSourcesList['id'] . ",[,0-9,]*\|/", $applicable_owners_sources))
+					{
+						$newSourceForAdding = $newSourceForAdding . $ownerSourcesList['id'] . ',';
+					}
+				}
+				$applicable_owners_sources = $applicable_owners_sources . '|';
+			}
+			else
+			{
+				$newSourceForAdding = ',' . $sourceId . ',|';
+			}
 			$userApplicable_owners_sourcesNEW = preg_replace("/,*\|$/", $newSourceForAdding, 		$userApplicable_owners_sources[0]);
 			$applicable_owners_sources = preg_replace("/\|" . $_SESSION['id'] . ":[,0-9,]*,\|/", 		$userApplicable_owners_sourcesNEW, $applicable_owners_sources);
 		}
@@ -45,7 +72,19 @@ else
 	else
 	{
 		// Add user and source in applicable_owners_sources
-		$userApplicable_owners_sourcesNEW = '|' . $_SESSION['id'] . ':,' . $sourceId . ',|';
+		if ($sourceId == '00')
+		{
+			$userApplicable_owners_sourcesNEW = '|' . $_SESSION['id'] . ':,';
+			foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
+			{
+				$userApplicable_owners_sourcesNEW = $userApplicable_owners_sourcesNEW . $ownerSourcesList['id'] . ',';
+			}
+			$userApplicable_owners_sourcesNEW = $userApplicable_owners_sourcesNEW . '|';
+		}
+		else
+		{
+			$userApplicable_owners_sourcesNEW = '|' . $_SESSION['id'] . ':,' . $sourceId . ',|';
+		}
 		$applicable_owners_sources = preg_replace("/\|$/", $userApplicable_owners_sourcesNEW,$applicable_owners_sources);
 	}
 

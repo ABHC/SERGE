@@ -489,6 +489,7 @@
 						}
 					}
 					?>
+					<option value="source00">All sources</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
 				<input type="text" class="keywordInput" name="newKeyword" id="keyword" placeholder="Keyword,next keyword, ..." />

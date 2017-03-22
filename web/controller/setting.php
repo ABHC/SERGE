@@ -46,6 +46,11 @@ if (isset($_POST['sourceKeyword']) AND isset($_POST['newKeyword']))
 	include_once('model/addNewKeyword.php');
 }
 
+# Reread owner sources to take care of changes
+/* FIXME
+include_once('model/readOwnerSources.php');
+include_once('model/readOwnerSourcesKeyword.php');
+*/
 include_once('view/nav/nav.php');
 
 include_once('view/body/setting.php');
