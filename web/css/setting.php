@@ -337,8 +337,79 @@ h2
 	align-items: center;
 	flex-wrap: wrap;
 	margin-left: 2%;
-	width: 98%;
 	margin-bottom: 10px;
+	width: 200px;
+	height: 30px;
+	overflow: hidden;
+}
+
+.keywordManagement > input:checked + .keywordList
+{
+	width: 98%;
+	height: auto;
+}
+
+.foldTag
+{
+	display: none;
+}
+
+.keywordManagement > input:not(:checked) ~ .keywordList > .unfoldTag
+{
+	display: block;
+	border-radius: 3px 3px 3px 3px;
+	border: 1px solid rgba(255,255,255, 0.15);
+	padding-top: 1px;
+	padding-bottom: 2px;
+	padding-left: 4px;
+	padding-right: 4px;
+	text-align: center;
+	margin-top: 3px;
+	margin-bottom: 3px;
+	margin-left: 3px;
+	margin-right: 3px;
+	background-color: rgba(0,120,176,0.4);
+	color: #fff;
+	cursor: pointer;
+}
+
+.keywordManagement > input:not(:checked) ~ .keywordList > .unfoldTag:hover
+{
+	background-color: rgba(0, 85, 127, 0.4);
+}
+
+.keywordManagement > input:checked + .keywordList > .unfoldTag
+{
+	display: none;
+}
+
+.keywordManagement > input:checked ~ .keywordList > .foldTag
+{
+	display: block;
+	border-radius: 3px 3px 3px 3px;
+	border: 1px solid rgba(255,255,255, 0.15);
+	padding-top: 1px;
+	padding-bottom: 2px;
+	padding-left: 4px;
+	padding-right: 4px;
+	text-align: center;
+	margin-top: 3px;
+	margin-bottom: 3px;
+	margin-left: 3px;
+	margin-right: 3px;
+	background-color: rgba(0,120,176,0.4);
+	color: #fff;
+	cursor: pointer;
+}
+
+.keywordManagement > input:checked ~ .keywordList > .foldTag:hover
+{
+	background-color: rgba(0, 85, 127, 0.4);
+}
+
+.keywordManagement > input:not(:checked) + .keywordList > .foldTag
+{
+	display: none;
 }
 
 .tag
@@ -916,7 +987,6 @@ input:checked + .slider:before
 	border-radius: 50%;
 	transition: all .6s;
 }
-
 
 [type="radio"]:checked + label:before
 {
