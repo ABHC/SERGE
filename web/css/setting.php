@@ -96,7 +96,8 @@ select option
 
 select#sourceKeyword
 {
-	width: calc(50% - 60px);
+	flex: 1;
+	max-width: 50%;
 	background-color: rgba(255,89,0,0.4);
 	height: 27px;
 	margin-left: 10px;
@@ -107,6 +108,11 @@ select#sourceKeyword
 select#sourceKeyword option
 {
 	background-color: rgba(131, 49, 5, 0.8);
+}
+
+input#email
+{
+	width: 80%;
 }
 
 h3
@@ -203,7 +209,6 @@ h3
 	background-color: rgba(0, 0, 0, 0.4);
 	border-radius: 3px;
 	border: 1px solid rgba(255,255,255,0.1);
-	margin-bottom: 30px;
 	padding: 1%;
 	overflow: hidden;
 }
@@ -293,10 +298,16 @@ label.next::selection
 {
 	display: flex;
 	flex-direction: row;
-	justify-content: flex-start;
-	align-items: stretch;
+	justify-content: space-around;
+	align-items: flex-start;
+	flex-wrap: wrap;
 	margin-top: 20px;
-	width: 80%;
+	width: 100%;
+}
+
+.divRow > div
+{
+	max-width: 45%;
 }
 
 h2
@@ -311,12 +322,12 @@ h2
 	flex-direction: column;
 	justify-content: flex-start;
 	align-items: flex-start;
-	width: 48%;
+	width: calc(80% - 20px);
 	padding: 10px;
 	background-color: rgba(0, 0, 0, 0.4);
 	border-radius: 3px;
 	border: 1px solid rgba(255,255,255,0.1);
-	margin-right: 15px;
+	margin-top: 50px;
 }
 
 .keywordList
@@ -589,12 +600,12 @@ h2
 
 .communicationResults
 {
-	width: 48%;
+	width: calc(80% - 20px);
 	padding: 10px;
 	background-color: rgba(0, 0, 0, 0.4);
 	border-radius: 3px;
 	border: 1px solid rgba(255,255,255,0.1);
-	margin-left: 2%;
+	margin-top: 50px;
 }
 
 .selectCommResult
@@ -771,7 +782,7 @@ input:checked + .slider:before
 	background-color: rgba(0, 0, 0, 0.4);
 	border-radius: 3px;
 	border: 1px solid rgba(255,255,255,0.1);
-	margin-top: 40px;
+	margin-top: 50px;
 }
 
 .patentManagement
@@ -781,7 +792,7 @@ input:checked + .slider:before
 	background-color: rgba(0, 0, 0, 0.4);
 	border-radius: 3px;
 	border: 1px solid rgba(255,255,255,0.1);
-	margin-top: 40px;
+	margin-top: 50px;
 }
 
 .query
@@ -805,8 +816,7 @@ input:checked + .slider:before
 [type="checkbox"]:not(:checked),
 [type="checkbox"]:checked
 {
-	position: absolute;
-	left: -9999px;
+	display: none;
 }
 
 [type="checkbox"]:not(:checked) + label,
@@ -948,7 +958,7 @@ input:checked + .slider:before
 {
 	display: flex;
 	justify-content: center;
-	margin-top: 40px;
+	margin-top: 50px;
 }
 
 .newQueryContainer

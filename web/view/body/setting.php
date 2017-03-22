@@ -346,318 +346,330 @@
 		</div>
 	</div>
 
-	<div class="divRow">
-		<div class="keywordManagement">
-			<h2>News management</h2>
-			<form method="post" action="setting">
-				<div class="newsInput">
-					<input alt="Add" title="Add" class="submit" type="submit" value="" />
-					<select name="sourceKeyword" id="sourceKeyword">
-						<?php
-						foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
-						{
-							if ($ownerSourcesList['name'] == "")
-							{
-								preg_match('@^(?:http.*://)?([^/]+)@i', $ownerSourcesList['link'], $matches);
-								echo '<option value="source' . $ownerSourcesList['id'] . '">' . $matches[1] . '</option>' . PHP_EOL;
-							}
-							else
-							{
-								echo '<option value="source' . $ownerSourcesList['id'] . '">' . $ownerSourcesList['name'] . '</option>' . PHP_EOL;
-							}
-						}
-						?>
-					</select>
-					<span class="arrDownBorder">▾</span>
-					<input type="text" class="keywordInput" name="newKeyword" id="keyword" placeholder="Keyword,next keyword, ..." />
+	<div class="communicationResults">
+		<h2>Communication of results</h2>
+		<form method="post" action="setting.php">
+			<div class="divRow">
+				<div>
+					<p>
+						<h3>Your email</h3>
+						<input type="email" name="email" id="email" value="pohuvalentin@gmail.com" size="30" required/>
+					</p>
+					<h3>Result page</h3>
+					<p>
+						Background <select class="selectCommResult" name="deleteHistoryUnit">
+							<option value="skyscraper">Skyscraper</option>
+							<option value="mountain">Mountain</option>
+							<option value="nature">Nature</option>
+							<option value="sea">Sea</option>
+							<option value="random">Random</option>
+						</select>
+						<span class="arrDown">▾</span>
+					</p>
 				</div>
-			</form>
-			<form method="post" action="setting">
-				<div class="newsInput">
-					<input alt="Add" title="Add" class="submit" type="submit" value="" />
-					<select name="sourceType" id="sourceKeyword">
-						<option value="inputSource">Add my own source</option>
-						<option value="sourceGeneralEN">General news source pack [English]</option>
-						<option value="sourceTechnologyEN">Technology source pack [English]</option>
-						<option value="sourceSpatialEN">Spatial source pack [English]</option>
-						<option value="sourceGeneralFR">General news source pack [French]</option>
-						<option value="sourceTechnologyFR">Technology source pack [French]</option>
-						<option value="sourceSpacialFR">Spatial source pack [French]</option>
-					</select>
-					<span class="arrDownBorder">▾</span>
-					<input type="url" name="newSource" id="source" placeholder="Source" size="30" />
+				<div>
+					<h3>Sending condition</h3>
+					<p>
+						<input type="radio" id="condNbLink" name="cond" required>
+						<label class="radio" for="condNbLink"></label>
+						by number of links
+						<input class="number alpha" type="number" name="numberLinks" min="5" placeholder="50"/>
+					</p>
+					<p>
+						<input type="radio" id="condFreq" name="cond" required>
+						<label class="radio" for="condFreq"></label>
+						by frequency, every
+						<input class="number alpha" type="number" name="freq" min="2" max="500" step="2" placeholder="24"/> hours
+					</p>
+					<p>
+						<input type="radio" id="condDate" name="cond" required>
+						<label class="radio" for="condDate"></label>
+						at
+						<input class="number alpha" type="number" name="freq" min="0" max="23" step="2" placeholder="19"/> h
+						, every
+						<select class="selectCommResult" name="day">
+							<option value="business day">business day</option>
+							<option value="day">day</option>
+							<option value="monday">monday</option>
+							<option value="tuesday">tuesday</option>
+							<option value="wednesday">wednesday</option>
+							<option value="thursday">thursday</option>
+							<option value="friday">friday</option>
+							<option value="saturday">saturday</option>
+							<option value="sunday">sunday</option>
+						</select>
+						<span class="arrDown">▾</span>
+						and
+						<select class="selectCommResult" name="day">
+							<option value="none">that's all</option>
+							<option value="monday">monday</option>
+							<option value="tuesday">tuesday</option>
+							<option value="wednesday">wednesday</option>
+							<option value="thursday">thursday</option>
+							<option value="friday">friday</option>
+							<option value="saturday">saturday</option>
+							<option value="sunday">sunday</option>
+						</select>
+						<span class="arrDown">▾</span>
+					</p>
 				</div>
-				<?php echo $ERROR_MESSAGE; ?>
-			</form>
-
-			<div class="inlineButton">
-				<a class="buttonCreatesourcePack" href="sourcePack?action=creation">Create my own source pack</a>
-				<a class="buttonVisiteCommunitySourcePack" href="sourcePack?action=visite">Add community source pack</a>
+				<div>
+					<h3>Sorting for links in email</h3>
+					<p>
+						<input type="radio" id="orderByKeyword" name="orderBy" required>
+						<label class="radio" for="orderByKeyword"></label>
+						by keyword
+					</p>
+					<p>
+						<input type="radio" id="orderBySource" name="orderBy" required>
+						<label class="radio" for="orderBySource"></label>
+						by source
+					</p>
+					<p>
+						<input type="radio" id="orderByAlpha" name="orderBy" required>
+						<label class="radio" for="orderByAlpha"></label>
+						by alphabetical order
+					</p>
+				</div>
+				<div>
+					<h3>Privacy</h3>
+					<div class="align">
+						<label class="switch">
+							<input type="checkbox" checked>
+							<div class="slider"></div>
+						</label>
+						Record when a link is clicked
+					</div>
+					<p>
+						History life time : <input class="number alpha" name="history" type="number" min="1" value="12"/> months
+					</p>
+				<div>
+					<h3></h3>
+					<div class="deleteContainer">
+						<div class="deleteLogo"></div>
+						<input alt="Delete" title="Delete" class="deleteButton" type="submit" value="Delete history" />
+						the last&nbsp;
+						<input class="number alpha" name="deleteHistory" type="number" min="1" value="1"/>
+						&nbsp;
+						<select class="selectCommResult Unit" name="deleteHistoryUnit">
+							<option value="hour">Hour</option>
+							<option value="day">Day</option>
+							<option value="week">Week</option>
+							<option value="month">Month</option>
+							<option value="year">Year</option>
+						</select>
+						<span class="arrDown">▾</span>
+					</div>
+				</div>
 			</div>
+			</div>
+			<div class="centerSubmit">
+				<input alt="Add" title="Add" class="submit" type="submit" value="" />
+			</div>
+		</form>
+	</div>
 
-			<?php
-			foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
-			{
-				if ($ownerSourcesList['name'] == "")
-				{
-					preg_match('@^(?:http.*://)?([^/]+)@i', $ownerSourcesList['link'], $matches);
-					echo '<div class="tagSource Tactive">' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '&action=del"></a>' . PHP_EOL . '<a alt="Disable" title="Disable" href="setting?source=source' . $ownerSourcesList['id'] . '&action=disable"></a>' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '">' . $matches[1] . '</a>' . PHP_EOL . '</div>' . PHP_EOL;
-				}
-				else
-				{
-					echo '<div class="tagSource Tactive">' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '&action=del"></a>' . PHP_EOL . '<a alt="Disable" title="Disable" href="setting?source=source' . $ownerSourcesList['id'] . '&action=disable"></a>' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '">' . $ownerSourcesList['name'] . '</a>' . PHP_EOL . '</div>' . PHP_EOL;
-				}
-
-				echo '<div class="keywordList">' . PHP_EOL;
-
-				foreach ($reqReadOwnerSourcesKeywordtmp as $ownerKeywordList)
-				{
-					$applicable_owners_sources = $ownerKeywordList['applicable_owners_sources'];
-
-					if (preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*," . $ownerSourcesList['id'] . ",[,0-9,]*\|/", $applicable_owners_sources))
+	<div class="keywordManagement">
+		<h2>News management</h2>
+		<form method="post" action="setting">
+			<div class="newsInput">
+				<input alt="Add" title="Add" class="submit" type="submit" value="" />
+				<select name="sourceKeyword" id="sourceKeyword">
+					<?php
+					foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
 					{
-						echo '<div class="tag Tactive">' . PHP_EOL . '<a alt="Delete" title="Delete" href="setting?keyword=keyword' . $ownerKeywordList['id'] . '&action=del"></a>' . PHP_EOL . '<a alt="Disable" title="Disable" href="setting?keyword=keyword' . $ownerKeywordList['id'] . '&action=disable"></a>' . PHP_EOL . '<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">' . $ownerKeywordList['keyword'] . '</a>' . PHP_EOL . '</div>' .PHP_EOL;
+						if ($ownerSourcesList['name'] == "")
+						{
+							preg_match('@^(?:http.*://)?([^/]+)@i', $ownerSourcesList['link'], $matches);
+							echo '<option value="source' . $ownerSourcesList['id'] . '">' . $matches[1] . '</option>' . PHP_EOL;
+						}
+						else
+						{
+							echo '<option value="source' . $ownerSourcesList['id'] . '">' . $ownerSourcesList['name'] . '</option>' . PHP_EOL;
+						}
 					}
-				}
-				echo '</div>' . PHP_EOL;
-			}
-			?>
+					?>
+				</select>
+				<span class="arrDownBorder">▾</span>
+				<input type="text" class="keywordInput" name="newKeyword" id="keyword" placeholder="Keyword,next keyword, ..." />
+			</div>
+		</form>
+		<form method="post" action="setting">
+			<div class="newsInput">
+				<input alt="Add" title="Add" class="submit" type="submit" value="" />
+				<select name="sourceType" id="sourceKeyword">
+					<option value="inputSource">Add my own source</option>
+					<option value="sourceGeneralEN">General news source pack [English]</option>
+					<option value="sourceTechnologyEN">Technology source pack [English]</option>
+					<option value="sourceSpatialEN">Spatial source pack [English]</option>
+					<option value="sourceGeneralFR">General news source pack [French]</option>
+					<option value="sourceTechnologyFR">Technology source pack [French]</option>
+					<option value="sourceSpacialFR">Spatial source pack [French]</option>
+				</select>
+				<span class="arrDownBorder">▾</span>
+				<input type="url" name="newSource" id="source" placeholder="Source" size="30" />
+			</div>
+			<?php echo $ERROR_MESSAGE; ?>
+		</form>
 
-			<div class="tagSource Tactive">
-				<a href="setting?source=source&action=del"></a>
-				<a alt="Disable" title="Disable" href="setting?source=source&action=disable"></a>
-				<a href="setting?source=source">Nextinpact</a>
-			</div>
-			<div class="keywordList">
-				<div class="tag Tactive">
-					<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-					<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-					<a href="setting?keyword=keyword">test</a>
-				</div>
-				<div class="tag Tactive">
-					<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-					<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-					<a href="setting?keyword=keyword">Ours</a>
-				</div>
-				<div class="tag Tactive">
-					<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-					<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-					<a href="setting?keyword=keyword">Chien vert</a>
-				</div>
-				<div class="tag Tactive">
-					<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-					<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-					<a href="setting?keyword=keyword">neutron</a>
-				</div>
-				<div class="tag Tactive">
-					<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-					<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-					<a href="setting?keyword=keyword">nucléaire</a>
-				</div>
-				<div class="tag Tactive">
-					<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-					<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-					<a href="setting?keyword=keyword">wikileaks</a>
-				</div>
-			</div>
-			<div class="tagSource Tactive">
-				<a href="setting?source=source&action=del"></a>
-				<a alt="Disable" title="Disable" href="setting?source=source&action=disable"></a>
-				<a href="setting?source=source">Les-crises</a>
-			</div>
-			<div class="keywordList">
-				<div class="tag Tactive">
-					<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-					<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-					<a href="setting?keyword=keyword">test</a>
-				</div>
-				<div class="tag Tactive">
-					<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-					<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-					<a href="setting?keyword=keyword">Ours</a>
-				</div>
-				<div class="tag Tdisable">
-					<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-					<a alt="Activate" title="Activate" href="setting?keyword=keyword&action=activate"></a>
-					<a href="setting?keyword=keyword">Chien vert</a>
-				</div>
-				<div class="tag Tdisable">
-					<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-					<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-					<a href="setting?keyword=keyword">neutron</a>
-				</div>
-				<div class="tag Tactive">
-					<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-					<a alt="Activate" title="Activate" href="setting?keyword=keyword&action=activate"></a>
-					<a href="setting?keyword=keyword">nucléaire</a>
-				</div>
-				<div class="tag Tdisable">
-					<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-					<a alt="Activate" title="Activate" href="setting?keyword=keyword&action=activate"></a>
-					<a href="setting?keyword=keyword">wikileaks</a>
-				</div>
-			</div>
-			<div class="tagSource Tactive">
-				<a href="setting?source=source&action=del"></a>
-				<a alt="Disable" title="Disable" href="setting?source=source&action=disable"></a>
-				<a href="setting?source=source">Numerama</a>
-			</div>
-			<div class="keywordList">
-				<div class="tag Tactive">
-					<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-					<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-					<a href="setting?keyword=keyword">test</a>
-				</div>
-				<div class="tag Tactive">
-					<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-					<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-					<a href="setting?keyword=keyword">Ours</a>
-				</div>
-				<div class="tag Tactive">
-					<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-					<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-					<a href="setting?keyword=keyword">Chien vert</a>
-				</div>
-				<div class="tag Tdisable">
-					<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-					<a alt="Activate" title="Activate" href="setting?keyword=keyword&action=activate"></a>
-					<a href="setting?keyword=keyword">neutron</a>
-				</div>
-				<div class="tag Tactive">
-					<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-					<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-					<a href="setting?keyword=keyword">nucléaire</a>
-				</div>
-				<div class="tag Tactive">
-					<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-					<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-					<a href="setting?keyword=keyword">wikileaks</a>
-				</div>
-			</div>
-			<div class="tagSource Tdisable">
-				<a href="setting?source=source&action=del"></a>
-				<a alt="Activate" title="Activate" href="setting?source=source&action=activate"></a>
-				<a href="setting?source=source">Le monde</a>
-			</div>
-			<div class="keywordList">
-				<div class="tag Tdisable">
-					<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-					<a alt="Activate" title="Activate" href="setting?keyword=keyword&action=activate"></a>
-					<a href="setting?keyword=keyword">Decodex</a>
-				</div>
-			</div>
+		<div class="inlineButton">
+			<a class="buttonCreatesourcePack" href="sourcePack?action=creation">Create my own source pack</a>
+			<a class="buttonVisiteCommunitySourcePack" href="sourcePack?action=visite">Add community source pack</a>
 		</div>
 
-		<div class="communicationResults">
-			<h2>Communication of results</h2>
-			<form method="post" action="setting.php">
-				<p>
-					<h3>Your email</h3>
-					<input type="email" name="email" id="email" value="pohuvalentin@gmail.com" size="30" required/>
-				</p>
-				<h3>Sending condition</h3>
-				<p>
-					<input type="radio" id="condNbLink" name="cond" required>
-					<label class="radio" for="condNbLink"></label>
-					by number of links
-					<input class="number alpha" type="number" name="numberLinks" min="5" placeholder="50"/>
-				</p>
-				<p>
-					<input type="radio" id="condFreq" name="cond" required>
-					<label class="radio" for="condFreq"></label>
-					by frequency, every
-					<input class="number alpha" type="number" name="freq" min="2" max="500" step="2" placeholder="24"/> hours
-				</p>
-				<p>
-					<input type="radio" id="condDate" name="cond" required>
-					<label class="radio" for="condDate"></label>
-					at
-					<input class="number alpha" type="number" name="freq" min="0" max="23" step="2" placeholder="19"/> h
-					, every
-					<select class="selectCommResult" name="day">
-						<option value="business day">business day</option>
-						<option value="day">day</option>
-						<option value="monday">monday</option>
-						<option value="tuesday">tuesday</option>
-						<option value="wednesday">wednesday</option>
-						<option value="thursday">thursday</option>
-						<option value="friday">friday</option>
-						<option value="saturday">saturday</option>
-						<option value="sunday">sunday</option>
-					</select>
-					<span class="arrDown">▾</span>
-					and
-					<select class="selectCommResult" name="day">
-						<option value="none">that's all</option>
-						<option value="monday">monday</option>
-						<option value="tuesday">tuesday</option>
-						<option value="wednesday">wednesday</option>
-						<option value="thursday">thursday</option>
-						<option value="friday">friday</option>
-						<option value="saturday">saturday</option>
-						<option value="sunday">sunday</option>
-					</select>
-					<span class="arrDown">▾</span>
-				</p>
-				<h3>Sorting for links in email</h3>
-				<p>
-					<input type="radio" id="orderByKeyword" name="orderBy" required>
-					<label class="radio" for="orderByKeyword"></label>
-					by keyword
-				</p>
-				<p>
-					<input type="radio" id="orderBySource" name="orderBy" required>
-					<label class="radio" for="orderBySource"></label>
-					by source
-				</p>
-				<p>
-					<input type="radio" id="orderByAlpha" name="orderBy" required>
-					<label class="radio" for="orderByAlpha"></label>
-					by alphabetical order
-				</p>
-				<h3>Result page</h3>
-				<p>
-					Background <select class="selectCommResult" name="deleteHistoryUnit">
-						<option value="skyscraper">Skyscraper</option>
-						<option value="mountain">Mountain</option>
-						<option value="nature">Nature</option>
-						<option value="sea">Sea</option>
-						<option value="random">Random</option>
-					</select>
-					<span class="arrDown">▾</span>
-				</p>
-				<h3>Privacy</h3>
-				<div class="align">
-					<label class="switch">
-						<input type="checkbox" checked>
-						<div class="slider"></div>
-					</label>
-					Record when a link is clicked
-				</div>
-				<p>
-					History life time : <input class="number alpha" name="history" type="number" min="1" value="12"/> months
-				</p>
-				<div class="deleteContainer">
-					<div class="deleteLogo"></div>
-					<input alt="Delete" title="Delete" class="deleteButton" type="submit" value="Delete history" />
-					the last&nbsp;
-					<input class="number alpha" name="deleteHistory" type="number" min="1" value="1"/>
-					&nbsp;
-					<select class="selectCommResult Unit" name="deleteHistoryUnit">
-						<option value="hour">Hour</option>
-						<option value="day">Day</option>
-						<option value="week">Week</option>
-						<option value="month">Month</option>
-						<option value="year">Year</option>
-					</select>
-					<span class="arrDown">▾</span>
-				</div>
-				<div class="centerSubmit">
-					<input alt="Add" title="Add" class="submit" type="submit" value="" />
-				</div>
-			</form>
+		<?php
+		foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
+		{
+			if ($ownerSourcesList['name'] == "")
+			{
+				preg_match('@^(?:http.*://)?([^/]+)@i', $ownerSourcesList['link'], $matches);
+				echo '<div class="tagSource Tactive">' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '&action=del"></a>' . PHP_EOL . '<a alt="Disable" title="Disable" href="setting?source=source' . $ownerSourcesList['id'] . '&action=disable"></a>' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '">' . $matches[1] . '</a>' . PHP_EOL . '</div>' . PHP_EOL;
+			}
+			else
+			{
+				echo '<div class="tagSource Tactive">' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '&action=del"></a>' . PHP_EOL . '<a alt="Disable" title="Disable" href="setting?source=source' . $ownerSourcesList['id'] . '&action=disable"></a>' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '">' . $ownerSourcesList['name'] . '</a>' . PHP_EOL . '</div>' . PHP_EOL;
+			}
+
+			echo '<div class="keywordList">' . PHP_EOL;
+
+			foreach ($reqReadOwnerSourcesKeywordtmp as $ownerKeywordList)
+			{
+				$applicable_owners_sources = $ownerKeywordList['applicable_owners_sources'];
+
+				if (preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*," . $ownerSourcesList['id'] . ",[,0-9,]*\|/", $applicable_owners_sources))
+				{
+					echo '<div class="tag Tactive">' . PHP_EOL . '<a alt="Delete" title="Delete" href="setting?keyword=keyword' . $ownerKeywordList['id'] . '&action=del"></a>' . PHP_EOL . '<a alt="Disable" title="Disable" href="setting?keyword=keyword' . $ownerKeywordList['id'] . '&action=disable"></a>' . PHP_EOL . '<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">' . $ownerKeywordList['keyword'] . '</a>' . PHP_EOL . '</div>' .PHP_EOL;
+				}
+			}
+			echo '</div>' . PHP_EOL;
+		}
+		?>
+
+		<div class="tagSource Tactive">
+			<a href="setting?source=source&action=del"></a>
+			<a alt="Disable" title="Disable" href="setting?source=source&action=disable"></a>
+			<a href="setting?source=source">Nextinpact</a>
+		</div>
+		<div class="keywordList">
+			<div class="tag Tactive">
+				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
+				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
+				<a href="setting?keyword=keyword">test</a>
+			</div>
+			<div class="tag Tactive">
+				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
+				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
+				<a href="setting?keyword=keyword">Ours</a>
+			</div>
+			<div class="tag Tactive">
+				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
+				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
+				<a href="setting?keyword=keyword">Chien vert</a>
+			</div>
+			<div class="tag Tactive">
+				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
+				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
+				<a href="setting?keyword=keyword">neutron</a>
+			</div>
+			<div class="tag Tactive">
+				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
+				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
+				<a href="setting?keyword=keyword">nucléaire</a>
+			</div>
+			<div class="tag Tactive">
+				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
+				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
+				<a href="setting?keyword=keyword">wikileaks</a>
+			</div>
+		</div>
+		<div class="tagSource Tactive">
+			<a href="setting?source=source&action=del"></a>
+			<a alt="Disable" title="Disable" href="setting?source=source&action=disable"></a>
+			<a href="setting?source=source">Les-crises</a>
+		</div>
+		<div class="keywordList">
+			<div class="tag Tactive">
+				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
+				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
+				<a href="setting?keyword=keyword">test</a>
+			</div>
+			<div class="tag Tactive">
+				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
+				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
+				<a href="setting?keyword=keyword">Ours</a>
+			</div>
+			<div class="tag Tdisable">
+				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
+				<a alt="Activate" title="Activate" href="setting?keyword=keyword&action=activate"></a>
+				<a href="setting?keyword=keyword">Chien vert</a>
+			</div>
+			<div class="tag Tdisable">
+				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
+				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
+				<a href="setting?keyword=keyword">neutron</a>
+			</div>
+			<div class="tag Tactive">
+				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
+				<a alt="Activate" title="Activate" href="setting?keyword=keyword&action=activate"></a>
+				<a href="setting?keyword=keyword">nucléaire</a>
+			</div>
+			<div class="tag Tdisable">
+				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
+				<a alt="Activate" title="Activate" href="setting?keyword=keyword&action=activate"></a>
+				<a href="setting?keyword=keyword">wikileaks</a>
+			</div>
+		</div>
+		<div class="tagSource Tactive">
+			<a href="setting?source=source&action=del"></a>
+			<a alt="Disable" title="Disable" href="setting?source=source&action=disable"></a>
+			<a href="setting?source=source">Numerama</a>
+		</div>
+		<div class="keywordList">
+			<div class="tag Tactive">
+				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
+				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
+				<a href="setting?keyword=keyword">test</a>
+			</div>
+			<div class="tag Tactive">
+				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
+				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
+				<a href="setting?keyword=keyword">Ours</a>
+			</div>
+			<div class="tag Tactive">
+				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
+				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
+				<a href="setting?keyword=keyword">Chien vert</a>
+			</div>
+			<div class="tag Tdisable">
+				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
+				<a alt="Activate" title="Activate" href="setting?keyword=keyword&action=activate"></a>
+				<a href="setting?keyword=keyword">neutron</a>
+			</div>
+			<div class="tag Tactive">
+				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
+				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
+				<a href="setting?keyword=keyword">nucléaire</a>
+			</div>
+			<div class="tag Tactive">
+				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
+				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
+				<a href="setting?keyword=keyword">wikileaks</a>
+			</div>
+		</div>
+		<div class="tagSource Tdisable">
+			<a href="setting?source=source&action=del"></a>
+			<a alt="Activate" title="Activate" href="setting?source=source&action=activate"></a>
+			<a href="setting?source=source">Le monde</a>
+		</div>
+		<div class="keywordList">
+			<div class="tag Tdisable">
+				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
+				<a alt="Activate" title="Activate" href="setting?keyword=keyword&action=activate"></a>
+				<a href="setting?keyword=keyword">Decodex</a>
+			</div>
 		</div>
 	</div>
+
 	<div class="scientificPublicationManagement">
 		<h2>Science watch management</h2>
 		<form method="post" action="setting.php">
