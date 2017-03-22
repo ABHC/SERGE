@@ -130,8 +130,13 @@ h3
 	border: 1px solid rgba(255,255,255, 0.15);
 	background: url('../images/+.png') center no-repeat;
 	background-size: contain;
-	background-color: rgba(0,99,149, 0.55);
+	background-color: rgb(6, 85, 124);
 	cursor: pointer;
+}
+
+.submit:hover
+{
+	background-color: rgba(0,99,149, 0.55);
 }
 
 .newsInput
