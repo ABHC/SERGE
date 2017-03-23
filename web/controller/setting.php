@@ -70,7 +70,7 @@ if (isset($_GET['keyword']) AND isset($_GET['action']) AND isset($_GET['source']
 		$applicable_owners_sourcestmp = $ownerKeywordList['applicable_owners_sources'];
 
 		# Search for source in applicable_owners_sources
-		$sourceInKeyword = preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*," . $sourceIdAction . ",[,0-9,]*\|/", $applicable_owners_sourcestmp, $applicable_owners_sourceForCurrentUser);
+		$sourceInKeyword = preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*,!*" . $sourceIdAction . ",[,0-9,]*\|/", $applicable_owners_sourcestmp, $applicable_owners_sourceForCurrentUser);
 
 		if ($ownerKeywordList['id'] == $keywordIdAction AND $sourceInKeyword)
 		{
@@ -89,7 +89,13 @@ if (isset($_GET['keyword']) AND isset($_GET['action']) AND isset($_GET['source']
 	}
 	elseif ($keywordExist AND $action == 'disableKeyword')
 	{
-		//include_once('model/disableKeyword.php');## A créer
+		include_once('model/disableKeyword.php');
+		header('Location: setting');
+	}
+	elseif ($keywordExist AND $action == 'activateKeyword')
+	{
+		include_once('model/activateKeyword.php');
+		header('Location: setting');
 	}
 	else
 	{

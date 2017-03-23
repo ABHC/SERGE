@@ -541,6 +541,10 @@
 				{
 					echo '<div class="tag Tactive">' . PHP_EOL . '<a alt="Delete" title="Delete" href="setting?source=source'. $ownerSourcesList['id'] . '&keyword=keyword' . $ownerKeywordList['id'] . '&action=delKeyword"></a>' . PHP_EOL . '<a alt="Disable" title="Disable" href="setting?source=source'. $ownerSourcesList['id'] . '&keyword=keyword' . $ownerKeywordList['id'] . '&action=disableKeyword"></a>' . PHP_EOL . '<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">' . $ownerKeywordList['keyword'] . '</a>' . PHP_EOL . '</div>' .PHP_EOL;
 				}
+				elseif (preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*,!" . $ownerSourcesList['id'] . ",[,0-9,]*\|/", $applicable_owners_sources))
+				{
+					echo '<div class="tag Tdisable">' . PHP_EOL . '<a alt="Delete" title="Delete" href="setting?source=source'. $ownerSourcesList['id'] . '&keyword=keyword' . $ownerKeywordList['id'] . '&action=delKeyword"></a>' . PHP_EOL . '<a alt="Activate" title="Activate" href="setting?source=source'. $ownerSourcesList['id'] . '&keyword=keyword' . $ownerKeywordList['id'] . '&action=activateKeyword"></a>' . PHP_EOL . '<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">' . $ownerKeywordList['keyword'] . '</a>' . PHP_EOL . '</div>' .PHP_EOL;
+				}
 			}
 			echo '</div>' . PHP_EOL;
 		}
