@@ -539,124 +539,12 @@
 
 				if (preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*," . $ownerSourcesList['id'] . ",[,0-9,]*\|/", $applicable_owners_sources))
 				{
-					echo '<div class="tag Tactive">' . PHP_EOL . '<a alt="Delete" title="Delete" href="setting?keyword=keyword' . $ownerKeywordList['id'] . '&action=del"></a>' . PHP_EOL . '<a alt="Disable" title="Disable" href="setting?keyword=keyword' . $ownerKeywordList['id'] . '&action=disable"></a>' . PHP_EOL . '<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">' . $ownerKeywordList['keyword'] . '</a>' . PHP_EOL . '</div>' .PHP_EOL;
+					echo '<div class="tag Tactive">' . PHP_EOL . '<a alt="Delete" title="Delete" href="setting?source=source'. $ownerSourcesList['id'] . '&keyword=keyword' . $ownerKeywordList['id'] . '&action=delKeyword"></a>' . PHP_EOL . '<a alt="Disable" title="Disable" href="setting?source=source'. $ownerSourcesList['id'] . '&keyword=keyword' . $ownerKeywordList['id'] . '&action=disableKeyword"></a>' . PHP_EOL . '<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">' . $ownerKeywordList['keyword'] . '</a>' . PHP_EOL . '</div>' .PHP_EOL;
 				}
 			}
 			echo '</div>' . PHP_EOL;
 		}
 		?>
-
-		<div class="tagSource Tactive">
-			<a href="setting?source=source&action=del"></a>
-			<a alt="Disable" title="Disable" href="setting?source=source&action=disable"></a>
-			<a href="setting?source=source">Nextinpact</a>
-		</div>
-		<div class="keywordList">
-			<div class="tag Tactive">
-				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-				<a href="setting?keyword=keyword">test</a>
-			</div>
-			<div class="tag Tactive">
-				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-				<a href="setting?keyword=keyword">Ours</a>
-			</div>
-			<div class="tag Tactive">
-				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-				<a href="setting?keyword=keyword">Chien vert</a>
-			</div>
-			<div class="tag Tactive">
-				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-				<a href="setting?keyword=keyword">neutron</a>
-			</div>
-			<div class="tag Tactive">
-				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-				<a href="setting?keyword=keyword">nucléaire</a>
-			</div>
-			<div class="tag Tactive">
-				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-				<a href="setting?keyword=keyword">wikileaks</a>
-			</div>
-		</div>
-		<div class="tagSource Tactive">
-			<a href="setting?source=source&action=del"></a>
-			<a alt="Disable" title="Disable" href="setting?source=source&action=disable"></a>
-			<a href="setting?source=source">Les-crises</a>
-		</div>
-		<div class="keywordList">
-			<div class="tag Tactive">
-				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-				<a href="setting?keyword=keyword">test</a>
-			</div>
-			<div class="tag Tactive">
-				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-				<a href="setting?keyword=keyword">Ours</a>
-			</div>
-			<div class="tag Tdisable">
-				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-				<a alt="Activate" title="Activate" href="setting?keyword=keyword&action=activate"></a>
-				<a href="setting?keyword=keyword">Chien vert</a>
-			</div>
-			<div class="tag Tdisable">
-				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-				<a href="setting?keyword=keyword">neutron</a>
-			</div>
-			<div class="tag Tactive">
-				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-				<a alt="Activate" title="Activate" href="setting?keyword=keyword&action=activate"></a>
-				<a href="setting?keyword=keyword">nucléaire</a>
-			</div>
-			<div class="tag Tdisable">
-				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-				<a alt="Activate" title="Activate" href="setting?keyword=keyword&action=activate"></a>
-				<a href="setting?keyword=keyword">wikileaks</a>
-			</div>
-		</div>
-		<div class="tagSource Tactive">
-			<a href="setting?source=source&action=del"></a>
-			<a alt="Disable" title="Disable" href="setting?source=source&action=disable"></a>
-			<a href="setting?source=source">Numerama</a>
-		</div>
-		<div class="keywordList">
-			<div class="tag Tactive">
-				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-				<a href="setting?keyword=keyword">test</a>
-			</div>
-			<div class="tag Tactive">
-				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-				<a href="setting?keyword=keyword">Ours</a>
-			</div>
-			<div class="tag Tactive">
-				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-				<a href="setting?keyword=keyword">Chien vert</a>
-			</div>
-			<div class="tag Tdisable">
-				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-				<a alt="Activate" title="Activate" href="setting?keyword=keyword&action=activate"></a>
-				<a href="setting?keyword=keyword">neutron</a>
-			</div>
-			<div class="tag Tactive">
-				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-				<a href="setting?keyword=keyword">nucléaire</a>
-			</div>
-			<div class="tag Tactive">
-				<a alt="Delete" title="Delete" href="setting?keyword=keyword&action=del"></a>
-				<a alt="Disable" title="Disable" href="setting?keyword=keyword&action=disable"></a>
-				<a href="setting?keyword=keyword">wikileaks</a>
-			</div>
-		</div>
 		<div class="tagSource Tdisable">
 			<a href="setting?source=source&action=del"></a>
 			<a alt="Activate" title="Activate" href="setting?source=source&action=activate"></a>
