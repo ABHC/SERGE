@@ -1,17 +1,42 @@
 <?php
-
 // Define variables
-$ERROR_MESSAGE = '';
+$actualLetter          = '';
+$ERROR_MESSAGE         = '';
 
 /*include_once('model/get_text.php');*/
 
 # Nav activation for this page
 $setting="active";
 
+# Scroll position
+if (isset($_POST['scrollPos']))
+{
+	$_SESSION['scrollPos'] = htmlspecialchars($_POST['scrollPos']);
+}
+elseif (!isset($_SESSION['scrollPos']) OR $_SESSION['scrollPos'] == '')
+{
+	$_SESSION['scrollPos'] = 0;
+}
+
+# Save folding state
+foreach($_POST as $key => $val)
+{
+	if (preg_match("/radio-s./", $key))
+	{
+		$_SESSION[$key]=$val;
+	}
+	elseif (preg_match("/radio-ks.*/", $key))
+	{
+		$_SESSION[$key]=$val;
+	}
+}
+
+
 # User need to be connected to access to this page
 if (!isset($_SESSION['pseudo']))
 {
-	header('Location: connection.php?redirectFrom=setting');
+	$_SESSION['redirectFrom'] = 'setting';
+	header('Location: connection');
 }
 
 # Read owner sources
@@ -52,16 +77,37 @@ if (isset($_POST['sourceKeyword']) AND isset($_POST['newKeyword']))
 	$sourceId    = preg_replace('/[^0-9]/', '', htmlspecialchars($_POST['sourceKeyword']));
 	$newKeyword  = htmlspecialchars($_POST['newKeyword']);
 
-	include_once('model/addNewKeyword.php');
-	header('Location: setting');
+	if ($newKeyword != '' AND $sourceId != '')
+	{
+		include_once('model/addNewKeyword.php');
+	}
 }
 
-if (isset($_GET['keyword']) AND isset($_GET['action']) AND isset($_GET['source']))
+# Delete, disable, active keyword
+if (isset($_POST['delKeyword']))
 {
-	$keywordIdAction = preg_replace('/[^0-9]/', '', htmlspecialchars($_GET['keyword']));
-	$sourceIdAction  = preg_replace('/[^0-9]/', '', htmlspecialchars($_GET['source']));
-	$action          = htmlspecialchars($_GET['action']);
+	preg_match_all("/[0-9]*&/", htmlspecialchars($_POST['delKeyword']), $matchKeywordAndSource);
+	$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][0]);
+	$keywordIdAction = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][1]);
+	$action          = 'delKeyword';
+}
+elseif (isset($_POST['disableKeyword']))
+{
+	preg_match_all("/[0-9]*&/", htmlspecialchars($_POST['disableKeyword']), $matchKeywordAndSource);
+	$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][0]);
+	$keywordIdAction = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][1]);
+	$action          = 'disableKeyword';
+}
+elseif (isset($_POST['activateKeyword']))
+{
+	preg_match_all("/[0-9]*&/", htmlspecialchars($_POST['activateKeyword']), $matchKeywordAndSource);
+	$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][0]);
+	$keywordIdAction = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][1]);
+	$action          = 'activateKeyword';
+}
 
+if (isset($sourceIdAction) AND isset($keywordIdAction) AND isset($action))
+{
 	# Check if keyword exist for this ownerSourcesList
 	$keywordExist = FALSE;
 	foreach ($reqReadOwnerSourcesKeywordtmp as $ownerKeywordList)

@@ -22,7 +22,7 @@
 			$applicable_owners_sources = $req->fetch();
 			$req->closeCursor();
 
-			if (preg_match("/(\|[0-9]*:,)*\|/", $applicable_owners_sources['applicable_owners_sources']))
+			if (preg_match("/(\|[0-9]+:,)+\|/", $applicable_owners_sources['applicable_owners_sources']))
 			{
 				$req = $bdd->prepare('DELETE FROM keyword_news_serge WHERE id = :id');
 				$req->execute(array(

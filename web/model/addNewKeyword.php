@@ -1,4 +1,6 @@
 <?php
+$updateBDD = TRUE;
+
 // Check if keyword is already in bdd
 $req = $bdd->prepare('SELECT id, applicable_owners_sources, active FROM keyword_news_serge WHERE LOWER(keyword) = LOWER(:newKeyword)');
 $req->execute(array(
@@ -19,6 +21,7 @@ if (!$result)
 	}
 	else
 	{
+		# TODO Test if sourceId is an existing sources
 		$applicable_owners_sources = '|' . $_SESSION['id'] . ':,' . $sourceId . ',|';
 	}
 	// Adding new keyword
@@ -29,6 +32,7 @@ if (!$result)
 		'applicable_owners_sources' => $applicable_owners_sources,
 		'active' => $active));
 		$req->closeCursor();
+	header('Location: setting');
 }
 else
 {
@@ -44,6 +48,7 @@ else
 
 		if (preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*," . $sourceId . ",[,0-9,]*\|/", $applicable_owners_sources) AND $sourceId != '00')
 		{
+			$updateBDD     = FALSE;
 			$ERROR_MESSAGE = 'The keyword for this source was already in the database';
 		}
 		else
@@ -88,12 +93,16 @@ else
 		$applicable_owners_sources = preg_replace("/\|$/", $userApplicable_owners_sourcesNEW,$applicable_owners_sources);
 	}
 
-	$active = $result['active'] + 1;
-	$req = $bdd->prepare('UPDATE keyword_news_serge SET applicable_owners_sources = :applicable_owners_sources, active = :active WHERE id = :id');
-	$req->execute(array(
-		'applicable_owners_sources' => $applicable_owners_sources,
-		'active' => $active,
-		'id' => $result['id']));
-		$req->closeCursor();
+	if ($updateBDD)
+	{
+		$active = $result['active'] + 1;
+		$req = $bdd->prepare('UPDATE keyword_news_serge SET applicable_owners_sources = :applicable_owners_sources, active = :active WHERE id = :id');
+		$req->execute(array(
+			'applicable_owners_sources' => $applicable_owners_sources,
+			'active' => $active,
+			'id' => $result['id']));
+			$req->closeCursor();
+			header('Location: setting');
+	}
 }
 ?>

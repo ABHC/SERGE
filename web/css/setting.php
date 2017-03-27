@@ -145,6 +145,7 @@ h3
 	justify-content: flex-start;
 	align-items: center;
 	margin-bottom: 15px;
+	width: 100%;
 }
 
 .newsInput input[type="text"],
@@ -335,22 +336,37 @@ h2
 	margin-top: 50px;
 }
 
+.sourceList
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: flex-start;
+	flex-wrap: wrap;
+	margin-left: 2%;
+	margin-bottom: 10px;
+	width: 98%;
+	height: 30px;
+	overflow: hidden;
+}
+
 .keywordList
 {
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
 	flex-wrap: wrap;
-	margin-left: 2%;
+	margin-left: 4%;
 	margin-bottom: 10px;
 	width: 200px;
 	height: 30px;
 	overflow: hidden;
 }
 
-.keywordManagement > input:checked + .keywordList
+.sourceList > input:checked + .keywordList,
+.keywordManagement  > input:checked + .sourceList
 {
-	width: 98%;
+	width: 96%;
 	height: auto;
 }
 
@@ -359,7 +375,7 @@ h2
 	display: none;
 }
 
-.keywordManagement > input:not(:checked) ~ .keywordList > .unfoldTag
+.sourceList > input:not(:checked) ~ .keywordList > .unfoldTag
 {
 	display: block;
 	border-radius: 3px 3px 3px 3px;
@@ -378,17 +394,49 @@ h2
 	cursor: pointer;
 }
 
-.keywordManagement > input:not(:checked) ~ .keywordList > .unfoldTag:hover
+.keywordManagement > input:not(:checked) ~ .sourceList > .unfoldTag,
+.keywordManagement > input:checked ~ .sourceList > .foldTag
+{
+	display: block;
+	width: 96%;
+	border-radius: 3px 3px 3px 3px;
+	border: 1px solid rgba(255,255,255, 0.15);
+	padding-top: 1px;
+	padding-bottom: 2px;
+	padding-left: 4px;
+	padding-right: 4px;
+	text-align: center;
+	margin-top: 3px;
+	margin-bottom: 3px;
+	margin-left: 3px;
+	margin-right: 2%;
+	background-color: rgba(0,120,176,0.4);
+	color: #fff;
+	cursor: pointer;
+}
+
+.keywordManagement > input:checked ~ .sourceList > .foldTag
+{
+	width: 98%;
+}
+
+.sourceList > input:not(:checked) ~ .keywordList > .unfoldTag:hover,
+.keywordManagement > input:not(:checked) ~ .sourceList > .unfoldTag:hover,
+.sourceList > input:not(:checked) ~ .keywordList > .unfoldTag:focus,
+.keywordManagement > input:not(:checked) ~ .sourceList > .unfoldTag:focus,
+.sourceList > input:not(:checked) ~ .keywordList > .unfoldTag:active,
+.keywordManagement > input:not(:checked) ~ .sourceList > .unfoldTag:active
 {
 	background-color: rgba(0, 85, 127, 0.4);
 }
 
-.keywordManagement > input:checked + .keywordList > .unfoldTag
+.sourceList > input:checked + .keywordList > .unfoldTag,
+.keywordManagement > input:checked + .sourceList > .unfoldTag
 {
 	display: none;
 }
 
-.keywordManagement > input:checked ~ .keywordList > .foldTag
+.sourceList > input:checked ~ .keywordList > .foldTag
 {
 	display: block;
 	border-radius: 3px 3px 3px 3px;
@@ -407,12 +455,18 @@ h2
 	cursor: pointer;
 }
 
-.keywordManagement > input:checked ~ .keywordList > .foldTag:hover
+.sourceList > input:checked ~ .keywordList > .foldTag:hover,
+.keywordManagement > input:checked ~ .sourceList > .foldTag:hover,
+.sourceList > input:checked ~ .keywordList > .foldTag:focus,
+.keywordManagement > input:checked ~ .sourceList > .foldTag:focus,
+.sourceList > input:checked ~ .keywordList > .foldTag:active,
+.keywordManagement > input:checked ~ .sourceList > .foldTag:active
 {
 	background-color: rgba(0, 85, 127, 0.4);
 }
 
-.keywordManagement > input:not(:checked) + .keywordList > .foldTag
+.sourceList > input:not(:checked) + .keywordList > .foldTag,
+.keywordManagement > input:not(:checked) + .sourceList > .foldTag
 {
 	display: none;
 }
@@ -478,36 +532,48 @@ h2
 	color: rgba(230,230,230,0.55);
 }
 
-.tag a:nth-child(2)
+.tag input[type='submit']:nth-child(2)
 {
 	width: 12px;
 	height: 12px;
+	border: none;
+	font-size: 0px;
+	cursor: pointer;
 	background: url('../images/Active.png') center no-repeat;
 	background-size: contain;
 	margin-left: 0;
 	margin-right: 1px;
 }
 
-.tag a:nth-child(2):hover
+.tag input[type='submit']:nth-child(2):hover
 {
 	width: 12px;
 	height: 12px;
+	border: none;
+	font-size: 0px;
+	cursor: pointer;
 	background: url('../images/Disable.png') center no-repeat;
 	background-size: contain;
 }
 
-.tag.Tdisable a:nth-child(2)
+.tag.Tdisable input[type='submit']:nth-child(2)
 {
 	width: 12px;
 	height: 12px;
+	border: none;
+	font-size: 0px;
+	cursor: pointer;
 	background: url('../images/Desactivated.png') center no-repeat;
 	background-size: contain;
 }
 
-.tag.Tdisable a:nth-child(2):hover
+.tag.Tdisable input[type='submit']:nth-child(2):hover
 {
 	width: 12px;
 	height: 12px;
+	border: none;
+	font-size: 0px;
+	cursor: pointer;
 	background: url('../images/Activate.png') center no-repeat;
 	background-size: contain;
 }
@@ -528,25 +594,31 @@ h2
 	color: rgba(210,210,210,0.55);
 }
 
-.tag a:first-child
+.tag input[type='submit']:first-child
 {
 	width: 14px;
 	height: 14px;
+	cursor: pointer;
+	border: none;
+	font-size: 0px;
 	background: url('../images/Trash.png') center no-repeat;
 	background-size: contain;
 	margin-left: -3px;
 	margin-right: 2px;
 }
 
-.tag.Tdisable a:first-child
+.tag.Tdisable input[type='submit']:first-child
 {
 	width: 14px;
 	height: 14px;
+	cursor: pointer;
+	border: none;
+	font-size: 0px;
 	background: url('../images/TrashDesactivated.png') center no-repeat;
 	background-size: contain;
 }
 
-.tag a:first-child:hover
+.tag input[type='submit']:first-child:hover
 {
 	width: 14px;
 	height: 14px;
@@ -566,6 +638,7 @@ h2
 	padding-top: 1px;
 	padding-bottom: 2px;
 	text-align: center;
+	margin-left: 2%;
 	margin-bottom: 5px;
 	margin-top: 7px;
 }
