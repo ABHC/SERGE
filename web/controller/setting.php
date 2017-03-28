@@ -1,7 +1,15 @@
 <?php
 // Define variables
-$actualLetter          = '';
-$ERROR_MESSAGE         = '';
+$actualLetter = '';
+if (isset($_SESSION['ERROR_MESSAGE']))
+{
+	$ERROR_MESSAGE = $_SESSION['ERROR_MESSAGE'];
+	unset($_SESSION['ERROR_MESSAGE']);
+}
+else
+{
+	$ERROR_MESSAGE = '';
+}
 
 /*include_once('model/get_text.php');*/
 
@@ -44,9 +52,9 @@ include_once('model/readOwnerSources.php');
 include_once('model/readOwnerSourcesKeyword.php');
 
 # Adding new source
-if (isset($_POST['sourceType']))
+if (isset($_POST['sourceType'])  AND isset($_POST['newSource']))
 {
-	if ($_POST['sourceType'] == 'inputSource' AND isset($_POST['newSource']))
+	if (htmlspecialchars($_POST['sourceType']) == 'inputSource' AND htmlspecialchars($_POST['newSource']) != '')
 	{
 		$source       = htmlspecialchars($_POST['newSource']);
 		$sourceToTest = escapeshellarg($source);
@@ -55,7 +63,7 @@ if (isset($_POST['sourceType']))
 		# Check if the link is valid
 		exec($cmd, $linkValidation, $errorInCheckfeed);
 
-		if ($linkValidation[1] == 'VALID LINK' AND $errorInCheckfeed == 0)
+		if ($linkValidation[0] == 'valid link' AND $errorInCheckfeed == 0)
 		{
 			include_once('model/addNewSource.php');
 			header('Location: setting');
@@ -65,21 +73,29 @@ if (isset($_POST['sourceType']))
 			$ERROR_MESSAGE = 'Your link ' . 'return ' . $linkValidation[0] . ',' . $linkValidation[1] . ', please correct your link';
 		}
 	}
-	else
-	{
-		$ERROR_MESSAGE = 'You must write the link of the source';
-	}
 }
 
 # Adding new keyword
 if (isset($_POST['sourceKeyword']) AND isset($_POST['newKeyword']))
 {
+	include_once('model/addNewKeyword.php');
 	$sourceId    = preg_replace('/[^0-9]/', '', htmlspecialchars($_POST['sourceKeyword']));
 	$newKeyword  = htmlspecialchars($_POST['newKeyword']);
 
 	if ($newKeyword != '' AND $sourceId != '')
 	{
-		include_once('model/addNewKeyword.php');
+		preg_match_all("/,?[^,]*,?/", $newKeyword, $newKeyword_array);
+		array_pop($newKeyword_array[0]);
+		foreach ($newKeyword_array[0] as $keyword)
+		{
+			$newKeyword = preg_replace("/^ | *, *| $/", "", $keyword);
+			if ($newKeyword != '')
+			{
+				$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $bdd);
+			}
+		}
+		$_SESSION['ERROR_MESSAGE'] = $ERROR_MESSAGE;
+		header('Location: setting');
 	}
 }
 

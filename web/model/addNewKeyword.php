@@ -1,4 +1,6 @@
 <?php
+function addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $bdd)
+{
 $updateBDD = TRUE;
 
 // Check if keyword is already in bdd
@@ -32,7 +34,6 @@ if (!$result)
 		'applicable_owners_sources' => $applicable_owners_sources,
 		'active' => $active));
 		$req->closeCursor();
-	header('Location: setting');
 }
 else
 {
@@ -49,7 +50,7 @@ else
 		if (preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*," . $sourceId . ",[,0-9,]*\|/", $applicable_owners_sources) AND $sourceId != '00')
 		{
 			$updateBDD     = FALSE;
-			$ERROR_MESSAGE = 'The keyword for this source was already in the database';
+			$ERROR_MESSAGE = 'The keyword: "' . $newKeyword . '" for this source was already in the database<br>' . $ERROR_MESSAGE;
 		}
 		else
 		{
@@ -102,7 +103,9 @@ else
 			'active' => $active,
 			'id' => $result['id']));
 			$req->closeCursor();
-			header('Location: setting');
 	}
+}
+
+return $ERROR_MESSAGE;
 }
 ?>

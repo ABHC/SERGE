@@ -472,7 +472,7 @@
 		<div class="keywordManagement">
 			<h2>News management</h2>
 			<div class="newsInput">
-				<input alt="Add" title="Add" class="submit" type="submit" value="" />
+				<input title="Add new keyword" class="submit" type="submit" value="" />
 				<select name="sourceKeyword" id="sourceKeyword">
 					<?php
 					foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
@@ -494,7 +494,7 @@
 				<input type="text" class="keywordInput" name="newKeyword" id="keyword" placeholder="Keyword,next keyword, ..." />
 			</div>
 			<div class="newsInput">
-				<input alt="Add" title="Add" class="submit" type="submit" value="" />
+				<input alt="Add new source" title="Add" class="submit" type="submit" value="" />
 				<select name="sourceType" id="sourceKeyword">
 					<option value="inputSource">Add my own source</option>
 					<option value="sourceGeneralEN">General news source pack [English]</option>
@@ -519,8 +519,8 @@
 				$cptSource = 0;
 				foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
 				{
+					$ownerSourcesList['name'] = preg_replace("/\[!NEW!\]/", "", $ownerSourcesList['name']);
 					preg_match("/./", ucfirst($ownerSourcesList['name']), $rssFirstLetter);
-
 
 					if ($actualLetter != $rssFirstLetter[0])
 					{
@@ -549,15 +549,7 @@
 						echo '<input type="checkbox" name="radio-s' . $rssFirstLetter[0] . '" id="unfold-s' . $rssFirstLetter[0] . '" value="' . $rssFirstLetter[0] . '"' . $amICheckFoldSource . '/>'. PHP_EOL . '<div class="sourceList" >' . PHP_EOL . '<label for="unfold-s' . $rssFirstLetter[0] . '" class="unfoldTag">' . PHP_EOL . $rssFirstLetter[0] . ' ▾' . PHP_EOL . '</label>' . PHP_EOL . '<label for="unfold-s' . $rssFirstLetter[0] . '" class="foldTag">' . PHP_EOL . $rssFirstLetter[0] . ' ▴' . PHP_EOL . '</label>';
 					}
 
-					if ($ownerSourcesList['name'] == "")
-					{
-						preg_match('@^(?:http.*://)?([^/]+)@i', $ownerSourcesList['link'], $matches);
-						echo '<div class="tagSource Tactive" id="ks' . $ownerSourcesList['id'] . '">' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '&action=del"></a>' . PHP_EOL . '<a title="Disable" href="setting?source=source' . $ownerSourcesList['id'] . '&action=disable"></a>' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '">' . $matches[1] . '</a>' . PHP_EOL . '</div>' . PHP_EOL;
-					}
-					else
-					{
-						echo '<div class="tagSource Tactive" id="ks' . $ownerSourcesList['id'] . '">' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '&action=del"></a>' . PHP_EOL . '<a title="Disable" href="setting?source=source' . $ownerSourcesList['id'] . '&action=disable"></a>' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '">' . ucfirst($ownerSourcesList['name']) . '</a>' . PHP_EOL . '</div>' . PHP_EOL;
-					}
+					echo '<div class="tagSource Tactive" id="ks' . $ownerSourcesList['id'] . '">' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '&action=del"></a>' . PHP_EOL . '<a title="Disable" href="setting?source=source' . $ownerSourcesList['id'] . '&action=disable"></a>' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '">' . ucfirst($ownerSourcesList['name']) . '</a>' . PHP_EOL . '</div>' . PHP_EOL;
 
 					echo '<input type="checkbox" name="radio-ks' . $ownerSourcesList['id'] . '" id="unfold-ks' . $ownerSourcesList['id'] . '" value="' . $ownerSourcesList['id'] . '" ' . $amICheckFoldKeyword . '/>'. PHP_EOL . '<div class="keywordList" >' . PHP_EOL . '<label for="unfold-ks' . $ownerSourcesList['id'] . '" class="unfoldTag">' . PHP_EOL . 'Unfold keyword list ▾' . PHP_EOL . '</label>' . PHP_EOL . '<label for="unfold-ks' . $ownerSourcesList['id'] . '" class="foldTag">' . PHP_EOL . 'Fold keyword list ▴' . PHP_EOL . '</label>';
 
