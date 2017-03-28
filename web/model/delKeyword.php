@@ -1,5 +1,5 @@
 <?php
-	$applicable_owners_sourceForCurrentUserNEW = preg_replace("/,$sourceIdAction,/", ',', $applicable_owners_sourcesCurrentKeywordAndUser);
+	$applicable_owners_sourceForCurrentUserNEW = preg_replace("/,!*$sourceIdAction,/", ',', $applicable_owners_sourcesCurrentKeywordAndUser);
 
 	$applicable_owners_sourceForCurrentUserNEW = preg_replace("/\|/", '', $applicable_owners_sourceForCurrentUserNEW);
 
