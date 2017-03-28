@@ -570,7 +570,7 @@
 						{
 							echo '<div class="tag Tactive">' . PHP_EOL . '<input type="submit" title="Delete" name="delKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>' . PHP_EOL .'<input type="submit" title="Disable" name="disableKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>' . PHP_EOL . '<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">' . ucfirst($ownerKeywordList['keyword']) . '</a>' . PHP_EOL . '</div>' .PHP_EOL;
 						}
-						elseif (preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*,!" . $ownerSourcesList['id'] . ",[,0-9,]*\|/", $applicable_owners_sources))
+						elseif (preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*,!" . $ownerSourcesList['id'] . ",[,!0-9,]*\|/", $applicable_owners_sources))
 						{
 							echo '<div class="tag Tdisable">' . PHP_EOL . '<input type="submit" title="Delete" name="delKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>' . PHP_EOL . '<input type="submit" title="Activate" name="activateKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>' . PHP_EOL . '<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">' . ucfirst($ownerKeywordList['keyword']) . '</a>' . PHP_EOL . '</div>' .PHP_EOL;
 						}
