@@ -1,5 +1,5 @@
 <?php
-function addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $bdd)
+function addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd)
 {
 $updateBDD = TRUE;
 

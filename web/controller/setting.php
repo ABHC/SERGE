@@ -91,7 +91,7 @@ if (isset($_POST['sourceKeyword']) AND isset($_POST['newKeyword']))
 			$newKeyword = preg_replace("/^ | *, *| $/", "", $keyword);
 			if ($newKeyword != '')
 			{
-				$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $bdd);
+				$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd);
 			}
 		}
 		$_SESSION['ERROR_MESSAGE'] = $ERROR_MESSAGE;
