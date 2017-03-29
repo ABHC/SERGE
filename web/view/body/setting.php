@@ -525,28 +525,28 @@
 					if ($actualLetter != $rssFirstLetter[0])
 					{
 						$foldSourceName = 'radio-s' . $rssFirstLetter[0];
-						if ($_SESSION[$foldSourceName] == $rssFirstLetter[0])
+						$amICheckFoldSource = '';
+						if (isset($_SESSION[$foldSourceName]))
 						{
-							$amICheckFoldSource = 'checked';
-						}
-						else
-						{
-							$amICheckFoldSource = '';
-						}
-
-						$foldKeywordName = 'radio-ks' . $ownerSourcesList['id'];
-						if ($_SESSION[$foldKeywordName] == $ownerSourcesList['id'])
-						{
-							$amICheckFoldKeyword = 'checked';
-						}
-						else
-						{
-							$amICheckFoldKeyword = '';
+							if ($_SESSION[$foldSourceName] == $rssFirstLetter[0])
+							{
+								$amICheckFoldSource = 'checked';
+							}
 						}
 
 						echo '</div>';
 						$actualLetter = $rssFirstLetter[0];
-						echo '<input type="checkbox" name="radio-s' . $rssFirstLetter[0] . '" id="unfold-s' . $rssFirstLetter[0] . '" value="' . $rssFirstLetter[0] . '"' . $amICheckFoldSource . '/>'. PHP_EOL . '<div class="sourceList" >' . PHP_EOL . '<label for="unfold-s' . $rssFirstLetter[0] . '" class="unfoldTag">' . PHP_EOL . $rssFirstLetter[0] . ' ▾' . PHP_EOL . '</label>' . PHP_EOL . '<label for="unfold-s' . $rssFirstLetter[0] . '" class="foldTag">' . PHP_EOL . $rssFirstLetter[0] . ' ▴' . PHP_EOL . '</label>';
+						echo '<input type="checkbox" name="radio-s' . $rssFirstLetter[0] . '" id="unfold-s' . $rssFirstLetter[0] . '" value="' . $rssFirstLetter[0] . '" ' . $amICheckFoldSource . '/>'. PHP_EOL . '<div class="sourceList" >' . PHP_EOL . '<label for="unfold-s' . $rssFirstLetter[0] . '" class="unfoldTag">' . PHP_EOL . $rssFirstLetter[0] . ' ▾' . PHP_EOL . '</label>' . PHP_EOL . '<label for="unfold-s' . $rssFirstLetter[0] . '" class="foldTag">' . PHP_EOL . $rssFirstLetter[0] . ' ▴' . PHP_EOL . '</label>';
+					}
+
+					$foldKeywordName = 'radio-ks' . $ownerSourcesList['id'];
+					$amICheckFoldKeyword = '';
+					if (isset($_SESSION[$foldKeywordName]))
+					{
+						if ($_SESSION[$foldKeywordName] == $ownerSourcesList['id'])
+						{
+							$amICheckFoldKeyword = 'checked';
+						}
 					}
 
 					echo '<div class="tagSource Tactive" id="ks' . $ownerSourcesList['id'] . '">' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '&action=del"></a>' . PHP_EOL . '<a title="Disable" href="setting?source=source' . $ownerSourcesList['id'] . '&action=disable"></a>' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '">' . ucfirst($ownerSourcesList['name']) . '</a>' . PHP_EOL . '</div>' . PHP_EOL;

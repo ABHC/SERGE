@@ -4,7 +4,7 @@ $actualLetter = '';
 if (isset($_SESSION['ERROR_MESSAGE']))
 {
 	$ERROR_MESSAGE = $_SESSION['ERROR_MESSAGE'];
-	unset($_SESSION['ERROR_MESSAGE']);
+	$_SESSION['ERROR_MESSAGE'] = '';
 }
 else
 {
@@ -14,7 +14,9 @@ else
 /*include_once('model/get_text.php');*/
 
 # Nav activation for this page
-$setting="active";
+$result  = '';
+$wiki    = '';
+$setting = "active";
 
 # Scroll position
 if (isset($_POST['scrollPos']))
@@ -27,18 +29,32 @@ elseif (!isset($_SESSION['scrollPos']) OR $_SESSION['scrollPos'] == '')
 }
 
 # Save folding state
-foreach($_POST as $key => $val)
+if (isset($_POST['sourceType']))
 {
-	if (preg_match("/radio-s./", $key))
+	echo 'chien';
+	foreach($_SESSION as $key => $val)
 	{
-		$_SESSION[$key]=$val;
+		if (preg_match("/radio-s./", $key))
+		{
+			$_SESSION[$key] = '';
+		}
+		elseif (preg_match("/radio-ks[0-9]+/", $key))
+		{
+			$_SESSION[$key] = '';
+		}
 	}
-	elseif (preg_match("/radio-ks.*/", $key))
+	foreach($_POST as $key => $val)
 	{
-		$_SESSION[$key]=$val;
+		if (preg_match("/radio-s./", $key))
+		{
+			$_SESSION[$key] = $val;
+		}
+		elseif (preg_match("/radio-ks[0-9]+/", $key))
+		{
+			$_SESSION[$key] = $val;
+		}
 	}
 }
-
 
 # User need to be connected to access to this page
 if (!isset($_SESSION['pseudo']))
