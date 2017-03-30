@@ -104,7 +104,23 @@ if (isset($_POST['sourceKeyword']) AND isset($_POST['newKeyword']))
 		foreach ($newKeyword_array[0] as $keyword)
 		{
 			$newKeyword = preg_replace("/^ | *, *| $/", "", $keyword);
-			if ($newKeyword != '')
+			# Special keyword :all
+			if ($newKeyword == ':all' AND $sourceId =! '00')
+			{
+				$newKeyword = ':all@' . $sourceId;
+				$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd);
+			}
+			elseif ($newKeyword == ':all' AND $sourceId == '00')
+			{
+				$updateBDD = FALSE;
+				foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
+				{
+					$newKeyword = ':all@' . $ownerSourcesList['id'];
+					$sourceId = $ownerSourcesList['id'];
+					$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd);
+				}
+			}
+			elseif ($newKeyword != '')
 			{
 				$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd);
 			}
