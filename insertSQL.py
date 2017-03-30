@@ -13,6 +13,7 @@ import traceback
 import logging
 from logging.handlers import RotatingFileHandler
 import feedparser
+import jellyfish
 
 sys.path.insert(0, "modules/UFP/feedparser")
 sys.path.insert(1, "modules/UFP/feedparser")
@@ -80,6 +81,7 @@ def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 				########### SOURCE TITLE RETRIEVAL
 				try:
 					source_title = xmldoc.feed.title
+					source_title = source_title.capitalize()
 				except AttributeError:
 					logger_info.warning("NO TITLE IN :"+link+"\n")
 					source_title = None
@@ -120,8 +122,9 @@ def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 
 			link = rows[0]
 			rss_name = rows[1]
+			refresh_string = "[!NEW!]"
 
-			if rss_name is None :
+			if rss_name is None or refresh_string in rss_name :
 
 				req_results = sergenet.allRequestLong(link, logger_info, logger_error)
 				rss_error = req_results[0]
@@ -138,6 +141,7 @@ def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 					########### SOURCE TITLE RETRIEVAL
 					try:
 						source_title = xmldoc.feed.title
+						source_title = source_title.capitalize()
 					except AttributeError:
 						logger_info.warning("NO TITLE IN :"+link+"\n") ###
 						source_title = None
@@ -157,7 +161,7 @@ def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 			num = num+1
 
 
-def insertOrUpdate(query_checking, query_insertion, query_update, query_update_owners, post_link, item, id_item_comma, id_item_comma2, owners, logger_info, logger_error, database) :
+def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_update_owners, query_jelly_update, post_link, post_title, item, id_item_comma, id_item_comma2, id_rss, owners, logger_info, logger_error, function_id, database) :
 	"""insertOrUpdate manage links insertion or data update if the link is already present."""
 
 	########### DATABASE CHECKING
@@ -165,6 +169,30 @@ def insertOrUpdate(query_checking, query_insertion, query_update, query_update_o
 	call_data_cheking.execute(query_checking, (post_link, ))
 	checking = call_data_cheking.fetchone()
 	call_data_cheking.close()
+
+	jelly_breaker = False
+
+	########### DATABASE JELLYCHEKING
+	if function_id == 1 or function_id == 3:
+		call_data_cheking = database.cursor()
+		call_data_cheking.execute(query_jellychecking, (id_rss, ))
+		jellychecking = call_data_cheking.fetchall()
+		call_data_cheking.close()
+
+		for jelly in jellychecking:
+			jelly_title = jelly[0]
+			jelly_link = jelly[1]
+
+			jelly_title_score = jellyfish.levenshtein_distance(post_title, jelly_title)
+			jelly_link_score = jellyfish.levenshtein_distance(post_link, jelly_link)
+
+			if jelly_title_score <= 3 and jelly_breaker == False:
+				jelly_breaker = True
+				break
+
+			elif jelly_link_score <= 3 and jelly_breaker == False:
+				jelly_breaker = True
+				break
 
 	########### DATABASE INSERTION
 	if checking is None:
@@ -181,6 +209,8 @@ def insertOrUpdate(query_checking, query_insertion, query_update, query_update_o
 		insert_data.close()
 
 	########### DATABASE UPDATE
+
+	########### OWNERS UPDATE
 	else:
 		field_id_item = checking[0]
 		item_owners = checking[1]
@@ -221,6 +251,20 @@ def insertOrUpdate(query_checking, query_insertion, query_update, query_update_o
 				update_data.close()
 
 			split_index = split_index+1
+
+		########### JELLY (TITLE + LINK) UPDATE
+		if jelly_breaker == True:
+			update_data = database.cursor()
+			try:
+				update_data.execute(query_jelly_update, (post_title, post_link, jelly_link))
+				database.commit()
+			except Exception, except_type:
+				database.rollback()
+				logger_error.error("ROLLBACK AT JELLY UPDATE IN insertOrUpdate FUNCTION")
+				logger_error.error(query_update)
+				logger_error.error(repr(except_type))
+			update_data.close()
+
 
 
 def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database):

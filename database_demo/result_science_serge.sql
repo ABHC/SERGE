@@ -2,6 +2,7 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
 CREATE TABLE `result_science_serge` (
+  `id` int(11) NOT NULL,
   `title` text COLLATE utf8mb4_bin NOT NULL,
   `link` text COLLATE utf8mb4_bin NOT NULL,
   `send_status` VARCHAR(16000) COLLATE utf8mb4_bin DEFAULT ',0,',

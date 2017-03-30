@@ -66,9 +66,9 @@ def checkMate(database, logger_info, logger_error):
     keyword_news_serge_numbers = 4
     queries_science_serge_numbers = 5
     queries_wipo_serge_numbers = 4
-    result_news_serge_numbers = 7
-    result_patents_serge_numbers = 6
-    result_science_serge_numbers = 7
+    result_news_serge_numbers = 8
+    result_patents_serge_numbers = 7
+    result_science_serge_numbers = 8
     rss_serge_numbers = 6
     time_serge_numbers = 2
     users_table_serge_numbers = 15
@@ -102,9 +102,9 @@ def checkMate(database, logger_info, logger_error):
     keyword_news_serge_columns = ["id", "keyword", "applicable_owners_sources", "active"]
     queries_science_serge_columns = ["id", "query_arxiv", "query_doaj", "owners", "active"]
     queries_wipo_serge_columns = ["id", "query", "owners", "active"]
-    result_news_serge_columns = ["title", "link", "send_status", "date", "id_source", "keyword_id", "owners"]
-    result_patents_serge_columns = ["title", "link", "send_status", "date", "id_query_wipo", "owners"]
-    result_science_serge_columns = ["title", "link", "send_status", "date", "id_source", "query_id", "owners"]
+    result_news_serge_columns = ["id", "title", "link", "send_status", "date", "id_source", "keyword_id", "owners"]
+    result_patents_serge_columns = ["id", "title", "link", "send_status", "date", "id_query_wipo", "owners"]
+    result_science_serge_columns = ["id", "title", "link", "send_status", "date", "id_source", "query_id", "owners"]
     rss_serge_columns = ["id", "link", "name", "owners", "etag", "active"]
     time_serge_columns = ["name", "timestamps"]
     users_table_serge_columns = ["id", "users", "email", "password", "last_mail", "send_condition", "frequency", "link_limit", "selected_days", "selected_hour", "mail_design", "language", "permission_news", "permission_science", "permission_patents"]

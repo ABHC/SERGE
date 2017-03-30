@@ -141,7 +141,7 @@ def newscast(last_launch, max_users):
 
 	logger_info.info("\n\n######### Last News Research (newscast function) : \n\n")
 
-	new_article = 0
+	function_id = 1
 
 	######### CALL TO TABLE rss_serge
 
@@ -350,35 +350,78 @@ def newscast(last_launch, max_users):
 					id_item_comma2 = "," + str(keyword_id) + ","
 					item = (post_title, post_link, human_date, id_rss, id_item_comma2, owners)
 
-					if (keyword_lower in post_title_lower or keyword_lower in post_description_lower or keyword_lower in tags_list_lower or ":all@" in keyword_lower) and post_date >= last_launch and owners is not None:
+					########### AGGREGATED KEYWORDS RESEARCH
+					if "+" in keyword:
+						aggregated_keyword = keyword.split("+")
 
-						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
+						redundancy = 0
 
-						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
+						for splitkey in aggregated_keyword:
+							splitkey = splitkey.strip().lower()
+							splitkey_sans_accent = sans_accent_maj(splitkey)
 
-						########### QUERY FOR DATABASE UPDATE
-						query_update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
-						query_update_owners = ("UPDATE result_news_serge SET owners = %s WHERE link = %s")
+							if (splitkey in post_title_lower or splitkey in post_description_lower or splitkey in tags_list_lower) and post_date >= last_launch and owners is not None:
 
-						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_insertion, query_update, query_update_owners, post_link, item, id_item_comma, id_item_comma2, owners, logger_info, logger_error, database)
+								redundancy = redundancy + 1
 
-					elif (keyword_sans_accent in post_title_sans_accent or keyword_sans_accent in post_description_sans_accent or keyword_sans_accent in tags_list_sans_accent) and post_date >= last_launch and owners is not None:
+							elif (splitkey_sans_accent in post_title_lower or splitkey_sans_accent in post_description_sans_accent or splitkey in tags_list_sans_accent) and post_date >= last_launch and owners is not None:
 
-						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
+								redundancy = redundancy + 1
 
-						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
+						if redundancy == len(aggregated_keyword):
 
-						########### QUERY FOR DATABASE UPDATE
-						query_update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
-						query_update_owners = ("UPDATE result_news_serge SET owners = %s WHERE link = %s")
+							########### QUERY FOR DATABASE CHECKING
+							query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
+							query_jellychecking = ("SELECT title, link FROM result_news_serge WHERE id_source = %s")
 
-						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_insertion, query_update, query_update_owners, post_link, item, id_item_comma, id_item_comma2, owners, logger_info, logger_error, database)
+							########### QUERY FOR DATABASE INSERTION
+							query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
+
+							########### QUERY FOR DATABASE UPDATE
+							query_update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
+							query_update_owners = ("UPDATE result_news_serge SET owners = %s WHERE link = %s")
+							query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s WHERE link = %s")
+
+							########### CALL insertOrUpdate FUNCTION
+							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_update_owners, query_jelly_update, post_link, post_title, item, id_item_comma, id_item_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
+
+					########### SIMPLE KEYWORDS RESEARCH
+					else:
+						########### RESEARCH OF KEYWORDS IN LOWER CASE
+						if (keyword_lower in post_title_lower or keyword_lower in post_description_lower or keyword_lower in tags_list_lower or ":all@" in keyword_lower) and post_date >= last_launch and owners is not None:
+
+							########### QUERY FOR DATABASE CHECKING
+							query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
+							query_jellychecking = ("SELECT title, link FROM result_news_serge WHERE id_source = %s")
+
+							########### QUERY FOR DATABASE INSERTION
+							query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
+
+							########### QUERIES FOR DATABASE UPDATE
+							query_update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
+							query_update_owners = ("UPDATE result_news_serge SET owners = %s WHERE link = %s")
+							query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s WHERE link = %s")
+
+							########### CALL insertOrUpdate FUNCTION
+							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_update_owners, query_jelly_update, post_link, post_title, item, id_item_comma, id_item_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
+
+						########### RESEARCH OF KEYWORDS WITHOUT ACCENTS
+						elif (keyword_sans_accent in post_title_sans_accent or keyword_sans_accent in post_description_sans_accent or keyword_sans_accent in tags_list_sans_accent) and post_date >= last_launch and owners is not None:
+
+							########### QUERY FOR DATABASE CHECKING
+							query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
+							query_jellychecking = ("SELECT title, link FROM result_news_serge WHERE id_source = %s")
+
+							########### QUERY FOR DATABASE INSERTION
+							query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
+
+							########### QUERY FOR DATABASE UPDATE
+							query_update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
+							query_update_owners = ("UPDATE result_news_serge SET owners = %s WHERE link = %s")
+							query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s WHERE link = %s")
+
+							########### CALL insertOrUpdate FUNCTION
+							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_update_owners, query_jelly_update, post_link, post_title, item, id_item_comma, id_item_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
 
 					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
@@ -395,6 +438,9 @@ def patents(last_launch):
 		- research of the keywords in the xml beacons <title> and <description>
 		- if serge find a news this one is added to the database
 		- if the news is already saved in the database serge continue to search other news"""
+
+	function_id = 2
+	id_rss = None
 
 	#WIPO_languages = ["ZH", "DA", "EN", "FR", "DE", "HE", "IT", "JA", "KO", "PL", "PT", "RU", "ES", "SV", "VN"]
 	logger_info.info("\n\n######### Last Patents Research (patents function) : \n\n")
@@ -456,6 +502,7 @@ def patents(last_launch):
 
 							########### QUERY FOR DATABASE CHECKING
 							query_checking = ("SELECT id_query_wipo, owners FROM result_patents_serge WHERE link = %s")
+							query_jellychecking = None
 
 							########### QUERY FOR DATABASE INSERTION
 							query_insertion = ("INSERT INTO result_patents_serge(title, link, date, id_query_wipo, owners) VALUES(%s, %s, %s, %s, %s)")
@@ -463,9 +510,10 @@ def patents(last_launch):
 							########### QUERY FOR DATABASE UPDATE
 							query_update = ("UPDATE result_patents_serge SET id_query_wipo = %s WHERE link = %s")
 							query_update_owners = ("UPDATE result_patents_serge SET owners = %s WHERE link = %s")
+							query_jelly_update = None
 
 							########### CALL insertOrUpdate FUNCTION
-							insertSQL.insertOrUpdate(query_checking, query_insertion, query_update, query_update_owners, post_link, item, id_item_comma, id_item_comma2, owners, logger_info, logger_error, database)
+							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_update_owners, query_jelly_update, post_link, post_title, item, id_item_comma, id_item_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
 
 						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
@@ -488,6 +536,8 @@ def science(last_launch):
 		- URL re-building with DOAJ query
 		- Research of last published papers related to the query at DOAJ
 		- Same routine for content saving"""
+
+	function_id = 3
 
 	######### Recherche SCIENCE
 	logger_info.info("\n\n######### Last Scientific papers on Arxiv.org (science function) : \n\n")
@@ -556,13 +606,14 @@ def science(last_launch):
 
 						id_item_comma = str(query_id)+","
 						id_item_comma2 = ","+str(query_id)+","
-						id_source = 0
-						item = (post_title, post_link, human_date, id_item_comma2, id_source, owners)
+						id_rss = 0
+						item = (post_title, post_link, human_date, id_item_comma2, id_rss, owners)
 
 						if post_date >= last_launch:
 
 							########### QUERY FOR DATABASE CHECKING
 							query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
+							query_jellychecking = ("SELECT title, link FROM result_science_serge WHERE id_source = %s")
 
 							########### QUERY FOR DATABASE INSERTION
 							query_insertion = ("INSERT INTO result_science_serge(title, link, date, query_id, id_source, owners) VALUES(%s, %s, %s, %s, %s, %s)")
@@ -570,9 +621,10 @@ def science(last_launch):
 							########### QUERY FOR DATABASE UPDATE
 							query_update = ("UPDATE result_science_serge SET query_id = %s WHERE link = %s")
 							query_update_owners = ("UPDATE result_science_serge SET owners = %s WHERE link = %s")
+							query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s WHERE link = %s")
 
 							########### CALL insertOrUpdate FUNCTION
-							insertSQL.insertOrUpdate(query_checking, query_insertion, query_update, query_update_owners, post_link, item, id_item_comma, id_item_comma2, owners, logger_info, logger_error, database)
+							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_update_owners, query_jelly_update, post_link, post_title, item, id_item_comma, id_item_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
 
 						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
@@ -626,13 +678,14 @@ def science(last_launch):
 
 					id_item_comma = str(query_id)+","
 					id_item_comma2 = ","+str(query_id)+","
-					id_source = 1
-					item = (post_title, post_link, human_date, id_item_comma2, id_source, owners)
+					id_rss = 1
+					item = (post_title, post_link, human_date, id_item_comma2, id_rss, owners)
 
 					if post_date >= last_launch:
 
 						########### QUERY FOR DATABASE CHECKING
 						query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
+						query_jellychecking = ("SELECT title, link FROM result_science_serge WHERE id_source = %s")
 
 						########### QUERY FOR DATABASE INSERTION
 						query_insertion = ("INSERT INTO result_science_serge(title, link, date, query_id, id_source, owners) VALUES(%s, %s, %s, %s, %s, %s)")
@@ -640,9 +693,10 @@ def science(last_launch):
 						########### QUERY FOR DATABASE UPDATE
 						query_update = ("UPDATE result_science_serge SET query_id = %s WHERE link = %s")
 						query_update_owners = ("UPDATE result_science_serge SET owners = %s WHERE link = %s")
+						query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s WHERE link = %s")
 
 						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_insertion, query_update, query_update_owners, post_link, item, id_item_comma, id_item_comma2, owners, logger_info, logger_error, database)
+						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_update_owners, query_jelly_update, post_link, post_title, item, id_item_comma, id_item_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
 
 					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
@@ -915,6 +969,7 @@ update = ("UPDATE time_serge SET timestamps = %s WHERE name = 'timelog'")
 
 call_time = database.cursor()
 call_time.execute(update, (now, ))
+database.commit()
 call_time.close()
 
 the_end = time.time()
