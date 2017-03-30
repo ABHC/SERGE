@@ -87,6 +87,8 @@ def buildMail(user, user_id_comma, register, pydate, permission_news, permission
 			if ":all@" in word_and_attribute[0] :
 				split_for_all = word_and_attribute[0].split("@")
 
+				query_sitename = "SELECT name FROM rss_serge WHERE id = %s"
+
 				call_name = database.cursor()
 				call_name.execute(query_sitename, (split_for_all[1], ))
 				sitename = call_name.fetchone()
