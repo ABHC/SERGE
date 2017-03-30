@@ -22,10 +22,9 @@ if (isset($_POST['conn_pseudo']) && isset($_POST['conn_password']))
 	else
 	{
 		session_start();
-		$_SESSION['pass']   = $password;
 		$_SESSION['pseudo'] = $pseudo;
 		$_SESSION['id']     = $result['id'];
-		$redirect           = htmlspecialchars($_GET['redirectFrom']);
+		$redirect           = $_SESSION['redirectFrom'];
 		header("Location: $redirect");
 	}
 }

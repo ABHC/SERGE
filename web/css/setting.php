@@ -96,7 +96,8 @@ select option
 
 select#sourceKeyword
 {
-	width: calc(50% - 60px);
+	flex: 1;
+	max-width: 50%;
 	background-color: rgba(255,89,0,0.4);
 	height: 27px;
 	margin-left: 10px;
@@ -107,6 +108,11 @@ select#sourceKeyword
 select#sourceKeyword option
 {
 	background-color: rgba(131, 49, 5, 0.8);
+}
+
+input#email
+{
+	width: 80%;
 }
 
 h3
@@ -124,8 +130,13 @@ h3
 	border: 1px solid rgba(255,255,255, 0.15);
 	background: url('../images/+.png') center no-repeat;
 	background-size: contain;
-	background-color: rgba(0,99,149, 0.55);
+	background-color: rgb(6, 85, 124);
 	cursor: pointer;
+}
+
+.submit:hover
+{
+	background-color: rgba(0,99,149, 0.55);
 }
 
 .newsInput
@@ -134,6 +145,7 @@ h3
 	justify-content: flex-start;
 	align-items: center;
 	margin-bottom: 15px;
+	width: 100%;
 }
 
 .newsInput input[type="text"],
@@ -203,7 +215,6 @@ h3
 	background-color: rgba(0, 0, 0, 0.4);
 	border-radius: 3px;
 	border: 1px solid rgba(255,255,255,0.1);
-	margin-bottom: 30px;
 	padding: 1%;
 	overflow: hidden;
 }
@@ -293,10 +304,16 @@ label.next::selection
 {
 	display: flex;
 	flex-direction: row;
-	justify-content: flex-start;
-	align-items: stretch;
+	justify-content: space-around;
+	align-items: flex-start;
+	flex-wrap: wrap;
 	margin-top: 20px;
-	width: 80%;
+	width: 100%;
+}
+
+.divRow > div
+{
+	max-width: 45%;
 }
 
 h2
@@ -311,12 +328,26 @@ h2
 	flex-direction: column;
 	justify-content: flex-start;
 	align-items: flex-start;
-	width: 48%;
+	width: calc(80% - 20px);
 	padding: 10px;
 	background-color: rgba(0, 0, 0, 0.4);
 	border-radius: 3px;
 	border: 1px solid rgba(255,255,255,0.1);
-	margin-right: 15px;
+	margin-top: 50px;
+}
+
+.sourceList
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: flex-start;
+	flex-wrap: wrap;
+	margin-left: 2%;
+	margin-bottom: 10px;
+	width: 98%;
+	height: 30px;
+	overflow: hidden;
 }
 
 .keywordList
@@ -325,9 +356,119 @@ h2
 	justify-content: flex-start;
 	align-items: center;
 	flex-wrap: wrap;
-	margin-left: 2%;
-	width: 98%;
+	margin-left: 4%;
 	margin-bottom: 10px;
+	width: 200px;
+	height: 30px;
+	overflow: hidden;
+}
+
+.sourceList > input:checked + .keywordList,
+.keywordManagement  > input:checked + .sourceList
+{
+	width: 96%;
+	height: auto;
+}
+
+.foldTag
+{
+	display: none;
+}
+
+.sourceList > input:not(:checked) ~ .keywordList > .unfoldTag
+{
+	display: block;
+	border-radius: 3px 3px 3px 3px;
+	border: 1px solid rgba(255,255,255, 0.15);
+	padding-top: 1px;
+	padding-bottom: 2px;
+	padding-left: 4px;
+	padding-right: 4px;
+	text-align: center;
+	margin-top: 3px;
+	margin-bottom: 3px;
+	margin-left: 3px;
+	margin-right: 3px;
+	background-color: rgba(0,120,176,0.4);
+	color: #fff;
+	cursor: pointer;
+}
+
+.keywordManagement > input:not(:checked) ~ .sourceList > .unfoldTag,
+.keywordManagement > input:checked ~ .sourceList > .foldTag
+{
+	display: block;
+	width: 96%;
+	border-radius: 3px 3px 3px 3px;
+	border: 1px solid rgba(255,255,255, 0.15);
+	padding-top: 1px;
+	padding-bottom: 2px;
+	padding-left: 4px;
+	padding-right: 4px;
+	text-align: center;
+	margin-top: 3px;
+	margin-bottom: 3px;
+	margin-left: 3px;
+	margin-right: 2%;
+	background-color: rgba(0,120,176,0.4);
+	color: #fff;
+	cursor: pointer;
+}
+
+.keywordManagement > input:checked ~ .sourceList > .foldTag
+{
+	width: 98%;
+}
+
+.sourceList > input:not(:checked) ~ .keywordList > .unfoldTag:hover,
+.keywordManagement > input:not(:checked) ~ .sourceList > .unfoldTag:hover,
+.sourceList > input:not(:checked) ~ .keywordList > .unfoldTag:focus,
+.keywordManagement > input:not(:checked) ~ .sourceList > .unfoldTag:focus,
+.sourceList > input:not(:checked) ~ .keywordList > .unfoldTag:active,
+.keywordManagement > input:not(:checked) ~ .sourceList > .unfoldTag:active
+{
+	background-color: rgba(0, 85, 127, 0.4);
+}
+
+.sourceList > input:checked + .keywordList > .unfoldTag,
+.keywordManagement > input:checked + .sourceList > .unfoldTag
+{
+	display: none;
+}
+
+.sourceList > input:checked ~ .keywordList > .foldTag
+{
+	display: block;
+	border-radius: 3px 3px 3px 3px;
+	border: 1px solid rgba(255,255,255, 0.15);
+	padding-top: 1px;
+	padding-bottom: 2px;
+	padding-left: 4px;
+	padding-right: 4px;
+	text-align: center;
+	margin-top: 3px;
+	margin-bottom: 3px;
+	margin-left: 3px;
+	margin-right: 3px;
+	background-color: rgba(0,120,176,0.4);
+	color: #fff;
+	cursor: pointer;
+}
+
+.sourceList > input:checked ~ .keywordList > .foldTag:hover,
+.keywordManagement > input:checked ~ .sourceList > .foldTag:hover,
+.sourceList > input:checked ~ .keywordList > .foldTag:focus,
+.keywordManagement > input:checked ~ .sourceList > .foldTag:focus,
+.sourceList > input:checked ~ .keywordList > .foldTag:active,
+.keywordManagement > input:checked ~ .sourceList > .foldTag:active
+{
+	background-color: rgba(0, 85, 127, 0.4);
+}
+
+.sourceList > input:not(:checked) + .keywordList > .foldTag,
+.keywordManagement > input:not(:checked) + .sourceList > .foldTag
+{
+	display: none;
 }
 
 .tag
@@ -391,36 +532,48 @@ h2
 	color: rgba(230,230,230,0.55);
 }
 
-.tag a:nth-child(2)
+.tag input[type='submit']:nth-child(2)
 {
 	width: 12px;
 	height: 12px;
+	border: none;
+	font-size: 0px;
+	cursor: pointer;
 	background: url('../images/Active.png') center no-repeat;
 	background-size: contain;
 	margin-left: 0;
 	margin-right: 1px;
 }
 
-.tag a:nth-child(2):hover
+.tag input[type='submit']:nth-child(2):hover
 {
 	width: 12px;
 	height: 12px;
+	border: none;
+	font-size: 0px;
+	cursor: pointer;
 	background: url('../images/Disable.png') center no-repeat;
 	background-size: contain;
 }
 
-.tag.Tdisable a:nth-child(2)
+.tag.Tdisable input[type='submit']:nth-child(2)
 {
 	width: 12px;
 	height: 12px;
+	border: none;
+	font-size: 0px;
+	cursor: pointer;
 	background: url('../images/Desactivated.png') center no-repeat;
 	background-size: contain;
 }
 
-.tag.Tdisable a:nth-child(2):hover
+.tag.Tdisable input[type='submit']:nth-child(2):hover
 {
 	width: 12px;
 	height: 12px;
+	border: none;
+	font-size: 0px;
+	cursor: pointer;
 	background: url('../images/Activate.png') center no-repeat;
 	background-size: contain;
 }
@@ -441,25 +594,31 @@ h2
 	color: rgba(210,210,210,0.55);
 }
 
-.tag a:first-child
+.tag input[type='submit']:first-child
 {
 	width: 14px;
 	height: 14px;
+	cursor: pointer;
+	border: none;
+	font-size: 0px;
 	background: url('../images/Trash.png') center no-repeat;
 	background-size: contain;
 	margin-left: -3px;
 	margin-right: 2px;
 }
 
-.tag.Tdisable a:first-child
+.tag.Tdisable input[type='submit']:first-child
 {
 	width: 14px;
 	height: 14px;
+	cursor: pointer;
+	border: none;
+	font-size: 0px;
 	background: url('../images/TrashDesactivated.png') center no-repeat;
 	background-size: contain;
 }
 
-.tag a:first-child:hover
+.tag input[type='submit']:first-child:hover
 {
 	width: 14px;
 	height: 14px;
@@ -479,6 +638,7 @@ h2
 	padding-top: 1px;
 	padding-bottom: 2px;
 	text-align: center;
+	margin-left: 2%;
 	margin-bottom: 5px;
 	margin-top: 7px;
 }
@@ -589,12 +749,12 @@ h2
 
 .communicationResults
 {
-	width: 48%;
+	width: calc(80% - 20px);
 	padding: 10px;
 	background-color: rgba(0, 0, 0, 0.4);
 	border-radius: 3px;
 	border: 1px solid rgba(255,255,255,0.1);
-	margin-left: 2%;
+	margin-top: 50px;
 }
 
 .selectCommResult
@@ -771,7 +931,7 @@ input:checked + .slider:before
 	background-color: rgba(0, 0, 0, 0.4);
 	border-radius: 3px;
 	border: 1px solid rgba(255,255,255,0.1);
-	margin-top: 40px;
+	margin-top: 50px;
 }
 
 .patentManagement
@@ -781,7 +941,7 @@ input:checked + .slider:before
 	background-color: rgba(0, 0, 0, 0.4);
 	border-radius: 3px;
 	border: 1px solid rgba(255,255,255,0.1);
-	margin-top: 40px;
+	margin-top: 50px;
 }
 
 .query
@@ -805,8 +965,7 @@ input:checked + .slider:before
 [type="checkbox"]:not(:checked),
 [type="checkbox"]:checked
 {
-	position: absolute;
-	left: -9999px;
+	display: none;
 }
 
 [type="checkbox"]:not(:checked) + label,
@@ -907,7 +1066,6 @@ input:checked + .slider:before
 	transition: all .6s;
 }
 
-
 [type="radio"]:checked + label:before
 {
 	content: '';
@@ -948,7 +1106,7 @@ input:checked + .slider:before
 {
 	display: flex;
 	justify-content: center;
-	margin-top: 40px;
+	margin-top: 50px;
 }
 
 .newQueryContainer
