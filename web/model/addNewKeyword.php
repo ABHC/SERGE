@@ -3,6 +3,8 @@ function addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSour
 {
 $updateBDD = TRUE;
 
+# Special keyword :all
+
 // Check if keyword is already in bdd
 $req = $bdd->prepare('SELECT id, applicable_owners_sources, active FROM keyword_news_serge WHERE LOWER(keyword) = LOWER(:newKeyword)');
 $req->execute(array(

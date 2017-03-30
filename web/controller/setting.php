@@ -1,4 +1,11 @@
 <?php
+# User need to be connected to access to this page
+if (!isset($_SESSION['pseudo']))
+{
+	$_SESSION['redirectFrom'] = 'setting';
+	header('Location: connection');
+}
+
 // Define variables
 $actualLetter = '';
 if (isset($_SESSION['ERROR_MESSAGE']))
@@ -31,7 +38,6 @@ elseif (!isset($_SESSION['scrollPos']) OR $_SESSION['scrollPos'] == '')
 # Save folding state
 if (isset($_POST['sourceType']))
 {
-	echo 'chien';
 	foreach($_SESSION as $key => $val)
 	{
 		if (preg_match("/radio-s./", $key))
@@ -54,13 +60,6 @@ if (isset($_POST['sourceType']))
 			$_SESSION[$key] = $val;
 		}
 	}
-}
-
-# User need to be connected to access to this page
-if (!isset($_SESSION['pseudo']))
-{
-	$_SESSION['redirectFrom'] = 'setting';
-	header('Location: connection');
 }
 
 # Read owner sources
@@ -96,7 +95,7 @@ if (isset($_POST['sourceKeyword']) AND isset($_POST['newKeyword']))
 {
 	include_once('model/addNewKeyword.php');
 	$sourceId    = preg_replace('/[^0-9]/', '', htmlspecialchars($_POST['sourceKeyword']));
-	$newKeyword  = htmlspecialchars($_POST['newKeyword']);
+	$newKeyword  = ucfirst(htmlspecialchars($_POST['newKeyword']));
 
 	if ($newKeyword != '' AND $sourceId != '')
 	{
