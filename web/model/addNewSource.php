@@ -11,7 +11,7 @@ if (!$result)
 	// Adding new source
 	$owners = ',' . $_SESSION['id'] . ',';
 	$active = 0;
-	preg_match('@^(?:http.*://)?([^/]+)@i', $source, $matches);
+	preg_match('@^(?:http.*://[www.]*)?([^/]+)@i', $source, $matches);
 	$name = ucfirst($matches[1] . '[!NEW!]');
 	$req = $bdd->prepare('INSERT INTO rss_serge (link, owners, name, active) VALUES
 	(:link, :owners, :name, :active)');

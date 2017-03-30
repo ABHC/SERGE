@@ -477,15 +477,8 @@
 					<?php
 					foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
 					{
-						if ($ownerSourcesList['name'] == "")
-						{
-							preg_match('@^(?:http.*://)?([^/]+)@i', $ownerSourcesList['link'], $matches);
-							echo '<option value="source' . $ownerSourcesList['id'] . '">' . $matches[1] . '</option>' . PHP_EOL;
-						}
-						else
-						{
-							echo '<option value="source' . $ownerSourcesList['id'] . '">' . $ownerSourcesList['name'] . '</option>' . PHP_EOL;
-						}
+						$ownerSourcesList['name'] = preg_replace("/\[!NEW!\]/", "", $ownerSourcesList['name']);
+						echo '<option value="source' . $ownerSourcesList['id'] . '">' . $ownerSourcesList['name'] . '</option>' . PHP_EOL;
 					}
 					?>
 					<option value="source00">All sources</option>
