@@ -17,47 +17,47 @@ def allCheckLong (link):
 		req.encoding = "utf8"
 		rss = req.text
 		header = req.headers
-		rss_error = 0
+		rss_error = False
 	except requests.exceptions.ConnectionError:
 		print ("connection error")
 		print ("unvalid link")
 		rss = None
-		rss_error = 1
+		rss_error = True
 	except requests.exceptions.HTTPError:
 		print ("http error")
 		print ("unvalid link")
 		rss = None
-		rss_error = 1
+		rss_error = True
 	except requests.exceptions.URLRequired:
 		print ("url required")
 		print ("unvalid link")
 		rss = None
-		rss_error = 1
+		rss_error = True
 	except requests.exceptions.MissingSchema:
 		print ("url required")
 		print ("unvalid link")
 		rss = None
-		rss_error = 1
+		rss_error = True
 	except requests.exceptions.TooManyRedirects:
 		print ("too many redirects")
 		print ("unvalid link")
 		rss = None
-		rss_error = 1
+		rss_error = True
 	except requests.exceptions.ConnectTimeout:
 		print ("timeout")
 		print ("unvalid link")
 		rss = None
-		rss_error = 1
+		rss_error = True
 	except requests.exceptions.ReadTimeout:
 		print ("timeout")
 		print ("unvalid link")
 		rss = None
-		rss_error = 1
+		rss_error = True
 	except requests.exceptions.InvalidURL:
 		print ("Failed to parse website")
 		print ("unvalid link")
 		rss = None
-		rss_error = 1
+		rss_error = True
 
 
 	req_results = (rss_error, rss)
@@ -72,7 +72,7 @@ def feedMeUp (link):
 	rss_error = req_results[0]
 	rss = req_results[1]
 
-	if rss_error == 0:
+	if rss_error == False:
 
 		missing_flux = False
 
@@ -159,7 +159,7 @@ def feedMeUp (link):
 		if unvalid_count == 0:
 			print ("valid link")
 
-	elif rss_error == 1:
+	elif rss_error == True:
 		print req_results
 		print ("unvalid link")
 
