@@ -12,12 +12,14 @@ $req->execute(array(
 
 if (!$result)
 {
+	$active = 0;
 	if ($sourceId == '00')
 	{
 		$applicable_owners_sources = '|' . $_SESSION['id'] . ':,';
 		foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
 		{
 			$applicable_owners_sources = $applicable_owners_sources . $ownerSourcesList['id'] . ',';
+			$active = $active + 1;
 		}
 		$applicable_owners_sources = $applicable_owners_sources . '|';
 	}
@@ -25,9 +27,9 @@ if (!$result)
 	{
 		# TODO Test if sourceId is an existing sources
 		$applicable_owners_sources = '|' . $_SESSION['id'] . ':,' . $sourceId . ',|';
+		$active = $active + 1;
 	}
 	// Adding new keyword
-	$active = 1;
 	$req = $bdd->prepare('INSERT INTO keyword_news_serge (keyword, applicable_owners_sources, active) VALUES (:newKeyword, :applicable_owners_sources, :active)');
 	$req->execute(array(
 		'newKeyword' => $newKeyword,
@@ -37,6 +39,7 @@ if (!$result)
 }
 else
 {
+	$active = $result['active'];
 	// Update applicable_owners_sources
 	// Search in applicable_owners_sources if idUser: exist
 	$applicable_owners_sources = $result['applicable_owners_sources'];
@@ -63,6 +66,7 @@ else
 					if (!preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*," . $ownerSourcesList['id'] . ",[,0-9,]*\|/", $applicable_owners_sources))
 					{
 						$newSourceForAdding = $newSourceForAdding . $ownerSourcesList['id'] . ',';
+						$active = $active + 1;
 					}
 				}
 				$applicable_owners_sources = $applicable_owners_sources . '|';
@@ -70,6 +74,7 @@ else
 			else
 			{
 				$newSourceForAdding = ',' . $sourceId . ',|';
+				$active = $active + 1;
 			}
 			$userApplicable_owners_sourcesNEW = preg_replace("/,*\|$/", $newSourceForAdding, 		$userApplicable_owners_sources[0]);
 			$applicable_owners_sources = preg_replace("/\|" . $_SESSION['id'] . ":[,0-9,]*,\|/", 		$userApplicable_owners_sourcesNEW, $applicable_owners_sources);
@@ -84,19 +89,20 @@ else
 			foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
 			{
 				$userApplicable_owners_sourcesNEW = $userApplicable_owners_sourcesNEW . $ownerSourcesList['id'] . ',';
+				$active = $active + 1;
 			}
 			$userApplicable_owners_sourcesNEW = $userApplicable_owners_sourcesNEW . '|';
 		}
 		else
 		{
 			$userApplicable_owners_sourcesNEW = '|' . $_SESSION['id'] . ':,' . $sourceId . ',|';
+			$active = $active + 1;
 		}
 		$applicable_owners_sources = preg_replace("/\|$/", $userApplicable_owners_sourcesNEW,$applicable_owners_sources);
 	}
 
 	if ($updateBDD)
 	{
-		$active = $result['active'] + 1;
 		$req = $bdd->prepare('UPDATE keyword_news_serge SET applicable_owners_sources = :applicable_owners_sources, active = :active WHERE id = :id');
 		$req->execute(array(
 			'applicable_owners_sources' => $applicable_owners_sources,

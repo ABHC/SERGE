@@ -7,7 +7,7 @@
 			foreach ($applicable_owners_sources as $input_lines)
 			{
 				# Regarder nb source
-				preg_match_all("/,*[0-9]*,/", $input_lines['applicable_owners_sources'], $output_array);
+				preg_match_all("/,*[0-9]+,/", $input_lines['applicable_owners_sources'], $output_array);
 
 				$cpt = 0;
 				while (isset($output_array[0][$cpt]))
