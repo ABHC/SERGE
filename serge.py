@@ -3,7 +3,7 @@
 #TODO Modifier le HTML/CSS pour introduire un code couleur
 #TODO Modifier le HTML/CSS pour modifier l'emplacement du logo pour le wiki et le mettre à gauche
 #TODO Insérer une sécurité sur la recupération du timestamps de la base time : si le timestamps est null insérer le timestamps actuel
-#TODO Vérifier avant l'éxécution
+#TODO IMPORTANT Faire des try except pour bibjson
 
 """SERGE (Serge Explore Research and Generate Emails) is a tool for news and technological monitoring.
 
@@ -313,10 +313,13 @@ def newscast(last_launch, max_users):
 
 					try:
 						post_date = xmldoc.entries[range].published_parsed
+						human_date = time.strftime("%d/%m/%Y %H:%M", post_date)
+						post_date = time.mktime(post_date)
 					except AttributeError:
 						logger_error.warning("BEACON ERROR : missing <date> in "+link)
 						logger_error.warning(traceback.format_exc())
-						post_date = ""
+						post_date = None
+						human_date = "None"
 
 					########### OPTIONNAL UNIVERSAL FEED PARSER VARIABLE
 					tags_list_lower = []
@@ -324,7 +327,12 @@ def newscast(last_launch, max_users):
 
 					if tag_test is not None:
 						tagdex = 0
-						post_tags = xmldoc.entries[range].tags
+
+						try :
+							post_tags = xmldoc.entries[range].tags
+						except AttributeError:
+							logger_info.info("BEACON INFO : no <category> in "+link+" range : "+str(range))
+							post_tags = []
 
 						while tagdex < len(post_tags) :
 							tags_list_lower.append(xmldoc.entries[range].tags[tagdex].term.lower())
@@ -335,9 +343,6 @@ def newscast(last_launch, max_users):
 							tags_list_sans_accent.append(tag)
 
 					########### DATA PROCESSING
-					human_date = time.strftime("%d/%m/%Y %H:%M", post_date)
-					post_date = time.mktime(post_date)
-
 					post_title_lower = post_title.strip().lower()
 					post_description_lower = post_description.strip().lower()
 					keyword_lower = keyword.strip().lower()
@@ -374,11 +379,11 @@ def newscast(last_launch, max_users):
 							splitkey = splitkey.strip().lower()
 							splitkey_sans_accent = sans_accent_maj(splitkey)
 
-							if (splitkey in post_title_lower or splitkey in post_description_lower or splitkey in tags_list_lower) and post_date >= last_launch and owners is not None:
+							if (splitkey in post_title_lower or splitkey in post_description_lower or splitkey in tags_list_lower) and post_date >= last_launch and post_date is not None and owners is not None:
 
 								redundancy = redundancy + 1
 
-							elif (splitkey_sans_accent in post_title_lower or splitkey_sans_accent in post_description_sans_accent or splitkey in tags_list_sans_accent) and post_date >= last_launch and owners is not None:
+							elif (splitkey_sans_accent in post_title_lower or splitkey_sans_accent in post_description_sans_accent or splitkey in tags_list_sans_accent) and post_date >= last_launch and post_date is not None and owners is not None:
 
 								redundancy = redundancy + 1
 
@@ -402,7 +407,7 @@ def newscast(last_launch, max_users):
 					########### SIMPLE KEYWORDS RESEARCH
 					else:
 						########### RESEARCH OF KEYWORDS IN LOWER CASE
-						if (keyword_lower in post_title_lower or keyword_lower in post_description_lower or keyword_lower in tags_list_lower or ":all@" in keyword_lower) and post_date >= last_launch and owners is not None:
+						if (keyword_lower in post_title_lower or keyword_lower in post_description_lower or keyword_lower in tags_list_lower or ":all@" in keyword_lower) and post_date >= last_launch and post_date is not None and owners is not None:
 
 							########### QUERY FOR DATABASE CHECKING
 							query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
@@ -420,7 +425,7 @@ def newscast(last_launch, max_users):
 							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_update_owners, query_jelly_update, post_link, post_title, item, id_item_comma, id_item_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
 
 						########### RESEARCH OF KEYWORDS WITHOUT ACCENTS
-						elif (keyword_sans_accent in post_title_sans_accent or keyword_sans_accent in post_description_sans_accent or keyword_sans_accent in tags_list_sans_accent) and post_date >= last_launch and owners is not None:
+						elif (keyword_sans_accent in post_title_sans_accent or keyword_sans_accent in post_description_sans_accent or keyword_sans_accent in tags_list_sans_accent) and post_date >= last_launch and post_date is not None and owners is not None:
 
 							########### QUERY FOR DATABASE CHECKING
 							query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
@@ -495,24 +500,36 @@ def patents(last_launch):
 
 				else:
 					while range < rangemax:
-						post_title = xmldoc.entries[range].title
-						post_link = xmldoc.entries[range].link
-						post_date = xmldoc.entries[range].published_parsed
 
-						if post_date is None:
-							human_date = 0
-							post_date = 0
+						try:
+							post_title = xmldoc.entries[range].title
+						except AttributeError:
+							logger_error.warning("BEACON ERROR : missing <title> in "+link)
+							logger_error.warning(traceback.format_exc())
+							post_title = ""
 
-						else:
+						try:
+							post_link = xmldoc.entries[range].link
+						except AttributeError:
+							logger_error.warning("BEACON ERROR : missing <link> in "+link)
+							logger_error.warning(traceback.format_exc())
+							post_link = ""
+
+						try:
+							post_date = xmldoc.entries[range].published_parsed
 							human_date = time.strftime("%d/%m/%Y %H:%M", post_date)
 							post_date = time.mktime(post_date)
-
+						except AttributeError:
+							logger_error.warning("BEACON ERROR : missing <date> in "+link)
+							logger_error.warning(traceback.format_exc())
+							post_date = None
+							human_date = "None"
 
 						id_item_comma = str(id_query_wipo)+","
 						id_item_comma2 = ","+str(id_query_wipo)+","
 						item = (post_title, post_link, human_date, id_item_comma2, owners)
 
-						if post_date >= last_launch:
+						if post_date >= last_launch and post_date is not None:
 
 							########### QUERY FOR DATABASE CHECKING
 							query_checking = ("SELECT id_query_wipo, owners FROM result_patents_serge WHERE link = %s")
@@ -612,18 +629,37 @@ def science(last_launch):
 					query_id=rows[0]
 
 					while range < rangemax:
-						post_title = xmldoc.entries[range].title
-						post_link = xmldoc.entries[range].link
-						post_date = xmldoc.entries[range].published_parsed
-						human_date = time.strftime("%d/%m/%Y %H:%M", post_date)
-						post_date = time.mktime(post_date)
+
+						try:
+							post_title = xmldoc.entries[range].title
+						except AttributeError:
+							logger_error.warning("BEACON ERROR : missing <title> in "+link)
+							logger_error.warning(traceback.format_exc())
+							post_title = ""
+
+						try:
+							post_link = xmldoc.entries[range].link
+						except AttributeError:
+							logger_error.warning("BEACON ERROR : missing <link> in "+link)
+							logger_error.warning(traceback.format_exc())
+							post_link = ""
+
+						try:
+							post_date = xmldoc.entries[range].published_parsed
+							human_date = time.strftime("%d/%m/%Y %H:%M", post_date)
+							post_date = time.mktime(post_date)
+						except AttributeError:
+							logger_error.warning("BEACON ERROR : missing <date> in "+link)
+							logger_error.warning(traceback.format_exc())
+							post_date = None
+							human_date = "None"
 
 						id_item_comma = str(query_id)+","
 						id_item_comma2 = ","+str(query_id)+","
 						id_rss = 0
 						item = (post_title, post_link, human_date, id_item_comma2, id_rss, owners)
 
-						if post_date >= last_launch:
+						if post_date >= last_launch and post_date is not None:
 
 							########### QUERY FOR DATABASE CHECKING
 							query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
@@ -747,7 +783,7 @@ logger_info.info(time.asctime(time.gmtime(now))+"\n")
 last_launch = lastResearch()
 
 ######### DATABASE INTERGRITY CHECKING
-failsafe.checkMate(database, logger_info, logger_error)
+#failsafe.checkMate(database, logger_info, logger_error)
 
 ######### NUMBERS OF USERS
 call_users = database.cursor()
