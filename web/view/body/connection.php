@@ -3,7 +3,7 @@
 	<div class="connection">
 		<span class="title_connection">Connection</span>
 
-		<form method="post" action="connection.php?redirectFrom=<?php echo htmlspecialchars($_GET['redirectFrom']);?>">
+		<form method="post" action="connection">
 			<p class="title_form_connection">Email</p> <p><input class="connection_field" type="text" name="conn_pseudo" id="Pseudo" value="<?php echo htmlspecialchars($_POST['conn_pseudo']);?>" /></p>
 			<p class="title_form_connection">Password</p> <input class="connection_field" type="password" name="conn_password" id="Mot de passe" /></p>
 			<a class="text_connection" href="forgot_passphrase.php">Forgot your passphrase ?</a>

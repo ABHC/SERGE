@@ -477,8 +477,17 @@
 					<?php
 					foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
 					{
+						if ($ownerSourcesList['id'] == $_SESSION['lastSourceUse'])
+						{
+							$amISelected = 'selected';
+						}
+						else
+						{
+							$amISelected = '';
+						}
+
 						$ownerSourcesList['name'] = preg_replace("/\[!NEW!\]/", "", $ownerSourcesList['name']);
-						echo '<option value="source' . $ownerSourcesList['id'] . '">' . $ownerSourcesList['name'] . '</option>' . PHP_EOL;
+						echo '<option value="source' . $ownerSourcesList['id'] . '" ' . $amISelected . '>' . $ownerSourcesList['name'] . '</option>' . PHP_EOL;
 					}
 					?>
 					<option value="source00">All sources</option>
@@ -542,7 +551,14 @@
 						}
 					}
 
-					echo '<div class="tagSource Tactive" id="ks' . $ownerSourcesList['id'] . '">' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '&action=del"></a>' . PHP_EOL . '<a title="Disable" href="setting?source=source' . $ownerSourcesList['id'] . '&action=disable"></a>' . PHP_EOL . '<a href="setting?source=source' . $ownerSourcesList['id'] . '">' . ucfirst($ownerSourcesList['name']) . '</a>' . PHP_EOL . '</div>' . PHP_EOL;
+					echo '
+					<div class="tagSource Tactive" id="ks' . $ownerSourcesList['id'] . '">' . PHP_EOL .
+						'<a href="setting?source=source' . $ownerSourcesList['id'] . '&action=del"></a>' . PHP_EOL .
+						'<a title="Disable" href="setting?source=source' . $ownerSourcesList['id'] . '&action=disable"></a>' . PHP_EOL .
+						'<a href="setting?source=source' . $ownerSourcesList['id'] . '">' . PHP_EOL .
+					ucfirst($ownerSourcesList['name']) . PHP_EOL .
+						'</a>' . PHP_EOL .
+					'</div>' . PHP_EOL;
 
 					echo '<input type="checkbox" name="radio-ks' . $ownerSourcesList['id'] . '" id="unfold-ks' . $ownerSourcesList['id'] . '" value="' . $ownerSourcesList['id'] . '" ' . $amICheckFoldKeyword . '/>'. PHP_EOL . '<div class="keywordList" >' . PHP_EOL . '<label for="unfold-ks' . $ownerSourcesList['id'] . '" class="unfoldTag">' . PHP_EOL . 'Unfold keyword list ▾' . PHP_EOL . '</label>' . PHP_EOL . '<label for="unfold-ks' . $ownerSourcesList['id'] . '" class="foldTag">' . PHP_EOL . 'Fold keyword list ▴' . PHP_EOL . '</label>';
 

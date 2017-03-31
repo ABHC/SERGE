@@ -99,6 +99,7 @@ if (isset($_POST['sourceKeyword']) AND isset($_POST['newKeyword']))
 
 	if ($newKeyword != '' AND $sourceId != '')
 	{
+		$_SESSION['lastSourceUse'] = $sourceId;
 		preg_match_all("/,?[^,]*,?/", $newKeyword, $newKeyword_array);
 		array_pop($newKeyword_array[0]);
 		foreach ($newKeyword_array[0] as $keyword)
