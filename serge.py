@@ -354,6 +354,20 @@ def newscast(last_launch, max_users):
 					if "+" in keyword:
 						aggregated_keyword = keyword.split("+")
 
+						grain = 0
+						grain_list = []
+						aggregate_size = len(aggregated_keyword)
+
+						while grain < aggregate_size:
+							if aggregated_keyword[grain] != "":
+								grain_list.append(aggregated_keyword[grain])
+							elif aggregated_keyword[grain] == "" and grain != 0 and len(grain_list) != 0:
+								coherent_grain = grain_list[len(grain_list)-1] + "+"
+								grain_list[len(grain_list)-1] = coherent_grain
+
+							grain = grain+1
+
+						aggregated_keyword = tuple(grain_list)
 						redundancy = 0
 
 						for splitkey in aggregated_keyword:
