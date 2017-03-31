@@ -53,6 +53,11 @@ def allCheckLong (link):
 		print ("unvalid link")
 		rss = None
 		rss_error = 1
+	except requests.exceptions.InvalidURL:
+		print ("Failed to parse website")
+		print ("unvalid link")
+		rss = None
+		rss_error = 1
 
 
 	req_results = (rss_error, rss)
@@ -123,6 +128,7 @@ def feedMeUp (link):
 				post_description = xmldoc.entries[range].description
 				attribute_description = ""
 			except AttributeError:
+				print range
 				attribute_description = "missing <description>, "
 				unvalid_count = unvalid_count+1
 				break
@@ -139,7 +145,7 @@ def feedMeUp (link):
 				post_date = xmldoc.entries[range].published_parsed
 				attribute_date = ""
 			except AttributeError:
-				attribute_date = "missing <date>, "
+				attribute_date = "missing <date>"
 				unvalid_count = unvalid_count+1
 				break
 
@@ -147,12 +153,14 @@ def feedMeUp (link):
 
 		if unvalid_count > 0:
 			complete_attribute = attribute_title+attribute_description+attribute_link+attribute_date
-			print ("unvalid link")
+			print complete_attribute
+			print ("WARNING : Some beacons are missing, your research may be less efficient")
 
 		if unvalid_count == 0:
 			print ("valid link")
 
 	elif rss_error == 1:
+		print req_results
 		print ("unvalid link")
 
 ########### MAIN

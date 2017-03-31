@@ -295,28 +295,28 @@ def newscast(last_launch, max_users):
 					except AttributeError:
 						logger_error.warning("BEACON ERROR : missing <title> in "+link)
 						logger_error.warning(traceback.format_exc())
-						break
+						post_title = ""
 
 					try:
 						post_description = xmldoc.entries[range].description
 					except AttributeError:
 						logger_error.warning("BEACON ERROR : missing <description> in "+link)
 						logger_error.warning(traceback.format_exc())
-						break
+						post_description = ""
 
 					try:
 						post_link = xmldoc.entries[range].link
 					except AttributeError:
 						logger_error.warning("BEACON ERROR : missing <link> in "+link)
 						logger_error.warning(traceback.format_exc())
-						break
+						post_link = ""
 
 					try:
 						post_date = xmldoc.entries[range].published_parsed
 					except AttributeError:
 						logger_error.warning("BEACON ERROR : missing <date> in "+link)
 						logger_error.warning(traceback.format_exc())
-						break
+						post_date = ""
 
 					########### OPTIONNAL UNIVERSAL FEED PARSER VARIABLE
 					tags_list_lower = []
