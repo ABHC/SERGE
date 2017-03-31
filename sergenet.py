@@ -117,6 +117,12 @@ def allRequestLong (link, logger_info, logger_error):
 		logger_info.warning("Please check the availability of the feed\n \n")
 		rss = None
 		rss_error = True
+	except requests.exceptions.InvalidURL:
+		link = link.replace("https://", "")
+		logger_info.warning("Failed to parse "+link+" (InvalidURL exception) \n")
+		logger_info.warning("Please check the link\n \n")
+		rss = None
+		rss_error = True
 
 	req_results = (rss_error, rss)
 
