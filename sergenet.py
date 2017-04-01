@@ -15,45 +15,51 @@ def headToEtag (link, logger_info, logger_error):
 		etag = requests.head(link, headers={'User-Agent' : "Serge Browser"}, timeout=15).headers.get('etag')
 		head_error = False
 	except requests.exceptions.ConnectionError:
-		link = link.replace("http://", "")
+		link = link.replace("http://", "").replace("http://", "")
 		logger_info.warning("CONNECTION ERROR AT "+link+"\n")
 		logger_info.warning("Please check the availability of the feed and the link\n \n")
 		etag = None
 		head_error = True
 	except requests.exceptions.HTTPError:
-		link = link.replace("https://", "")
+		link = link.replace("http://", "").replace("https://", "")
 		logger_info.warning("Error in the access "+link+" (HTTP protocol error) \n")
 		logger_info.warning("Please check the availability of the feed\n \n")
 		etag = None
 		head_error = True
 	except requests.exceptions.URLRequired:
-		link = link.replace("https://", "")
+		link = link.replace("http://", "").replace("https://", "")
 		logger_info.warning("Error in the access "+link+" (Link is not an URL) \n")
 		logger_info.warning("Please check the link\n \n")
 		etag = None
 		head_error = True
 	except requests.exceptions.MissingSchema:
-		link = link.replace("https://", "")
+		link = link.replace("http://", "").replace("https://", "")
 		logger_info.warning("Error in the access "+link+" (Link is not an URL) \n")
 		logger_info.warning("Please check the link\n \n")
 		etag = None
 		head_error = True
 	except requests.exceptions.TooManyRedirects:
-		link = link.replace("https://", "")
+		link = link.replace("http://", "").replace("https://", "")
 		logger_info.warning("Error in the access "+link+" (Too Many Redirects error) \n")
 		logger_info.warning("Please check the link\n \n")
 		etag = None
-		head_error = Truerss_error
+		head_error = True
 	except requests.exceptions.ConnectTimeout:
-		link = link.replace("https://", "")
+		link = link.replace("http://", "").replace("https://", "")
 		logger_info.warning("Error in the access "+link+" (server don't respond ---> ConnectTimeout) \n")
 		logger_info.warning("Please check the availability of the feed\n \n")
 		etag = None
 		head_error = True
 	except requests.exceptions.ReadTimeout:
-		link = link.replace("https://", "")
+		link = link.replace("http://", "").replace("https://", "")
 		logger_info.warning("Error in the access "+link+" (server don't respond ---> ReadTimeout) \n")
 		logger_info.warning("Please check the availability of the feed\n \n")
+		etag = None
+		head_error = True
+	except requests.exceptions.InvalidURL:
+		link = link.replace("http://", "").replace("https://", "")
+		logger_info.warning("Failed to parse "+link+" (InvalidURL exception) \n")
+		logger_info.warning("Please check the link\n \n")
 		etag = None
 		head_error = True
 
@@ -76,45 +82,51 @@ def allRequestLong (link, logger_info, logger_error):
 		logger_info.info("HEADER :\n"+str(header)+"\n\n") #affichage des paramètres de connexion
 		rss_error = False
 	except requests.exceptions.ConnectionError:
-		link = link.replace("http://", "")
+		link = link.replace("http://", "").replace("http://", "")
 		logger_info.warning("CONNECTION ERROR AT "+link+"\n")
 		logger_info.warning("Please check the availability of the feed and the link\n \n")
 		rss = None
 		rss_error = True
 	except requests.exceptions.HTTPError:
-		link = link.replace("https://", "")
+		link = link.replace("http://", "").replace("https://", "")
 		logger_info.warning("Error in the access "+link+" (HTTP protocol error) \n")
 		logger_info.warning("Please check the availability of the feed\n \n")
 		rss = None
 		rss_error = True
 	except requests.exceptions.URLRequired:
-		link = link.replace("https://", "")
+		link = link.replace("http://", "").replace("https://", "")
 		logger_info.warning("Error in the access "+link+" (Link is not an URL) \n")
 		logger_info.warning("Please check the link\n \n")
 		rss = None
 		rss_error = True
 	except requests.exceptions.MissingSchema:
-		link = link.replace("https://", "")
+		link = link.replace("http://", "").replace("https://", "")
 		logger_info.warning("Error in the access "+link+" (Link is not an URL) \n")
 		logger_info.warning("Please check the link\n \n")
 		rss = None
 		rss_error = True
 	except requests.exceptions.TooManyRedirects:
-		link = link.replace("https://", "")
+		link = link.replace("http://", "").replace("https://", "")
 		logger_info.warning("Error in the access "+link+" (Too Many Redirects error) \n")
 		logger_info.warning("Please check the link\n \n")
 		rss = None
 		rss_error = True
 	except requests.exceptions.ConnectTimeout:
-		link = link.replace("https://", "")
+		link = link.replace("http://", "").replace("https://", "")
 		logger_info.warning("Error in the access "+link+" (server don't respond ---> ConnectTimeout) \n")
 		logger_info.warning("Please check the availability of the feed\n \n")
 		rss = None
 		rss_error = True
 	except requests.exceptions.ReadTimeout:
-		link = link.replace("https://", "")
+		link = link.replace("http://", "").replace("https://", "")
 		logger_info.warning("Error in the access "+link+" (server don't respond ---> ReadTimeout) \n")
 		logger_info.warning("Please check the availability of the feed\n \n")
+		rss = None
+		rss_error = True
+	except requests.exceptions.InvalidURL:
+		link = link.replace("http://", "").replace("https://", "")
+		logger_info.warning("Failed to parse "+link+" (InvalidURL exception) \n")
+		logger_info.warning("Please check the link\n \n")
 		rss = None
 		rss_error = True
 
