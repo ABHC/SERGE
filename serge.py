@@ -322,8 +322,8 @@ def newscast(last_launch, max_users):
 						human_date = "None"
 
 					########### OPTIONNAL UNIVERSAL FEED PARSER VARIABLE
-					tags_list_lower = []
-					tags_list_sans_accent = []
+					tags_string_lower = ""
+					tags_string_sans_accent = ""
 
 					if tag_test is not None:
 						tagdex = 0
@@ -335,12 +335,9 @@ def newscast(last_launch, max_users):
 							post_tags = []
 
 						while tagdex < len(post_tags) :
-							tags_list_lower.append(xmldoc.entries[range].tags[tagdex].term.lower())
+							tags_string_lower =  tags_string_lower + xmldoc.entries[range].tags[tagdex].term.lower() + " "
+							tags_string_sans_accent = tags_string_sans_accent + sans_accent_maj(xmldoc.entries[range].tags[tagdex].term.lower()) + " "
 							tagdex = tagdex+1
-
-						for tag in tags_list_lower:
-							tag = sans_accent_maj(tag)
-							tags_list_sans_accent.append(tag)
 
 					########### DATA PROCESSING
 					post_title_lower = post_title.strip().lower()
@@ -379,11 +376,11 @@ def newscast(last_launch, max_users):
 							splitkey = splitkey.strip().lower()
 							splitkey_sans_accent = sans_accent_maj(splitkey)
 
-							if (splitkey in post_title_lower or splitkey in post_description_lower or splitkey in tags_list_lower) and post_date >= last_launch and post_date is not None and owners is not None:
+							if (re.search('[^a-z]'+splitkey, post_title_lower) or re.search('[^a-z]'+splitkey, post_description_lower) or re.search('[^a-z]'+splitkey, tags_string_lower)) and post_date >= last_launch and post_date is not None and owners is not None:
 
 								redundancy = redundancy + 1
 
-							elif (splitkey_sans_accent in post_title_lower or splitkey_sans_accent in post_description_sans_accent or splitkey in tags_list_sans_accent) and post_date >= last_launch and post_date is not None and owners is not None:
+							elif (re.search('[^a-z]'+splitkey_sans_accent, post_title_sans_accent) or re.search('[^a-z]'+splitkey_sans_accent, post_description_sans_accent) or re.search('[^a-z]'+splitkey_sans_accent, tags_string_sans_accent)) and post_date >= last_launch and post_date is not None and owners is not None:
 
 								redundancy = redundancy + 1
 
@@ -407,7 +404,7 @@ def newscast(last_launch, max_users):
 					########### SIMPLE KEYWORDS RESEARCH
 					else:
 						########### RESEARCH OF KEYWORDS IN LOWER CASE
-						if (keyword_lower in post_title_lower or keyword_lower in post_description_lower or keyword_lower in tags_list_lower or ":all@" in keyword_lower) and post_date >= last_launch and post_date is not None and owners is not None:
+						if (re.search('[^a-z]'+keyword_lower, post_title_lower) or re.search('[^a-z]'+keyword_lower, post_description_lower) or re.search('[^a-z]'+keyword_lower, tags_string_lower) or re.search('^:all@'+id_rss+'$', keyword_lower)) and post_date >= last_launch and post_date is not None and owners is not None:
 
 							########### QUERY FOR DATABASE CHECKING
 							query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
@@ -425,7 +422,7 @@ def newscast(last_launch, max_users):
 							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_update_owners, query_jelly_update, post_link, post_title, item, id_item_comma, id_item_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
 
 						########### RESEARCH OF KEYWORDS WITHOUT ACCENTS
-						elif (keyword_sans_accent in post_title_sans_accent or keyword_sans_accent in post_description_sans_accent or keyword_sans_accent in tags_list_sans_accent) and post_date >= last_launch and post_date is not None and owners is not None:
+						elif (re.search('[^a-z]'+keyword_sans_accent, post_title_sans_accent) or re.search('[^a-z]'+keyword_sans_accent, post_description_sans_accent) or re.search('[^a-z]'+keyword_sans_accent, tags_string_sans_accent)) and post_date >= last_launch and post_date is not None and owners is not None:
 
 							########### QUERY FOR DATABASE CHECKING
 							query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
