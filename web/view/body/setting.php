@@ -560,22 +560,36 @@
 						}
 					}
 
-					echo
-					'<div class="tagSource Tactive" id="ks' . $ownerSourcesList['id'] . '">'.
-						'<input type="submit" title="Delete" name="delSource" value="source' . $ownerSourcesList['id'] . '&"/>'.
-						'<input type="submit" title="Disable" name="disableSource" value="source' . $ownerSourcesList['id']. '&"/>'.
-						'<a href="setting?source=source' . $ownerSourcesList['id'] . '">'.
-							ucfirst($ownerSourcesList['name']).
-						'</a>'.
-					'</div>';
+					if (preg_match("/," . $_SESSION['id'] . ",/", $ownerSourcesList['owners']))
+					{
+						echo
+						'<div class="tagSource Tactive" id="ks' . $ownerSourcesList['id'] . '">'.
+							'<input type="submit" title="Delete" name="delSource" value="source' . $ownerSourcesList['id'] . '&"/>'.
+							'<input type="submit" title="Disable" name="disableSource" value="source' . $ownerSourcesList['id']. '&"/>'.
+							'<a href="setting?source=source' . $ownerSourcesList['id'] . '">'.
+								ucfirst($ownerSourcesList['name']).
+							'</a>'.
+						'</div>';
+					}
+					elseif (preg_match("/,!" . $_SESSION['id'] . ",/", $ownerSourcesList['owners']))
+					{
+						echo
+						'<div class="tagSource Tdisable" id="ks' . $ownerSourcesList['id'] . '">'.
+							'<input type="submit" title="Delete" name="delSource" value="source' . $ownerSourcesList['id'] . '&"/>'.
+							'<input type="submit" title="Activate" name="activateSource" value="source' . $ownerSourcesList['id']. '&"/>'.
+							'<a href="setting?source=source' . $ownerSourcesList['id'] . '">'.
+								ucfirst($ownerSourcesList['name']).
+							'</a>'.
+						'</div>';
+					}
 
 					echo
 					'<input type="checkbox" name="radio-ks' . $ownerSourcesList['id'] . '" id="unfold-ks' . $ownerSourcesList['id'] . '" value="' . $ownerSourcesList['id'] . '" ' . $amICheckFoldKeyword . '/>'.
-					'<div class="keywordList" >'.
-						'<label for="unfold-ks' . $ownerSourcesList['id'] . '" class="unfoldTag">'.
+					'<div class="keywordList" id="keywordList' . $ownerSourcesList['id'] . '">'.
+						'<label for="unfold-ks' . $ownerSourcesList['id'] . '" id="unfold' . $ownerSourcesList['id'] . '"  class="unfoldTag">'.
 							'Unfold keyword list ▾'.
 						'</label>'.
-						'<label for="unfold-ks' . $ownerSourcesList['id'] . '" class="foldTag">'.
+						'<label for="unfold-ks' . $ownerSourcesList['id'] . '" id="fold' . $ownerSourcesList['id'] . '" class="foldTag">'.
 							'Fold keyword list ▴'.
 						'</label>';
 
@@ -595,6 +609,7 @@
 									ucfirst($ownerKeywordList['keyword']).
 								'</a>'.
 							'</div>';
+							$cptKeyword++;
 						}
 						elseif (preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*,!" . $ownerSourcesList['id'] . ",[,!0-9,]*\|/", $applicable_owners_sources))
 						{
@@ -606,10 +621,28 @@
 									ucfirst($ownerKeywordList['keyword']).
 								'</a>'.
 							'</div>';
+							$cptKeyword++;
 						}
-						$cptKeyword++;
 					}
 					echo '</div>' . PHP_EOL;
+
+					if ($cptKeyword < 7)
+					{
+						echo
+						'<style>
+						#unfold' . $ownerSourcesList['id'] . ',
+						#fold' . $ownerSourcesList['id'] . '
+						{
+							display: none;
+						}
+
+						#keywordlist' . $ownerSourcesList['id'] . '.keywordList
+						{
+							width: 96%;
+							height: auto;
+						}
+						</style>';
+					}
 					$cptSource++;
 				}
 				?>

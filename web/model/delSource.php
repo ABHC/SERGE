@@ -1,5 +1,6 @@
 <?php
-	$sourceOwnerNEW = preg_replace("/,!*$sourceIdAction,/", ',', $owners);
+	$userId = $_SESSION['id'];
+	$sourceOwnerNEW = preg_replace("/,!*$userId,/", ',', $owners);
 
 	$active = $activeForCurrentSource - 1;
 

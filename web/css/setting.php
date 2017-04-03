@@ -650,12 +650,12 @@ h2
 
 .tagSource.Tdisable
 {
-	background-color: rgba(132,99,85,0.4);
+	background-color: rgba(255,255,255,0.2);
 }
 
 .tagSource.Tdisable:hover
 {
-	background-color:  rgba(104, 77, 67, 0.4);
+	background-color:  rgba(240,240,240,0.2);
 }
 
 .tagSource.Tdisable a
