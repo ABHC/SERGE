@@ -681,62 +681,83 @@ h2
 	margin-left: 2px;
 }
 
-.tagSource a:first-child
+.tagSource input[type='submit']:first-child
 {
 	width: 14px;
 	height: 14px;
+	cursor: pointer;
+	border: none;
+	font-size: 0px;
 	background: url('../images/Trash.png') center no-repeat;
 	background-size: contain;
 	margin-left: -3px;
 	margin-right: 2px;
 }
 
-.tagSource.Tdisable a:first-child
+.tagSource.Tdisable input[type='submit']:first-child
 {
 	width: 14px;
 	height: 14px;
+	cursor: pointer;
+	border: none;
+	font-size: 0px;
 	background: url('../images/TrashDesactivated.png') center no-repeat;
 	background-size: contain;
 }
 
-.tagSource a:first-child:hover
+.tagSource input[type='submit']:first-child:hover
 {
 	width: 14px;
 	height: 14px;
+	cursor: pointer;
+	border: none;
+	font-size: 0px;
 	background: url('../images/TrashRed.png') center no-repeat;
 	background-size: contain;
 }
 
-.tagSource a:nth-child(2)
+.tagSource input[type='submit']:nth-child(2)
 {
 	width: 12px;
 	height: 12px;
+	cursor: pointer;
+	border: none;
+	font-size: 0px;
 	background: url('../images/Active.png') center no-repeat;
 	background-size: contain;
 	margin-left: 0;
 	margin-right: 1px;
 }
 
-.tagSource a:nth-child(2):hover
+.tagSource input[type='submit']:nth-child(2):hover
 {
 	width: 12px;
 	height: 12px;
+	cursor: pointer;
+	border: none;
+	font-size: 0px;
 	background: url('../images/Disable.png') center no-repeat;
 	background-size: contain;
 }
 
-.tagSource.Tdisable a:nth-child(2)
+.tagSource.Tdisable input[type='submit']:nth-child(2)
 {
 	width: 12px;
 	height: 12px;
+	cursor: pointer;
+	border: none;
+	font-size: 0px;
 	background: url('../images/Desactivated.png') center no-repeat;
 	background-size: contain;
 }
 
-.tagSource.Tdisable a:nth-child(2):hover
+.tagSource.Tdisable input[type='submit']:nth-child(2):hover
 {
 	width: 12px;
 	height: 12px;
+	cursor: pointer;
+	border: none;
+	font-size: 0px;
 	background: url('../images/Activate.png') center no-repeat;
 	background-size: contain;
 }

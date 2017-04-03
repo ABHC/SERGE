@@ -11,3 +11,8 @@ body
 	margin: 0;
 	font-family: Verdana, Geneva, sans-serif;
 }
+
+*
+{
+	outline: none;
+}

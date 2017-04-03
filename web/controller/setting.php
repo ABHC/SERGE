@@ -131,69 +131,131 @@ if (isset($_POST['sourceKeyword']) AND isset($_POST['newKeyword']))
 	}
 }
 
-# Delete, disable, active keyword
-if (isset($_POST['delKeyword']))
+if (isset($_POST['delKeyword']) OR isset($_POST['disableKeyword']) OR isset($_POST['activateKeyword']))
 {
-	preg_match_all("/[0-9]*&/", htmlspecialchars($_POST['delKeyword']), $matchKeywordAndSource);
-	$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][0]);
-	$keywordIdAction = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][1]);
-	$action          = 'delKeyword';
-}
-elseif (isset($_POST['disableKeyword']))
-{
-	preg_match_all("/[0-9]*&/", htmlspecialchars($_POST['disableKeyword']), $matchKeywordAndSource);
-	$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][0]);
-	$keywordIdAction = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][1]);
-	$action          = 'disableKeyword';
-}
-elseif (isset($_POST['activateKeyword']))
-{
-	preg_match_all("/[0-9]*&/", htmlspecialchars($_POST['activateKeyword']), $matchKeywordAndSource);
-	$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][0]);
-	$keywordIdAction = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][1]);
-	$action          = 'activateKeyword';
-}
-
-if (isset($sourceIdAction) AND isset($keywordIdAction) AND isset($action))
-{
-	# Check if keyword exist for this ownerSourcesList
-	$keywordExist = FALSE;
-	foreach ($reqReadOwnerSourcesKeywordtmp as $ownerKeywordList)
+	# Delete, disable, active keyword
+	if (isset($_POST['delKeyword']))
 	{
-		# Source of current keyword for current user
-		$applicable_owners_sourcestmp = $ownerKeywordList['applicable_owners_sources'];
+		preg_match_all("/[0-9]*&/", htmlspecialchars($_POST['delKeyword']), $matchKeywordAndSource);
+		$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][0]);
+		$keywordIdAction = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][1]);
+		$action          = 'delKeyword';
+	}
+	elseif (isset($_POST['disableKeyword']))
+	{
+		preg_match_all("/[0-9]*&/", htmlspecialchars($_POST['disableKeyword']), $matchKeywordAndSource);
+		$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][0]);
+		$keywordIdAction = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][1]);
+		$action          = 'disableKeyword';
+	}
+	elseif (isset($_POST['activateKeyword']))
+	{
+		preg_match_all("/[0-9]*&/", htmlspecialchars($_POST['activateKeyword']), $matchKeywordAndSource);
+		$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][0]);
+		$keywordIdAction = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][1]);
+		$action          = 'activateKeyword';
+	}
 
-		# Search for source in applicable_owners_sources
-		$sourceInKeyword = preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*,!*" . $sourceIdAction . ",[,!0-9,]*\|/", $applicable_owners_sourcestmp, $applicable_owners_sourceForCurrentUser);
-
-		if ($ownerKeywordList['id'] == $keywordIdAction AND $sourceInKeyword)
+	if (isset($sourceIdAction) AND isset($keywordIdAction) AND isset($action))
+	{
+		# Check if keyword exist for this ownerSourcesList
+		$keywordExist = FALSE;
+		foreach ($reqReadOwnerSourcesKeywordtmp as $ownerKeywordList)
 		{
-			$applicable_owners_sourcesCurrentKeywordAndUser = $applicable_owners_sourceForCurrentUser[0];
-			$applicable_owners_sources = $ownerKeywordList['applicable_owners_sources'];
-			$activeForCurrentKeyword   = $ownerKeywordList['active'];
-			$keywordExist = TRUE;
+			# Source of current keyword for current user
+			$applicable_owners_sourcestmp = $ownerKeywordList['applicable_owners_sources'];
+
+			# Search for source in applicable_owners_sources
+			$sourceInKeyword = preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*,!*" . $sourceIdAction . ",[,!0-9,]*\|/", $applicable_owners_sourcestmp, $applicable_owners_sourceForCurrentUser);
+
+			if ($ownerKeywordList['id'] == $keywordIdAction AND $sourceInKeyword)
+			{
+				$applicable_owners_sourcesCurrentKeywordAndUser = $applicable_owners_sourceForCurrentUser[0];
+				$applicable_owners_sources = $ownerKeywordList['applicable_owners_sources'];
+				$activeForCurrentKeyword   = $ownerKeywordList['active'];
+				$keywordExist = TRUE;
+			}
+		}
+
+		# Delete an existing keyword
+		if ($keywordExist AND $action == 'delKeyword')
+		{
+			include_once('model/delKeyword.php');
+			header('Location: setting');
+		}
+		elseif ($keywordExist AND $action == 'disableKeyword')
+		{
+			include_once('model/disableKeyword.php');
+			header('Location: setting');
+		}
+		elseif ($keywordExist AND $action == 'activateKeyword')
+		{
+			include_once('model/activateKeyword.php');
+			header('Location: setting');
+		}
+		else
+		{
+			$ERROR_MESSAGE = 'Keyword doesn\'t exist or invalid action';
 		}
 	}
+}
 
-	# Delete an existing keyword
-	if ($keywordExist AND $action == 'delKeyword')
+if (isset($_POST['delSource']) OR isset($_POST['disableSource']) OR isset($_POST['activateSource']))
+{
+	# Delete, disable, active sources
+	if (isset($_POST['delSource']))
 	{
-		include_once('model/delKeyword.php');
-		header('Location: setting');
+		preg_match("/[0-9]*&/", htmlspecialchars($_POST['delSource']), $matchSourceId);
+		$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchSourceId[0]);
+		$action          = 'delSource';
 	}
-	elseif ($keywordExist AND $action == 'disableKeyword')
+	elseif (isset($_POST['disableSource']))
 	{
-		include_once('model/disableKeyword.php');
-		header('Location: setting');
+		preg_match("/[0-9]*&/", htmlspecialchars($_POST['disableSource']), $matchSourceId);
+		$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchSourceId[0]);
+		$action          = 'disableSource';
 	}
-	elseif ($keywordExist AND $action == 'activateKeyword')
+	elseif (isset($_POST['activateSource']))
 	{
-		include_once('model/activateKeyword.php');
-		header('Location: setting');
+		preg_match("/[0-9]*&/", htmlspecialchars($_POST['activateSource']), $matchSourceId);
+		$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchSourceId[0]);
+		$action          = 'activateSource';
 	}
-	else
+
+	if (isset($sourceIdAction) AND isset($action))
 	{
-		$ERROR_MESSAGE = 'Keyword doesn\'t exist or invalid action';
+		# Check if source exist for this owner
+		$sourceExist = FALSE;
+		foreach ($reqReadOwnerSourcestmp as $sourceList)
+		{
+			if ($sourceList['id'] == $sourceIdAction)
+			{
+				$owners                 = $sourceList['owners'];
+				$activeForCurrentSource = $sourceList['active'];
+				$sourceExist            = TRUE;
+			}
+		}
+
+		# Delete an existing sources
+		if ($sourceExist AND $action == 'delSource')
+		{
+			include_once('model/delSource.php');
+			header('Location: setting');
+		}
+		elseif ($sourceExist AND $action == 'disableSource')
+		{
+			include_once('model/disableSource.php');
+			header('Location: setting');
+		}
+		elseif ($sourceExist AND $action == 'activateSource')
+		{
+			include_once('model/activateSource.php');
+			header('Location: setting');
+		}
+		else
+		{
+			$ERROR_MESSAGE = 'Source doesn\'t exist or invalid action';
+		}
 	}
 }
 
