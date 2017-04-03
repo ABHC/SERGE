@@ -58,7 +58,7 @@ def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 	######### BIMENSUAL REFRESH
 	if interval >= 5097600:
 		while num <= max_rss:
-			query = "SELECT link FROM rss_serge WHERE id = %s"
+			query = ("SELECT link FROM rss_serge WHERE id = %s")
 
 			call_rss = database.cursor()
 			call_rss.execute(query, (num, ))
@@ -113,7 +113,7 @@ def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 	else:
 		while num <= max_rss :
 
-			query = "SELECT link, name FROM rss_serge WHERE id = %s"
+			query = ("SELECT link, name FROM rss_serge WHERE id = %s")
 
 			call_rss = database.cursor()
 			call_rss.execute(query, (num, ))
@@ -376,7 +376,7 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 		call_patents.close()
 
 	######### USER last_mail FIELD UPDATE
-	update = "UPDATE users_table_serge SET last_mail = %s WHERE id = %s"
+	update = ("UPDATE users_table_serge SET last_mail = %s WHERE id = %s")
 
 	call_users = database.cursor()
 

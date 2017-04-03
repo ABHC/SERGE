@@ -120,7 +120,7 @@ def feedMeUp (link):
 				post_title = xmldoc.entries[range].title
 				attribute_title = ""
 			except AttributeError:
-				attribute_title = "missing <title>, "
+				attribute_title = "missing title beacon, "
 				unvalid_count = unvalid_count+1
 				break
 
@@ -128,8 +128,7 @@ def feedMeUp (link):
 				post_description = xmldoc.entries[range].description
 				attribute_description = ""
 			except AttributeError:
-				print range
-				attribute_description = "missing <description>, "
+				attribute_description = "missing description beacon, "
 				unvalid_count = unvalid_count+1
 				break
 
@@ -145,7 +144,7 @@ def feedMeUp (link):
 				post_date = xmldoc.entries[range].published_parsed
 				attribute_date = ""
 			except AttributeError:
-				attribute_date = "missing <date>"
+				attribute_date = "missing date beacon"
 				unvalid_count = unvalid_count+1
 				break
 
