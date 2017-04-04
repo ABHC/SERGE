@@ -342,11 +342,11 @@ def newscast(last_launch, max_users):
 					########### DATA PROCESSING
 					post_title_lower = post_title.strip().lower()
 					post_description_lower = post_description.strip().lower()
-					keyword_lower = keyword.strip().lower()
+					keyword_lower = re.escape(keyword.strip().lower())
 
 					post_title_sans_accent = sans_accent_maj(post_title_lower)
 					post_description_sans_accent = sans_accent_maj(post_description_lower)
-					keyword_sans_accent = sans_accent_maj(keyword)
+					keyword_sans_accent = re.escape(sans_accent_maj(keyword))
 
 					id_item_comma = str(keyword_id) + ","
 					id_item_comma2 = "," + str(keyword_id) + ","
@@ -373,10 +373,10 @@ def newscast(last_launch, max_users):
 						redundancy = 0
 
 						for splitkey in aggregated_keyword:
-							splitkey = splitkey.strip().lower()
-							splitkey_sans_accent = sans_accent_maj(splitkey)
+							splitkey_lower = re.escape(splitkey.strip().lower())
+							splitkey_sans_accent = re.escape(sans_accent_maj(splitkey))
 
-							if (re.search('[^a-z]'+splitkey, post_title_lower) or re.search('[^a-z]'+splitkey, post_description_lower) or re.search('[^a-z]'+splitkey, tags_string_lower)) and post_date >= last_launch and post_date is not None and owners is not None:
+							if (re.search('[^a-z]'+splitkey_lower, post_title_lower) or re.search('[^a-z]'+splitkey_lower, post_description_lower) or re.search('[^a-z]'+splitkey_lower, tags_string_lower)) and post_date >= last_launch and post_date is not None and owners is not None:
 
 								redundancy = redundancy + 1
 
