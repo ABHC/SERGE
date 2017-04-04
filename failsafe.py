@@ -30,13 +30,13 @@ def checkMate(database, logger_info, logger_error):
 
     num_tables = num_tables[0]
 
-    if num_tables == 10:
+    if num_tables == 11:
         logger_info.info("Number of tables : check")
     else:
         logger_error.critical("Number of tables : FALSE")
-        if num_tables < 10:
+        if num_tables < 11:
             logger_error.critical("Missing Tables")
-        elif num_tables > 10:
+        elif num_tables > 11:
             logger_error.critical("Too much Tables")
             sys.exit()
         else:
@@ -45,7 +45,7 @@ def checkMate(database, logger_info, logger_error):
             sys.exit()
 
     ######### CHECKING TABLES' NAMES
-    expected_tables_list = ["admin_table_serge", "keyword_news_serge", "queries_science_serge", "queries_wipo_serge", "result_news_serge", "result_patents_serge", "result_science_serge", "rss_serge", "time_serge", "users_table_serge"]
+    expected_tables_list = ["admin_table_serge", "background_serge", "keyword_news_serge", "queries_science_serge", "queries_wipo_serge", "result_news_serge", "result_patents_serge", "result_science_serge", "rss_serge", "time_serge", "users_table_serge"]
 
     checking.execute(check_tables_name)
     name_tables = checking.fetchall()
@@ -63,6 +63,7 @@ def checkMate(database, logger_info, logger_error):
 
     ######### CHECKING TABLES' NUMBER OF COLUMNS
     admin_table_serge_numbers = 3
+    background_serge_numbers = 4
     keyword_news_serge_numbers = 4
     queries_science_serge_numbers = 5
     queries_wipo_serge_numbers = 4
@@ -99,6 +100,7 @@ def checkMate(database, logger_info, logger_error):
 
     ######### CHECKING TABLES COLUMNS' NAMES
     admin_table_serge_columns = ["id", "admin", "email"]
+    background_serge_columns = ["id", "name", "filename", "type"]
     keyword_news_serge_columns = ["id", "keyword", "applicable_owners_sources", "active"]
     queries_science_serge_columns = ["id", "query_arxiv", "query_doaj", "owners", "active"]
     queries_wipo_serge_columns = ["id", "query", "owners", "active"]
