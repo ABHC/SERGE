@@ -354,10 +354,17 @@
 				<div>
 					<p>
 						<h3>Your email</h3>
-						<input type="email" name="email" id="email" value="pohuvalentin@gmail.com" size="30"/>
+						<input type="email" name="email" id="email" value="<?php echo $_SESSION['email']; ?>"/>
 					</p>
 					<h3>Result page</h3>
 					<p>
+						<?php
+						if ($_SESSION['background_result'] == 'skyscraper')
+						{
+							$background['skyscraper'] = 'selected';
+						}
+						?>
+
 						Background <select class="selectCommResult" name="deleteHistoryUnit">
 							<option value="skyscraper">Skyscraper</option>
 							<option value="mountain">Mountain</option>
