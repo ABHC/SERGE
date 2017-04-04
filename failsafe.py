@@ -71,7 +71,7 @@ def checkMate(database, logger_info, logger_error):
     result_science_serge_numbers = 8
     rss_serge_numbers = 6
     time_serge_numbers = 2
-    users_table_serge_numbers = 15
+    users_table_serge_numbers = 16
 
     for name in tables_name_list:
         checking.execute(check_numbers_columns, (database_name, name))
@@ -107,7 +107,7 @@ def checkMate(database, logger_info, logger_error):
     result_science_serge_columns = ["id", "title", "link", "send_status", "date", "id_source", "query_id", "owners"]
     rss_serge_columns = ["id", "link", "name", "owners", "etag", "active"]
     time_serge_columns = ["name", "timestamps"]
-    users_table_serge_columns = ["id", "users", "email", "password", "last_mail", "send_condition", "frequency", "link_limit", "selected_days", "selected_hour", "mail_design", "language", "permission_news", "permission_science", "permission_patents"]
+    users_table_serge_columns = ["id", "users", "email", "password", "last_mail", "send_condition", "frequency", "link_limit", "selected_days", "selected_hour", "mail_design", "language", "background_result", "permission_news", "permission_science", "permission_patents"]
 
     for name in tables_name_list:
 
