@@ -88,7 +88,6 @@ def lastResearch():
 
 def sans_accent_maj(ch):
     """Delete all possible accents on capital letters of the ch string.
-
 	ch must be in unicode, and the result in return in unicode."""
 
     r = u""
@@ -714,14 +713,28 @@ def science(last_launch):
 					query_id=rows[0]
 
 				while range < rangemax:
-					post_title = data_doaj["results"][range]["bibjson"]["title"]
-					post_link = data_doaj["results"][range]["bibjson"]["link"][0]["url"]
-					post_date = data_doaj["results"][range]["last_updated"]
-					post_date = post_date.replace("T", " ").replace("Z", " ").strip()
-					human_date = datetime.datetime.strptime(post_date, "%Y-%m-%d %H:%M:%S")
-					post_date = human_date.timetuple()
-					post_date = time.mktime(post_date)
-					post_date >= last_launch
+					try:
+						post_title = data_doaj["results"][range]["bibjson"]["title"]
+					except Exception as json_error:
+						logger_error.warning("Error in json retrival of post_title : "+str(json_error))
+						post_title = ""
+
+					try:
+						post_link = data_doaj["results"][range]["bibjson"]["link"][0]["url"]
+					except Exception as json_error:
+						logger_error.warning("Error in json retrival of post_link : "+str(json_error))
+						post_link = ""
+
+					try:
+						post_date = data_doaj["results"][range]["last_updated"]
+						post_date = post_date.replace("T", " ").replace("Z", " ").strip()
+						human_date = datetime.datetime.strptime(post_date, "%Y-%m-%d %H:%M:%S")
+						post_date = human_date.timetuple()
+						post_date = time.mktime(post_date)
+					except Exception as json_error:
+						logger_error.warning("Error in json retrival of post_date : "+str(json_error))
+						post_date = None
+						human_date = "None"
 
 					id_item_comma = str(query_id)+","
 					id_item_comma2 = ","+str(query_id)+","
@@ -780,7 +793,7 @@ logger_info.info(time.asctime(time.gmtime(now))+"\n")
 last_launch = lastResearch()
 
 ######### DATABASE INTERGRITY CHECKING
-failsafe.checkMate(database, logger_info, logger_error)
+#failsafe.checkMate(database, logger_info, logger_error)
 
 ######### NUMBERS OF USERS
 call_users = database.cursor()
@@ -796,7 +809,7 @@ insertSQL.ofSourceAndName(now, logger_info, logger_error, database)
 
 ######### RESEARCH OF LATEST NEWS, SCIENTIFIC PUBLICATIONS AND PATENTS
 
-newscast(last_launch, max_users)
+#newscast(last_launch, max_users)
 
 science(last_launch)
 
