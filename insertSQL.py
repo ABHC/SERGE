@@ -186,11 +186,7 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 			jelly_title_score = jellyfish.levenshtein_distance(post_title, jelly_title)
 			jelly_link_score = jellyfish.levenshtein_distance(post_link, jelly_link)
 
-			if jelly_title_score <= 3 and jelly_breaker == False:
-				jelly_breaker = True
-				break
-
-			elif jelly_link_score <= 3 and jelly_breaker == False:
+			if jelly_title_score <= 3 and jelly_link_score <= 3 and jelly_breaker == False:
 				jelly_breaker = True
 				break
 
@@ -201,6 +197,7 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 		try:
 			insert_data.execute(query_insertion, item)
 			database.commit()
+			#print item
 		except Exception, except_type:
 			database.rollback()
 			logger_error.error("ROLLBACK AT INSERTION IN insertOrUpdate FUNCTION")
