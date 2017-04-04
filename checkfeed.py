@@ -120,7 +120,7 @@ def feedMeUp (link):
 				post_title = xmldoc.entries[range].title
 				attribute_title = ""
 			except AttributeError:
-				attribute_title = "missing title beacon, "
+				attribute_title = "title "
 				unvalid_count = unvalid_count+1
 				break
 
@@ -128,7 +128,7 @@ def feedMeUp (link):
 				post_description = xmldoc.entries[range].description
 				attribute_description = ""
 			except AttributeError:
-				attribute_description = "missing description beacon, "
+				attribute_description = "description "
 				unvalid_count = unvalid_count+1
 				break
 
@@ -136,7 +136,7 @@ def feedMeUp (link):
 				post_link = xmldoc.entries[range].link
 				attribute_link = ""
 			except AttributeError:
-				attribute_link = "missing <link>, "
+				attribute_link = "link "
 				unvalid_count = unvalid_count+1
 				break
 
@@ -144,16 +144,16 @@ def feedMeUp (link):
 				post_date = xmldoc.entries[range].published_parsed
 				attribute_date = ""
 			except AttributeError:
-				attribute_date = "missing date beacon"
+				attribute_date = "date "
 				unvalid_count = unvalid_count+1
 				break
 
 			range = range+1
 
 		if unvalid_count > 0:
-			complete_attribute = attribute_title+attribute_description+attribute_link+attribute_date
-			print complete_attribute
-			print ("WARNING : Some beacons are missing, your research may be less efficient")
+			complete_attribute = "Missing beacon(s) : "+attribute_title+attribute_description+attribute_link+attribute_date
+			print ("valid link")
+			print ("WARNING : Some beacons are missing, your research may be less efficient \n"+complete_attribute)
 
 		if unvalid_count == 0:
 			print ("valid link")
