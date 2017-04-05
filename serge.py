@@ -793,7 +793,7 @@ logger_info.info(time.asctime(time.gmtime(now))+"\n")
 last_launch = lastResearch()
 
 ######### DATABASE INTERGRITY CHECKING
-#failsafe.checkMate(database, logger_info, logger_error)
+failsafe.checkMate(database, logger_info, logger_error)
 
 ######### NUMBERS OF USERS
 call_users = database.cursor()
@@ -809,7 +809,7 @@ insertSQL.ofSourceAndName(now, logger_info, logger_error, database)
 
 ######### RESEARCH OF LATEST NEWS, SCIENTIFIC PUBLICATIONS AND PATENTS
 
-#newscast(last_launch, max_users)
+newscast(last_launch, max_users)
 
 science(last_launch)
 
