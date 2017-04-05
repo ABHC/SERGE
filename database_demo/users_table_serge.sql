@@ -15,6 +15,7 @@ CREATE TABLE `users_table_serge` (
   `mail_design` text COLLATE utf8mb4_bin NOT NULL,
   `language` varchar(2) COLLATE utf8mb4_bin DEFAULT 'EN',
   `record_read` tinyint(1) NOT NULL,
+  `history_lifetime` int(11) DEFAULT NULL,
   `background_result` text COLLATE utf8mb4_bin NOT NULL,
   `permission_news` tinyint(1) NOT NULL,
   `permission_science` tinyint(1) NOT NULL,
