@@ -8,6 +8,7 @@ if (!isset($_SESSION['pseudo']))
 
 // Define variables
 $actualLetter = '';
+$style = '';
 if (isset($_SESSION['ERROR_MESSAGE']))
 {
 	$ERROR_MESSAGE = $_SESSION['ERROR_MESSAGE'];
@@ -62,9 +63,17 @@ if (isset($_POST['sourceType']))
 	}
 }
 
+# Read background list
+include_once('model/readBackgroundList.php');
+$type           = 'result';
+$backgroundList = readBackgroundList($type, $bdd);
+
 # Read owner sources
 include_once('model/readOwnerSources.php');
 include_once('model/readOwnerSourcesKeyword.php');
+
+# Read user settings
+include_once('model/readUserSettings.php');
 
 # Adding new source
 if (isset($_POST['sourceType'])  AND isset($_POST['newSource']))
@@ -257,6 +266,118 @@ if (isset($_POST['delSource']) OR isset($_POST['disableSource']) OR isset($_POST
 			$ERROR_MESSAGE = 'Source doesn\'t exist or invalid action';
 		}
 	}
+}
+
+# Sending condition
+	if ($userSettings['send_condition'] == 'link_limit')
+	{
+		$condNbLink = 'checked';
+	}
+	elseif ($userSettings['send_condition'] == 'freq')
+	{
+		$condFreq = 'checked';
+	}
+	elseif ($userSettings['send_condition'] == 'deadline')
+	{
+		$condDate = 'checked';
+	}
+
+	preg_match_all("/[1-7]/", $userSettings['selected_days'], $selected_days);
+	foreach ($selected_days[0] as $value)
+	{
+		$day[$value] = 'selected';
+	}
+
+	$day2 = $day;
+
+	if ($day[1] == 'selected' AND $day[2] == 'selected' AND $day[3] == 'selected' AND $day[4] == 'selected' AND $day[5] == 'selected' AND $day[6] == 'selected' AND $day[7] == 'selected')
+	{
+		$day[1] = '';
+		$day[2] = '';
+		$day[3] = '';
+		$day[4] = '';
+		$day[5] = '';
+		$day[6] = '';
+		$day[7] = '';
+		$day2[1] = '';
+		$day2[2] = '';
+		$day2[3] = '';
+		$day2[4] = '';
+		$day2[5] = '';
+		$day2[6] = '';
+		$day2[7] = '';
+		$day[9] = 'selected';
+	}
+	elseif ($day[1] == 'selected' AND $day[2] == 'selected' AND $day[3] == 'selected' AND $day[4] == 'selected' AND $day[5] == 'selected')
+	{
+		$day[1] = '';
+		$day[2] = '';
+		$day[3] = '';
+		$day[4] = '';
+		$day[5] = '';
+		$day[6] = '';
+		$day[7] = '';
+		$day2[1] = '';
+		$day2[2] = '';
+		$day2[3] = '';
+		$day2[4] = '';
+		$day2[5] = '';
+		$day[0] = 'selected';
+	}
+	elseif($day[1] == 'selected' AND $day[3] == 'selected' AND $day[5] == 'selected')
+	{
+		$day[1]  = '';
+		$day[2]  = '';
+		$day[3]  = '';
+		$day[4]  = '';
+		$day[5]  = '';
+		$day[6]  = '';
+		$day[7]  = '';
+		$day2[1] = '';
+		$day2[3] = '';
+		$day2[5] = '';
+		$day[8]  = 'selected';
+	}
+
+	$firstEntry = FALSE;
+	$cpt = 1;
+	while ($cpt <= 7)
+	{
+		if ($day[$cpt] == 'selected' AND $day2[$cpt] == 'selected' AND !$firstEntry)
+		{
+			$day2[$cpt] = '';
+			$firstEntry = TRUE;
+		}
+		elseif ($day[$cpt] == 'selected' AND $day2[$cpt] == 'selected' AND $firstEntry)
+		{
+			$day[$cpt] = '';
+			$cpt = 8;
+		}
+		$cpt++;
+	}
+
+# Sorting links in email
+if ($userSettings['mail_design'] == 'masterword')
+{
+	$orderByKeyword = 'checked';
+}
+elseif ($userSettings['mail_design'] == 'origin')
+{
+	$orderBySource = 'checked';
+}
+elseif ($userSettings['mail_design'] == 'type')
+{
+	$orderByType = 'checked';
+}
+
+# Privacy
+if ($userSettings['record_read'] == 0)
+{
+	$recordRead = 'checked';
+}
+elseif ($userSettings['record_read'] == 1)
+{
+	$recordRead = '';
 }
 
 include_once('view/nav/nav.php');

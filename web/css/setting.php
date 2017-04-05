@@ -67,7 +67,7 @@ select
 	width: calc(40% - 30px);
 	max-width: fit-content;
 	height: 26px;
-	font-size: inherit;
+	font-size: 17px;
 	padding: 4px;
 	padding-right: 10px;
 	border-radius: 3px;
@@ -783,7 +783,6 @@ h2
 	position: relative;
 	width: fit-content;
 	max-width: fit-content;
-	font-size: inherit;
 	padding: 0;
 	padding-right: 8px;
 	border: none;

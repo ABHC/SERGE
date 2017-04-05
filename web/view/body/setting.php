@@ -354,22 +354,26 @@
 				<div>
 					<p>
 						<h3>Your email</h3>
-						<input type="email" name="email" id="email" value="<?php echo $_SESSION['email']; ?>"/>
+						<input type="email" name="email" id="email" value="<?php echo $userSettings['email']; ?>"/>
 					</p>
 					<h3>Result page</h3>
 					<p>
+						Background <select class="selectCommResult" name="backgrounResult">
 						<?php
-						if ($_SESSION['background_result'] == 'skyscraper')
+						foreach ($backgroundList as $backgroundName)
 						{
-							$background['skyscraper'] = 'selected';
+							if ($userSettings['background_result'] == $backgroundName['name'])
+							{
+								$backgroundSelected = 'selected';
+							}
+							else
+							{
+								$backgroundSelected = '';
+							}
+
+							echo '<option value="' . $backgroundName['name'] . '" ' . $backgroundSelected . '>' . $backgroundName['name'] . '</option>';
 						}
 						?>
-
-						Background <select class="selectCommResult" name="deleteHistoryUnit">
-							<option value="skyscraper">Skyscraper</option>
-							<option value="mountain">Mountain</option>
-							<option value="nature">Nature</option>
-							<option value="sea">Sea</option>
 							<option value="random">Random</option>
 						</select>
 						<span class="arrDown">▾</span>
@@ -378,45 +382,46 @@
 				<div>
 					<h3>Sending condition</h3>
 					<p>
-						<input type="radio" id="condNbLink" name="cond">
+						<input type="radio" id="condNbLink" name="cond" <?php echo $condNbLink; ?>>
 						<label class="radio" for="condNbLink"></label>
-						by number of links
-						<input class="number alpha" type="number" name="numberLinks" min="5" placeholder="50"/>
+						by number of links :
+						<input class="number alpha" type="number" name="numberLinks" min="5" placeholder="50" value="<?php echo $userSettings['link_limit']; ?>"/>
 					</p>
 					<p>
-						<input type="radio" id="condFreq" name="cond">
+						<input type="radio" id="condFreq" name="cond" <?php echo $condFreq; ?>>
 						<label class="radio" for="condFreq"></label>
 						by frequency, every
-						<input class="number alpha" type="number" name="freq" min="2" max="500" step="2" placeholder="24"/> hours
+						<input class="number alpha" type="number" name="freq" min="2" max="500" step="2" placeholder="24" value="<?php echo $userSettings['frequency']; ?>"/> hours
 					</p>
 					<p>
-						<input type="radio" id="condDate" name="cond">
+						<input type="radio" id="condDate" name="cond" <?php echo $condDate; ?>>
 						<label class="radio" for="condDate"></label>
 						at
-						<input class="number alpha" type="number" name="freq" min="0" max="23" step="2" placeholder="19"/> h
+						<input class="number alpha" type="number" name="freq" min="0" max="23" step="2" placeholder="19" value="<?php echo $userSettings['selected_hour']; ?>"/> h
 						, every
 						<select class="selectCommResult" name="day">
-							<option value="business day">business day</option>
-							<option value="day">day</option>
-							<option value="monday">monday</option>
-							<option value="tuesday">tuesday</option>
-							<option value="wednesday">wednesday</option>
-							<option value="thursday">thursday</option>
-							<option value="friday">friday</option>
-							<option value="saturday">saturday</option>
-							<option value="sunday">sunday</option>
+							<option value="business day" <?php echo $day[0]; ?>>business day</option>
+							<option value="second business day" <?php echo $day[8]; ?>>second business day</option>
+							<option value="day" <?php echo $day[9]; ?>>day</option>
+							<option value="monday" <?php echo $day[1]; ?>>monday</option>
+							<option value="tuesday" <?php echo $day[2]; ?>>tuesday</option>
+							<option value="wednesday" <?php echo $day[3]; ?>>wednesday</option>
+							<option value="thursday" <?php echo $day[4]; ?>>thursday</option>
+							<option value="friday" <?php echo $day[5]; ?>>friday</option>
+							<option value="saturday" <?php echo $day[6]; ?>>saturday</option>
+							<option value="sunday" <?php echo $day[7]; ?>>sunday</option>
 						</select>
 						<span class="arrDown">▾</span>
 						and
 						<select class="selectCommResult" name="day">
 							<option value="none">that's all</option>
-							<option value="monday">monday</option>
-							<option value="tuesday">tuesday</option>
-							<option value="wednesday">wednesday</option>
-							<option value="thursday">thursday</option>
-							<option value="friday">friday</option>
-							<option value="saturday">saturday</option>
-							<option value="sunday">sunday</option>
+							<option value="monday" <?php echo $day2[1]; ?>>monday</option>
+							<option value="tuesday" <?php echo $day2[2]; ?>>tuesday</option>
+							<option value="wednesday" <?php echo $day2[3]; ?>>wednesday</option>
+							<option value="thursday" <?php echo $day2[4]; ?>>thursday</option>
+							<option value="friday" <?php echo $day2[5]; ?>>friday</option>
+							<option value="saturday" <?php echo $day2[6]; ?>>saturday</option>
+							<option value="sunday" <?php echo $day2[7]; ?>>sunday</option>
 						</select>
 						<span class="arrDown">▾</span>
 					</p>
@@ -424,17 +429,17 @@
 				<div>
 					<h3>Sorting for links in email</h3>
 					<p>
-						<input type="radio" id="orderByKeyword" name="orderBy">
+						<input type="radio" id="orderByKeyword" name="orderBy" <?php echo $orderByKeyword; ?>>
 						<label class="radio" for="orderByKeyword"></label>
 						by keyword
 					</p>
 					<p>
-						<input type="radio" id="orderBySource" name="orderBy">
+						<input type="radio" id="orderBySource" name="orderBy" <?php echo $orderBySource; ?>>
 						<label class="radio" for="orderBySource"></label>
 						by source
 					</p>
 					<p>
-						<input type="radio" id="orderByAlpha" name="orderBy">
+						<input type="radio" id="orderByAlpha" name="orderBy" <?php echo $orderByType; ?>>
 						<label class="radio" for="orderByAlpha"></label>
 						by alphabetical order
 					</p>
@@ -443,13 +448,13 @@
 					<h3>Privacy</h3>
 					<div class="align">
 						<label class="switch">
-							<input type="checkbox" checked>
+							<input type="checkbox" <?php echo $recordRead; ?>>
 							<div class="slider"></div>
 						</label>
 						Record when a link is clicked
 					</div>
 					<p>
-						History life time : <input class="number alpha" name="history" type="number" min="1" value="12"/> months
+						History life time : <input class="number alpha" name="history" type="number" min="1" value="<?php  echo $userSettings['history_lifetime']; ?>"/> months
 					</p>
 					<div>
 						<h3></h3>
@@ -635,26 +640,30 @@
 
 					if ($cptKeyword < 7)
 					{
-						echo
-						'<style>
-						#unfold' . $ownerSourcesList['id'] . ',
-						#fold' . $ownerSourcesList['id'] . '
-						{
-							display: none;
-						}
-
-						#keywordlist' . $ownerSourcesList['id'] . '.keywordList
-						{
-							width: 96%;
-							height: auto;
-						}
-						</style>';
+						$style = $style . PHP_EOL .
+						'#unfold' . $ownerSourcesList['id'] . ',' . PHP_EOL .
+						'#fold' . $ownerSourcesList['id'] . PHP_EOL .
+						'{' . PHP_EOL .
+						'	display: none;' . PHP_EOL .
+						'}' . PHP_EOL .
+						'#keywordList' . $ownerSourcesList['id'] . PHP_EOL .
+						'{' . PHP_EOL .
+						'	width: 96%;' . PHP_EOL .
+						'	height: auto;' . PHP_EOL .
+						'}' . PHP_EOL;
 					}
 					$cptSource++;
 				}
 				?>
 			</div>
 		</div>
+
+<?php
+	echo
+	'<style>' . PHP_EOL .
+	$style .
+	'</style>' . PHP_EOL;
+?>
 
 		<div class="scientificPublicationManagement">
 			<h2>Science watch management</h2>

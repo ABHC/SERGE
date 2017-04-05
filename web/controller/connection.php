@@ -24,15 +24,6 @@ if (isset($_POST['conn_pseudo']) && isset($_POST['conn_password']))
 		session_start();
 		$_SESSION['pseudo']            = $pseudo;
 		$_SESSION['id']                = $result['id'];
-		$_SESSION['email']             = $result['email'];
-		$_SESSION['send_condition']    = $result['send_condition'];
-		$_SESSION['frequency']         = $result['frequency'];
-		$_SESSION['link_limit']        = $result['link_limit'];
-		$_SESSION['selected_days']     = $result['selected_days'];
-		$_SESSION['selected_hour']     = $result['selected_hour'];
-		$_SESSION['mail_design']       = $result['mail_design'];
-		$_SESSION['language']          = $result['language'];
-		$_SESSION['background_result'] = $result['background_result'];
 		$redirect                      = $_SESSION['redirectFrom'];
 		header("Location: $redirect");
 	}
