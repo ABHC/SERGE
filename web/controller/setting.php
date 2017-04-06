@@ -90,6 +90,10 @@ if (isset($_POST['sourceType'])  AND isset($_POST['newSource']))
 		if ($linkValidation[0] == 'valid link' AND $errorInCheckfeed == 0)
 		{
 			include_once('model/addNewSource.php');
+			if (isset($linkValidation[1]))
+			{
+				$_SESSION['ERROR_MESSAGE'] = $linkValidation[1];
+			}
 			header('Location: setting');
 		}
 		else

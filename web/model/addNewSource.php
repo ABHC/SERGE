@@ -29,13 +29,13 @@ else
 	$req->execute(array(
 		'owners' => $actualOwner,
 		'link' => $source));
-		$result = $req->fetch();
+		$resultActualOwner = $req->fetch();
 		$req->closeCursor();
 
-		if (!$result)
+		if (!$resultActualOwner)
 		{
 			// Update owners of existing source with the new onwer
-			$newsOwners = $result[0] . $_SESSION['id'] . ',';
+			$newOwners = $result['owners'] . $_SESSION['id'] . ',';
 			$req = $bdd->prepare('UPDATE rss_serge SET owners = :owners WHERE link = :link');
 			$req->execute(array(
 				'owners' => $newOwners,
