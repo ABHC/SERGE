@@ -271,10 +271,6 @@ def newsletterByKeyword (user, pydate, translate_text, permission_news, permissi
 	"""Formatting function for emails, apply the formatting by keywords"""
 
 	######### PENDING LINKS
-	print pending_news
-	print pending_patents
-	print pending_science
-
 	pending_all = pending_news+pending_science+pending_patents
 
 	######### BANNER AND HELLO
