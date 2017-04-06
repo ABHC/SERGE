@@ -30,9 +30,6 @@ from logging.handlers import RotatingFileHandler
 from shutil import copyfile
 import json
 
-sys.path.insert(0, "modules/UFP/feedparser")
-sys.path.insert(1, "modules/UFP/feedparser")
-
 ######### IMPORT SERGE SPECIALS MODULES
 import mailer
 import sergenet
@@ -314,17 +311,16 @@ def newscast(last_launch, max_users):
 					try :
 						post_tags = xmldoc.entries[range].tags
 					except AttributeError:
-						logger_info.info("BEACON INFO : no <category> in "+link+" range : "+str(range))
 						post_tags = []
 
 					########### DATA PROCESSING
 					post_title_lower = post_title.strip().lower()
 					post_description_lower = post_description.strip().lower()
-					keyword_lower = re.escape(keyword.strip().lower())
+					keyword_lower = keyword.strip().lower()
 
 					post_title_sans_accent = sans_accent_maj(post_title_lower)
 					post_description_sans_accent = sans_accent_maj(post_description_lower)
-					keyword_sans_accent = re.escape(sans_accent_maj(keyword))
+					keyword_sans_accent = sans_accent_maj(keyword)
 
 					tagdex = 0
 					tags_string_lower = ""
@@ -360,14 +356,14 @@ def newscast(last_launch, max_users):
 						redundancy = 0
 
 						for splitkey in aggregated_keyword:
-							splitkey_lower = re.escape(splitkey.strip().lower())
-							splitkey_sans_accent = re.escape(sans_accent_maj(splitkey))
+							splitkey_lower = splitkey.strip().lower()
+							splitkey_sans_accent = sans_accent_maj(splitkey)
 
-							if (re.search('[^a-z]'+splitkey_lower, post_title_lower) or re.search('[^a-z]'+splitkey_lower, post_description_lower) or re.search('[^a-z]'+splitkey_lower, tags_string_lower)) and post_date >= last_launch and post_date is not None and owners is not None:
+							if (re.search('[^a-z]'+re.escape(re.escape(splitkey_lower)), re.escape(post_title_lower)) or re.search('[^a-z]'+re.escape(re.escape(splitkey_lower)), re.escape(post_description_lower)) or re.search('[^a-z]'+re.escape(re.escape(splitkey_lower)), re.escape(tags_string_lower))) and post_date >= last_launch and post_date is not None and owners is not None:
 
 								redundancy = redundancy + 1
 
-							elif (re.search('[^a-z]'+splitkey_sans_accent, post_title_sans_accent) or re.search('[^a-z]'+splitkey_sans_accent, post_description_sans_accent) or re.search('[^a-z]'+splitkey_sans_accent, tags_string_sans_accent)) and post_date >= last_launch and post_date is not None and owners is not None:
+							elif (re.search('[^a-z]'+re.escape(re.escape(splitkey_sans_accent)), re.escape(post_title_sans_accent)) or re.search('[^a-z]'+re.escape(re.escape(splitkey_sans_accent)), re.escape(post_description_sans_accent)) or re.search('[^a-z]'+re.escape(re.escape(splitkey_sans_accent)), re.escape(tags_string_sans_accent))) and post_date >= last_launch and post_date is not None and owners is not None:
 
 								redundancy = redundancy + 1
 
@@ -391,7 +387,7 @@ def newscast(last_launch, max_users):
 					########### SIMPLE KEYWORDS RESEARCH
 					else:
 						########### RESEARCH OF KEYWORDS IN LOWER CASE
-						if (re.search('[^a-z]'+keyword_lower, post_title_lower) or re.search('[^a-z]'+keyword_lower, post_description_lower) or re.search('[^a-z]'+keyword_lower, tags_string_lower) or re.search('^:all@'+id_rss+'$', keyword_lower)) and post_date >= last_launch and post_date is not None and owners is not None:
+						if (re.search('[^a-z]'+re.escape(re.escape(keyword_lower)), re.escape(post_title_lower)) or re.search('[^a-z]'+re.escape(re.escape(keyword_lower)), re.escape(post_description_lower)) or re.search('[^a-z]'+re.escape(re.escape(keyword_lower)), re.escape(tags_string_lower)) or re.search('^'+re.escape(re.escape(':all@'+id_rss))+'$', re.escape(keyword_lower))) and post_date >= last_launch and post_date is not None and owners is not None:
 
 							########### QUERY FOR DATABASE CHECKING
 							query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
@@ -409,7 +405,7 @@ def newscast(last_launch, max_users):
 							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_update_owners, query_jelly_update, post_link, post_title, item, id_item_comma, id_item_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
 
 						########### RESEARCH OF KEYWORDS WITHOUT ACCENTS
-						elif (re.search('[^a-z]'+keyword_sans_accent, post_title_sans_accent) or re.search('[^a-z]'+keyword_sans_accent, post_description_sans_accent) or re.search('[^a-z]'+keyword_sans_accent, tags_string_sans_accent)) and post_date >= last_launch and post_date is not None and owners is not None:
+						elif (re.search('[^a-z]'+re.escape(re.escape(keyword_sans_accent)), re.escape(post_title_sans_accent)) or re.search('[^a-z]'+re.escape(re.escape(keyword_sans_accent)), re.escape(post_description_sans_accent)) or re.search('[^a-z]'+re.escape(re.escape(keyword_sans_accent)), re.escape(tags_string_sans_accent))) and post_date >= last_launch and post_date is not None and owners is not None:
 
 							########### QUERY FOR DATABASE CHECKING
 							query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
@@ -986,6 +982,9 @@ for user in user_list_all:
 
 			######### CALL TO stairwayToUpdate FUNCTION
 			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database)
+
+		elif pending_all == 0:
+			logger_info.info("NO PENDING NEWS")
 
 		else :
 			logger_info.info("BAD DAY OR/AND BAD HOUR")
