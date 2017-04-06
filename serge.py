@@ -227,15 +227,6 @@ def newscast(last_launch, max_users):
 				logger_info.warning("NO TITLE IN :"+link+"\n")
 				missing_flux = True
 
-			try:
-				tag_test = xmldoc.entries[0].tags
-			except AttributeError:
-				logger_info.info("BEACON INFO : no <category> in "+link)
-				tag_test = None
-			except IndexError:
-				logger_info.critical("NO ENTRIES IN :"+link+"\n")
-				missing_flux = True
-
 			rangemax = len(xmldoc.entries)
 			range = 0 #on initialise la variable range qui va servir pour pointer les articles
 
@@ -288,7 +279,7 @@ def newscast(last_launch, max_users):
 
 				while range < rangemax and range < 500:
 
-					########### MANDATORY UNIVERSAL FEED PARSER VARIABLES
+					########### UNIVERSAL FEED PARSER VARIABLES
 					try:
 						post_title = xmldoc.entries[range].title
 					except AttributeError:
@@ -320,23 +311,11 @@ def newscast(last_launch, max_users):
 						post_date = None
 						human_date = "None"
 
-					########### OPTIONNAL UNIVERSAL FEED PARSER VARIABLE
-					tags_string_lower = ""
-					tags_string_sans_accent = ""
-
-					if tag_test is not None:
-						tagdex = 0
-
-						try :
-							post_tags = xmldoc.entries[range].tags
-						except AttributeError:
-							logger_info.info("BEACON INFO : no <category> in "+link+" range : "+str(range))
-							post_tags = []
-
-						while tagdex < len(post_tags) :
-							tags_string_lower =  tags_string_lower + xmldoc.entries[range].tags[tagdex].term.lower() + " "
-							tags_string_sans_accent = tags_string_sans_accent + sans_accent_maj(xmldoc.entries[range].tags[tagdex].term.lower()) + " "
-							tagdex = tagdex+1
+					try :
+						post_tags = xmldoc.entries[range].tags
+					except AttributeError:
+						logger_info.info("BEACON INFO : no <category> in "+link+" range : "+str(range))
+						post_tags = []
 
 					########### DATA PROCESSING
 					post_title_lower = post_title.strip().lower()
@@ -346,6 +325,15 @@ def newscast(last_launch, max_users):
 					post_title_sans_accent = sans_accent_maj(post_title_lower)
 					post_description_sans_accent = sans_accent_maj(post_description_lower)
 					keyword_sans_accent = re.escape(sans_accent_maj(keyword))
+
+					tagdex = 0
+					tags_string_lower = ""
+					tags_string_sans_accent = ""
+
+					while tagdex < len(post_tags) :
+						tags_string_lower =  tags_string_lower + xmldoc.entries[range].tags[tagdex].term.lower() + " "
+						tags_string_sans_accent = tags_string_sans_accent + sans_accent_maj(xmldoc.entries[range].tags[tagdex].term.lower()) + " "
+						tagdex = tagdex+1
 
 					id_item_comma = str(keyword_id) + ","
 					id_item_comma2 = "," + str(keyword_id) + ","
@@ -901,12 +889,7 @@ for user in user_list_all:
 		for row in rows:
 			not_send_patents_list.append(row)
 
-	######### NUMBER OF LINKS IN EACH CATEGORY
-	pending_news = len(not_send_news_list)
-	pending_science = len(not_send_science_list)
-	pending_patents = len(not_send_patents_list)
-
-	pending_all = pending_news+pending_science+pending_patents
+	pending_all = len(not_send_news_list)+len(not_send_science_list)+len(not_send_patents_list)
 
 	######### SEND CONDITION QUERY
 	query = "SELECT send_condition FROM users_table_serge WHERE id = %s"
@@ -937,7 +920,7 @@ for user in user_list_all:
 			logger_info.info("FREQUENCY REACHED")
 
 			######### CALL TO buildMail FUNCTION
-			mailer.buildMail(user, user_id_comma, register, pydate, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, database)
+			mailer.buildMail(user, user_id_comma, register, pydate, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, database)
 
 			######### CALL TO highwayToMail FUNCTION
 			mailer.highwayToMail(register, user, database)
@@ -966,7 +949,7 @@ for user in user_list_all:
 			logger_info.info("LIMIT REACHED")
 
 			######### CALL TO buildMail FUNCTION
-			mailer.buildMail(user, user_id_comma, register, pydate, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, database)
+			mailer.buildMail(user, user_id_comma, register, pydate, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, database)
 
 			######### CALL TO highwayToMail FUNCTION
 			mailer.highwayToMail(register, user, database)
@@ -996,7 +979,7 @@ for user in user_list_all:
 			logger_info.info("GOOD DAY AND GOOD HOUR")
 
 			######### CALL TO buildMail FUNCTION
-			mailer.buildMail(user, user_id_comma, register, pydate, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, database)
+			mailer.buildMail(user, user_id_comma, register, pydate, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, database)
 
 			######### CALL TO highwayToMail FUNCTION
 			mailer.highwayToMail(register, user, database)

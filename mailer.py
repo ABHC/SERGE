@@ -25,10 +25,15 @@ passSQL = passSQL.read().strip()
 #database = MySQLdb.connect(host="localhost", user="root", passwd=passSQL, db="CairnDevices", use_unicode=1, charset="utf8")# [AUDIT][REVIEW] CRITICAL n'utilise plus root pour te connecter à la BDD mais un utilisateur ici serge qui aura les accès uniquement aux tables de serge. Sinon en cas de faille dans ton programme toute les autres tables seront exposées
 
 
-def buildMail(user, user_id_comma, register, pydate, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, database):
+def buildMail(user, user_id_comma, register, pydate, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, database):
 	"""Function for mail pre-formatting.
 
 	   buildMail retrieves mail building option for the current user and does a pre-formatting of the mail. Then the function calls the building functions for mail."""
+
+	######### NUMBER OF LINKS IN EACH CATEGORY
+	pending_news = len(not_send_news_list)
+	pending_science = len(not_send_science_list)
+	pending_patents = len(not_send_patents_list)
 
 	######### SET LISTS AND VARIABLES FOR MAIL DESIGN
 	newswords_list = []
@@ -266,6 +271,10 @@ def newsletterByKeyword (user, pydate, translate_text, permission_news, permissi
 	"""Formatting function for emails, apply the formatting by keywords"""
 
 	######### PENDING LINKS
+	print pending_news
+	print pending_patents
+	print pending_science
+
 	pending_all = pending_news+pending_science+pending_patents
 
 	######### BANNER AND HELLO

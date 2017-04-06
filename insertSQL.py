@@ -197,7 +197,6 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 		try:
 			insert_data.execute(query_insertion, item)
 			database.commit()
-			#print item
 		except Exception, except_type:
 			database.rollback()
 			logger_error.error("ROLLBACK AT INSERTION IN insertOrUpdate FUNCTION")
