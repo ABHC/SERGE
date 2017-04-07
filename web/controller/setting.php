@@ -79,67 +79,91 @@ include_once('model/readOwnerSourcesKeyword.php');
 # Read user settings
 include_once('model/readUserSettings.php');
 
-# Change email
-if (isset($_POST['email']))
+if (htmlspecialchars($_POST['settings']) == 'ChangeSettings')
 {
-	if (htmlspecialchars($_POST['email']) != '')
+	# Change email
+	if (isset($_POST['email']))
 	{
-		$newEmail = htmlspecialchars($_POST['email']);
-		include_once('model/addNewEmail.php');
-		header('Location: setting');
-	}
-}
-
-# Change result backgroundList
-if (isset($_POST['backgroundResult']))
-{
-	if (htmlspecialchars($_POST['backgroundResult']) != '')
-	{
-		$backgroundResult = htmlspecialchars($_POST['backgroundResult']);
-		include_once('model/changeBackgroundResult.php');
-		header('Location: setting');
-	}
-}
-
-# change sending condition
-if (isset($_POST['cond']))
-{
-	if (htmlspecialchars($_POST['cond']) != '')
-	{
-		$cond         = htmlspecialchars($_POST['cond']);
-		$linkLimit    = htmlspecialchars($_POST['numberLinks']);
-		$frequency    = htmlspecialchars($_POST['freq']);
-		$selectedDays = htmlspecialchars($_POST['days']);
-		$selectedHour = htmlspecialchars($_POST['hours']);
-		$secondDay    = htmlspecialchars($_POST['secondDay']);
-
-		if (!preg_match("/$secondDay/", $selectedDays)) 
+		if (htmlspecialchars($_POST['email']) != '')
 		{
-			$selectedDays = $selectedDays . $secondDay;
+			$newEmail = htmlspecialchars($_POST['email']);
+			include_once('model/addNewEmail.php');
+		}
+	}
+
+	# Change result backgroundList
+	if (isset($_POST['backgroundResult']))
+	{
+		if (htmlspecialchars($_POST['backgroundResult']) != '')
+		{
+			$backgroundResult = htmlspecialchars($_POST['backgroundResult']);
+			include_once('model/changeBackgroundResult.php');
+		}
+	}
+
+	# change sending condition
+	if (isset($_POST['cond']))
+	{
+		if (htmlspecialchars($_POST['cond']) != '')
+		{
+			$cond         = htmlspecialchars($_POST['cond']);
+			$linkLimit    = htmlspecialchars($_POST['numberLinks']);
+			$frequency    = htmlspecialchars($_POST['freq']);
+			$selectedDays = htmlspecialchars($_POST['days']);
+			$selectedHour = htmlspecialchars($_POST['hours']);
+			$secondDay    = htmlspecialchars($_POST['secondDay']);
+
+			if (!preg_match("/$secondDay/", $selectedDays))
+			{
+				$selectedDays = $selectedDays . $secondDay;
+			}
+
+			$linkLimit    = ($linkLimit == '' ? NULL : $linkLimit);
+			$frequency    = ($frequency == '' ? NULL : $frequency);
+			$selectedDays = ($selectedDays == '' ? NULL : $selectedDays);
+			$selectedHour = ($selectedHour == '' ? NULL : $selectedHour);
+
+			include_once('model/changeSendCondition.php');
 		}
 
-		$linkLimit    = ($linkLimit == '' ? NULL : $linkLimit);
-		$frequency    = ($frequency == '' ? NULL : $frequency);
-		$selectedDays = ($selectedDays == '' ? NULL : $selectedDays);
-		$selectedHour = ($selectedHour == '' ? NULL : $selectedHour);
-
-		include_once('model/changeSendCondition.php');
-		header('Location: setting');
 	}
-}
 
-# Change sorting for link in email
-if (isset($_POST['orderBy']))
-{
-	if (htmlspecialchars($_POST['orderBy']) != '')
+	# Change sorting for link in email
+	if (isset($_POST['orderBy']))
 	{
-		$orderBy = htmlspecialchars($_POST['orderBy']);
-		include_once('model/changeSortEmail.php');
-		header('Location: setting');
+		if (htmlspecialchars($_POST['orderBy']) != '')
+		{
+			$orderBy = htmlspecialchars($_POST['orderBy']);
+			include_once('model/changeSortEmail.php');
+		}
 	}
-}
 
-# Change privacy settings
+	# Change privacy settings
+	if (isset($_POST['recordRead']))
+	{
+		if (htmlspecialchars($_POST['recordRead']) == 'active')
+		{
+			$recordRead = 0;
+			include_once('model/changeRecordRead.php');
+		}
+	}
+	elseif (!isset($_POST['recordRead']))
+	{
+		$recordRead = 1;
+		include_once('model/changeRecordRead.php');
+	}
+
+	if (isset($_POST['historyLifetime']))
+	{
+		if (htmlspecialchars($_POST['historyLifetime']) != '')
+		{
+			$historyLifetime = htmlspecialchars($_POST['historyLifetime']);
+			include_once('model/changeHistoryLifetime.php');
+		}
+	}
+
+	header('Location: setting');
+}
 
 # Adding new source
 if (isset($_POST['sourceType']) AND isset($_POST['newSource']))

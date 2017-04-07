@@ -448,13 +448,13 @@
 					<h3>Privacy</h3>
 					<div class="align">
 						<label class="switch">
-							<input type="checkbox" <?php echo $recordRead; ?>>
+							<input type="checkbox" name="recordRead" value="active" <?php echo $recordRead; ?>>
 							<div class="slider"></div>
 						</label>
 						Record when a link is clicked
 					</div>
 					<p>
-						History life time : <input class="number alpha" name="history" type="number" min="1" value="<?php  echo $userSettings['history_lifetime']; ?>"/> months
+						History life time : <input class="number alpha" name="historyLifetime" type="number" min="1" value="<?php  echo $userSettings['history_lifetime']; ?>"/> months
 					</p>
 					<div>
 						<h3></h3>
@@ -477,7 +477,7 @@
 				</div>
 			</div>
 			<div class="centerSubmit">
-				<input alt="Add" title="Add" class="submit" type="submit" value="" />
+				<input title="Submit settings" class="submit" type="submit" name="settings" value="ChangeSettings" />
 			</div>
 		</div>
 
