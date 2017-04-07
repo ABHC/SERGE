@@ -93,10 +93,7 @@ def feedMeUp (link):
 			missing_flux = True
 
 		try:
-			tag_test = xmldoc.entries[0].tags
-			entries_error = ""
-		except AttributeError:
-			tag_test = None
+			entries_test = xmldoc.entries[0]
 			entries_error = ""
 		except IndexError:
 			entries_error = "no entries, "
