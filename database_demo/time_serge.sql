@@ -6,4 +6,8 @@ CREATE TABLE `time_serge` (
   `timestamps` bigint(8) unsigned NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
+INSERT INTO `time_serge` (`name`, `timestamps`) VALUES
+('timelog', CURRENT_TIMESTAMP()),
+('feedtitles_refresh', CURRENT_TIMESTAMP());
+
 SET NAMES utf8mb4;
