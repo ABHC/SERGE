@@ -101,7 +101,7 @@ def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 
 			num = num+1
 
-		LOG.write("timesptamps update for refreshing feedtitles \n")
+		logger_info.info("Timestamps update for refreshing feedtitles \n")
 		now = unicode(now)
 		update = ("UPDATE time_serge SET timestamps = %s WHERE name = 'feedtitles_refresh'")
 
