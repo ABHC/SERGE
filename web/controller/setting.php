@@ -86,6 +86,17 @@ if (isset($_POST['email']))
 	}
 }
 
+# Change result backgroundList
+if (isset($_POST['backgroundResult']))
+{
+	if (htmlspecialchars($_POST['backgroundResult']) != '')
+	{
+		$backgroundResult = htmlspecialchars($_POST['backgroundResult']);
+		include_once('model/changeBackgroundResult.php');
+		header('Location: setting');
+	}
+}
+
 # Adding new source
 if (isset($_POST['sourceType']) AND isset($_POST['newSource']))
 {

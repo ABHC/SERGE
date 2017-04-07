@@ -358,7 +358,7 @@
 					</p>
 					<h3>Result page</h3>
 					<p>
-						Background <select class="selectCommResult" name="backgrounResult">
+						Background <select class="selectCommResult" name="backgroundResult">
 						<?php
 						foreach ($backgroundList as $backgroundName)
 						{
