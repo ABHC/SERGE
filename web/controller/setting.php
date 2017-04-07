@@ -9,6 +9,10 @@ if (!isset($_SESSION['pseudo']))
 // Define variables
 $actualLetter = '';
 $style = '';
+$orderByKeyword = '';
+$orderBySource  = '';
+$orderByType    = '';
+
 if (isset($_SESSION['ERROR_MESSAGE']))
 {
 	$ERROR_MESSAGE = $_SESSION['ERROR_MESSAGE'];
@@ -96,6 +100,46 @@ if (isset($_POST['backgroundResult']))
 		header('Location: setting');
 	}
 }
+
+# change sending condition
+if (isset($_POST['cond']))
+{
+	if (htmlspecialchars($_POST['cond']) != '')
+	{
+		$cond         = htmlspecialchars($_POST['cond']);
+		$linkLimit    = htmlspecialchars($_POST['numberLinks']);
+		$frequency    = htmlspecialchars($_POST['freq']);
+		$selectedDays = htmlspecialchars($_POST['days']);
+		$selectedHour = htmlspecialchars($_POST['hours']);
+		$secondDay    = htmlspecialchars($_POST['secondDay']);
+
+		if (!preg_match("/$secondDay/", $selectedDays)) 
+		{
+			$selectedDays = $selectedDays . $secondDay;
+		}
+
+		$linkLimit    = ($linkLimit == '' ? NULL : $linkLimit);
+		$frequency    = ($frequency == '' ? NULL : $frequency);
+		$selectedDays = ($selectedDays == '' ? NULL : $selectedDays);
+		$selectedHour = ($selectedHour == '' ? NULL : $selectedHour);
+
+		include_once('model/changeSendCondition.php');
+		header('Location: setting');
+	}
+}
+
+# Change sorting for link in email
+if (isset($_POST['orderBy']))
+{
+	if (htmlspecialchars($_POST['orderBy']) != '')
+	{
+		$orderBy = htmlspecialchars($_POST['orderBy']);
+		include_once('model/changeSortEmail.php');
+		header('Location: setting');
+	}
+}
+
+# Change privacy settings
 
 # Adding new source
 if (isset($_POST['sourceType']) AND isset($_POST['newSource']))
