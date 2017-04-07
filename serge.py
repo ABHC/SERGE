@@ -2,8 +2,6 @@
 
 #TODO Modifier le HTML/CSS pour introduire un code couleur
 #TODO Modifier le HTML/CSS pour modifier l'emplacement du logo pour le wiki et le mettre à gauche
-#TODO Insérer une sécurité sur la recupération du timestamps de la base time : si le timestamps est null insérer le timestamps actuel
-#TODO IMPORTANT Faire des try except pour bibjson
 
 """SERGE (Serge Explore Research and Generate Emails) is a tool for news and technological monitoring.
 
@@ -73,29 +71,29 @@ def lastResearch():
 		last_launch = call_time.fetchone()
 		call_time.close()
 
-		last_launch = float(last_launch[0])
-
 	except Exception, except_type:
 		logger_error.critical("Error in lastResearch function on SQL request")
 		logger_error.critical(repr(except_type))
 		sys.exit()
 
+	last_launch = float(last_launch[0])
+
 	return last_launch
 
 
-def sans_accent_maj(ch):
-    """Delete all possible accents on capital letters of the ch string.
-	ch must be in unicode, and the result in return in unicode."""
+def sans_accent_maj(string):
+    """Delete all possible accents on capital letters of the string.
+	string must be in unicode, and the result in return in unicode."""
 
-    r = u""
-    for car in ch:
-        carnorm = unicodedata.normalize('NFKD', car)
-        carcat = unicodedata.category(carnorm[0])
-        if carcat == u"Lu":
-            r += carnorm[0]
+    outcome = u""
+    for caracter in string:
+        carnorm = unicodedata.normalize('NFKD', caracter)
+        carcase = unicodedata.category(carnorm[0])
+        if carcase == u"Lu":
+            outcome += carnorm[0]
         else:
-            r += car
-    return r
+            outcome += caracter
+    return outcome
 
 
 def permission(register) :
@@ -777,7 +775,7 @@ logger_info.info(time.asctime(time.gmtime(now))+"\n")
 last_launch = lastResearch()
 
 ######### DATABASE INTERGRITY CHECKING
-failsafe.checkMate(database, logger_info, logger_error)
+#failsafe.checkMate(database, logger_info, logger_error)
 
 ######### NUMBERS OF USERS
 call_users = database.cursor()
