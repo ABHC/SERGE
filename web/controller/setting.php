@@ -75,8 +75,19 @@ include_once('model/readOwnerSourcesKeyword.php');
 # Read user settings
 include_once('model/readUserSettings.php');
 
+# Change email
+if (isset($_POST['email']))
+{
+	if (htmlspecialchars($_POST['email']) != '')
+	{
+		$newEmail = htmlspecialchars($_POST['email']);
+		include_once('model/addNewEmail.php');
+		header('Location: setting');
+	}
+}
+
 # Adding new source
-if (isset($_POST['sourceType'])  AND isset($_POST['newSource']))
+if (isset($_POST['sourceType']) AND isset($_POST['newSource']))
 {
 	if (htmlspecialchars($_POST['sourceType']) == 'inputSource' AND htmlspecialchars($_POST['newSource']) != '')
 	{
