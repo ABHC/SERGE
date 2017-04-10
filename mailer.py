@@ -72,6 +72,10 @@ def buildMail(user, user_id_comma, register, pydate, permission_news, permission
 
 	######### CALL TO NEWSLETTER FUNCTION
 	if mail_design[0] == "type":
+		not_send_news_list = sorted(not_send_news_list, key= lambda news_field : news_field[1])
+		not_send_science_list = sorted(not_send_science_list, key= lambda science_field : science_field[1])
+		not_send_patents_list = sorted(not_send_patents_list, key= lambda patents_field : patents_field[1])
+
 		newsletterByType(user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate)
 
 	elif mail_design[0] == "masterword":
@@ -153,7 +157,7 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 	<p style="text-align: left;margin-left: 20px;margin-top: auto; margin-bottom: auto;font-size: 3vw;font-family: 'Overpass Mono', monospace , sans-serif; text-align: center;word-wrap: break-word; max-height: 170px; width: 60%;">Serge beats you the news</p>
 	</div>
 
-	<div style="width: 100%;height: 1px;background-color: grey;margin: 0;"><\div>
+	<div style="width: 100%;height: 1px;background-color: grey;margin: 0;"></div>
 
 	<p style="width: 85%;margin-left: auto;margin-right: auto;">{0} {1}, {2} {3} :</p>
 
