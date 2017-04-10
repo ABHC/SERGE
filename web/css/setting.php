@@ -127,6 +127,7 @@ h3
 	width: 30px;
 	height: 30px;
 	border-radius: 50%;
+	font-size: 0;
 	border: 1px solid rgba(255,255,255, 0.15);
 	background: url('../images/+.png') center no-repeat;
 	background-size: contain;

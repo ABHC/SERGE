@@ -382,46 +382,46 @@
 				<div>
 					<h3>Sending condition</h3>
 					<p>
-						<input type="radio" id="condNbLink" name="cond" <?php echo $condNbLink; ?>>
+						<input type="radio" id="condNbLink" name="cond" value="link_limit" <?php echo $condNbLink; ?>>
 						<label class="radio" for="condNbLink"></label>
 						by number of links :
 						<input class="number alpha" type="number" name="numberLinks" min="5" placeholder="50" value="<?php echo $userSettings['link_limit']; ?>"/>
 					</p>
 					<p>
-						<input type="radio" id="condFreq" name="cond" <?php echo $condFreq; ?>>
+						<input type="radio" id="condFreq" name="cond" value="freq" <?php echo $condFreq; ?>>
 						<label class="radio" for="condFreq"></label>
 						by frequency, every
 						<input class="number alpha" type="number" name="freq" min="2" max="500" step="2" placeholder="24" value="<?php echo $userSettings['frequency']; ?>"/> hours
 					</p>
 					<p>
-						<input type="radio" id="condDate" name="cond" <?php echo $condDate; ?>>
+						<input type="radio" id="condDate" name="cond" value="deadline" <?php echo $condDate; ?>>
 						<label class="radio" for="condDate"></label>
 						at
-						<input class="number alpha" type="number" name="freq" min="0" max="23" step="2" placeholder="19" value="<?php echo $userSettings['selected_hour']; ?>"/> h
+						<input class="number alpha" type="number" name="hours" min="0" max="23" step="2" placeholder="19" value="<?php echo $userSettings['selected_hour']; ?>"/> h
 						, every
-						<select class="selectCommResult" name="day">
-							<option value="business day" <?php echo $day[0]; ?>>business day</option>
-							<option value="second business day" <?php echo $day[8]; ?>>second business day</option>
-							<option value="day" <?php echo $day[9]; ?>>day</option>
-							<option value="monday" <?php echo $day[1]; ?>>monday</option>
-							<option value="tuesday" <?php echo $day[2]; ?>>tuesday</option>
-							<option value="wednesday" <?php echo $day[3]; ?>>wednesday</option>
-							<option value="thursday" <?php echo $day[4]; ?>>thursday</option>
-							<option value="friday" <?php echo $day[5]; ?>>friday</option>
-							<option value="saturday" <?php echo $day[6]; ?>>saturday</option>
-							<option value="sunday" <?php echo $day[7]; ?>>sunday</option>
+						<select class="selectCommResult" name="days">
+							<option value=",1,2,3,4,5," <?php echo $day[0]; ?>>business day</option>
+							<option value=",1,3,5," <?php echo $day[8]; ?>>second business day</option>
+							<option value=",1,2,3,4,5,6,7," <?php echo $day[9]; ?>>day</option>
+							<option value=",1," <?php echo $day[1]; ?>>monday</option>
+							<option value=",2," <?php echo $day[2]; ?>>tuesday</option>
+							<option value=",3," <?php echo $day[3]; ?>>wednesday</option>
+							<option value=",4," <?php echo $day[4]; ?>>thursday</option>
+							<option value=",5," <?php echo $day[5]; ?>>friday</option>
+							<option value=",6," <?php echo $day[6]; ?>>saturday</option>
+							<option value=",7," <?php echo $day[7]; ?>>sunday</option>
 						</select>
 						<span class="arrDown">▾</span>
 						and
-						<select class="selectCommResult" name="day">
-							<option value="none">that's all</option>
-							<option value="monday" <?php echo $day2[1]; ?>>monday</option>
-							<option value="tuesday" <?php echo $day2[2]; ?>>tuesday</option>
-							<option value="wednesday" <?php echo $day2[3]; ?>>wednesday</option>
-							<option value="thursday" <?php echo $day2[4]; ?>>thursday</option>
-							<option value="friday" <?php echo $day2[5]; ?>>friday</option>
-							<option value="saturday" <?php echo $day2[6]; ?>>saturday</option>
-							<option value="sunday" <?php echo $day2[7]; ?>>sunday</option>
+						<select class="selectCommResult" name="secondDay">
+							<option value="">that's all</option>
+							<option value="1," <?php echo $day2[1]; ?>>monday</option>
+							<option value="2," <?php echo $day2[2]; ?>>tuesday</option>
+							<option value="3," <?php echo $day2[3]; ?>>wednesday</option>
+							<option value="4," <?php echo $day2[4]; ?>>thursday</option>
+							<option value="5," <?php echo $day2[5]; ?>>friday</option>
+							<option value="6," <?php echo $day2[6]; ?>>saturday</option>
+							<option value="7," <?php echo $day2[7]; ?>>sunday</option>
 						</select>
 						<span class="arrDown">▾</span>
 					</p>
@@ -429,17 +429,17 @@
 				<div>
 					<h3>Sorting for links in email</h3>
 					<p>
-						<input type="radio" id="orderByKeyword" name="orderBy" <?php echo $orderByKeyword; ?>>
+						<input type="radio" id="orderByKeyword" name="orderBy" value="masterword" <?php echo $orderByKeyword; ?>>
 						<label class="radio" for="orderByKeyword"></label>
 						by keyword
 					</p>
 					<p>
-						<input type="radio" id="orderBySource" name="orderBy" <?php echo $orderBySource; ?>>
+						<input type="radio" id="orderBySource" name="orderBy" value="origin" <?php echo $orderBySource; ?>>
 						<label class="radio" for="orderBySource"></label>
 						by source
 					</p>
 					<p>
-						<input type="radio" id="orderByAlpha" name="orderBy" <?php echo $orderByType; ?>>
+						<input type="radio" id="orderByAlpha" name="orderBy" value="type" <?php echo $orderByType; ?>>
 						<label class="radio" for="orderByAlpha"></label>
 						by alphabetical order
 					</p>
@@ -448,13 +448,13 @@
 					<h3>Privacy</h3>
 					<div class="align">
 						<label class="switch">
-							<input type="checkbox" <?php echo $recordRead; ?>>
+							<input type="checkbox" name="recordRead" value="active" <?php echo $recordRead; ?>>
 							<div class="slider"></div>
 						</label>
 						Record when a link is clicked
 					</div>
 					<p>
-						History life time : <input class="number alpha" name="history" type="number" min="1" value="<?php  echo $userSettings['history_lifetime']; ?>"/> months
+						History life time : <input class="number alpha" name="historyLifetime" type="number" min="1" value="<?php  echo $userSettings['history_lifetime']; ?>"/> months
 					</p>
 					<div>
 						<h3></h3>
@@ -477,7 +477,7 @@
 				</div>
 			</div>
 			<div class="centerSubmit">
-				<input alt="Add" title="Add" class="submit" type="submit" value="" />
+				<input title="Submit settings" class="submit" type="submit" name="settings" value="ChangeSettings" />
 			</div>
 		</div>
 
