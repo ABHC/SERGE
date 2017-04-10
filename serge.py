@@ -14,19 +14,18 @@ SERGE's sources :
 
 ######### IMPORT CLASSICAL MODULES
 import os
-import time
 import re
+import sys
+import time
 from datetime import datetime as dt
 import datetime
-import sys
 import MySQLdb
+import json
 import feedparser
-import unicodedata
 import traceback
 import logging
-from logging.handlers import RotatingFileHandler
 from shutil import copyfile
-import json
+from logging.handlers import RotatingFileHandler
 
 ######### IMPORT SERGE SPECIALS MODULES
 import mailer
@@ -79,21 +78,6 @@ def lastResearch():
 	last_launch = float(last_launch[0])
 
 	return last_launch
-
-
-def sans_accent_maj(string):
-    """Delete all possible accents on capital letters of the string.
-	string must be in unicode, and the result in return in unicode."""
-
-    outcome = u""
-    for caracter in string:
-        carnorm = unicodedata.normalize('NFKD', caracter)
-        carcase = unicodedata.category(carnorm[0])
-        if carcase == u"Lu":
-            outcome += carnorm[0]
-        else:
-            outcome += caracter
-    return outcome
 
 
 def permission(register) :
@@ -312,26 +296,20 @@ def newscast(last_launch, max_users):
 						post_tags = []
 
 					########### DATA PROCESSING
-					post_title_lower = post_title.strip().lower()
-					post_description_lower = post_description.strip().lower()
-					keyword_lower = keyword.strip().lower()
-
-					post_title_sans_accent = sans_accent_maj(post_title_lower)
-					post_description_sans_accent = sans_accent_maj(post_description_lower)
-					keyword_sans_accent = sans_accent_maj(keyword)
-
-					tagdex = 0
-					tags_string_lower = ""
-					tags_string_sans_accent = ""
-
-					while tagdex < len(post_tags) :
-						tags_string_lower =  tags_string_lower + xmldoc.entries[range].tags[tagdex].term.lower() + " "
-						tags_string_sans_accent = tags_string_sans_accent + sans_accent_maj(xmldoc.entries[range].tags[tagdex].term.lower()) + " "
-						tagdex = tagdex+1
+					post_title = post_title.strip()
+					post_description = post_description.strip()
+					keyword = keyword.strip()
 
 					id_item_comma = str(keyword_id) + ","
 					id_item_comma2 = "," + str(keyword_id) + ","
 					item = (post_title, post_link, human_date, id_rss, id_item_comma2, owners)
+
+					tagdex = 0
+					tags_string = ""
+
+					while tagdex < len(post_tags) :
+						tags_string = tags_string + xmldoc.entries[range].tags[tagdex].term.lower() + " "
+						tagdex = tagdex+1
 
 					########### AGGREGATED KEYWORDS RESEARCH
 					if "+" in keyword:
@@ -354,14 +332,8 @@ def newscast(last_launch, max_users):
 						redundancy = 0
 
 						for splitkey in aggregated_keyword:
-							splitkey_lower = splitkey.strip().lower()
-							splitkey_sans_accent = sans_accent_maj(splitkey)
 
-							if (re.search('[^a-z]'+re.escape(re.escape(splitkey_lower)), re.escape(post_title_lower)) or re.search('[^a-z]'+re.escape(re.escape(splitkey_lower)), re.escape(post_description_lower)) or re.search('[^a-z]'+re.escape(re.escape(splitkey_lower)), re.escape(tags_string_lower))) and post_date >= last_launch and post_date is not None and owners is not None:
-
-								redundancy = redundancy + 1
-
-							elif (re.search('[^a-z]'+re.escape(re.escape(splitkey_sans_accent)), re.escape(post_title_sans_accent)) or re.search('[^a-z]'+re.escape(re.escape(splitkey_sans_accent)), re.escape(post_description_sans_accent)) or re.search('[^a-z]'+re.escape(re.escape(splitkey_sans_accent)), re.escape(tags_string_sans_accent))) and post_date >= last_launch and post_date is not None and owners is not None:
+							if (re.search('[^a-z]'+re.escape(re.escape(splitkey)), re.escape(post_title), re.IGNORECASE) or re.search('[^a-z]'+re.escape(re.escape(splitkey)), re.escape(post_description), re.IGNORECASE) or re.search('[^a-z]'+re.escape(re.escape(splitkey)), re.escape(tags_string), re.IGNORECASE)) and post_date >= last_launch and post_date is not None and owners is not None:
 
 								redundancy = redundancy + 1
 
@@ -384,8 +356,7 @@ def newscast(last_launch, max_users):
 
 					########### SIMPLE KEYWORDS RESEARCH
 					else:
-						########### RESEARCH OF KEYWORDS IN LOWER CASE
-						if (re.search('[^a-z]'+re.escape(re.escape(keyword_lower)), re.escape(post_title_lower)) or re.search('[^a-z]'+re.escape(re.escape(keyword_lower)), re.escape(post_description_lower)) or re.search('[^a-z]'+re.escape(re.escape(keyword_lower)), re.escape(tags_string_lower)) or re.search('^'+re.escape(re.escape(':all@'+id_rss))+'$', re.escape(keyword_lower))) and post_date >= last_launch and post_date is not None and owners is not None:
+						if (re.search('[^a-z]'+re.escape(re.escape(keyword)), re.escape(post_title), re.IGNORECASE) or re.search('[^a-z]'+re.escape(re.escape(keyword)), re.escape(post_description), re.IGNORECASE) or re.search('[^a-z]'+re.escape(re.escape(keyword)), re.escape(tags_string), re.IGNORECASE) or re.search('^'+re.escape(re.escape(':all@'+id_rss))+'$', re.escape(keyword), re.IGNORECASE)) and post_date >= last_launch and post_date is not None and owners is not None:
 
 							########### QUERY FOR DATABASE CHECKING
 							query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
@@ -402,25 +373,7 @@ def newscast(last_launch, max_users):
 							########### CALL insertOrUpdate FUNCTION
 							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_update_owners, query_jelly_update, post_link, post_title, item, id_item_comma, id_item_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
 
-						########### RESEARCH OF KEYWORDS WITHOUT ACCENTS
-						elif (re.search('[^a-z]'+re.escape(re.escape(keyword_sans_accent)), re.escape(post_title_sans_accent)) or re.search('[^a-z]'+re.escape(re.escape(keyword_sans_accent)), re.escape(post_description_sans_accent)) or re.search('[^a-z]'+re.escape(re.escape(keyword_sans_accent)), re.escape(tags_string_sans_accent))) and post_date >= last_launch and post_date is not None and owners is not None:
-
-							########### QUERY FOR DATABASE CHECKING
-							query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
-							query_jellychecking = ("SELECT title, link FROM result_news_serge WHERE id_source = %s")
-
-							########### QUERY FOR DATABASE INSERTION
-							query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id) VALUES (%s, %s, %s, %s, %s)")
-
-							########### QUERY FOR DATABASE UPDATE
-							query_update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
-							query_update_owners = ("UPDATE result_news_serge SET owners = %s WHERE link = %s")
-							query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s WHERE link = %s")
-
-							########### CALL insertOrUpdate FUNCTION
-							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_update_owners, query_jelly_update, post_link, post_title, item, id_item_comma, id_item_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
-
-					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
+					range = range+1
 
 				range = 0
 
@@ -565,10 +518,8 @@ def science(last_launch):
 
 	for trio_queries_owners in queries_and_owners_science_list:
 
-		query_arxiv = trio_queries_owners[0]
-		query_arxiv = sans_accent_maj(query_arxiv).strip()
-		query_doaj = trio_queries_owners[1]
-		query_doaj = sans_accent_maj(query_doaj).strip()
+		query_arxiv = trio_queries_owners[0].strip()
+		query_doaj = trio_queries_owners[1].strip()
 		owners = trio_queries_owners[2]
 
 		######### RESEARCH SCIENCE ON Arxiv
@@ -775,7 +726,7 @@ logger_info.info(time.asctime(time.gmtime(now))+"\n")
 last_launch = lastResearch()
 
 ######### DATABASE INTERGRITY CHECKING
-#failsafe.checkMate(database, logger_info, logger_error)
+failsafe.checkMate(database, logger_info, logger_error)
 
 ######### NUMBERS OF USERS
 call_users = database.cursor()
@@ -805,7 +756,7 @@ call_users.execute("SELECT users FROM users_table_serge")
 rows = call_users.fetchall()
 call_users.close()
 
-user_list_all = []  # Enregistrement des utilisateur dans une liste.
+user_list_all = []
 
 for row in rows:
 	field = row[0].strip()
