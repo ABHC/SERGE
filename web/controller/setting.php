@@ -56,6 +56,8 @@ if (isset($_POST['sourceType']))
 	}
 	foreach($_POST as $key => $val)
 	{
+		$key = htmlspecialchars($key);
+		$val = htmlspecialchars($val);
 		if (preg_match("/radio-s./", $key))
 		{
 			$_SESSION[$key] = $val;
