@@ -24,116 +24,57 @@
 		<div class="table-content">
 			<table cellpadding="0" cellspacing="0" border="0">
 				<tbody>
-					<tr>
-						<td><input type="checkbox" name="delete" id="delete00" /><label class="checkbox" for="delete00"></label></td>
-						<td><a href="lelien">Les chiens sont ils vos ancêtres ?</a></td>
-						<td>Génétique</td>
-						<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
-						<td>15/09/2049</td>
-						<td>Sent</td>
-						<td>Not read</td>
-						<td><a href="link?link" class="wikiLogo"><img src="../images/iconWikiWB.png"/></a></td>
-					</tr>
-					<tr>
-						<td><input type="checkbox" name="delete" id="delete01" /><label class="checkbox" for="delete01"></label></td>
-						<td><a href="lelien">Les chiens sont ils vos ancêtres ?</a></td>
-						<td>Génétique</td>
-						<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
-						<td>15/09/2049</td>
-						<td>Sent</td>
-						<td>Not read</td>
-						<td><a href="link?link" class="wikiLogo"><img src="../images/iconWikiWB.png"/></a></td>
-					</tr>
-					<tr>
-						<td><input type="checkbox" name="delete" id="delete02" /><label class="checkbox" for="delete02"></label></td>
-						<td><a href="lelien">Les chiens sont ils vos ancêtres ?</a></td>
-						<td>Génétique</td>
-						<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
-						<td>15/09/2049</td>
-						<td>Sent</td>
-						<td>Not read</td>
-						<td><a href="link?link" class="wikiLogo"><img src="../images/iconWikiWB.png"/></a></td>
-					</tr>
-					<tr>
-						<td><input type="checkbox" name="delete" id="delete03" /><label class="checkbox" for="delete03"></label></td>
-						<td><a href="lelien">Les chiens sont ils vos ancêtres ?</a></td>
-						<td>Génétique</td>
-						<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
-						<td>15/09/2049</td>
-						<td>Sent</td>
-						<td>Not read</td>
-						<td><a href="link?link" class="wikiLogo"><img src="../images/iconWikiWB.png"/></a></td>
-					</tr>
-					<tr>
-						<td><input type="checkbox" name="delete" id="delete04" /><label class="checkbox" for="delete04"></label></td>
-						<td><a href="lelien">Les chiens sont ils vos ancêtres ?</a></td>
-						<td>Génétique</td>
-						<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
-						<td>15/09/2049</td>
-						<td>Sent</td>
-						<td>Not read</td>
-						<td><a href="link?link" class="wikiLogo"><img src="../images/iconWikiWB.png"/></a></td>
-					</tr>
-					<tr>
-						<td><input type="checkbox" name="delete" id="delete05" /><label class="checkbox" for="delete05"></label></td>
-						<td><a href="lelien">Les chiens sont'ils vos ancêtres ?</a></td>
-						<td>Génétique</td>
-						<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
-						<td>15/09/2049</td>
-						<td>Sent</td>
-						<td>Not read</td>
-						<td><a href="link?link" class="wikiLogo"><img src="../images/iconWikiWB.png"/></a></td>
-					</tr>
-					<tr>
-						<td><input type="checkbox" name="delete" id="delete06" /><label class="checkbox" for="delete06"></label></td>
-						<td><a href="lelien">Les chiens sont'ils vos ancêtres ?</a></td>
-						<td>Génétique</td>
-						<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
-						<td>15/09/2049</td>
-						<td>Sent</td>
-						<td>Not read</td>
-						<td><a href="link?link" class="wikiLogo"><img src="../images/iconWikiWB.png"/></a></td>
-					</tr>
-					<tr>
-						<td><input type="checkbox" name="delete" id="delete07" /><label class="checkbox" for="delete07"></label></td>
-						<td><a href="lelien">Les chiens sont'ils vos ancêtres ?</a></td>
-						<td>Génétique</td>
-						<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
-						<td>15/09/2049</td>
-						<td>Sent</td>
-						<td>Not read</td>
-						<td><a href="link?link" class="wikiLogo"><img src="../images/iconWikiWB.png"/></a></td>
-					</tr>
-					<tr>
-						<td><input type="checkbox" name="delete" id="delete08" /><label class="checkbox" for="delete08"></label></td>
-						<td><a href="lelien">Les chiens sont'ils vos ancêtres ?</a></td>
-						<td>Génétique</td>
-						<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
-						<td>15/09/2049</td>
-						<td>Sent</td>
-						<td>Not read</td>
-						<td><a href="link?link" class="wikiLogo"><img src="../images/iconWikiWB.png"/></a></td>
-					</tr>
-					<tr>
-						<td><input type="checkbox" name="delete" id="delete09" /><label class="checkbox" for="delete09"></label></td>
-						<td><a href="lelien">Les chiens sont'ils vos ancêtres ?</a></td>
-						<td>Génétique</td>
-						<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
-						<td>15/09/2049</td>
-						<td>Sent</td>
-						<td>Not read</td>
-						<td><a href="link?link" class="wikiLogo"><img src="../images/iconWikiWB.png"/></a></td>
-					</tr>
-					<tr>
-						<td><input type="checkbox" name="delete" id="delete10" /><label class="checkbox" for="delete10"></label></td>
-						<td><a href="lelien">Les chiens sont'ils vos ancêtres ?</a></td>
-						<td>Génétique</td>
-						<td><a href="leliendelasource">Leschiensontdesoreilles.net</a></td>
-						<td>15/09/2049</td>
-						<td>Sent</td>
-						<td>Not read</td>
-						<td><a href="link?link" class="wikiLogo"><img src="../images/iconWikiWB.png"/></a></td>
-					</tr>
+					<?php
+					foreach ($readOwnerResults as $result)
+					{
+						# Read keyword for current result
+						$keyword = readResultKeyword($result['keyword_id'], $readOwnerKeyword, $bdd);
+
+						# Read source for current result
+						$reqSourceResults = $bdd->prepare('SELECT link, name FROM rss_serge WHERE id LIKE :id');
+						$reqSourceResults->execute(array(
+							'id' => $result['id_source']));
+							$source = $reqSourceResults->fetch();
+							$reqSourceResults->closeCursor();
+
+						$date = $result['date']; #TODO Créer Option timezone et Adapter à la time zone de l'utilisateur
+
+						$userIdComma = ',' . $_SESSION['id'] . ',';
+						if (preg_match("/$userIdComma/", $result['send_status']))
+						{
+							$amISend = 'Sent';
+						}
+						else
+						{
+							$amISend = 'Not sent';
+						}
+
+						if (preg_match("/$userIdComma/", $result['read_status']))
+						{
+							$amIRead = 'Read';
+						}
+						else
+						{
+							$amIRead = 'Not read';
+						}
+
+						echo '
+						<tr>
+							<td><input type="checkbox" name="delete' . $result['id'] . '" id="delete0' . $result['id'] . '" /><label class="checkbox" for="delete0' . $result['id'] . '"></label></td>
+							<td><a href="' . $result['link'] . '">' . $result['title'] . '</a></td>
+							<td>' . $keyword . '</td>
+							<td><a href="' . $source['link'] . '">' . $source['name'] . '</a></td>
+							<td>' . $date . '</td>
+							<td>' . $amISend . '</td>
+							<td>' . $amIRead . '</td>
+							<td>
+								<a href="link?link" class="wikiLogo">
+									<img src="../images/iconWikiWB.png"/>
+								</a>
+							</td>
+						</tr>';
+					}
+					?>
 				</tbody>
 			</table>
 		</div>
