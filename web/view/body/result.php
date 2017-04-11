@@ -16,8 +16,8 @@
 						<th>Keyword</th>
 						<th><a href="?orderBy=source' . $colOrder['DESC'] . '">Source ' . $colOrder['source'] . '</a></th>
 						<th><a href="?orderBy=date' . $colOrder['DESC'] . '">Date ' . $colOrder['date'] . '</a></th>
-						<th>Sent</th>
-						<th><a href="?orderBy=read' . $colOrder['DESC'] . '">Read ' . $colOrder['read'] . '</a></th>
+						<th><a href="?orderBy=send' . $colOrder['DESC'] . '">' . $colOrder['send'] . '</a></th>
+						<th><a href="?orderBy=read' . $colOrder['DESC'] . '">' . $colOrder['read'] . '</a></th>
 						<th><a href="wiki">Wiki</a></th>';
 						?>
 					</tr>
@@ -46,20 +46,20 @@
 						$userIdComma = ',' . $_SESSION['id'] . ',';
 						if (preg_match("/$userIdComma/", $result['send_status']))
 						{
-							$amISend = 'Sent';
+							$amISend = '<img src="images/iconSend.png" />';
 						}
 						else
 						{
-							$amISend = 'Not sent';
+							$amISend = '<img src="images/iconNotSend.png" />';
 						}
 
 						if (preg_match("/$userIdComma/", $result['read_status']))
 						{
-							$amIRead = 'Read';
+							$amIRead = '<img src="images/iconRead.png" />';
 						}
 						else
 						{
-							$amIRead = 'Not read';
+							$amIRead = '<img src="images/iconUnread.png" />';
 						}
 
 						echo '

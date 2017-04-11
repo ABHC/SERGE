@@ -107,6 +107,16 @@ th a
 	color: #fff;
 }
 
+th:nth-child(6)
+{
+	width: 50px;
+}
+
+th:nth-child(7)
+{
+	width: 50px;
+}
+
 .submit
 {
 	width: 20px;
@@ -125,12 +135,12 @@ th:nth-child(1)
 
 th:nth-child(2)
 {
-	width: 27%;
+	width: 30%;
 }
 
 th:last-child
 {
-	width: 8%;
+	width: 50px;
 }
 
 td
@@ -152,6 +162,12 @@ td a
 	color: #fff;
 }
 
+td img
+{
+	width: 34px;
+	height: auto;
+}
+
 td:nth-child(1)
 {
 	width: 40px;
@@ -160,14 +176,24 @@ td:nth-child(1)
 
 td:nth-child(2)
 {
-	width: 27%;
+	width: 30%;
 	text-align: left;
 	padding-left: 5px;
 }
 
+td:nth-child(6)
+{
+	width: 50px;
+}
+
+td:nth-child(7)
+{
+	width: 50px;
+}
+
 td:last-child
 {
-	width: 8%;
+	width: 50px;
 }
 
 [type="checkbox"]:not(:checked),

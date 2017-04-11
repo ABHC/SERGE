@@ -11,6 +11,9 @@ if (!isset($_SESSION['pseudo']))
 $result  = 'active';
 $wiki    = '';
 $setting = '';
+$colOrder['read'] = 'Read';
+$colOrder['send'] = 'Send';
+$colOrder['DESC'] = '';
 
 include_once('model/readOwnerKeyword.php');
 
@@ -73,7 +76,7 @@ if (isset($_GET['orderBy']))
 	}
 	elseif ($orderBy == 'read')
 	{
-		$colOrder['read'] = '▾';
+		$colOrder['read'] = 'Read';
 		$colOrder['DESC'] = 'DESC';
 
 		# WARNING sensitive variable [SQLI]
@@ -81,11 +84,27 @@ if (isset($_GET['orderBy']))
 	}
 	elseif ($orderBy == 'readDESC')
 	{
-		$colOrder['read'] = '▴';
+		$colOrder['read'] = 'Unread';
 		$colOrder['DESC'] = '';
 
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'AND read_status NOT LIKE \'%' . $_SESSION['id'] .'%\' ORDER BY date DESC';
+	}
+	elseif ($orderBy == 'send')
+	{
+		$colOrder['send'] = 'Send';
+		$colOrder['DESC'] = 'DESC';
+
+		# WARNING sensitive variable [SQLI]
+		$ORDERBY = 'AND send_status LIKE \'%' . $_SESSION['id'] .'%\' ORDER BY date DESC';
+	}
+	elseif ($orderBy == 'sendDESC')
+	{
+		$colOrder['send'] = 'Not send';
+		$colOrder['DESC'] = '';
+
+		# WARNING sensitive variable [SQLI]
+		$ORDERBY = 'AND send_status NOT LIKE \'%' . $_SESSION['id'] .'%\' ORDER BY date DESC';
 	}
 	else
 	{
