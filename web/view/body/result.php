@@ -29,6 +29,7 @@
 					{
 						# Read keyword for current result
 						$keyword = readResultKeyword($result['keyword_id'], $readOwnerKeyword, $bdd);
+						$keyword = preg_replace("/^:all@[0-9]+$/", ":All", $keyword);
 
 						# Read source for current result
 						$reqSourceResults = $bdd->prepare('SELECT link, name FROM rss_serge WHERE id LIKE :id');
@@ -61,7 +62,7 @@
 						echo '
 						<tr>
 							<td><input type="checkbox" name="delete' . $result['id'] . '" id="delete0' . $result['id'] . '" /><label class="checkbox" for="delete0' . $result['id'] . '"></label></td>
-							<td><a href="' . $result['link'] . '">' . $result['title'] . '</a></td>
+							<td><a href="' . $result['link'] . '" target="_blank">' . $result['title'] . '</a></td>
 							<td>' . $keyword . '</td>
 							<td><a href="' . $source['link'] . '">' . $source['name'] . '</a></td>
 							<td>' . $date . '</td>

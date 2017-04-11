@@ -16,6 +16,9 @@ include_once('model/readOwnerKeyword.php');
 
 include_once('model/readResultKeywordName.php');
 
+$resultBase  = 0;
+$resultLimit = 15;
+
 include_once('model/readOwnerResult.php');
 
 include_once('view/nav/nav.php');
