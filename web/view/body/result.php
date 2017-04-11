@@ -10,13 +10,16 @@
 				<thead>
 					<tr>
 						<th><input alt="Delete" title="Delete selected links" class="submit" type="submit" value="" /></th>
-						<th><a href="?orderBy=title">Title</a></th>
-						<th><a href="?orderBy=keyword">Keyword</a></th>
-						<th><a href="?orderBy=source">Source</a></th>
-						<th><a href="?orderBy=date">Date</a></th>
-						<th><a href="?orderBy=sent">Sent</a></th>
-						<th><a href="?orderBy=read">Read</a></th>
-						<th><a href="wiki">Wiki</a></th>
+						<?php
+						echo '
+						<th><a href="?orderBy=title' . $colOrder['DESC'] . '">Title ' . $colOrder['title'] . '</a></th>
+						<th>Keyword</th>
+						<th><a href="?orderBy=source' . $colOrder['DESC'] . '">Source ' . $colOrder['source'] . '</a></th>
+						<th><a href="?orderBy=date' . $colOrder['DESC'] . '">Date ' . $colOrder['date'] . '</a></th>
+						<th>Sent</th>
+						<th><a href="?orderBy=read' . $colOrder['DESC'] . '">Read ' . $colOrder['read'] . '</a></th>
+						<th><a href="wiki">Wiki</a></th>';
+						?>
 					</tr>
 				</thead>
 			</table>
