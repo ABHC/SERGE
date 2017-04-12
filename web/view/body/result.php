@@ -9,7 +9,7 @@
 			<table cellpadding="0" cellspacing="0" border="0">
 				<thead>
 					<tr>
-						<th><input alt="Delete" title="Delete selected links" class="submit" type="submit" value="" /></th>
+						<th><input alt="Delete" title="Delete selected links" name="deleteLink" class="submit" type="submit" value="delete" /></th>
 						<?php
 						echo '
 						<th><a href="?orderBy=title' . $colOrder['DESC'] . '">Title ' . $colOrder['title'] . '</a></th>

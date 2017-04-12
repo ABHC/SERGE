@@ -55,6 +55,11 @@ h1
 	margin-bottom: 15px;
 }
 
+* input[type='submit']
+{
+	font-size: 0px;
+}
+
 .tableContainer
 {
 	display: flex;

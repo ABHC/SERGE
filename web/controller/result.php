@@ -16,6 +16,24 @@ $colOrder['send'] = 'Send';
 $colOrder['DESC'] = '';
 $recordLink = '';
 
+include_once('model/delResult.php');
+
+if (isset($_POST['deleteLink']))
+{
+	foreach($_POST as $key => $val)
+	{
+		$key = htmlspecialchars($key);
+		$val = htmlspecialchars($val);
+		if (preg_match("/^delete[0-9]+$/", $key))
+		{
+				$resultId = preg_replace("/^delete/", "", $key);
+				deleteLink($bdd, $resultId);
+		}
+	}
+}
+
+
+
 include_once('model/readUserSettings.php');
 $recordRead = $userSettings['record_read'];
 
