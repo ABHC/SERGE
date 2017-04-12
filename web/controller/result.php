@@ -14,6 +14,20 @@ $setting = '';
 $colOrder['read'] = 'Read';
 $colOrder['send'] = 'Send';
 $colOrder['DESC'] = '';
+$recordLink = '';
+
+include_once('model/readUserSettings.php');
+$recordRead = $userSettings['record_read'];
+
+if ($recordRead == 0)
+{
+	$pass   = $userSettings['password'];
+	$id     = $userSettings['id'];
+	$pseudo = $_SESSION['pseudo'];
+	$salt   = 'blackSalt';
+	$hash   =  hash('sha256', $salt . ':' . $pass . $pseudo . $id);
+	$recordLink = 'redirect?id=' . $id . '&hash=' . $hash . '&link=';
+}
 
 include_once('model/readOwnerKeyword.php');
 
@@ -88,7 +102,7 @@ if (isset($_GET['orderBy']))
 		$colOrder['DESC'] = '';
 
 		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'AND read_status NOT LIKE \'%' . $_SESSION['id'] .'%\' ORDER BY date DESC';
+		$ORDERBY = 'AND read_status NOT LIKE \'%' . $_SESSION['id'] . '%\' ORDER BY date DESC';
 	}
 	elseif ($orderBy == 'send')
 	{

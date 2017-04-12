@@ -65,7 +65,7 @@
 						echo '
 						<tr>
 							<td><input type="checkbox" name="delete' . $result['id'] . '" id="delete0' . $result['id'] . '" /><label class="checkbox" for="delete0' . $result['id'] . '"></label></td>
-							<td><a href="' . $result['link'] . '" target="_blank">' . $result['title'] . '</a></td>
+							<td><a href="' . $recordLink . $result['link'] . '" target="_blank">' . $result['title'] . '</a></td>
 							<td>' . $keyword . '</td>
 							<td><a href="' . $source['link'] . '">' . $source['name'] . '</a></td>
 							<td>' . $date . '</td>
