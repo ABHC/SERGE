@@ -15,3 +15,5 @@ CREATE TABLE `result_news_serge` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 SET NAMES utf8mb4;
+
+ALTER TABLE `result_news_serge` ADD FULLTEXT INDEX `search` (`title`, `link`);

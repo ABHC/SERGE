@@ -5,6 +5,10 @@
 <div class="body">
 	<h1>Watch result</h1>
 	<a href="https://cairngit.eu/Graph.png"> chien </a>
+	<form class="formSearch" method="get" action="result">
+		<input type="text" name="search" id="search" placeholder="Search Serge" value="<?php echo htmlspecialchars($_GET['search']); ?>"/>
+	</form>
+
 	<form class="tableContainer" method="post" action="result">
 		<div class="table-header">
 			<table cellpadding="0" cellspacing="0" border="0">
@@ -42,6 +46,8 @@
 							$source = $reqSourceResults->fetch();
 							$reqSourceResults->closeCursor();
 
+						preg_match("/^https?:\/\/[^\/]*\//", $source['link'], $sourceLink);
+
 						$date = $result['date']; #TODO Créer Option timezone et Adapter à la time zone de l'utilisateur
 
 						$userIdComma = ',' . $_SESSION['id'] . ',';
@@ -68,7 +74,7 @@
 							<td><input type="checkbox" name="delete' . $result['id'] . '" id="delete0' . $result['id'] . '" /><label class="checkbox" for="delete0' . $result['id'] . '"></label></td>
 							<td><a href="' . $recordLink . $result['link'] . '" target="_blank">' . $result['title'] . '</a></td>
 							<td>' . $keyword . '</td>
-							<td><a href="' . $source['link'] . '">' . $source['name'] . '</a></td>
+							<td><a href="' .  $sourceLink[0] . '">' . $source['name'] . '</a></td>
 							<td>' . $date . '</td>
 							<td>' . $amISend . '</td>
 							<td>' . $amIRead . '</td>

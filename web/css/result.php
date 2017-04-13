@@ -60,6 +60,35 @@ h1
 	font-size: 0px;
 }
 
+input[type='text']
+{
+	width: 40%;
+	height: 25px;
+	color: rgb(245,245,245);
+	text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+	font-size: 17px;
+	background-color: rgba(0,0,0,0.4);
+	border: 1px solid rgba(255,255,255,0.4);
+	border-radius: 3px;
+	margin: 20px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+input[type='text']::placeholder
+{
+	color: rgb(190,190,190);
+}
+
+form.formSearch
+{
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+}
+
 .tableContainer
 {
 	display: flex;

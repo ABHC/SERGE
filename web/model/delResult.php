@@ -10,11 +10,11 @@ function deleteLink($bdd, $resultId)
 	if (!empty($ownersResult))
 	{
 		$userId = $_SESSION['id'];
-		$sourceOwnerNEW = preg_replace("/,$userId,/", ',', $ownersResult);
+		$OwnerNEW = preg_replace("/,$userId,/", ',', $ownersResult['owners']);
 
 		$req = $bdd->prepare('UPDATE result_news_serge SET owners = :owners WHERE id = :id');
 		$req->execute(array(
-			'owners' => $sourceOwnerNEW,
+			'owners' => $OwnerNEW,
 			'id' => $resultId));
 			$req->closeCursor();
 	}

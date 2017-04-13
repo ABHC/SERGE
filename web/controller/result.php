@@ -15,6 +15,8 @@ $colOrder['read'] = 'Read';
 $colOrder['send'] = 'Send';
 $colOrder['DESC'] = '';
 $recordLink = '';
+$search = '';
+$ORDERBYorSEARCH = '';
 
 include_once('model/delResult.php');
 
@@ -63,86 +65,86 @@ if (isset($_GET['page']) AND preg_match("/^[0-9]+$/", htmlspecialchars($_GET['pa
 # Order results
 if (isset($_GET['orderBy']))
 {
-	$orderBy = htmlspecialchars($_GET['orderBy']);
-	if ($orderBy == 'title')
+	$ORDERBYorSEARCH = htmlspecialchars($_GET['orderBy']);
+	if ($ORDERBYorSEARCH == 'title')
 	{
 		$colOrder['title'] = '▾';
 		$colOrder['DESC'] = 'DESC';
 
 		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'ORDER BY title';
+		$ORDERBYorSEARCH = 'ORDER BY title';
 	}
-	elseif ($orderBy == 'titleDESC')
+	elseif ($ORDERBYorSEARCH == 'titleDESC')
 	{
 		$colOrder['title'] = '▴';
 		$colOrder['DESC'] = '';
 
 		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'ORDER BY title DESC';
+		$ORDERBYorSEARCH = 'ORDER BY title DESC';
 	}
-	elseif ($orderBy == 'source')
+	elseif ($ORDERBYorSEARCH == 'source')
 	{
 		$colOrder['source'] = '▾';
 		$colOrder['DESC'] = 'DESC';
 
 		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'ORDER BY id_source';
+		$ORDERBYorSEARCH = 'ORDER BY id_source';
 	}
-	elseif ($orderBy == 'sourceDESC')
+	elseif ($ORDERBYorSEARCH == 'sourceDESC')
 	{
 		$colOrder['source'] = '▴';
 		$colOrder['DESC'] = '';
 
 		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'ORDER BY id_source DESC';
+		$ORDERBYorSEARCH = 'ORDER BY id_source DESC';
 	}
-	elseif ($orderBy == 'date')
+	elseif ($ORDERBYorSEARCH == 'date')
 	{
 		$colOrder['date'] = '▾';
 		$colOrder['DESC'] = 'DESC';
 
 		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'ORDER BY date';
+		$ORDERBYorSEARCH = 'ORDER BY date';
 	}
-	elseif ($orderBy == 'dateDESC')
+	elseif ($ORDERBYorSEARCH == 'dateDESC')
 	{
 		$colOrder['date'] = '▴';
 		$colOrder['DESC'] = '';
 
 		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'ORDER BY date DESC';
+		$ORDERBYorSEARCH = 'ORDER BY date DESC';
 	}
-	elseif ($orderBy == 'read')
+	elseif ($ORDERBYorSEARCH == 'read')
 	{
 		$colOrder['read'] = 'Read';
 		$colOrder['DESC'] = 'DESC';
 
 		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'AND read_status LIKE \'%' . $_SESSION['id'] .'%\' ORDER BY date DESC';
+		$ORDERBYorSEARCH = 'AND read_status LIKE \'%' . $_SESSION['id'] .'%\' ORDER BY date DESC';
 	}
-	elseif ($orderBy == 'readDESC')
+	elseif ($ORDERBYorSEARCH == 'readDESC')
 	{
 		$colOrder['read'] = 'Unread';
 		$colOrder['DESC'] = '';
 
 		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'AND read_status NOT LIKE \'%' . $_SESSION['id'] . '%\' ORDER BY date DESC';
+		$ORDERBYorSEARCH = 'AND read_status NOT LIKE \'%' . $_SESSION['id'] . '%\' ORDER BY date DESC';
 	}
-	elseif ($orderBy == 'send')
+	elseif ($ORDERBYorSEARCH == 'send')
 	{
 		$colOrder['send'] = 'Send';
 		$colOrder['DESC'] = 'DESC';
 
 		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'AND send_status LIKE \'%' . $_SESSION['id'] .'%\' ORDER BY date DESC';
+		$ORDERBYorSEARCH = 'AND send_status LIKE \'%' . $_SESSION['id'] .'%\' ORDER BY date DESC';
 	}
-	elseif ($orderBy == 'sendDESC')
+	elseif ($ORDERBYorSEARCH == 'sendDESC')
 	{
 		$colOrder['send'] = 'Not send';
 		$colOrder['DESC'] = '';
 
 		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'AND send_status NOT LIKE \'%' . $_SESSION['id'] .'%\' ORDER BY date DESC';
+		$ORDERBYorSEARCH = 'AND send_status NOT LIKE \'%' . $_SESSION['id'] .'%\' ORDER BY date DESC';
 	}
 	else
 	{
@@ -150,7 +152,7 @@ if (isset($_GET['orderBy']))
 		$colOrder['DESC'] = '';
 
 		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'ORDER BY date DESC';
+		$ORDERBYorSEARCH = 'ORDER BY date DESC';
 	}
 }
 else
@@ -159,7 +161,20 @@ else
 	$colOrder['DESC'] = '';
 
 	# WARNING sensitive variable [SQLI]
-	$ORDERBY = 'ORDER BY date DESC';
+	$ORDERBYorSEARCH = 'ORDER BY date DESC';
+}
+
+# Search in result
+if (!empty($_GET['search']))
+{
+	$search = htmlspecialchars($_GET['search']);
+
+	# WARNING sensitive variable [SQLI]
+	$ORDERBYorSEARCH = 'AND (MATCH(title, link) AGAINST (:search)) ' . $ORDERBYorSEARCH;
+}
+else
+{
+	$ORDERBYorSEARCH = 'AND title NOT LIKE :search ' . $ORDERBYorSEARCH;
 }
 
 include_once('model/readOwnerResult.php');
