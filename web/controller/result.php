@@ -32,8 +32,6 @@ if (isset($_POST['deleteLink']))
 	}
 }
 
-
-
 include_once('model/readUserSettings.php');
 $recordRead = $userSettings['record_read'];
 
@@ -53,6 +51,14 @@ include_once('model/readResultKeywordName.php');
 
 $resultBase  = 0;
 $resultLimit = 15;
+
+# Page number
+if (isset($_GET['page']) AND preg_match("/^[0-9]+$/", htmlspecialchars($_GET['page'])))
+{
+	$page       = htmlspecialchars($_GET['page']);
+	$page       = $page - 1;
+	$resultBase = 15 * $page;
+}
 
 # Order results
 if (isset($_GET['orderBy']))

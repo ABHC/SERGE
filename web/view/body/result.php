@@ -4,6 +4,7 @@
 </div>
 <div class="body">
 	<h1>Watch result</h1>
+	<a href="https://cairngit.eu/Graph.png"> chien </a>
 	<form class="tableContainer" method="post" action="result">
 		<div class="table-header">
 			<table cellpadding="0" cellspacing="0" border="0">
