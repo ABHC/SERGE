@@ -9,7 +9,8 @@ import traceback
 import logging
 import feedparser
 
-def allCheckLong (link):
+
+def allCheckLong(link):
 	"""Function for standardized requests to feed and internet pages."""
 
 	try:
@@ -59,12 +60,12 @@ def allCheckLong (link):
 		rss = None
 		rss_error = True
 
-
 	req_results = (rss_error, rss)
 
 	return req_results
 
-def feedMeUp (link):
+
+def feedMeUp(link):
 	"""Function for checking RSS feeds"""
 
 	########### LINK CONNEXION
@@ -72,7 +73,7 @@ def feedMeUp (link):
 	rss_error = req_results[0]
 	rss = req_results[1]
 
-	if rss_error == False:
+	if rss_error is False:
 
 		missing_flux = False
 
@@ -99,7 +100,7 @@ def feedMeUp (link):
 			entries_error = "no entries, "
 			missing_flux = True
 
-		if missing_flux == True:
+		if missing_flux is True:
 			flux_error = "missing_flux, "
 			complete_error = flux_error+title_error+entries_error
 			print complete_error
@@ -155,9 +156,10 @@ def feedMeUp (link):
 		if unvalid_count == 0:
 			print ("valid link")
 
-	elif rss_error == True:
+	elif rss_error is True:
 		print req_results
 		print ("unvalid link")
+
 
 ########### MAIN
 try:

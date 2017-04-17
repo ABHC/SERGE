@@ -4,7 +4,6 @@
 </div>
 <div class="body">
 	<h1>Watch result</h1>
-	<a href="https://cairngit.eu/Graph.png"> chien </a>
 	<form class="formSearch" method="get" action="result">
 		<input type="text" name="search" id="search" placeholder="Search Serge" value="<?php echo htmlspecialchars($_GET['search']); ?>"/>
 		<input type="hidden" name="orderBy" value="<?php echo htmlspecialchars($_GET['orderBy']); ?>"/>

@@ -50,7 +50,6 @@ def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 		logger_error.critical(repr(except_type))
 		sys.exit()
 
-
 	######### SEARCH FOR SOURCE NAME
 	num = 1
 	interval = float(now)-last_refresh
@@ -186,7 +185,7 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 			jelly_title_score = jellyfish.levenshtein_distance(post_title, jelly_title)
 			jelly_link_score = jellyfish.levenshtein_distance(post_link, jelly_link)
 
-			if jelly_title_score <= 3 and jelly_link_score <= 3 and jelly_breaker == False:
+			if jelly_title_score <= 3 and jelly_link_score <= 3 and jelly_breaker is False:
 				jelly_breaker = True
 				break
 
@@ -249,7 +248,7 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 			split_index = split_index+1
 
 		########### JELLY (TITLE + LINK) UPDATE
-		if jelly_breaker == True:
+		if jelly_breaker is True:
 			update_data = database.cursor()
 			try:
 				update_data.execute(query_jelly_update, (post_title, post_link, jelly_link))
@@ -260,7 +259,6 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 				logger_error.error(query_update)
 				logger_error.error(repr(except_type))
 			update_data.close()
-
 
 
 def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database):

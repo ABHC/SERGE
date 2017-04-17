@@ -163,19 +163,19 @@ def newscast(last_launch, max_users):
 		etag = head_results[0]
 		head_error = head_results[1]
 
-		if etag == None and head_error == False:
+		if etag is None and head_error is False:
 			greenlight = True
-		elif etag != old_etag and head_error == False:
+		elif etag != old_etag and head_error is False:
 			greenlight = True
-		elif etag == old_etag and head_error == False:
+		elif etag == old_etag and head_error is False:
 			greenlight = False
-		elif head_error == True:
+		elif head_error is True:
 			greenlight = False
 		else :
 			greenlight = False
 			logger_error.critical("UNKNOWN ERROR WITH ETAG IN :"+link+"\n")
 
-		if greenlight == True:
+		if greenlight is True:
 			########### INSERT NEW ETAG IN RSS SERGE
 			insertSQL.backToTheFuture(etag, link, database)
 
@@ -184,11 +184,11 @@ def newscast(last_launch, max_users):
 			rss_error = req_results[0]
 			rss = req_results[1]
 
-		elif greenlight == False:
+		elif greenlight is False:
 			rss_error = None
 
 		########### LINK CONNEXION
-		if rss_error == False and greenlight == True:
+		if rss_error is False and greenlight is True:
 
 			missing_flux = False
 
@@ -209,7 +209,7 @@ def newscast(last_launch, max_users):
 			rangemax = len(xmldoc.entries)
 			range = 0 #on initialise la variable range qui va servir pour pointer les articles
 
-			prime_conditions = (couple_keyword_attribute for couple_keyword_attribute in keywords_and_id_news_list if missing_flux == False)
+			prime_conditions = (couple_keyword_attribute for couple_keyword_attribute in keywords_and_id_news_list if missing_flux is False)
 
 			for couple_keyword_attribute in prime_conditions:
 				keyword_id = couple_keyword_attribute[0]
@@ -229,7 +229,7 @@ def newscast(last_launch, max_users):
 				source_owners = source_owners[0]
 				applicable_owners_sources = applicable_owners_sources[0].split("|")
 
-				second_conditions = (couple_owners_sources for couple_owners_sources in applicable_owners_sources if id_rss_comma in couple_owners_sources )
+				second_conditions = (couple_owners_sources for couple_owners_sources in applicable_owners_sources if id_rss_comma in couple_owners_sources)
 
 				keyword_owners = ","
 
@@ -418,7 +418,7 @@ def patents(last_launch):
 		rss_error = req_results[0]
 		rss_wipo = req_results[1]
 
-		if rss_error == False:
+		if rss_error is False:
 			xmldoc = feedparser.parse(rss_wipo)
 			range = 0
 			rangemax = len(xmldoc.entries)
@@ -530,7 +530,7 @@ def science(last_launch):
 		rss_error = req_results[0]
 		rss_arxiv = req_results[1]
 
-		if rss_error == False:
+		if rss_error is False:
 			try:
 				xmldoc = feedparser.parse(rss_arxiv)
 			except Exception, except_type:
@@ -555,7 +555,7 @@ def science(last_launch):
 					rows = call_science.fetchone()
 					call_science.close()
 
-					query_id=rows[0]
+					query_id = rows[0]
 
 					while range < rangemax:
 
@@ -618,7 +618,7 @@ def science(last_launch):
 		rss_error = req_results[0]
 		web_doaj = req_results[1]
 
-		if rss_error == False:
+		if rss_error is False:
 			try:
 				data_doaj = json.loads(web_doaj)
 			except Exception, except_type:
@@ -643,7 +643,7 @@ def science(last_launch):
 					rows = call_science.fetchone()
 					call_science.close()
 
-					query_id=rows[0]
+					query_id = rows[0]
 
 				while range < rangemax:
 					try:
@@ -695,6 +695,7 @@ def science(last_launch):
 
 		else:
 			logger_info.warning("Error : the json API is unavailable")
+
 
 ######### ERROR HOOK DEPLOYMENT
 sys.excepthook = cemeteriesOfErrors
