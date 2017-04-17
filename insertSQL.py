@@ -172,7 +172,7 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 	jelly_breaker = False
 
 	########### DATABASE JELLYCHEKING
-	if function_id == 1 or function_id == 3:
+	if function_id == 1 or function_id == 3: # ETRANGE
 		call_data_cheking = database.cursor()
 		call_data_cheking.execute(query_jellychecking, (id_rss, ))
 		jellychecking = call_data_cheking.fetchall()
@@ -190,7 +190,7 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 				break
 
 	########### DATABASE INSERTION
-	if checking is None:
+	if checking is None: # Manque de la prise en compte de jelly_breaker ?
 		insert_data = database.cursor()
 
 		try:

@@ -333,7 +333,7 @@ def newscast(last_launch, max_users):
 
 						for splitkey in aggregated_keyword:
 
-							if (re.search('[^a-z]'+re.escape(re.escape(splitkey)), re.escape(post_title), re.IGNORECASE) or re.search('[^a-z]'+re.escape(re.escape(splitkey)), re.escape(post_description), re.IGNORECASE) or re.search('[^a-z]'+re.escape(re.escape(splitkey)), re.escape(tags_string), re.IGNORECASE)) and post_date >= last_launch and post_date is not None and owners is not None:
+							if (re.search('[^a-z]'+re.escape(splitkey), post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey), post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey), tags_string, re.IGNORECASE)) and post_date >= last_launch and post_date is not None and owners is not None:
 
 								redundancy = redundancy + 1
 
@@ -356,7 +356,7 @@ def newscast(last_launch, max_users):
 
 					########### SIMPLE KEYWORDS RESEARCH
 					else:
-						if (re.search('[^a-z]'+re.escape(re.escape(keyword)), re.escape(post_title), re.IGNORECASE) or re.search('[^a-z]'+re.escape(re.escape(keyword)), re.escape(post_description), re.IGNORECASE) or re.search('[^a-z]'+re.escape(re.escape(keyword)), re.escape(tags_string), re.IGNORECASE) or re.search('^'+re.escape(re.escape(':all@'+id_rss))+'$', re.escape(keyword), re.IGNORECASE)) and post_date >= last_launch and post_date is not None and owners is not None:
+						if (re.search('[^a-z]'+re.escape(keyword), post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(keyword), post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(keyword), tags_string, re.IGNORECASE) or re.search('^'+re.escape(':all@'+id_rss)+'$', keyword, re.IGNORECASE)) and post_date >= last_launch and post_date is not None and owners is not None: # Pourquoi [^a-z] ?!
 
 							########### QUERY FOR DATABASE CHECKING
 							query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
