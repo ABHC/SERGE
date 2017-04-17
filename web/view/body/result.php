@@ -7,6 +7,8 @@
 	<a href="https://cairngit.eu/Graph.png"> chien </a>
 	<form class="formSearch" method="get" action="result">
 		<input type="text" name="search" id="search" placeholder="Search Serge" value="<?php echo htmlspecialchars($_GET['search']); ?>"/>
+		<input type="hidden" name="orderBy" value="<?php echo htmlspecialchars($_GET['orderBy']); ?>"/>
+		<input type="hidden" name="optionalCond" value="<?php echo htmlspecialchars($_GET['optionalCond']); ?>"/>
 	</form>
 
 	<form class="tableContainer" method="post" action="result">
@@ -17,12 +19,12 @@
 						<th><input alt="Delete" title="Delete selected links" name="deleteLink" class="submit" type="submit" value="delete" /></th>
 						<?php
 						echo '
-						<th><a href="?orderBy=title' . $colOrder['DESC'] . '">Title ' . $colOrder['title'] . '</a></th>
+						<th><a href="?orderBy=title' . $colOrder['DESC'] . $searchSort . $optionalCond . '">Title ' . $colOrder['title'] . '</a></th>
 						<th>Keyword</th>
-						<th><a href="?orderBy=source' . $colOrder['DESC'] . '">Source ' . $colOrder['source'] . '</a></th>
-						<th><a href="?orderBy=date' . $colOrder['DESC'] . '">Date ' . $colOrder['date'] . '</a></th>
-						<th><a href="?orderBy=send' . $colOrder['DESC'] . '">' . $colOrder['send'] . '</a></th>
-						<th><a href="?orderBy=read' . $colOrder['DESC'] . '">' . $colOrder['read'] . '</a></th>
+						<th><a href="?orderBy=source' . $colOrder['DESC'] . $searchSort . $optionalCond . '">Source ' . $colOrder['source'] . '</a></th>
+						<th><a href="?orderBy=date' . $colOrder['DESC'] . $searchSort . $optionalCond . '">Date ' . $colOrder['date'] . '</a></th>
+						<th><a href="?optionalCond=send' . $colOrder['OCDESC'] . $searchSort . $orderBy . '">' . $colOrder['send'] . '</a></th>
+						<th><a href="?optionalCond=read' . $colOrder['OCDESC'] . $searchSort . $orderBy . '">' . $colOrder['read'] . '</a></th>
 						<th><a href="wiki">Wiki</a></th>';
 						?>
 					</tr>

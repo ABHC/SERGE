@@ -20,7 +20,10 @@ $colOrder['date'] = '';
 $recordLink = '';
 $search = '';
 $searchBoolean = '';
+$searchSort = '';
+$orderBy = '';
 $ORDERBY = '';
+$OPTIONALCOND = '';
 
 $SELECTRESULT = '(SELECT id, title, link, send_status, read_status, `date`, id_source, keyword_id FROM result_news_serge WHERE owners LIKE :user';
 
@@ -69,10 +72,10 @@ if (isset($_GET['page']) AND preg_match("/^[0-9]+$/", htmlspecialchars($_GET['pa
 }
 
 # Order results
-if (isset($_GET['orderBy']))
+if (!empty($_GET['orderBy']))
 {
-	$ORDERBY = htmlspecialchars($_GET['orderBy']);
-	if ($ORDERBY == 'title')
+	$orderBy = htmlspecialchars($_GET['orderBy']);
+	if ($orderBy == 'title')
 	{
 		$colOrder['title'] = '▾';
 		$colOrder['DESC'] = 'DESC';
@@ -80,7 +83,7 @@ if (isset($_GET['orderBy']))
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY title';
 	}
-	elseif ($ORDERBY == 'titleDESC')
+	elseif ($orderBy == 'titleDESC')
 	{
 		$colOrder['title'] = '▴';
 		$colOrder['DESC'] = '';
@@ -88,7 +91,7 @@ if (isset($_GET['orderBy']))
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY title DESC';
 	}
-	elseif ($ORDERBY == 'source')
+	elseif ($orderBy == 'source')
 	{
 		$colOrder['source'] = '▾';
 		$colOrder['DESC'] = 'DESC';
@@ -96,7 +99,7 @@ if (isset($_GET['orderBy']))
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY id_source';
 	}
-	elseif ($ORDERBY == 'sourceDESC')
+	elseif ($orderBy == 'sourceDESC')
 	{
 		$colOrder['source'] = '▴';
 		$colOrder['DESC'] = '';
@@ -104,7 +107,7 @@ if (isset($_GET['orderBy']))
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY id_source DESC';
 	}
-	elseif ($ORDERBY == 'date')
+	elseif ($orderBy == 'date')
 	{
 		$colOrder['date'] = '▾';
 		$colOrder['DESC'] = 'DESC';
@@ -112,45 +115,13 @@ if (isset($_GET['orderBy']))
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY date';
 	}
-	elseif ($ORDERBY == 'dateDESC')
+	elseif ($orderBy == 'dateDESC')
 	{
 		$colOrder['date'] = '▴';
 		$colOrder['DESC'] = '';
 
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY date DESC';
-	}
-	elseif ($ORDERBY == 'read')
-	{
-		$colOrder['read'] = 'Read';
-		$colOrder['DESC'] = 'DESC';
-
-		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'AND read_status LIKE \'%' . $_SESSION['id'] .'%\' ORDER BY date DESC';
-	}
-	elseif ($ORDERBY == 'readDESC')
-	{
-		$colOrder['read'] = 'Unread';
-		$colOrder['DESC'] = '';
-
-		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'AND read_status NOT LIKE \'%' . $_SESSION['id'] . '%\' ORDER BY date DESC';
-	}
-	elseif ($ORDERBY == 'send')
-	{
-		$colOrder['send'] = 'Send';
-		$colOrder['DESC'] = 'DESC';
-
-		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'AND send_status LIKE \'%' . $_SESSION['id'] .'%\' ORDER BY date DESC';
-	}
-	elseif ($ORDERBY == 'sendDESC')
-	{
-		$colOrder['send'] = 'Not send';
-		$colOrder['DESC'] = '';
-
-		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'AND send_status NOT LIKE \'%' . $_SESSION['id'] .'%\' ORDER BY date DESC';
 	}
 	else
 	{
@@ -160,6 +131,8 @@ if (isset($_GET['orderBy']))
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY date DESC';
 	}
+
+	$orderBy = '&orderBy=' . $orderBy;
 }
 elseif (empty($_GET['search']))
 {
@@ -170,27 +143,70 @@ elseif (empty($_GET['search']))
 	$ORDERBY = 'ORDER BY date DESC';
 }
 
+if (!empty($_GET['optionalCond']))
+{
+	$optionalCond = htmlspecialchars($_GET['optionalCond']);
+	if ($optionalCond == 'read')
+	{
+		$colOrder['read'] = 'Read';
+		$colOrder['OCDESC'] = 'DESC';
+
+		# WARNING sensitive variable [SQLI]
+		$OPTIONALCOND = ' AND read_status LIKE \'%' . $_SESSION['id'] .'%\'';
+	}
+	elseif ($optionalCond == 'readDESC')
+	{
+		$colOrder['read'] = 'Unread';
+		$colOrder['OCDESC'] = '';
+
+		# WARNING sensitive variable [SQLI]
+		$OPTIONALCOND = ' AND read_status NOT LIKE \'%' . $_SESSION['id'] . '%\'';
+	}
+	elseif ($optionalCond == 'send')
+	{
+		$colOrder['send'] = 'Send';
+		$colOrder['OCDESC'] = 'DESC';
+
+		# WARNING sensitive variable [SQLI]
+		$OPTIONALCOND = ' AND send_status LIKE \'%' . $_SESSION['id'] .'%\'';
+	}
+	elseif ($optionalCond == 'sendDESC')
+	{
+		$colOrder['send'] = 'Not send';
+		$colOrder['OCDESC'] = '';
+
+		# WARNING sensitive variable [SQLI]
+		$OPTIONALCOND = ' AND send_status NOT LIKE \'%' . $_SESSION['id'] .'%\'';
+	}
+
+	$optionalCond = '&optionalCond=' . $optionalCond;
+}
+
 # Search in result
 if (!empty($_GET['search']))
 {
 	$search = htmlspecialchars($_GET['search']);
-	$searchBoolean = preg_replace("/(^|\ )[a-zA-Z]{1,3}\ /", " ", $search);
-	$searchBoolean = preg_replace("/\ /", "* ", $searchBoolean);
-	$searchBoolean = preg_replace("/.$/", "$0*", $searchBoolean);
+	$searchBoolean = preg_replace("/(^|\ )[a-zA-Z]{1,3}(\ |$)/", " ", $search);
+	$searchBoolean = preg_replace("/[^ ]+/", '\'$0\'', $searchBoolean);
+	$searchBoolean = preg_replace("/[^ ]+'/", "$0*", $searchBoolean);
 	$searchBoolean = preg_replace("/^..*.$/", "($0$1)", $searchBoolean);
 
 	# WARNING sensitive variable [SQLI]
+	$SELECTRESULT = $SELECTRESULT . $OPTIONALCOND;
 	$QUERYRESULT =
 	$SELECTRESULT . ' AND MATCH(title, link) AGAINST (:search))
 	 UNION ' .
 	 $SELECTRESULT . ' AND MATCH(title, link) AGAINST (:searchBoolean IN BOOLEAN MODE)  LIMIT 10)
 	 UNION ' .
-	 $SELECTRESULT . ' AND MATCH(title, link) AGAINST (:search WITH QUERY EXPANSION) LIMIT 10)' .
+	 $SELECTRESULT . ' AND MATCH(title, link) AGAINST (:search WITH QUERY EXPANSION) LIMIT 3)' .
 	 $ORDERBY;
+
+	$searchSort = '&search=' . $search;
 }
 else
 {
 	# WARNING sensitive variable [SQLI]
+	$SELECTRESULT = $SELECTRESULT . $OPTIONALCOND;
 	$QUERYRESULT = $SELECTRESULT . ' AND title NOT LIKE :search AND title NOT LIKE :searchBoolean) ' . $ORDERBY;
 }
 
