@@ -180,17 +180,17 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 
 		for jelly in jellychecking:
 			jelly_title = jelly[0]
-			jelly_link = jelly[1]
+			jelly_link = jelly[1] # [REVIEW] Supprimer link car non pertinent
 
 			jelly_title_score = jellyfish.levenshtein_distance(post_title, jelly_title)
-			jelly_link_score = jellyfish.levenshtein_distance(post_link, jelly_link)
+			jelly_link_score = jellyfish.levenshtein_distance(post_link, jelly_link) # [REVIEW] Supprimer link car non pertinent
 
-			if jelly_title_score <= 3 and jelly_link_score <= 3 and jelly_breaker is False:
+			if jelly_title_score <= 3 and jelly_link_score <= 3 and jelly_breaker is False: # [REVIEW] Supprimer link car non pertinent
 				jelly_breaker = True
 				break
 
 	########### DATABASE INSERTION
-	if checking is None: # Manque de la prise en compte de jelly_breaker ?
+	if checking is None: # [REVIEW] Manque de la prise en compte de jelly_breaker ?
 		insert_data = database.cursor()
 
 		try:
