@@ -164,13 +164,13 @@ def newscast(last_launch, max_users):
 		head_error = head_results[1]
 
 		if etag is None and head_error is False:
-			greenlight = True
+			greenlight = True # [REVIEW] Deux conditions différente et même résultat autant mettre un OR sur le if pour avoir une seule condition
 		elif etag != old_etag and head_error is False:
-			greenlight = True
+			greenlight = True # [REVIEW] Deux conditions différente et même résultat autant mettre un OR sur le if pour avoir une seule condition
 		elif etag == old_etag and head_error is False:
-			greenlight = False
+			greenlight = False # [REVIEW] Deux conditions différente et même résultat autant mettre un OR sur le if pour avoir une seule condition
 		elif head_error is True:
-			greenlight = False
+			greenlight = False # [REVIEW] Deux conditions différente et même résultat autant mettre un OR sur le if pour avoir une seule condition
 		else :
 			greenlight = False
 			logger_error.critical("UNKNOWN ERROR WITH ETAG IN :"+link+"\n")
@@ -704,7 +704,7 @@ sys.excepthook = cemeteriesOfErrors
 try:
 	os.remove("Newsletter.html")
 except OSError:
-	pass
+	pass # [REVIEW] Si erreur tu pass, il faudrait au moins le logger
 
 ######### Connexion à la base de données CairnDevices
 passSQL = open("permission/password.txt", "r")
