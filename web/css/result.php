@@ -3,9 +3,13 @@ header('content-type: text/css');
 ob_start('ob_gzhandler');
 header('Cache-Control: max-age=31536000, must-revalidate');
 
-//include_once('../model/connexion_sql.php');
+session_start();
+
+include_once('../model/connection_sql.php');
 
 //include_once('../model/design.php');
+
+include_once('../model/backgroundDesign.php');
 
 include_once('style.php');
 
@@ -29,7 +33,7 @@ include_once('nav.php');
 	width: 100%;
 	height: 100vh;
 	z-index: -1;
-	background: url('../images/background/Skyscrapers01.jpg') center no-repeat;
+	background: url('../images/background/<?php echo $background['filename']; ?>') center no-repeat;
 	background-size: cover;
 }
 
