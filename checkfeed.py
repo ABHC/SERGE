@@ -157,7 +157,7 @@ def feedMeUp(link):
 			print ("valid link")
 
 	elif rss_error is True:
-		print req_results
+		print req_results # [BUG]
 		print ("unvalid link")
 
 
