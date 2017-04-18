@@ -324,6 +324,7 @@ tr:nth-child(2n)
 	flex-direction: row;
 	justify-content: space-around;
 	align-items: center;
+	color: #fff;
 }
 
 .pageNumber
@@ -331,7 +332,7 @@ tr:nth-child(2n)
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	width: 30px;
+	min-width: 30px;
 	height: 30px;
 	margin-left: 10px;
 	margin-right: 10px;
@@ -344,6 +345,12 @@ tr:nth-child(2n)
 a.pageNumber
 {
 	text-decoration: none;
+}
+
+a.pageNumber.current
+{
+	font-weight: bold;
+	border: 1px solid rgba(255,255,255,0.5);
 }
 
 <?php

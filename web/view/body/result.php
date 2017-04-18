@@ -18,10 +18,10 @@
 						<th><input alt="Delete" title="Delete selected links" name="deleteLink" class="submit" type="submit" value="delete" /></th>
 						<?php
 						echo '
-						<th><a href="?orderBy=title' . $colOrder['DESC'] . $searchSort . $optionalCond . '">Title ' . $colOrder['title'] . '</a></th>
+						<th><a href="?orderBy=title' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '">Title ' . $colOrder['title'] . '</a></th>
 						<th>Keyword</th>
-						<th><a href="?orderBy=source' . $colOrder['DESC'] . $searchSort . $optionalCond . '">Source ' . $colOrder['source'] . '</a></th>
-						<th><a href="?orderBy=date' . $colOrder['DESC'] . $searchSort . $optionalCond . '">Date ' . $colOrder['date'] . '</a></th>
+						<th><a href="?orderBy=source' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '">Source ' . $colOrder['source'] . '</a></th>
+						<th><a href="?orderBy=date' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '">Date ' . $colOrder['date'] . '</a></th>
 						<th><a href="?optionalCond=send' . $colOrder['OCDESC'] . $searchSort . $orderBy . '">' . $colOrder['send'] . '</a></th>
 						<th><a href="?optionalCond=read' . $colOrder['OCDESC'] . $searchSort . $orderBy . '">' . $colOrder['read'] . '</a></th>
 						<th><a href="wiki">Wiki</a></th>';
@@ -34,7 +34,8 @@
 			<table cellpadding="0" cellspacing="0" border="0">
 				<tbody>
 					<?php
-					foreach ($readOwnerResults as $result)
+					$readOwnerResults = new ArrayIterator($readOwnerResults);
+					foreach (new LimitIterator($readOwnerResults, $base, $limit) as $result)
 					{
 						# Read keyword for current result
 						$keyword = readResultKeyword($result['keyword_id'], $readOwnerKeyword, $bdd);
@@ -92,17 +93,54 @@
 		</div>
 	</form>
 	<div class="pages">
-		<a href="result?page=1" class="pageNumber">
-			1
-		</a>
-		<a href="result?page=2" class="pageNumber">
-			2
-		</a>
-		<a href="result?page=3" class="pageNumber">
-			3
-		</a>
-		<a href="result?page=4" class="pageNumber">
-			4
-		</a>
+		<?php
+		$nbPage = ceil(count($readOwnerResults) / $limit);
+		$page   = $page + 1;
+		$cpt    = 1;
+		$dotBetweenPageNumber = FALSE;
+
+		while ($cpt <= $nbPage)
+		{
+			if ($cpt == $page)
+			{
+				echo '
+				<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '" class="pageNumber current">
+				' . $cpt . '
+				</a>';
+				$dotBetweenPageNumber = FALSE;
+			}
+			elseif ($cpt <= 2)
+			{
+				echo '
+				<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '" class="pageNumber">
+				' . $cpt . '
+				</a>';
+			}
+			elseif (($cpt - 1) == $page OR ($cpt + 1) == $page)
+			{
+				echo '
+				<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '" class="pageNumber">
+				' . $cpt . '
+				</a>';
+				$dotBetweenPageNumber = FALSE;
+			}
+			elseif ($cpt == $nbPage OR ($cpt + 1) == $nbPage)
+			{
+				echo '
+				<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '" class="pageNumber">
+				' . $cpt . '
+				</a>';
+			}
+			else
+			{
+				if ($dotBetweenPageNumber == FALSE)
+				{
+					echo '...';
+					$dotBetweenPageNumber = TRUE;
+				}
+			}
+			$cpt++;
+		}
+		?>
 	</div>
 </div>

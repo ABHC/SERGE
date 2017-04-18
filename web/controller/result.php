@@ -24,6 +24,9 @@ $searchSort = '';
 $orderBy = '';
 $ORDERBY = '';
 $OPTIONALCOND = '';
+$limit = 15;
+$base = 0;
+$page = 0;
 
 $SELECTRESULT = '(SELECT id, title, link, send_status, read_status, `date`, id_source, keyword_id FROM result_news_serge WHERE owners LIKE :user';
 
@@ -60,15 +63,14 @@ include_once('model/readOwnerKeyword.php');
 
 include_once('model/readResultKeywordName.php');
 
-$resultBase  = 0;
-$resultLimit = 500;
-
 # Page number
 if (isset($_GET['page']) AND preg_match("/^[0-9]+$/", htmlspecialchars($_GET['page'])))
 {
-	$page       = htmlspecialchars($_GET['page']);
-	$page       = $page - 1;
-	$resultBase = 15 * $page;
+	$actualPageLink = '&page=' . htmlspecialchars($_GET['page']);
+	$limit          = 15;
+	$page           = htmlspecialchars($_GET['page']);
+	$page           = $page - 1;
+	$base           = $limit * $page;
 }
 
 # Order results
