@@ -28,6 +28,6 @@ function readResultKeyword($keywordIds, $readOwnerKeyword, $bdd)
 		$keyword = $reqKeywordResults->fetch();
 		$reqKeywordResults->closeCursor();
 
-		return $keyword['keyword'];
+	return $keyword['keyword'];
 }
 ?>

@@ -51,11 +51,11 @@ $recordRead = $userSettings['record_read'];
 
 if ($recordRead == 0)
 {
-	$pass   = $userSettings['password'];
-	$id     = $userSettings['id'];
-	$pseudo = $_SESSION['pseudo'];
-	$salt   = 'blackSalt';
-	$hash   =  hash('sha256', $salt . ':' . $pass . $pseudo . $id);
+	$pass       = $userSettings['password'];
+	$id         = $userSettings['id'];
+	$pseudo     = $_SESSION['pseudo'];
+	$salt       = 'blackSalt';
+	$hash       =  hash('sha256', $salt . ':' . $pass . $pseudo . $id);
 	$recordLink = 'redirect?id=' . $id . '&hash=' . $hash . '&link=';
 }
 
@@ -183,22 +183,72 @@ if (!empty($_GET['optionalCond']))
 
 	$optionalCond = '&optionalCond=' . $optionalCond;
 }
+else
+{
+	$optionalCond = '';
+}
 
 # Search in result
 if (!empty($_GET['search']))
 {
-	$search = htmlspecialchars($_GET['search']);
+	$search        = htmlspecialchars($_GET['search']);
 	$searchBoolean = preg_replace("/(^|\ )[a-zA-Z]{1,3}(\ |$)/", " ", $search);
 	$searchBoolean = preg_replace("/[^ ]+/", '\'$0\'', $searchBoolean);
 	$searchBoolean = preg_replace("/[^ ]+'/", "$0*", $searchBoolean);
 	$searchBoolean = preg_replace("/^..*.$/", "($0$1)", $searchBoolean);
 
+	# Search in keyword
+	$SEARCHKEYWORD   = '';
+	$searchInKeyword = preg_replace("/(^|\ )[a-zA-Z]{1,3}(\ |$)/", " ", $search);
+	$searchKeywordList = explode(" ", $searchInKeyword);
+
+	foreach ($searchKeywordList as $searchKeyword)
+	{
+		if (strlen($searchKeyword) > 3)
+		{
+			$searchKeyword = '%' . $searchKeyword . '%';
+			$userId = '%|' . $_SESSION['id'] . ':%';
+			$reqSearchOwnerKeyword = $bdd->prepare('SELECT id FROM keyword_news_serge WHERE applicable_owners_sources LIKE :user AND LOWER(keyword) LIKE LOWER(:searchKeyword)');
+			$reqSearchOwnerKeyword->execute(array(
+				'user' => $userId,
+				'searchKeyword' => $searchKeyword));
+				$searchOwnerKeyword = $reqSearchOwnerKeyword->fetchAll();
+				$reqSearchOwnerKeyword->closeCursor();
+
+			if (!empty($searchOwnerKeyword))
+			{
+				$OR = '';
+				foreach ($searchOwnerKeyword as $searchKeyword)
+				{
+					$keywordIdSearch = '\'%,' . $searchKeyword['id'] . ',%\'';
+
+					# WARNING sensitive variable [SQLI]
+					$SEARCHKEYWORD = $SEARCHKEYWORD . $OR . 'keyword_id LIKE ' . $keywordIdSearch;
+					$OR = ' OR ';
+				}
+			}
+		}
+	}
+
+	if (!empty($SEARCHKEYWORD))
+	{
+		# WARNING sensitive variable [SQLI]
+		$CHECKKEYWORD = '(SELECT id, title, link, send_status, read_status, `date`, id_source, keyword_id FROM result_news_serge WHERE owners LIKE :user AND (' . $SEARCHKEYWORD . '))';
+	}
+	else
+	{
+		# WARNING sensitive variable [SQLI]
+		$CHECKKEYWORD = '(SELECT id, title, link, send_status, read_status, `date`, id_source, keyword_id FROM result_news_serge WHERE id = 0)';
+	}
+
 	# WARNING sensitive variable [SQLI]
 	$SELECTRESULT = $SELECTRESULT . $OPTIONALCOND;
 	$QUERYRESULT =
-	$SELECTRESULT . ' AND MATCH(title, link) AGAINST (:search))
+	 $SELECTRESULT . ' AND MATCH(title, link) AGAINST (:search))
 	 UNION ' .
-	 $SELECTRESULT . ' AND MATCH(title, link) AGAINST (:searchBoolean IN BOOLEAN MODE)  LIMIT 10)
+	 $SELECTRESULT . ' AND MATCH(title, link) AGAINST (:searchBoolean IN BOOLEAN MODE)  LIMIT 15)
+	 UNION ' .
+	 $CHECKKEYWORD . '
 	 UNION ' .
 	 $SELECTRESULT . ' AND MATCH(title, link) AGAINST (:search WITH QUERY EXPANSION) LIMIT 3)' .
 	 $ORDERBY;
