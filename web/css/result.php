@@ -3,9 +3,13 @@ header('content-type: text/css');
 ob_start('ob_gzhandler');
 header('Cache-Control: max-age=31536000, must-revalidate');
 
-//include_once('../model/connexion_sql.php');
+session_start();
+
+include_once('../model/connection_sql.php');
 
 //include_once('../model/design.php');
+
+include_once('../model/backgroundDesign.php');
 
 include_once('style.php');
 
@@ -29,7 +33,7 @@ include_once('nav.php');
 	width: 100%;
 	height: 100vh;
 	z-index: -1;
-	background: url('../images/background/Skyscrapers01.jpg') center no-repeat;
+	background: url('../images/background/<?php echo $background['filename']; ?>') center no-repeat;
 	background-size: cover;
 }
 
@@ -53,6 +57,40 @@ h1
 	font-weight: 300;
 	text-align: center;
 	margin-bottom: 15px;
+}
+
+* input[type='submit']
+{
+	font-size: 0px;
+}
+
+input[type='text']
+{
+	width: 40%;
+	height: 25px;
+	color: rgb(245,245,245);
+	text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+	font-size: 17px;
+	background-color: rgba(0,0,0,0.4);
+	border: 1px solid rgba(255,255,255,0.4);
+	border-radius: 3px;
+	margin: 20px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+input[type='text']::placeholder
+{
+	color: rgb(190,190,190);
+}
+
+form.formSearch
+{
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
 }
 
 .tableContainer
@@ -107,6 +145,16 @@ th a
 	color: #fff;
 }
 
+th:nth-child(6)
+{
+	width: 50px;
+}
+
+th:nth-child(7)
+{
+	width: 50px;
+}
+
 .submit
 {
 	width: 20px;
@@ -125,12 +173,12 @@ th:nth-child(1)
 
 th:nth-child(2)
 {
-	width: 27%;
+	width: 30%;
 }
 
 th:last-child
 {
-	width: 8%;
+	width: 50px;
 }
 
 td
@@ -152,6 +200,12 @@ td a
 	color: #fff;
 }
 
+td img
+{
+	width: 34px;
+	height: auto;
+}
+
 td:nth-child(1)
 {
 	width: 40px;
@@ -160,14 +214,24 @@ td:nth-child(1)
 
 td:nth-child(2)
 {
-	width: 27%;
+	width: 30%;
 	text-align: left;
 	padding-left: 5px;
 }
 
+td:nth-child(6)
+{
+	width: 50px;
+}
+
+td:nth-child(7)
+{
+	width: 50px;
+}
+
 td:last-child
 {
-	width: 8%;
+	width: 50px;
 }
 
 [type="checkbox"]:not(:checked),
@@ -264,6 +328,7 @@ tr:nth-child(2n)
 	flex-direction: row;
 	justify-content: space-around;
 	align-items: center;
+	color: #fff;
 }
 
 .pageNumber
@@ -271,7 +336,7 @@ tr:nth-child(2n)
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	width: 30px;
+	min-width: 30px;
 	height: 30px;
 	margin-left: 10px;
 	margin-right: 10px;
@@ -284,6 +349,12 @@ tr:nth-child(2n)
 a.pageNumber
 {
 	text-decoration: none;
+}
+
+a.pageNumber.current
+{
+	font-weight: bold;
+	border: 1px solid rgba(255,255,255,0.5);
 }
 
 <?php

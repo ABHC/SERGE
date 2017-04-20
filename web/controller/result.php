@@ -1,26 +1,85 @@
 <?php
-# User need to be connected to access to this page
-if (!isset($_SESSION['pseudo']))
-{
-	$_SESSION['redirectFrom'] = 'result';
-	header('Location: connection');
-}
+
+include_once('controller/accessLimitedToSignInPeople.php');
 
 //include_once('model/get_text.php');
 
-$result  = 'active';
-$wiki    = '';
-$setting = '';
+# Initialization of variables
+$result             = 'active';
+$wiki               = '';
+$setting            = '';
+$colOrder['read']   = 'Read';
+$colOrder['send']   = 'Send';
+$colOrder['DESC']   = '';
+$colOrder['title']  = '';
+$colOrder['source'] = '';
+$colOrder['date']   = '';
+$colOrder['OCDESC'] = '';
+$recordLink         = '';
+$search             = '';
+$searchBoolean      = '';
+$searchInLink       = '';
+$searchSort         = '';
+$orderBy            = '';
+$ORDERBY            = '';
+$OPTIONALCOND       = '';
+$limit              = 15;
+$base               = 0;
+$page               = 0;
+$actualPageLink     = '';
+
+# Warning sensitive variables [SQLI]
+$SELECTRESULT = '(SELECT id, title, link, send_status, read_status, `date`, id_source, keyword_id FROM result_news_serge WHERE owners LIKE :user';
+
+
+# Delete results
+include_once('model/delResult.php');
+
+if (isset($_POST['deleteLink']))
+{
+	foreach($_POST as $key => $val)
+	{
+		$key = htmlspecialchars($key);
+		$val = htmlspecialchars($val);
+
+		if (preg_match("/^delete[0-9]+$/", $key))
+		{
+				$resultId = preg_replace("/^delete/", "", $key);
+				deleteLink($bdd, $resultId);
+		}
+	}
+}
+
+# Record when a link is click
+include_once('model/readUserSettings.php');
+
+$recordRead = readUserSettings('id, password, record_read', $bdd);
+
+if ($recordRead['record_read'] == 0)
+{
+	$pass       = $recordRead['password'];
+	$id         = $recordRead['id'];
+	$pseudo     = $_SESSION['pseudo'];
+	$salt       = 'blackSalt';
+	$hash       =  hash('sha256', $salt . ':' . $pass . $pseudo . $id);
+	$recordLink = 'redirect?id=' . $id . '&hash=' . $hash . '&link=';
+}
 
 include_once('model/readOwnerKeyword.php');
 
 include_once('model/readResultKeywordName.php');
 
-$resultBase  = 0;
-$resultLimit = 15;
+# Page number
+if (isset($_GET['page']) AND preg_match("/^[0-9]+$/", htmlspecialchars($_GET['page'])))
+{
+	$actualPageLink = '&page=' . htmlspecialchars($_GET['page']);
+	$limit          = 15;
+	$page           = $_GET['page'] - 1;
+	$base           = $limit * $page;
+}
 
 # Order results
-if (isset($_GET['orderBy']))
+if (!empty($_GET['orderBy']))
 {
 	$orderBy = htmlspecialchars($_GET['orderBy']);
 	if ($orderBy == 'title')
@@ -71,22 +130,6 @@ if (isset($_GET['orderBy']))
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY date DESC';
 	}
-	elseif ($orderBy == 'read')
-	{
-		$colOrder['read'] = '▾';
-		$colOrder['DESC'] = 'DESC';
-
-		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'AND read_status LIKE \'%' . $_SESSION['id'] .'%\' ORDER BY date DESC';
-	}
-	elseif ($orderBy == 'readDESC')
-	{
-		$colOrder['read'] = '▴';
-		$colOrder['DESC'] = '';
-
-		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'AND read_status NOT LIKE \'%' . $_SESSION['id'] .'%\' ORDER BY date DESC';
-	}
 	else
 	{
 		$colOrder['date'] = '▴';
@@ -95,8 +138,10 @@ if (isset($_GET['orderBy']))
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY date DESC';
 	}
+
+	$orderBy = '&orderBy=' . $orderBy;
 }
-else
+elseif (empty($_GET['search']))
 {
 	$colOrder['date'] = '▴';
 	$colOrder['DESC'] = '';
@@ -104,6 +149,51 @@ else
 	# WARNING sensitive variable [SQLI]
 	$ORDERBY = 'ORDER BY date DESC';
 }
+
+if (!empty($_GET['optionalCond']))
+{
+	$optionalCond = htmlspecialchars($_GET['optionalCond']);
+	if ($optionalCond == 'read')
+	{
+		$colOrder['read'] = 'Read';
+		$colOrder['OCDESC'] = 'DESC';
+
+		# WARNING sensitive variable [SQLI]
+		$OPTIONALCOND = ' AND read_status LIKE \'%' . $_SESSION['id'] .'%\'';
+	}
+	elseif ($optionalCond == 'readDESC')
+	{
+		$colOrder['read'] = 'Unread';
+		$colOrder['OCDESC'] = '';
+
+		# WARNING sensitive variable [SQLI]
+		$OPTIONALCOND = ' AND read_status NOT LIKE \'%' . $_SESSION['id'] . '%\'';
+	}
+	elseif ($optionalCond == 'send')
+	{
+		$colOrder['send'] = 'Send';
+		$colOrder['OCDESC'] = 'DESC';
+
+		# WARNING sensitive variable [SQLI]
+		$OPTIONALCOND = ' AND send_status LIKE \'%' . $_SESSION['id'] .'%\'';
+	}
+	elseif ($optionalCond == 'sendDESC')
+	{
+		$colOrder['send'] = 'Not send';
+		$colOrder['OCDESC'] = '';
+
+		# WARNING sensitive variable [SQLI]
+		$OPTIONALCOND = ' AND send_status NOT LIKE \'%' . $_SESSION['id'] .'%\'';
+	}
+
+	$optionalCond = '&optionalCond=' . $optionalCond;
+}
+else
+{
+	$optionalCond = '';
+}
+
+include_once('controller/searchEngine.php');
 
 include_once('model/readOwnerResult.php');
 

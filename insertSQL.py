@@ -51,7 +51,6 @@ def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 		logger_error.critical(repr(except_type))
 		sys.exit()
 
-
 	######### SEARCH FOR SOURCE NAME
 	num = 1
 	interval = float(now)-last_refresh
@@ -278,7 +277,6 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 			logger_error.error(query_update)
 			logger_error.error(repr(except_type))
 		update_data.close()
-
 
 def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database):
 	"""stairwayToUpdate manage the send_status update in database."""

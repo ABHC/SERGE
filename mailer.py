@@ -28,7 +28,7 @@ passSQL = passSQL.read().strip()
 def buildMail(user, user_id_comma, register, pydate, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, database):
 	"""Function for mail pre-formatting.
 
-	   buildMail retrieves mail building option for the current user and does a pre-formatting of the mail. Then the function calls the building functions for mail."""
+		buildMail retrieves mail building option for the current user and does a pre-formatting of the mail. Then the function calls the building functions for mail."""
 
 	######### NUMBER OF LINKS IN EACH CATEGORY
 	pending_news = len(not_send_news_list)
@@ -104,7 +104,7 @@ def buildMail(user, user_id_comma, register, pydate, permission_news, permission
 				call_name.close()
 
 				sitename = sitename[0]
-				rebuilt_all = split_for_all[0].replace(":","").capitalize() + " @ " + sitename.replace(".","&#8228;")
+				rebuilt_all = split_for_all[0].replace(":", "").capitalize() + " @ " + sitename.replace(".", "&#8228;")
 				word_and_attribute = (rebuilt_all, word_and_attribute[1])
 
 			newswords_list.append(word_and_attribute)
@@ -135,7 +135,7 @@ def buildMail(user, user_id_comma, register, pydate, permission_news, permission
 		newsletterBySource(user, pydate, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list)
 
 
-def newsletterByType (user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate):
+def newsletterByType(user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate):
 	"""Formatting function for emails, apply the default formatting"""
 
 	######### PENDING LINKS
@@ -271,7 +271,7 @@ def newsletterByType (user, permission_news, permission_science, permission_pate
 	newsletter.close
 
 
-def newsletterByKeyword (user, pydate, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list):
+def newsletterByKeyword(user, pydate, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list):
 	"""Formatting function for emails, apply the formatting by keywords"""
 
 	######### PENDING LINKS
@@ -340,7 +340,7 @@ def newsletterByKeyword (user, pydate, translate_text, permission_news, permissi
 					•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 					</p>""".format(couple_results[0], couple_results[1]))
 
-	index  = 0
+	index = 0
 
 	######### ECRITURE SCIENCE
 	if permission_science == 0 and pending_science > 0:
@@ -468,7 +468,7 @@ def newsletterByKeyword (user, pydate, translate_text, permission_news, permissi
 	newsletter.close
 
 
-def newsletterBySource (user, pydate, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list):
+def newsletterBySource(user, pydate, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list):
 	"""Formatting function for emails, apply the formatting by sources"""
 
 	######### PENDING LINKS
@@ -685,9 +685,9 @@ def highwayToMail(register, user, database):
 	sergemail.close
 
 	######### ADRESSES AND LANGUAGE RECOVERY
-	query= "SELECT email, language FROM users_table_serge WHERE id = %s"
+	query = "SELECT email, language FROM users_table_serge WHERE id = %s"
 
-	call_users= database.cursor()
+	call_users = database.cursor()
 	call_users.execute(query, (register))
 	user_infos = call_users.fetchone()
 	call_users.close()

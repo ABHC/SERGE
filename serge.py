@@ -163,13 +163,9 @@ def newscast(last_launch, max_users):
 		etag = head_results[0]
 		head_error = head_results[1]
 
-		if etag == None and head_error == False:
+		if (etag == None and head_error == False) or (etag != old_etag and head_error == False):
 			greenlight = True
-		elif etag != old_etag and head_error == False:
-			greenlight = True
-		elif etag == old_etag and head_error == False:
-			greenlight = False
-		elif head_error == True:
+		elif (etag == old_etag and head_error == False) or head_error == True :
 			greenlight = False
 		else :
 			greenlight = False
@@ -331,7 +327,7 @@ def newscast(last_launch, max_users):
 
 						for splitkey in aggregated_keyword:
 
-							if (re.search('[^a-z]'+re.escape(re.escape(splitkey)), re.escape(post_title), re.IGNORECASE) or re.search('[^a-z]'+re.escape(re.escape(splitkey)), re.escape(post_description), re.IGNORECASE) or re.search('[^a-z]'+re.escape(re.escape(splitkey)), re.escape(tags_string), re.IGNORECASE)) and post_date >= last_launch and post_date is not None and owners is not None:
+							if (re.search('[^a-z]'+re.escape(splitkey), post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey), post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey), tags_string, re.IGNORECASE)) and post_date >= last_launch and post_date is not None and owners is not None:
 
 								redundancy = redundancy + 1
 
@@ -354,7 +350,7 @@ def newscast(last_launch, max_users):
 
 					########### SIMPLE KEYWORDS RESEARCH
 					else:
-						if (re.search('[^a-z]'+re.escape(re.escape(keyword)), re.escape(post_title), re.IGNORECASE) or re.search('[^a-z]'+re.escape(re.escape(keyword)), re.escape(post_description), re.IGNORECASE) or re.search('[^a-z]'+re.escape(re.escape(keyword)), re.escape(tags_string), re.IGNORECASE) or keyword == (":all@"+id_rss)) and post_date >= last_launch and post_date is not None and owners is not None:
+						if (re.search('[^a-z]'+re.escape(keyword), post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(keyword), post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(keyword), tags_string, re.IGNORECASE) or re.search('^'+re.escape(':all@'+id_rss)+'$', keyword, re.IGNORECASE)) and post_date >= last_launch and post_date is not None and owners is not None:
 
 							########### QUERY FOR DATABASE CHECKING
 							query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
@@ -691,6 +687,7 @@ sys.excepthook = cemeteriesOfErrors
 ######### CLEANING OF THE DIRECTORY
 try:
 	os.remove("Newsletter.html")
+	logger_info.info("POSSIBLE CRASH AT PREVIOUS EXECUTION : Newsletter.html STILL IN THE DIRETORY AT ACTUAL EXECUTION")
 except OSError:
 	pass
 
@@ -941,6 +938,7 @@ for user in user_list_all:
 	try:
 		os.remove("Newsletter.html")
 	except OSError:
+		logger_error.error("Newsletter.html NOT DELETED OR NOT IN DIRECTORY")
 		pass
 
 ######### TIMESTAMPS UPDATE

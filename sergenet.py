@@ -8,7 +8,8 @@ import traceback
 import logging
 from logging.handlers import RotatingFileHandler
 
-def headToEtag (link, logger_info, logger_error):
+
+def headToEtag(link, logger_info, logger_error):
 	"""Function for retrieve etag"""
 
 	try:
@@ -68,7 +69,7 @@ def headToEtag (link, logger_info, logger_error):
 	return head_results
 
 
-def allRequestLong (link, logger_info, logger_error):
+def allRequestLong(link, logger_info, logger_error):
 	"""Function for standardized requests to feed and internet pages.
 
 	Name from Metallica, All Nightmare Long."""
