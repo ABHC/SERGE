@@ -5,9 +5,9 @@
 <div class="body">
 	<h1>Watch result</h1>
 	<form class="formSearch" method="get" action="result">
-		<input type="text" name="search" id="search" placeholder="Search Serge" value="<?php echo htmlspecialchars($_GET['search']); ?>"/>
-		<input type="hidden" name="orderBy" value="<?php echo htmlspecialchars($_GET['orderBy']); ?>"/>
-		<input type="hidden" name="optionalCond" value="<?php echo htmlspecialchars($_GET['optionalCond']); ?>"/>
+		<input type="text" name="search" id="search" placeholder="Search Serge" value="<?php echo $search; ?>"/>
+		<input type="hidden" name="orderBy" value="<?php echo $orderBy; ?>"/>
+		<input type="hidden" name="optionalCond" value="<?php echo $optionalCond; ?>"/>
 	</form>
 
 	<form class="tableContainer" method="post" action="result">
