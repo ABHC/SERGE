@@ -20,6 +20,7 @@ $colOrder['date'] = '';
 $recordLink = '';
 $search = '';
 $searchBoolean = '';
+$searchInLink = '';
 $searchSort = '';
 $orderBy = '';
 $ORDERBY = '';
@@ -197,6 +198,38 @@ if (!empty($_GET['search']))
 	$searchBoolean = preg_replace("/[^ ]+'/", "$0*", $searchBoolean);
 	$searchBoolean = preg_replace("/^..*.$/", "($0$1)", $searchBoolean);
 
+	# Search in link
+	$SEARCHINLINK     = '';
+	$searchInLink     = preg_replace("/(^|\ )[a-zA-Z]{1,2}(\ |$)/", " ", $search);
+	$searchInLinkList = explode(" ", $searchInLink);
+	$OR = '';
+
+	foreach ($searchInLinkList as $searchInLink)
+	{
+		$searchInLink = preg_replace("/[^a-zA-Z0-9]+/", "%", $searchInLink);
+		if (strlen($searchInLink) > 2)
+		{
+			$searchInLink = '%' . $searchInLink . '%';
+
+			# WARNING sensitive variable [SQLI]
+			$SEARCHINLINK = $SEARCHINLINK . $OR . 'LOWER(link) LIKE LOWER("' . $searchInLink . '")';
+			$OR = ' OR ';
+		}
+	}
+
+	if (!empty($SEARCHINLINK))
+	{
+		# WARNING sensitive variable [SQLI]
+		$CHECKLINK = '(SELECT id, title, link, send_status, read_status, `date`, id_source, keyword_id FROM result_news_serge WHERE owners LIKE :user AND (' . $SEARCHINLINK . '))';
+		echo $CHECKLINK;
+	}
+	else
+	{
+		# WARNING sensitive variable [SQLI]
+		$CHECKLINK = '(SELECT id, title, link, send_status, read_status, `date`, id_source, keyword_id FROM result_news_serge WHERE id = 0)';
+	}
+
+
 	# Search in keyword
 	$SEARCHKEYWORD   = '';
 	$searchInKeyword = preg_replace("/(^|\ )[a-zA-Z]{1,3}(\ |$)/", " ", $search);
@@ -244,13 +277,15 @@ if (!empty($_GET['search']))
 	# WARNING sensitive variable [SQLI]
 	$SELECTRESULT = $SELECTRESULT . $OPTIONALCOND;
 	$QUERYRESULT =
-	 $SELECTRESULT . ' AND MATCH(title, link) AGAINST (:search))
+	 $SELECTRESULT . ' AND MATCH(title) AGAINST (":search"))
 	 UNION ' .
-	 $SELECTRESULT . ' AND MATCH(title, link) AGAINST (:searchBoolean IN BOOLEAN MODE)  LIMIT 15)
+	 $SELECTRESULT . ' AND MATCH(title) AGAINST (":searchBoolean" IN BOOLEAN MODE)  LIMIT 15)
 	 UNION ' .
 	 $CHECKKEYWORD . '
 	 UNION ' .
-	 $SELECTRESULT . ' AND MATCH(title, link) AGAINST (:search WITH QUERY EXPANSION) LIMIT 3)' .
+	 $CHECKLINK    . '
+	 UNION ' .
+	 $SELECTRESULT . ' AND MATCH(title) AGAINST (":search" WITH QUERY EXPANSION) LIMIT 3)' .
 	 $ORDERBY;
 
 	$searchSort = '&search=' . $search;

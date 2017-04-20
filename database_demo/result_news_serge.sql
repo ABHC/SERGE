@@ -16,4 +16,4 @@ CREATE TABLE `result_news_serge` (
 
 SET NAMES utf8mb4;
 
-ALTER TABLE `result_news_serge` ADD FULLTEXT INDEX `search` (`title`, `link`);
+ALTER TABLE `result_news_serge` ADD FULLTEXT INDEX `search` (`title`);
