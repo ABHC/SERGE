@@ -221,7 +221,6 @@ if (!empty($_GET['search']))
 	{
 		# WARNING sensitive variable [SQLI]
 		$CHECKLINK = '(SELECT id, title, link, send_status, read_status, `date`, id_source, keyword_id FROM result_news_serge WHERE owners LIKE :user AND (' . $SEARCHINLINK . '))';
-		echo $CHECKLINK;
 	}
 	else
 	{
@@ -241,12 +240,7 @@ if (!empty($_GET['search']))
 		{
 			$searchKeyword = '%' . $searchKeyword . '%';
 			$userId = '%|' . $_SESSION['id'] . ':%';
-			$reqSearchOwnerKeyword = $bdd->prepare('SELECT id FROM keyword_news_serge WHERE applicable_owners_sources LIKE :user AND LOWER(keyword) LIKE LOWER(:searchKeyword)');
-			$reqSearchOwnerKeyword->execute(array(
-				'user' => $userId,
-				'searchKeyword' => $searchKeyword));
-				$searchOwnerKeyword = $reqSearchOwnerKeyword->fetchAll();
-				$reqSearchOwnerKeyword->closeCursor();
+			include_once('model/readKeywordId.php');
 
 			if (!empty($searchOwnerKeyword))
 			{
