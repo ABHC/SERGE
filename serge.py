@@ -282,13 +282,11 @@ def newscast(last_launch, max_users):
 
 					try:
 						post_date = xmldoc.entries[range].published_parsed
-						human_date = time.strftime("%d/%m/%Y %H:%M", post_date)
 						post_date = time.mktime(post_date)
 					except AttributeError:
 						logger_error.warning("BEACON ERROR : missing <date> in "+link)
 						logger_error.warning(traceback.format_exc())
 						post_date = None
-						human_date = "None"
 
 					try :
 						post_tags = xmldoc.entries[range].tags
@@ -300,9 +298,9 @@ def newscast(last_launch, max_users):
 					post_description = post_description.strip()
 					keyword = keyword.strip()
 
-					id_item_comma = str(keyword_id) + ","
-					id_item_comma2 = "," + str(keyword_id) + ","
-					item = (post_title, post_link, human_date, id_rss, id_item_comma2, owners)
+					keyword_id_comma = str(keyword_id) + ","
+					keyword_id_comma2 = "," + str(keyword_id) + ","
+					item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
 					tagdex = 0
 					tags_string = ""
@@ -341,37 +339,36 @@ def newscast(last_launch, max_users):
 
 							########### QUERY FOR DATABASE CHECKING
 							query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
-							query_jellychecking = ("SELECT title, link FROM result_news_serge WHERE id_source = %s")
+							query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s and UNIX_TIMESTAMP() < (`date`+86400)")
 
 							########### QUERY FOR DATABASE INSERTION
 							query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
 
 							########### QUERY FOR DATABASE UPDATE
-							query_update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
-							query_update_owners = ("UPDATE result_news_serge SET owners = %s WHERE link = %s")
-							query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s WHERE link = %s")
+							query_update = ("UPDATE result_news_serge SET keyword_id = %s, owners = %s WHERE link = %s")
+							query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s, keyword_id = %s, owners = %s WHERE link = %s")
 
 							########### CALL insertOrUpdate FUNCTION
-							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_update_owners, query_jelly_update, post_link, post_title, item, id_item_comma, id_item_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
+							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
+
 
 					########### SIMPLE KEYWORDS RESEARCH
 					else:
-						if (re.search('[^a-z]'+re.escape(re.escape(keyword)), re.escape(post_title), re.IGNORECASE) or re.search('[^a-z]'+re.escape(re.escape(keyword)), re.escape(post_description), re.IGNORECASE) or re.search('[^a-z]'+re.escape(re.escape(keyword)), re.escape(tags_string), re.IGNORECASE) or re.search('^'+re.escape(re.escape(':all@'+id_rss))+'$', re.escape(keyword), re.IGNORECASE)) and post_date >= last_launch and post_date is not None and owners is not None:
+						if (re.search('[^a-z]'+re.escape(re.escape(keyword)), re.escape(post_title), re.IGNORECASE) or re.search('[^a-z]'+re.escape(re.escape(keyword)), re.escape(post_description), re.IGNORECASE) or re.search('[^a-z]'+re.escape(re.escape(keyword)), re.escape(tags_string), re.IGNORECASE) or keyword == (":all@"+id_rss)) and post_date >= last_launch and post_date is not None and owners is not None:
 
 							########### QUERY FOR DATABASE CHECKING
 							query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
-							query_jellychecking = ("SELECT title, link FROM result_news_serge WHERE id_source = %s")
+							query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s and UNIX_TIMESTAMP() < (`date`+86400)")
 
 							########### QUERY FOR DATABASE INSERTION
 							query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
 
 							########### QUERIES FOR DATABASE UPDATE
-							query_update = ("UPDATE result_news_serge SET keyword_id = %s WHERE link = %s")
-							query_update_owners = ("UPDATE result_news_serge SET owners = %s WHERE link = %s")
-							query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s WHERE link = %s")
+							query_update = ("UPDATE result_news_serge SET keyword_id = %s, owners = %s WHERE link = %s")
+							query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s, keyword_id = %s, owners = %s WHERE link = %s")
 
 							########### CALL insertOrUpdate FUNCTION
-							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_update_owners, query_jelly_update, post_link, post_title, item, id_item_comma, id_item_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
+							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
 
 					range = range+1
 
@@ -448,17 +445,15 @@ def patents(last_launch):
 
 						try:
 							post_date = xmldoc.entries[range].published_parsed
-							human_date = time.strftime("%d/%m/%Y %H:%M", post_date)
 							post_date = time.mktime(post_date)
 						except AttributeError:
 							logger_error.warning("BEACON ERROR : missing <date> in "+link)
 							logger_error.warning(traceback.format_exc())
 							post_date = None
-							human_date = "None"
 
-						id_item_comma = str(id_query_wipo)+","
-						id_item_comma2 = ","+str(id_query_wipo)+","
-						item = (post_title, post_link, human_date, id_item_comma2, owners)
+						keyword_id_comma = str(id_query_wipo)+","
+						keyword_id_comma2 = ","+str(id_query_wipo)+","
+						item = (post_title, post_link, post_date, keyword_id_comma2, owners)
 
 						if post_date >= last_launch and post_date is not None:
 
@@ -470,12 +465,11 @@ def patents(last_launch):
 							query_insertion = ("INSERT INTO result_patents_serge(title, link, date, id_query_wipo, owners) VALUES(%s, %s, %s, %s, %s)")
 
 							########### QUERY FOR DATABASE UPDATE
-							query_update = ("UPDATE result_patents_serge SET id_query_wipo = %s WHERE link = %s")
-							query_update_owners = ("UPDATE result_patents_serge SET owners = %s WHERE link = %s")
+							query_update = ("UPDATE result_patents_serge SET id_query_wipo = %s, owners = %s WHERE link = %s")
 							query_jelly_update = None
 
 							########### CALL insertOrUpdate FUNCTION
-							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_update_owners, query_jelly_update, post_link, post_title, item, id_item_comma, id_item_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
+							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
 
 						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
@@ -575,35 +569,32 @@ def science(last_launch):
 
 						try:
 							post_date = xmldoc.entries[range].published_parsed
-							human_date = time.strftime("%d/%m/%Y %H:%M", post_date)
 							post_date = time.mktime(post_date)
 						except AttributeError:
 							logger_error.warning("BEACON ERROR : missing <date> in "+link)
 							logger_error.warning(traceback.format_exc())
 							post_date = None
-							human_date = "None"
 
-						id_item_comma = str(query_id)+","
-						id_item_comma2 = ","+str(query_id)+","
+						keyword_id_comma = str(query_id)+","
+						keyword_id_comma2 = ","+str(query_id)+","
 						id_rss = 0
-						item = (post_title, post_link, human_date, id_item_comma2, id_rss, owners)
+						item = (post_title, post_link, post_date, keyword_id_comma2, id_rss, owners)
 
 						if post_date >= last_launch and post_date is not None:
 
 							########### QUERY FOR DATABASE CHECKING
 							query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
-							query_jellychecking = ("SELECT title, link FROM result_science_serge WHERE id_source = %s")
+							query_jellychecking = ("SELECT title, link, query_id, owners FROM result_science_serge WHERE id_source = %s and UNIX_TIMESTAMP() < (`date`+86400)")
 
 							########### QUERY FOR DATABASE INSERTION
 							query_insertion = ("INSERT INTO result_science_serge(title, link, date, query_id, id_source, owners) VALUES(%s, %s, %s, %s, %s, %s)")
 
 							########### QUERY FOR DATABASE UPDATE
-							query_update = ("UPDATE result_science_serge SET query_id = %s WHERE link = %s")
-							query_update_owners = ("UPDATE result_science_serge SET owners = %s WHERE link = %s")
-							query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s WHERE link = %s")
+							query_update = ("UPDATE result_science_serge SET query_id = %s, owners = %s WHERE link = %s")
+							query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s, query_id = %s, owners = %s WHERE link = %s")
 
 							########### CALL insertOrUpdate FUNCTION
-							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_update_owners, query_jelly_update, post_link, post_title, item, id_item_comma, id_item_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
+							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
 
 						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
@@ -667,29 +658,27 @@ def science(last_launch):
 					except Exception as json_error:
 						logger_error.warning("Error in json retrival of post_date : "+str(json_error))
 						post_date = None
-						human_date = "None"
 
-					id_item_comma = str(query_id)+","
-					id_item_comma2 = ","+str(query_id)+","
+					keyword_id_comma = str(query_id)+","
+					keyword_id_comma2 = ","+str(query_id)+","
 					id_rss = 1
-					item = (post_title, post_link, human_date, id_item_comma2, id_rss, owners)
+					item = (post_title, post_link, post_date, keyword_id_comma2, id_rss, owners)
 
 					if post_date >= last_launch:
 
 						########### QUERY FOR DATABASE CHECKING
 						query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
-						query_jellychecking = ("SELECT title, link FROM result_science_serge WHERE id_source = %s")
+						query_jellychecking = ("SELECT title, link, query_id, owners FROM result_science_serge WHERE id_source = %s and UNIX_TIMESTAMP() < (`date`+86400)")
 
 						########### QUERY FOR DATABASE INSERTION
 						query_insertion = ("INSERT INTO result_science_serge(title, link, date, query_id, id_source, owners) VALUES(%s, %s, %s, %s, %s, %s)")
 
 						########### QUERY FOR DATABASE UPDATE
-						query_update = ("UPDATE result_science_serge SET query_id = %s WHERE link = %s")
-						query_update_owners = ("UPDATE result_science_serge SET owners = %s WHERE link = %s")
-						query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s WHERE link = %s")
+						query_update = ("UPDATE result_science_serge SET query_id = %s, owners = %s WHERE link = %s")
+						query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s, query_id = %s, owners = %s WHERE link = %s")
 
 						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_update_owners, query_jelly_update, post_link, post_title, item, id_item_comma, id_item_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
+						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
 
 					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
@@ -726,7 +715,7 @@ logger_info.info(time.asctime(time.gmtime(now))+"\n")
 last_launch = lastResearch()
 
 ######### DATABASE INTERGRITY CHECKING
-failsafe.checkMate(database, logger_info, logger_error)
+#failsafe.checkMate(database, logger_info, logger_error)
 
 ######### NUMBERS OF USERS
 call_users = database.cursor()
