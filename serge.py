@@ -16,6 +16,7 @@ SERGE's sources :
 import os
 import re
 import sys
+import cgi
 import time
 from datetime import datetime as dt
 import datetime
@@ -296,7 +297,6 @@ def newscast(last_launch, max_users):
 
 					keyword_id_comma = str(keyword_id) + ","
 					keyword_id_comma2 = "," + str(keyword_id) + ","
-					item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
 					tagdex = 0
 					tags_string = ""
@@ -344,6 +344,10 @@ def newscast(last_launch, max_users):
 							query_update = ("UPDATE result_news_serge SET keyword_id = %s, owners = %s WHERE link = %s")
 							query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s, keyword_id = %s, owners = %s WHERE link = %s")
 
+							########### ITEM BUILDING
+							post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
+							item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
+
 							########### CALL insertOrUpdate FUNCTION
 							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
 
@@ -362,6 +366,10 @@ def newscast(last_launch, max_users):
 							########### QUERIES FOR DATABASE UPDATE
 							query_update = ("UPDATE result_news_serge SET keyword_id = %s, owners = %s WHERE link = %s")
 							query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s, keyword_id = %s, owners = %s WHERE link = %s")
+
+							########### ITEM BUILDING
+							post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
+							item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
 							########### CALL insertOrUpdate FUNCTION
 							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
@@ -449,7 +457,6 @@ def patents(last_launch):
 
 						keyword_id_comma = str(id_query_wipo)+","
 						keyword_id_comma2 = ","+str(id_query_wipo)+","
-						item = (post_title, post_link, post_date, keyword_id_comma2, owners)
 
 						if post_date >= last_launch and post_date is not None:
 
@@ -464,10 +471,14 @@ def patents(last_launch):
 							query_update = ("UPDATE result_patents_serge SET id_query_wipo = %s, owners = %s WHERE link = %s")
 							query_jelly_update = None
 
+							########### ITEM BUILDING
+							post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
+							item = (post_title, post_link, post_date, keyword_id_comma2, owners)
+
 							########### CALL insertOrUpdate FUNCTION
 							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
 
-						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
+						range = range+1
 
 			else:
 				logger_info.warning("\n Error : the feed is unavailable")
@@ -574,7 +585,6 @@ def science(last_launch):
 						keyword_id_comma = str(query_id)+","
 						keyword_id_comma2 = ","+str(query_id)+","
 						id_rss = 0
-						item = (post_title, post_link, post_date, keyword_id_comma2, id_rss, owners)
 
 						if post_date >= last_launch and post_date is not None:
 
@@ -588,6 +598,10 @@ def science(last_launch):
 							########### QUERY FOR DATABASE UPDATE
 							query_update = ("UPDATE result_science_serge SET query_id = %s, owners = %s WHERE link = %s")
 							query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s, query_id = %s, owners = %s WHERE link = %s")
+
+							########### ITEM BUILDING
+							post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
+							item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
 							########### CALL insertOrUpdate FUNCTION
 							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
@@ -658,7 +672,6 @@ def science(last_launch):
 					keyword_id_comma = str(query_id)+","
 					keyword_id_comma2 = ","+str(query_id)+","
 					id_rss = 1
-					item = (post_title, post_link, post_date, keyword_id_comma2, id_rss, owners)
 
 					if post_date >= last_launch:
 
@@ -672,6 +685,10 @@ def science(last_launch):
 						########### QUERY FOR DATABASE UPDATE
 						query_update = ("UPDATE result_science_serge SET query_id = %s, owners = %s WHERE link = %s")
 						query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s, query_id = %s, owners = %s WHERE link = %s")
+
+						########### ITEM BUILDING
+						post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
+						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
 						########### CALL insertOrUpdate FUNCTION
 						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
