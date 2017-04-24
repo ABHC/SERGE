@@ -40,21 +40,24 @@ if (!empty($_GET['search']))
 
 
 	# Search in keyword
+	include_once('model/readKeywordId.php');
+	$OR = '';
 	$SEARCHKEYWORD   = '';
 	$searchInKeyword = preg_replace("/(^|\ )[a-zA-Z]{1,3}(\ |$)/", " ", $search);
 	$searchKeywordList = explode(" ", $searchInKeyword);
 
 	foreach ($searchKeywordList as $searchKeyword)
 	{
+		//unset($searchOwnerKeyword);
 		if (strlen($searchKeyword) > 3)
 		{
 			$searchKeyword = '%' . $searchKeyword . '%';
 			$userId = '%|' . $_SESSION['id'] . ':%';
-			include_once('model/readKeywordId.php');
+
+			$searchOwnerKeyword = readKeywordId($userId, $searchKeyword, $bdd);
 
 			if (!empty($searchOwnerKeyword))
 			{
-				$OR = '';
 				foreach ($searchOwnerKeyword as $searchKeyword)
 				{
 					$keywordIdSearch = '\'%,' . $searchKeyword['id'] . ',%\'';
