@@ -729,7 +729,7 @@ logger_info.info(time.asctime(time.gmtime(now))+"\n")
 last_launch = lastResearch()
 
 ######### DATABASE INTERGRITY CHECKING
-#failsafe.checkMate(database, logger_info, logger_error)
+failsafe.checkMate(database, logger_info, logger_error)
 
 ######### NUMBERS OF USERS
 call_users = database.cursor()
