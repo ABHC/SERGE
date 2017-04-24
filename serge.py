@@ -593,7 +593,7 @@ def science(last_launch):
 							query_jellychecking = ("SELECT title, link, query_id, owners FROM result_science_serge WHERE id_source = %s and UNIX_TIMESTAMP() < (`date`+86400)")
 
 							########### QUERY FOR DATABASE INSERTION
-							query_insertion = ("INSERT INTO result_science_serge(title, link, date, query_id, id_source, owners) VALUES(%s, %s, %s, %s, %s, %s)")
+							query_insertion = ("INSERT INTO result_science_serge(title, link, date, id_source, query_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
 
 							########### QUERY FOR DATABASE UPDATE
 							query_update = ("UPDATE result_science_serge SET query_id = %s, owners = %s WHERE link = %s")
@@ -680,7 +680,7 @@ def science(last_launch):
 						query_jellychecking = ("SELECT title, link, query_id, owners FROM result_science_serge WHERE id_source = %s and UNIX_TIMESTAMP() < (`date`+86400)")
 
 						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_science_serge(title, link, date, query_id, id_source, owners) VALUES(%s, %s, %s, %s, %s, %s)")
+						query_insertion = ("INSERT INTO result_science_serge(title, link, date, id_source, query_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
 
 						########### QUERY FOR DATABASE UPDATE
 						query_update = ("UPDATE result_science_serge SET query_id = %s, owners = %s WHERE link = %s")
@@ -701,14 +701,7 @@ def science(last_launch):
 ######### ERROR HOOK DEPLOYMENT
 sys.excepthook = cemeteriesOfErrors
 
-######### CLEANING OF THE DIRECTORY
-try:
-	os.remove("Newsletter.html")
-	logger_info.info("POSSIBLE CRASH AT PREVIOUS EXECUTION : Newsletter.html STILL IN THE DIRETORY AT ACTUAL EXECUTION")
-except OSError:
-	pass
-
-######### Connexion à la base de données CairnDevices
+######### CONNEXION TO Serge DATABASE
 passSQL = open("permission/password.txt", "r")
 passSQL = passSQL.read().strip()
 
@@ -864,14 +857,11 @@ for user in user_list_all:
 
 		interval = now-last_mail
 
-		if interval >= frequency and pending_all != 0:
+		if interval >= frequency and pending_all > 0:
 			logger_info.info("FREQUENCY REACHED")
 
 			######### CALL TO buildMail FUNCTION
 			mailer.buildMail(user, user_id_comma, register, pydate, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, database)
-
-			######### CALL TO highwayToMail FUNCTION
-			mailer.highwayToMail(register, user, database)
 
 			######### CALL TO stairwayToUpdate FUNCTION
 			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database)
@@ -898,9 +888,6 @@ for user in user_list_all:
 
 			######### CALL TO buildMail FUNCTION
 			mailer.buildMail(user, user_id_comma, register, pydate, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, database)
-
-			######### CALL TO highwayToMail FUNCTION
-			mailer.highwayToMail(register, user, database)
 
 			######### CALL TO stairwayToUpdate FUNCTION
 			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database)
@@ -929,9 +916,6 @@ for user in user_list_all:
 			######### CALL TO buildMail FUNCTION
 			mailer.buildMail(user, user_id_comma, register, pydate, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, database)
 
-			######### CALL TO highwayToMail FUNCTION
-			mailer.highwayToMail(register, user, database)
-
 			######### CALL TO stairwayToUpdate FUNCTION
 			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database)
 
@@ -950,13 +934,6 @@ for user in user_list_all:
 
 	register = int(register)
 	register = register+1
-
-	######### CLEANING OF THE DIRECTORY
-	try:
-		os.remove("Newsletter.html")
-	except OSError:
-		logger_error.error("Newsletter.html NOT DELETED OR NOT IN DIRECTORY")
-		pass
 
 ######### TIMESTAMPS UPDATE
 now = unicode(now)

@@ -18,12 +18,6 @@ from logging.handlers import RotatingFileHandler
 ######### IMPORT SERGE SPECIALS MODULES
 import decoder
 
-######### Connexion à la base de données CairnDevices
-passSQL = open("permission/password.txt", "r")
-passSQL = passSQL.read().strip()
-
-#database = MySQLdb.connect(host="localhost", user="root", passwd=passSQL, db="CairnDevices", use_unicode=1, charset="utf8")# [AUDIT][REVIEW] CRITICAL n'utilise plus root pour te connecter à la BDD mais un utilisateur ici serge qui aura les accès uniquement aux tables de serge. Sinon en cas de faille dans ton programme toute les autres tables seront exposées
-
 
 def buildMail(user, user_id_comma, register, pydate, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, database):
 	"""Function for mail pre-formatting.
@@ -76,7 +70,7 @@ def buildMail(user, user_id_comma, register, pydate, permission_news, permission
 		not_send_science_list = sorted(not_send_science_list, key= lambda science_field : science_field[1])
 		not_send_patents_list = sorted(not_send_patents_list, key= lambda patents_field : patents_field[1])
 
-		newsletterByType(user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate)
+		newsletter = newsletterByType(user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate)
 
 	elif mail_design[0] == "masterword":
 		query_newswords = "SELECT keyword, id FROM keyword_news_serge WHERE applicable_owners_sources LIKE %s AND active > 0"
@@ -119,7 +113,7 @@ def buildMail(user, user_id_comma, register, pydate, permission_news, permission
 			word_and_attribute = (human_query, word_and_attribute[1])
 			patent_master_queries_list.append(word_and_attribute)
 
-		newsletterByKeyword(user, pydate, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list)
+		newsletter = newsletterByKeyword(user, pydate, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list)
 
 	elif mail_design[0] == "origin":
 		query_news_origin = "SELECT name, id FROM rss_serge WHERE owners like %s and active > 0"
@@ -132,7 +126,10 @@ def buildMail(user, user_id_comma, register, pydate, permission_news, permission
 		for source_and_attribute in news_origin:
 			news_origin_list.append(source_and_attribute)
 
-		newsletterBySource(user, pydate, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list)
+		newsletter = newsletterBySource(user, pydate, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list)
+
+	######### CALL TO highwayToMail FUNCTION
+	highwayToMail(register, user, newsletter, database)
 
 
 def newsletterByType(user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate):
@@ -142,9 +139,7 @@ def newsletterByType(user, permission_news, permission_science, permission_paten
 	pending_all = pending_news+pending_science+pending_patents
 
 	######### BANNER AND HELLO
-	newsletter = open("Newsletter.html", "a")
-
-	newsletter.write("""<!doctype html>
+	newsletter = ("""<!doctype html>
 	<html lang="fr">
 	<head>
 	<meta charset="utf-8">
@@ -169,7 +164,7 @@ def newsletterByType(user, permission_news, permission_science, permission_paten
 
 	######### ECRITURE NEWS
 	if permission_news == 0 and pending_news > 0:
-		newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(translate_text[3]))
+		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[3]))
 
 		while index < pending_news:
 			news_attributes = not_send_news_list[index]
@@ -177,7 +172,7 @@ def newsletterByType(user, permission_news, permission_science, permission_paten
 			if news_attributes[1].isupper() is True:
 				news_attributes = (news_attributes[0], news_attributes[1].lower().capitalize())
 
-			newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
+			newsletter = newsletter + ("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 				•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 			</p>""".format(news_attributes[0].strip().encode("utf8"), news_attributes[1].strip().encode("utf_8")))
 			index = index+1
@@ -186,7 +181,7 @@ def newsletterByType(user, permission_news, permission_science, permission_paten
 
 	######### ECRITURE SCIENCE
 	if permission_science == 0 and pending_science > 0:
-		newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(translate_text[4]))
+		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[4]))
 
 		while index < pending_science:
 			science_attributes = not_send_science_list[index]
@@ -194,7 +189,7 @@ def newsletterByType(user, permission_news, permission_science, permission_paten
 			if science_attributes[1].isupper() is True:
 				science_attributes = (science_attributes[0], science_attributes[1].lower().capitalize())
 
-			newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
+			newsletter = newsletter + ("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 				•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 			</p>""".format(science_attributes[0].strip().encode("utf_8"), science_attributes[1].strip().encode("utf_8")))
 			index = index+1
@@ -203,7 +198,7 @@ def newsletterByType(user, permission_news, permission_science, permission_paten
 
 	######### ECRITURE PATENTS
 	if permission_patents == 0 and pending_patents > 0:
-		newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(translate_text[5]))
+		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[5]))
 
 		while index < pending_patents:
 			patents_attributes = not_send_patents_list[index]
@@ -211,7 +206,7 @@ def newsletterByType(user, permission_news, permission_science, permission_paten
 			if patents_attributes[1].isupper() is True:
 				patents_attributes = (patents_attributes[0], patents_attributes[1].lower().capitalize())
 
-			newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
+			newsletter = newsletter + ("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 				•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 			</p>""".format(patents_attributes[0].strip().encode("utf_8"), patents_attributes[1].strip().encode("utf_8")))
 			index = index+1
@@ -219,7 +214,7 @@ def newsletterByType(user, permission_news, permission_science, permission_paten
 	index = 0
 
 	######### GOODBYE
-	newsletter.write("""</div>
+	newsletter = newsletter + ("""</div>
 		<br/>
 		<p style="width: 85%;margin-left: auto;margin-right: auto;align: left;"><font color="black" >{0} {1},</font></p>
 		<p style="width: 85%;margin-left: auto;margin-right: auto;"><font color="black" >SERGE</font></p><br/>
@@ -227,7 +222,7 @@ def newsletterByType(user, permission_news, permission_science, permission_paten
 		<div style="width: 100%;height: 1px;background-color: grey;margin: 0;"></div>""".format(translate_text[6], user))
 
 	######### FOOTER
-	newsletter.write("""<div style="text-align: center;text-decoration: none;color: grey;margin-top: 5px;max-height: 130px;width: 100%;">
+	newsletter = newsletter + ("""<div style="text-align: center;text-decoration: none;color: grey;margin-top: 5px;max-height: 130px;width: 100%;">
 	<div style="display: inline-block;float: left;max-width: 33%;">
 	<a style="display:flex;justify-content: flex-start;align-items: center;text-decoration: none; color: grey;font-size: 12px;" href="https://cairn-devices.eu/">
 	<div style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/logo_CairnDevices.png') no-repeat center / contain;background-size: contain;width: 15vw;max-width: 120px; height: 11.6vw;max-height: 88px;"></div>
@@ -268,7 +263,7 @@ def newsletterByType(user, permission_news, permission_science, permission_paten
 	</body>
 	</html>""".format(translate_text[7], translate_text[8], translate_text[9], translate_text[10]))
 
-	newsletter.close
+	return newsletter
 
 
 def newsletterByKeyword(user, pydate, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list):
@@ -278,9 +273,7 @@ def newsletterByKeyword(user, pydate, translate_text, permission_news, permissio
 	pending_all = pending_news+pending_science+pending_patents
 
 	######### BANNER AND HELLO
-	newsletter = open("Newsletter.html", "a")
-
-	newsletter.write("""<!doctype html>
+	newsletter = ("""<!doctype html>
 	<html lang="fr">
 	<head>
 	<meta charset="utf-8">
@@ -306,7 +299,7 @@ def newsletterByKeyword(user, pydate, translate_text, permission_news, permissio
 
 	######### ECRITURE NEWS
 	if permission_news == 0 and pending_news > 0:
-		newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(translate_text[3]))
+		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[3]))
 
 		######### ECRITURE KEYWORDS FOR NEWS
 		for couple_word_attribute in sorted(newswords_list, key= lambda newswords_field : newswords_field[0]):
@@ -333,10 +326,10 @@ def newsletterByKeyword(user, pydate, translate_text, permission_news, permissio
 			elements = len(process_result_list)
 
 			if elements > 0:
-				newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(word.capitalize()))
+				newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(word.capitalize()))
 
 				for couple_results in process_result_list:
-					newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
+					newsletter = newsletter + ("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 					•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 					</p>""".format(couple_results[0], couple_results[1]))
 
@@ -344,7 +337,7 @@ def newsletterByKeyword(user, pydate, translate_text, permission_news, permissio
 
 	######### ECRITURE SCIENCE
 	if permission_science == 0 and pending_science > 0:
-		newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(translate_text[4]))
+		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[4]))
 
 		######### ECRITURE KEYWORDS FOR SCIENCE
 		for couple_word_attribute in sorted(sciencewords_list, key= lambda sciencewords_field : sciencewords_field[0]):
@@ -370,17 +363,17 @@ def newsletterByKeyword(user, pydate, translate_text, permission_news, permissio
 			elements = len(process_result_list)
 
 			if elements > 0:
-				newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(word))
+				newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(word))
 
 				for couple_results in process_result_list:
-					newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
+					newsletter = newsletter + ("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 						•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 					</p>""".format(couple_results[0], couple_results[1]))
 	index = 0
 
 	######### ECRITURE PATENTS
 	if permission_patents == 0 and pending_patents > 0:
-		newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(translate_text[5]))
+		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[5]))
 
 		######### ECRITURE QUERY FOR PATENTS
 		for couple_query_attribute in sorted(patent_master_queries_list, key= lambda query_field : query_field[0]):
@@ -406,17 +399,17 @@ def newsletterByKeyword(user, pydate, translate_text, permission_news, permissio
 			elements = len(process_result_list)
 
 			if elements > 0:
-				newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(plain_query))
+				newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(plain_query))
 
 				for couple_results in process_result_list:
-					newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
+					newsletter = newsletter + ("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 						•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 					</p>""".format(couple_results[0], couple_results[1]))
 
 	index = 0
 
 	######### GOODBYE
-	newsletter.write("""</div>
+	newsletter = newsletter + ("""</div>
 		<br/>
 		<p style="width: 85%;margin-left: auto;margin-right: auto;align: left;"><font color="black" >{0} {1},</font></p>
 		<p style="width: 85%;margin-left: auto;margin-right: auto;"><font color="black" >SERGE</font></p><br/>
@@ -424,7 +417,7 @@ def newsletterByKeyword(user, pydate, translate_text, permission_news, permissio
 		<div style="width: 100%;height: 1px;background-color: grey;margin: 0;"></div>""".format(translate_text[6], user))
 
 	######### FOOTER
-	newsletter.write("""<div style="text-align: center;text-decoration: none;color: grey;margin-top: 5px;max-height: 130px;width: 100%;">
+	newsletter = newsletter + ("""<div style="text-align: center;text-decoration: none;color: grey;margin-top: 5px;max-height: 130px;width: 100%;">
 	<div style="display: inline-block;float: left;max-width: 33%;">
 	<a style="display:flex;justify-content: flex-start;align-items: center;text-decoration: none; color: grey;font-size: 12px;" href="https://cairn-devices.eu/">
 	<div style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/logo_CairnDevices.png') no-repeat center / contain;background-size: contain;width: 15vw;max-width: 120px; height: 11.6vw;max-height: 88px;"></div>
@@ -465,7 +458,7 @@ def newsletterByKeyword(user, pydate, translate_text, permission_news, permissio
 	</body>
 	</html>""".format(translate_text[7], translate_text[8], translate_text[9], translate_text[10]))
 
-	newsletter.close
+	return newsletter
 
 
 def newsletterBySource(user, pydate, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list):
@@ -475,9 +468,7 @@ def newsletterBySource(user, pydate, translate_text, permission_news, permission
 	pending_all = pending_news+pending_science+pending_patents
 
 	######### BANNER AND HELLO
-	newsletter = open("Newsletter.html", "a")
-
-	newsletter.write("""<!doctype html>
+	newsletter = ("""<!doctype html>
 	<html lang="fr">
 	<head>
 	<meta charset="utf-8">
@@ -502,7 +493,7 @@ def newsletterBySource(user, pydate, translate_text, permission_news, permission
 
 	######### ECRITURE NEWS
 	if permission_news == 0 and pending_news > 0:
-		newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(translate_text[3]))
+		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[3]))
 
 		######### ECRITURE ORIGIN FOR NEWS
 		for couple_source_attribute in sorted(news_origin_list, key= lambda news_origin_field : news_origin_field[0]):
@@ -528,10 +519,10 @@ def newsletterBySource(user, pydate, translate_text, permission_news, permission
 			elements = len(process_result_list)
 
 			if elements > 0:
-				newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(origin_name.strip().encode("utf8")))
+				newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(origin_name.strip().encode("utf8")))
 
 				for couple_results in process_result_list:
-					newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
+					newsletter = newsletter + ("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 						•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 						</p>""".format(couple_results[0], couple_results[1]))
 
@@ -539,7 +530,7 @@ def newsletterBySource(user, pydate, translate_text, permission_news, permission
 
 	######### ECRITURE SCIENCE
 	if permission_science == 0 and pending_science > 0:
-		newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(translate_text[4]))
+		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[4]))
 		new_papers = 0
 
 		######### CHECKING FOR ARXIV PAPERS
@@ -552,7 +543,7 @@ def newsletterBySource(user, pydate, translate_text, permission_news, permission
 			index = index+1
 
 		if new_papers > 0:
-			newsletter.write("""<br/><br/><b>Arxiv.org</b><br/>""")
+			newsletter = newsletter + ("""<br/><br/><b>Arxiv.org</b><br/>""")
 
 		index = 0
 
@@ -565,7 +556,7 @@ def newsletterBySource(user, pydate, translate_text, permission_news, permission
 				if science_attributes[1].isupper() is True:
 					science_attributes = (science_attributes[0], science_attributes[1].lower().capitalize(), science_attributes[2], science_attributes[3])
 
-				newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
+				newsletter = newsletter + ("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 					•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 				</p>""".format(science_attributes[0].strip().encode("utf8"), science_attributes[1].strip().encode("utf8")))
 
@@ -584,7 +575,7 @@ def newsletterBySource(user, pydate, translate_text, permission_news, permission
 			index = index+1
 
 		if new_papers > 0:
-			newsletter.write("""<br/><br/><b>Directory Of Open Access Journals (DOAJ)</b><br/>""")
+			newsletter = newsletter + ("""<br/><br/><b>Directory Of Open Access Journals (DOAJ)</b><br/>""")
 
 		index = 0
 
@@ -597,7 +588,7 @@ def newsletterBySource(user, pydate, translate_text, permission_news, permission
 				if science_attributes[1].isupper() is True:
 					science_attributes = (science_attributes[0], science_attributes[1].lower().capitalize(), science_attributes[2], science_attributes[3])
 
-				newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
+				newsletter = newsletter + ("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 					•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 				</p>""".format(science_attributes[0].strip().encode("utf8"), science_attributes[1].strip().encode("utf8")))
 
@@ -607,8 +598,8 @@ def newsletterBySource(user, pydate, translate_text, permission_news, permission
 
 	######### ECRITURE PATENTS
 	if permission_patents == 0 and pending_patents > 0:
-		newsletter.write("""<br/><br/><b>{0}</b><br/>""".format(translate_text[5]))
-		newsletter.write("""<br/><br/><b>OMPI : Organisation Mondiale de la Propriété Intellectuelle</b><br/>""")
+		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[5]))
+		newsletter = newsletter + ("""<br/><br/><b>OMPI : Organisation Mondiale de la Propriété Intellectuelle</b><br/>""")
 
 		while index < pending_patents:
 			patents_attributes = not_send_patents_list[index]
@@ -616,7 +607,7 @@ def newsletterBySource(user, pydate, translate_text, permission_news, permission
 			if patents_attributes[1].isupper() is True:
 				patents_attributes = (patents_attributes[0], science_attributes[1].lower().capitalize())
 
-			newsletter.write("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
+			newsletter = newsletter + ("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
 			•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
 			</p>""".format(patents_attributes[0].strip().encode("utf8"), patents_attributes[1].strip().encode("utf8")))
 			index = index+1
@@ -624,7 +615,7 @@ def newsletterBySource(user, pydate, translate_text, permission_news, permission
 	index = 0
 
 	######### GOODBYE
-	newsletter.write("""</div>
+	newsletter = newsletter + ("""</div>
 		<br/>
 		<p style="width: 85%;margin-left: auto;margin-right: auto;align: left;"><font color="black" >Bonne journée {0},</font></p>
 		<p style="width: 85%;margin-left: auto;margin-right: auto;"><font color="black" >SERGE</font></p><br/>
@@ -632,7 +623,7 @@ def newsletterBySource(user, pydate, translate_text, permission_news, permission
 		<div style="width: 100%;height: 1px;background-color: grey;margin: 0;"></div>""".format(user))
 
 	######### FOOTER
-	newsletter.write("""<div style="text-align: center;text-decoration: none;color: grey;margin-top: 5px;max-height: 130px;width: 100%;">
+	newsletter = newsletter + ("""<div style="text-align: center;text-decoration: none;color: grey;margin-top: 5px;max-height: 130px;width: 100%;">
 	<div style="display: inline-block;float: left;max-width: 33%;">
 	<a style="display:flex;justify-content: flex-start;align-items: center;text-decoration: none; color: grey;font-size: 12px;" href="https://cairn-devices.eu/">
 	<div style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/logo_CairnDevices.png') no-repeat center / contain;background-size: contain;width: 15vw;max-width: 120px; height: 11.6vw;max-height: 88px;"></div>
@@ -673,10 +664,10 @@ def newsletterBySource(user, pydate, translate_text, permission_news, permission
 	</body>
 	</html>""".format(translate_text[7], translate_text[8], translate_text[9], translate_text[10]))
 
-	newsletter.close
+	return newsletter
 
 
-def highwayToMail(register, user, database):
+def highwayToMail(register, user, newsletter,database):
 	"""Function for emails sending"""
 
 	######### SERGE MAIL
@@ -704,9 +695,7 @@ def highwayToMail(register, user, database):
 		translate_subject = subject_EN
 
 	######### CONTENT WRITING IN EMAIL
-	newsletter = open("Newsletter.html", "r")
-	msg = MIMEText(newsletter.read(), 'html')
-	newsletter.close()
+	msg = MIMEText(newsletter, 'html')
 
 	msg['From'] = fromaddr
 	msg['To'] = toaddr
