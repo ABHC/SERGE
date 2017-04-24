@@ -1,10 +1,6 @@
 <?php
-# User need to be connected to access to this page
-if (!isset($_SESSION['pseudo']))
-{
-	$_SESSION['redirectFrom'] = 'setting';
-	header('Location: connection');
-}
+
+include_once('controller/accessLimitedToSignInPeople.php');
 
 // Define variables
 $actualLetter = '';

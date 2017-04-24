@@ -71,6 +71,7 @@
 							$amIRead = '<img src="images/iconUnread.png" />';
 						}
 
+						# Changer l'affichage date date("H:i d/m/o", $timestamp);
 						echo '
 						<tr>
 							<td><input type="checkbox" name="delete' . $result['id'] . '" id="delete0' . $result['id'] . '" /><label class="checkbox" for="delete0' . $result['id'] . '"></label></td>
