@@ -146,13 +146,15 @@ def newscast(trio_sources_news):
 	########### INSERT NEW ETAG IN RSS SERGE
 	if greenlight is True:
 		insertSQL.backToTheFuture(etag, link, database)
-	elif greenlight is False and etag is None:
-		insertSQL.backToTheFuture(etag, link, database)
 
 		########### LINK CONNEXION
 		req_results = sergenet.allRequestLong(link, logger_info, logger_error)
 		rss = req_results[0]
 		rss_error = req_results[1]
+
+	elif greenlight is False and etag is None:
+		insertSQL.backToTheFuture(etag, link, database)
+		rss_error = None
 
 	elif greenlight is False:
 		rss_error = None
@@ -669,7 +671,8 @@ def science():
 
 
 def databaseConnection():
-	######### Connexion à la base de données CairnDevices
+	"""Connexion to Serge database""""
+
 	passSQL = open("permission/password.txt", "r")
 	passSQL = passSQL.read().strip()
 
@@ -710,18 +713,17 @@ logger_info.info("\nMax Users : " + str(max_users)+"\n")
 ######### RSS SERGE UPDATE
 insertSQL.ofSourceAndName(now, logger_info, logger_error, database)
 
-######### RESEARCH OF LATEST NEWS, SCIENTIFIC PUBLICATIONS AND PATENTS
-
+######### PROCESS CREATION FOR SCIENCE AND PATENTS
 procScience = Process(target=science, args=())
 procPatents = Process(target=patents, args=())
 
+######### RESEARCH OF LATEST SCIENTIFIC PUBLICATIONS AND PATENTS
 procScience.start()
 procPatents.start()
 
 logger_info.info("\n\n######### Last News Research (newscast function) : \n\n")
 
 ######### CALL TO TABLE rss_serge
-
 call_rss = database.cursor()
 call_rss.execute("SELECT link, id, etag FROM rss_serge WHERE active >= 1")
 rows = call_rss.fetchall()
@@ -732,13 +734,13 @@ sources_news_list = []
 for row in rows:
 	sources_news_list.append(row)
 
-
+######### PROCESS CREATION FOR NEWSCAST AND RESEARCH OF LATEST NEWS
 pool = mp.Pool(processes=10)
 pool.map(newscast, sources_news_list)
 
+######### MAIN BLOCKING FOR MULTIPROCESSING
 procScience.join()
 procPatents.join()
-
 pool.close()
 pool.join()
 
