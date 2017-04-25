@@ -10,7 +10,7 @@ if (!$result)
 {
 	// Adding new source
 	$owners = ',' . $_SESSION['id'] . ',';
-	$active = 0;
+	$active = 1;
 	preg_match('@^(?:http.*://[www.]*)?([^/]+)@i', $source, $matches);
 	$name = ucfirst($matches[1] . '[!NEW!]');
 	$req = $bdd->prepare('INSERT INTO rss_serge (link, owners, name, active) VALUES
@@ -25,7 +25,7 @@ if (!$result)
 else
 {
 	$actualOwner ='%,' . $_SESSION['id'] . ',%';
-	$req = $bdd->prepare('SELECT owners FROM rss_serge WHERE owners LIKE :owners AND link = :link');
+	$req = $bdd->prepare('SELECT owners, active FROM rss_serge WHERE owners LIKE :owners AND link = :link');
 	$req->execute(array(
 		'owners' => $actualOwner,
 		'link' => $source));
@@ -35,11 +35,13 @@ else
 		if (!$resultActualOwner)
 		{
 			// Update owners of existing source with the new onwer
-			$newOwners = $result['owners'] . $_SESSION['id'] . ',';
-			$req = $bdd->prepare('UPDATE rss_serge SET owners = :owners WHERE link = :link');
+			$newOwners = $resultActualOwner['owners'] . $_SESSION['id'] . ',';
+			$active    = $resultActualOwner['active'] + 1;
+			$req = $bdd->prepare('UPDATE rss_serge SET owners = :owners, active = :active WHERE link = :link');
 			$req->execute(array(
 				'owners' => $newOwners,
-				'link' => $source));
+				'link' => $source,
+				'active' => $active));
 				$req->closeCursor();
 		}
 		else
