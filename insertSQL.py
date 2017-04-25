@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-#cgi.escape(xss).encode('utf8', 'xmlcharrefreplace').decode('utf8')
 """insertSQL contains all the functions related to the insertion of datas in SERGE database."""
 
 ######### IMPORT CLASSICAL MODULES
@@ -277,6 +276,7 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 			logger_error.error(query_update)
 			logger_error.error(repr(except_type))
 		update_data.close()
+
 
 def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database):
 	"""stairwayToUpdate manage the send_status update in database."""

@@ -19,48 +19,41 @@ def allCheckLong(link):
 		rss = req.text
 		header = req.headers
 		rss_error = False
+		error_message = None
 	except requests.exceptions.ConnectionError:
-		print ("connection error")
-		print ("unvalid link")
 		rss = None
 		rss_error = True
+		error_message = ("ERROR : Connection error")
 	except requests.exceptions.HTTPError:
-		print ("http error")
-		print ("unvalid link")
 		rss = None
 		rss_error = True
+		error_message = ("ERROR : HTTP error")
 	except requests.exceptions.URLRequired:
-		print ("url required")
-		print ("unvalid link")
 		rss = None
 		rss_error = True
+		error_message = ("ERROR : Url required")
 	except requests.exceptions.MissingSchema:
-		print ("url required")
-		print ("unvalid link")
 		rss = None
 		rss_error = True
+		error_message ("ERROR : Url required")
 	except requests.exceptions.TooManyRedirects:
-		print ("too many redirects")
-		print ("unvalid link")
 		rss = None
 		rss_error = True
+		error_message = ("ERROR : Too many redirects")
 	except requests.exceptions.ConnectTimeout:
-		print ("timeout")
-		print ("unvalid link")
 		rss = None
 		rss_error = True
+		error_message ("ERROR : Timeout")
 	except requests.exceptions.ReadTimeout:
-		print ("timeout")
-		print ("unvalid link")
 		rss = None
 		rss_error = True
+		error_message ("ERROR : Timeout")
 	except requests.exceptions.InvalidURL:
-		print ("Failed to parse website")
-		print ("unvalid link")
 		rss = None
 		rss_error = True
+		error_message = ("ERROR : Failed to parse website")
 
-	req_results = (rss_error, rss)
+	req_results = (rss_error, rss, error_message)
 
 	return req_results
 
@@ -81,8 +74,8 @@ def feedMeUp(link):
 		try:
 			xmldoc = feedparser.parse(rss)
 		except Exception, except_type:
-			print ("parsing error in : "+link)
 			print ("unvalid link")
+			print ("parsing error in : "+link)
 			sys.exit()
 
 		########### RSS ANALYZE
@@ -103,8 +96,8 @@ def feedMeUp(link):
 		if missing_flux is True:
 			flux_error = "missing_flux, "
 			complete_error = flux_error+title_error+entries_error
-			print complete_error
 			print ("unvalid link")
+			print complete_error
 			sys.exit()
 
 		rangemax = len(xmldoc.entries)
@@ -157,21 +150,22 @@ def feedMeUp(link):
 			print ("valid link")
 
 	elif rss_error is True:
-		print req_results # [BUG]
 		print ("unvalid link")
+		print req_results[2]
 
 
 ########### MAIN
 try:
 	link = sys.argv[1]
 except IndexError:
-	print ("url required")
+	print ("URL required")
 	sys.exit()
 
 split_link = link.split(":")
 
 if split_link[0] != "http" and split_link[0] != "https":
-	print ("url required : protocol missing")
+	print ("unvalid link")
+	print ("URL required : protocol is missing")
 	sys.exit()
 
 feedMeUp(link)
