@@ -427,7 +427,7 @@ def patents():
 							post_date = None
 
 						keyword_id_comma = str(id_query_wipo)+","
-						keyword_id_comma2 = ","+str(id_query_wipo)+",":
+						keyword_id_comma2 = ","+str(id_query_wipo)+","
 
 						########### QUERY FOR DATABASE CHECKING
 						query_checking = ("SELECT id_query_wipo, owners FROM result_patents_serge WHERE link = %s")
