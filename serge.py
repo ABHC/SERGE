@@ -671,7 +671,7 @@ def science():
 
 
 def databaseConnection():
-	"""Connexion to Serge database""""
+	"""Connexion to Serge database"""
 
 	passSQL = open("permission/password.txt", "r")
 	passSQL = passSQL.read().strip()
