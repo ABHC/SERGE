@@ -14,6 +14,8 @@ SERGE's sources :
 
 ######### IMPORT CLASSICAL MODULES
 import os
+import multiprocessing as mp
+from multiprocessing import Process
 import re
 import sys
 import cgi
@@ -107,7 +109,7 @@ def permission(register) :
 	return permission_list
 
 
-def newscast(last_launch, max_users):
+def newscast(trio_sources_news):
 	"""Function for last news on RSS feeds defined by users.
 
 		Process :
@@ -118,265 +120,252 @@ def newscast(last_launch, max_users):
 		- if serge find a news this one is added to the database
 		- if the news is already saved in the database serge continue to search other news"""
 
-	logger_info.info("\n\n######### Last News Research (newscast function) : \n\n")
+	database = databaseConnection()
 
 	function_id = 1
 
-	######### CALL TO TABLE rss_serge
+	########### LINK & ID_RSS EXTRACTION
+	global last_launch
+	global max_users
 
-	call_rss = database.cursor()
-	call_rss.execute("SELECT link, id, etag FROM rss_serge WHERE active >= 1")
-	rows = call_rss.fetchall()
-	call_rss.close()
+	link = trio_sources_news[0].strip()
+	id_rss = trio_sources_news[1]
+	old_etag = trio_sources_news[2]
 
-	sources_news_list = []
+	id_rss = str(id_rss)
+	id_rss_comma = "," + id_rss + ","
+	id_rss_comma_percent = "%," + id_rss + ",%"
+
+	######### CALL TO TABLE keywords_news_serge
+	query = "SELECT id, keyword FROM keyword_news_serge WHERE applicable_owners_sources LIKE %s AND active > 0"
+
+	call_news = database.cursor()
+	call_news.execute(query, (id_rss_comma_percent,))
+	rows = call_news.fetchall()
+	call_news.close()
+
+	keywords_and_id_news_list = []
 
 	for row in rows:
-		sources_news_list.append(row)
+		field = (row[0], row[1].strip())
+		keywords_and_id_news_list.append(field)
 
-	########### LINK & ID_RSS EXTRACTION
+	########### ETAG COMPARISON
+	head_results = sergenet.headToEtag(link, logger_info, logger_error)
+	etag = head_results[0]
+	head_error = head_results[1]
 
-	for trio_sources_news in sources_news_list:
-		link = trio_sources_news[0].strip()
-		id_rss = trio_sources_news[1]
-		old_etag = trio_sources_news[2]
+	if (etag is None and head_error is False) or (etag != old_etag and head_error is False):
+		greenlight = True
+	elif (etag == old_etag and head_error is False) or head_error is True :
+		greenlight = False
+	else :
+		greenlight = False
+		logger_error.critical("UNKNOWN ERROR WITH ETAG IN :"+link+"\n")
 
-		id_rss = str(id_rss)
-		id_rss_comma = "," + id_rss + ","
-		id_rss_comma_percent = "%," + id_rss + ",%"
-
-		######### CALL TO TABLE keywords_news_serge
-		query = "SELECT id, keyword FROM keyword_news_serge WHERE applicable_owners_sources LIKE %s AND active > 0"
-
-		call_news = database.cursor()
-		call_news.execute(query, (id_rss_comma_percent,))
-		rows = call_news.fetchall()
-		call_news.close()
-
-		keywords_and_id_news_list = []
-
-		for row in rows:
-			field = (row[0], row[1].strip())
-			keywords_and_id_news_list.append(field)
-
-		########### ETAG COMPARISON
-		head_results = sergenet.headToEtag(link, logger_info, logger_error)
-		etag = head_results[0]
-		head_error = head_results[1]
-
-		if (etag == None and head_error == False) or (etag != old_etag and head_error == False):
-			greenlight = True
-		elif (etag == old_etag and head_error == False) or head_error == True :
-			greenlight = False
-		else :
-			greenlight = False
-			logger_error.critical("UNKNOWN ERROR WITH ETAG IN :"+link+"\n")
-
-		if greenlight == True:
-			########### INSERT NEW ETAG IN RSS SERGE
-			insertSQL.backToTheFuture(etag, link, database)
-
-			########### LINK CONNEXION
-			req_results = sergenet.allRequestLong(link, logger_info, logger_error)
-			rss_error = req_results[0]
-			rss = req_results[1]
-
-		elif greenlight == False:
-			rss_error = None
+	if greenlight is True:
+		########### INSERT NEW ETAG IN RSS SERGE
+		insertSQL.backToTheFuture(etag, link, database)
 
 		########### LINK CONNEXION
-		if rss_error == False and greenlight == True:
+		req_results = sergenet.allRequestLong(link, logger_info, logger_error)
+		rss_error = req_results[0]
+		rss = req_results[1]
 
-			missing_flux = False
+	elif greenlight is False:
+		rss_error = None
 
-			########### RSS PARSING
-			try:
-				xmldoc = feedparser.parse(rss)
-			except Exception, except_type:
-				logger_error.error("PARSING ERROR IN :"+link+"\n")
-				logger_error.error(repr(except_type))
+	########### LINK CONNEXION
+	if rss_error is False and greenlight is True:
+		missing_flux = False
 
-			########### RSS ANALYZE
-			try:
-				source_title = xmldoc.feed.title
-			except AttributeError:
-				logger_info.warning("NO TITLE IN :"+link+"\n")
-				missing_flux = True
+		########### RSS PARSING
+		try:
+			xmldoc = feedparser.parse(rss)
+		except Exception, except_type:
+			logger_error.error("PARSING ERROR IN :"+link+"\n")
+			logger_error.error(repr(except_type))
 
-			rangemax = len(xmldoc.entries)
-			range = 0 #on initialise la variable range qui va servir pour pointer les articles
+		########### RSS ANALYZE
+		try:
+			source_title = xmldoc.feed.title
+		except AttributeError:
+			logger_info.warning("NO TITLE IN :"+link+"\n")
+			missing_flux = True
 
-			prime_conditions = (couple_keyword_attribute for couple_keyword_attribute in keywords_and_id_news_list if missing_flux == False)
+		rangemax = len(xmldoc.entries)
+		range = 0 #on initialise la variable range qui va servir pour pointer les articles
 
-			for couple_keyword_attribute in prime_conditions:
-				keyword_id = couple_keyword_attribute[0]
-				keyword = couple_keyword_attribute[1]
+		prime_conditions = (couple_keyword_attribute for couple_keyword_attribute in keywords_and_id_news_list if missing_flux is False)
 
-				########### OWNERS RETRIEVAL
-				query_keyword_parameters = ("SELECT applicable_owners_sources FROM keyword_news_serge WHERE keyword = %s and active > 0")
-				query_source_owners = ("SELECT owners FROM rss_serge WHERE link = %s and active > 0")
+		for couple_keyword_attribute in prime_conditions:
+			keyword_id = couple_keyword_attribute[0]
+			keyword = couple_keyword_attribute[1]
 
-				call_news = database.cursor()
-				call_news.execute(query_keyword_parameters, (keyword, ))
-				applicable_owners_sources = call_news.fetchone()
-				call_news.execute(query_source_owners, (link, ))
-				source_owners = call_news.fetchone()
-				call_news.close()
+			########### OWNERS RETRIEVAL
+			query_keyword_parameters = ("SELECT applicable_owners_sources FROM keyword_news_serge WHERE keyword = %s and active > 0")
+			query_source_owners = ("SELECT owners FROM rss_serge WHERE link = %s and active > 0")
 
-				source_owners = source_owners[0]
-				applicable_owners_sources = applicable_owners_sources[0].split("|")
+			call_news = database.cursor()
+			call_news.execute(query_keyword_parameters, (keyword, ))
+			applicable_owners_sources = call_news.fetchone()
+			call_news.execute(query_source_owners, (link, ))
+			source_owners = call_news.fetchone()
+			call_news.close()
 
-				second_conditions = (couple_owners_sources for couple_owners_sources in applicable_owners_sources if id_rss_comma in couple_owners_sources )
+			source_owners = source_owners[0]
+			applicable_owners_sources = applicable_owners_sources[0].split("|")
 
-				keyword_owners = ","
+			second_conditions = (couple_owners_sources for couple_owners_sources in applicable_owners_sources if id_rss_comma in couple_owners_sources)
 
-				for couple_owners_sources in second_conditions:
-					sorted_couple_owners_sources = couple_owners_sources.split(":")
-					sorted_owner = sorted_couple_owners_sources[0] + ","
+			keyword_owners = ","
 
-					if sorted_owner not in keyword_owners:
-						keyword_owners = keyword_owners+sorted_owner
+			for couple_owners_sources in second_conditions:
+				sorted_couple_owners_sources = couple_owners_sources.split(":")
+				sorted_owner = sorted_couple_owners_sources[0] + ","
 
-				owners = ","
-				owners_index = 1
+				if sorted_owner not in keyword_owners:
+					keyword_owners = keyword_owners+sorted_owner
 
-				while owners_index <= max_users:
-					owners_index = str(owners_index)
-					owners_index_comma = "," + owners_index + ","
+			owners = ","
+			owners_index = 1
 
-					if owners_index_comma in keyword_owners and owners_index_comma in source_owners:
-						owners = owners+owners_index+","
+			while owners_index <= max_users:
+				owners_index = str(owners_index)
+				owners_index_comma = "," + owners_index + ","
 
-					owners_index = int(owners_index)
-					owners_index = owners_index+1
+				if owners_index_comma in keyword_owners and owners_index_comma in source_owners:
+					owners = owners+owners_index+","
 
-				if owners == ",":
-					owners = None
+				owners_index = int(owners_index)
+				owners_index = owners_index+1
 
-				while range < rangemax and range < 500:
+			if owners == ",":
+				owners = None
 
-					########### UNIVERSAL FEED PARSER VARIABLES
-					try:
-						post_title = xmldoc.entries[range].title
-					except AttributeError:
-						logger_error.warning("BEACON ERROR : missing <title> in "+link)
-						logger_error.warning(traceback.format_exc())
-						post_title = ""
+			while range < rangemax and range < 500:
 
-					try:
-						post_description = xmldoc.entries[range].description
-					except AttributeError:
-						logger_error.warning("BEACON ERROR : missing <description> in "+link)
-						logger_error.warning(traceback.format_exc())
-						post_description = ""
+				########### UNIVERSAL FEED PARSER VARIABLES
+				try:
+					post_title = xmldoc.entries[range].title
+				except AttributeError:
+					logger_error.warning("BEACON ERROR : missing <title> in "+link)
+					logger_error.warning(traceback.format_exc())
+					post_title = ""
 
-					try:
-						post_link = xmldoc.entries[range].link
-					except AttributeError:
-						logger_error.warning("BEACON ERROR : missing <link> in "+link)
-						logger_error.warning(traceback.format_exc())
-						post_link = ""
+				try:
+					post_description = xmldoc.entries[range].description
+				except AttributeError:
+					logger_error.warning("BEACON ERROR : missing <description> in "+link)
+					logger_error.warning(traceback.format_exc())
+					post_description = ""
 
-					try:
-						post_date = xmldoc.entries[range].published_parsed
-						post_date = time.mktime(post_date)
-					except AttributeError:
-						logger_error.warning("BEACON ERROR : missing <date> in "+link)
-						logger_error.warning(traceback.format_exc())
-						post_date = None
+				try:
+					post_link = xmldoc.entries[range].link
+				except AttributeError:
+					logger_error.warning("BEACON ERROR : missing <link> in "+link)
+					logger_error.warning(traceback.format_exc())
+					post_link = ""
 
-					try :
-						post_tags = xmldoc.entries[range].tags
-					except AttributeError:
-						post_tags = []
+				try:
+					post_date = xmldoc.entries[range].published_parsed
+					post_date = time.mktime(post_date)
+				except AttributeError:
+					logger_error.warning("BEACON ERROR : missing <date> in "+link)
+					logger_error.warning(traceback.format_exc())
+					post_date = None
 
-					########### DATA PROCESSING
-					post_title = post_title.strip()
-					post_description = post_description.strip()
-					keyword = keyword.strip()
+				try :
+					post_tags = xmldoc.entries[range].tags
+				except AttributeError:
+					post_tags = []
 
-					keyword_id_comma = str(keyword_id) + ","
-					keyword_id_comma2 = "," + str(keyword_id) + ","
+				########### DATA PROCESSING
+				post_title = post_title.strip()
+				post_description = post_description.strip()
+				keyword = keyword.strip()
 
-					tagdex = 0
-					tags_string = ""
+				keyword_id_comma = str(keyword_id) + ","
+				keyword_id_comma2 = "," + str(keyword_id) + ","
 
-					while tagdex < len(post_tags) :
-						tags_string = tags_string + xmldoc.entries[range].tags[tagdex].term.lower() + " "
-						tagdex = tagdex+1
+				tagdex = 0
+				tags_string = ""
 
-					########### AGGREGATED KEYWORDS RESEARCH
-					if "+" in keyword:
-						aggregated_keyword = keyword.split("+")
+				while tagdex < len(post_tags) :
+					tags_string = tags_string + xmldoc.entries[range].tags[tagdex].term.lower() + " "
+					tagdex = tagdex+1
 
-						grain = 0
-						grain_list = []
-						aggregate_size = len(aggregated_keyword)
+				########### AGGREGATED KEYWORDS RESEARCH
+				if "+" in keyword:
+					aggregated_keyword = keyword.split("+")
 
-						while grain < aggregate_size:
-							if aggregated_keyword[grain] != "":
-								grain_list.append(aggregated_keyword[grain])
-							elif aggregated_keyword[grain] == "" and grain != 0 and len(grain_list) != 0:
-								coherent_grain = grain_list[len(grain_list)-1] + "+"
-								grain_list[len(grain_list)-1] = coherent_grain
+					grain = 0
+					grain_list = []
+					aggregate_size = len(aggregated_keyword)
 
-							grain = grain+1
+					while grain < aggregate_size:
+						if aggregated_keyword[grain] != "":
+							grain_list.append(aggregated_keyword[grain])
+						elif aggregated_keyword[grain] == "" and grain != 0 and len(grain_list) != 0:
+							coherent_grain = grain_list[len(grain_list)-1] + "+"
+							grain_list[len(grain_list)-1] = coherent_grain
 
-						aggregated_keyword = tuple(grain_list)
-						redundancy = 0
+						grain = grain+1
 
-						for splitkey in aggregated_keyword:
+					aggregated_keyword = tuple(grain_list)
+					redundancy = 0
 
-							if (re.search('[^a-z]'+re.escape(splitkey), post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey), post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey), tags_string, re.IGNORECASE)) and post_date >= last_launch and post_date is not None and owners is not None:
+					for splitkey in aggregated_keyword:
 
-								redundancy = redundancy + 1
+						if (re.search('[^a-z]'+re.escape(splitkey), post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey), post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey), tags_string, re.IGNORECASE)) and post_date >= last_launch and post_date is not None and owners is not None:
 
-						if redundancy == len(aggregated_keyword):
+							redundancy = redundancy + 1
 
-							########### QUERY FOR DATABASE CHECKING
-							query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
-							query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s and UNIX_TIMESTAMP() < (`date`+86400)")
+					if redundancy == len(aggregated_keyword):
 
-							########### QUERY FOR DATABASE INSERTION
-							query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
+						########### QUERY FOR DATABASE CHECKING
+						query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
+						query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s and UNIX_TIMESTAMP() < (`date`+86400)")
 
-							########### QUERY FOR DATABASE UPDATE
-							query_update = ("UPDATE result_news_serge SET keyword_id = %s, owners = %s WHERE link = %s")
-							query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s, keyword_id = %s, owners = %s WHERE link = %s")
+						########### QUERY FOR DATABASE INSERTION
+						query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
 
-							########### ITEM BUILDING
-							post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
-							item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
+						########### QUERY FOR DATABASE UPDATE
+						query_update = ("UPDATE result_news_serge SET keyword_id = %s, owners = %s WHERE link = %s")
+						query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s, keyword_id = %s, owners = %s WHERE link = %s")
 
-							########### CALL insertOrUpdate FUNCTION
-							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
+						########### ITEM BUILDING
+						post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
+						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
+						########### CALL insertOrUpdate FUNCTION
+						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
 
-					########### SIMPLE KEYWORDS RESEARCH
-					else:
-						if (re.search('[^a-z]'+re.escape(keyword), post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(keyword), post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(keyword), tags_string, re.IGNORECASE) or re.search('^'+re.escape(':all@'+id_rss)+'$', keyword, re.IGNORECASE)) and post_date >= last_launch and post_date is not None and owners is not None:
+				########### SIMPLE KEYWORDS RESEARCH
+				else:
+					if (re.search('[^a-z]'+re.escape(keyword), post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(keyword), post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(keyword), tags_string, re.IGNORECASE) or re.search('^'+re.escape(':all@'+id_rss)+'$', keyword, re.IGNORECASE)) and post_date >= last_launch and post_date is not None and owners is not None:
 
-							########### QUERY FOR DATABASE CHECKING
-							query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
-							query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s and UNIX_TIMESTAMP() < (`date`+86400)")
+						########### QUERY FOR DATABASE CHECKING
+						query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
+						query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s and UNIX_TIMESTAMP() < (`date`+86400)")
 
-							########### QUERY FOR DATABASE INSERTION
-							query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
+						########### QUERY FOR DATABASE INSERTION
+						query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
 
-							########### QUERIES FOR DATABASE UPDATE
-							query_update = ("UPDATE result_news_serge SET keyword_id = %s, owners = %s WHERE link = %s")
-							query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s, keyword_id = %s, owners = %s WHERE link = %s")
+						########### QUERIES FOR DATABASE UPDATE
+						query_update = ("UPDATE result_news_serge SET keyword_id = %s, owners = %s WHERE link = %s")
+						query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s, keyword_id = %s, owners = %s WHERE link = %s")
 
-							########### ITEM BUILDING
-							post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
-							item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
+						########### ITEM BUILDING
+						post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
+						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
-							########### CALL insertOrUpdate FUNCTION
-							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
+						########### CALL insertOrUpdate FUNCTION
+						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
 
-					range = range+1
+				range = range+1
 
-				range = 0
+			range = 0
 
 
 def patents(last_launch):
@@ -389,6 +378,8 @@ def patents(last_launch):
 		- research of the keywords in the xml beacons <title> and <description>
 		- if serge find a news this one is added to the database
 		- if the news is already saved in the database serge continue to search other news"""
+
+	database = databaseConnection()
 
 	function_id = 2
 	id_rss = None
@@ -419,7 +410,7 @@ def patents(last_launch):
 		rss_error = req_results[0]
 		rss_wipo = req_results[1]
 
-		if rss_error == False:
+		if rss_error is False:
 			xmldoc = feedparser.parse(rss_wipo)
 			range = 0
 			rangemax = len(xmldoc.entries)
@@ -500,6 +491,8 @@ def science(last_launch):
 		- Research of last published papers related to the query at DOAJ
 		- Same routine for content saving"""
 
+	database = databaseConnection()
+
 	function_id = 3
 
 	######### Recherche SCIENCE
@@ -531,7 +524,7 @@ def science(last_launch):
 		rss_error = req_results[0]
 		rss_arxiv = req_results[1]
 
-		if rss_error == False:
+		if rss_error is False:
 			try:
 				xmldoc = feedparser.parse(rss_arxiv)
 			except Exception, except_type:
@@ -556,7 +549,7 @@ def science(last_launch):
 					rows = call_science.fetchone()
 					call_science.close()
 
-					query_id=rows[0]
+					query_id = rows[0]
 
 					while range < rangemax:
 
@@ -619,7 +612,7 @@ def science(last_launch):
 		rss_error = req_results[0]
 		web_doaj = req_results[1]
 
-		if rss_error == False:
+		if rss_error is False:
 			try:
 				data_doaj = json.loads(web_doaj)
 			except Exception, except_type:
@@ -644,7 +637,7 @@ def science(last_launch):
 					rows = call_science.fetchone()
 					call_science.close()
 
-					query_id=rows[0]
+					query_id = rows[0]
 
 				while range < rangemax:
 					try:
@@ -698,6 +691,17 @@ def science(last_launch):
 		else:
 			logger_info.warning("Error : the json API is unavailable")
 
+
+def databaseConnection():
+	######### Connexion à la base de données CairnDevices
+	passSQL = open("permission/password.txt", "r")
+	passSQL = passSQL.read().strip()
+
+	database = MySQLdb.connect(host="localhost", user="Serge", passwd=passSQL, db="Serge", use_unicode=1, charset="utf8mb4")
+
+	return database
+
+
 ######### ERROR HOOK DEPLOYMENT
 sys.excepthook = cemeteriesOfErrors
 
@@ -729,7 +733,7 @@ logger_info.info(time.asctime(time.gmtime(now))+"\n")
 last_launch = lastResearch()
 
 ######### DATABASE INTERGRITY CHECKING
-#failsafe.checkMate(database, logger_info, logger_error)
+failsafe.checkMate(database, logger_info, logger_error)
 
 ######### NUMBERS OF USERS
 call_users = database.cursor()
@@ -745,11 +749,35 @@ insertSQL.ofSourceAndName(now, logger_info, logger_error, database)
 
 ######### RESEARCH OF LATEST NEWS, SCIENTIFIC PUBLICATIONS AND PATENTS
 
-newscast(last_launch, max_users)
+procScience = Process(target=science, args=(last_launch,))
+procPatents = Process(target=patents, args=(last_launch,))
 
-science(last_launch)
+procScience.start()
+procPatents.start()
 
-patents(last_launch)
+logger_info.info("\n\n######### Last News Research (newscast function) : \n\n")
+
+######### CALL TO TABLE rss_serge
+
+call_rss = database.cursor()
+call_rss.execute("SELECT link, id, etag FROM rss_serge WHERE active >= 1")
+rows = call_rss.fetchall()
+call_rss.close()
+
+sources_news_list = []
+
+for row in rows:
+	sources_news_list.append(row)
+
+
+pool = mp.Pool(processes=10)
+pool.map(newscast, sources_news_list)
+
+procScience.join()
+procPatents.join()
+
+pool.close()
+pool.join()
 
 ######### AFFECTATION
 logger_info.info("AFFECTATION")
