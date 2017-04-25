@@ -706,10 +706,7 @@ def databaseConnection():
 sys.excepthook = cemeteriesOfErrors
 
 ######### CONNEXION TO Serge DATABASE
-passSQL = open("permission/password.txt", "r")
-passSQL = passSQL.read().strip()
-
-database = MySQLdb.connect(host="localhost", user="Serge", passwd=passSQL, db="Serge", use_unicode=1, charset="utf8mb4")
+database = databaseConnection()
 
 ######### TIME VARIABLES DECLARATION
 now = time.time()                                 #NOW IS A TIMESTAMPS
@@ -771,6 +768,9 @@ procPatents.join()
 
 pool.close()
 pool.join()
+
+######### CONNEXION TO Serge DATABASE
+database = databaseConnection()
 
 ######### AFFECTATION
 logger_info.info("AFFECTATION")
