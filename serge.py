@@ -64,25 +64,6 @@ def cemeteriesOfErrors(*exc_info):
 	logger_error.critical("SERGE END : CRITICAL FAILURE\n")
 
 
-def lastResearch():
-	"""Function whose the purpose is to extract the timestamp corresponding at the last reasearch"""
-
-	try:
-		call_time = database.cursor()
-		call_time.execute("SELECT timestamps FROM time_serge WHERE name = 'timelog'")
-		last_launch = call_time.fetchone()
-		call_time.close()
-
-	except Exception, except_type:
-		logger_error.critical("Error in lastResearch function on SQL request")
-		logger_error.critical(repr(except_type))
-		sys.exit()
-
-	last_launch = float(last_launch[0])
-
-	return last_launch
-
-
 def permission(register) :
 	"""Function whose retrieve the user permission for news, science, or patents research"""
 
@@ -123,10 +104,9 @@ def newscast(trio_sources_news):
 	database = databaseConnection()
 
 	function_id = 1
+	global max_users
 
 	########### LINK & ID_RSS EXTRACTION
-	global last_launch
-	global max_users
 
 	link = trio_sources_news[0].strip()
 	id_rss = trio_sources_news[1]
@@ -317,7 +297,7 @@ def newscast(trio_sources_news):
 
 					for splitkey in aggregated_keyword:
 
-						if (re.search('[^a-z]'+re.escape(splitkey), post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey), post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey), tags_string, re.IGNORECASE)) and post_date >= last_launch and post_date is not None and owners is not None:
+						if (re.search('[^a-z]'+re.escape(splitkey), post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey), post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey), tags_string, re.IGNORECASE)) and owners is not None:
 
 							redundancy = redundancy + 1
 
@@ -343,7 +323,7 @@ def newscast(trio_sources_news):
 
 				########### SIMPLE KEYWORDS RESEARCH
 				else:
-					if (re.search('[^a-z]'+re.escape(keyword), post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(keyword), post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(keyword), tags_string, re.IGNORECASE) or re.search('^'+re.escape(':all@'+id_rss)+'$', keyword, re.IGNORECASE)) and post_date >= last_launch and post_date is not None and owners is not None:
+					if (re.search('[^a-z]'+re.escape(keyword), post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(keyword), post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(keyword), tags_string, re.IGNORECASE) or re.search('^'+re.escape(':all@'+id_rss)+'$', keyword, re.IGNORECASE)) and owners is not None:
 
 						########### QUERY FOR DATABASE CHECKING
 						query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
@@ -368,7 +348,7 @@ def newscast(trio_sources_news):
 			range = 0
 
 
-def patents(last_launch):
+def patents():
 	"""Function for last patents published by the World Intellectual Property Organization.
 
 		Process :
@@ -447,27 +427,25 @@ def patents(last_launch):
 							post_date = None
 
 						keyword_id_comma = str(id_query_wipo)+","
-						keyword_id_comma2 = ","+str(id_query_wipo)+","
+						keyword_id_comma2 = ","+str(id_query_wipo)+",":
 
-						if post_date >= last_launch and post_date is not None:
+						########### QUERY FOR DATABASE CHECKING
+						query_checking = ("SELECT id_query_wipo, owners FROM result_patents_serge WHERE link = %s")
+						query_jellychecking = None
 
-							########### QUERY FOR DATABASE CHECKING
-							query_checking = ("SELECT id_query_wipo, owners FROM result_patents_serge WHERE link = %s")
-							query_jellychecking = None
+						########### QUERY FOR DATABASE INSERTION
+						query_insertion = ("INSERT INTO result_patents_serge(title, link, date, id_query_wipo, owners) VALUES(%s, %s, %s, %s, %s)")
 
-							########### QUERY FOR DATABASE INSERTION
-							query_insertion = ("INSERT INTO result_patents_serge(title, link, date, id_query_wipo, owners) VALUES(%s, %s, %s, %s, %s)")
+						########### QUERY FOR DATABASE UPDATE
+						query_update = ("UPDATE result_patents_serge SET id_query_wipo = %s, owners = %s WHERE link = %s")
+						query_jelly_update = None
 
-							########### QUERY FOR DATABASE UPDATE
-							query_update = ("UPDATE result_patents_serge SET id_query_wipo = %s, owners = %s WHERE link = %s")
-							query_jelly_update = None
+						########### ITEM BUILDING
+						post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
+						item = (post_title, post_link, post_date, keyword_id_comma2, owners)
 
-							########### ITEM BUILDING
-							post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
-							item = (post_title, post_link, post_date, keyword_id_comma2, owners)
-
-							########### CALL insertOrUpdate FUNCTION
-							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
+						########### CALL insertOrUpdate FUNCTION
+						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
 
 						range = range+1
 
@@ -477,7 +455,7 @@ def patents(last_launch):
 			logger_error.warning("\n UNKNOWN CONNEXION ERROR")
 
 
-def science(last_launch):
+def science():
 	"""Function for last patents published by arxiv.org and the Directory of Open Access Journals.
 
 		Process :
@@ -579,25 +557,23 @@ def science(last_launch):
 						keyword_id_comma2 = ","+str(query_id)+","
 						id_rss = 0
 
-						if post_date >= last_launch and post_date is not None:
+						########### QUERY FOR DATABASE CHECKING
+						query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
+						query_jellychecking = ("SELECT title, link, query_id, owners FROM result_science_serge WHERE id_source = %s and UNIX_TIMESTAMP() < (`date`+86400)")
 
-							########### QUERY FOR DATABASE CHECKING
-							query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
-							query_jellychecking = ("SELECT title, link, query_id, owners FROM result_science_serge WHERE id_source = %s and UNIX_TIMESTAMP() < (`date`+86400)")
+						########### QUERY FOR DATABASE INSERTION
+						query_insertion = ("INSERT INTO result_science_serge(title, link, date, id_source, query_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
 
-							########### QUERY FOR DATABASE INSERTION
-							query_insertion = ("INSERT INTO result_science_serge(title, link, date, id_source, query_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
+						########### QUERY FOR DATABASE UPDATE
+						query_update = ("UPDATE result_science_serge SET query_id = %s, owners = %s WHERE link = %s")
+						query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s, query_id = %s, owners = %s WHERE link = %s")
 
-							########### QUERY FOR DATABASE UPDATE
-							query_update = ("UPDATE result_science_serge SET query_id = %s, owners = %s WHERE link = %s")
-							query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s, query_id = %s, owners = %s WHERE link = %s")
+						########### ITEM BUILDING
+						post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
+						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
-							########### ITEM BUILDING
-							post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
-							item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
-
-							########### CALL insertOrUpdate FUNCTION
-							insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
+						########### CALL insertOrUpdate FUNCTION
+						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
 
 						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
@@ -666,25 +642,24 @@ def science(last_launch):
 					keyword_id_comma2 = ","+str(query_id)+","
 					id_rss = 1
 
-					if post_date >= last_launch:
 
-						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
-						query_jellychecking = ("SELECT title, link, query_id, owners FROM result_science_serge WHERE id_source = %s and UNIX_TIMESTAMP() < (`date`+86400)")
+					########### QUERY FOR DATABASE CHECKING
+					query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
+					query_jellychecking = ("SELECT title, link, query_id, owners FROM result_science_serge WHERE id_source = %s and UNIX_TIMESTAMP() < (`date`+86400)")
 
-						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_science_serge(title, link, date, id_source, query_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
+					########### QUERY FOR DATABASE INSERTION
+					query_insertion = ("INSERT INTO result_science_serge(title, link, date, id_source, query_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
 
-						########### QUERY FOR DATABASE UPDATE
-						query_update = ("UPDATE result_science_serge SET query_id = %s, owners = %s WHERE link = %s")
-						query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s, query_id = %s, owners = %s WHERE link = %s")
+					########### QUERY FOR DATABASE UPDATE
+					query_update = ("UPDATE result_science_serge SET query_id = %s, owners = %s WHERE link = %s")
+					query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s, query_id = %s, owners = %s WHERE link = %s")
 
-						########### ITEM BUILDING
-						post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
-						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
+					########### ITEM BUILDING
+					post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
+					item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
-						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
+					########### CALL insertOrUpdate FUNCTION
+					insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
 
 					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
@@ -722,9 +697,6 @@ pydate = unicode(pydate)                          #TRANSFORM PYDATE INTO UNICODE
 
 logger_info.info(time.asctime(time.gmtime(now))+"\n")
 
-######### LAST LAUNCH
-last_launch = lastResearch()
-
 ######### DATABASE INTERGRITY CHECKING
 failsafe.checkMate(database, logger_info, logger_error)
 
@@ -742,8 +714,8 @@ insertSQL.ofSourceAndName(now, logger_info, logger_error, database)
 
 ######### RESEARCH OF LATEST NEWS, SCIENTIFIC PUBLICATIONS AND PATENTS
 
-procScience = Process(target=science, args=(last_launch,))
-procPatents = Process(target=patents, args=(last_launch,))
+procScience = Process(target=science, args=(,))
+procPatents = Process(target=patents, args=(,))
 
 procScience.start()
 procPatents.start()
