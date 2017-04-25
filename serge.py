@@ -644,7 +644,6 @@ def science():
 					keyword_id_comma2 = ","+str(query_id)+","
 					id_rss = 1
 
-
 					########### QUERY FOR DATABASE CHECKING
 					query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
 					query_jellychecking = ("SELECT title, link, query_id, owners FROM result_science_serge WHERE id_source = %s and UNIX_TIMESTAMP() < (`date`+86400)")
@@ -713,8 +712,8 @@ insertSQL.ofSourceAndName(now, logger_info, logger_error, database)
 
 ######### RESEARCH OF LATEST NEWS, SCIENTIFIC PUBLICATIONS AND PATENTS
 
-procScience = Process(target=science, args=(,))
-procPatents = Process(target=patents, args=(,))
+procScience = Process(target=science, args=())
+procPatents = Process(target=patents, args=())
 
 procScience.start()
 procPatents.start()
