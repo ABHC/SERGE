@@ -143,14 +143,16 @@ def newscast(trio_sources_news):
 		greenlight = False
 		logger_error.critical("UNKNOWN ERROR WITH ETAG IN :"+link+"\n")
 
+	########### INSERT NEW ETAG IN RSS SERGE
 	if greenlight is True:
-		########### INSERT NEW ETAG IN RSS SERGE
+		insertSQL.backToTheFuture(etag, link, database)
+	elif greenlight is False and etag is None:
 		insertSQL.backToTheFuture(etag, link, database)
 
 		########### LINK CONNEXION
 		req_results = sergenet.allRequestLong(link, logger_info, logger_error)
-		rss_error = req_results[0]
-		rss = req_results[1]
+		rss = req_results[0]
+		rss_error = req_results[1]
 
 	elif greenlight is False:
 		rss_error = None

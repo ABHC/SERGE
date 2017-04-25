@@ -131,6 +131,6 @@ def allRequestLong(link, logger_info, logger_error):
 		rss = None
 		rss_error = True
 
-	req_results = (rss_error, rss)
+	req_results = (rss, rss_error)
 
 	return req_results
