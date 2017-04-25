@@ -15,8 +15,6 @@ from logging.handlers import RotatingFileHandler
 import feedparser
 import jellyfish
 
-sys.path.insert(0, "modules/UFP/feedparser")
-sys.path.insert(1, "modules/UFP/feedparser")
 
 ######### IMPORT FROM SERGE MAIN
 import sergenet
@@ -187,7 +185,7 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 
 			jelly_title_score = jellyfish.levenshtein_distance(post_title, jelly_title)
 
-			if 0 < jelly_title_score <= 3 and jelly_breaker == False:
+			if 0 < jelly_title_score <= 3 and jelly_breaker is False:
 				jelly_breaker = True
 				duplicate = True
 

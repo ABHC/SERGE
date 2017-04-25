@@ -41,9 +41,9 @@ if (!empty($_GET['search']))
 
 	# Search in keyword
 	include_once('model/readKeywordId.php');
-	$OR = '';
-	$SEARCHKEYWORD   = '';
-	$searchInKeyword = preg_replace("/(^|\ )[a-zA-Z]{1,3}(\ |$)/", " ", $search);
+	$OR                = '';
+	$SEARCHKEYWORD     = '';
+	$searchInKeyword   = preg_replace("/(^|\ )[a-zA-Z]{1,3}(\ |$)/", " ", $search);
 	$searchKeywordList = explode(" ", $searchInKeyword);
 
 	foreach ($searchKeywordList as $searchKeyword)
@@ -51,8 +51,8 @@ if (!empty($_GET['search']))
 		//unset($searchOwnerKeyword);
 		if (strlen($searchKeyword) > 3)
 		{
+			$userId        = '%|' . $_SESSION['id'] . ':%';
 			$searchKeyword = '%' . $searchKeyword . '%';
-			$userId = '%|' . $_SESSION['id'] . ':%';
 
 			$searchOwnerKeyword = readKeywordId($userId, $searchKeyword, $bdd);
 
@@ -101,6 +101,6 @@ else
 {
 	# WARNING sensitive variable [SQLI]
 	$SELECTRESULT = $SELECTRESULT . $OPTIONALCOND;
-	$QUERYRESULT = $SELECTRESULT . ' AND title NOT LIKE :search AND title NOT LIKE :searchBoolean) ' . $ORDERBY;
+	$QUERYRESULT  = $SELECTRESULT . ' AND title NOT LIKE :search AND title NOT LIKE :searchBoolean) ' . $ORDERBY;
 }
 ?>
