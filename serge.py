@@ -218,7 +218,7 @@ def newscast(trio_sources_news):
 				########### UNIVERSAL FEED PARSER VARIABLES
 				try:
 					post_title = xmldoc.entries[range].title
-					if title == "":
+					if post_title == "":
 						post_title = "NO TITLE"
 				except AttributeError or title == "":
 					logger_error.warning("BEACON ERROR : missing <title> in "+link)
@@ -418,7 +418,7 @@ def science():
 
 						try:
 							post_title = xmldoc.entries[range].title
-							if title == "":
+							if post_title == "":
 								post_title = "NO TITLE"
 						except AttributeError:
 							logger_error.warning("BEACON ERROR : missing <title> in "+link)
@@ -505,7 +505,7 @@ def science():
 				while range < rangemax:
 					try:
 						post_title = data_doaj["results"][range]["bibjson"]["title"]
-						if title == "":
+						if post_title == "":
 							post_title = "NO TITLE"
 					except Exception as json_error:
 						logger_error.warning("Error in json retrival of post_title : "+str(json_error))
@@ -613,7 +613,7 @@ def patents():
 
 						try:
 							post_title = xmldoc.entries[range].title
-							if title == "":
+							if post_title == "":
 								post_title = "NO TITLE"
 						except AttributeError:
 							logger_error.warning("BEACON ERROR : missing <title> in "+link)
