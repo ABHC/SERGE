@@ -35,6 +35,7 @@ import mailer
 import sergenet
 import failsafe
 import insertSQL
+import resultstation
 
 ######### LOGGER CONFIG
 formatter_error = logging.Formatter("%(asctime)s -- %(levelname)s -- %(message)s")
@@ -62,32 +63,6 @@ def cemeteriesOfErrors(*exc_info):
 	colderror = "".join(traceback.format_exception(*exc_info))
 	logger_error.critical(colderror+"\n\n")
 	logger_error.critical("SERGE END : CRITICAL FAILURE\n")
-
-
-def permission(register) :
-	"""Function whose retrieve the user permission for news, science, or patents research"""
-
-	query_news = "SELECT permission_news FROM users_table_serge WHERE id LIKE %s"
-	query_science = "SELECT permission_science FROM users_table_serge WHERE id LIKE %s"
-	query_patents = "SELECT permission_patents FROM users_table_serge WHERE id LIKE %s"
-
-	call_users = database.cursor()
-
-	call_users.execute(query_news, (register,))
-	permission_news = call_users.fetchone()
-	permission_news = int(permission_news[0])
-
-	call_users.execute(query_science, (register,))
-	permission_science = call_users.fetchone()
-	permission_science = int(permission_science[0])
-
-	call_users.execute(query_patents, (register,))
-	permission_patents = call_users.fetchone()
-	permission_patents = int(permission_patents[0])
-
-	permission_list = [permission_news, permission_science, permission_patents]
-
-	return permission_list
 
 
 def newscast(trio_sources_news):
@@ -768,70 +743,14 @@ for user in user_list_all:
 	logger_info.info("USER : " + register)
 	user_id_comma = "%," + register + ",%"
 
-	######### SET ID LISTS FOR KEYWORDS, PATENTS QUERIES AND SOURCES
-	id_keywords_news_list = []
-	id_keywords_science_list = []
-	id_query_wipo_list = []
-	id_sources_news_list = []
+	results_basket = resultstation.triage(register, user_id_comma, database)
 
-	######### SET RESULTS LISTS
-	not_send_news_list = []
-	not_send_science_list = []
-	not_send_patents_list = []
-
-	permission_list = permission(register)
-
-	######### NEWS PERMISSION STATE
-	permission_news = permission_list[0]
-
-	######### RESULTS NEWS
-	if permission_news == 0:
-
-		######### NEWS ATTRIBUTES QUERY (LINK + TITLE + ID SOURCE + KEYWORD ID)
-		query_news = ("SELECT link, title, id_source, keyword_id FROM result_news_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
-
-		call_news = database.cursor()
-		call_news.execute(query_news, (user_id_comma, user_id_comma))
-		rows = call_news.fetchall()
-		call_news.close()
-
-		for row in rows:
-			field = [row[0], row[1], row[2], str(row[3])]
-			not_send_news_list.append(field)
-
-	######### SCIENCE PERMISSION STATE
-	permission_science = permission_list[1]
-
-	######### RESULTS SCIENCE
-	if permission_science == 0:
-
-		######### SCIENCE ATTRIBUTES QUERY (LINK + TITLE + KEYWORD ID)
-		query_science = ("SELECT link, title, query_id, id_source FROM result_science_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
-
-		call_science = database.cursor()
-		call_science.execute(query_science, (user_id_comma, user_id_comma))
-		rows = call_science.fetchall()
-		call_science.close()
-
-		for row in rows:
-			not_send_science_list.append(row)
-
-	######### PATENTS PERMISSION STATE
-	permission_patents = permission_list[2]
-
-	######### RESULTS PATENTS
-	if permission_patents == 0:
-
-		######### PATENTS ATTRIBUTES QUERY (LINK + TITLE + ID QUERY WIPO)
-		query_patents = ("SELECT link, title, id_query_wipo FROM result_patents_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
-
-		call_patents = database.cursor()
-		call_patents.execute(query_patents, (user_id_comma, user_id_comma))
-		rows = call_patents.fetchall()
-		call_patents.close()
-
-		for row in rows:
-			not_send_patents_list.append(row)
+	not_send_news_list = results_basket[0]
+	not_send_science_list = results_basket[1]
+	not_send_patents_list = results_basket[2]
+	permission_news = results_basket[3]
+	permission_science = results_basket[4]
+	permission_patents = results_basket[5]
 
 	pending_all = len(not_send_news_list)+len(not_send_science_list)+len(not_send_patents_list)
 
@@ -938,17 +857,9 @@ for user in user_list_all:
 	register = int(register)
 	register = register+1
 
-######### TIMESTAMPS UPDATE
-now = unicode(now)
-update = ("UPDATE time_serge SET timestamps = %s WHERE name = 'timelog'")
-
-call_time = database.cursor()
-call_time.execute(update, (now, ))
-database.commit()
-call_time.close()
-
+######### EXECUTION TIME
 the_end = time.time()
-harder_better_faster_stronger = (the_end - float(now))
+exec_time = (the_end - float(now))
 
 logger_info.info("Timelog timestamp update")
-logger_info.info("SERGE END : NOMINAL EXECUTION ("+str(harder_better_faster_stronger)+" sec)\n")
+logger_info.info("SERGE END : NOMINAL EXECUTION ("+str(exec_time)+" sec)\n")

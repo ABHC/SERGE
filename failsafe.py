@@ -46,7 +46,7 @@ def checkMate(database, logger_info, logger_error):
 			sys.exit()
 
 	######### CHECKING TABLES' NAMES
-	expected_tables_list = ["admin_table_serge", "background_serge", "keyword_news_serge", "queries_science_serge", "queries_wipo_serge", "result_news_serge", "result_patents_serge", "result_science_serge", "rss_serge", "time_serge", "users_table_serge"]
+	expected_tables_list = ["admin_table_serge", "background_serge", "keyword_news_serge", "queries_science_serge", "queries_wipo_serge", "result_news_serge", "result_patents_serge", "result_science_serge", "rss_serge", "miscellaneous_serge", "users_table_serge"]
 
 	checking.execute(check_tables_name)
 	name_tables = checking.fetchall()
@@ -72,7 +72,7 @@ def checkMate(database, logger_info, logger_error):
 	result_patents_serge_numbers = 7
 	result_science_serge_numbers = 8
 	rss_serge_numbers = 6
-	time_serge_numbers = 2
+	miscellaneous_serge_numbers = 2
 	users_table_serge_numbers = 18
 
 	for name in tables_name_list:
@@ -109,7 +109,7 @@ def checkMate(database, logger_info, logger_error):
 	result_patents_serge_columns = ["id", "title", "link", "send_status", "date", "id_query_wipo", "owners"]
 	result_science_serge_columns = ["id", "title", "link", "send_status", "date", "id_source", "query_id", "owners"]
 	rss_serge_columns = ["id", "link", "name", "owners", "etag", "active"]
-	time_serge_columns = ["name", "timestamps"]
+	miscellaneous_serge_columns = ["name", "value"]
 	users_table_serge_columns = ["id", "users", "email", "password", "last_mail", "send_condition", "frequency", "link_limit", "selected_days", "selected_hour", "mail_design", "language", "record_read", "history_lifetime", "background_result", "permission_news", "permission_science", "permission_patents"]
 
 	for name in tables_name_list:

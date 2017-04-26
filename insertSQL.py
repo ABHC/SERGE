@@ -37,7 +37,7 @@ def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 	######### LAST BIMENSUAL RESEARCH
 	try:
 		call_time = database.cursor()
-		call_time.execute("SELECT timestamps FROM time_serge WHERE name = 'feedtitles_refresh'")
+		call_time.execute("SELECT value FROM miscellaneous_serge WHERE name = 'feedtitles_refresh'")
 		last_refresh = call_time.fetchone()
 		call_time.close()
 
@@ -98,13 +98,14 @@ def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 
 			num = num+1
 
-		logger_info.info("Timestamps update for refreshing feedtitles \n")
 		now = unicode(now)
-		update = ("UPDATE time_serge SET timestamps = %s WHERE name = 'feedtitles_refresh'")
+		update = ("UPDATE miscellaneous_serge SET value = %s WHERE name = 'feedtitles_refresh'")
 
 		call_time = database.cursor()
 		call_time.execute(update, (now, ))
 		call_time.close()
+
+		logger_info.info("Timestamps update for refreshing feedtitles \n")
 
 	######### USUAL RESEARCH
 	else:
@@ -281,12 +282,12 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 
 	######### SEND_STATUS UPDATE IN result_news_serge
 	for attributes in not_send_news_list:
-		link = attributes[0]
+		baselink = attributes[4]
 
 		query = ("SELECT send_status FROM result_news_serge WHERE link = %s")
 
 		call_news = database.cursor()
-		call_news.execute(query, (link,))
+		call_news.execute(query, (baselink,))
 		row = call_news.fetchone()
 
 		send_status = row[0]
@@ -299,7 +300,7 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 			update = ("UPDATE result_news_serge SET send_status = %s WHERE link = %s")
 
 			try:
-				call_news.execute(update, (complete_status, link))
+				call_news.execute(update, (complete_status, baselink))
 				database.commit()
 			except Exception, except_type:
 				database.rollback()
@@ -316,12 +317,12 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 
 	######### SEND_STATUS UPDATE IN result_science_serge
 	for attributes in not_send_science_list:
-		link = attributes[0]
+		baselink = attributes[4]
 
 		query = ("SELECT send_status FROM result_science_serge WHERE link = %s")
 
 		call_science = database.cursor()
-		call_science.execute(query, (link,))
+		call_science.execute(query, (baselink,))
 		row = call_science.fetchone()
 
 		send_status = row[0]
@@ -334,7 +335,7 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 			update = ("UPDATE result_science_serge SET send_status = %s WHERE link = %s")
 
 			try:
-				call_science.execute(update, (complete_status, link))
+				call_science.execute(update, (complete_status, baselink))
 				database.commit()
 			except Exception, except_type:
 				database.rollback()
@@ -351,12 +352,12 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 
 	######### SEND_STATUS UPDATE IN result_patents_serge
 	for attributes in not_send_patents_list:
-		link = attributes[0]
+		baselink = attributes[4]
 
 		query = ("SELECT send_status FROM result_patents_serge WHERE link = %s")
 
 		call_patents = database.cursor()
-		call_patents.execute(query, (link,))
+		call_patents.execute(query, (baselink,))
 		row = call_patents.fetchone()
 
 		send_status = row[0]
@@ -369,7 +370,7 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 			update = ("UPDATE result_patents_serge SET send_status = %s WHERE link = %s")
 
 			try:
-				call_patents.execute(update, (complete_status, link))
+				call_patents.execute(update, (complete_status, baselink))
 				database.commit()
 			except Exception, except_type:
 				database.rollback()
