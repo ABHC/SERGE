@@ -35,6 +35,7 @@ import mailer
 import sergenet
 import failsafe
 import insertSQL
+import resultstation
 
 ######### LOGGER CONFIG
 formatter_error = logging.Formatter("%(asctime)s -- %(levelname)s -- %(message)s")
@@ -64,30 +65,15 @@ def cemeteriesOfErrors(*exc_info):
 	logger_error.critical("SERGE END : CRITICAL FAILURE\n")
 
 
-def permission(register) :
-	"""Function whose retrieve the user permission for news, science, or patents research"""
+def databaseConnection():
+	"""Connexion to Serge database"""
 
-	query_news = "SELECT permission_news FROM users_table_serge WHERE id LIKE %s"
-	query_science = "SELECT permission_science FROM users_table_serge WHERE id LIKE %s"
-	query_patents = "SELECT permission_patents FROM users_table_serge WHERE id LIKE %s"
+	passSQL = open("permission/password.txt", "r")
+	passSQL = passSQL.read().strip()
 
-	call_users = database.cursor()
+	database = MySQLdb.connect(host="localhost", user="Serge", passwd=passSQL, db="Serge", use_unicode=1, charset="utf8mb4")
 
-	call_users.execute(query_news, (register,))
-	permission_news = call_users.fetchone()
-	permission_news = int(permission_news[0])
-
-	call_users.execute(query_science, (register,))
-	permission_science = call_users.fetchone()
-	permission_science = int(permission_science[0])
-
-	call_users.execute(query_patents, (register,))
-	permission_patents = call_users.fetchone()
-	permission_patents = int(permission_patents[0])
-
-	permission_list = [permission_news, permission_science, permission_patents]
-
-	return permission_list
+	return database
 
 
 def newscast(trio_sources_news):
@@ -232,10 +218,12 @@ def newscast(trio_sources_news):
 				########### UNIVERSAL FEED PARSER VARIABLES
 				try:
 					post_title = xmldoc.entries[range].title
-				except AttributeError:
+					if title == "":
+						post_title = "NO TITLE"
+				except AttributeError or title == "":
 					logger_error.warning("BEACON ERROR : missing <title> in "+link)
 					logger_error.warning(traceback.format_exc())
-					post_title = ""
+					post_title = "NO TITLE"
 
 				try:
 					post_description = xmldoc.entries[range].description
@@ -257,7 +245,7 @@ def newscast(trio_sources_news):
 				except AttributeError:
 					logger_error.warning("BEACON ERROR : missing <date> in "+link)
 					logger_error.warning(traceback.format_exc())
-					post_date = None
+					post_date = now
 
 				try :
 					post_tags = xmldoc.entries[range].tags
@@ -352,113 +340,6 @@ def newscast(trio_sources_news):
 			range = 0
 
 
-def patents():
-	"""Function for last patents published by the World Intellectual Property Organization.
-
-		Process :
-		- wipo query retrieval
-		- URL re-building with wipo query
-		- connexion to sources one by one
-		- research of the keywords in the xml beacons <title> and <description>
-		- if serge find a news this one is added to the database
-		- if the news is already saved in the database serge continue to search other news"""
-
-	database = databaseConnection()
-
-	function_id = 2
-	id_rss = None
-
-	#WIPO_languages = ["ZH", "DA", "EN", "FR", "DE", "HE", "IT", "JA", "KO", "PL", "PT", "RU", "ES", "SV", "VN"]
-	logger_info.info("\n\n######### Last Patents Research (patents function) : \n\n")
-
-	######### CALL TO TABLE queries_wipo
-	call_patents_key = database.cursor()
-	call_patents_key.execute("SELECT query, id, owners FROM queries_wipo_serge")
-	matrix_query = call_patents_key.fetchall()
-	call_patents_key.close()
-
-	queryception_list = []
-
-	for queryception in matrix_query:
-		queryception_list.append(queryception)
-
-	for couple_query in queryception_list:
-		id_query_wipo = couple_query[1]
-		query_wipo = couple_query[0].strip().encode("utf8")
-		owners = couple_query[2].strip().encode("utf8")
-
-		logger_info.info(query_wipo+"\n")
-		link = ('https://patentscope.wipo.int/search/rss.jsf?query='+query_wipo+'+&office=&rss=true&sortOption=Pub+Date+Desc')
-
-		req_results = sergenet.allRequestLong(link, logger_info, logger_error)
-		rss_error = req_results[0]
-		rss_wipo = req_results[1]
-
-		if rss_error is False:
-			xmldoc = feedparser.parse(rss_wipo)
-			range = 0
-			rangemax = len(xmldoc.entries)
-			logger_info.info("Link :"+str(link))
-			logger_info.info("Patentscope RSS length :"+unicode(rangemax)+"\n \n")
-
-			if (xmldoc):
-				if rangemax == 0:
-					logger_info.info("VOID QUERY : "+query_wipo+"\n")
-
-				else:
-					while range < rangemax:
-
-						try:
-							post_title = xmldoc.entries[range].title
-						except AttributeError:
-							logger_error.warning("BEACON ERROR : missing <title> in "+link)
-							logger_error.warning(traceback.format_exc())
-							post_title = ""
-
-						try:
-							post_link = xmldoc.entries[range].link
-						except AttributeError:
-							logger_error.warning("BEACON ERROR : missing <link> in "+link)
-							logger_error.warning(traceback.format_exc())
-							post_link = ""
-
-						try:
-							post_date = xmldoc.entries[range].published_parsed
-							post_date = time.mktime(post_date)
-						except AttributeError:
-							logger_error.warning("BEACON ERROR : missing <date> in "+link)
-							logger_error.warning(traceback.format_exc())
-							post_date = None
-
-						keyword_id_comma = str(id_query_wipo)+","
-						keyword_id_comma2 = ","+str(id_query_wipo)+","
-
-						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT id_query_wipo, owners FROM result_patents_serge WHERE link = %s")
-						query_jellychecking = None
-
-						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_patents_serge(title, link, date, id_query_wipo, owners) VALUES(%s, %s, %s, %s, %s)")
-
-						########### QUERY FOR DATABASE UPDATE
-						query_update = ("UPDATE result_patents_serge SET id_query_wipo = %s, owners = %s WHERE link = %s")
-						query_jelly_update = None
-
-						########### ITEM BUILDING
-						post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
-						item = (post_title, post_link, post_date, keyword_id_comma2, owners)
-
-						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
-
-						range = range+1
-
-			else:
-				logger_info.warning("\n Error : the feed is unavailable")
-		else:
-			logger_error.warning("\n UNKNOWN CONNEXION ERROR")
-
-
 def science():
 	"""Function for last patents published by arxiv.org and the Directory of Open Access Journals.
 
@@ -537,10 +418,12 @@ def science():
 
 						try:
 							post_title = xmldoc.entries[range].title
+							if title == "":
+								post_title = "NO TITLE"
 						except AttributeError:
 							logger_error.warning("BEACON ERROR : missing <title> in "+link)
 							logger_error.warning(traceback.format_exc())
-							post_title = ""
+							post_title = "NO TITLE"
 
 						try:
 							post_link = xmldoc.entries[range].link
@@ -555,7 +438,7 @@ def science():
 						except AttributeError:
 							logger_error.warning("BEACON ERROR : missing <date> in "+link)
 							logger_error.warning(traceback.format_exc())
-							post_date = None
+							post_date = now
 
 						keyword_id_comma = str(query_id)+","
 						keyword_id_comma2 = ","+str(query_id)+","
@@ -622,9 +505,11 @@ def science():
 				while range < rangemax:
 					try:
 						post_title = data_doaj["results"][range]["bibjson"]["title"]
+						if title == "":
+							post_title = "NO TITLE"
 					except Exception as json_error:
 						logger_error.warning("Error in json retrival of post_title : "+str(json_error))
-						post_title = ""
+						post_title = "NO TITLE"
 
 					try:
 						post_link = data_doaj["results"][range]["bibjson"]["link"][0]["url"]
@@ -640,7 +525,7 @@ def science():
 						post_date = time.mktime(post_date)
 					except Exception as json_error:
 						logger_error.warning("Error in json retrival of post_date : "+str(json_error))
-						post_date = None
+						post_date = now
 
 					keyword_id_comma = str(query_id)+","
 					keyword_id_comma2 = ","+str(query_id)+","
@@ -670,15 +555,113 @@ def science():
 			logger_info.warning("Error : the json API is unavailable")
 
 
-def databaseConnection():
-	"""Connexion to Serge database"""
+def patents():
+	"""Function for last patents published by the World Intellectual Property Organization.
 
-	passSQL = open("permission/password.txt", "r")
-	passSQL = passSQL.read().strip()
+		Process :
+		- wipo query retrieval
+		- URL re-building with wipo query
+		- connexion to sources one by one
+		- research of the keywords in the xml beacons <title> and <description>
+		- if serge find a news this one is added to the database
+		- if the news is already saved in the database serge continue to search other news"""
 
-	database = MySQLdb.connect(host="localhost", user="Serge", passwd=passSQL, db="Serge", use_unicode=1, charset="utf8mb4")
+	database = databaseConnection()
 
-	return database
+	function_id = 2
+	id_rss = None
+
+	#WIPO_languages = ["ZH", "DA", "EN", "FR", "DE", "HE", "IT", "JA", "KO", "PL", "PT", "RU", "ES", "SV", "VN"]
+	logger_info.info("\n\n######### Last Patents Research (patents function) : \n\n")
+
+	######### CALL TO TABLE queries_wipo
+	call_patents_key = database.cursor()
+	call_patents_key.execute("SELECT query, id, owners FROM queries_wipo_serge")
+	matrix_query = call_patents_key.fetchall()
+	call_patents_key.close()
+
+	queryception_list = []
+
+	for queryception in matrix_query:
+		queryception_list.append(queryception)
+
+	for couple_query in queryception_list:
+		id_query_wipo = couple_query[1]
+		query_wipo = couple_query[0].strip().encode("utf8")
+		owners = couple_query[2].strip().encode("utf8")
+
+		logger_info.info(query_wipo+"\n")
+		link = ('https://patentscope.wipo.int/search/rss.jsf?query='+query_wipo+'+&office=&rss=true&sortOption=Pub+Date+Desc')
+
+		req_results = sergenet.allRequestLong(link, logger_info, logger_error)
+		rss_error = req_results[0]
+		rss_wipo = req_results[1]
+
+		if rss_error is False:
+			xmldoc = feedparser.parse(rss_wipo)
+			range = 0
+			rangemax = len(xmldoc.entries)
+			logger_info.info("Link :"+str(link))
+			logger_info.info("Patentscope RSS length :"+unicode(rangemax)+"\n \n")
+
+			if (xmldoc):
+				if rangemax == 0:
+					logger_info.info("VOID QUERY : "+query_wipo+"\n")
+
+				else:
+					while range < rangemax:
+
+						try:
+							post_title = xmldoc.entries[range].title
+							if title == "":
+								post_title = "NO TITLE"
+						except AttributeError:
+							logger_error.warning("BEACON ERROR : missing <title> in "+link)
+							logger_error.warning(traceback.format_exc())
+							post_title = "NO TITLE"
+
+						try:
+							post_link = xmldoc.entries[range].link
+						except AttributeError:
+							logger_error.warning("BEACON ERROR : missing <link> in "+link)
+							logger_error.warning(traceback.format_exc())
+							post_link = ""
+
+						try:
+							post_date = xmldoc.entries[range].published_parsed
+							post_date = time.mktime(post_date)
+						except AttributeError:
+							logger_error.warning("BEACON ERROR : missing <date> in "+link)
+							logger_error.warning(traceback.format_exc())
+							post_date = now
+
+						keyword_id_comma = str(id_query_wipo)+","
+						keyword_id_comma2 = ","+str(id_query_wipo)+","
+
+						########### QUERY FOR DATABASE CHECKING
+						query_checking = ("SELECT id_query_wipo, owners FROM result_patents_serge WHERE link = %s")
+						query_jellychecking = None
+
+						########### QUERY FOR DATABASE INSERTION
+						query_insertion = ("INSERT INTO result_patents_serge(title, link, date, id_query_wipo, owners) VALUES(%s, %s, %s, %s, %s)")
+
+						########### QUERY FOR DATABASE UPDATE
+						query_update = ("UPDATE result_patents_serge SET id_query_wipo = %s, owners = %s WHERE link = %s")
+						query_jelly_update = None
+
+						########### ITEM BUILDING
+						post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
+						item = (post_title, post_link, post_date, keyword_id_comma2, owners)
+
+						########### CALL insertOrUpdate FUNCTION
+						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
+
+						range = range+1
+
+			else:
+				logger_info.warning("\n Error : the feed is unavailable")
+		else:
+			logger_error.warning("\n UNKNOWN CONNEXION ERROR")
 
 
 ######### ERROR HOOK DEPLOYMENT
@@ -768,70 +751,14 @@ for user in user_list_all:
 	logger_info.info("USER : " + register)
 	user_id_comma = "%," + register + ",%"
 
-	######### SET ID LISTS FOR KEYWORDS, PATENTS QUERIES AND SOURCES
-	id_keywords_news_list = []
-	id_keywords_science_list = []
-	id_query_wipo_list = []
-	id_sources_news_list = []
+	results_basket = resultstation.triage(register, user_id_comma, database)
 
-	######### SET RESULTS LISTS
-	not_send_news_list = []
-	not_send_science_list = []
-	not_send_patents_list = []
-
-	permission_list = permission(register)
-
-	######### NEWS PERMISSION STATE
-	permission_news = permission_list[0]
-
-	######### RESULTS NEWS
-	if permission_news == 0:
-
-		######### NEWS ATTRIBUTES QUERY (LINK + TITLE + ID SOURCE + KEYWORD ID)
-		query_news = ("SELECT link, title, id_source, keyword_id FROM result_news_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
-
-		call_news = database.cursor()
-		call_news.execute(query_news, (user_id_comma, user_id_comma))
-		rows = call_news.fetchall()
-		call_news.close()
-
-		for row in rows:
-			field = [row[0], row[1], row[2], str(row[3])]
-			not_send_news_list.append(field)
-
-	######### SCIENCE PERMISSION STATE
-	permission_science = permission_list[1]
-
-	######### RESULTS SCIENCE
-	if permission_science == 0:
-
-		######### SCIENCE ATTRIBUTES QUERY (LINK + TITLE + KEYWORD ID)
-		query_science = ("SELECT link, title, query_id, id_source FROM result_science_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
-
-		call_science = database.cursor()
-		call_science.execute(query_science, (user_id_comma, user_id_comma))
-		rows = call_science.fetchall()
-		call_science.close()
-
-		for row in rows:
-			not_send_science_list.append(row)
-
-	######### PATENTS PERMISSION STATE
-	permission_patents = permission_list[2]
-
-	######### RESULTS PATENTS
-	if permission_patents == 0:
-
-		######### PATENTS ATTRIBUTES QUERY (LINK + TITLE + ID QUERY WIPO)
-		query_patents = ("SELECT link, title, id_query_wipo FROM result_patents_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
-
-		call_patents = database.cursor()
-		call_patents.execute(query_patents, (user_id_comma, user_id_comma))
-		rows = call_patents.fetchall()
-		call_patents.close()
-
-		for row in rows:
-			not_send_patents_list.append(row)
+	not_send_news_list = results_basket[0]
+	not_send_science_list = results_basket[1]
+	not_send_patents_list = results_basket[2]
+	permission_news = results_basket[3]
+	permission_science = results_basket[4]
+	permission_patents = results_basket[5]
 
 	pending_all = len(not_send_news_list)+len(not_send_science_list)+len(not_send_patents_list)
 
@@ -938,17 +865,9 @@ for user in user_list_all:
 	register = int(register)
 	register = register+1
 
-######### TIMESTAMPS UPDATE
-now = unicode(now)
-update = ("UPDATE time_serge SET timestamps = %s WHERE name = 'timelog'")
-
-call_time = database.cursor()
-call_time.execute(update, (now, ))
-database.commit()
-call_time.close()
-
+######### EXECUTION TIME
 the_end = time.time()
-harder_better_faster_stronger = (the_end - float(now))
+exec_time = (the_end - float(now))
 
 logger_info.info("Timelog timestamp update")
-logger_info.info("SERGE END : NOMINAL EXECUTION ("+str(harder_better_faster_stronger)+" sec)\n")
+logger_info.info("SERGE END : NOMINAL EXECUTION ("+str(exec_time)+" sec)\n")
