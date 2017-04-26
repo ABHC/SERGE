@@ -65,6 +65,17 @@ def cemeteriesOfErrors(*exc_info):
 	logger_error.critical("SERGE END : CRITICAL FAILURE\n")
 
 
+def databaseConnection():
+	"""Connexion to Serge database"""
+
+	passSQL = open("permission/password.txt", "r")
+	passSQL = passSQL.read().strip()
+
+	database = MySQLdb.connect(host="localhost", user="Serge", passwd=passSQL, db="Serge", use_unicode=1, charset="utf8mb4")
+
+	return database
+
+
 def newscast(trio_sources_news):
 	"""Function for last news on RSS feeds defined by users.
 
@@ -329,115 +340,6 @@ def newscast(trio_sources_news):
 			range = 0
 
 
-def patents():
-	"""Function for last patents published by the World Intellectual Property Organization.
-
-		Process :
-		- wipo query retrieval
-		- URL re-building with wipo query
-		- connexion to sources one by one
-		- research of the keywords in the xml beacons <title> and <description>
-		- if serge find a news this one is added to the database
-		- if the news is already saved in the database serge continue to search other news"""
-
-	database = databaseConnection()
-
-	function_id = 2
-	id_rss = None
-
-	#WIPO_languages = ["ZH", "DA", "EN", "FR", "DE", "HE", "IT", "JA", "KO", "PL", "PT", "RU", "ES", "SV", "VN"]
-	logger_info.info("\n\n######### Last Patents Research (patents function) : \n\n")
-
-	######### CALL TO TABLE queries_wipo
-	call_patents_key = database.cursor()
-	call_patents_key.execute("SELECT query, id, owners FROM queries_wipo_serge")
-	matrix_query = call_patents_key.fetchall()
-	call_patents_key.close()
-
-	queryception_list = []
-
-	for queryception in matrix_query:
-		queryception_list.append(queryception)
-
-	for couple_query in queryception_list:
-		id_query_wipo = couple_query[1]
-		query_wipo = couple_query[0].strip().encode("utf8")
-		owners = couple_query[2].strip().encode("utf8")
-
-		logger_info.info(query_wipo+"\n")
-		link = ('https://patentscope.wipo.int/search/rss.jsf?query='+query_wipo+'+&office=&rss=true&sortOption=Pub+Date+Desc')
-
-		req_results = sergenet.allRequestLong(link, logger_info, logger_error)
-		rss_error = req_results[0]
-		rss_wipo = req_results[1]
-
-		if rss_error is False:
-			xmldoc = feedparser.parse(rss_wipo)
-			range = 0
-			rangemax = len(xmldoc.entries)
-			logger_info.info("Link :"+str(link))
-			logger_info.info("Patentscope RSS length :"+unicode(rangemax)+"\n \n")
-
-			if (xmldoc):
-				if rangemax == 0:
-					logger_info.info("VOID QUERY : "+query_wipo+"\n")
-
-				else:
-					while range < rangemax:
-
-						try:
-							post_title = xmldoc.entries[range].title
-							if title == "":
-								post_title = "NO TITLE"
-						except AttributeError:
-							logger_error.warning("BEACON ERROR : missing <title> in "+link)
-							logger_error.warning(traceback.format_exc())
-							post_title = "NO TITLE"
-
-						try:
-							post_link = xmldoc.entries[range].link
-						except AttributeError:
-							logger_error.warning("BEACON ERROR : missing <link> in "+link)
-							logger_error.warning(traceback.format_exc())
-							post_link = ""
-
-						try:
-							post_date = xmldoc.entries[range].published_parsed
-							post_date = time.mktime(post_date)
-						except AttributeError:
-							logger_error.warning("BEACON ERROR : missing <date> in "+link)
-							logger_error.warning(traceback.format_exc())
-							post_date = now
-
-						keyword_id_comma = str(id_query_wipo)+","
-						keyword_id_comma2 = ","+str(id_query_wipo)+","
-
-						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT id_query_wipo, owners FROM result_patents_serge WHERE link = %s")
-						query_jellychecking = None
-
-						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_patents_serge(title, link, date, id_query_wipo, owners) VALUES(%s, %s, %s, %s, %s)")
-
-						########### QUERY FOR DATABASE UPDATE
-						query_update = ("UPDATE result_patents_serge SET id_query_wipo = %s, owners = %s WHERE link = %s")
-						query_jelly_update = None
-
-						########### ITEM BUILDING
-						post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
-						item = (post_title, post_link, post_date, keyword_id_comma2, owners)
-
-						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
-
-						range = range+1
-
-			else:
-				logger_info.warning("\n Error : the feed is unavailable")
-		else:
-			logger_error.warning("\n UNKNOWN CONNEXION ERROR")
-
-
 def science():
 	"""Function for last patents published by arxiv.org and the Directory of Open Access Journals.
 
@@ -653,15 +555,113 @@ def science():
 			logger_info.warning("Error : the json API is unavailable")
 
 
-def databaseConnection():
-	"""Connexion to Serge database"""
+def patents():
+	"""Function for last patents published by the World Intellectual Property Organization.
 
-	passSQL = open("permission/password.txt", "r")
-	passSQL = passSQL.read().strip()
+		Process :
+		- wipo query retrieval
+		- URL re-building with wipo query
+		- connexion to sources one by one
+		- research of the keywords in the xml beacons <title> and <description>
+		- if serge find a news this one is added to the database
+		- if the news is already saved in the database serge continue to search other news"""
 
-	database = MySQLdb.connect(host="localhost", user="Serge", passwd=passSQL, db="Serge", use_unicode=1, charset="utf8mb4")
+	database = databaseConnection()
 
-	return database
+	function_id = 2
+	id_rss = None
+
+	#WIPO_languages = ["ZH", "DA", "EN", "FR", "DE", "HE", "IT", "JA", "KO", "PL", "PT", "RU", "ES", "SV", "VN"]
+	logger_info.info("\n\n######### Last Patents Research (patents function) : \n\n")
+
+	######### CALL TO TABLE queries_wipo
+	call_patents_key = database.cursor()
+	call_patents_key.execute("SELECT query, id, owners FROM queries_wipo_serge")
+	matrix_query = call_patents_key.fetchall()
+	call_patents_key.close()
+
+	queryception_list = []
+
+	for queryception in matrix_query:
+		queryception_list.append(queryception)
+
+	for couple_query in queryception_list:
+		id_query_wipo = couple_query[1]
+		query_wipo = couple_query[0].strip().encode("utf8")
+		owners = couple_query[2].strip().encode("utf8")
+
+		logger_info.info(query_wipo+"\n")
+		link = ('https://patentscope.wipo.int/search/rss.jsf?query='+query_wipo+'+&office=&rss=true&sortOption=Pub+Date+Desc')
+
+		req_results = sergenet.allRequestLong(link, logger_info, logger_error)
+		rss_error = req_results[0]
+		rss_wipo = req_results[1]
+
+		if rss_error is False:
+			xmldoc = feedparser.parse(rss_wipo)
+			range = 0
+			rangemax = len(xmldoc.entries)
+			logger_info.info("Link :"+str(link))
+			logger_info.info("Patentscope RSS length :"+unicode(rangemax)+"\n \n")
+
+			if (xmldoc):
+				if rangemax == 0:
+					logger_info.info("VOID QUERY : "+query_wipo+"\n")
+
+				else:
+					while range < rangemax:
+
+						try:
+							post_title = xmldoc.entries[range].title
+							if title == "":
+								post_title = "NO TITLE"
+						except AttributeError:
+							logger_error.warning("BEACON ERROR : missing <title> in "+link)
+							logger_error.warning(traceback.format_exc())
+							post_title = "NO TITLE"
+
+						try:
+							post_link = xmldoc.entries[range].link
+						except AttributeError:
+							logger_error.warning("BEACON ERROR : missing <link> in "+link)
+							logger_error.warning(traceback.format_exc())
+							post_link = ""
+
+						try:
+							post_date = xmldoc.entries[range].published_parsed
+							post_date = time.mktime(post_date)
+						except AttributeError:
+							logger_error.warning("BEACON ERROR : missing <date> in "+link)
+							logger_error.warning(traceback.format_exc())
+							post_date = now
+
+						keyword_id_comma = str(id_query_wipo)+","
+						keyword_id_comma2 = ","+str(id_query_wipo)+","
+
+						########### QUERY FOR DATABASE CHECKING
+						query_checking = ("SELECT id_query_wipo, owners FROM result_patents_serge WHERE link = %s")
+						query_jellychecking = None
+
+						########### QUERY FOR DATABASE INSERTION
+						query_insertion = ("INSERT INTO result_patents_serge(title, link, date, id_query_wipo, owners) VALUES(%s, %s, %s, %s, %s)")
+
+						########### QUERY FOR DATABASE UPDATE
+						query_update = ("UPDATE result_patents_serge SET id_query_wipo = %s, owners = %s WHERE link = %s")
+						query_jelly_update = None
+
+						########### ITEM BUILDING
+						post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
+						item = (post_title, post_link, post_date, keyword_id_comma2, owners)
+
+						########### CALL insertOrUpdate FUNCTION
+						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
+
+						range = range+1
+
+			else:
+				logger_info.warning("\n Error : the feed is unavailable")
+		else:
+			logger_error.warning("\n UNKNOWN CONNEXION ERROR")
 
 
 ######### ERROR HOOK DEPLOYMENT
