@@ -578,7 +578,7 @@
 						'<div class="tagSource Tactive" id="ks' . $ownerSourcesList['id'] . '">'.
 							'<input type="submit" title="Delete" name="delSource" value="source' . $ownerSourcesList['id'] . '&"/>'.
 							'<input type="submit" title="Disable" name="disableSource" value="source' . $ownerSourcesList['id']. '&"/>'.
-							'<a href="setting?source=source' . $ownerSourcesList['id'] . '">'.
+							'<a href="' . $ownerSourcesList['link']. '" target="_blank">'.
 								ucfirst($ownerSourcesList['name']).
 							'</a>'.
 						'</div>';
@@ -589,7 +589,7 @@
 						'<div class="tagSource Tdisable" id="ks' . $ownerSourcesList['id'] . '">'.
 							'<input type="submit" title="Delete" name="delSource" value="source' . $ownerSourcesList['id'] . '&"/>'.
 							'<input type="submit" title="Activate" name="activateSource" value="source' . $ownerSourcesList['id']. '&"/>'.
-							'<a href="setting?source=source' . $ownerSourcesList['id'] . '">'.
+							'<a href="' . $ownerSourcesList['link']. '" target="_blank">'.
 								ucfirst($ownerSourcesList['name']).
 							'</a>'.
 						'</div>';

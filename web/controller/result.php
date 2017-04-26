@@ -31,6 +31,37 @@ $actualPageLink     = '';
 # Warning sensitive variables [SQLI]
 $SELECTRESULT = '(SELECT id, title, link, send_status, read_status, `date`, id_source, keyword_id FROM result_news_serge WHERE owners LIKE :user';
 
+# Select results type
+if (!empty($_GET['type']))
+{
+	$type = htmlspecialchars($_GET['type']);
+
+	if ($type == 'news')
+	{
+		$type       = 'news';
+		$newsActive = 'class="active"';
+	}
+	elseif ($type == 'sciences')
+	{
+		$type       = 'sciences';
+		$sciencesActive = 'class="active"';
+	}
+	elseif ($type == 'patents')
+	{
+		$type       = 'patents';
+		$patentsActive = 'class="active"';
+	}
+	else
+	{
+		$type       = 'news';
+		$newsActive = 'class="active"';
+	}
+}
+else
+{
+	$type       = 'news';
+	$newsActive = 'class="active"';
+}
 
 # Delete results
 include_once('model/delResult.php');

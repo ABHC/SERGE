@@ -84,6 +84,71 @@ input[type='text']::placeholder
 	color: rgb(190,190,190);
 }
 
+.selectResultsType
+{
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: flex-start;
+	margin-left: calc(-50% + 25px);
+	width: 50px;
+	height: auto;
+	margin-top: 20px;
+}
+
+.selectResultsType a
+{
+	width: 60px;
+	height: 98px;
+	background-color: rgba(0, 0, 0, 0.5);
+	text-decoration: none;
+}
+
+.selectResultsType a:hover
+{
+	background-color: rgba(0, 0, 0, 0);
+}
+
+.selectResultsType .active
+{
+	background-color: rgba(0, 0, 0, 0);
+}
+
+.selectResultsType a div
+{
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
+	width: 40px;
+	height: 88px;
+	color: #fff;
+	text-decoration: none;
+	text-transform: uppercase;
+	font-size: 10px;
+}
+
+.selectResultsTypeNews
+{
+	margin: auto;
+	background: url('../images/icoNews.png') center no-repeat;
+	background-size: contain;
+}
+
+.selectResultsTypeSciences
+{
+	margin: auto;
+	background: url('../images/icoSciences.png') center no-repeat;
+	background-size: contain;
+}
+
+.selectResultsTypePatents
+{
+	margin: auto;
+	background: url('../images/icoPatents.png') center no-repeat;
+	background-size: contain;
+}
+
 form.formSearch
 {
 	display: flex;

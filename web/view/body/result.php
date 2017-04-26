@@ -10,6 +10,18 @@
 		<input type="hidden" name="optionalCond" value="<?php echo $optionalCond; ?>"/>
 	</form>
 
+	<div class="selectResultsType">
+		<a <?php echo $newsActive; ?> href="result?type=news">
+			<div class="selectResultsTypeNews">News</div>
+		</a>
+		<a <?php echo $sciencesActive; ?> href="result?type=sciences">
+			<div class="selectResultsTypeSciences">Sciences</div>
+		</a>
+		<a <?php echo $patentsActive; ?> href="result?type=patents">
+			<div class="selectResultsTypePatents">Patents</div>
+		</a>
+	</div>
+
 	<form class="tableContainer" method="post" action="result">
 		<div class="table-header">
 			<table cellpadding="0" cellspacing="0" border="0">
