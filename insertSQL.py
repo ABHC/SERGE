@@ -193,7 +193,7 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 		jelly_breaker = False
 
 	########### DATABASE INSERTION
-	if checking is None and duplicate is False:
+	if checking is None and duplicate is False and item[1] != "":
 		insert_data = database.cursor()
 
 		try:
@@ -209,7 +209,7 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 	########### DATABASE UPDATE
 
 	########### JELLY UPDATE
-	elif checking is None and duplicate is True:
+	elif checking is None and duplicate is True item[1] != "":
 		already_owners_list = owners.split(",")
 		complete_id = jelly_id_keyword
 		complete_owners = jelly_owners
@@ -242,7 +242,7 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 			update_data.close()
 
 	########### CLASSIC UPDATE
-	elif checking is not None and duplicate is False :
+	elif checking is not None and duplicate is False item[1] != "":
 		field_id_keyword = checking[0]
 		item_owners = checking[1]
 		already_owners_list = owners.split(",")

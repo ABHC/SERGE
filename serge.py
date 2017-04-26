@@ -207,10 +207,12 @@ def newscast(trio_sources_news):
 				########### UNIVERSAL FEED PARSER VARIABLES
 				try:
 					post_title = xmldoc.entries[range].title
-				except AttributeError:
+					if title == "":
+						post_title = "NO TITLE"
+				except AttributeError or title == "":
 					logger_error.warning("BEACON ERROR : missing <title> in "+link)
 					logger_error.warning(traceback.format_exc())
-					post_title = ""
+					post_title = "NO TITLE"
 
 				try:
 					post_description = xmldoc.entries[range].description
@@ -232,7 +234,7 @@ def newscast(trio_sources_news):
 				except AttributeError:
 					logger_error.warning("BEACON ERROR : missing <date> in "+link)
 					logger_error.warning(traceback.format_exc())
-					post_date = None
+					post_date = now
 
 				try :
 					post_tags = xmldoc.entries[range].tags
@@ -385,10 +387,12 @@ def patents():
 
 						try:
 							post_title = xmldoc.entries[range].title
+							if title == "":
+								post_title = "NO TITLE"
 						except AttributeError:
 							logger_error.warning("BEACON ERROR : missing <title> in "+link)
 							logger_error.warning(traceback.format_exc())
-							post_title = ""
+							post_title = "NO TITLE"
 
 						try:
 							post_link = xmldoc.entries[range].link
@@ -403,7 +407,7 @@ def patents():
 						except AttributeError:
 							logger_error.warning("BEACON ERROR : missing <date> in "+link)
 							logger_error.warning(traceback.format_exc())
-							post_date = None
+							post_date = now
 
 						keyword_id_comma = str(id_query_wipo)+","
 						keyword_id_comma2 = ","+str(id_query_wipo)+","
@@ -512,10 +516,12 @@ def science():
 
 						try:
 							post_title = xmldoc.entries[range].title
+							if title == "":
+								post_title = "NO TITLE"
 						except AttributeError:
 							logger_error.warning("BEACON ERROR : missing <title> in "+link)
 							logger_error.warning(traceback.format_exc())
-							post_title = ""
+							post_title = "NO TITLE"
 
 						try:
 							post_link = xmldoc.entries[range].link
@@ -530,7 +536,7 @@ def science():
 						except AttributeError:
 							logger_error.warning("BEACON ERROR : missing <date> in "+link)
 							logger_error.warning(traceback.format_exc())
-							post_date = None
+							post_date = now
 
 						keyword_id_comma = str(query_id)+","
 						keyword_id_comma2 = ","+str(query_id)+","
@@ -597,9 +603,11 @@ def science():
 				while range < rangemax:
 					try:
 						post_title = data_doaj["results"][range]["bibjson"]["title"]
+						if title == "":
+							post_title = "NO TITLE"
 					except Exception as json_error:
 						logger_error.warning("Error in json retrival of post_title : "+str(json_error))
-						post_title = ""
+						post_title = "NO TITLE"
 
 					try:
 						post_link = data_doaj["results"][range]["bibjson"]["link"][0]["url"]
@@ -615,7 +623,7 @@ def science():
 						post_date = time.mktime(post_date)
 					except Exception as json_error:
 						logger_error.warning("Error in json retrival of post_date : "+str(json_error))
-						post_date = None
+						post_date = now
 
 					keyword_id_comma = str(query_id)+","
 					keyword_id_comma2 = ","+str(query_id)+","
