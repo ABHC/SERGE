@@ -667,7 +667,7 @@ def newsletterBySource(user, pydate, translate_text, permission_news, permission
 	return newsletter
 
 
-def highwayToMail(register, user, newsletter,database):
+def highwayToMail(register, user, newsletter, database):
 	"""Function for emails sending"""
 
 	######### SERGE MAIL

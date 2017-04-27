@@ -35,7 +35,7 @@ def allCheckLong(link):
 	except requests.exceptions.MissingSchema:
 		rss = None
 		rss_error = True
-		error_message ("ERROR : Url required")
+		error_message("ERROR : Url required")
 	except requests.exceptions.TooManyRedirects:
 		rss = None
 		rss_error = True
@@ -43,11 +43,11 @@ def allCheckLong(link):
 	except requests.exceptions.ConnectTimeout:
 		rss = None
 		rss_error = True
-		error_message ("ERROR : Timeout")
+		error_message("ERROR : Timeout")
 	except requests.exceptions.ReadTimeout:
 		rss = None
 		rss_error = True
-		error_message ("ERROR : Timeout")
+		error_message("ERROR : Timeout")
 	except requests.exceptions.InvalidURL:
 		rss = None
 		rss_error = True
