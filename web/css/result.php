@@ -91,7 +91,7 @@ input[type='text']::placeholder
 	flex-direction: column;
 	justify-content: flex-start;
 	align-items: flex-start;
-	margin-left: calc(-50% + 25px);
+	left: 0;
 	width: 50px;
 	height: auto;
 	margin-top: 20px;
