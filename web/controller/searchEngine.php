@@ -30,12 +30,12 @@ if (!empty($_GET['search']))
 	if (!empty($SEARCHINLINK))
 	{
 		# WARNING sensitive variable [SQLI]
-		$CHECKLINK = '(SELECT id, title, link, send_status, read_status, `date`, id_source, keyword_id FROM result_news_serge WHERE owners LIKE :user AND (' . $SEARCHINLINK . '))';
+		$CHECKLINK = '(SELECT id, title, link, send_status, read_status, `date`' . $specialColumn . 'FROM ' . $tableName . ' WHERE owners LIKE :user AND (' . $SEARCHINLINK . '))';
 	}
 	else
 	{
 		# WARNING sensitive variable [SQLI]
-		$CHECKLINK = '(SELECT id, title, link, send_status, read_status, `date`, id_source, keyword_id FROM result_news_serge WHERE id = 0)';
+		$CHECKLINK = '(SELECT id, title, link, send_status, read_status, `date`' . $specialColumn . 'FROM ' . $tableName . ' WHERE id = 0)';
 	}
 
 
@@ -45,17 +45,15 @@ if (!empty($_GET['search']))
 	$SEARCHKEYWORD     = '';
 	$searchInKeyword   = preg_replace("/(^|\ )[a-zA-Z]{1,3}(\ |$)/", " ", $search);
 	$searchKeywordList = explode(" ", $searchInKeyword);
+	$userId        = '%' . $userId . '%';
 
 	foreach ($searchKeywordList as $searchKeyword)
 	{
-		//unset($searchOwnerKeyword);
 		if (strlen($searchKeyword) > 3)
 		{
-			$userId        = '%|' . $_SESSION['id'] . ':%';
 			$searchKeyword = '%' . $searchKeyword . '%';
 
-			$searchOwnerKeyword = readKeywordId($userId, $searchKeyword, $bdd);
-
+			$searchOwnerKeyword = readKeywordId($userId, $searchKeyword, $bdd,  $tableNameQuery, $ownersColumn, $queryColumn);
 			if (!empty($searchOwnerKeyword))
 			{
 				foreach ($searchOwnerKeyword as $searchKeyword)
@@ -63,7 +61,7 @@ if (!empty($_GET['search']))
 					$keywordIdSearch = '\'%,' . $searchKeyword['id'] . ',%\'';
 
 					# WARNING sensitive variable [SQLI]
-					$SEARCHKEYWORD = $SEARCHKEYWORD . $OR . 'keyword_id LIKE ' . $keywordIdSearch;
+					$SEARCHKEYWORD = $SEARCHKEYWORD . $OR . $keywordQueryId . ' LIKE ' . $keywordIdSearch;
 					$OR = ' OR ';
 				}
 			}
@@ -73,12 +71,12 @@ if (!empty($_GET['search']))
 	if (!empty($SEARCHKEYWORD))
 	{
 		# WARNING sensitive variable [SQLI]
-		$CHECKKEYWORD = '(SELECT id, title, link, send_status, read_status, `date`, id_source, keyword_id FROM result_news_serge WHERE owners LIKE :user AND (' . $SEARCHKEYWORD . '))';
+		$CHECKKEYWORD = '(SELECT id, title, link, send_status, read_status, `date`' . $specialColumn . 'FROM ' . $tableName . ' WHERE owners LIKE :user AND (' . $SEARCHKEYWORD . '))';
 	}
 	else
 	{
 		# WARNING sensitive variable [SQLI]
-		$CHECKKEYWORD = '(SELECT id, title, link, send_status, read_status, `date`, id_source, keyword_id FROM result_news_serge WHERE id = 0)';
+		$CHECKKEYWORD = '(SELECT id, title, link, send_status, read_status, `date`' . $specialColumn . 'FROM ' . $tableName . ' WHERE id = 0)';
 	}
 
 	# WARNING sensitive variable [SQLI]

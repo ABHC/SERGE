@@ -28,8 +28,6 @@ $base               = 0;
 $page               = 0;
 $actualPageLink     = '';
 
-# Warning sensitive variables [SQLI]
-$SELECTRESULT = '(SELECT id, title, link, send_status, read_status, `date`, id_source, keyword_id FROM result_news_serge WHERE owners LIKE :user';
 
 # Select results type
 if (!empty($_GET['type']))
@@ -38,30 +36,72 @@ if (!empty($_GET['type']))
 
 	if ($type == 'news')
 	{
-		$type       = 'news';
-		$newsActive = 'class="active"';
+		$type           = 'news';
+		$newsActive     = 'class="active"';
+		$tableName      = 'result_news_serge';
+		$tableNameQuery = 'keyword_news_serge';
+		$ownersColumn   = 'applicable_owners_sources';
+		$userId        = '|' . $_SESSION['id'] . ':';
+		$keywordQueryId = 'keyword_id';
+		$queryColumn    = 'keyword';
+		$specialColumn  = ', id_source, keyword_id ';
+		$displayColumn  = 'Keyword';
 	}
 	elseif ($type == 'sciences')
 	{
-		$type       = 'sciences';
+		$type           = 'sciences';
 		$sciencesActive = 'class="active"';
+		$tableName      = 'result_science_serge';
+		$tableNameQuery = 'queries_science_serge';
+		$ownersColumn   = 'owners';
+		$userId        = ',' . $_SESSION['id'] . ',';
+		$keywordQueryId = 'query_id';
+		$queryColumn    = 'query_arxiv';
+		$specialColumn  = ', id_source ';
+		$displayColumn  = 'Query';
 	}
 	elseif ($type == 'patents')
 	{
-		$type       = 'patents';
-		$patentsActive = 'class="active"';
+		$type           = 'patents';
+		$patentsActive  = 'class="active"';
+		$tableName      = 'result_patents_serge';
+		$tableNameQuery = 'queries_patents_serge';
+		$ownersColumn   = 'owners';
+		$userId        = ',' . $_SESSION['id'] . ',';
+		$keywordQueryId = 'query_id';
+		$queryColumn    = 'query';
+		$displayColumn  = 'Query';
 	}
 	else
 	{
-		$type       = 'news';
-		$newsActive = 'class="active"';
+		$type           = 'news';
+		$newsActive     = 'class="active"';
+		$tableName      = 'result_news_serge';
+		$tableNameQuery = 'keyword_news_serge';
+		$ownersColumn   = 'applicable_owners_sources';
+		$userId         = '|' . $_SESSION['id'] . ':';
+		$keywordQueryId = 'keyword_id';
+		$queryColumn    = 'keyword';
+		$specialColumn  = ', id_source, keyword_id ';
+		$displayColumn  = 'Keyword';
 	}
 }
 else
 {
-	$type       = 'news';
-	$newsActive = 'class="active"';
+	$type           = 'news';
+	$newsActive     = 'class="active"';
+	$tableName      = 'result_news_serge';
+	$tableNameQuery = 'keyword_news_serge';
+	$ownersColumn   = 'applicable_owners_sources';
+	$userId         = '|' . $_SESSION['id'] . ':';
+	$keywordQueryId = 'keyword_id';
+	$queryColumn    = 'keyword';
+	$specialColumn  = ', id_source, keyword_id ';
+	$displayColumn  = 'Keyword';
 }
+
+# Warning sensitive variables [SQLI]
+$SELECTRESULT = '(SELECT id, title, link, send_status, read_status, `date`' . $specialColumn . 'FROM ' . $tableName . ' WHERE owners LIKE :user';
 
 # Delete results
 include_once('model/delResult.php');

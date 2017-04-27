@@ -1,7 +1,7 @@
 <?php
-function readKeywordId($userId, $searchKeyword, $bdd)
+function readKeywordId($userId, $searchKeyword, $bdd, $tableNameQuery, $ownersColumn,  $queryColumn)
 {
-	$reqSearchOwnerKeyword = $bdd->prepare('SELECT id FROM keyword_news_serge WHERE applicable_owners_sources LIKE :user AND LOWER(keyword) LIKE LOWER(:searchKeyword)');
+	$reqSearchOwnerKeyword = $bdd->prepare('SELECT id FROM ' . $tableNameQuery . ' WHERE ' . $ownersColumn . ' LIKE :user AND LOWER(' . $queryColumn . ') LIKE LOWER(:searchKeyword)');
 	$reqSearchOwnerKeyword->execute(array(
 		'user' => $userId,
 		'searchKeyword' => $searchKeyword));

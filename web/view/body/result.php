@@ -8,8 +8,9 @@
 		<input type="text" name="search" id="search" placeholder="Search Serge" value="<?php echo $search; ?>"/>
 		<input type="hidden" name="orderBy" value="<?php echo $orderBy; ?>"/>
 		<input type="hidden" name="optionalCond" value="<?php echo $optionalCond; ?>"/>
-	</form>
+		<input type="hidden" name="type" value="<?php echo $type; ?>"/>
 
+	</form>
 	<div class="selectResultsType">
 		<a <?php echo $newsActive; ?> href="result?type=news">
 			<div class="selectResultsTypeNews">News</div>
@@ -31,7 +32,7 @@
 						<?php
 						echo '
 						<th><a href="?orderBy=title' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '">Title ' . $colOrder['title'] . '</a></th>
-						<th>Keyword</th>
+						<th>' . $displayColumn . '</th>
 						<th><a href="?orderBy=source' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '">Source ' . $colOrder['source'] . '</a></th>
 						<th><a href="?orderBy=date' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '">Date ' . $colOrder['date'] . '</a></th>
 						<th><a href="?optionalCond=send' . $colOrder['OCDESC'] . $searchSort . $orderBy . '">' . $colOrder['send'] . '</a></th>
