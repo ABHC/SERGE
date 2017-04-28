@@ -2,7 +2,7 @@
 
 if (isset($_GET['link']) AND isset($_GET['id']) AND isset($_GET['hash']))
 {
-	$link = htmlspecialchars($_GET['link']);
+	$link = urldecode($_GET['link']);
 	$id   = htmlspecialchars($_GET['id']);
 	$hash = htmlspecialchars($_GET['hash']);
 

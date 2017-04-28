@@ -453,9 +453,6 @@
 						</label>
 						Record when a link is clicked
 					</div>
-					<p>
-						History life time : <input class="number alpha" name="historyLifetime" type="number" min="1" value="<?php  echo $userSettings['history_lifetime']; ?>"/> months
-					</p>
 					<div>
 						<h3></h3>
 						<div class="deleteContainer">
