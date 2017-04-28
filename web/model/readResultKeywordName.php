@@ -1,5 +1,5 @@
 <?php
-function readResultKeyword($keywordIds, $readOwnerKeyword, $bdd)
+function readResultKeyword($keywordIds, $readOwnerKeyword, $bdd, $queryColumn, $tableNameQuery)
 {
 	$breaker = FALSE;
 	preg_match_all("/[0-9]+,/", $keywordIds, $keywordIds_array);
@@ -22,12 +22,12 @@ function readResultKeyword($keywordIds, $readOwnerKeyword, $bdd)
 		}
 	}
 
-	$reqKeywordResults = $bdd->prepare('SELECT keyword FROM keyword_news_serge WHERE id = :id');
+	$reqKeywordResults = $bdd->prepare('SELECT ' . $queryColumn . ' FROM ' . $tableNameQuery . ' WHERE id = :id');
 	$reqKeywordResults->execute(array(
 		'id' => $keywordId));
 		$keyword = $reqKeywordResults->fetch();
 		$reqKeywordResults->closeCursor();
 
-	return $keyword['keyword'];
+	return $keyword[$queryColumn];
 }
 ?>
