@@ -460,9 +460,9 @@
 						<h3></h3>
 						<div class="deleteContainer">
 							<div class="deleteLogo"></div>
-							<input alt="Delete" title="Delete" class="deleteButton" type="submit" value="Delete history" />
+							<input alt="Delete" title="Delete" class="deleteButton" type="submit" name="buttonDeleteHistory" value="deleteHistory" />
 							the last&nbsp;
-							<input class="number alpha" name="deleteHistory" type="number" min="1" value="1"/>
+							<input class="number alpha" name="deleteHistoryValue" type="number" min="1" value="1"/>
 							&nbsp;
 							<select class="selectCommResult Unit" name="deleteHistoryUnit">
 								<option value="hour">Hour</option>

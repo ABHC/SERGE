@@ -163,6 +163,50 @@ if (htmlspecialchars($_POST['settings']) == 'ChangeSettings')
 	header('Location: setting');
 }
 
+# Delete history button
+if (!empty($_POST['buttonDeleteHistory']))
+{
+	if (htmlspecialchars($_POST['buttonDeleteHistory']) == 'deleteHistory')
+	{
+		include_once('model/delResult.php');
+		$deleteHistoryValue = htmlspecialchars($_POST['deleteHistoryValue']);
+		$deleteHistoryUnit  = htmlspecialchars($_POST['deleteHistoryUnit']);
+
+		if ($deleteHistoryUnit == 'hour')
+		{
+			$deleteTimeIntervale = $deleteHistoryValue * 3600;
+		}
+		elseif ($deleteHistoryUnit == 'day')
+		{
+			$deleteTimeIntervale = $deleteHistoryValue * 3600 * 24;
+		}
+		elseif ($deleteHistoryUnit == 'week')
+		{
+			$deleteTimeIntervale = $deleteHistoryValue * 3600 * 24 * 7;
+		}
+		elseif ($deleteHistoryUnit == 'month')
+		{
+			$deleteTimeIntervale = $deleteHistoryValue * 3600 * 24 * 7 * 30;
+		}
+		elseif ($deleteHistoryUnit == 'year')
+		{
+			$deleteTimeIntervale = $deleteHistoryValue * 3600 * 24 * 7 * 30 * 12;
+		}
+
+		$now                = time();
+		$deleteTime         = $now - $deleteTimeIntervale;
+
+		$owner = '%,' . $_SESSION['id'] . ',%';
+
+		include_once('model/readOwnerResultByTimeInterval.php');
+
+		foreach ($readIdResutlToDel as $idResultToDel)
+		{
+				deleteLink($bdd, $idResultToDel['id']);
+		}
+	}
+}
+
 # Adding new source
 if (isset($_POST['sourceType']) AND isset($_POST['newSource']))
 {
