@@ -664,6 +664,9 @@ def patents():
 			logger_error.warning("\n UNKNOWN CONNEXION ERROR")
 
 
+#def extensions():
+	#fonctions qui liste les extensions qui sont rentrés dans miscellaneous_serge. traite la value pour faire les import et l'éxécution de l'extension. Tout ça un par un pour lancer chaque extension à la suite.
+
 ######### ERROR HOOK DEPLOYMENT
 sys.excepthook = cemeteriesOfErrors
 
@@ -712,14 +715,14 @@ call_rss.execute("SELECT link, id, etag FROM rss_serge WHERE active >= 1")
 rows = call_rss.fetchall()
 call_rss.close()
 
-sources_news_list = []
+trio_sources_news = []
 
 for row in rows:
-	sources_news_list.append(row)
+	trio_sources_news.append(row)
 
 ######### PROCESS CREATION FOR NEWSCAST AND RESEARCH OF LATEST NEWS
 pool = mp.Pool(processes=10)
-pool.map(newscast, sources_news_list)
+pool.map(newscast, trio_sources_news)
 
 ######### MAIN BLOCKING FOR MULTIPROCESSING
 procScience.join()
