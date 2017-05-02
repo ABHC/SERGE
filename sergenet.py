@@ -78,7 +78,7 @@ def allRequestLong(link, logger_info, logger_error):
 		req = requests.get(link, headers={'User-Agent' : "Serge Browser"}, timeout=15)
 		req.encoding = "utf8"
 		rss = req.text
-		logger_info.info(link+"\n")
+		logger_info.info("READ : "link+"\n")
 		header = req.headers
 		#logger_info.info("HEADER :\n"+str(header)+"\n\n") #affichage des paramètres de connexion
 		rss_error = False

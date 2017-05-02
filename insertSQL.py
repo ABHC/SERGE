@@ -20,7 +20,7 @@ import jellyfish
 import sergenet
 
 
-def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
+def ofSourceAndName(now, logger_info, logger_error, database):
 	"""ofSourceAndName check the field 'name' in rss_serge and fill it if it is empty or update it"""
 
 	logger_info.info("\n######### Feed titles retrieval (ofSourceAndName function) :\n\n")
@@ -68,7 +68,7 @@ def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 			rss_error = req_results[0]
 			rss = req_results[1]
 
-			if rss_error == 0:
+			if rss_error == False:
 				########### RSS PARSING
 				try:
 					xmldoc = feedparser.parse(rss)
@@ -109,7 +109,7 @@ def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 
 	######### USUAL RESEARCH
 	else:
-		while num <= max_rss :
+		while num <= max_rss:
 
 			query = ("SELECT link, name FROM rss_serge WHERE id = %s")
 
@@ -122,13 +122,13 @@ def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 			rss_name = rows[1]
 			refresh_string = "[!NEW!]"
 
-			if rss_name is None or refresh_string in rss_name :
+			if rss_name is None or refresh_string in rss_name:
 
 				req_results = sergenet.allRequestLong(link, logger_info, logger_error)
 				rss_error = req_results[0]
 				rss = req_results[1]
 
-				if rss_error == 0 :
+				if rss_error == False:
 
 					########### RSS PARSING
 					try:
@@ -141,7 +141,7 @@ def ofSourceAndName(now, logger_info, logger_error, database): #Metallica
 						source_title = xmldoc.feed.title
 						source_title = source_title.capitalize()
 					except AttributeError:
-						logger_info.warning("NO TITLE IN :"+link+"\n") ###
+						logger_info.warning("NO TITLE IN :"+link+"\n")
 						source_title = None
 
 					update = ("UPDATE rss_serge SET name = %s WHERE id = %s")
