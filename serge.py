@@ -16,6 +16,7 @@ SERGE's sources :
 import os
 import multiprocessing as mp
 from multiprocessing import Process
+from math import ceil
 import re
 import sys
 import cgi
@@ -717,11 +718,15 @@ call_rss.close()
 
 trio_sources_news = []
 
+nbRSS = 0
 for row in rows:
+	nbRSS += 1
 	trio_sources_news.append(row)
 
+nbProc = int(ceil(0.25 * nbRSS))
+
 ######### PROCESS CREATION FOR NEWSCAST AND RESEARCH OF LATEST NEWS
-pool = mp.Pool(processes=10)
+pool = mp.Pool(processes=nbProc)
 pool.map(newscast, trio_sources_news)
 
 ######### MAIN BLOCKING FOR MULTIPROCESSING

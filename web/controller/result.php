@@ -57,7 +57,7 @@ if (!empty($_GET['type']))
 		$userId        = ',' . $_SESSION['id'] . ',';
 		$keywordQueryId = 'query_id';
 		$queryColumn    = 'query_arxiv';
-		$specialColumn  = ', id_source ';
+		$specialColumn  = ',query_id, id_source ';
 		$displayColumn  = 'Query';
 	}
 	elseif ($type == 'patents')
@@ -65,7 +65,7 @@ if (!empty($_GET['type']))
 		$type           = 'patents';
 		$patentsActive  = 'class="active"';
 		$tableName      = 'result_patents_serge';
-		$tableNameQuery = 'queries_patents_serge';
+		$tableNameQuery = 'queries_wipo_serge';
 		$ownersColumn   = 'owners';
 		$userId        = ',' . $_SESSION['id'] . ',';
 		$keywordQueryId = 'query_id';

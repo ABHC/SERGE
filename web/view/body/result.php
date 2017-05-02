@@ -51,7 +51,7 @@
 					foreach (new LimitIterator($readOwnerResults, $base, $limit) as $result)
 					{
 						# Read keyword for current result
-						$keyword = readResultKeyword($result['keyword_id'], $readOwnerKeyword, $bdd);
+						$keyword = readResultKeyword($result[$keywordQueryId], $readOwnerKeyword, $bdd, $queryColumn, $tableNameQuery);
 						$keyword = preg_replace("/^:all@[0-9]+$/", ":All", $keyword);
 
 						# Read source for current result
