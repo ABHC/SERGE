@@ -516,6 +516,70 @@ elseif ($userSettings['record_read'] == 1)
 	$recordRead = '';
 }
 
+# Add new science query
+if (!empty($_POST['scienceQuerySubmit']) AND $_POST['scienceQuerySubmit'] == 'add')
+{
+	$cpt = 0;
+	$open = 0;
+	$close = 0;
+	$nbscienceType = 'scienceType0';
+	$queryScience_Arxiv = '';
+# TODO parenthesis
+	while(!empty($_POST[$nbscienceType]) AND isset($_POST['scienceQuery' . $cpt]))
+	{
+		if (preg_match("/(ti|au|abs|co|jr|cat)/", $_POST['scienceType' . $cpt]))
+		{
+			$openParenthesis = '';
+			$closeParenthesis = '';
+			if ($_POST['openParenthesis' . $cpt] == 'active')
+			{
+				$openParenthesis = '%28';
+				$open ++;
+			}
+
+			if ($_POST['closeParenthesis' . $cpt] == 'active')
+			{
+				$closeParenthesis = '%29';
+				$close ++;
+			}
+
+			$queryScience_Arxiv = $queryScience_Arxiv . $openParenthesis . $_POST['scienceType' . $cpt] . ':';
+
+			$scienceQuery = htmlspecialchars($_POST['scienceQuery' . $cpt]);
+			$scienceQuery = preg_replace("/ /", "+", $scienceQuery);
+			$scienceQuery = urlencode($scienceQuery);
+			$queryScience_Arxiv = $queryScience_Arxiv . '%22' . $scienceQuery . '%22' . $closeParenthesis;
+
+			if (!empty($_POST['andOrAndnot' . $cpt])
+					AND preg_match("/(AND|OR|NOTAND)/", $_POST['andOrAndnot' . $cpt])
+					AND !empty($_POST['scienceType' . ($cpt + 1)])
+					AND preg_match("/(ti|au|abs|co|jr|cat)/", $_POST['scienceType' . ($cpt + 1)])
+					AND isset($_POST['scienceQuery' . ($cpt + 1)]))
+			{
+				$queryScience_Arxiv = $queryScience_Arxiv . '+' . $_POST['andOrAndnot' . $cpt] . '+';
+			}
+			elseif (!empty($_POST['andOrAndnot' . $cpt])
+							AND !preg_match("/(AND|OR|NOTAND)/", $_POST['andOrAndnot' . $cpt])
+							AND !empty($_POST['scienceType' . ($cpt + 1)])
+							AND preg_match("/(ti|au|abs|co|jr|cat)/", $_POST['scienceType' . ($cpt + 1)])
+							AND isset($_POST['scienceQuery' . ($cpt + 1)]))
+			{
+				$queryScience_Arxiv = $queryScience_Arxiv . '+OR+';
+			}
+		}
+
+		$cpt ++;
+		$nbscienceType = 'scienceType' . $cpt;
+	}
+
+	if ($open != $close)
+	{
+		$ERROR_SCIENCEQUERY = 'Invalid query : parenthesis does not match';
+	}
+
+	echo '$queryScience_Arxiv : ' . $queryScience_Arxiv;
+}
+
 include_once('view/nav/nav.php');
 
 include_once('view/body/setting.php');
