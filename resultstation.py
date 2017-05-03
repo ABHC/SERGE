@@ -9,6 +9,7 @@ import hashlib
 import logging
 import traceback
 import unicodedata #voir la documentation : https://docs.python.org/2/library/unicodedata.html
+from urllib import pathname2url as pn
 
 
 def permission(register, database) :
@@ -68,7 +69,7 @@ def recorder(register, link, database):
 
 	salt = "blackSalt"
 	chop = hashlib.sha256(salt + ":" + user_pass + user_name + str(register)).hexdigest()
-	recording_link = "http://" + domain + "/redirect?id=" + str(register) + "&hash=" + chop + "&link=" + link
+	recording_link = "http://" + domain + "/redirect?id=" + str(register) + "&hash=" + chop + "&link=" + pn(link)
 
 	return (recording_link)
 
