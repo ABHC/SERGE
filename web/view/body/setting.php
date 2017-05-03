@@ -665,8 +665,10 @@
 		<div class="scientificPublicationManagement">
 			<h2>Science watch management</h2>
 			<div class="newQueryContainer">
-				<input alt="Add" title="Add" class="submit" type="submit" value="" />
-				<select alt="Type" title="Type" class="queryType" name="scienceType00" id="scienceType00">
+				<input title="Add new science query" class="submit" type="submit" name="scienceQuerySubmit" value="add" />
+				<input type="checkbox" id="openParenthesis0" name="openParenthesis0" value="active" />
+				<label class="queryParenthesis" for="openParenthesis0">(</label>
+				<select title="Type" class="queryType" name="scienceType0" id="scienceType00">
 					<option value="ti">Title</option>
 					<option value="au">Author</option>
 					<option value="abs">Abstract</option>
@@ -675,16 +677,20 @@
 					<option value="cat">Subject categorie</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" class="query" name="scienceQuery00" id="scienceQuery00" placeholder="Keyword" size="30" />
+				<input type="text" class="query" name="scienceQuery0" id="scienceQuery00" placeholder="Keyword" size="30" />
+				<input type="checkbox" id="closeParenthesis0" name="openParenthesis0" value="active" />
+				<label class="queryParenthesis" for="closeParenthesis0">)</label>
 				<div class="btnList">
-					<input type="radio" id="andOrNotand_AND00" name="andOrAndnot00">
+					<input type="radio" id="andOrNotand_AND00" name="andOrAndnot0" value="AND">
 					<label class="ANDOrNotand" for="andOrNotand_AND00"></label>
-					<input type="radio" id="andOrNotand_OR00" name="andOrAndnot00" checked>
+					<input type="radio" id="andOrNotand_OR00" name="andOrAndnot0" value="OR" checked>
 					<label class="andORNotand" for="andOrNotand_OR00"></label>
-					<input type="radio" id="andOrNotand_NOTAND00" name="andOrAndnot00">
+					<input type="radio" id="andOrNotand_NOTAND00" name="andOrAndnot0" value="NOTAND">
 					<label class="andOrNOTAND" for="andOrNotand_NOTAND00"></label>
 				</div>
-				<select alt="Type" title="Type" class="queryType" name="scienceType01" id="scienceType01">
+				<input type="checkbox" id="openParenthesis1" name="openParenthesis1" value="active" checked/>
+				<label class="queryParenthesis" for="openParenthesis1">(</label>
+				<select alt="Type" title="Type" class="queryType" name="scienceType1" id="scienceType01">
 					<option value="ti">Title</option>
 					<option value="au">Author</option>
 					<option value="abs">Abstract</option>
@@ -693,16 +699,20 @@
 					<option value="cat">Subject categorie</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" class="query" name="scienceQuery01" id="scienceQuery01" placeholder="Keyword" size="30" />
+				<input type="text" class="query" name="scienceQuery1" id="scienceQuery01" placeholder="Keyword" size="30" />
+				<input type="checkbox" id="closeParenthesis1" name="closeParenthesis1" value="active" />
+				<label class="queryParenthesis" for="closeParenthesis1">)</label>
 				<div class="btnList">
-					<input type="radio" id="andOrNotand_AND01" name="andOrAndnot01">
+					<input type="radio" id="andOrNotand_AND01" name="andOrAndnot1" value="AND">
 					<label class="ANDOrNotand" for="andOrNotand_AND01"></label>
-					<input type="radio" id="andOrNotand_OR01" name="andOrAndnot01" checked>
+					<input type="radio" id="andOrNotand_OR01" name="andOrAndnot1" value="OR" checked>
 					<label class="andORNotand" for="andOrNotand_OR01"></label>
-					<input type="radio" id="andOrNotand_NOTAND01" name="andOrAndnot01">
+					<input type="radio" id="andOrNotand_NOTAND01" name="andOrAndnot1" value="NOTAND">
 					<label class="andOrNOTAND" for="andOrNotand_NOTAND01"></label>
 				</div>
-				<select alt="Type" title="Type" class="queryType" name="scienceType02" id="scienceType02">
+				<input type="checkbox" id="openParenthesis2" name="openParenthesis2" value="active" />
+				<label class="queryParenthesis" for="openParenthesis2">(</label>
+				<select alt="Type" title="Type" class="queryType" name="scienceType2" id="scienceType02">
 					<option value="ti">Title</option>
 					<option value="au">Author</option>
 					<option value="abs">Abstract</option>
@@ -711,9 +721,12 @@
 					<option value="cat">Subject categorie</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" class="query" name="scienceQuery02" id="scienceQuery02" placeholder="Keyword" size="30" />
+				<input type="text" class="query" name="scienceQuery2" id="scienceQuery02" placeholder="Keyword" size="30" />
+				<input type="checkbox" id="closeParenthesis2" name="closeParenthesis2" value="active" checked/>
+				<label class="queryParenthesis" for="closeParenthesis2">)</label>
 				<input alt="Extend" title="Extend" class="extend" type="submit" id="extendScience" name="extendScience" value=">>" />
 			</div>
+			<?php echo $ERROR_SCIENCEQUERY; ?>
 			<div class="queryContainer">
 				<a title="Delete" class="deleteQuery" href="setting?action=deleteQueryScience&query=0" ></a>
 				<a title="Disable" class="disableQuery" href="setting?action=disableQueryScience&query=0" ></a>

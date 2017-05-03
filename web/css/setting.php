@@ -989,8 +989,8 @@ input:checked + .slider:before
 	display: none;
 }
 
-[type="checkbox"]:not(:checked) + label,
-[type="checkbox"]:checked + label
+[type="checkbox"]:not(:checked) + .andOr,
+[type="checkbox"]:checked + .andOr
 {
 	position: relative;
 	padding-left: 20px;
@@ -998,7 +998,7 @@ input:checked + .slider:before
 	cursor: pointer;
 }
 
-[type="checkbox"]:not(:checked) + label:before
+[type="checkbox"]:not(:checked) + .andOr:before
 {
 	content: '';
 	position: absolute;
@@ -1013,7 +1013,7 @@ input:checked + .slider:before
 }
 
 
-[type="checkbox"]:checked + label:before
+[type="checkbox"]:checked + .andOr:before
 {
 	content: '';
 	position: absolute;
@@ -1027,7 +1027,7 @@ input:checked + .slider:before
 	transition: all .5s;
 }
 
-[type="checkbox"]:not(:checked) + label:after
+[type="checkbox"]:not(:checked) + .andOr:after
 {
 	content: 'AND';
 	position: absolute;
@@ -1038,7 +1038,7 @@ input:checked + .slider:before
 	text-align: center;
 }
 
-[type="checkbox"]:checked + label:after
+[type="checkbox"]:checked + .andOr:after
 {
 	content: 'OR';
 	position: absolute;
@@ -1162,6 +1162,27 @@ input:checked + .slider:before
 	width: 60px;
 	height: 50px;
 	margin-bottom: 15px;
+}
+
+.queryParenthesis
+{
+	font-size: 40px;
+	padding-bottom: 7px;
+	cursor: pointer;
+	margin-left: 0;
+	margin-right: -5px;
+}
+
+[type="checkbox"]:checked + .queryParenthesis
+{
+	color: rgba(245, 245, 245, 0.4);
+	transition: all 0.6s;
+}
+
+[type="checkbox"]:not(:checked) + .queryParenthesis
+{
+	color: rgba(245, 245, 245, 0.09);
+	transition: all 0.3s;
 }
 
 .ANDOrNotand,
