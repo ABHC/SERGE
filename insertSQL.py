@@ -125,8 +125,8 @@ def ofSourceAndName(now, logger_info, logger_error, database):
 			if rss_name is None or refresh_string in rss_name:
 
 				req_results = sergenet.allRequestLong(link, logger_info, logger_error)
-				rss_error = req_results[0]
-				rss = req_results[1]
+				rss = req_results[0]
+				rss_error = req_results[1]
 
 				if rss_error == False:
 

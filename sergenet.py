@@ -70,9 +70,7 @@ def headToEtag(link, logger_info, logger_error):
 
 
 def allRequestLong(link, logger_info, logger_error):
-	"""Function for standardized requests to feed and internet pages.
-
-	Name from Metallica, All Nightmare Long."""
+	"""Function for standardized requests to feed and internet pages."""
 
 	try:
 		req = requests.get(link, headers={'User-Agent' : "Serge Browser"}, timeout=15)
