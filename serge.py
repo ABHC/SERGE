@@ -20,6 +20,7 @@ from math import ceil
 import re
 import sys
 import cgi
+from HTMLParser import HTMLParser
 import time
 from datetime import datetime as dt
 import datetime
@@ -75,6 +76,13 @@ def databaseConnection():
 	database = MySQLdb.connect(host="localhost", user="Serge", passwd=passSQL, db="Serge", use_unicode=1, charset="utf8mb4")
 
 	return database
+
+
+def escaping(string):
+	h = HTMLParser()
+	stringEscaped = cgi.escape(h.unescape(string.strip())).encode('utf8', 'xmlcharrefreplace').decode('utf8')
+
+	return stringEscaped
 
 
 def newscast(trio_sources_news):
@@ -308,7 +316,7 @@ def newscast(trio_sources_news):
 						query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s, keyword_id = %s, owners = %s WHERE link = %s")
 
 						########### ITEM BUILDING
-						post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
+						post_title = escaping(post_title)
 						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
 						########### CALL insertOrUpdate FUNCTION
@@ -330,7 +338,7 @@ def newscast(trio_sources_news):
 						query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s, keyword_id = %s, owners = %s WHERE link = %s")
 
 						########### ITEM BUILDING
-						post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
+						post_title = escaping(post_title)
 						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
 						########### CALL insertOrUpdate FUNCTION
@@ -457,7 +465,7 @@ def science():
 						query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s, query_id = %s, owners = %s WHERE link = %s")
 
 						########### ITEM BUILDING
-						post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
+						post_title = escaping(post_title)
 						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
 						########### CALL insertOrUpdate FUNCTION
@@ -544,7 +552,7 @@ def science():
 					query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s, query_id = %s, owners = %s WHERE link = %s")
 
 					########### ITEM BUILDING
-					post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
+					post_title = escaping(post_title)
 					item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
 					########### CALL insertOrUpdate FUNCTION
@@ -651,7 +659,7 @@ def patents():
 						query_jelly_update = None
 
 						########### ITEM BUILDING
-						post_title = cgi.escape(post_title.strip()).encode('utf8', 'xmlcharrefreplace').decode('utf8')
+						post_title = escaping(post_title)
 						item = (post_title, post_link, post_date, keyword_id_comma2, owners)
 
 						########### CALL insertOrUpdate FUNCTION
