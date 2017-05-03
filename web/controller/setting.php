@@ -517,17 +517,27 @@ elseif ($userSettings['record_read'] == 1)
 }
 
 # Add new science query
+include_once('model/addNewScienceQuery.php');
 if (!empty($_POST['scienceQuerySubmit']) AND $_POST['scienceQuerySubmit'] == 'add')
 {
 	$cpt = 0;
 	$open = 0;
 	$close = 0;
 	$nbscienceType = 'scienceType0';
+	$queryFieldsDoaj['ti']  = 'bibjson.title';
+	$queryFieldsDoaj['au']  = 'bibjson.author.name';
+	$queryFieldsDoaj['abs'] = 'bibjson.abstract';
+	$queryFieldsDoaj['cat'] = 'bibjson.subject.term';
+	$queryFieldsDoaj['all'] = '';
+	$queryBoundDoaj['OR']   = 'OR';
+	$queryBoundDoaj['AND']  = 'AND';
+	$queryBoundDoaj['NOTAND'] = 'NOT';
 	$queryScience_Arxiv = '';
-# TODO parenthesis
+	$queryScience_Doaj  = '';
+
 	while(!empty($_POST[$nbscienceType]) AND isset($_POST['scienceQuery' . $cpt]))
 	{
-		if (preg_match("/(ti|au|abs|co|jr|cat)/", $_POST['scienceType' . $cpt]))
+		if (preg_match("/(^ti$|^au$|^abs$|^jr$|^cat$|^all$)/", $_POST['scienceType' . $cpt]))
 		{
 			$openParenthesis = '';
 			$closeParenthesis = '';
@@ -544,27 +554,31 @@ if (!empty($_POST['scienceQuerySubmit']) AND $_POST['scienceQuerySubmit'] == 'ad
 			}
 
 			$queryScience_Arxiv = $queryScience_Arxiv . $openParenthesis . $_POST['scienceType' . $cpt] . ':';
+			$queryScience_Doaj = $queryScience_Doaj . $openParenthesis . $queryFieldsDoaj[$_POST['scienceType' . $cpt]] . ':';
 
 			$scienceQuery = htmlspecialchars($_POST['scienceQuery' . $cpt]);
-			$scienceQuery = preg_replace("/ /", "+", $scienceQuery);
 			$scienceQuery = urlencode($scienceQuery);
+			$scienceQuery = preg_replace("/ /", "+", $scienceQuery);
 			$queryScience_Arxiv = $queryScience_Arxiv . '%22' . $scienceQuery . '%22' . $closeParenthesis;
+			$queryScience_Doaj = $queryScience_Doaj . '%22' . $scienceQuery . '%22' . $closeParenthesis;
 
 			if (!empty($_POST['andOrAndnot' . $cpt])
-					AND preg_match("/(AND|OR|NOTAND)/", $_POST['andOrAndnot' . $cpt])
+					AND preg_match("/(^AND$|^OR$|^NOTAND$)/", $_POST['andOrAndnot' . $cpt])
 					AND !empty($_POST['scienceType' . ($cpt + 1)])
-					AND preg_match("/(ti|au|abs|co|jr|cat)/", $_POST['scienceType' . ($cpt + 1)])
+					AND preg_match("/(^ti$|^au$|^abs$|^jr$|^cat$|^all$)/", $_POST['scienceType' . ($cpt + 1)])
 					AND isset($_POST['scienceQuery' . ($cpt + 1)]))
 			{
 				$queryScience_Arxiv = $queryScience_Arxiv . '+' . $_POST['andOrAndnot' . $cpt] . '+';
+				$queryScience_Doaj = $queryScience_Doaj . ' ' . $queryBoundDoaj[$_POST['andOrAndnot' . $cpt]] . ' ';
 			}
 			elseif (!empty($_POST['andOrAndnot' . $cpt])
-							AND !preg_match("/(AND|OR|NOTAND)/", $_POST['andOrAndnot' . $cpt])
+							AND !preg_match("/(^AND$|^OR$|^NOTAND$)/", $_POST['andOrAndnot' . $cpt])
 							AND !empty($_POST['scienceType' . ($cpt + 1)])
-							AND preg_match("/(ti|au|abs|co|jr|cat)/", $_POST['scienceType' . ($cpt + 1)])
+							AND preg_match("/(^ti$|^au$|^abs$|^jr$|^cat$|^all$)/", $_POST['scienceType' . ($cpt + 1)])
 							AND isset($_POST['scienceQuery' . ($cpt + 1)]))
 			{
 				$queryScience_Arxiv = $queryScience_Arxiv . '+OR+';
+				$queryScience_Doaj = $queryScience_Doaj . ' OR ';
 			}
 		}
 
@@ -577,7 +591,13 @@ if (!empty($_POST['scienceQuerySubmit']) AND $_POST['scienceQuerySubmit'] == 'ad
 		$ERROR_SCIENCEQUERY = 'Invalid query : parenthesis does not match';
 	}
 
-	echo '$queryScience_Arxiv : ' . $queryScience_Arxiv;
+	if (empty($ERROR_SCIENCEQUERY))
+	{
+		$ERROR_SCIENCEQUERY = addNewScienceQuery($queryScience_Arxiv, $queryScience_Doaj, $bdd);
+	}
+
+	echo '$queryScience_Arxiv : ' . $queryScience_Arxiv . '<br>';
+	echo '$queryScience_Doaj : ' . $queryScience_Doaj;
 }
 
 include_once('view/nav/nav.php');

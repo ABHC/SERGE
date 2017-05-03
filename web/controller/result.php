@@ -1,5 +1,4 @@
 <?php
-
 include_once('controller/accessLimitedToSignInPeople.php');
 
 //include_once('model/get_text.php');

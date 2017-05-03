@@ -672,9 +672,9 @@
 					<option value="ti">Title</option>
 					<option value="au">Author</option>
 					<option value="abs">Abstract</option>
-					<option value="co">Comment</option>
 					<option value="jr">Journal reference</option>
 					<option value="cat">Subject categorie</option>
+					<option value="all">All</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
 				<input type="text" class="query" name="scienceQuery0" id="scienceQuery00" placeholder="Keyword" size="30" />
@@ -694,9 +694,9 @@
 					<option value="ti">Title</option>
 					<option value="au">Author</option>
 					<option value="abs">Abstract</option>
-					<option value="co">Comment</option>
 					<option value="jr">Journal reference</option>
 					<option value="cat">Subject categorie</option>
+					<option value="all">All</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
 				<input type="text" class="query" name="scienceQuery1" id="scienceQuery01" placeholder="Keyword" size="30" />
@@ -716,9 +716,9 @@
 					<option value="ti">Title</option>
 					<option value="au">Author</option>
 					<option value="abs">Abstract</option>
-					<option value="co">Comment</option>
 					<option value="jr">Journal reference</option>
 					<option value="cat">Subject categorie</option>
+					<option value="all">All</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
 				<input type="text" class="query" name="scienceQuery2" id="scienceQuery02" placeholder="Keyword" size="30" />
