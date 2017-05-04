@@ -1477,6 +1477,18 @@ input:checked + .slider:before
 	background-color: rgba(255,255,255, 0.2);
 }
 
+.queryParenthesisView
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: rgba(245, 245, 245, 0.6);
+	font-size: 40px;
+	margin-top: -5px;
+	margin-left: -7px;
+	margin-right: 2px;
+}
+
 .queryOrView
 {
 	display: flex;

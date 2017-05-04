@@ -558,7 +558,7 @@ if (!empty($_POST['scienceQuerySubmit']) AND $_POST['scienceQuerySubmit'] == 'ad
 
 			$scienceQuery = htmlspecialchars($_POST['scienceQuery' . $cpt]);
 			$scienceQuery = urlencode($scienceQuery);
-			$scienceQuery = preg_replace("/ /", "+", $scienceQuery);
+			$scienceQuery = preg_replace("/( |:|`|%22|%28|%29)/", "+", $scienceQuery);
 			$queryScience_Arxiv = $queryScience_Arxiv . '%22' . $scienceQuery . '%22' . $closeParenthesis;
 			$queryScience_Doaj = $queryScience_Doaj . '%22' . $scienceQuery . '%22' . $closeParenthesis;
 

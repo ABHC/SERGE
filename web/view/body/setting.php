@@ -672,8 +672,8 @@
 					<option value="ti">Title</option>
 					<option value="au">Author</option>
 					<option value="abs">Abstract</option>
-					<option value="jr">Journal reference</option>
-					<option value="cat">Subject categorie</option>
+					<option value="jr">Reference</option>
+					<option value="cat">Category</option>
 					<option value="all">All</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
@@ -694,8 +694,8 @@
 					<option value="ti">Title</option>
 					<option value="au">Author</option>
 					<option value="abs">Abstract</option>
-					<option value="jr">Journal reference</option>
-					<option value="cat">Subject categorie</option>
+					<option value="jr">Reference</option>
+					<option value="cat">Category</option>
 					<option value="all">All</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
@@ -716,8 +716,8 @@
 					<option value="ti">Title</option>
 					<option value="au">Author</option>
 					<option value="abs">Abstract</option>
-					<option value="jr">Journal reference</option>
-					<option value="cat">Subject categorie</option>
+					<option value="jr">Reference</option>
+					<option value="cat">Category</option>
 					<option value="all">All</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
@@ -730,30 +730,73 @@
 			<div class="queryContainer">
 				<a title="Delete" class="deleteQuery" href="setting?action=deleteQueryScience&query=0" ></a>
 				<a title="Disable" class="disableQuery" href="setting?action=disableQueryScience&query=0" ></a>
-				<a href="setting?action=editQueryScience&query=0" >
-					<div class="queryTypeView">Author</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=0" >
-					<div class="queryKeywordView">Gintoki</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=0" >
-					<div class="queryAndView">AND</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=0" >
-					<div class="queryTypeView">Title</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=0" >
-					<div class="queryKeywordView">Wooden computer</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=0" >
-					<div class="queryOrView">OR</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=0" >
-					<div class="queryTypeView">Comment</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=0" >
-					<div class="queryKeywordView">Wooden electronics</div>
-				</a>
+				<?php
+				$queryFieldsName['ti']  = 'Title';
+				$queryFieldsName['au']  = 'Author';
+				$queryFieldsName['abs'] = 'Abstract';
+				$queryFieldsName['cat'] = 'Category';
+				$queryFieldsName['jr']  = 'Reference';
+				$queryFieldsName['all'] = 'All';
+
+				$query = 'ti:%22artificial+intelligence%22+AND+%28abs:%22genetic%22+AND+abs:%22algorithm%22%29';
+
+				$query = preg_replace("/%22/", "`", $query);
+				$query = preg_replace("/%28/", "(", $query);
+				$query = preg_replace("/%29/", ")", $query);
+
+				preg_match_all("/[a-z]+:/", $query, $queryFields);
+				foreach ($queryFields[0] as $fields)
+				{
+					preg_match("/^\(/", $query, $openParenthesisDisplay);
+					if (!empty($openParenthesisDisplay[0]))
+					{
+						$query = preg_replace("/^\(/", "", $query);
+						$queryDisplay = $queryDisplay . '
+						<a href="setting?action=editQueryScience&query=0" >
+							<div class="queryParenthesisView">(</div>
+						</a>
+						';
+					}
+
+					preg_match("/$fields`[^`]*`/", $query, $fieldInput);
+					$fieldInputPURE = preg_replace("/\+/", "\+", $fieldInput[0]);
+					$query = preg_replace("/$fieldInputPURE/", "", $query);
+					$fieldInput = preg_replace("/(.+:|`)/", "", $fieldInput[0]);
+					$fieldInput = preg_replace("/\+/", " ", $fieldInput);
+					$fields = preg_replace("/(:|`)/", "", $fields);
+					$queryDisplay = $queryDisplay . '
+					<a href="setting?action=editQueryScience&query=0" >
+						<div class="queryTypeView">' . $queryFieldsName[$fields] . '</div>
+					</a>
+					<a href="setting?action=editQueryScience&query=0" >
+						<div class="queryKeywordView">' . $fieldInput . '</div>
+					</a>';
+
+					preg_match("/^\)/", $query, $closeParenthesisDisplay);
+					if (!empty($closeParenthesisDisplay[0]))
+					{
+						$query = preg_replace("/^\)/", "", $query);
+						$queryDisplay = $queryDisplay . '
+						<a href="setting?action=editQueryScience&query=0" >
+							<div class="queryParenthesisView">)</div>
+						</a>
+						';
+					}
+
+					preg_match("/^\+(AND|OR|NOTAND)\+/", $query, $logicalConnector);
+					if (!empty($logicalConnector[1]))
+					{
+						$query = preg_replace("/^\+(AND|OR|NOTAND)\+/", "", $query);
+						$queryDisplay = $queryDisplay . '
+						<a href="setting?action=editQueryScience&query=0" >
+						<div class="query' . ucfirst(strtolower($logicalConnector[1])) . 'View">' . $logicalConnector[1] . '</div>
+						</a>
+						';
+					}
+				}
+
+				echo $queryDisplay;
+				?>
 			</div>
 			<div class="queryContainer">
 				<a title="Delete" class="deleteQuery" href="setting?action=deleteQueryScience&query=1" ></a>
