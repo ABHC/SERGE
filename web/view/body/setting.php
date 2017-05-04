@@ -738,8 +738,9 @@
 				$queryFieldsName['jr']  = 'Reference';
 				$queryFieldsName['all'] = 'All';
 
-				$query = 'ti:%22artificial+intelligence%22+AND+%28abs:%22genetic%22+AND+abs:%22algorithm%22%29';
+				include_once('model/readOwnerScienceQuery.php');
 
+				$query = $query['query_arxiv'];
 				$query = preg_replace("/%22/", "`", $query);
 				$query = preg_replace("/%28/", "(", $query);
 				$query = preg_replace("/%29/", ")", $query);
