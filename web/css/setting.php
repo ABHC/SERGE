@@ -1482,7 +1482,7 @@ input:checked + .slider:before
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	color: rgba(245, 245, 245, 0.6);
+	color: rgba(245, 245, 245, 0.4);
 	font-size: 40px;
 	margin-top: -5px;
 	margin-left: -7px;

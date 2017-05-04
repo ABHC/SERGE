@@ -681,11 +681,11 @@
 				<input type="checkbox" id="closeParenthesis0" name="openParenthesis0" value="active" />
 				<label class="queryParenthesis" for="closeParenthesis0">)</label>
 				<div class="btnList">
-					<input type="radio" id="andOrNotand_AND00" name="andOrAndnot0" value="AND">
+					<input type="radio" id="andOrNotand_AND00" name="andOrAndnot1" value="AND">
 					<label class="ANDOrNotand" for="andOrNotand_AND00"></label>
-					<input type="radio" id="andOrNotand_OR00" name="andOrAndnot0" value="OR" checked>
+					<input type="radio" id="andOrNotand_OR00" name="andOrAndnot1" value="OR" checked>
 					<label class="andORNotand" for="andOrNotand_OR00"></label>
-					<input type="radio" id="andOrNotand_NOTAND00" name="andOrAndnot0" value="NOTAND">
+					<input type="radio" id="andOrNotand_NOTAND00" name="andOrAndnot1" value="NOTAND">
 					<label class="andOrNOTAND" for="andOrNotand_NOTAND00"></label>
 				</div>
 				<input type="checkbox" id="openParenthesis1" name="openParenthesis1" value="active" checked/>
@@ -703,11 +703,11 @@
 				<input type="checkbox" id="closeParenthesis1" name="closeParenthesis1" value="active" />
 				<label class="queryParenthesis" for="closeParenthesis1">)</label>
 				<div class="btnList">
-					<input type="radio" id="andOrNotand_AND01" name="andOrAndnot1" value="AND">
+					<input type="radio" id="andOrNotand_AND01" name="andOrAndnot2" value="AND">
 					<label class="ANDOrNotand" for="andOrNotand_AND01"></label>
-					<input type="radio" id="andOrNotand_OR01" name="andOrAndnot1" value="OR" checked>
+					<input type="radio" id="andOrNotand_OR01" name="andOrAndnot2" value="OR" checked>
 					<label class="andORNotand" for="andOrNotand_OR01"></label>
-					<input type="radio" id="andOrNotand_NOTAND01" name="andOrAndnot1" value="NOTAND">
+					<input type="radio" id="andOrNotand_NOTAND01" name="andOrAndnot2" value="NOTAND">
 					<label class="andOrNOTAND" for="andOrNotand_NOTAND01"></label>
 				</div>
 				<input type="checkbox" id="openParenthesis2" name="openParenthesis2" value="active" />
@@ -727,18 +727,22 @@
 				<input alt="Extend" title="Extend" class="extend" type="submit" id="extendScience" name="extendScience" value=">>" />
 			</div>
 			<?php echo $ERROR_SCIENCEQUERY; ?>
-			<div class="queryContainer">
-				<a title="Delete" class="deleteQuery" href="setting?action=deleteQueryScience&query=0" ></a>
-				<a title="Disable" class="disableQuery" href="setting?action=disableQueryScience&query=0" ></a>
-				<?php
+			<?php
+			include_once('model/readOwnerScienceQuery.php');
+			foreach ($queries as $query)
+			{
+				$queryDisplay = '';
+				echo '
+				<div class="queryContainer">
+					<a title="Delete" class="deleteQuery" href="setting?action=deleteQueryScience&query=0" ></a>
+					<a title="Disable" class="disableQuery" href="setting?action=disableQueryScience&query=0" ></a>
+				';
 				$queryFieldsName['ti']  = 'Title';
 				$queryFieldsName['au']  = 'Author';
 				$queryFieldsName['abs'] = 'Abstract';
 				$queryFieldsName['cat'] = 'Category';
 				$queryFieldsName['jr']  = 'Reference';
 				$queryFieldsName['all'] = 'All';
-
-				include_once('model/readOwnerScienceQuery.php');
 
 				$query = $query['query_arxiv'];
 				$query = preg_replace("/%22/", "`", $query);
@@ -788,103 +792,18 @@
 					if (!empty($logicalConnector[1]))
 					{
 						$query = preg_replace("/^\+(AND|OR|NOTAND)\+/", "", $query);
+						preg_match("/.{1,3}/", $logicalConnector[1], $logicalConnector);
 						$queryDisplay = $queryDisplay . '
 						<a href="setting?action=editQueryScience&query=0" >
-						<div class="query' . ucfirst(strtolower($logicalConnector[1])) . 'View">' . $logicalConnector[1] . '</div>
+						<div class="query' . ucfirst(strtolower($logicalConnector[0])) . 'View">' . $logicalConnector[0] . '</div>
 						</a>
 						';
 					}
 				}
 
-				echo $queryDisplay;
-				?>
-			</div>
-			<div class="queryContainer">
-				<a title="Delete" class="deleteQuery" href="setting?action=deleteQueryScience&query=1" ></a>
-				<a title="Disable" class="disableQuery" href="setting?action=disableQueryScience&query=1" ></a>
-				<a href="setting?action=editQueryScience&query=1" >
-					<div class="queryTypeView">Author</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=1" >
-					<div class="queryKeywordView">Pr Chen</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=1" >
-					<div class="queryOrView">OR</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=1" >
-					<div class="queryTypeView">Title</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=1" >
-					<div class="queryKeywordView">Pokemon</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=1" >
-					<div class="queryAndView">AND</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=1" >
-					<div class="queryTypeView">Title</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=1" >
-					<div class="queryKeywordView">Pika</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=1" >
-					<div class="queryAndView">AND</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=1" >
-					<div class="queryTypeView">Abstract</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=1" >
-					<div class="queryKeywordView">Joel</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=1" >
-					<div class="queryNotView">NOT</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=1" >
-					<div class="queryTypeView">English abstract</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=1" >
-					<div class="queryKeywordView">Sacha</div>
-				</a>
-			</div>
-			<div class="queryContainer">
-				<a title="Delete" class="deleteQuery" href="setting?action=deleteQueryScience&query=2" ></a>
-				<a title="Disable" class="disableQuery" href="setting?action=disableQueryScience&query=2" ></a>
-				<a href="setting?action=editQueryScience&query=2" >
-					<div class="queryTypeView">Author</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=2" >
-					<div class="queryKeywordView">Ruffy67</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=2" >
-					<div class="queryAndView">AND</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=2" >
-					<div class="queryTypeView">English abstract</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=2" >
-					<div class="queryKeywordView">test</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=2" >
-					<div class="queryNotView">NOT</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=2" >
-					<div class="queryTypeView">English title</div>
-				</a>
-				<a href="setting?action=editQueryScience&query=2" >
-					<div class="queryKeywordView">test2</div>
-				</a>
-			</div>
-			<div class="queryContainer">
-				<a title="Delete" class="deleteQuery" href="setting?action=deleteQueryScience&query=3" ></a>
-				<a title="Disable" class="disableQuery" href="setting?action=disableQueryScience&query=3" ></a>
-				<div class="queryTypeView">Title</div>
-				<div class="queryKeywordView">RoboJo</div>
-				<div class="queryAndView">AND</div>
-				<div class="queryTypeView">Abstract</div>
-				<div class="queryKeywordView">Pied en canard</div>
-				<div class="queryNotView">NOT</div>
-				<div class="queryTypeView">Title</div>
-				<div class="queryKeywordView">Jo le taxi</div>
-			</div>
+				echo $queryDisplay . '</div>';
+			}
+			?>
 			<div class="queryContainer Qdisable">
 				<a title="Delete" class="deleteQuery" href="setting?action=deleteQueryScience&query=4" ></a>
 				<a title="Activate" class="activateQuery" href="setting?action=activeQueryScience&query=4" ></a>

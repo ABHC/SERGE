@@ -535,8 +535,21 @@ if (!empty($_POST['scienceQuerySubmit']) AND $_POST['scienceQuerySubmit'] == 'ad
 	$queryScience_Arxiv = '';
 	$queryScience_Doaj  = '';
 
-	while(!empty($_POST[$nbscienceType]) AND isset($_POST['scienceQuery' . $cpt]))
+	while(!empty($_POST[$nbscienceType]) AND !empty($_POST['scienceQuery' . $cpt]))
 	{
+		if (!empty($_POST['andOrAndnot' . $cpt])
+				AND preg_match("/(^AND$|^OR$|^NOTAND$)/", $_POST['andOrAndnot' . $cpt]))
+		{
+			$queryScience_Arxiv = $queryScience_Arxiv . '+' . $_POST['andOrAndnot' . $cpt] . '+';
+			$queryScience_Doaj = $queryScience_Doaj . ' ' . $queryBoundDoaj[$_POST['andOrAndnot' . $cpt]] . ' ';
+		}
+		elseif (!empty($_POST['andOrAndnot' . $cpt])
+						AND !preg_match("/(^AND$|^OR$|^NOTAND$)/", $_POST['andOrAndnot' . $cpt]))
+		{
+			$queryScience_Arxiv = $queryScience_Arxiv . '+OR+';
+			$queryScience_Doaj = $queryScience_Doaj . ' OR ';
+		}
+
 		if (preg_match("/(^ti$|^au$|^abs$|^jr$|^cat$|^all$)/", $_POST['scienceType' . $cpt]))
 		{
 			$openParenthesis = '';
@@ -554,34 +567,19 @@ if (!empty($_POST['scienceQuerySubmit']) AND $_POST['scienceQuerySubmit'] == 'ad
 			}
 
 			$queryScience_Arxiv = $queryScience_Arxiv . $openParenthesis . $_POST['scienceType' . $cpt] . ':';
-			$queryScience_Doaj = $queryScience_Doaj . $openParenthesis . $queryFieldsDoaj[$_POST['scienceType' . $cpt]] . ':';
+			$queryScience_Doaj = $queryScience_Doaj . $openParenthesis;
+
+			if (!empty($queryFieldsDoaj[$_POST['scienceType' . $cpt]]))
+			{
+				$queryScience_Doaj = $queryScience_Doaj . $queryFieldsDoaj[$_POST['scienceType' . $cpt]] . ':';
+			}
 
 			$scienceQuery = htmlspecialchars($_POST['scienceQuery' . $cpt]);
 			$scienceQuery = urlencode($scienceQuery);
 			$scienceQuery = preg_replace("/( |:|`|%22|%28|%29)/", "+", $scienceQuery);
 			$queryScience_Arxiv = $queryScience_Arxiv . '%22' . $scienceQuery . '%22' . $closeParenthesis;
 			$queryScience_Doaj = $queryScience_Doaj . '%22' . $scienceQuery . '%22' . $closeParenthesis;
-
-			if (!empty($_POST['andOrAndnot' . $cpt])
-					AND preg_match("/(^AND$|^OR$|^NOTAND$)/", $_POST['andOrAndnot' . $cpt])
-					AND !empty($_POST['scienceType' . ($cpt + 1)])
-					AND preg_match("/(^ti$|^au$|^abs$|^jr$|^cat$|^all$)/", $_POST['scienceType' . ($cpt + 1)])
-					AND isset($_POST['scienceQuery' . ($cpt + 1)]))
-			{
-				$queryScience_Arxiv = $queryScience_Arxiv . '+' . $_POST['andOrAndnot' . $cpt] . '+';
-				$queryScience_Doaj = $queryScience_Doaj . ' ' . $queryBoundDoaj[$_POST['andOrAndnot' . $cpt]] . ' ';
-			}
-			elseif (!empty($_POST['andOrAndnot' . $cpt])
-							AND !preg_match("/(^AND$|^OR$|^NOTAND$)/", $_POST['andOrAndnot' . $cpt])
-							AND !empty($_POST['scienceType' . ($cpt + 1)])
-							AND preg_match("/(^ti$|^au$|^abs$|^jr$|^cat$|^all$)/", $_POST['scienceType' . ($cpt + 1)])
-							AND isset($_POST['scienceQuery' . ($cpt + 1)]))
-			{
-				$queryScience_Arxiv = $queryScience_Arxiv . '+OR+';
-				$queryScience_Doaj = $queryScience_Doaj . ' OR ';
-			}
 		}
-
 		$cpt ++;
 		$nbscienceType = 'scienceType' . $cpt;
 	}
@@ -596,8 +594,6 @@ if (!empty($_POST['scienceQuerySubmit']) AND $_POST['scienceQuerySubmit'] == 'ad
 		$ERROR_SCIENCEQUERY = addNewScienceQuery($queryScience_Arxiv, $queryScience_Doaj, $bdd);
 	}
 
-	echo '$queryScience_Arxiv : ' . $queryScience_Arxiv . '<br>';
-	echo '$queryScience_Doaj : ' . $queryScience_Doaj;
 }
 
 include_once('view/nav/nav.php');
