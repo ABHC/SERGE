@@ -117,7 +117,7 @@
 			if ($cpt == $page)
 			{
 				echo '
-				<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '" class="pageNumber current">
+				<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '&type=' . $type . '" class="pageNumber current">
 				' . $cpt . '
 				</a>';
 				$dotBetweenPageNumber = FALSE;
@@ -125,14 +125,14 @@
 			elseif ($cpt <= 2)
 			{
 				echo '
-				<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '" class="pageNumber">
+				<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '&type=' . $type . '" class="pageNumber">
 				' . $cpt . '
 				</a>';
 			}
 			elseif (($cpt - 1) == $page OR ($cpt + 1) == $page)
 			{
 				echo '
-				<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '" class="pageNumber">
+				<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '&type=' . $type . '" class="pageNumber">
 				' . $cpt . '
 				</a>';
 				$dotBetweenPageNumber = FALSE;
@@ -140,7 +140,7 @@
 			elseif ($cpt == $nbPage OR ($cpt + 1) == $nbPage)
 			{
 				echo '
-				<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '" class="pageNumber">
+				<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '&type=' . $type . '" class="pageNumber">
 				' . $cpt . '
 				</a>';
 			}
