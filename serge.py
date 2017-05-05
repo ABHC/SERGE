@@ -393,8 +393,8 @@ def science():
 		logger_info.info(query_arxiv.encode("utf8")+"\n")
 
 		req_results = sergenet.allRequestLong(link, logger_info, logger_error)
-		rss_error = req_results[0]
-		rss_arxiv = req_results[1]
+		rss_arxiv = req_results[0]
+		rss_error = req_results[1]
 
 		if rss_error is False:
 			try:
@@ -481,8 +481,8 @@ def science():
 		logger_info.info(query_doaj.encode("utf8")+"\n")
 
 		req_results = sergenet.allRequestLong(link_doaj, logger_info, logger_error)
-		rss_error = req_results[0]
-		web_doaj = req_results[1]
+		web_doaj = req_results[0]
+		rss_error = req_results[1]
 
 		if rss_error is False:
 			try:
@@ -603,8 +603,8 @@ def patents():
 		link = ('https://patentscope.wipo.int/search/rss.jsf?query='+query_wipo+'+&office=&rss=true&sortOption=Pub+Date+Desc')
 
 		req_results = sergenet.allRequestLong(link, logger_info, logger_error)
-		rss_error = req_results[0]
-		rss_wipo = req_results[1]
+		rss_wipo = req_results[0]
+		rss_error = req_results[1]
 
 		if rss_error is False:
 			xmldoc = feedparser.parse(rss_wipo)
