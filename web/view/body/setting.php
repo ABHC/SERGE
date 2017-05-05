@@ -732,10 +732,22 @@
 			foreach ($queries as $query)
 			{
 				$queryDisplay = '';
+				$Qdisable = '';
+				$titleDisableActivate = "Disable";
+				$nameClassDisableActivate = "disable";
+
+				$pattern = ',!' . $_SESSION['id'] . ',';
+				if (preg_match("/$pattern/", $query['owners']))
+				{
+					$Qdisable = 'Qdisable';
+					$titleDisableActivate = "Activate";
+					$nameClassDisableActivate = "activate";
+				}
+
 				echo '
-				<div class="queryContainer">
-					<a title="Delete" class="deleteQuery" href="setting?action=deleteQueryScience&query=0" ></a>
-					<a title="Disable" class="disableQuery" href="setting?action=disableQueryScience&query=0" ></a>
+				<div class="queryContainer ' . $Qdisable . '">
+					<input type="submit" title="Delete" class="deleteQuery" name="delQueryScience" value="query' . $query['id'] . '"/>
+					<input type="submit" title="' . $titleDisableActivate . '" class="' . $nameClassDisableActivate . 'Query" name="' . $nameClassDisableActivate . 'QueryScience" value="query' . $query['id'] . '"/>
 				';
 				$queryFieldsName['ti']  = 'Title';
 				$queryFieldsName['au']  = 'Author';

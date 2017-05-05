@@ -1424,6 +1424,8 @@ input:checked + .slider:before
 	background-size: 20px;
 	background-color: rgba(255,255,255, 0.2);
 	margin-right: 10px;
+	font-size: 0;
+	cursor: pointer;
 }
 
 .disableQuery:hover
@@ -1446,6 +1448,8 @@ input:checked + .slider:before
 	background-size: 20px;
 	background-color: rgba(255,255,255, 0.2);
 	margin-right: 10px;
+	font-size: 0;
+	cursor: pointer;
 }
 
 .activateQuery:hover
@@ -1468,6 +1472,8 @@ input:checked + .slider:before
 	background-size: 20px;
 	background-color: rgba(255,255,255, 0.2);
 	margin-right: 10px;
+	font-size: 0;
+	cursor: pointer;
 }
 
 .deleteQuery:hover

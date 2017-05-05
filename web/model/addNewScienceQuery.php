@@ -32,7 +32,7 @@ function addNewScienceQuery($queryScience_Arxiv, $queryScience_Doaj, $bdd)
 
 		if (!preg_match("$userId", $owners))
 		{
-			$newOwners = $owners . $userId;
+			$newOwners = $owners . $_SESSION['id'] . ',';
 			$req = $bdd->prepare('UPDATE queries_science_serge SET owners = :newOwners, active = :active WHERE id = :id');
 			$req->execute(array(
 				'newOwners' => $newOwners,

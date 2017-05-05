@@ -593,7 +593,62 @@ if (!empty($_POST['scienceQuerySubmit']) AND $_POST['scienceQuerySubmit'] == 'ad
 	{
 		$ERROR_SCIENCEQUERY = addNewScienceQuery($queryScience_Arxiv, $queryScience_Doaj, $bdd);
 	}
+}
 
+#Delete science query
+if (!empty($_POST['delQueryScience']))
+{
+	preg_match("/[0-9]+/", $_POST['delQueryScience'], $idQueryToDel);
+
+	// Read owner science query
+	$req = $bdd->prepare('SELECT owners, active FROM queries_science_serge WHERE id =  :queryId AND owners LIKE :userId');
+	$req->execute(array(
+		'queryId' => $idQueryToDel[0],
+		'userId' => '%,' . $_SESSION['id'] . ',%'));
+		$result = $req->fetch();
+		$req->closeCursor();
+
+	if (!empty($result))
+	{
+		$userId = $_SESSION['id'];
+		$queryOwnerNEW = preg_replace("/,!*$userId,/", ',', $result['owners']);
+
+		$active = $result['active'] - 1;
+
+		$req = $bdd->prepare('UPDATE queries_science_serge SET owners = :owners, active = :active WHERE id = :id');
+		$req->execute(array(
+			'owners' => $queryOwnerNEW,
+			'active' => $active,
+			'id' => $idQueryToDel[0]));
+			$req->closeCursor();
+	}
+}
+
+#Disable science query
+if (!empty($_POST['disableQueryScience']))
+{
+	preg_match("/[0-9]+/", $_POST['disableQueryScience'], $idQueryToDisable);
+	// Read owner science query
+	$req = $bdd->prepare('SELECT owners, active FROM queries_science_serge WHERE id =  :queryId AND owners LIKE :userId');
+	$req->execute(array(
+		'queryId' => $idQueryToDisable[0],
+		'userId' => '%,' . $_SESSION['id'] . ',%'));
+		$result = $req->fetch();
+		$req->closeCursor();
+
+	if (!empty($result))
+	{
+		$userId = $_SESSION['id'];
+		$queryOwnerNEW = preg_replace("/,$userId,/", ",!$userId,", $result['owners']);
+
+		$active = $result['active'] - 1;
+		$req = $bdd->prepare('UPDATE queries_science_serge SET owners = :owners, active = :active WHERE id = :id');
+		$req->execute(array(
+			'owners' => $queryOwnerNEW,
+			'active' => $active,
+			'id' => $idQueryToDisable[0]));
+			$req->closeCursor();
+	}
 }
 
 include_once('view/nav/nav.php');
