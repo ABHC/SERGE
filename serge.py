@@ -673,8 +673,27 @@ def patents():
 			logger_error.warning("\n UNKNOWN CONNEXION ERROR")
 
 
-#def extensions():
+def extensions(database):
 	#fonctions qui liste les extensions qui sont rentrés dans miscellaneous_serge. traite la value pour faire les import et l'éxécution de l'extension. Tout ça un par un pour lancer chaque extension à la suite.
+
+	global logger_info
+	global logger_error
+
+	######### CALL TO TABLE miscellaneous_serge
+	call_extensions = database.cursor()
+	call_extensions.execute("SELECT value FROM miscellaneous_serge WHERE name = 'extension'")
+	row = call_extensions.fetchone()
+	call_extensions.close()
+
+	extensions_names = row[0]
+	extensions_names = extensions_names.split("|")
+
+	######### CALL OF EXTENSIONS
+	for extension in extensions_names:
+		if extension != "":
+			module = __import__(extension)
+			module.startingPoint()
+
 
 ######### ERROR HOOK DEPLOYMENT
 sys.excepthook = cemeteriesOfErrors

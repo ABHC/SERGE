@@ -9,6 +9,7 @@ CREATE TABLE `miscellaneous_serge` (
 INSERT INTO `miscellaneous_serge` (`name`, `value`) VALUES
 ('timelog', UNIX_TIMESTAMP()),
 ('feedtitles_refresh', UNIX_TIMESTAMP()),
-('domain', 'Your_domain_name');
+('domain', 'Your_domain_name'),
+('extension', 'Your_Extension1|Your_Extension2|Your_Extension3');
 
 SET NAMES utf8mb4;
