@@ -651,6 +651,33 @@ if (!empty($_POST['disableQueryScience']))
 	}
 }
 
+#Activate science query
+if (!empty($_POST['activateQueryScience']))
+{
+	preg_match("/[0-9]+/", $_POST['activateQueryScience'], $idQueryToActivate);
+	// Read owner science query
+	$req = $bdd->prepare('SELECT owners, active FROM queries_science_serge WHERE id =  :queryId AND owners LIKE :userId');
+	$req->execute(array(
+		'queryId' => $idQueryToActivate[0],
+		'userId' => '%,!' . $_SESSION['id'] . ',%'));
+		$result = $req->fetch();
+		$req->closeCursor();
+
+	if (!empty($result))
+	{
+		$userId = $_SESSION['id'];
+		$queryOwnerNEW = preg_replace("/,!$userId,/", ",$userId,", $result['owners']);
+
+		$active = $result['active'] + 1;
+		$req = $bdd->prepare('UPDATE queries_science_serge SET owners = :owners, active = :active WHERE id = :id');
+		$req->execute(array(
+			'owners' => $queryOwnerNEW,
+			'active' => $active,
+			'id' => $idQueryToActivate[0]));
+			$req->closeCursor();
+	}
+}
+
 include_once('view/nav/nav.php');
 
 include_once('view/body/setting.php');
