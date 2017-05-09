@@ -38,8 +38,7 @@ def checkMate(database, logger_info, logger_error):
 		if num_tables < 11:
 			logger_error.critical("Missing Tables")
 		elif num_tables > 11:
-			logger_error.critical("Too much Tables")
-			sys.exit()
+			logger_info.info("An extension  or more seems to be installed")
 		else:
 			logger_error.critical("UNEXPECTED ERROR")
 			logger_error.critical("variable value : "+str(num_tables))

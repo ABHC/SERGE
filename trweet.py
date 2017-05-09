@@ -8,8 +8,6 @@ import hashlib
 import MySQLdb
 import datetime
 
-######### IMPORT SERGE SPECIALS MODULES
-#import serge
 
 def twitterConnection():
 	"""Connexion to Twitter API"""
@@ -62,13 +60,13 @@ def rate_limit():
 	return (remaining_search, reset_search, remaining_timeline, reset_timeline)
 
 
-def startingPoint():
+def startingPoint(logger_info, logger_error):
 	"""A kind of main"""
 
-	global logger_info
-	global logger_error
-
 	database = databaseConnection()
+
+	######### RESEARCH ON TWITTER
+	logger_info.info("\n\n######### TWITTER EXTENSION \n\n")
 
 	######### CALL TO queries_trweet_serge
 	call_queries = database.cursor()
@@ -113,29 +111,37 @@ def startingPoint():
 
 		if geo == 1:
 
-			if calls_research_count < remaining_search:
-				trweetFishing(attributes)
+			if calls_research_count <= remaining_search:
+				trweetFishing(attributes, logger_info, logger_error)
+
+			elif calls_research_count > remaining_search:
+				logger_info.info("RATE LIMIT OF RESEARCH METHOD REACHED\n\n")
 
 		elif geo == 0:
 
 			if calls_research_count <= remaining_search:
-				lakesOfTrweets(attributes)
+				lakesOfTrweets(attributes, logger_info, logger_error)
+
+			elif calls_research_count > remaining_search:
+				logger_info.info("RATE LIMIT OF RESEARCH METHOD REACHED\n\n")
 
 		calls_research_count = calls_research_count + 1
 
 	for attributes in target_list:
 
-		if calls_timeline_count < remaining_timeline:
-			trweetTorrent(attributes)
+		if calls_timeline_count <= remaining_timeline:
+			trweetTorrent(attributes, logger_info, logger_error)
+
+		elif calls_timeline_count > remaining_timeline:
+			logger_info.info("RATE LIMIT OF TIMELINE METHOD REACHED\n\n")
 
 		calls_timeline_count = calls_timeline_count + 1
 
+	logger_info.info("\n\n######### END OF TWITTER EXTENSION EXECUTION \n\n")
 
-def trweetFishing(attributes):
+
+def trweetFishing(attributes, logger_info, logger_error):
 	"""The goal of this function is to catch tweets that contains the query saved in the database"""
-
-	global logger_info
-	global logger_error
 
 	api = twitterConnection()
 
@@ -180,14 +186,11 @@ def trweetFishing(attributes):
 		geo_species = False
 
 		########### CALL trweetBucket FUNCTION
-		trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database)
+		trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database, logger_info, logger_error)
 
 
-def lakesOfTrweets(attributes):
+def lakesOfTrweets(attributes, logger_info, logger_error):
 	"""The goal of this function is to catch geolocalisation data in tweets that contains the query saved in the database"""
-
-	global logger_info
-	global logger_error
 
 	api = twitterConnection()
 
@@ -262,14 +265,11 @@ def lakesOfTrweets(attributes):
 			geo_species = True
 
 			########### CALL trweetBucket FUNCTION
-			trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database)
+			trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database, logger_info, logger_error)
 
 
-def trweetTorrent(attributes):
+def trweetTorrent(attributes, logger_info, logger_error):
 	"""The goal of this function is to catch entire timelines or specific tweets in timeline"""
-
-	global logger_info
-	global logger_error
 
 	api = twitterConnection()
 
@@ -315,14 +315,11 @@ def trweetTorrent(attributes):
 			geo_species = False
 
 			########### CALL trweetBucket FUNCTION
-			trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database)
+			trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database, logger_info, logger_error)
 
 
-def trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database):
+def trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database, logger_info, logger_error):
 	"""trweetBucket manage tweets insertion or data update if tweets are already present."""
-
-	global logger_info
-	global logger_error
 
 	if geo_species == False:
 		link = item[7]

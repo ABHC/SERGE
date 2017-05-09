@@ -674,10 +674,7 @@ def patents():
 
 
 def extensions(database):
-	#fonctions qui liste les extensions qui sont rentrés dans miscellaneous_serge. traite la value pour faire les import et l'éxécution de l'extension. Tout ça un par un pour lancer chaque extension à la suite.
-
-	global logger_info
-	global logger_error
+	"""Call to optionnal function for content research. extensions are listed in miscellaneous_serge."""
 
 	######### CALL TO TABLE miscellaneous_serge
 	call_extensions = database.cursor()
@@ -692,7 +689,7 @@ def extensions(database):
 	for extension in extensions_names:
 		if extension != "":
 			module = __import__(extension)
-			module.startingPoint()
+			module.startingPoint(logger_info, logger_error)
 
 
 ######### ERROR HOOK DEPLOYMENT
@@ -764,6 +761,9 @@ pool.join()
 
 ######### CONNEXION TO Serge DATABASE
 database = databaseConnection()
+
+######### EXTENSIONS EXECUTION
+extensions(database)
 
 ######### AFFECTATION
 logger_info.info("AFFECTATION")
