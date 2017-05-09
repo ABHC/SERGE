@@ -367,7 +367,7 @@ def science():
 
 	function_id = 3
 
-	######### Recherche SCIENCE
+	######### SCIENCE RESEARCH
 	logger_info.info("\n\n######### Last Scientific papers on Arxiv.org (science function) : \n\n")
 
 	######### CALL TO TABLE keywords_science_serge
@@ -682,15 +682,21 @@ def extensions(database):
 	row = call_extensions.fetchone()
 	call_extensions.close()
 
-	extensions_names = row[0]
-	extensions_names = extensions_names.split("|")
+	extensions_list = row[0]
+	extensions_list = extensions_list.split("|")
+
+	extensions_names = []
+
+	for extension_entry in extensions_list:
+		extension_entry = extension_entry.split("!")
+		module_name = extension_entry[0]
+		extensions_names.append(module_name)
 
 	######### CALL OF EXTENSIONS
 	for extension in extensions_names:
 		if extension != "":
 			module = __import__(extension)
 			module.startingPoint(logger_info, logger_error)
-
 
 ######### ERROR HOOK DEPLOYMENT
 sys.excepthook = cemeteriesOfErrors
