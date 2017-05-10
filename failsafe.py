@@ -31,43 +31,39 @@ def checkMate(database, logger_info, logger_error):
 
 	num_tables = num_tables[0]
 
-	if num_tables == 11:
-		logger_info.info("Number of tables : check")
+	if num_tables < 11:
+		logger_error.critical("Missing Tables")
 	else:
-		logger_error.critical("Number of tables : FALSE")
-		if num_tables < 11:
-			logger_error.critical("Missing Tables")
-		elif num_tables > 11:
-			call_extensions = database.cursor()
-			call_extensions.execute("SELECT value FROM miscellaneous_serge WHERE name = 'extension'")
-			row = call_extensions.fetchone()
-			call_extensions.close()
+		call_extensions = database.cursor()
+		call_extensions.execute("SELECT value FROM miscellaneous_serge WHERE name = 'extension'")
+		row = call_extensions.fetchone()
+		call_extensions.close()
 
-			extensions_list = row[0]
-			extensions_list = extensions_list.split("|")
+		extensions_list = row[0]
+		extensions_list = extensions_list.split("|")
 
-			optionnal_tables = 0
-			extensions_num_tables = []
+		optionnal_tables = 0
+		extensions_num_tables = []
 
-			for extension_entry in extensions_list:
-				extension_entry = extension_entry.split("!")
-				if extension_entry != '':
-					try:
-						amount_tables = extension_entry[1]
-						amount_tables = int(amount_tables)
-					except IndexError:
-						amount_tables = 0
+		for extension_entry in extensions_list:
+			extension_entry = extension_entry.split("!")
+			if extension_entry != '':
+				try:
+					amount_tables = extension_entry[1]
+					amount_tables = int(amount_tables)
+				except IndexError:
+					amount_tables = 0
 
-					optionnal_tables = optionnal_tables + amount_tables
+				optionnal_tables = optionnal_tables + amount_tables
 
-			if num_tables == (11+optionnal_tables):
-				logger_info.info("Number of tables : check")
-			elif num_tables < (11+optionnal_tables):
-				logger_error.critical("Missing Tables, for at least one extension")
-				sys.exit()
-			elif num_tables > (11+optionnal_tables):
-				logger_error.critical("Too Much Tables")
-				sys.exit()
+		if num_tables == (11+optionnal_tables):
+			logger_info.info("Number of tables : check")
+		elif num_tables < (11+optionnal_tables):
+			logger_error.critical("Missing Tables, for at least one extension")
+			sys.exit()
+		elif num_tables > (11+optionnal_tables):
+			logger_error.critical("Too Much Tables")
+			sys.exit()
 		else:
 			logger_error.critical("UNEXPECTED ERROR")
 			logger_error.critical("variable value : "+str(num_tables))

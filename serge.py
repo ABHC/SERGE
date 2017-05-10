@@ -698,6 +698,7 @@ def extensions(database):
 			module = __import__(extension)
 			module.startingPoint(logger_info, logger_error)
 
+
 ######### ERROR HOOK DEPLOYMENT
 sys.excepthook = cemeteriesOfErrors
 
