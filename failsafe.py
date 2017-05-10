@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*-
 
 import sys
-import MySQLdb #Paquet MySQL
+import MySQLdb
 
 """failsafe contains all the functions related to the database verification."""
 

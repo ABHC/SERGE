@@ -29,7 +29,6 @@ import json
 import feedparser
 import traceback
 import logging
-from shutil import copyfile
 from logging.handlers import RotatingFileHandler
 
 ######### IMPORT SERGE SPECIALS MODULES

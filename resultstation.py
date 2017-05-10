@@ -2,13 +2,13 @@
 
 import os
 import re
-import sys #voir la documentation : https://docs.python.org/2/library/sys.html
+import sys
 import time
-import MySQLdb #Paquet MySQL
+import MySQLdb
 import hashlib
 import logging
 import traceback
-import unicodedata #voir la documentation : https://docs.python.org/2/library/unicodedata.html
+import unicodedata
 from urllib import pathname2url as pn
 
 

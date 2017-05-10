@@ -5,12 +5,12 @@
 import os
 import time
 import re
-import sys #voir la documentation : https://docs.python.org/2/library/sys.html
-import MySQLdb #Paquet MySQL
-import unicodedata #voir la documentation : https://docs.python.org/2/library/unicodedata.html
+import sys
+import MySQLdb
+import unicodedata
 import traceback
 import logging
-import smtplib #voir la documentation : https://docs.python.org/2.7/library/smtplib.html
+import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from logging.handlers import RotatingFileHandler
