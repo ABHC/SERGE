@@ -77,7 +77,7 @@ def startingPoint(logger_info, logger_error):
 	search_list = []
 
 	for row in rows:
-		 search_list.append(row)
+		search_list.append(row)
 
 	######### CALL TO target_trweet_serge
 	call_target = database.cursor()
@@ -88,7 +88,7 @@ def startingPoint(logger_info, logger_error):
 	target_list = []
 
 	for row in rows:
-		 target_list.append(row)
+		target_list.append(row)
 
 	######### REMAINING CALLS
 	search_list = sorted(search_list, key= lambda search_attributes : search_attributes[5])
@@ -99,8 +99,8 @@ def startingPoint(logger_info, logger_error):
 
 	remaining_search = phonebox[0]
 	reset_search = phonebox[1]
-	remaining_timeline = phonebox [2]
-	reset_timeline = phonebox [3]
+	remaining_timeline = phonebox[2]
+	reset_timeline = phonebox[3]
 
 	calls_research_count = 0
 	calls_timeline_count = 0
@@ -156,7 +156,7 @@ def trweetFishing(attributes, logger_info, logger_error):
 	query_id_comma = str(query_id)+","
 	query_id_comma2 = ","+str(query_id)+","
 
-	if lang == None:
+	if lang is None:
 		chirp_list = api.search(q = query, count = 30, show_user = True)
 
 	else:
@@ -205,7 +205,7 @@ def lakesOfTrweets(attributes, logger_info, logger_error):
 	query_id_comma = str(query_id)+","
 	query_id_comma2 = ","+str(query_id)+","
 
-	if lang == None:
+	if lang is None:
 		shoal = api.search(q = query, count = 100, show_user = False)
 
 	else:
@@ -321,19 +321,19 @@ def trweetTorrent(attributes, logger_info, logger_error):
 def trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database, logger_info, logger_error):
 	"""trweetBucket manage tweets insertion or data update if tweets are already present."""
 
-	if geo_species == False:
+	if geo_species is False:
 		link = item[7]
-	elif geo_species == True:
+	elif geo_species is True:
 		trweet_id = item[2]
 
-	owners = item [1]
+	owners = item[1]
 
 	########### DATABASE CHECKING
 	call_data_cheking = database.cursor()
 
-	if geo_species == False:
+	if geo_species is False:
 		call_data_cheking.execute(query_checking, (link, ))
-	elif geo_species == True:
+	elif geo_species is True:
 		call_data_cheking.execute(query_checking, (trweet_id, ))
 
 	checking = call_data_cheking.fetchone()
@@ -379,9 +379,9 @@ def trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, que
 		########### OWNERS & ID UPDATE
 		update_data = database.cursor()
 		try:
-			if geo_species == False:
+			if geo_species is False:
 				update_data.execute(query_update, (complete_id, complete_owners, link))
-			elif geo_species == True:
+			elif geo_species is True:
 				update_data.execute(query_update, (complete_id, complete_owners, trweet_id))
 			database.commit()
 		except Exception, except_type:
