@@ -693,10 +693,15 @@ def extensions(database):
 		extensions_names.append(module_name)
 
 	######### CALL OF EXTENSIONS
+	extProcesses = ()
 	for extension in extensions_names:
 		if extension != "":
 			module = __import__(extension)
-			module.startingPoint(logger_info, logger_error)
+			exec("proc"+extension+" = Process(target=module.startingPoint, args=(logger_info, logger_error))")
+			exec("proc"+extension+".start()")
+			exec("extProcesses += (proc"+extension+",)")
+
+	return extProcesses
 
 
 ######### ERROR HOOK DEPLOYMENT
@@ -739,6 +744,9 @@ procPatents = Process(target=patents, args=())
 procScience.start()
 procPatents.start()
 
+######### EXTENSIONS EXECUTION
+extProcesses = extensions(database)
+
 logger_info.info("\n\n######### Last News Research (newscast function) : \n\n")
 
 ######### CALL TO TABLE rss_serge
@@ -761,16 +769,14 @@ pool = mp.Pool(processes=nbProc)
 pool.map(newscast, trio_sources_news)
 
 ######### MAIN BLOCKING FOR MULTIPROCESSING
+for processe in extProcesses:
+	processe.join()
+
 procScience.join()
 procPatents.join()
 pool.close()
 pool.join()
 
-######### CONNEXION TO Serge DATABASE
-database = databaseConnection()
-
-######### EXTENSIONS EXECUTION
-extensions(database)
 
 ######### AFFECTATION
 logger_info.info("AFFECTATION")
