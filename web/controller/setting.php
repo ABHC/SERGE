@@ -678,6 +678,40 @@ if (!empty($_POST['activateQueryScience']))
 	}
 }
 
+# Add new patents query
+if (!empty($_POST['patentQuerySubmit']) AND $_POST['patentQuerySubmit'] == 'add')
+{
+	include_once('model/addNewPatentQuery.php');
+	$cpt = 0;
+	$andOrPatent = '';
+	$queryPatent = '';
+
+	while(!empty($_POST['patentType' . $cpt]) AND !empty($_POST['patentQuery' . $cpt]))
+	{
+		if (!preg_match("/^[A-Z_]+$/", $_POST['patentType' . $cpt]))
+		{
+			$_POST['patentType' . $cpt] = 'ALLNAMES';
+		}
+
+		$patentQueryInput = urlencode(preg_replace("/:/", "", $_POST['patentQuery' . $cpt]));
+
+		$queryPatent = $queryPatent . $andOrPatent . $_POST['patentType' . $cpt] . '%3A' . $patentQueryInput . '+';
+
+		if(empty($_POST['andOrPatent' . $cpt]))
+		{
+			$andOrPatent = 'AND+';
+		}
+		else
+		{
+			$andOrPatent = 'OR+';
+		}
+		$cpt++;
+	}
+
+	$ERROR_PATENTQUERY = addNewPatentQuery($queryPatent, $bdd);
+}
+
+
 include_once('view/nav/nav.php');
 
 include_once('view/body/setting.php');
