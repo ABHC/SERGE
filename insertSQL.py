@@ -159,7 +159,7 @@ def ofSourceAndName(now, logger_info, logger_error, database):
 			num = num+1
 
 
-def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database) :
+def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly, database) :
 	"""insertOrUpdate manage links insertion or data update if the link is already present."""
 
 	########### DATABASE CHECKING
@@ -168,81 +168,88 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 	checking = call_data_cheking.fetchone()
 	call_data_cheking.close()
 
-	jelly_breaker = False
 	duplicate = False
 
-	########### DATABASE JELLYCHEKING
-	if function_id == 1 or function_id == 3:
-		call_data_cheking = database.cursor()
-		call_data_cheking.execute(query_jellychecking, (id_rss, ))
-		jellychecking = call_data_cheking.fetchall()
-		call_data_cheking.close()
+	########### IF POST LINK NOT IN DATABASE
+	if checking is None and item[1] != "":
 
-		for jelly in jellychecking:
-			jelly_title = jelly[0]
-			jelly_link = jelly[1]
-			jelly_id_keyword = jelly[2]
-			jelly_owners = jelly[3]
+		########### SEARCHING FOR AN IDENTICAL NEWS POST TITLE (LINK CHANGE)
+		if need_jelly == True:
+			call_data_cheking = database.cursor()
+			call_data_cheking.execute(query_jellychecking, (id_rss, ))
+			jellychecking = call_data_cheking.fetchall()
+			call_data_cheking.close()
 
-			jelly_title_score = jellyfish.levenshtein_distance(post_title, jelly_title)
+			for jelly in jellychecking:
+				jelly_title = jelly[0]
+				jelly_link = jelly[1]
+				jelly_id_keyword = jelly[2]
+				jelly_owners = jelly[3]
 
-			if 0 < jelly_title_score <= 3 and jelly_breaker is False:
-				jelly_breaker = True
-				duplicate = True
+				jelly_title_score = jellyfish.levenshtein_distance(post_title, jelly_title)
 
-		jelly_breaker = False
+				if jelly_title_score == 0 and duplicate is False:
+					duplicate = True
 
-	########### DATABASE INSERTION
-	if checking is None and duplicate is False and item[1] != "":
-		insert_data = database.cursor()
+					########### LINK CHANGE : NEW ATTRIBUTES CREATION (COMPLETE ID & COMPLETE OWNERS)
+					already_owners_list = owners.split(",")
+					complete_id = jelly_id_keyword
+					complete_owners = jelly_owners
 
-		try:
-			insert_data.execute(query_insertion, item)
-			database.commit()
-		except Exception, except_type:
-			database.rollback()
-			logger_error.error("ROLLBACK AT INSERTION IN insertOrUpdate FUNCTION")
-			logger_error.error(query_insertion)
-			logger_error.error(repr(except_type))
-		insert_data.close()
+					if keyword_id_comma2 not in jelly_id_keyword:
+						complete_id = jelly_id_keyword+keyword_id_comma
 
-	########### DATABASE UPDATE
+					split_index = 1
 
-	########### JELLY UPDATE
-	elif checking is None and duplicate is True and item[1] != "":
-		already_owners_list = owners.split(",")
-		complete_id = jelly_id_keyword
-		complete_owners = jelly_owners
+					while split_index < (len(already_owners_list)-1):
+						already_owner = ","+already_owners_list[split_index]+","
+						add_owner = already_owners_list[split_index]+","
 
-		########### NEW ATTRIBUTES CREATION (COMPLETE ID & COMPLETE OWNERS)
-		if keyword_id_comma2 not in jelly_id_keyword:
-			complete_id = jelly_id_keyword+keyword_id_comma
+						if already_owner not in jelly_owners:
+							complete_owners = complete_owners+add_owner
 
-		split_index = 1
+						split_index = split_index+1
 
-		while split_index < (len(already_owners_list)-1):
-			already_owner = ","+already_owners_list[split_index]+","
-			add_owner = already_owners_list[split_index]+","
+					########### LINK CHANGE : ATTRIBUTES UPDATE
+					update_data = database.cursor()
+					try:
+						update_data.execute(query_jelly_update, (post_title, post_link, complete_id, complete_owners, jelly_link))
+						database.commit()
+					except Exception, except_type:
+						database.rollback()
+						logger_error.error("ROLLBACK AT JELLY UPDATE IN insertOrUpdate FUNCTION")
+						logger_error.error(query_jelly_update)
+						logger_error.error(repr(except_type))
+					update_data.close()
 
-			if already_owner not in jelly_owners:
-				complete_owners = complete_owners+add_owner
+			########### NORMAL CONDITION : DATABASE INSERTION FOR NEWS CONTENTS
+			if duplicate == False:
+				insert_data = database.cursor()
+				try:
+					insert_data.execute(query_insertion, item)
+					database.commit()
+				except Exception, except_type:
+					database.rollback()
+					logger_error.error("ROLLBACK AT INSERTION IN insertOrUpdate FUNCTION")
+					logger_error.error(query_insertion)
+					logger_error.error(repr(except_type))
+				insert_data.close()
 
-			split_index = split_index+1
+		########### DATABASE INSERTION IF SCIENCE OR PATENTS CONTENTS
+		else:
+			insert_data = database.cursor()
+			try:
+				insert_data.execute(query_insertion, item)
+				database.commit()
+			except Exception, except_type:
+				database.rollback()
+				logger_error.error("ROLLBACK AT INSERTION IN insertOrUpdate FUNCTION")
+				logger_error.error(query_insertion)
+				logger_error.error(repr(except_type))
+			insert_data.close()
 
-		########### ATTRIBUTES UPDATE
-		update_data = database.cursor()
-		try:
-			update_data.execute(query_jelly_update, (post_title, post_link, complete_id, complete_owners, jelly_link))
-			database.commit()
-		except Exception, except_type:
-			database.rollback()
-			logger_error.error("ROLLBACK AT JELLY UPDATE IN insertOrUpdate FUNCTION")
-			logger_error.error(query_jelly_update)
-			logger_error.error(repr(except_type))
-			update_data.close()
-
-	########### CLASSIC UPDATE
-	elif checking is not None and duplicate is False and item[1] != "":
+	########### IF POST LINK IN DATABASE
+	elif checking is not None and item[1] != "":
 		field_id_keyword = checking[0]
 		item_owners = checking[1]
 		already_owners_list = owners.split(",")
@@ -264,17 +271,62 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 
 			split_index = split_index+1
 
-		########### OWNERS & ID UPDATE
-		update_data = database.cursor()
-		try:
-			update_data.execute(query_update, (complete_id, complete_owners, post_link))
-			database.commit()
-		except Exception, except_type:
-			database.rollback()
-			logger_error.error("ROLLBACK AT UPDATE IN insertOrUpdate FUNCTION")
-			logger_error.error(query_update)
-			logger_error.error(repr(except_type))
-		update_data.close()
+		########### SEARCHING FOR A MODIFICATED NEWS POST TITLE
+		if need_jelly == True:
+			call_data_cheking = database.cursor()
+			call_data_cheking.execute(query_jellychecking, (id_rss, ))
+			jellychecking = call_data_cheking.fetchall()
+			call_data_cheking.close()
+
+			for jelly in jellychecking:
+				jelly_title = jelly[0]
+				jelly_link = jelly[1]
+				jelly_id_keyword = jelly[2]
+				jelly_owners = jelly[3]
+
+				jelly_title_score = jellyfish.levenshtein_distance(post_title, jelly_title)
+
+				if 0 < jelly_title_score <= 3 and duplicate is False:
+					duplicate = True
+
+					########### MODIFICATED TITLE : ATTRIBUTES UPDATE
+					update_data = database.cursor()
+					try:
+						update_data.execute(query_jelly_update, (post_title, post_link, complete_id, complete_owners, jelly_link))
+						database.commit()
+					except Exception, except_type:
+						database.rollback()
+						logger_error.error("ROLLBACK AT JELLY UPDATE IN insertOrUpdate FUNCTION")
+						logger_error.error(query_jelly_update)
+						logger_error.error(repr(except_type))
+					update_data.close()
+
+			########### NORMAL CONDITION : DATABASE UPDATE FOR NEWS CONTENTS
+			if duplicate == False:
+				else:
+					update_data = database.cursor()
+					try:
+						update_data.execute(query_update, (complete_id, complete_owners, post_link))
+						database.commit()
+					except Exception, except_type:
+						database.rollback()
+						logger_error.error("ROLLBACK AT UPDATE IN insertOrUpdate FUNCTION")
+						logger_error.error(query_update)
+						logger_error.error(repr(except_type))
+					update_data.close()
+
+		########### CLASSIC UPDATE FOR SCIENCE OR PATENTS CONTENTS
+		else:
+			update_data = database.cursor()
+			try:
+				update_data.execute(query_update, (complete_id, complete_owners, post_link))
+				database.commit()
+			except Exception, except_type:
+				database.rollback()
+				logger_error.error("ROLLBACK AT UPDATE IN insertOrUpdate FUNCTION")
+				logger_error.error(query_update)
+				logger_error.error(repr(except_type))
+			update_data.close()
 
 
 def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database):

@@ -78,6 +78,8 @@ def databaseConnection():
 
 
 def escaping(string):
+	"""The purpose of this function is the escaping of special characters like & in contents titles."""
+
 	h = HTMLParser()
 	stringEscaped = cgi.escape(h.unescape(string.strip())).encode('utf8', 'xmlcharrefreplace').decode('utf8')
 
@@ -97,7 +99,7 @@ def newscast(trio_sources_news):
 
 	database = databaseConnection()
 
-	function_id = 1
+	need_jelly = True
 	global max_users
 
 	########### LINK & ID_RSS EXTRACTION
@@ -319,7 +321,7 @@ def newscast(trio_sources_news):
 						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
 						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
+						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly, database)
 
 				########### SIMPLE KEYWORDS RESEARCH
 				else:
@@ -341,7 +343,7 @@ def newscast(trio_sources_news):
 						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
 						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
+						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly, database)
 
 				range = range+1
 
@@ -364,7 +366,7 @@ def science():
 
 	database = databaseConnection()
 
-	function_id = 3
+	need_jelly = False
 
 	######### SCIENCE RESEARCH
 	logger_info.info("\n\n######### Last Scientific papers on Arxiv.org (science function) : \n\n")
@@ -468,7 +470,7 @@ def science():
 						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
 						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
+						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly, database)
 
 						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
@@ -555,7 +557,7 @@ def science():
 					item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
 					########### CALL insertOrUpdate FUNCTION
-					insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
+					insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly, database)
 
 					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
@@ -576,10 +578,9 @@ def patents():
 
 	database = databaseConnection()
 
-	function_id = 2
+	need_jelly = False
 	id_rss = None
 
-	#WIPO_languages = ["ZH", "DA", "EN", "FR", "DE", "HE", "IT", "JA", "KO", "PL", "PT", "RU", "ES", "SV", "VN"]
 	logger_info.info("\n\n######### Last Patents Research (patents function) : \n\n")
 
 	######### CALL TO TABLE queries_wipo
@@ -662,7 +663,7 @@ def patents():
 						item = (post_title, post_link, post_date, keyword_id_comma2, owners)
 
 						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, function_id, database)
+						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly, database)
 
 						range = range+1
 
