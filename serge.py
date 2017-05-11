@@ -600,7 +600,7 @@ def patents():
 		owners = couple_query[2].strip().encode("utf8")
 
 		logger_info.info(query_wipo+"\n")
-		link = ('https://patentscope.wipo.int/search/rss.jsf?query='+query_wipo+'+&office=&rss=true&sortOption=Pub+Date+Desc')
+		link = ('https://patentscope.wipo.int/search/rss.jsf?query='+query_wipo+'&office=&rss=true&sortOption=Pub+Date+Desc')
 
 		req_results = sergenet.allRequestLong(link, logger_info, logger_error)
 		rss_wipo = req_results[0]

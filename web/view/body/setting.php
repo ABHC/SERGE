@@ -841,34 +841,203 @@
 		<div class="patentManagement">
 			<h2>Patent watch management</h2>
 			<div class="newQueryContainer">
-				<input alt="Add" title="Add" class="submit" type="submit" value="" />
-				<select alt="Type" title="Type" class="queryType" name="patentType00" id="patentType00">
-					<option value="EN_TI">English title</option>
-					<option value="EN_AB">English abstract</option>
-					<option value="IN">Inventor</option>
+				<input title="Add new patents query" class="submit" type="submit" name="patentQuerySubmit" value="add" />
+				<select title="Type" class="queryType" name="patentType0" id="patentType00">
+					<option value="ALLNAMES">All Names</option>
+					<option value="ALLNUM">All Numbers and IDs</option>
+					<option value="AAD">Applicant Address</option>
+					<option value="AADC">Applicant Address Country</option>
+					<option value="PAA">Applicant All Data</option>
+					<option value="PA">Applicant Name</option>
+					<option value="ANA">Applicant Nationality</option>
+					<option value="ARE">Applicant Residence</option>
+					<option value="AD">Application Date</option>
+					<option value="AN">Application Number</option>
+					<option value="CHEM">Chemical</option>
+					<option value="CTR">Country</option>
+					<option value="DS">Designated States</option>
+					<option value="EN_AB">English Abstract</option>
+					<option value="EN_ALL">English All</option>
+					<option value="EN_CL">English Claims</option>
+					<option value="EN_DE">English Description</option>
+					<option value="EN_ALLTXT">English Text</option>
+					<option value="EN_TI">English Title</option>
+					<option value="IC_EX">Exact IPC code</option>
+					<option value="LGF">Filing Language</option>
+					<option value="FP">Front Page(FP)</option>
+					<option value="GN">Grant Number</option>
+					<option value="IC">International Class</option>
+					<option value="ICI">International Class Inventive</option>
+					<option value="ICN">International Class N-Inventive</option>
+					<option value="IPE">International Preliminary Examination</option>
+					<option value="ISA">International Search Authority</option>
+					<option value="ISR">International Search Report</option>
+					<option value="INA">Inventor All Data</option>
+					<option value="IN">Inventor Name</option>
+					<option value="IADC">Inventor Nationality</option>
+					<option value="RPA">Legal Representative All Data</option>
+					<option value="RCN">Legal Representative Country</option>
+					<option value="RP">Legal Representative Name</option>
+					<option value="RAD">Legal Representative Address</option>
+					<option value="LI">Licensing availability</option>
+					<option value="PAF">Main Applicant Name</option>
+					<option value="ICF">Main International Class</option>
+					<option value="INF">Main Inventor Name</option>
+					<option value="RPF">Main Legal Rep Name</option>
+					<option value="NPA">National Phase All Data</option>
+					<option value="NPAN">National Phase Application Number</option>
+					<option value="NPED">National Phase Entry Date</option>
+					<option value="NPET">National Phase Entry Type</option>
+					<option value="PN">National Publication Number</option>
+					<option value="OF">Office Code</option>
+					<option value="NPCC">National Phase Office Code</option>
+					<option value="PRIORPCTAN">Prior PCT Application Number</option>
+					<option value="PRIORPCTWO">Prior PCT WO Number</option>
+					<option value="PI">Priority All Data</option>
+					<option value="PCN">Priority Country</option>
+					<option value="PD">Priority Date</option>
+					<option value="NP">Priority Number</option>
+					<option value="DP">Publication Date</option>
+					<option value="LGP">Publication Language</option>
+					<option value="SIS">Supplementary International Search</option>
+					<option value="TPO">Third Party Observation</option>
+					<option value="WO">WIPO Publication Number</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" class="query" name="patentQuery00" id="patentQuery00" placeholder="Keyword" size="30" />
-				<input type="checkbox" id="patentAndOr1">
+				<input type="text" class="query" name="patentQuery0" id="patentQuery00" placeholder="Keyword" size="30" />
+				<input type="checkbox" id="patentAndOr1" name="andOrPatent0" value="OR">
 				<label class="andOr" for="patentAndOr1"></label>
-				<select alt="Type" title="Type" class="queryType" name="patentType01" id="patentType01">
-					<option value="EN_TI">English title</option>
-					<option value="EN_AB">English abstract</option>
-					<option value="IN">Inventor</option>
+				<select alt="Type" title="Type" class="queryType" name="patentType1" id="patentType01">
+					<option value="ALLNAMES">All Names</option>
+					<option value="ALLNUM">All Numbers and IDs</option>
+					<option value="AAD">Applicant Address</option>
+					<option value="AADC">Applicant Address Country</option>
+					<option value="PAA">Applicant All Data</option>
+					<option value="PA">Applicant Name</option>
+					<option value="ANA">Applicant Nationality</option>
+					<option value="ARE">Applicant Residence</option>
+					<option value="AD">Application Date</option>
+					<option value="AN">Application Number</option>
+					<option value="CHEM">Chemical</option>
+					<option value="CTR">Country</option>
+					<option value="DS">Designated States</option>
+					<option value="EN_AB">English Abstract</option>
+					<option value="EN_ALL">English All</option>
+					<option value="EN_CL">English Claims</option>
+					<option value="EN_DE">English Description</option>
+					<option value="EN_ALLTXT">English Text</option>
+					<option value="EN_TI">English Title</option>
+					<option value="IC_EX">Exact IPC code</option>
+					<option value="LGF">Filing Language</option>
+					<option value="FP">Front Page(FP)</option>
+					<option value="GN">Grant Number</option>
+					<option value="IC">International Class</option>
+					<option value="ICI">International Class Inventive</option>
+					<option value="ICN">International Class N-Inventive</option>
+					<option value="IPE">International Preliminary Examination</option>
+					<option value="ISA">International Search Authority</option>
+					<option value="ISR">International Search Report</option>
+					<option value="INA">Inventor All Data</option>
+					<option value="IN">Inventor Name</option>
+					<option value="IADC">Inventor Nationality</option>
+					<option value="RPA">Legal Representative All Data</option>
+					<option value="RCN">Legal Representative Country</option>
+					<option value="RP">Legal Representative Name</option>
+					<option value="RAD">Legal Representative Address</option>
+					<option value="LI">Licensing availability</option>
+					<option value="PAF">Main Applicant Name</option>
+					<option value="ICF">Main International Class</option>
+					<option value="INF">Main Inventor Name</option>
+					<option value="RPF">Main Legal Rep Name</option>
+					<option value="NPA">National Phase All Data</option>
+					<option value="NPAN">National Phase Application Number</option>
+					<option value="NPED">National Phase Entry Date</option>
+					<option value="NPET">National Phase Entry Type</option>
+					<option value="PN">National Publication Number</option>
+					<option value="OF">Office Code</option>
+					<option value="NPCC">National Phase Office Code</option>
+					<option value="PRIORPCTAN">Prior PCT Application Number</option>
+					<option value="PRIORPCTWO">Prior PCT WO Number</option>
+					<option value="PI">Priority All Data</option>
+					<option value="PCN">Priority Country</option>
+					<option value="PD">Priority Date</option>
+					<option value="NP">Priority Number</option>
+					<option value="DP">Publication Date</option>
+					<option value="LGP">Publication Language</option>
+					<option value="SIS">Supplementary International Search</option>
+					<option value="TPO">Third Party Observation</option>
+					<option value="WO">WIPO Publication Number</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" class="query" name="patentQuery01" id="patentQuery01" placeholder="Keyword" size="30" />
-				<input type="checkbox" id="patentAndOr2">
+				<input type="text" class="query" name="patentQuery1" id="patentQuery01" placeholder="Keyword" size="30" />
+				<input type="checkbox" id="patentAndOr2"  name="andOrPatent1" value="OR">
 				<label class="andOr" for="patentAndOr2"></label>
-				<select alt="Type" title="Type" class="queryType" name="patentType02" id="patentType02">
-					<option value="EN_TI">English title</option>
-					<option value="EN_AB">English abstract</option>
-					<option value="IN">Inventor</option>
+				<select alt="Type" title="Type" class="queryType" name="patentType2" id="patentType02">
+					<option value="ALLNAMES">All Names</option>
+					<option value="ALLNUM">All Numbers and IDs</option>
+					<option value="AAD">Applicant Address</option>
+					<option value="AADC">Applicant Address Country</option>
+					<option value="PAA">Applicant All Data</option>
+					<option value="PA">Applicant Name</option>
+					<option value="ANA">Applicant Nationality</option>
+					<option value="ARE">Applicant Residence</option>
+					<option value="AD">Application Date</option>
+					<option value="AN">Application Number</option>
+					<option value="CHEM">Chemical</option>
+					<option value="CTR">Country</option>
+					<option value="DS">Designated States</option>
+					<option value="EN_AB">English Abstract</option>
+					<option value="EN_ALL">English All</option>
+					<option value="EN_CL">English Claims</option>
+					<option value="EN_DE">English Description</option>
+					<option value="EN_ALLTXT">English Text</option>
+					<option value="EN_TI">English Title</option>
+					<option value="IC_EX">Exact IPC code</option>
+					<option value="LGF">Filing Language</option>
+					<option value="FP">Front Page(FP)</option>
+					<option value="GN">Grant Number</option>
+					<option value="IC">International Class</option>
+					<option value="ICI">International Class Inventive</option>
+					<option value="ICN">International Class N-Inventive</option>
+					<option value="IPE">International Preliminary Examination</option>
+					<option value="ISA">International Search Authority</option>
+					<option value="ISR">International Search Report</option>
+					<option value="INA">Inventor All Data</option>
+					<option value="IN">Inventor Name</option>
+					<option value="IADC">Inventor Nationality</option>
+					<option value="RPA">Legal Representative All Data</option>
+					<option value="RCN">Legal Representative Country</option>
+					<option value="RP">Legal Representative Name</option>
+					<option value="RAD">Legal Representative Address</option>
+					<option value="LI">Licensing availability</option>
+					<option value="PAF">Main Applicant Name</option>
+					<option value="ICF">Main International Class</option>
+					<option value="INF">Main Inventor Name</option>
+					<option value="RPF">Main Legal Rep Name</option>
+					<option value="NPA">National Phase All Data</option>
+					<option value="NPAN">National Phase Application Number</option>
+					<option value="NPED">National Phase Entry Date</option>
+					<option value="NPET">National Phase Entry Type</option>
+					<option value="PN">National Publication Number</option>
+					<option value="OF">Office Code</option>
+					<option value="NPCC">National Phase Office Code</option>
+					<option value="PRIORPCTAN">Prior PCT Application Number</option>
+					<option value="PRIORPCTWO">Prior PCT WO Number</option>
+					<option value="PI">Priority All Data</option>
+					<option value="PCN">Priority Country</option>
+					<option value="PD">Priority Date</option>
+					<option value="NP">Priority Number</option>
+					<option value="DP">Publication Date</option>
+					<option value="LGP">Publication Language</option>
+					<option value="SIS">Supplementary International Search</option>
+					<option value="TPO">Third Party Observation</option>
+					<option value="WO">WIPO Publication Number</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" class="query" name="patentQuery02" id="patentQuery02" placeholder="Keyword" size="30" />
+				<input type="text" class="query" name="patentQuery2" id="patentQuery02" placeholder="Keyword" size="30" />
 				<input alt="Extend" title="Extend" class="extend" type="submit" id="extend" name="extend" value=">>" />
 			</div>
+			<?php echo $ERROR_PATENTQUERY; ?>
 			<div class="queryContainer">
 				<a title="Delete" class="deleteQuery" href="setting?action=deleteQueryPatent&query=0" ></a>
 				<a title="Disable" class="disableQuery" href="setting?action=disableQueryPatent&query=0" ></a>
