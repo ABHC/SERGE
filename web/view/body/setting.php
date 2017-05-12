@@ -816,27 +816,6 @@
 				echo $queryDisplay . '</div>';
 			}
 			?>
-			<div class="queryContainer Qdisable">
-				<a title="Delete" class="deleteQuery" href="setting?action=deleteQueryScience&query=4" ></a>
-				<a title="Activate" class="activateQuery" href="setting?action=activeQueryScience&query=4" ></a>
-				<div class="queryTypeView">Title</div>
-				<div class="queryKeywordView">RoboJo</div>
-				<div class="queryAndView">AND</div>
-				<div class="queryTypeView">Abstract</div>
-				<div class="queryKeywordView">Pied en canard</div>
-				<div class="queryNotView">NOT</div>
-				<div class="queryTypeView">Title</div>
-				<div class="queryKeywordView">Jo le taxi</div>
-			</div>
-			<div class="queryContainer Qdisable">
-				<a title="Delete" class="deleteQuery" href="setting?action=deleteQueryScience&query=5" ></a>
-				<a title="Activate" class="activateQuery" href="setting?action=activeQueryScience&query=5" ></a>
-				<div class="queryTypeView">Title</div>
-				<div class="queryKeywordView">Mister Robot</div>
-				<div class="queryNotView">NOT</div>
-				<div class="queryTypeView">Abstract</div>
-				<div class="queryKeywordView">Ours</div>
-			</div>
 		</div>
 		<div class="patentManagement">
 			<h2>Patent watch management</h2>
@@ -1156,102 +1135,6 @@
 				echo $queryDisplay . '</div>';
 			}
 			?>
-			<div class="queryContainer">
-				<a title="Delete" class="deleteQuery" href="setting?action=deleteQueryPatent&query=0" ></a>
-				<a title="Disable" class="disableQuery" href="setting?action=disableQueryPatent&query=0" ></a>
-				<div class="queryTypeView">Inventor</div>
-				<div class="queryKeywordView">Gintoki</div>
-				<div class="queryAndView">AND</div>
-				<div class="queryTypeView">English title</div>
-				<div class="queryKeywordView">Wooden computer</div>
-				<div class="queryOrView">OR</div>
-				<div class="queryTypeView">English title</div>
-				<div class="queryKeywordView">Wooden electronics</div>
-			</div>
-			<div class="queryContainer">
-				<a title="Delete" class="deleteQuery" href="setting?action=deleteQueryPatent&query=1" ></a>
-				<a title="Disable" class="disableQuery" href="setting?action=disableQueryPatent&query=1" ></a>
-				<div class="queryTypeView">Inventor</div>
-				<div class="queryKeywordView">Pr Chen</div>
-				<div class="queryOrView">OR</div>
-				<div class="queryTypeView">English title</div>
-				<div class="queryKeywordView">Pokemon</div>
-				<div class="queryAndView">AND</div>
-				<div class="queryTypeView">English title</div>
-				<div class="queryKeywordView">Pika</div>
-				<div class="queryAndView">AND</div>
-				<div class="queryTypeView">English abstract</div>
-				<div class="queryKeywordView">Joel</div>
-				<div class="queryOrView">OR</div>
-				<div class="queryTypeView">English abstract</div>
-				<div class="queryKeywordView">Sacha</div>
-			</div>
-			<div class="queryContainer">
-				<a title="Delete" class="deleteQuery" href="setting?action=deleteQueryPatent&query=2" ></a>
-				<a title="Disable" class="disableQuery" href="setting?action=disableQueryPatent&query=2" ></a>
-				<div class="queryTypeView">Inventor</div>
-				<div class="queryKeywordView">Ruffy67</div>
-				<div class="queryAndView">AND</div>
-				<div class="queryTypeView">English abstract</div>
-				<div class="queryKeywordView">test</div>
-				<div class="queryAndView">AND</div>
-				<div class="queryTypeView">English title</div>
-				<div class="queryKeywordView">test2</div>
-			</div>
-			<div class="queryContainer">
-				<a title="Delete" class="deleteQuery" href="setting?action=deleteQueryPatent&query=3" ></a>
-				<a title="Disable" class="disableQuery" href="setting?action=disableQueryPatent&query=3" ></a>
-				<div class="queryTypeView">English title</div>
-				<div class="queryKeywordView">RoboJo</div>
-				<div class="queryAndView">AND</div>
-				<div class="queryTypeView">English abstract</div>
-				<div class="queryKeywordView">Pied en canard</div>
-				<div class="queryOrView">OR</div>
-				<div class="queryTypeView">English title</div>
-				<div class="queryKeywordView">Jo le taxi</div>
-				<div class="queryAndView">AND</div>
-				<div class="queryTypeView">English abstract</div>
-				<div class="queryKeywordView">Dermiste</div>
-			</div>
-			<div class="queryContainer">
-				<a title="Delete" class="deleteQuery" href="setting?action=deleteQueryPatent&query=4" ></a>
-				<a title="Disable" class="disableQuery" href="setting?action=disableQueryPatent&query=4" ></a>
-				<div class="queryTypeView">English title</div>
-				<div class="queryKeywordView">RoboJo</div>
-				<div class="queryAndView">AND</div>
-				<div class="queryTypeView">English abstract</div>
-				<div class="queryKeywordView">Pied en canard</div>
-				<div class="queryOrView">OR</div>
-				<div class="queryTypeView">English title</div>
-				<div class="queryKeywordView">Jo le taxi</div>
-			</div>
-			<div class="queryContainer">
-				<a title="Delete" class="deleteQuery" href="setting?action=deleteQueryPatent&query=5" ></a>
-				<a title="Disable" class="disableQuery" href="setting?action=disableQueryPatent&query=5" ></a>
-				<div class="queryTypeView">English title</div>
-				<div class="queryKeywordView">Mister Robot</div>
-				<div class="queryAndView">AND</div>
-				<div class="queryTypeView">English abstract</div>
-				<div class="queryKeywordView">Ours</div>
-				<div class="queryOrView">OR</div>
-				<div class="queryTypeView">English title</div>
-				<div class="queryKeywordView">Jo le taxi</div>
-			</div>
-			<div class="queryContainer Qdisable">
-				<a title="Delete" class="deleteQuery" href="setting?action=deleteQueryPatent&query=6" ></a>
-				<a title="Activate" class="activateQuery" href="setting?action=activeQueryPatent&query=6" ></a>
-				<div class="queryTypeView">English title</div>
-				<div class="queryKeywordView">Cat</div>
-				<div class="queryAndView">AND</div>
-				<div class="queryTypeView">English abstract</div>
-				<div class="queryKeywordView">animals</div>
-				<div class="queryOrView">OR</div>
-				<div class="queryTypeView">English title</div>
-				<div class="queryKeywordView">Dog</div>
-				<div class="queryAndView">AND</div>
-				<div class="queryTypeView">English abstract</div>
-				<div class="queryKeywordView">Canis</div>
-			</div>
 		</div>
 	</div>
 </form>

@@ -601,10 +601,11 @@ if (!empty($_POST['delQueryScience']))
 	preg_match("/[0-9]+/", $_POST['delQueryScience'], $idQueryToDel);
 
 	// Read owner science query
-	$req = $bdd->prepare('SELECT owners, active FROM queries_science_serge WHERE id =  :queryId AND owners LIKE :userId');
+	$req = $bdd->prepare('SELECT owners, active FROM queries_science_serge WHERE id = :queryId AND (owners LIKE :userIdDisable OR owners LIKE :userIdActivate)');
 	$req->execute(array(
 		'queryId' => $idQueryToDel[0],
-		'userId' => '%,' . $_SESSION['id'] . ',%'));
+		'userIdDisable' => '%,!' . $_SESSION['id'] . ',%',
+		'userIdActivate' => '%,' . $_SESSION['id'] . ',%',));
 		$result = $req->fetch();
 		$req->closeCursor();
 
@@ -709,6 +710,90 @@ if (!empty($_POST['patentQuerySubmit']) AND $_POST['patentQuerySubmit'] == 'add'
 	}
 
 	$ERROR_PATENTQUERY = addNewPatentQuery($queryPatent, $bdd);
+}
+
+#Delete patent query
+if (!empty($_POST['delQueryPatent']))
+{
+	preg_match("/[0-9]+/", $_POST['delQueryPatent'], $idQueryToDel);
+
+	// Read owner patent query
+	$req = $bdd->prepare('SELECT owners, active FROM queries_wipo_serge WHERE id =  :queryId AND (owners LIKE :userIdDisable OR owners LIKE :userIdActivate)');
+	$req->execute(array(
+		'queryId' => $idQueryToDel[0],
+		'userIdDisable' => '%,!' . $_SESSION['id'] . ',%',
+		'userIdActivate' => '%,' . $_SESSION['id'] . ',%',));
+		$result = $req->fetch();
+		$req->closeCursor();
+
+	if (!empty($result))
+	{
+		$userId = $_SESSION['id'];
+		$queryOwnerNEW = preg_replace("/,!*$userId,/", ',', $result['owners']);
+
+		$active = $result['active'] - 1;
+
+		$req = $bdd->prepare('UPDATE queries_wipo_serge SET owners = :owners, active = :active WHERE id = :id');
+		$req->execute(array(
+			'owners' => $queryOwnerNEW,
+			'active' => $active,
+			'id' => $idQueryToDel[0]));
+			$req->closeCursor();
+	}
+}
+
+#Disable patent query
+if (!empty($_POST['disableQueryPatent']))
+{
+	preg_match("/[0-9]+/", $_POST['disableQueryPatent'], $idQueryToDisable);
+	// Read owner patent query
+	$req = $bdd->prepare('SELECT owners, active FROM queries_wipo_serge WHERE id =  :queryId AND owners LIKE :userId');
+	$req->execute(array(
+		'queryId' => $idQueryToDisable[0],
+		'userId' => '%,' . $_SESSION['id'] . ',%'));
+		$result = $req->fetch();
+		$req->closeCursor();
+
+	if (!empty($result))
+	{
+		$userId = $_SESSION['id'];
+		$queryOwnerNEW = preg_replace("/,$userId,/", ",!$userId,", $result['owners']);
+
+		$active = $result['active'] - 1;
+		$req = $bdd->prepare('UPDATE queries_wipo_serge SET owners = :owners, active = :active WHERE id = :id');
+		$req->execute(array(
+			'owners' => $queryOwnerNEW,
+			'active' => $active,
+			'id' => $idQueryToDisable[0]));
+			$req->closeCursor();
+	}
+}
+
+#Activate patent query
+if (!empty($_POST['activateQueryPatent']))
+{
+	preg_match("/[0-9]+/", $_POST['activateQueryPatent'], $idQueryToActivate);
+	// Read owner patent query
+	$req = $bdd->prepare('SELECT owners, active FROM queries_wipo_serge WHERE id =  :queryId AND owners LIKE :userId');
+	$req->execute(array(
+		'queryId' => $idQueryToActivate[0],
+		'userId' => '%,!' . $_SESSION['id'] . ',%'));
+		$result = $req->fetch();
+		$req->closeCursor();
+
+	if (!empty($result))
+	{
+		$userId = $_SESSION['id'];
+		$queryOwnerNEW = preg_replace("/,!$userId,/", ",$userId,", $result['owners']);
+
+		$active = $result['active'] + 1;
+		$req = $bdd->prepare('UPDATE queries_wipo_serge SET owners = :owners, active = :active WHERE id = :id');
+		$req->execute(array(
+			'owners' => $queryOwnerNEW,
+			'active' => $active,
+			'id' => $idQueryToActivate[0]));
+			$req->closeCursor();
+	}
 }
 
 
