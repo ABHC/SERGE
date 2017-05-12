@@ -26,6 +26,12 @@ if (isset($_POST['conn_pseudo']) && isset($_POST['conn_password']))
 		$_SESSION['id']                = $result['id'];
 		$_SESSION['lastSourceUse']     = '';
 		$redirect                      = $_SESSION['redirectFrom'];
+
+		if (empty($redirect))
+		{
+			$redirect = 'result';
+		}
+
 		header("Location: $redirect");
 	}
 }
