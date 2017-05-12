@@ -69,7 +69,7 @@ def ofSourceAndName(now, logger_info, logger_error, database):
 			rss = req_results[0]
 			rss_error = req_results[1]
 
-			if rss_error == False:
+			if rss_error is False:
 				########### RSS PARSING
 				try:
 					xmldoc = feedparser.parse(rss)
@@ -103,7 +103,7 @@ def ofSourceAndName(now, logger_info, logger_error, database):
 			ion_error = favicon_results[1]
 
 			########### FAVICON REPLACEMENT IF ERRORS OCCURS
-			if icon_error == True:
+			if icon_error is True:
 				favicon_link = "https://www.google.com/s2/favicons?domain=LienDuFluxAvecOuSanshttp"
 
 				favicon_results = sergenet.headToIcon(favicon_link, logger_info, logger_error)
@@ -111,7 +111,7 @@ def ofSourceAndName(now, logger_info, logger_error, database):
 				icon_error = req_results[1]
 
 			########### FAVICON UPDATE
-			if icon_error == False:
+			if icon_error is False:
 				update_favicon = ("UPDATE rss_serge SET favicon = %s WHERE id = %s")
 
 				########### LINK UPDATE
@@ -160,7 +160,7 @@ def ofSourceAndName(now, logger_info, logger_error, database):
 				rss = req_results[0]
 				rss_error = req_results[1]
 
-				if rss_error == False:
+				if rss_error is False:
 
 					########### RSS PARSING
 					try:
@@ -197,7 +197,7 @@ def ofSourceAndName(now, logger_info, logger_error, database):
 				icon_error = favicon_results[1]
 
 				########### FAVICON REPLACEMENT IF ERRORS OCCURS
-				if icon_error == True:
+				if icon_error is True:
 					favicon_link = "https://www.google.com/s2/favicons?domain=LienDuFluxAvecOuSanshttp"
 
 					favicon_results = sergenet.headToIcon(favicon_link, logger_info, logger_error)
@@ -205,7 +205,7 @@ def ofSourceAndName(now, logger_info, logger_error, database):
 					icon_error = req_results[1]
 
 				########### FAVICON UPDATE
-				if icon_error == False:
+				if icon_error is False:
 					update_favicon = ("UPDATE rss_serge SET favicon = %s WHERE id = %s")
 
 					########### LINK UPDATE
@@ -237,7 +237,7 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 	if checking is None and item[1] != "":
 
 		########### SEARCHING FOR AN IDENTICAL NEWS POST TITLE (LINK CHANGE)
-		if need_jelly == True:
+		if need_jelly is True:
 			call_data_cheking = database.cursor()
 			call_data_cheking.execute(query_jellychecking, (id_rss, ))
 			jellychecking = call_data_cheking.fetchall()
@@ -286,7 +286,7 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 					update_data.close()
 
 			########### NORMAL CONDITION : DATABASE INSERTION FOR NEWS CONTENTS
-			if duplicate == False:
+			if duplicate is False:
 				insert_data = database.cursor()
 				try:
 					insert_data.execute(query_insertion, item)
@@ -335,7 +335,7 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 			split_index = split_index+1
 
 		########### SEARCHING FOR A MODIFICATED NEWS POST TITLE
-		if need_jelly == True:
+		if need_jelly is True:
 			call_data_cheking = database.cursor()
 			call_data_cheking.execute(query_jellychecking, (id_rss, ))
 			jellychecking = call_data_cheking.fetchall()
@@ -365,7 +365,7 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 					update_data.close()
 
 			########### NORMAL CONDITION : DATABASE UPDATE FOR NEWS CONTENTS
-			if duplicate == False:
+			if duplicate is False:
 				update_data = database.cursor()
 				try:
 					update_data.execute(query_update, (complete_id, complete_owners, post_link))
