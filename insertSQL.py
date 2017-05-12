@@ -463,7 +463,7 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 
 	######### SEND_STATUS UPDATE IN result_patents_serge
 	for attributes in not_send_patents_list:
-		baselink = attributes[4]
+		baselink = attributes[3]
 
 		query = ("SELECT send_status FROM result_patents_serge WHERE link = %s")
 

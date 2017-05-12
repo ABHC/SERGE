@@ -134,7 +134,7 @@ def triage(register, user_id_comma, database) :
 
 		for row in rows:
 			row = list(row)
-			row.insert(4, row[0])
+			row.insert(3, row[0])
 			not_send_patents_list.append(row)
 
 	######### LINKS MODIFICATION FOR RECORDS
