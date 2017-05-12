@@ -127,13 +127,13 @@ def newscast(trio_sources_news):
 		keywords_and_id_news_list.append(field)
 
 	########### ETAG COMPARISON
-	head_results = sergenet.headToEtag(link, logger_info, logger_error)
-	etag = head_results[0]
-	head_error = head_results[1]
+	etag_results = sergenet.aLinkToThePast(link, logger_info, logger_error)
+	etag = etag_results[0]
+	etag_error = etag_results[1]
 
-	if (etag is None and head_error is False) or (etag != old_etag and head_error is False):
+	if (etag is None and etag_error is False) or (etag != old_etag and etag_error is False):
 		greenlight = True
-	elif (etag == old_etag and head_error is False) or head_error is True :
+	elif (etag == old_etag and etag_error is False) or etag_error is True :
 		greenlight = False
 	else :
 		greenlight = False
@@ -722,7 +722,7 @@ pydate = unicode(pydate)                          #TRANSFORM PYDATE INTO UNICODE
 logger_info.info(time.asctime(time.gmtime(now))+"\n")
 
 ######### DATABASE INTERGRITY CHECKING
-failsafe.checkMate(database, logger_info, logger_error)
+#failsafe.checkMate(database, logger_info, logger_error)
 
 ######### NUMBERS OF USERS
 call_users = database.cursor()

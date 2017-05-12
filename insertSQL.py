@@ -64,6 +64,7 @@ def ofSourceAndName(now, logger_info, logger_error, database):
 
 			link = rows[0]
 
+			########### RSS FEED RECOVERY
 			req_results = sergenet.allRequestLong(link, logger_info, logger_error)
 			rss = req_results[0]
 			rss_error = req_results[1]
@@ -96,6 +97,34 @@ def ofSourceAndName(now, logger_info, logger_error, database):
 					logger_error.error(repr(except_type))
 				update_rss.close()
 
+			########### FAVICON RECOVERY
+			favicon_results = sergenet.headToIcon(favicon_link, logger_info, logger_error)
+			icon = favicon_results[0]
+			ion_error = favicon_results[1]
+
+			########### FAVICON REPLACEMENT IF ERRORS OCCURS
+			if icon_error == True:
+				favicon_link = "https://www.google.com/s2/favicons?domain=LienDuFluxAvecOuSanshttp"
+
+				favicon_results = sergenet.headToIcon(favicon_link, logger_info, logger_error)
+				icon = req_results[0]
+				icon_error = req_results[1]
+
+			########### FAVICON UPDATE
+			if icon_error == False:
+				update_favicon = ("UPDATE rss_serge SET favicon = %s WHERE id = %s")
+
+				########### LINK UPDATE
+				update_rss = database.cursor()
+				try:
+					update_rss.execute(update_favicon, (icon, num))
+					database.commit()
+				except Exception, except_type:
+					database.rollback()
+					logger_error.error("ROLLBACK AT FAVICON UPDATE IN ofSourceAndName")
+					logger_error.error(repr(except_type))
+				update_rss.close()
+
 			num = num+1
 
 		now = unicode(now)
@@ -121,9 +150,11 @@ def ofSourceAndName(now, logger_info, logger_error, database):
 			link = rows[0]
 			rss_name = rows[1]
 			refresh_string = "[!NEW!]"
+			favicon_link = "https://www.google.com/s2/favicons?domain="+link
 
 			if rss_name is None or refresh_string in rss_name:
 
+				########### RSS FEED RECOVERY
 				req_results = sergenet.allRequestLong(link, logger_info, logger_error)
 				rss = req_results[0]
 				rss_error = req_results[1]
@@ -146,13 +177,42 @@ def ofSourceAndName(now, logger_info, logger_error, database):
 
 					update = ("UPDATE rss_serge SET name = %s WHERE id = %s")
 
+					########### LINK UPDATE
 					update_rss = database.cursor()
 					try:
 						update_rss.execute(update, (source_title, num))
 						database.commit()
 					except Exception, except_type:
 						database.rollback()
-						logger_error.error("ROLLBACK IN USUAL RESEARCH IN ofSourceAndName")
+						logger_error.error("ROLLBACK AT LINK UPDATE IN ofSourceAndName")
+						logger_error.error(repr(except_type))
+					update_rss.close()
+
+				########### FAVICON RECOVERY
+				favicon_results = sergenet.headToIcon(favicon_link, logger_info, logger_error)
+				icon = favicon_results[0]
+				icon_error = favicon_results[1]
+
+				########### FAVICON REPLACEMENT IF ERRORS OCCURS
+				if icon_error == True:
+					favicon_link = "https://www.google.com/s2/favicons?domain=LienDuFluxAvecOuSanshttp"
+
+					favicon_results = sergenet.headToIcon(favicon_link, logger_info, logger_error)
+					icon = req_results[0]
+					icon_error = req_results[1]
+
+				########### FAVICON UPDATE
+				if icon_error == False:
+					update_favicon = ("UPDATE rss_serge SET favicon = %s WHERE id = %s")
+
+					########### LINK UPDATE
+					update_rss = database.cursor()
+					try:
+						update_rss.execute(update_favicon, (icon, num))
+						database.commit()
+					except Exception, except_type:
+						database.rollback()
+						logger_error.error("ROLLBACK AT FAVICON UPDATE IN ofSourceAndName")
 						logger_error.error(repr(except_type))
 					update_rss.close()
 
@@ -303,17 +363,16 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 
 			########### NORMAL CONDITION : DATABASE UPDATE FOR NEWS CONTENTS
 			if duplicate == False:
-				else:
-					update_data = database.cursor()
-					try:
-						update_data.execute(query_update, (complete_id, complete_owners, post_link))
-						database.commit()
-					except Exception, except_type:
-						database.rollback()
-						logger_error.error("ROLLBACK AT UPDATE IN insertOrUpdate FUNCTION")
-						logger_error.error(query_update)
-						logger_error.error(repr(except_type))
-					update_data.close()
+				update_data = database.cursor()
+				try:
+					update_data.execute(query_update, (complete_id, complete_owners, post_link))
+					database.commit()
+				except Exception, except_type:
+					database.rollback()
+					logger_error.error("ROLLBACK AT UPDATE IN insertOrUpdate FUNCTION")
+					logger_error.error(query_update)
+					logger_error.error(repr(except_type))
+				update_data.close()
 
 		########### CLASSIC UPDATE FOR SCIENCE OR PATENTS CONTENTS
 		else:

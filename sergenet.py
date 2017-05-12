@@ -6,67 +6,68 @@
 import requests
 import traceback
 import logging
+from shutil import copyfileobj
 from logging.handlers import RotatingFileHandler
 
 
-def headToEtag(link, logger_info, logger_error):
+def aLinkToThePast(link, logger_info, logger_error):
 	"""Function for retrieve etag"""
 
 	try:
 		etag = requests.head(link, headers={'User-Agent' : "Serge Browser"}, timeout=15).headers.get('etag')
-		head_error = False
+		etag_error = False
 	except requests.exceptions.ConnectionError:
 		link = link.replace("http://", "").replace("http://", "")
 		logger_info.warning("CONNECTION ERROR AT "+link+"\n")
 		logger_info.warning("Please check the availability of the feed and the link\n \n")
 		etag = None
-		head_error = True
+		etag_error = True
 	except requests.exceptions.HTTPError:
 		link = link.replace("http://", "").replace("https://", "")
 		logger_info.warning("Error in the access "+link+" (HTTP protocol error) \n")
 		logger_info.warning("Please check the availability of the feed\n \n")
 		etag = None
-		head_error = True
+		etag_error = True
 	except requests.exceptions.URLRequired:
 		link = link.replace("http://", "").replace("https://", "")
 		logger_info.warning("Error in the access "+link+" (Link is not an URL) \n")
 		logger_info.warning("Please check the link\n \n")
 		etag = None
-		head_error = True
+		etag_error = True
 	except requests.exceptions.MissingSchema:
 		link = link.replace("http://", "").replace("https://", "")
 		logger_info.warning("Error in the access "+link+" (Link is not an URL) \n")
 		logger_info.warning("Please check the link\n \n")
 		etag = None
-		head_error = True
+		etag_error = True
 	except requests.exceptions.TooManyRedirects:
 		link = link.replace("http://", "").replace("https://", "")
 		logger_info.warning("Error in the access "+link+" (Too Many Redirects error) \n")
 		logger_info.warning("Please check the link\n \n")
 		etag = None
-		head_error = True
+		etag_error = True
 	except requests.exceptions.ConnectTimeout:
 		link = link.replace("http://", "").replace("https://", "")
 		logger_info.warning("Error in the access "+link+" (server don't respond ---> ConnectTimeout) \n")
 		logger_info.warning("Please check the availability of the feed\n \n")
 		etag = None
-		head_error = True
+		etag_error = True
 	except requests.exceptions.ReadTimeout:
 		link = link.replace("http://", "").replace("https://", "")
 		logger_info.warning("Error in the access "+link+" (server don't respond ---> ReadTimeout) \n")
 		logger_info.warning("Please check the availability of the feed\n \n")
 		etag = None
-		head_error = True
+		etag_error = True
 	except requests.exceptions.InvalidURL:
 		link = link.replace("http://", "").replace("https://", "")
 		logger_info.warning("Failed to parse "+link+" (InvalidURL exception) \n")
 		logger_info.warning("Please check the link\n \n")
 		etag = None
-		head_error = True
+		etag_error = True
 
-	head_results = (etag, head_error)
+	etag_results = (etag, etag_error)
 
-	return head_results
+	return etag_results
 
 
 def allRequestLong(link, logger_info, logger_error):
@@ -132,3 +133,64 @@ def allRequestLong(link, logger_info, logger_error):
 	req_results = (rss, rss_error)
 
 	return req_results
+
+
+def headToIcon(favicon_link, logger_info, logger_error):
+	"""Function for retrieve favicons"""
+
+	try:
+		req = requests.get(favicon_link, stream=True)
+		icon = req.raw
+		icon_error = False
+	except requests.exceptions.ConnectionError:
+		link = link.replace("http://", "").replace("http://", "")
+		logger_info.warning("CONNECTION ERROR AT "+link+"\n")
+		logger_info.warning("Please check the availability of the feed and the link\n \n")
+		icon = None
+		icon_error = True
+	except requests.exceptions.HTTPError:
+		link = link.replace("http://", "").replace("https://", "")
+		logger_info.warning("Error in the access "+link+" (HTTP protocol error) \n")
+		logger_info.warning("Please check the availability of the feed\n \n")
+		icon = None
+		icon_error = True
+	except requests.exceptions.URLRequired:
+		link = link.replace("http://", "").replace("https://", "")
+		logger_info.warning("Error in the access "+link+" (Link is not an URL) \n")
+		logger_info.warning("Please check the link\n \n")
+		icon = None
+		icon_error = True
+	except requests.exceptions.MissingSchema:
+		link = link.replace("http://", "").replace("https://", "")
+		logger_info.warning("Error in the access "+link+" (Link is not an URL) \n")
+		logger_info.warning("Please check the link\n \n")
+		icon = None
+		icon_error = True
+	except requests.exceptions.TooManyRedirects:
+		link = link.replace("http://", "").replace("https://", "")
+		logger_info.warning("Error in the access "+link+" (Too Many Redirects error) \n")
+		logger_info.warning("Please check the link\n \n")
+		icon = None
+		icon_error = True
+	except requests.exceptions.ConnectTimeout:
+		link = link.replace("http://", "").replace("https://", "")
+		logger_info.warning("Error in the access "+link+" (server don't respond ---> ConnectTimeout) \n")
+		logger_info.warning("Please check the availability of the feed\n \n")
+		icon = None
+		icon_error = True
+	except requests.exceptions.ReadTimeout:
+		link = link.replace("http://", "").replace("https://", "")
+		logger_info.warning("Error in the access "+link+" (server don't respond ---> ReadTimeout) \n")
+		logger_info.warning("Please check the availability of the feed\n \n")
+		icon = None
+		icon_error = True
+	except requests.exceptions.InvalidURL:
+		link = link.replace("http://", "").replace("https://", "")
+		logger_info.warning("Failed to parse "+link+" (InvalidURL exception) \n")
+		logger_info.warning("Please check the link\n \n")
+		icon = None
+		icon_error = True
+
+	favicon_results = (icon, icon_error)
+
+	return favicon_results
