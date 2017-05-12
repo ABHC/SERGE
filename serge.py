@@ -722,7 +722,7 @@ pydate = unicode(pydate)                          #TRANSFORM PYDATE INTO UNICODE
 logger_info.info(time.asctime(time.gmtime(now))+"\n")
 
 ######### DATABASE INTERGRITY CHECKING
-#failsafe.checkMate(database, logger_info, logger_error)
+failsafe.checkMate(database, logger_info, logger_error)
 
 ######### NUMBERS OF USERS
 call_users = database.cursor()
