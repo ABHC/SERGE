@@ -140,7 +140,7 @@ def ofSourceAndName(now, logger_info, logger_error, database):
 	else:
 		while num <= max_rss:
 
-			query = ("SELECT link, name FROM rss_serge WHERE id = %s")
+			query = ("SELECT link, name, favicon FROM rss_serge WHERE id = %s")
 
 			call_rss = database.cursor()
 			call_rss.execute(query, (num, ))
@@ -149,6 +149,7 @@ def ofSourceAndName(now, logger_info, logger_error, database):
 
 			link = rows[0]
 			rss_name = rows[1]
+			favicon = rows[2]
 			refresh_string = "[!NEW!]"
 			favicon_link = "https://www.google.com/s2/favicons?domain="+link
 
@@ -187,6 +188,8 @@ def ofSourceAndName(now, logger_info, logger_error, database):
 						logger_error.error("ROLLBACK AT LINK UPDATE IN ofSourceAndName")
 						logger_error.error(repr(except_type))
 					update_rss.close()
+
+			if favicon is None:
 
 				########### FAVICON RECOVERY
 				favicon_results = sergenet.headToIcon(favicon_link, logger_info, logger_error)
