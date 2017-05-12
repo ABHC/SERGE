@@ -69,7 +69,13 @@ def recorder(register, link, database):
 
 	salt = "blackSalt"
 	chop = hashlib.sha256(salt + ":" + user_pass + user_name + str(register)).hexdigest()
-	recording_link = "http://" + domain + "/redirect?id=" + str(register) + "&hash=" + chop + "&link=" + pn(link)
+
+	try:
+		recording_link = "http://" + domain + "/redirect?id=" + str(register) + "&hash=" + chop + "&link=" + pn(link)
+	except Exception, except_type:
+		logger_error.error("ERROR IN RECORDING LINK CONTRUCTION ON :"+link+"\n")
+		logger_error.error(repr(except_type))
+		recording_link = link
 
 	return (recording_link)
 
