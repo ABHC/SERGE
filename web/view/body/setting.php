@@ -1038,6 +1038,124 @@
 				<input alt="Extend" title="Extend" class="extend" type="submit" id="extend" name="extend" value=">>" />
 			</div>
 			<?php echo $ERROR_PATENTQUERY; ?>
+			<?php
+			include_once('model/readOwnerPatentQuery.php');
+			foreach ($queries as $query)
+			{
+				$queryDisplay = '';
+				$Qdisable = '';
+				$titleDisableActivate = "Disable";
+				$nameClassDisableActivate = "disable";
+
+				$pattern = ',!' . $_SESSION['id'] . ',';
+				if (preg_match("/$pattern/", $query['owners']))
+				{
+					$Qdisable = 'Qdisable';
+					$titleDisableActivate = "Activate";
+					$nameClassDisableActivate = "activate";
+				}
+
+				echo '
+				<div class="queryContainer ' . $Qdisable . '">
+					<input type="submit" title="Delete" class="deleteQuery" name="delQueryPatent" value="query' . $query['id'] . '"/>
+					<input type="submit" title="' . $titleDisableActivate . '" class="' . $nameClassDisableActivate . 'Query" name="' . $nameClassDisableActivate . 'QueryPatent" value="query' . $query['id'] . '"/>
+				';
+
+				$queryFieldsName['ALLNAMES'] = 'All Names';
+				$queryFieldsName['ALLNUM'] = 'All Numbers and IDs';
+				$queryFieldsName['AAD'] = 'Applicant Address';
+				$queryFieldsName['AADC'] = 'Applicant Address Country';
+				$queryFieldsName['PAA'] = 'Applicant All Data';
+				$queryFieldsName['PA'] = 'Applicant Name';
+				$queryFieldsName['ANA'] = 'Applicant Nationality';
+				$queryFieldsName['ARE'] = 'Applicant Residence';
+				$queryFieldsName['AD'] = 'Application Date';
+				$queryFieldsName['AN'] = 'Application Number';
+				$queryFieldsName['CHEM'] = 'Chemical';
+				$queryFieldsName['CTR'] = 'Country';
+				$queryFieldsName['DS'] = 'Designated States';
+				$queryFieldsName['EN_AB'] = 'English Abstract';
+				$queryFieldsName['EN_ALL'] = 'English All';
+				$queryFieldsName['EN_CL'] = 'English Claims';
+				$queryFieldsName['EN_DE'] = 'English Description';
+				$queryFieldsName['EN_ALLTXT'] = 'English Text';
+				$queryFieldsName['EN_TI'] = 'English Title';
+				$queryFieldsName['IC_EX'] = 'Exact IPC code';
+				$queryFieldsName['LGF'] = 'Filing Language';
+				$queryFieldsName['FP'] = 'Front Page(FP)';
+				$queryFieldsName['GN'] = 'Grant Number';
+				$queryFieldsName['IC'] = 'International Class';
+				$queryFieldsName['ICI'] = 'International Class Inventive';
+				$queryFieldsName['ICN'] = 'International Class N-Inventive';
+				$queryFieldsName['IPE'] = 'International Preliminary Examination';
+				$queryFieldsName['ISA'] = 'International Search Authority';
+				$queryFieldsName['ISR'] = 'International Search Report';
+				$queryFieldsName['INA'] = 'Inventor All Data';
+				$queryFieldsName['IN'] = 'Inventor Name';
+				$queryFieldsName['IADC'] = 'Inventor Nationality';
+				$queryFieldsName['RPA'] = 'Legal Representative All Data';
+				$queryFieldsName['RCN'] = 'Legal Representative Country';
+				$queryFieldsName['RP'] = 'Legal Representative Name';
+				$queryFieldsName['RAD'] = 'Legal Representative Address';
+				$queryFieldsName['LI'] = 'Licensing availability';
+				$queryFieldsName['PAF'] = 'Main Applicant Name';
+				$queryFieldsName['ICF'] = 'Main International Class';
+				$queryFieldsName['INF'] = 'Main Inventor Name';
+				$queryFieldsName['RPF'] = 'Main Legal Rep Name';
+				$queryFieldsName['NPA'] = 'National Phase All Data';
+				$queryFieldsName['NPAN'] = 'National Phase Application Number';
+				$queryFieldsName['NPED'] = 'National Phase Entry Date';
+				$queryFieldsName['NPET'] = 'National Phase Entry Type';
+				$queryFieldsName['PN'] = 'National Publication Number';
+				$queryFieldsName['OF'] = 'Office Code';
+				$queryFieldsName['NPCC'] = 'National Phase Office Code';
+				$queryFieldsName['PRIORPCTAN'] = 'Prior PCT Application Number';
+				$queryFieldsName['PRIORPCTWO'] = 'Prior PCT WO Number';
+				$queryFieldsName['PI'] = 'Priority All Data';
+				$queryFieldsName['PCN'] = 'Priority Country';
+				$queryFieldsName['PD'] = 'Priority Date';
+				$queryFieldsName['NP'] = 'Priority Number';
+				$queryFieldsName['DP'] = 'Publication Date';
+				$queryFieldsName['LGP'] = 'Publication Language';
+				$queryFieldsName['SIS'] = 'Supplementary International Search';
+				$queryFieldsName['TPO'] = 'Third Party Observation';
+				$queryFieldsName['WO'] = 'WIPO Publication Number';
+
+				$query = $query['query'];
+
+				preg_match_all("/[A-Z_]+\%3A/", $query, $queryFields);
+				foreach ($queryFields[0] as $fields)
+				{
+					preg_match("/$fields\ *[^\+]+\+/", $query, $fieldInput);
+					$fieldInputPURE = preg_replace("/\+/", "\+", $fieldInput[0]);
+					$query = preg_replace("/$fieldInputPURE/", "", $query);
+					$fieldInput = preg_replace("/(.+\%3A|`)/", "", $fieldInput[0]);
+					$fieldInput = preg_replace("/\+/", " ", $fieldInput);
+					$fields = preg_replace("/(\%3A|`)/", "", $fields);
+					$queryDisplay = $queryDisplay . '
+					<a href="setting?action=editQueryPatent&query=0" >
+						<div class="queryTypeView">' . $queryFieldsName[$fields] . '</div>
+					</a>
+					<a href="setting?action=editQueryPatent&query=0" >
+						<div class="queryKeywordView">' . $fieldInput . '</div>
+					</a>';
+
+					preg_match("/^(AND|OR)\+/", $query, $logicalConnector);
+					if (!empty($logicalConnector[1]))
+					{
+						$query = preg_replace("/^(AND|OR)\+/", "", $query);
+						preg_match("/.{1,3}/", $logicalConnector[1], $logicalConnector);
+						$queryDisplay = $queryDisplay . '
+						<a href="setting?action=editQueryPatent&query=0" >
+						<div class="query' . ucfirst(strtolower($logicalConnector[0])) . 'View">' . $logicalConnector[0] . '</div>
+						</a>
+						';
+					}
+				}
+
+				echo $queryDisplay . '</div>';
+			}
+			?>
 			<div class="queryContainer">
 				<a title="Delete" class="deleteQuery" href="setting?action=deleteQueryPatent&query=0" ></a>
 				<a title="Disable" class="disableQuery" href="setting?action=disableQueryPatent&query=0" ></a>
