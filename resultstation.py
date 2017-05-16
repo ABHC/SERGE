@@ -53,6 +53,7 @@ def recorder(register, link, database):
 def triage(register, user_id_comma) :
 	"""Triage by lists of news, of science publications and of patents to send. Update of these lists if user authorize records of links that was read."""
 
+	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
 	######### PERMISSION FOR RECORDS

@@ -18,6 +18,7 @@ def checkMate(logger_info, logger_error):
 	- numbers of columns checking in each tables
 	- columns name checking in each tables"""
 
+	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
 	serge = "%serge%"

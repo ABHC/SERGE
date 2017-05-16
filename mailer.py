@@ -25,6 +25,7 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 
 		buildMail retrieves mail building option for the current user and does a pre-formatting of the mail. Then the function calls the building functions for mail."""
 
+	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
 	######### NUMBER OF LINKS IN EACH CATEGORY
