@@ -18,6 +18,8 @@ def checkMate(logger_info, logger_error):
 	- numbers of columns checking in each tables
 	- columns name checking in each tables"""
 
+	database = databaseConnection()
+
 	serge = "%serge%"
 	database_name = "Serge"
 	tables_name_list = []
