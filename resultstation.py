@@ -11,6 +11,8 @@ import traceback
 import unicodedata
 from urllib import pathname2url as pn
 
+######### IMPORT SERGE SPECIALS MODULES
+from serge import databaseConnection
 
 def recorder(register, link, database):
 	"""Creation of "recording links" that update Serge Database when clicked"""
@@ -47,8 +49,10 @@ def recorder(register, link, database):
 	return (recording_link)
 
 
-def triage(register, user_id_comma, database) :
+def triage(register, user_id_comma) :
 	"""Triage by lists of news, of science publications and of patents to send. Update of these lists if user authorize records of links that was read."""
+
+	database = databaseConnection()
 
 	######### PERMISSION FOR RECORDS
 	query_record = "SELECT record_read FROM users_table_serge WHERE id LIKE %s"

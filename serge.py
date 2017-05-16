@@ -799,7 +799,7 @@ for user in user_list_all:
 	logger_info.info("USER : " + register)
 	user_id_comma = "%," + register + ",%"
 
-	results_basket = resultstation.triage(register, user_id_comma, database)
+	results_basket = resultstation.triage(register, user_id_comma)
 
 	not_send_news_list = results_basket[0]
 	not_send_science_list = results_basket[1]
