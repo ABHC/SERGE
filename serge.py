@@ -804,9 +804,6 @@ for user in user_list_all:
 	not_send_news_list = results_basket[0]
 	not_send_science_list = results_basket[1]
 	not_send_patents_list = results_basket[2]
-	permission_news = results_basket[3]
-	permission_science = results_basket[4]
-	permission_patents = results_basket[5]
 
 	pending_all = len(not_send_news_list)+len(not_send_science_list)+len(not_send_patents_list)
 
@@ -839,7 +836,7 @@ for user in user_list_all:
 			logger_info.info("FREQUENCY REACHED")
 
 			######### CALL TO buildMail FUNCTION
-			mailer.buildMail(user, user_id_comma, register, pydate, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, database)
+			mailer.buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list, database)
 
 			######### CALL TO stairwayToUpdate FUNCTION
 			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database)
@@ -865,7 +862,7 @@ for user in user_list_all:
 			logger_info.info("LIMIT REACHED")
 
 			######### CALL TO buildMail FUNCTION
-			mailer.buildMail(user, user_id_comma, register, pydate, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, database)
+			mailer.buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list, database)
 
 			######### CALL TO stairwayToUpdate FUNCTION
 			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database)
@@ -892,7 +889,7 @@ for user in user_list_all:
 			logger_info.info("GOOD DAY AND GOOD HOUR")
 
 			######### CALL TO buildMail FUNCTION
-			mailer.buildMail(user, user_id_comma, register, pydate, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, database)
+			mailer.buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list, database)
 
 			######### CALL TO stairwayToUpdate FUNCTION
 			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database)

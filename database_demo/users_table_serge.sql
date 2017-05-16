@@ -14,12 +14,9 @@ CREATE TABLE `users_table_serge` (
   `selected_hour` int(11) DEFAULT NULL,
   `mail_design` text COLLATE utf8mb4_bin NOT NULL,
   `language` varchar(2) COLLATE utf8mb4_bin DEFAULT 'EN',
-  `record_read` tinyint(1) NOT NULL,
+  `record_read` BOOLEAN NOT NULL,
   `history_lifetime` int(11) DEFAULT NULL,
-  `background_result` text COLLATE utf8mb4_bin NOT NULL,
-  `permission_news` tinyint(1) NOT NULL,
-  `permission_science` tinyint(1) NOT NULL,
-  `permission_patents` tinyint(1) NOT NULL,
+  `background_result` text COLLATE utf8mb4_bin NOT NULL
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 

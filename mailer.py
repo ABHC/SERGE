@@ -19,7 +19,7 @@ from logging.handlers import RotatingFileHandler
 import decoder
 
 
-def buildMail(user, user_id_comma, register, pydate, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, database):
+def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list, database):
 	"""Function for mail pre-formatting.
 
 		buildMail retrieves mail building option for the current user and does a pre-formatting of the mail. Then the function calls the building functions for mail."""
@@ -70,7 +70,7 @@ def buildMail(user, user_id_comma, register, pydate, permission_news, permission
 		not_send_science_list = sorted(not_send_science_list, key= lambda science_field : science_field[1])
 		not_send_patents_list = sorted(not_send_patents_list, key= lambda patents_field : patents_field[1])
 
-		newsletter = newsletterByType(user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate)
+		newsletter = newsletterByType(user, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate)
 
 	elif mail_design[0] == "masterword":
 		query_newswords = "SELECT keyword, id FROM keyword_news_serge WHERE applicable_owners_sources LIKE %s AND active > 0"
@@ -113,7 +113,7 @@ def buildMail(user, user_id_comma, register, pydate, permission_news, permission
 			word_and_attribute = (human_query, word_and_attribute[1])
 			patent_master_queries_list.append(word_and_attribute)
 
-		newsletter = newsletterByKeyword(user, pydate, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list)
+		newsletter = newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list)
 
 	elif mail_design[0] == "origin":
 		query_news_origin = "SELECT name, id FROM rss_serge WHERE owners like %s and active > 0"
@@ -126,13 +126,13 @@ def buildMail(user, user_id_comma, register, pydate, permission_news, permission
 		for source_and_attribute in news_origin:
 			news_origin_list.append(source_and_attribute)
 
-		newsletter = newsletterBySource(user, pydate, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list)
+		newsletter = newsletterBySource(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list)
 
 	######### CALL TO highwayToMail FUNCTION
 	highwayToMail(register, user, newsletter, database)
 
 
-def newsletterByType(user, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate):
+def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate):
 	"""Formatting function for emails, apply the default formatting"""
 
 	######### PENDING LINKS
@@ -163,7 +163,7 @@ def newsletterByType(user, permission_news, permission_science, permission_paten
 	index = 0
 
 	######### ECRITURE NEWS
-	if permission_news == 0 and pending_news > 0:
+	if pending_news > 0:
 		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[3]))
 
 		while index < pending_news:
@@ -180,7 +180,7 @@ def newsletterByType(user, permission_news, permission_science, permission_paten
 	index = 0
 
 	######### ECRITURE SCIENCE
-	if permission_science == 0 and pending_science > 0:
+	if pending_science > 0:
 		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[4]))
 
 		while index < pending_science:
@@ -197,7 +197,7 @@ def newsletterByType(user, permission_news, permission_science, permission_paten
 	index = 0
 
 	######### ECRITURE PATENTS
-	if permission_patents == 0 and pending_patents > 0:
+	if pending_patents > 0:
 		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[5]))
 
 		while index < pending_patents:
@@ -266,7 +266,7 @@ def newsletterByType(user, permission_news, permission_science, permission_paten
 	return newsletter
 
 
-def newsletterByKeyword(user, pydate, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list):
+def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list):
 	"""Formatting function for emails, apply the formatting by keywords"""
 
 	######### PENDING LINKS
@@ -298,7 +298,7 @@ def newsletterByKeyword(user, pydate, translate_text, permission_news, permissio
 	already_in_the_list = []
 
 	######### ECRITURE NEWS
-	if permission_news == 0 and pending_news > 0:
+	if pending_news > 0:
 		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[3]))
 
 		######### ECRITURE KEYWORDS FOR NEWS
@@ -336,7 +336,7 @@ def newsletterByKeyword(user, pydate, translate_text, permission_news, permissio
 	index = 0
 
 	######### ECRITURE SCIENCE
-	if permission_science == 0 and pending_science > 0:
+	if pending_science > 0:
 		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[4]))
 
 		######### ECRITURE KEYWORDS FOR SCIENCE
@@ -372,7 +372,7 @@ def newsletterByKeyword(user, pydate, translate_text, permission_news, permissio
 	index = 0
 
 	######### ECRITURE PATENTS
-	if permission_patents == 0 and pending_patents > 0:
+	if pending_patents > 0:
 		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[5]))
 
 		######### ECRITURE QUERY FOR PATENTS
@@ -461,7 +461,7 @@ def newsletterByKeyword(user, pydate, translate_text, permission_news, permissio
 	return newsletter
 
 
-def newsletterBySource(user, pydate, translate_text, permission_news, permission_science, permission_patents, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list):
+def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list):
 	"""Formatting function for emails, apply the formatting by sources"""
 
 	######### PENDING LINKS
@@ -492,7 +492,7 @@ def newsletterBySource(user, pydate, translate_text, permission_news, permission
 	index = 0
 
 	######### ECRITURE NEWS
-	if permission_news == 0 and pending_news > 0:
+	if pending_news > 0:
 		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[3]))
 
 		######### ECRITURE ORIGIN FOR NEWS
@@ -529,7 +529,7 @@ def newsletterBySource(user, pydate, translate_text, permission_news, permission
 	index = 0
 
 	######### ECRITURE SCIENCE
-	if permission_science == 0 and pending_science > 0:
+	if pending_science > 0:
 		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[4]))
 		new_papers = 0
 
@@ -597,7 +597,7 @@ def newsletterBySource(user, pydate, translate_text, permission_news, permission
 	index = 0
 
 	######### ECRITURE PATENTS
-	if permission_patents == 0 and pending_patents > 0:
+	if pending_patents > 0:
 		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[5]))
 		newsletter = newsletter + ("""<br/><br/><b>OMPI : Organisation Mondiale de la Propriété Intellectuelle</b><br/>""")
 
