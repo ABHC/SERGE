@@ -666,64 +666,70 @@
 			<h2>Science watch management</h2>
 			<div class="newQueryContainer">
 				<input title="Add new science query" class="submit" type="submit" name="scienceQuerySubmit" value="add" />
-				<input type="checkbox" id="openParenthesis0" name="openParenthesis0" value="active" />
-				<label class="queryParenthesis" for="openParenthesis0">(</label>
-				<select title="Type" class="queryType" name="scienceType0" id="scienceType00">
-					<option value="ti">Title</option>
-					<option value="au">Author</option>
-					<option value="abs">Abstract</option>
-					<option value="jr">Reference</option>
-					<option value="cat">Category</option>
-					<option value="all">All</option>
-				</select>
-				<span class="arrDownBorder">▾</span>
-				<input type="text" class="query" name="scienceQuery0" id="scienceQuery00" placeholder="Keyword" size="30" />
-				<input type="checkbox" id="closeParenthesis0" name="openParenthesis0" value="active" />
-				<label class="queryParenthesis" for="closeParenthesis0">)</label>
-				<div class="btnList">
-					<input type="radio" id="andOrNotand_AND00" name="andOrAndnot1" value="AND">
-					<label class="ANDOrNotand" for="andOrNotand_AND00"></label>
-					<input type="radio" id="andOrNotand_OR00" name="andOrAndnot1" value="OR" checked>
-					<label class="andORNotand" for="andOrNotand_OR00"></label>
-					<input type="radio" id="andOrNotand_NOTAND00" name="andOrAndnot1" value="NOTAND">
-					<label class="andOrNOTAND" for="andOrNotand_NOTAND00"></label>
-				</div>
-				<input type="checkbox" id="openParenthesis1" name="openParenthesis1" value="active" checked/>
-				<label class="queryParenthesis" for="openParenthesis1">(</label>
-				<select alt="Type" title="Type" class="queryType" name="scienceType1" id="scienceType01">
-					<option value="ti">Title</option>
-					<option value="au">Author</option>
-					<option value="abs">Abstract</option>
-					<option value="jr">Reference</option>
-					<option value="cat">Category</option>
-					<option value="all">All</option>
-				</select>
-				<span class="arrDownBorder">▾</span>
-				<input type="text" class="query" name="scienceQuery1" id="scienceQuery01" placeholder="Keyword" size="30" />
-				<input type="checkbox" id="closeParenthesis1" name="closeParenthesis1" value="active" />
-				<label class="queryParenthesis" for="closeParenthesis1">)</label>
-				<div class="btnList">
-					<input type="radio" id="andOrNotand_AND01" name="andOrAndnot2" value="AND">
-					<label class="ANDOrNotand" for="andOrNotand_AND01"></label>
-					<input type="radio" id="andOrNotand_OR01" name="andOrAndnot2" value="OR" checked>
-					<label class="andORNotand" for="andOrNotand_OR01"></label>
-					<input type="radio" id="andOrNotand_NOTAND01" name="andOrAndnot2" value="NOTAND">
-					<label class="andOrNOTAND" for="andOrNotand_NOTAND01"></label>
-				</div>
-				<input type="checkbox" id="openParenthesis2" name="openParenthesis2" value="active" />
-				<label class="queryParenthesis" for="openParenthesis2">(</label>
-				<select alt="Type" title="Type" class="queryType" name="scienceType2" id="scienceType02">
-					<option value="ti">Title</option>
-					<option value="au">Author</option>
-					<option value="abs">Abstract</option>
-					<option value="jr">Reference</option>
-					<option value="cat">Category</option>
-					<option value="all">All</option>
-				</select>
-				<span class="arrDownBorder">▾</span>
-				<input type="text" class="query" name="scienceQuery2" id="scienceQuery02" placeholder="Keyword" size="30" />
-				<input type="checkbox" id="closeParenthesis2" name="closeParenthesis2" value="active" checked/>
-				<label class="queryParenthesis" for="closeParenthesis2">)</label>
+				<?php
+				$cpt = 0;
+				$logicalConnector = '';
+
+				while ($cpt < $_SESSION['cptScienceQuery'])
+				{
+					echo $logicalConnector;
+
+					if (intval($cpt/3) == ($cpt/3) AND $cpt != 0)
+					{
+						echo '<div class="ghostSpace"></div>';
+					}
+
+					$selected['ti'] = '';
+					$selected['au'] = '';
+					$selected['abs'] = '';
+					$selected['jr'] = '';
+					$selected['cat'] = '';
+					$selected['all'] = '';
+					$selected[$_POST['scienceType' . $cpt]] = 'selected';
+
+					echo '
+					<input type="checkbox" id="openParenthesis' . $cpt . '" name="openParenthesis' . $cpt . '" value="active" />
+					<label class="queryParenthesis" for="openParenthesis' . $cpt . '">(</label>
+					<select title="Type" class="queryType" name="scienceType' . $cpt . '" id="scienceType0' . $cpt . '">
+						<option value="ti" ' . $selected['ti'] . '>Title</option>
+						<option value="au" ' . $selected['au'] . '>Author</option>
+						<option value="abs" ' . $selected['abs'] . '>Abstract</option>
+						<option value="jr" ' . $selected['jr'] . '>Reference</option>
+						<option value="cat" ' . $selected['cat'] . '>Category</option>
+						<option value="all" ' . $selected['all'] . '>All</option>
+					</select>
+					<span class="arrDownBorder">▾</span>
+					<input type="text" class="query" name="scienceQuery' . $cpt . '" id="scienceQuery0' . $cpt . '" placeholder="Keyword" size="30" value="' . $_POST['scienceQuery' . $cpt] . '"/>
+					<input type="checkbox" id="closeParenthesis' . $cpt . '" name="openParenthesis' . $cpt . '" value="active" />
+					<label class="queryParenthesis" for="closeParenthesis' . $cpt . '">)</label>';
+
+					$cpt++;
+
+					$checked['OR'] = '';
+					$checked['AND'] = '';
+					$checked['NOTAND'] = '';
+					$checked[$_POST['andOrAndnot' . $cpt]] = 'checked';
+
+					if (empty($_POST['andOrAndnot' . $cpt]))
+					{
+						$checked['OR'] = 'checked';
+					}
+
+					$logicalConnector = '
+					<div class="btnList">
+						<input type="radio" id="andOrNotand_AND0' . $cpt . '" name="andOrAndnot' . $cpt . '" value="AND" ' . $checked['AND'] . '>
+						<label class="ANDOrNotand" for="andOrNotand_AND0' . $cpt . '"></label>
+						<input type="radio" id="andOrNotand_OR0' . $cpt . '" name="andOrAndnot' . $cpt . '" value="OR" ' . $checked['OR'] . '>
+						<label class="andORNotand" for="andOrNotand_OR0' . $cpt . '"></label>
+						<input type="radio" id="andOrNotand_NOTAND0' . $cpt . '" name="andOrAndnot' . $cpt . '" value="NOTAND" ' . $checked['NOTAND'] . '>
+						<label class="andOrNOTAND" for="andOrNotand_NOTAND0' . $cpt . '"></label>
+					</div>';
+				}
+				if ($_SESSION['cptScienceQuery'] > 3)
+				{
+					echo '<div class="ghostSpace"></div>';
+				}
+				?>
 				<input alt="Extend" title="Extend" class="extend" type="submit" id="extendScience" name="extendScience" value=">>" />
 			</div>
 			<?php echo $ERROR_SCIENCEQUERY; ?>
@@ -821,200 +827,159 @@
 			<h2>Patent watch management</h2>
 			<div class="newQueryContainer">
 				<input title="Add new patents query" class="submit" type="submit" name="patentQuerySubmit" value="add" />
-				<select title="Type" class="queryType" name="patentType0" id="patentType00">
-					<option value="ALLNAMES">All Names</option>
-					<option value="ALLNUM">All Numbers and IDs</option>
-					<option value="AAD">Applicant Address</option>
-					<option value="AADC">Applicant Address Country</option>
-					<option value="PAA">Applicant All Data</option>
-					<option value="PA">Applicant Name</option>
-					<option value="ANA">Applicant Nationality</option>
-					<option value="ARE">Applicant Residence</option>
-					<option value="AD">Application Date</option>
-					<option value="AN">Application Number</option>
-					<option value="CHEM">Chemical</option>
-					<option value="CTR">Country</option>
-					<option value="DS">Designated States</option>
-					<option value="EN_AB">English Abstract</option>
-					<option value="EN_ALL">English All</option>
-					<option value="EN_CL">English Claims</option>
-					<option value="EN_DE">English Description</option>
-					<option value="EN_ALLTXT">English Text</option>
-					<option value="EN_TI">English Title</option>
-					<option value="IC_EX">Exact IPC code</option>
-					<option value="LGF">Filing Language</option>
-					<option value="FP">Front Page(FP)</option>
-					<option value="GN">Grant Number</option>
-					<option value="IC">International Class</option>
-					<option value="ICI">International Class Inventive</option>
-					<option value="ICN">International Class N-Inventive</option>
-					<option value="IPE">International Preliminary Examination</option>
-					<option value="ISA">International Search Authority</option>
-					<option value="ISR">International Search Report</option>
-					<option value="INA">Inventor All Data</option>
-					<option value="IN">Inventor Name</option>
-					<option value="IADC">Inventor Nationality</option>
-					<option value="RPA">Legal Representative All Data</option>
-					<option value="RCN">Legal Representative Country</option>
-					<option value="RP">Legal Representative Name</option>
-					<option value="RAD">Legal Representative Address</option>
-					<option value="LI">Licensing availability</option>
-					<option value="PAF">Main Applicant Name</option>
-					<option value="ICF">Main International Class</option>
-					<option value="INF">Main Inventor Name</option>
-					<option value="RPF">Main Legal Rep Name</option>
-					<option value="NPA">National Phase All Data</option>
-					<option value="NPAN">National Phase Application Number</option>
-					<option value="NPED">National Phase Entry Date</option>
-					<option value="NPET">National Phase Entry Type</option>
-					<option value="PN">National Publication Number</option>
-					<option value="OF">Office Code</option>
-					<option value="NPCC">National Phase Office Code</option>
-					<option value="PRIORPCTAN">Prior PCT Application Number</option>
-					<option value="PRIORPCTWO">Prior PCT WO Number</option>
-					<option value="PI">Priority All Data</option>
-					<option value="PCN">Priority Country</option>
-					<option value="PD">Priority Date</option>
-					<option value="NP">Priority Number</option>
-					<option value="DP">Publication Date</option>
-					<option value="LGP">Publication Language</option>
-					<option value="SIS">Supplementary International Search</option>
-					<option value="TPO">Third Party Observation</option>
-					<option value="WO">WIPO Publication Number</option>
+				<?php
+				$cpt = 0;
+				$logicalConnector = '';
+
+				while ($cpt < $_SESSION['cptPatentQuery'])
+				{
+					echo $logicalConnector;
+
+					if (intval($cpt/3) == ($cpt/3) AND $cpt != 0)
+					{
+						echo '<div class="ghostSpace"></div>';
+					}
+
+					$selected['ALLNAMES'] = '';
+					$selected['ALLNUM'] = '';
+					$selected['AAD'] = '';
+					$selected['AADC'] = '';
+					$selected['PAA'] = '';
+					$selected['PA'] = '';
+					$selected['ANA'] = '';
+					$selected['ARE'] = '';
+					$selected['AD'] = '';
+					$selected['AN'] = '';
+					$selected['CHEM'] = '';
+					$selected['CTR'] = '';
+					$selected['DS'] = '';
+					$selected['EN_AB'] = '';
+					$selected['EN_ALL'] = '';
+					$selected['EN_CL'] = '';
+					$selected['EN_DE'] = '';
+					$selected['EN_ALLTXT'] = '';
+					$selected['EN_TI'] = '';
+					$selected['IC_EX'] = '';
+					$selected['LGF'] = '';
+					$selected['FP'] = '';
+					$selected['GN'] = '';
+					$selected['IC'] = '';
+					$selected['ICI'] = '';
+					$selected['ICN'] = '';
+					$selected['IPE'] = '';
+					$selected['ISA'] = '';
+					$selected['ISR'] = '';
+					$selected['INA'] = '';
+					$selected['IN'] = '';
+					$selected['IADC'] = '';
+					$selected['RPA'] = '';
+					$selected['RCN'] = '';
+					$selected['RP'] = '';
+					$selected['RAD'] = '';
+					$selected['LI'] = '';
+					$selected['PAF'] = '';
+					$selected['ICF'] = '';
+					$selected['INF'] = '';
+					$selected['RPF'] = '';
+					$selected['NPA'] = '';
+					$selected['NPAN'] = '';
+					$selected['NPED'] = '';
+					$selected['NPET'] = '';
+					$selected['PN'] = '';
+					$selected['OF'] = '';
+					$selected['NPCC'] = '';
+					$selected['PRIORPCTAN'] = '';
+					$selected['PRIORPCTWO'] = '';
+					$selected['PI'] = '';
+					$selected['PCN'] = '';
+					$selected['PD'] = '';
+					$selected['NP'] = '';
+					$selected['DP'] = '';
+					$selected['LGP'] = '';
+					$selected['SIS'] = '';
+					$selected['TPO'] = '';
+					$selected['WO'] = '';
+					$selected[$_POST['patentType' . $cpt]] = 'selected';
+
+					echo '
+				<select title="Type" class="queryType" name="patentType' . $cpt . '" id="patentType' . $cpt . '">
+					<option value="ALLNAMES" ' . $selected['ALLNAMES'] . '>All Names</option>
+					<option value="ALLNUM" ' . $selected['ALLNUM'] . '>All Numbers and IDs</option>
+					<option value="AAD" ' . $selected['AAD'] . '>Applicant Address</option>
+					<option value="AADC" ' . $selected['AADC'] . '>Applicant Address Country</option>
+					<option value="PAA" ' . $selected['PAA'] . '>Applicant All Data</option>
+					<option value="PA" ' . $selected['PA'] . '>Applicant Name</option>
+					<option value="ANA" ' . $selected['ANA'] . '>Applicant Nationality</option>
+					<option value="ARE" ' . $selected['ARE'] . '>Applicant Residence</option>
+					<option value="AD" ' . $selected['AD'] . '>Application Date</option>
+					<option value="AN" ' . $selected['AN'] . '>Application Number</option>
+					<option value="CHEM" ' . $selected['CHEM'] . '>Chemical</option>
+					<option value="CTR" ' . $selected['CTR'] . '>Country</option>
+					<option value="DS" ' . $selected['DS'] . '>Designated States</option>
+					<option value="EN_AB" ' . $selected['EN_AB'] . '>English Abstract</option>
+					<option value="EN_ALL" ' . $selected['EN_ALL'] . '>English All</option>
+					<option value="EN_CL" ' . $selected['EN_CL'] . '>English Claims</option>
+					<option value="EN_DE" ' . $selected['EN_DE'] . '>English Description</option>
+					<option value="EN_ALLTXT" ' . $selected['EN_ALLTXT'] . '>English Text</option>
+					<option value="EN_TI" ' . $selected['EN_TI'] . '>English Title</option>
+					<option value="EN_EX" ' . $selected['EN_EX'] . '>Exact IPC code</option>
+					<option value="LGF" ' . $selected['LGF'] . '>Filing Language</option>
+					<option value="FP" ' . $selected['FP'] . '>Front Page(FP)</option>
+					<option value="GN" ' . $selected['GN'] . '>Grant Number</option>
+					<option value="IC" ' . $selected['IC'] . '>International Class</option>
+					<option value="ICI" ' . $selected['ICI'] . '>International Class Inventive</option>
+					<option value="ICN" ' . $selected['ICN'] . '>International Class N-Inventive</option>
+					<option value="IPE" ' . $selected['IPE'] . '>International Preliminary Examination</option>
+					<option value="ISA" ' . $selected['ISA'] . '>International Search Authority</option>
+					<option value="ISR" ' . $selected['ISR'] . '>International Search Report</option>
+					<option value="INA" ' . $selected['INA'] . '>Inventor All Data</option>
+					<option value="IN" ' . $selected['IN'] . '>Inventor Name</option>
+					<option value="IADC" ' . $selected['IADC'] . '>Inventor Nationality</option>
+					<option value="RPA" ' . $selected['RPA'] . '>Legal Representative All Data</option>
+					<option value="RCN" ' . $selected['RCN'] . '>Legal Representative Country</option>
+					<option value="RP" ' . $selected['RP'] . '>Legal Representative Name</option>
+					<option value="RAD" ' . $selected['RAD'] . '>Legal Representative Address</option>
+					<option value="LI" ' . $selected['LI'] . '>Licensing availability</option>
+					<option value="PAF" ' . $selected['PAF'] . '>Main Applicant Name</option>
+					<option value="ICF" ' . $selected['ICF'] . '>Main International Class</option>
+					<option value="INF" ' . $selected['INF'] . '>Main Inventor Name</option>
+					<option value="RPF" ' . $selected['RPF'] . '>Main Legal Rep Name</option>
+					<option value="NPA" ' . $selected['NPA'] . '>National Phase All Data</option>
+					<option value="NPAN" ' . $selected['NPAN'] . '>National Phase Application Number</option>
+					<option value="NPED" ' . $selected['NPED'] . '>National Phase Entry Date</option>
+					<option value="NPET" ' . $selected['NPET'] . '>National Phase Entry Type</option>
+					<option value="PN" ' . $selected['PN'] . '>National Publication Number</option>
+					<option value="OF" ' . $selected['OF'] . '>Office Code</option>
+					<option value="NPCC" ' . $selected['NPCC'] . '>National Phase Office Code</option>
+					<option value="PRIORPCTAN" ' . $selected['PRIORPCTAN'] . '>Prior PCT Application Number</option>
+					<option value="PRIORPCTW" ' . $selected['PRIORPCTW'] . '>Prior PCT WO Number</option>
+					<option value="PI" ' . $selected['PI'] . '>Priority All Data</option>
+					<option value="PCN" ' . $selected['PCN'] . '>Priority Country</option>
+					<option value="PD" ' . $selected['PD'] . '>Priority Date</option>
+					<option value="NP" ' . $selected['NP'] . '>Priority Number</option>
+					<option value="DP" ' . $selected['DP'] . '>Publication Date</option>
+					<option value="LGP" ' . $selected['LGP'] . '>Publication Language</option>
+					<option value="SIS" ' . $selected['SIS'] . '>Supplementary International Search</option>
+					<option value="TPO" ' . $selected['TPO'] . '>Third Party Observation</option>
+					<option value="WO" ' . $selected['WO'] . '>WIPO Publication Number</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" class="query" name="patentQuery0" id="patentQuery00" placeholder="Keyword" size="30" />
-				<input type="checkbox" id="patentAndOr1" name="andOrPatent0" value="OR">
-				<label class="andOr" for="patentAndOr1"></label>
-				<select alt="Type" title="Type" class="queryType" name="patentType1" id="patentType01">
-					<option value="ALLNAMES">All Names</option>
-					<option value="ALLNUM">All Numbers and IDs</option>
-					<option value="AAD">Applicant Address</option>
-					<option value="AADC">Applicant Address Country</option>
-					<option value="PAA">Applicant All Data</option>
-					<option value="PA">Applicant Name</option>
-					<option value="ANA">Applicant Nationality</option>
-					<option value="ARE">Applicant Residence</option>
-					<option value="AD">Application Date</option>
-					<option value="AN">Application Number</option>
-					<option value="CHEM">Chemical</option>
-					<option value="CTR">Country</option>
-					<option value="DS">Designated States</option>
-					<option value="EN_AB">English Abstract</option>
-					<option value="EN_ALL">English All</option>
-					<option value="EN_CL">English Claims</option>
-					<option value="EN_DE">English Description</option>
-					<option value="EN_ALLTXT">English Text</option>
-					<option value="EN_TI">English Title</option>
-					<option value="IC_EX">Exact IPC code</option>
-					<option value="LGF">Filing Language</option>
-					<option value="FP">Front Page(FP)</option>
-					<option value="GN">Grant Number</option>
-					<option value="IC">International Class</option>
-					<option value="ICI">International Class Inventive</option>
-					<option value="ICN">International Class N-Inventive</option>
-					<option value="IPE">International Preliminary Examination</option>
-					<option value="ISA">International Search Authority</option>
-					<option value="ISR">International Search Report</option>
-					<option value="INA">Inventor All Data</option>
-					<option value="IN">Inventor Name</option>
-					<option value="IADC">Inventor Nationality</option>
-					<option value="RPA">Legal Representative All Data</option>
-					<option value="RCN">Legal Representative Country</option>
-					<option value="RP">Legal Representative Name</option>
-					<option value="RAD">Legal Representative Address</option>
-					<option value="LI">Licensing availability</option>
-					<option value="PAF">Main Applicant Name</option>
-					<option value="ICF">Main International Class</option>
-					<option value="INF">Main Inventor Name</option>
-					<option value="RPF">Main Legal Rep Name</option>
-					<option value="NPA">National Phase All Data</option>
-					<option value="NPAN">National Phase Application Number</option>
-					<option value="NPED">National Phase Entry Date</option>
-					<option value="NPET">National Phase Entry Type</option>
-					<option value="PN">National Publication Number</option>
-					<option value="OF">Office Code</option>
-					<option value="NPCC">National Phase Office Code</option>
-					<option value="PRIORPCTAN">Prior PCT Application Number</option>
-					<option value="PRIORPCTWO">Prior PCT WO Number</option>
-					<option value="PI">Priority All Data</option>
-					<option value="PCN">Priority Country</option>
-					<option value="PD">Priority Date</option>
-					<option value="NP">Priority Number</option>
-					<option value="DP">Publication Date</option>
-					<option value="LGP">Publication Language</option>
-					<option value="SIS">Supplementary International Search</option>
-					<option value="TPO">Third Party Observation</option>
-					<option value="WO">WIPO Publication Number</option>
-				</select>
-				<span class="arrDownBorder">▾</span>
-				<input type="text" class="query" name="patentQuery1" id="patentQuery01" placeholder="Keyword" size="30" />
-				<input type="checkbox" id="patentAndOr2"  name="andOrPatent1" value="OR">
-				<label class="andOr" for="patentAndOr2"></label>
-				<select alt="Type" title="Type" class="queryType" name="patentType2" id="patentType02">
-					<option value="ALLNAMES">All Names</option>
-					<option value="ALLNUM">All Numbers and IDs</option>
-					<option value="AAD">Applicant Address</option>
-					<option value="AADC">Applicant Address Country</option>
-					<option value="PAA">Applicant All Data</option>
-					<option value="PA">Applicant Name</option>
-					<option value="ANA">Applicant Nationality</option>
-					<option value="ARE">Applicant Residence</option>
-					<option value="AD">Application Date</option>
-					<option value="AN">Application Number</option>
-					<option value="CHEM">Chemical</option>
-					<option value="CTR">Country</option>
-					<option value="DS">Designated States</option>
-					<option value="EN_AB">English Abstract</option>
-					<option value="EN_ALL">English All</option>
-					<option value="EN_CL">English Claims</option>
-					<option value="EN_DE">English Description</option>
-					<option value="EN_ALLTXT">English Text</option>
-					<option value="EN_TI">English Title</option>
-					<option value="IC_EX">Exact IPC code</option>
-					<option value="LGF">Filing Language</option>
-					<option value="FP">Front Page(FP)</option>
-					<option value="GN">Grant Number</option>
-					<option value="IC">International Class</option>
-					<option value="ICI">International Class Inventive</option>
-					<option value="ICN">International Class N-Inventive</option>
-					<option value="IPE">International Preliminary Examination</option>
-					<option value="ISA">International Search Authority</option>
-					<option value="ISR">International Search Report</option>
-					<option value="INA">Inventor All Data</option>
-					<option value="IN">Inventor Name</option>
-					<option value="IADC">Inventor Nationality</option>
-					<option value="RPA">Legal Representative All Data</option>
-					<option value="RCN">Legal Representative Country</option>
-					<option value="RP">Legal Representative Name</option>
-					<option value="RAD">Legal Representative Address</option>
-					<option value="LI">Licensing availability</option>
-					<option value="PAF">Main Applicant Name</option>
-					<option value="ICF">Main International Class</option>
-					<option value="INF">Main Inventor Name</option>
-					<option value="RPF">Main Legal Rep Name</option>
-					<option value="NPA">National Phase All Data</option>
-					<option value="NPAN">National Phase Application Number</option>
-					<option value="NPED">National Phase Entry Date</option>
-					<option value="NPET">National Phase Entry Type</option>
-					<option value="PN">National Publication Number</option>
-					<option value="OF">Office Code</option>
-					<option value="NPCC">National Phase Office Code</option>
-					<option value="PRIORPCTAN">Prior PCT Application Number</option>
-					<option value="PRIORPCTWO">Prior PCT WO Number</option>
-					<option value="PI">Priority All Data</option>
-					<option value="PCN">Priority Country</option>
-					<option value="PD">Priority Date</option>
-					<option value="NP">Priority Number</option>
-					<option value="DP">Publication Date</option>
-					<option value="LGP">Publication Language</option>
-					<option value="SIS">Supplementary International Search</option>
-					<option value="TPO">Third Party Observation</option>
-					<option value="WO">WIPO Publication Number</option>
-				</select>
-				<span class="arrDownBorder">▾</span>
-				<input type="text" class="query" name="patentQuery2" id="patentQuery02" placeholder="Keyword" size="30" />
-				<input alt="Extend" title="Extend" class="extend" type="submit" id="extend" name="extend" value=">>" />
+				<input type="text" class="query" name="patentQuery' . $cpt . '" id="patentQuery' . $cpt . '" placeholder="Keyword" size="30" value="' . $_POST['patentQuery' . $cpt] . '" />';
+
+				$cpt++;
+
+				$checked = '';
+				if ($_POST['andOrPatent' . $cpt] == 'OR')
+				{
+					$checked = 'checked';
+				}
+
+				$logicalConnector = '
+				<input type="checkbox" id="patentAndOr' . $cpt . '" name="andOrPatent' . $cpt . '" value="OR" ' . $checked . '>
+				<label class="andOr" for="patentAndOr' . $cpt . '"></label>';
+				}
+				?>
+				<input title="Extend" class="extend" type="submit" id="extend" name="extendPatent" value=">>" />
 			</div>
 			<?php echo $ERROR_PATENTQUERY; ?>
 			<?php

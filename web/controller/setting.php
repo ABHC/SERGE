@@ -9,6 +9,16 @@ $orderByKeyword = '';
 $orderBySource  = '';
 $orderByType    = '';
 
+if (empty($_SESSION['cptScienceQuery']))
+{
+	$_SESSION['cptScienceQuery'] = 3;
+}
+
+if (empty($_SESSION['cptPatentQuery']))
+{
+	$_SESSION['cptPatentQuery'] = 3;
+}
+
 if (isset($_SESSION['ERROR_MESSAGE']))
 {
 	$ERROR_MESSAGE = $_SESSION['ERROR_MESSAGE'];
@@ -534,6 +544,7 @@ if (!empty($_POST['scienceQuerySubmit']) AND $_POST['scienceQuerySubmit'] == 'ad
 	$queryBoundDoaj['NOTAND'] = 'NOT';
 	$queryScience_Arxiv = '';
 	$queryScience_Doaj  = '';
+	$_SESSION['cptScienceQuery'] = 3;
 
 	while(!empty($_POST[$nbscienceType]) AND !empty($_POST['scienceQuery' . $cpt]))
 	{
@@ -589,7 +600,7 @@ if (!empty($_POST['scienceQuerySubmit']) AND $_POST['scienceQuerySubmit'] == 'ad
 		$ERROR_SCIENCEQUERY = 'Invalid query : parenthesis does not match';
 	}
 
-	if (empty($ERROR_SCIENCEQUERY))
+	if (empty($ERROR_SCIENCEQUERY) AND !empty($queryScience_Arxiv) AND !empty($queryScience_Doaj))
 	{
 		$ERROR_SCIENCEQUERY = addNewScienceQuery($queryScience_Arxiv, $queryScience_Doaj, $bdd);
 	}
@@ -686,6 +697,7 @@ if (!empty($_POST['patentQuerySubmit']) AND $_POST['patentQuerySubmit'] == 'add'
 	$cpt = 0;
 	$andOrPatent = '';
 	$queryPatent = '';
+	$_SESSION['cptPatentQuery'] = 3;
 
 	while(!empty($_POST['patentType' . $cpt]) AND !empty($_POST['patentQuery' . $cpt]))
 	{
@@ -709,7 +721,10 @@ if (!empty($_POST['patentQuerySubmit']) AND $_POST['patentQuerySubmit'] == 'add'
 		$cpt++;
 	}
 
-	$ERROR_PATENTQUERY = addNewPatentQuery($queryPatent, $bdd);
+	if (!empty($queryPatent))
+	{
+		$ERROR_PATENTQUERY = addNewPatentQuery($queryPatent, $bdd);
+	}
 }
 
 #Delete patent query
@@ -796,6 +811,17 @@ if (!empty($_POST['activateQueryPatent']))
 	}
 }
 
+# Extend science query
+if (!empty($_POST['extendScience']))
+{
+	$_SESSION['cptScienceQuery'] += 3;
+}
+
+# Extend patent query
+if (!empty($_POST['extendPatent']))
+{
+	$_SESSION['cptPatentQuery'] += 3;
+}
 
 include_once('view/nav/nav.php');
 
