@@ -17,10 +17,13 @@ import jellyfish
 
 ######### IMPORT FROM SERGE MAIN
 import sergenet
+from handshake import databaseConnection
 
 
-def ofSourceAndName(now, logger_info, logger_error, database):
+def ofSourceAndName(now, logger_info, logger_error):
 	"""ofSourceAndName check the field 'name' in rss_serge and fill it if it is empty or update it"""
+
+	database = databaseConnection()
 
 	logger_info.info("\n######### Feed titles retrieval (ofSourceAndName function) :\n\n")
 
@@ -221,8 +224,10 @@ def ofSourceAndName(now, logger_info, logger_error, database):
 			num = num+1
 
 
-def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly, database) :
+def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly) :
 	"""insertOrUpdate manage links insertion or data update if the link is already present."""
+
+	database = databaseConnection()
 
 	########### DATABASE CHECKING
 	call_data_cheking = database.cursor()
@@ -390,8 +395,10 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 			update_data.close()
 
 
-def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database):
+def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error):
 	"""stairwayToUpdate manage the send_status update in database."""
+
+	database = databaseConnection()
 
 	######### SEND_STATUS UPDATE IN result_news_serge
 	for attributes in not_send_news_list:
@@ -514,8 +521,10 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 	call_users.close()
 
 
-def backToTheFuture(etag, link, database):
+def backToTheFuture(etag, link):
 	"""backToTheFuture manage the etag update in database."""
+
+	database = databaseConnection()
 
 	######### ETAG UPDATE IN rss_serge
 	etag_update = ("UPDATE rss_serge SET etag = %s WHERE link = %s")

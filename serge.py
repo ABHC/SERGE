@@ -131,7 +131,7 @@ def newscast(trio_sources_news):
 
 	########### INSERT NEW ETAG IN RSS SERGE
 	if greenlight is True:
-		insertSQL.backToTheFuture(etag, link, database)
+		insertSQL.backToTheFuture(etag, link)
 
 		########### LINK CONNEXION
 		req_results = sergenet.allRequestLong(link, logger_info, logger_error)
@@ -139,7 +139,7 @@ def newscast(trio_sources_news):
 		rss_error = req_results[1]
 
 	elif greenlight is False and etag is None:
-		insertSQL.backToTheFuture(etag, link, database)
+		insertSQL.backToTheFuture(etag, link)
 		rss_error = None
 
 	elif greenlight is False:
@@ -311,7 +311,7 @@ def newscast(trio_sources_news):
 						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
 						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly, database)
+						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly)
 
 				########### SIMPLE KEYWORDS RESEARCH
 				else:
@@ -333,7 +333,7 @@ def newscast(trio_sources_news):
 						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
 						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly, database)
+						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly)
 
 				range = range+1
 
@@ -460,7 +460,7 @@ def science():
 						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
 						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly, database)
+						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly)
 
 						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
@@ -547,7 +547,7 @@ def science():
 					item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
 					########### CALL insertOrUpdate FUNCTION
-					insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly, database)
+					insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly)
 
 					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
@@ -653,7 +653,7 @@ def patents():
 						item = (post_title, post_link, post_date, keyword_id_comma2, owners)
 
 						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly, database)
+						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly)
 
 						range = range+1
 
@@ -712,7 +712,7 @@ pydate = unicode(pydate)                          #TRANSFORM PYDATE INTO UNICODE
 logger_info.info(time.asctime(time.gmtime(now))+"\n")
 
 ######### DATABASE INTERGRITY CHECKING
-failsafe.checkMate(database, logger_info, logger_error)
+failsafe.checkMate(logger_info, logger_error)
 
 ######### NUMBERS OF USERS
 call_users = database.cursor()
@@ -724,7 +724,7 @@ max_users = int(max_users[0])
 logger_info.info("\nMax Users : " + str(max_users)+"\n")
 
 ######### RSS SERGE UPDATE
-insertSQL.ofSourceAndName(now, logger_info, logger_error, database)
+insertSQL.ofSourceAndName(now, logger_info, logger_error)
 
 ######### PROCESS CREATION FOR SCIENCE AND PATENTS
 procScience = Process(target=science, args=())
@@ -826,10 +826,10 @@ for user in user_list_all:
 			logger_info.info("FREQUENCY REACHED")
 
 			######### CALL TO buildMail FUNCTION
-			mailer.buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list, database)
+			mailer.buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list)
 
 			######### CALL TO stairwayToUpdate FUNCTION
-			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database)
+			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error)
 
 		elif interval >= frequency and pending_all == 0:
 			logger_info.info("Frequency reached but no pending news")
@@ -852,10 +852,10 @@ for user in user_list_all:
 			logger_info.info("LIMIT REACHED")
 
 			######### CALL TO buildMail FUNCTION
-			mailer.buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list, database)
+			mailer.buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list)
 
 			######### CALL TO stairwayToUpdate FUNCTION
-			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database)
+			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error)
 
 		elif pending_all < limit:
 			logger_info.info("LIMIT NOT REACHED")
@@ -879,10 +879,10 @@ for user in user_list_all:
 			logger_info.info("GOOD DAY AND GOOD HOUR")
 
 			######### CALL TO buildMail FUNCTION
-			mailer.buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list, database)
+			mailer.buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list)
 
 			######### CALL TO stairwayToUpdate FUNCTION
-			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error, database)
+			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error)
 
 		elif pending_all == 0:
 			logger_info.info("NO PENDING NEWS")

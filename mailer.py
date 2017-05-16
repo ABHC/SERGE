@@ -17,12 +17,15 @@ from logging.handlers import RotatingFileHandler
 
 ######### IMPORT SERGE SPECIALS MODULES
 import decoder
+from handshake import databaseConnection
 
 
-def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list, database):
+def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list):
 	"""Function for mail pre-formatting.
 
 		buildMail retrieves mail building option for the current user and does a pre-formatting of the mail. Then the function calls the building functions for mail."""
+
+	database = databaseConnection()
 
 	######### NUMBER OF LINKS IN EACH CATEGORY
 	pending_news = len(not_send_news_list)

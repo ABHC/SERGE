@@ -1,12 +1,15 @@
 # -*- coding: utf8 -*-
 
+"""failsafe contains all the functions related to the database verification."""
+
 import sys
 import MySQLdb
 
-"""failsafe contains all the functions related to the database verification."""
+######### IMPORT FROM SERGE MAIN
+from handshake import databaseConnection
 
 
-def checkMate(database, logger_info, logger_error):
+def checkMate(logger_info, logger_error):
 	"""checkMate check the integrity of the database.
 
 	Process :
