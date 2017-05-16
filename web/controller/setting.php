@@ -151,13 +151,13 @@ if (htmlspecialchars($_POST['settings']) == 'ChangeSettings')
 	{
 		if (htmlspecialchars($_POST['recordRead']) == 'active')
 		{
-			$recordRead = 0;
+			$recordRead = 1;
 			include_once('model/changeRecordRead.php');
 		}
 	}
 	elseif (!isset($_POST['recordRead']))
 	{
-		$recordRead = 1;
+		$recordRead = 0;
 		include_once('model/changeRecordRead.php');
 	}
 
@@ -519,11 +519,11 @@ elseif ($userSettings['mail_design'] == 'type')
 # Privacy
 if ($userSettings['record_read'] == 0)
 {
-	$recordRead = 'checked';
+	$recordRead = '';
 }
 elseif ($userSettings['record_read'] == 1)
 {
-	$recordRead = '';
+	$recordRead = 'checked';
 }
 
 # Add new science query
