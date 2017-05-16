@@ -133,6 +133,7 @@ h3
 	background-size: contain;
 	background-color: rgb(6, 85, 124);
 	cursor: pointer;
+	margin-right: 5px;
 }
 
 .submit:hover
@@ -967,14 +968,15 @@ input:checked + .slider:before
 
 .query
 {
-	flex: 0.40;
-	min-width: 3.5%;
-	max-width: 15%;
+	/*flex: 0.40;*/
+	/*min-width: 3.5%;
+	max-width: 15%;*/
+	width: calc(33% - 195px);
 }
 
 .queryType
 {
-	width: 130px;
+	width: 125px;
 	font-size: 12px;
 }
 
@@ -994,7 +996,6 @@ input:checked + .slider:before
 {
 	position: relative;
 	padding-left: 20px;
-	margin-bottom: 23px;
 	cursor: pointer;
 }
 
@@ -1134,7 +1135,7 @@ input:checked + .slider:before
 {
 	display: flex;
 	flex-direction: row;
-	justify-content: flex-start;
+	justify-content: center;
 	align-items: center;
 	flex-wrap: wrap;
 	min-height: 85px;
@@ -1147,10 +1148,17 @@ input:checked + .slider:before
 	margin-left: 5px;
 }
 
+.newQueryContainer > .submit
+{
+	margin-left: -9px;
+}
+
 .newQueryContainer label.andOr
 {
 	margin-left: 5px;
-	margin-right: 15px;
+	margin-right: 12px;
+	margin-top: 20px;
+	margin-bottom: 43px;
 }
 
 .btnList
@@ -1171,6 +1179,12 @@ input:checked + .slider:before
 	cursor: pointer;
 	margin-left: 0;
 	margin-right: -5px;
+}
+
+.ghostSpace
+{
+	width: 22px;
+	height: 1px;
 }
 
 [type="checkbox"]:checked + .queryParenthesis
@@ -1382,6 +1396,12 @@ input:checked + .slider:before
 	font-size: 15px;
 	font-weight: 700;
 	cursor: pointer;
+	margin-left: 8px;
+}
+
+.extend:hover
+{
+	background-color: rgba(6, 140, 6, 0.5);
 }
 
 .queryContainer
