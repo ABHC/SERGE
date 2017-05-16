@@ -15,7 +15,6 @@ from logging.handlers import RotatingFileHandler
 import feedparser
 import jellyfish
 
-
 ######### IMPORT FROM SERGE MAIN
 import sergenet
 

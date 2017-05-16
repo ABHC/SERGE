@@ -37,6 +37,7 @@ import sergenet
 import failsafe
 import insertSQL
 import resultstation
+from handshake import databaseConnection
 
 ######### LOGGER CONFIG
 formatter_error = logging.Formatter("%(asctime)s -- %(levelname)s -- %(message)s")
@@ -64,17 +65,6 @@ def cemeteriesOfErrors(*exc_info):
 	colderror = "".join(traceback.format_exception(*exc_info))
 	logger_error.critical(colderror+"\n\n")
 	logger_error.critical("SERGE END : CRITICAL FAILURE\n")
-
-
-def databaseConnection():
-	"""Connexion to Serge database"""
-
-	passSQL = open("permission/password.txt", "r")
-	passSQL = passSQL.read().strip()
-
-	database = MySQLdb.connect(host="localhost", user="Serge", passwd=passSQL, db="Serge", use_unicode=1, charset="utf8mb4")
-
-	return database
 
 
 def escaping(string):

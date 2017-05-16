@@ -12,7 +12,8 @@ import unicodedata
 from urllib import pathname2url as pn
 
 ######### IMPORT SERGE SPECIALS MODULES
-from serge import databaseConnection
+from handshake import databaseConnection
+
 
 def recorder(register, link, database):
 	"""Creation of "recording links" that update Serge Database when clicked"""
