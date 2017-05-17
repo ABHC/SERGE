@@ -17,7 +17,7 @@ from logging.handlers import RotatingFileHandler
 
 ######### IMPORT SERGE SPECIALS MODULES
 import decoder
-from handshake import databaseConnection
+import handshake
 
 
 def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list):
@@ -26,7 +26,7 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 		buildMail retrieves mail building option for the current user and does a pre-formatting of the mail. Then the function calls the building functions for mail."""
 
 	########### CONNECTION TO SERGE DATABASE
-	database = databaseConnection()
+	database = handshake.databaseConnection()
 
 	######### NUMBER OF LINKS IN EACH CATEGORY
 	pending_news = len(not_send_news_list)
@@ -133,7 +133,7 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 		newsletter = newsletterBySource(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list)
 
 	######### CALL TO highwayToMail FUNCTION
-	highwayToMail(register, user, newsletter, database)
+	handshake.highwayToMail(register, user, newsletter, database)
 
 
 def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate):
@@ -669,50 +669,3 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 	</html>""".format(translate_text[7], translate_text[8], translate_text[9], translate_text[10]))
 
 	return newsletter
-
-
-def highwayToMail(register, user, newsletter, database):
-	"""Function for emails sending"""
-
-	######### SERGE MAIL
-	sergemail = open("permission/sergemail.txt", "r")
-	fromaddr = sergemail.read().strip()
-	sergemail.close
-
-	######### ADRESSES AND LANGUAGE RECOVERY
-	query = "SELECT email, language FROM users_table_serge WHERE id = %s"
-
-	call_users = database.cursor()
-	call_users.execute(query, (register))
-	user_infos = call_users.fetchone()
-	call_users.close()
-
-	toaddr = user_infos[0]
-
-	######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
-	subject_FR = "[SERGE] Veille Industrielle et Technologique"
-	subject_EN = "[SERGE] News monitoring and Technological watch"
-
-	try :
-		exec("translate_subject"+"="+"subject_"+user_infos[1])
-	except NameError :
-		translate_subject = subject_EN
-
-	######### CONTENT WRITING IN EMAIL
-	msg = MIMEText(newsletter, 'html')
-
-	msg['From'] = fromaddr
-	msg['To'] = toaddr
-	msg['Subject'] = translate_subject
-
-	passmail = open("permission/passmail.txt", "r")
-	mdp_mail = passmail.read().strip()
-	passmail.close()
-
-	######### EMAIL SERVER CONNEXION
-	server = smtplib.SMTP('smtp.cairn-devices.eu', 5025)
-	server.starttls()
-	server.login(fromaddr, mdp_mail) #mot de passe
-	text = msg.as_string()
-	server.sendmail(fromaddr, toaddr, text)
-	server.quit()
