@@ -10,9 +10,6 @@ import MySQLdb
 import unicodedata
 import traceback
 import logging
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 from logging.handlers import RotatingFileHandler
 
 ######### IMPORT SERGE SPECIALS MODULES
