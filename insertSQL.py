@@ -23,6 +23,7 @@ from handshake import databaseConnection
 def ofSourceAndName(now, logger_info, logger_error):
 	"""ofSourceAndName check the field 'name' in rss_serge and fill it if it is empty or update it"""
 
+	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
 	logger_info.info("\n######### Feed titles retrieval (ofSourceAndName function) :\n\n")
@@ -227,6 +228,7 @@ def ofSourceAndName(now, logger_info, logger_error):
 def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly) :
 	"""insertOrUpdate manage links insertion or data update if the link is already present."""
 
+	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
 	########### DATABASE CHECKING
@@ -398,6 +400,7 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error):
 	"""stairwayToUpdate manage the send_status update in database."""
 
+	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
 	######### SEND_STATUS UPDATE IN result_news_serge
@@ -524,6 +527,7 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 def backToTheFuture(etag, link):
 	"""backToTheFuture manage the etag update in database."""
 
+	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
 	######### ETAG UPDATE IN rss_serge

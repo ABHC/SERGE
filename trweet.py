@@ -55,6 +55,7 @@ def rate_limit():
 def startingPoint(logger_info, logger_error):
 	"""A kind of main"""
 
+	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
 	######### RESEARCH ON TWITTER
@@ -135,8 +136,10 @@ def startingPoint(logger_info, logger_error):
 def trweetFishing(attributes, logger_info, logger_error):
 	"""The goal of this function is to catch tweets that contains the query saved in the database"""
 
+	########### CONNECTION TO TWITTER API
 	api = twitterConnection()
 
+	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
 	query_id = attributes[0]
@@ -184,8 +187,10 @@ def trweetFishing(attributes, logger_info, logger_error):
 def lakesOfTrweets(attributes, logger_info, logger_error):
 	"""The goal of this function is to catch geolocalisation data in tweets that contains the query saved in the database"""
 
+	########### CONNECTION TO TWITTER API
 	api = twitterConnection()
 
+	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
 	query_id = attributes[0]
@@ -263,8 +268,10 @@ def lakesOfTrweets(attributes, logger_info, logger_error):
 def trweetTorrent(attributes, logger_info, logger_error):
 	"""The goal of this function is to catch entire timelines or specific tweets in timeline"""
 
+	########### CONNECTION TO TWITTER API
 	api = twitterConnection()
 
+	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
 	query_id = attributes[0]

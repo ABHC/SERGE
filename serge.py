@@ -87,6 +87,7 @@ def newscast(trio_sources_news):
 		- if serge find a news this one is added to the database
 		- if the news is already saved in the database serge continue to search other news"""
 
+	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
 	need_jelly = True
@@ -354,6 +355,7 @@ def science():
 		- Research of last published papers related to the query at DOAJ
 		- Same routine for content saving"""
 
+	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
 	need_jelly = False
@@ -566,6 +568,7 @@ def patents():
 		- if serge find a news this one is added to the database
 		- if the news is already saved in the database serge continue to search other news"""
 
+	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
 	need_jelly = False
@@ -697,7 +700,7 @@ def extensions(database):
 ######### ERROR HOOK DEPLOYMENT
 sys.excepthook = cemeteriesOfErrors
 
-######### CONNEXION TO Serge DATABASE
+######### CONNECTION TO Serge DATABASE
 database = databaseConnection()
 
 ######### TIME VARIABLES DECLARATION
