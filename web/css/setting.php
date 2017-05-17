@@ -53,7 +53,6 @@ form
 
 input
 {
-	width: 50%;
 	border-radius: 3px;
 	border: 1px solid rgba(255,255,255, 0.15);
 	padding: 4px;
@@ -61,10 +60,15 @@ input
 	color: #fff;
 }
 
+input[type='text']
+{
+	flex-grow: 1;
+	flex-shrink: 1;
+}
+
 select
 {
 	position: relative;
-	width: calc(40% - 30px);
 	max-width: fit-content;
 	height: 26px;
 	font-size: 17px;
@@ -85,6 +89,7 @@ select
 select:focus
 {
 	outline: none;
+	outline-style: none
 }
 
 select option
@@ -92,12 +97,13 @@ select option
 	background-color: rgb(51,59,68);
 	border: none;
 	outline: none;
+	outline-style: none
 }
 
 select#sourceKeyword
 {
-	flex: 1;
-	max-width: 50%;
+	flex-grow: 1;
+	flex-shrink: 1;
 	background-color: rgba(255,89,0,0.4);
 	height: 27px;
 	margin-left: 10px;
@@ -155,6 +161,8 @@ h3
 {
 	height: 17px;
 	font-size: 14px;
+	flex-grow: 1;
+	flex-shrink: 1;
 }
 
 .inlineButton
@@ -968,16 +976,27 @@ input:checked + .slider:before
 
 .query
 {
-	/*flex: 0.40;*/
-	/*min-width: 3.5%;
-	max-width: 15%;*/
-	width: calc(33% - 195px);
+	flex-grow: 1;
+	flex-shrink: 1;
+	width: 20px;
 }
 
 .queryType
 {
-	width: 125px;
+	flex-grow: 1;
+	flex-shrink: 1;
+	width: 50px;
+	max-width: fit-content;
 	font-size: 12px;
+}
+
+.lineQuery
+{
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
 }
 
 .andOr
@@ -1183,7 +1202,7 @@ input:checked + .slider:before
 
 .ghostSpace
 {
-	width: 22px;
+	width: 35px;
 	height: 1px;
 }
 
@@ -1396,12 +1415,17 @@ input:checked + .slider:before
 	font-size: 15px;
 	font-weight: 700;
 	cursor: pointer;
-	margin-left: 8px;
+	margin-left: 7px;
 }
 
 .extend:hover
 {
 	background-color: rgba(6, 140, 6, 0.5);
+}
+
+.scientificPublicationManagement > .newQueryContainer > .lineQuery > .extend
+{
+	margin-right: 28px;
 }
 
 .queryContainer

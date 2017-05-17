@@ -516,7 +516,7 @@
 					<option value="sourceSpacialFR">Spatial source pack [French]</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="url" name="newSource" id="source" placeholder="Source" size="30" />
+				<input type="url" name="newSource" id="source" placeholder="Source" />
 			</div>
 			<?php echo $ERROR_MESSAGE; ?>
 
@@ -665,6 +665,7 @@
 		<div class="scientificPublicationManagement">
 			<h2>Science watch management</h2>
 			<div class="newQueryContainer">
+				<div class="lineQuery">
 				<input title="Add new science query" class="submit" type="submit" name="scienceQuerySubmit" value="add" />
 				<?php
 				$cpt = 0;
@@ -673,6 +674,16 @@
 				while ($cpt < $_SESSION['cptScienceQuery'])
 				{
 					echo $logicalConnector;
+
+					if (intval($cpt/3) == ($cpt/3) AND $cpt != 0)
+					{
+						echo '</div>';
+					}
+
+					if (intval($cpt/3) == ($cpt/3) AND $cpt != 0)
+					{
+						echo '<div class="lineQuery">';
+					}
 
 					if (intval($cpt/3) == ($cpt/3) AND $cpt != 0)
 					{
@@ -699,7 +710,7 @@
 						<option value="all" ' . $selected['all'] . '>All</option>
 					</select>
 					<span class="arrDownBorder">▾</span>
-					<input type="text" class="query" name="scienceQuery' . $cpt . '" id="scienceQuery0' . $cpt . '" placeholder="Keyword" size="30" value="' . $_POST['scienceQuery' . $cpt] . '"/>
+					<input type="text" class="query" name="scienceQuery' . $cpt . '" id="scienceQuery0' . $cpt . '" placeholder="Keyword" value="' . $_POST['scienceQuery' . $cpt] . '"/>
 					<input type="checkbox" id="closeParenthesis' . $cpt . '" name="openParenthesis' . $cpt . '" value="active" />
 					<label class="queryParenthesis" for="closeParenthesis' . $cpt . '">)</label>';
 
@@ -725,12 +736,9 @@
 						<label class="andOrNOTAND" for="andOrNotand_NOTAND0' . $cpt . '"></label>
 					</div>';
 				}
-				if ($_SESSION['cptScienceQuery'] > 3)
-				{
-					echo '<div class="ghostSpace"></div>';
-				}
 				?>
 				<input alt="Extend" title="Extend" class="extend" type="submit" id="extendScience" name="extendScience" value=">>" />
+			</div>
 			</div>
 			<?php echo $ERROR_SCIENCEQUERY; ?>
 			<?php
@@ -826,6 +834,7 @@
 		<div class="patentManagement">
 			<h2>Patent watch management</h2>
 			<div class="newQueryContainer">
+				<div class="lineQuery">
 				<input title="Add new patents query" class="submit" type="submit" name="patentQuerySubmit" value="add" />
 				<?php
 				$cpt = 0;
@@ -834,6 +843,16 @@
 				while ($cpt < $_SESSION['cptPatentQuery'])
 				{
 					echo $logicalConnector;
+
+					if (intval($cpt/3) == ($cpt/3) AND $cpt != 0)
+					{
+						echo '</div>';
+					}
+
+					if (intval($cpt/3) == ($cpt/3) AND $cpt != 0)
+					{
+						echo '<div class="lineQuery">';
+					}
 
 					if (intval($cpt/3) == ($cpt/3) AND $cpt != 0)
 					{
@@ -964,7 +983,7 @@
 					<option value="WO" ' . $selected['WO'] . '>WIPO Publication Number</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" class="query" name="patentQuery' . $cpt . '" id="patentQuery' . $cpt . '" placeholder="Keyword" size="30" value="' . $_POST['patentQuery' . $cpt] . '" />';
+				<input type="text" class="query" name="patentQuery' . $cpt . '" id="patentQuery' . $cpt . '" placeholder="Keyword" value="' . $_POST['patentQuery' . $cpt] . '" />';
 
 				$cpt++;
 
@@ -980,6 +999,7 @@
 				}
 				?>
 				<input title="Extend" class="extend" type="submit" id="extend" name="extendPatent" value=">>" />
+			</div>
 			</div>
 			<?php echo $ERROR_PATENTQUERY; ?>
 			<?php
