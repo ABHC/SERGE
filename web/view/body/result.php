@@ -59,9 +59,76 @@
 						{
 							$tableNameSource = 'rss_serge';
 						}
-						elseif ($type == "science")
+						elseif ($type == "sciences")
 						{
 							$tableNameSource = 'science_sources_serge';
+							$queryDisplay = '';
+
+							$queryFieldsName['ti']  = 'Title';
+							$queryFieldsName['au']  = 'Author';
+							$queryFieldsName['abs'] = 'Abstract';
+							$queryFieldsName['cat'] = 'Category';
+							$queryFieldsName['jr']  = 'Reference';
+							$queryFieldsName['all'] = 'All';
+
+							$query = $keyword;
+							$query = preg_replace("/%22/", "`", $query);
+							$query = preg_replace("/%28/", "(", $query);
+							$query = preg_replace("/%29/", ")", $query);
+
+							preg_match_all("/[a-z]+:/", $query, $queryFields);
+							foreach ($queryFields[0] as $fields)
+							{
+								preg_match("/^\(/", $query, $openParenthesisDisplay);
+								if (!empty($openParenthesisDisplay[0]))
+								{
+									$query = preg_replace("/^\(/", "", $query);
+									$queryDisplay = $queryDisplay . '
+									<a href="setting?action=editQueryScience&query=0" >
+										<div class="queryParenthesisView">(</div>
+									</a>
+									';
+								}
+
+								preg_match("/$fields`[^`]*`/", $query, $fieldInput);
+								$fieldInputPURE = preg_replace("/\+/", "\+", $fieldInput[0]);
+								$query = preg_replace("/$fieldInputPURE/", "", $query);
+								$fieldInput = preg_replace("/(.+:|`)/", "", $fieldInput[0]);
+								$fieldInput = preg_replace("/\+/", " ", $fieldInput);
+								$fields = preg_replace("/(:|`)/", "", $fields);
+								$queryDisplay = $queryDisplay . '
+								<a href="setting?action=editQueryScience&query=0" >
+									<div class="queryTypeView">' . $queryFieldsName[$fields] . '</div>
+								</a>
+								<a href="setting?action=editQueryScience&query=0" >
+									<div class="queryKeywordView">' . $fieldInput . '</div>
+								</a>';
+
+								preg_match("/^\)/", $query, $closeParenthesisDisplay);
+								if (!empty($closeParenthesisDisplay[0]))
+								{
+									$query = preg_replace("/^\)/", "", $query);
+									$queryDisplay = $queryDisplay . '
+									<a href="setting?action=editQueryScience&query=0" >
+										<div class="queryParenthesisView">)</div>
+									</a>
+									';
+								}
+
+								preg_match("/^\+(AND|OR|NOTAND)\+/", $query, $logicalConnector);
+								if (!empty($logicalConnector[1]))
+								{
+									$query = preg_replace("/^\+(AND|OR|NOTAND)\+/", "", $query);
+									preg_match("/.{1,3}/", $logicalConnector[1], $logicalConnector);
+									$queryDisplay = $queryDisplay . '
+									<a href="setting?action=editQueryScience&query=0" >
+									<div class="query' . ucfirst(strtolower($logicalConnector[0])) . 'View">' . $logicalConnector[0] . '</div>
+									</a>
+									';
+								}
+							}
+
+							$keyword = '<div class="queryContainer">' . $queryDisplay . '</div>';
 						}
 						elseif ($type == "patents")
 						{

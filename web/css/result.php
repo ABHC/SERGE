@@ -193,7 +193,7 @@ table
 
 th
 {
-	width: 13%;
+	flex: 1;
 	padding: 15px 0 15px 0;
 	text-align: left;
 	font-weight: 500;
@@ -241,6 +241,11 @@ th:nth-child(2)
 	width: 30%;
 }
 
+th:nth-child(3)
+{
+	width: 20%;
+}
+
 th:last-child
 {
 	width: 50px;
@@ -248,7 +253,7 @@ th:last-child
 
 td
 {
-	width: 13%;
+	flex: 1;
 	padding: 15px 0 15px 0;
 	text-align: center;
 	vertical-align:middle;
@@ -280,6 +285,13 @@ td:nth-child(1)
 td:nth-child(2)
 {
 	width: 30%;
+	text-align: left;
+	padding-left: 5px;
+}
+
+td:nth-child(3)
+{
+	width: 20%;
 	text-align: left;
 	padding-left: 5px;
 }
@@ -385,6 +397,102 @@ a.wikiLogo img
 tr:nth-child(2n)
 {
 	background-color: rgba(255,255,255,0.08);
+}
+
+.queryContainer
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+	padding: 1px;
+}
+
+.queryParenthesisView
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: rgba(245, 245, 245, 0.4);
+	font-size: 15px;
+	margin-top: -3px;
+	margin-left: -2px;
+}
+
+.queryTypeView
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: fit-content;
+	background-color: rgba(60,60,60,0.4);
+	border-radius: 3px;
+	border: 1px solid rgba(255,255,255,0.2);
+	padding: 1px;
+	text-align: center;
+	font-size: 9px;
+	margin: 1px 0 1px 0;
+	margin-right: 3px;
+}
+
+.queryKeywordView
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: fit-content;
+	background-color: rgba(255,255,255,0.2);
+	border-radius: 3px 3px 3px 3px;
+	border: 1px solid rgba(255,255,255, 0.15);
+	padding: 1px;
+	text-align: center;
+	font-size: 9px;
+	margin: 1px 3px 1px 0;
+}
+
+.queryAndView
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 19px;
+	height: 19px;
+	border-radius: 50%;
+	border: 1px solid rgba(255,255,255, 0.15);
+	background-color: rgba(99,49,149, 0.55);
+	color: #fff;
+	font-size: 9px;
+	margin-right: 3px;
+}
+
+.queryOrView
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 19px;
+	height: 19px;
+	border-radius: 50%;
+	border: 1px solid rgba(255,255,255, 0.15);
+	background-color: rgba(0,149,109, 0.55);
+	color: #fff;
+	font-size: 9px;
+	margin-right: 3px;
+}
+
+.queryNotView
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 19px;
+	height: 19px;
+	border-radius: 50%;
+	border: 1px solid rgba(255,255,255, 0.15);
+	background-color: rgba(139, 19, 19, 0.55);
+	color: #fff;
+	font-size: 9px;
+	margin-right: 3px;
 }
 
 .pages

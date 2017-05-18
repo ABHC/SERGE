@@ -11,5 +11,5 @@ CREATE TABLE `science_sources_serge` (
 SET NAMES utf8mb4;
 
 INSERT INTO `science_sources_serge` (`id`, `link`, `name`) VALUES
-(1, 'http://arxiv.org/', 'Arxiv'),
+(1, 'http://arxiv.org/', 'ArXiv.org'),
 (2, 'https://doaj.org/', 'Directory of Open Access Journals (DOAJ)');
