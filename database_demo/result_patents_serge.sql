@@ -17,4 +17,4 @@ CREATE TABLE `result_patents_serge` (
 
 SET NAMES utf8mb4;
 
-ALTER TABLE `result_news_serge` ADD FULLTEXT INDEX `search` (`search_index`);
+ALTER TABLE `result_patents_serge` ADD FULLTEXT INDEX `search` (`search_index`);
