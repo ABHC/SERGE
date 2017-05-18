@@ -2,11 +2,22 @@
 # Search in result
 if (!empty($_GET['search']))
 {
+	include_once('model/updateSearchIndex.php');
+
 	$search        = htmlspecialchars($_GET['search']);
 	$searchBoolean = preg_replace("/(^|\ )[a-zA-Z]{1,3}(\ |$)/", " ", $search);
 	$searchBoolean = preg_replace("/[^ ]+/", '\'$0\'', $searchBoolean);
 	$searchBoolean = preg_replace("/[^ ]+'/", "$0*", $searchBoolean);
 	$searchBoolean = preg_replace("/^..*.$/", "($0$1)", $searchBoolean);
+
+	# Search with soundex
+	$searchArray = explode(" ", $search);
+	$searchSOUNDEX = '';
+	foreach($searchArray as $word)
+	{
+			$searchSOUNDEX = $searchSOUNDEX . ' ' . soundex($word) ;
+	}
+
 
 	# Search in link
 	$SEARCHINLINK     = '';
@@ -82,15 +93,17 @@ if (!empty($_GET['search']))
 	# WARNING sensitive variable [SQLI]
 	$SELECTRESULT = $SELECTRESULT . $OPTIONALCOND;
 	$QUERYRESULT =
-	 $SELECTRESULT . ' AND MATCH(title) AGAINST (":search"))
+	 $SELECTRESULT . ' AND MATCH(search_index) AGAINST (":search"))
 	 UNION ' .
-	 $SELECTRESULT . ' AND MATCH(title) AGAINST (":searchBoolean" IN BOOLEAN MODE)  LIMIT 15)
+	 $SELECTRESULT . ' AND match(search_index) AGAINST ("' . $searchSOUNDEX . '"))
+	 UNION ' .
+	 $SELECTRESULT . ' AND MATCH(search_index) AGAINST (":searchBoolean" IN BOOLEAN MODE)  LIMIT 15)
 	 UNION ' .
 	 $CHECKKEYWORD . '
 	 UNION ' .
 	 $CHECKLINK    . '
 	 UNION ' .
-	 $SELECTRESULT . ' AND MATCH(title) AGAINST (":search" WITH QUERY EXPANSION) LIMIT 3)' .
+	 $SELECTRESULT . ' AND MATCH(search_index) AGAINST (":search" WITH QUERY EXPANSION) LIMIT 3)' .
 	 $ORDERBY;
 
 	$searchSort = '&search=' . $search;
