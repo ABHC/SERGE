@@ -572,7 +572,7 @@ def patents():
 	database = databaseConnection()
 
 	need_jelly = False
-	id_rss = None
+	id_rss = 1
 
 	logger_info.info("\n\n######### Last Patents Research (patents function) : \n\n")
 
@@ -647,7 +647,7 @@ def patents():
 						query_jellychecking = None
 
 						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_patents_serge(title, link, date, id_query_wipo, owners) VALUES(%s, %s, %s, %s, %s)")
+						query_insertion = ("INSERT INTO result_patents_serge(title, link, date, id_source, id_query_wipo, owners) VALUES(%s, %s, %s, %s, %s)")
 
 						########### QUERY FOR DATABASE UPDATE
 						query_update = ("UPDATE result_patents_serge SET id_query_wipo = %s, owners = %s WHERE link = %s")
@@ -655,7 +655,7 @@ def patents():
 
 						########### ITEM BUILDING
 						post_title = escaping(post_title)
-						item = (post_title, post_link, post_date, keyword_id_comma2, owners)
+						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners,)
 
 						########### CALL insertOrUpdate FUNCTION
 						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly)
