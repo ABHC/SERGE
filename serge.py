@@ -624,6 +624,8 @@ def patents():
 
 						try:
 							post_link = xmldoc.entries[range].link
+							post_link = post_link.split("&")
+							post_link = post_link[0]
 						except AttributeError:
 							logger_error.warning("BEACON ERROR : missing <link> in "+link)
 							logger_error.warning(traceback.format_exc())
