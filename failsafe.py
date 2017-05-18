@@ -96,14 +96,14 @@ def checkMate(logger_info, logger_error):
 	admin_table_serge_numbers = 3
 	background_serge_numbers = 4
 	keyword_news_serge_numbers = 4
-	patents_sources_serge = 3
+	patents_sources_serge_numbers = 3
 	queries_science_serge_numbers = 5
 	queries_wipo_serge_numbers = 4
 	result_news_serge_numbers = 10
 	result_patents_serge_numbers = 9
 	result_science_serge_numbers = 10
 	rss_serge_numbers = 7
-	science_sources_serge = 3
+	science_sources_serge_numbers = 3
 	miscellaneous_serge_numbers = 2
 	users_table_serge_numbers = 15
 
