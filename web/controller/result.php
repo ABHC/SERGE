@@ -125,7 +125,7 @@ include_once('model/readUserSettings.php');
 
 $recordRead = readUserSettings('id, password, record_read', $bdd);
 
-if ($recordRead['record_read'] == 0)
+if ($recordRead['record_read'] == 1)
 {
 	$pass       = $recordRead['password'];
 	$id         = $recordRead['id'];
