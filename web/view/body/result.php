@@ -84,10 +84,15 @@
 							$amIRead = '<img src="images/iconUnread.png" />';
 						}
 
+						if (!empty($recordLink))
+						{
+							$result['link'] = urlencode($result['link']);
+						}
+
 						echo '
 						<tr>
 							<td><input type="checkbox" name="delete' . $result['id'] . '" id="delete0' . $result['id'] . '" /><label class="checkbox" for="delete0' . $result['id'] . '"></label></td>
-							<td><a href="' . $recordLink . urlencode($result['link']) . '" target="_blank">' . $result['title'] . '</a></td>
+							<td><a href="' . $recordLink . $result['link'] . '" target="_blank">' . $result['title'] . '</a></td>
 							<td>' . $keyword . '</td>
 							<td><a href="' .  $sourceLink[0] . '">' . $source['name'] . '</a></td>
 							<td>' . date("H:i d/m/o", $date) . '</td>
