@@ -3,11 +3,13 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `result_patents_serge` (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
+	`search_index` text COLLATE utf8mb4_bin DEFAULT NULL,
 	`title` text COLLATE utf8mb4_bin NOT NULL,
 	`link` text COLLATE utf8mb4_bin NOT NULL,
 	`send_status` VARCHAR(8000) COLLATE utf8mb4_bin DEFAULT ',0,',
 	`read_status` VARCHAR(8000) COLLATE utf8mb4_bin DEFAULT ',0,',
 	`date` text COLLATE utf8mb4_bin DEFAULT NULL,
+	`id_source` int(11) NOT NULL,
 	`id_query_wipo` text COLLATE utf8mb4_bin NOT NULL,
 	`owners` text COLLATE utf8mb4_bin NOT NULL,
 	PRIMARY KEY (id)
@@ -15,4 +17,4 @@ CREATE TABLE `result_patents_serge` (
 
 SET NAMES utf8mb4;
 
-ALTER TABLE `result_patents_serge` ADD FULLTEXT INDEX `search` (`title`);
+ALTER TABLE `result_news_serge` ADD FULLTEXT INDEX `search` (`search_index`);

@@ -444,7 +444,7 @@ def science():
 
 						keyword_id_comma = str(query_id)+","
 						keyword_id_comma2 = ","+str(query_id)+","
-						id_rss = 0
+						id_rss = 1
 
 						########### QUERY FOR DATABASE CHECKING
 						query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
@@ -531,7 +531,7 @@ def science():
 
 					keyword_id_comma = str(query_id)+","
 					keyword_id_comma2 = ","+str(query_id)+","
-					id_rss = 1
+					id_rss = 2
 
 					########### QUERY FOR DATABASE CHECKING
 					query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")

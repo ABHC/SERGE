@@ -55,7 +55,20 @@
 						$keyword = preg_replace("/^:all@[0-9]+$/", ":All", $keyword);
 
 						# Read source for current result
-						$reqSourceResults = $bdd->prepare('SELECT link, name FROM rss_serge WHERE id LIKE :id');
+						if ($type == "news")
+						{
+							$tableNameSource = 'rss_serge';
+						}
+						elseif ($type == "science")
+						{
+							$tableNameSource = 'science_sources_serge';
+						}
+						elseif ($type == "patents")
+						{
+							$tableNameSource = 'patents_sources_serge';
+						}
+
+						$reqSourceResults = $bdd->prepare("SELECT link, name FROM $tableNameSource WHERE id LIKE :id");
 						$reqSourceResults->execute(array(
 							'id' => $result['id_source']));
 							$source = $reqSourceResults->fetch();
