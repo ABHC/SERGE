@@ -9,7 +9,7 @@ function del_accent($str, $encoding='utf-8')
 		return $str;
 }
 
-$req = $bdd->prepare('SELECT id, title FROM result_news_serge WHERE search_index IS NULL AND owners LIKE :user');
+$req = $bdd->prepare('SELECT id, title, keyword_id FROM result_news_serge WHERE search_index IS NULL AND owners LIKE :user');
 $req->execute(array(
 	'user' => '%,' . $_SESSION['id'] . '%'));
 	$result = $req->fetchAll();
@@ -17,29 +17,43 @@ $req->execute(array(
 
 foreach ($result as $line)
 {
+	# Add keyword in Index
+	$keywordIds = explode(",", $line['keyword_id']);
+	$keywordIndex = '';
 
-$title = $line['title'];
+	foreach ($keywordIds as $keywordId)
+	{
+		$req = $bdd->prepare('SELECT keyword FROM keyword_news_serge WHERE id = :id');
+		$req->execute(array(
+			'id' => $keywordId));
+			$result = $req->fetch();
+			$req->closeCursor();
 
-$wordArray = explode(" ", $title);
-$titleIndexLOWER = '';
-$titleIndexSOUNDEX = '';
-$titleIndexDELACCENT = '';
-$titleIndexPERMUTE = '';
+			$keywordIndex = $keywordIndex . ' ' . $result['keyword'];
+	}
 
-foreach($wordArray as $word)
-{
-		$titleIndexLOWER = $titleIndexLOWER . ' ' . mb_strtolower($word) ;
-		$titleIndexDELACCENT = $titleIndexDELACCENT . ' ' . mb_strtolower(del_accent($word));
-		$titleIndexSOUNDEX = $titleIndexSOUNDEX . ' ' . soundex($word) ;
-}
+	$title = $line['title'] . ' ' . $keywordIndex;
 
-$titleIndex = $titleIndexLOWER . ' ' . $titleIndexDELACCENT . ' ' . $titleIndexSOUNDEX;
+	$wordArray = explode(" ", $title);
+	$titleIndexLOWER = '';
+	$titleIndexSOUNDEX = '';
+	$titleIndexDELACCENT = '';
+	$titleIndexPERMUTE = '';
 
-// Update search index
-$req = $bdd->prepare('UPDATE result_news_serge SET search_index = :title WHERE id = :id');
-$req->execute(array(
-	'title' => $titleIndex,
-	'id' => $line['id']));
-	$req->closeCursor();
+	foreach($wordArray as $word)
+	{
+			$titleIndexLOWER = $titleIndexLOWER . ' ' . mb_strtolower($word) ;
+			$titleIndexDELACCENT = $titleIndexDELACCENT . ' ' . mb_strtolower(del_accent($word));
+			$titleIndexSOUNDEX = $titleIndexSOUNDEX . ' ' . soundex($word) ;
+	}
+
+	$titleIndex = $titleIndexLOWER . ' ' . $titleIndexDELACCENT . ' ' . $titleIndexSOUNDEX;
+
+	// Update search index
+	$req = $bdd->prepare('UPDATE result_news_serge SET search_index = :title WHERE id = :id');
+	$req->execute(array(
+		'title' => $titleIndex,
+		'id' => $line['id']));
+		$req->closeCursor();
 }
 ?>
