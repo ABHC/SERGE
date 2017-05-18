@@ -710,15 +710,16 @@ if (!empty($_POST['patentQuerySubmit']) AND $_POST['patentQuerySubmit'] == 'add'
 
 		$queryPatent = $queryPatent . $andOrPatent . $_POST['patentType' . $cpt] . '%3A' . $patentQueryInput . '+';
 
+		$cpt++;
+
 		if(empty($_POST['andOrPatent' . $cpt]))
-		{
-			$andOrPatent = 'OR+';
-		}
-		else
 		{
 			$andOrPatent = 'AND+';
 		}
-		$cpt++;
+		else
+		{
+			$andOrPatent = 'OR+';
+		}
 	}
 
 	if (!empty($queryPatent))
