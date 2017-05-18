@@ -67,8 +67,9 @@ if (!empty($_GET['type']))
 		$tableNameQuery = 'queries_wipo_serge';
 		$ownersColumn   = 'owners';
 		$userId        = ',' . $_SESSION['id'] . ',';
-		$keywordQueryId = 'query_id';
+		$keywordQueryId = 'id_query_wipo';
 		$queryColumn    = 'query';
+		$specialColumn  = ', id_query_wipo, id_source ';
 		$displayColumn  = 'Query';
 	}
 	else
