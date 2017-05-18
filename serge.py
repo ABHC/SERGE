@@ -578,7 +578,7 @@ def patents():
 
 	######### CALL TO TABLE queries_wipo
 	call_patents_key = database.cursor()
-	call_patents_key.execute("SELECT query, id, owners FROM queries_wipo_serge")
+	call_patents_key.execute("SELECT query, id, owners FROM queries_wipo_serge WHERE active > 0")
 	matrix_query = call_patents_key.fetchall()
 	call_patents_key.close()
 
