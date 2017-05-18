@@ -37,7 +37,7 @@ def checkMate(logger_info, logger_error):
 
 	num_tables = num_tables[0]
 
-	if num_tables < 11:
+	if num_tables < 13:
 		logger_error.critical("Missing Tables")
 	else:
 		call_extensions = database.cursor()
@@ -62,12 +62,12 @@ def checkMate(logger_info, logger_error):
 
 				optionnal_tables = optionnal_tables + amount_tables
 
-		if num_tables == (11+optionnal_tables):
+		if num_tables == (13+optionnal_tables):
 			logger_info.info("Number of tables : check")
-		elif num_tables < (11+optionnal_tables):
+		elif num_tables < (13+optionnal_tables):
 			logger_error.critical("Missing Tables, for at least one extension")
 			sys.exit()
-		elif num_tables > (11+optionnal_tables):
+		elif num_tables > (13+optionnal_tables):
 			logger_error.critical("Too Much Tables")
 			sys.exit()
 		else:
@@ -76,7 +76,7 @@ def checkMate(logger_info, logger_error):
 			sys.exit()
 
 	######### CHECKING TABLES' NAMES
-	expected_tables_list = ["admin_table_serge", "background_serge", "keyword_news_serge", "queries_science_serge", "queries_wipo_serge", "result_news_serge", "result_patents_serge", "result_science_serge", "rss_serge", "miscellaneous_serge", "users_table_serge"]
+	expected_tables_list = ["admin_table_serge", "background_serge", "keyword_news_serge", "patents_sources_serge", "queries_science_serge", "queries_wipo_serge", "result_news_serge", "result_patents_serge", "result_science_serge", "rss_serge", "science_sources_serge", "miscellaneous_serge", "users_table_serge"]
 
 	checking.execute(check_tables_name)
 	name_tables = checking.fetchall()
@@ -96,12 +96,14 @@ def checkMate(logger_info, logger_error):
 	admin_table_serge_numbers = 3
 	background_serge_numbers = 4
 	keyword_news_serge_numbers = 4
+	patents_sources_serge = 3
 	queries_science_serge_numbers = 5
 	queries_wipo_serge_numbers = 4
 	result_news_serge_numbers = 10
-	result_patents_serge_numbers = 8
-	result_science_serge_numbers = 9
+	result_patents_serge_numbers = 9
+	result_science_serge_numbers = 10
 	rss_serge_numbers = 7
+	science_sources_serge = 3
 	miscellaneous_serge_numbers = 2
 	users_table_serge_numbers = 15
 
@@ -133,12 +135,14 @@ def checkMate(logger_info, logger_error):
 	admin_table_serge_columns = ["id", "admin", "email"]
 	background_serge_columns = ["id", "name", "filename", "type"]
 	keyword_news_serge_columns = ["id", "keyword", "applicable_owners_sources", "active"]
+	patents_sources_serge = ["id", "link", "name"]
 	queries_science_serge_columns = ["id", "query_arxiv", "query_doaj", "owners", "active"]
 	queries_wipo_serge_columns = ["id", "query", "owners", "active"]
 	result_news_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "id_source", "keyword_id", "owners"]
-	result_patents_serge_columns = ["id", "title", "link", "send_status", "read_status", "date", "id_query_wipo", "owners"]
-	result_science_serge_columns = ["id", "title", "link", "send_status", "read_status", "date", "id_source", "query_id", "owners"]
+	result_patents_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "id_query_wipo", "owners"]
+	result_science_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "id_source", "query_id", "owners"]
 	rss_serge_columns = ["id", "link", "name", "favicon", "owners", "etag", "active"]
+	science_sources_serge = ["id", "link", "name"]
 	miscellaneous_serge_columns = ["name", "value"]
 	users_table_serge_columns = ["id", "users", "email", "password", "last_mail", "send_condition", "frequency", "link_limit", "selected_days", "selected_hour", "mail_design", "language", "record_read", "history_lifetime", "background_result"]
 

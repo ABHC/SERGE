@@ -152,10 +152,10 @@ def trweetFishing(attributes, logger_info, logger_error):
 	query_id_comma2 = ","+str(query_id)+","
 
 	if lang is None:
-		chirp_list = api.search(q = query, count = 30, show_user = True)
+		chirp_list = api.search(q = query, count = 100, show_user = True)
 
 	else:
-		chirp_list = api.search(q = query, lang = lang , count = 30, show_user = True)
+		chirp_list = api.search(q = query, lang = lang , count = 100, show_user = True)
 
 	fishing_time = time.time()
 
