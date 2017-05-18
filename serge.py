@@ -647,7 +647,7 @@ def patents():
 						query_jellychecking = None
 
 						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_patents_serge(title, link, date, id_source, id_query_wipo, owners) VALUES(%s, %s, %s, %s, %s)")
+						query_insertion = ("INSERT INTO result_patents_serge(title, link, date, id_source, id_query_wipo, owners) VALUES(%s, %s, %s, %s, %s, %s)")
 
 						########### QUERY FOR DATABASE UPDATE
 						query_update = ("UPDATE result_patents_serge SET id_query_wipo = %s, owners = %s WHERE link = %s")
