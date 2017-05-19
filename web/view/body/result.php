@@ -31,12 +31,12 @@
 						<th><input alt="Delete" title="Delete selected links" name="deleteLink" class="submit" type="submit" value="delete" /></th>
 						<?php
 						echo '
-						<th><a href="?orderBy=title' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '">Title ' . $colOrder['title'] . '</a></th>
+						<th><a href="?orderBy=title' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '&type=' . $type . '">Title ' . $colOrder['title'] . '</a></th>
 						<th>' . $displayColumn . '</th>
-						<th><a href="?orderBy=source' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '">Source ' . $colOrder['source'] . '</a></th>
-						<th><a href="?orderBy=date' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '">Date ' . $colOrder['date'] . '</a></th>
-						<th><a href="?optionalCond=send' . $colOrder['OCDESC'] . $searchSort . $orderBy . '">' . $colOrder['send'] . '</a></th>
-						<th><a href="?optionalCond=read' . $colOrder['OCDESC'] . $searchSort . $orderBy . '">' . $colOrder['read'] . '</a></th>
+						<th><a href="?orderBy=source' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '&type=' . $type . '">Source ' . $colOrder['source'] . '</a></th>
+						<th><a href="?orderBy=date' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '&type=' . $type . '">Date ' . $colOrder['date'] . '</a></th>
+						<th><a href="?optionalCond=send' . $colOrder['OCDESC'] . $searchSort . $orderBy . '&type=' . $type . '">' . $colOrder['send'] . '</a></th>
+						<th><a href="?optionalCond=read' . $colOrder['OCDESC'] . $searchSort . $orderBy . '&type=' . $type . '">' . $colOrder['read'] . '</a></th>
 						<th><a href="wiki">Wiki</a></th>';
 						?>
 					</tr>
@@ -55,13 +55,8 @@
 						$keyword = preg_replace("/^:all@[0-9]+$/", ":All", $keyword);
 
 						# Read source for current result
-						if ($type == "news")
+						if ($type == "sciences")
 						{
-							$tableNameSource = 'rss_serge';
-						}
-						elseif ($type == "sciences")
-						{
-							$tableNameSource = 'science_sources_serge';
 							$queryDisplay = '';
 
 							$queryFieldsName['ti']  = 'Title';
@@ -132,7 +127,6 @@
 						}
 						elseif ($type == "patents")
 						{
-							$tableNameSource = 'patents_sources_serge';
 							$queryDisplay = '';
 
 							$queryFieldsName['ALLNAMES'] = 'All Names';

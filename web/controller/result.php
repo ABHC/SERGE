@@ -39,6 +39,7 @@ if (!empty($_GET['type']))
 		$newsActive     = 'class="active"';
 		$tableName      = 'result_news_serge';
 		$tableNameQuery = 'keyword_news_serge';
+		$tableNameSource = 'rss_serge';
 		$ownersColumn   = 'applicable_owners_sources';
 		$userId        = '|' . $_SESSION['id'] . ':';
 		$keywordQueryId = 'keyword_id';
@@ -52,6 +53,7 @@ if (!empty($_GET['type']))
 		$sciencesActive = 'class="active"';
 		$tableName      = 'result_science_serge';
 		$tableNameQuery = 'queries_science_serge';
+		$tableNameSource = 'science_sources_serge';
 		$ownersColumn   = 'owners';
 		$userId        = ',' . $_SESSION['id'] . ',';
 		$keywordQueryId = 'query_id';
@@ -65,6 +67,7 @@ if (!empty($_GET['type']))
 		$patentsActive  = 'class="active"';
 		$tableName      = 'result_patents_serge';
 		$tableNameQuery = 'queries_wipo_serge';
+		$tableNameSource = 'patents_sources_serge';
 		$ownersColumn   = 'owners';
 		$userId        = ',' . $_SESSION['id'] . ',';
 		$keywordQueryId = 'id_query_wipo';
@@ -78,6 +81,7 @@ if (!empty($_GET['type']))
 		$newsActive     = 'class="active"';
 		$tableName      = 'result_news_serge';
 		$tableNameQuery = 'keyword_news_serge';
+		$tableNameSource = 'rss_serge';
 		$ownersColumn   = 'applicable_owners_sources';
 		$userId         = '|' . $_SESSION['id'] . ':';
 		$keywordQueryId = 'keyword_id';
@@ -92,6 +96,7 @@ else
 	$newsActive     = 'class="active"';
 	$tableName      = 'result_news_serge';
 	$tableNameQuery = 'keyword_news_serge';
+	$tableNameSource = 'rss_serge';
 	$ownersColumn   = 'applicable_owners_sources';
 	$userId         = '|' . $_SESSION['id'] . ':';
 	$keywordQueryId = 'keyword_id';
@@ -133,7 +138,7 @@ if ($recordRead['record_read'] == 1)
 	$pseudo     = $_SESSION['pseudo'];
 	$salt       = 'blackSalt';
 	$hash       =  hash('sha256', $salt . ':' . $pass . $pseudo . $id);
-	$recordLink = 'redirect?id=' . $id . '&hash=' . $hash . '&link=';
+	$recordLink = 'redirect?id=' . $id . '&type=' . $type .'&hash=' . $hash . '&link=';
 }
 
 include_once('model/readOwnerKeyword.php');

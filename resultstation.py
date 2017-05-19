@@ -15,7 +15,7 @@ from urllib import pathname2url as pn
 from handshake import databaseConnection
 
 
-def recorder(register, link, database):
+def recorder(register, typeName, link, database):
 	"""Creation of "recording links" that update Serge Database when clicked"""
 
 	query_domain = ("SELECT value FROM miscellaneous_serge WHERE name = 'domain'")
@@ -41,7 +41,7 @@ def recorder(register, link, database):
 	chop = hashlib.sha256(salt + ":" + user_pass + user_name + str(register)).hexdigest()
 
 	try:
-		recording_link = "http://" + domain + "/redirect?id=" + str(register) + "&hash=" + chop + "&link=" + pn(link)
+		recording_link = "http://" + domain + "/redirect?id=" + str(register) + "&type=" + typeName + "&hash=" + chop + "&link=" + pn(link)
 	except Exception, except_type:
 		logger_error.error("ERROR IN RECORDING LINK CONTRUCTION ON :"+link+"\n")
 		logger_error.error(repr(except_type))
@@ -113,17 +113,20 @@ def triage(register, user_id_comma) :
 	if record_read is True:
 		for news in not_send_news_list:
 			link = news[0]
-			recording_link = recorder(register, link, database)
+			typeName = "news"
+			recording_link = recorder(register, typeName, link, database)
 			news[0] = recording_link
 
 		for science in not_send_science_list:
 			link = science[0]
-			recording_link = recorder(register, link, database)
+			typeName = "sciences"
+			recording_link = recorder(register, typeName, link, database)
 			science[0] = recording_link
 
 		for patent in not_send_patents_list:
 			link = patent[0]
-			recording_link = recorder(register, link, database)
+			typeName = "patents"
+			recording_link = recorder(register, typeName, link, database)
 			patent[0] = recording_link
 
 	return (not_send_news_list, not_send_science_list, not_send_patents_list)
