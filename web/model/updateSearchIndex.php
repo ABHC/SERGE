@@ -9,7 +9,7 @@ function del_accent($str, $encoding='utf-8')
 		return $str;
 }
 
-$req = $bdd->prepare('SELECT id, title, keyword_id FROM result_news_serge WHERE search_index IS NULL AND owners LIKE :user');
+$req = $bdd->prepare("SELECT id, title, $keywordQueryId FROM $tableName WHERE search_index IS NULL AND owners LIKE :user");
 $req->execute(array(
 	'user' => '%,' . $_SESSION['id'] . '%'));
 	$result = $req->fetchAll();
@@ -18,21 +18,34 @@ $req->execute(array(
 foreach ($result as $line)
 {
 	# Add keyword in Index
-	$keywordIds = explode(",", $line['keyword_id']);
-	$keywordIndex = '';
+	$keywordQueryIds = explode(",", $line[$keywordQueryId]);
+	$keywordQueryIndex= '';
 
-	foreach ($keywordIds as $keywordId)
+	foreach ($keywordQueryIds as $id)
 	{
-		$req = $bdd->prepare('SELECT keyword FROM keyword_news_serge WHERE id = :id');
+		$req = $bdd->prepare("SELECT $queryColumn FROM $tableNameQuery WHERE id = :id");
 		$req->execute(array(
-			'id' => $keywordId));
+			'id' => $id));
 			$result = $req->fetch();
 			$req->closeCursor();
 
-			$keywordIndex = $keywordIndex . ' ' . $result['keyword'];
+			if ($type == "sciences")
+			{
+				$step1 = preg_replace("/(%28|%29|%22|AND\+|OR\+|NOTAND\+[^+]+(\+|$))/", "", $result[$queryColumn]);
+				$step2 = preg_replace("/[^:\+]+:/", "", $step1);
+				$result[$queryColumn] = preg_replace("/\+/", " ", $step2);
+			}
+			elseif ($type == "patents")
+			{
+				$step1 = urldecode($result[$queryColumn]);
+				$step2 = preg_replace("/(AND|OR)/", "", $step1);
+				$result[$queryColumn] = preg_replace("/[^:\ ]+:/", "", $step2);
+			}
+
+			$keywordQueryIndex= $keywordQueryIndex. ' ' . $result[$queryColumn];
 	}
 
-	$title = $line['title'] . ' ' . $keywordIndex;
+	$title = $line['title'] . ' ' . $keywordQueryIndex;
 
 	$wordArray = explode(" ", $title);
 	$titleIndexLOWER = '';
@@ -47,12 +60,12 @@ foreach ($result as $line)
 			$titleIndexSOUNDEX = $titleIndexSOUNDEX . ' ' . soundex($word) ;
 	}
 
-	$titleIndex = $titleIndexLOWER . ' ' . $titleIndexDELACCENT . ' ' . $titleIndexSOUNDEX;
+	$searchIndex = $titleIndexLOWER . ' ' . $titleIndexDELACCENT . ' ' . $titleIndexSOUNDEX;
 
 	// Update search index
-	$req = $bdd->prepare('UPDATE result_news_serge SET search_index = :title WHERE id = :id');
+	$req = $bdd->prepare("UPDATE $tableName SET search_index = :search WHERE id = :id");
 	$req->execute(array(
-		'title' => $titleIndex,
+		'search' => $searchIndex,
 		'id' => $line['id']));
 		$req->closeCursor();
 }
