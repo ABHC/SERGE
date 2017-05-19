@@ -412,7 +412,7 @@ tr:nth-child(2n)
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	color: rgba(245, 245, 245, 0.4);
+	color: rgba(245, 245, 245, 0.6);
 	font-size: 15px;
 	margin-top: -3px;
 	margin-left: -2px;

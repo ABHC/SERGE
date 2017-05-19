@@ -2,10 +2,11 @@
 // Read in BDD the results for current owner
 $userId = '%,' . $_SESSION['id'] . ',%';
 $reqReadOwnerResults = $bdd->prepare("$QUERYRESULT");
-	$reqReadOwnerResults->bindValue('user', $userId, PDO::PARAM_STR);
-	$reqReadOwnerResults->bindValue('search', $search, PDO::PARAM_STR);
-	$reqReadOwnerResults->bindValue('searchBoolean', $searchBoolean, PDO::PARAM_STR);
-	$reqReadOwnerResults->execute();
+	$reqReadOwnerResults->execute(array(
+		'user' => $userId,
+		'search' => $search,
+		'searchBoolean' => $searchBoolean,
+		'searchSOUNDEX' => $searchSOUNDEX));
 
 $readOwnerResults = $reqReadOwnerResults->fetchAll();
 $nbResults = $reqReadOwnerResults->rowCount();

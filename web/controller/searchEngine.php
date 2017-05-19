@@ -15,7 +15,7 @@ if (!empty($_GET['search']))
 	$searchSOUNDEX = '';
 	foreach($searchArray as $word)
 	{
-			$searchSOUNDEX = $searchSOUNDEX . ' ' . soundex($word) ;
+			$searchSOUNDEX = $searchSOUNDEX . ' ' . soundex($word);
 	}
 
 
@@ -52,23 +52,27 @@ if (!empty($_GET['search']))
 	# WARNING sensitive variable [SQLI]
 	$SELECTRESULT = $SELECTRESULT . $OPTIONALCOND;
 	$QUERYRESULT =
-	 $SELECTRESULT . ' AND MATCH(search_index) AGAINST (":search"))
+	 $SELECTRESULT . ' AND MATCH(search_index) AGAINST (:search))
 	 UNION ' .
-	 $SELECTRESULT . ' AND MATCH(search_index) AGAINST (":searchBoolean" IN BOOLEAN MODE)  LIMIT 15)
+	 $SELECTRESULT . ' AND MATCH(search_index) AGAINST (:searchBoolean IN BOOLEAN MODE)  LIMIT 15)
 	 UNION ' .
-	 $SELECTRESULT . ' AND match(search_index) AGAINST ("' . $searchSOUNDEX . '"))
+	 $SELECTRESULT . ' AND match(search_index) AGAINST (:searchSOUNDEX))
 	 UNION ' .
 	 $CHECKLINK    . '
 	 UNION ' .
-	 $SELECTRESULT . ' AND MATCH(search_index) AGAINST (":search" WITH QUERY EXPANSION) LIMIT 15)' .
+	 $SELECTRESULT . ' AND MATCH(search_index) AGAINST (:search WITH QUERY EXPANSION) LIMIT 15) ' .
 	 $ORDERBY;
 
 	$searchSort = '&search=' . $search;
 }
 else
 {
+	$search = '';
+	$searchBoolean = '';
+	$searchSOUNDEX = '';
+
 	# WARNING sensitive variable [SQLI]
 	$SELECTRESULT = $SELECTRESULT . $OPTIONALCOND;
-	$QUERYRESULT  = $SELECTRESULT . ' AND title NOT LIKE :search AND title NOT LIKE :searchBoolean) ' . $ORDERBY;
+	$QUERYRESULT  = $SELECTRESULT . ' AND title NOT LIKE :search AND title NOT LIKE :searchBoolean AND title NOT LIKE :searchSOUNDEX) ' . $ORDERBY;
 }
 ?>

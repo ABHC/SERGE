@@ -6,7 +6,7 @@
 	<h1>Watch result</h1>
 	<form class="formSearch" method="get" action="result">
 		<input type="text" name="search" id="search" placeholder="Search Serge" value="<?php echo $search; ?>"/>
-		<input type="hidden" name="orderBy" value="<?php echo $orderBy; ?>"/>
+		<input type="hidden" name="orderBy" value="<?php echo preg_replace("/.*=/", "", $orderBy); ?>"/>
 		<input type="hidden" name="optionalCond" value="<?php echo $optionalCond; ?>"/>
 		<input type="hidden" name="type" value="<?php echo $type; ?>"/>
 
