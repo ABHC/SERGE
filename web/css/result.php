@@ -292,7 +292,6 @@ td:nth-child(2)
 td:nth-child(3)
 {
 	width: 20%;
-	text-align: left;
 	padding-left: 5px;
 }
 
