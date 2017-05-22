@@ -4,6 +4,7 @@
 </div>
 <form method="post" action="setting">
 	<input type="hidden" name="scrollPos" id="scrollPos" value="0"/>
+	<input type="hidden" name="delEditingScienceQuery" value="<?php echo $delEditingScienceQuery; ?>"/>
 	<div class="body">
 		<h1>Settings</h1>
 		<div class="graphContainer">
@@ -698,8 +699,13 @@
 					$selected['all'] = '';
 					$selected[$_POST['scienceType' . $cpt]] = 'selected';
 
+
+					if ($_POST['openParenthesis' . $cpt] == "active")
+					{
+						$checked['openParenthesis' . $cpt] = 'checked';
+					}
 					echo '
-					<input type="checkbox" id="openParenthesis' . $cpt . '" name="openParenthesis' . $cpt . '" value="active" />
+					<input type="checkbox" id="openParenthesis' . $cpt . '" name="openParenthesis' . $cpt . '" value="active" ' . $checked['openParenthesis' . $cpt] . '/>
 					<label class="queryParenthesis" for="openParenthesis' . $cpt . '">(</label>
 					<select title="Type" class="queryType" name="scienceType' . $cpt . '" id="scienceType0' . $cpt . '">
 						<option value="ti" ' . $selected['ti'] . '>Title</option>
@@ -710,8 +716,15 @@
 						<option value="all" ' . $selected['all'] . '>All</option>
 					</select>
 					<span class="arrDownBorder">▾</span>
-					<input type="text" class="query" name="scienceQuery' . $cpt . '" id="scienceQuery0' . $cpt . '" placeholder="Keyword" value="' . $_POST['scienceQuery' . $cpt] . '"/>
-					<input type="checkbox" id="closeParenthesis' . $cpt . '" name="openParenthesis' . $cpt . '" value="active" />
+					<input type="text" class="query" name="scienceQuery' . $cpt . '" id="scienceQuery0' . $cpt . '" placeholder="Keyword" value="' . $_POST['scienceQuery' . $cpt] . '"/>';
+
+
+					if ($_POST['closeParenthesis' . $cpt] == "active")
+					{
+						$checked['closeParenthesis' . $cpt] = 'checked';
+					}
+					echo '
+					<input type="checkbox" id="closeParenthesis' . $cpt . '" name="closeParenthesis' . $cpt . '" value="active" ' . $checked['closeParenthesis' . $cpt] . '/>
 					<label class="queryParenthesis" for="closeParenthesis' . $cpt . '">)</label>';
 
 					$cpt++;
@@ -763,6 +776,9 @@
 					<input type="submit" title="Delete" class="deleteQuery" name="delQueryScience" value="query' . $query['id'] . '"/>
 					<input type="submit" title="' . $titleDisableActivate . '" class="' . $nameClassDisableActivate . 'Query" name="' . $nameClassDisableActivate . 'QueryScience" value="query' . $query['id'] . '"/>
 				';
+
+				$queryId = $query['id'];
+
 				$queryFieldsName['ti']  = 'Title';
 				$queryFieldsName['au']  = 'Author';
 				$queryFieldsName['abs'] = 'Abstract';
@@ -783,7 +799,7 @@
 					{
 						$query = preg_replace("/^\(/", "", $query);
 						$queryDisplay = $queryDisplay . '
-						<a href="setting?action=editQueryScience&query=0" >
+						<a href="setting?action=editQueryScience&query=' . $queryId . '" >
 							<div class="queryParenthesisView">(</div>
 						</a>
 						';
@@ -796,10 +812,10 @@
 					$fieldInput = preg_replace("/\+/", " ", $fieldInput);
 					$fields = preg_replace("/(:|`)/", "", $fields);
 					$queryDisplay = $queryDisplay . '
-					<a href="setting?action=editQueryScience&query=0" >
+					<a href="setting?action=editQueryScience&query=' . $queryId . '" >
 						<div class="queryTypeView">' . $queryFieldsName[$fields] . '</div>
 					</a>
-					<a href="setting?action=editQueryScience&query=0" >
+					<a href="setting?action=editQueryScience&query=' . $queryId . '" >
 						<div class="queryKeywordView">' . $fieldInput . '</div>
 					</a>';
 
@@ -808,7 +824,7 @@
 					{
 						$query = preg_replace("/^\)/", "", $query);
 						$queryDisplay = $queryDisplay . '
-						<a href="setting?action=editQueryScience&query=0" >
+						<a href="setting?action=editQueryScience&query=' . $queryId . '" >
 							<div class="queryParenthesisView">)</div>
 						</a>
 						';
@@ -820,7 +836,7 @@
 						$query = preg_replace("/^\+(AND|OR|NOTAND)\+/", "", $query);
 						preg_match("/.{1,3}/", $logicalConnector[1], $logicalConnector);
 						$queryDisplay = $queryDisplay . '
-						<a href="setting?action=editQueryScience&query=0" >
+						<a href="setting?action=editQueryScience&query=' . $queryId . '" >
 						<div class="query' . ucfirst(strtolower($logicalConnector[0])) . 'View">' . $logicalConnector[0] . '</div>
 						</a>
 						';
@@ -1025,6 +1041,8 @@
 					<input type="submit" title="' . $titleDisableActivate . '" class="' . $nameClassDisableActivate . 'Query" name="' . $nameClassDisableActivate . 'QueryPatent" value="query' . $query['id'] . '"/>
 				';
 
+				$queryId = $query['id'];
+
 				$queryFieldsName['ALLNAMES'] = 'All Names';
 				$queryFieldsName['ALLNUM'] = 'All Numbers and IDs';
 				$queryFieldsName['AAD'] = 'Applicant Address';
@@ -1097,10 +1115,10 @@
 					$fieldInput = preg_replace("/\+/", " ", $fieldInput);
 					$fields = preg_replace("/(\%3A|`)/", "", $fields);
 					$queryDisplay = $queryDisplay . '
-					<a href="setting?action=editQueryPatent&query=0" >
+					<a href="setting?action=editQueryPatent&query=' . $queryId . '" >
 						<div class="queryTypeView">' . $queryFieldsName[$fields] . '</div>
 					</a>
-					<a href="setting?action=editQueryPatent&query=0" >
+					<a href="setting?action=editQueryPatent&query=' . $queryId . '" >
 						<div class="queryKeywordView">' . $fieldInput . '</div>
 					</a>';
 
@@ -1110,7 +1128,7 @@
 						$query = preg_replace("/^(AND|OR)\+/", "", $query);
 						preg_match("/.{1,3}/", $logicalConnector[1], $logicalConnector);
 						$queryDisplay = $queryDisplay . '
-						<a href="setting?action=editQueryPatent&query=0" >
+						<a href="setting?action=editQueryPatent&query=' . $queryId . '" >
 						<div class="query' . ucfirst(strtolower($logicalConnector[0])) . 'View">' . $logicalConnector[0] . '</div>
 						</a>
 						';

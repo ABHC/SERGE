@@ -58,6 +58,8 @@
 						if ($type == "sciences")
 						{
 							$queryDisplay = '';
+							preg_match("/,[0-9]+,/", $result[$keywordQueryId], $queryId);
+							$queryId = preg_replace("/,/", "", $queryId[0]);
 
 							$queryFieldsName['ti']  = 'Title';
 							$queryFieldsName['au']  = 'Author';
@@ -79,7 +81,7 @@
 								{
 									$query = preg_replace("/^\(/", "", $query);
 									$queryDisplay = $queryDisplay . '
-									<a href="setting?action=editQueryScience&query=0" >
+									<a href="setting?action=editQueryScience&query=' . $queryId . '" >
 										<div class="queryParenthesisView">(</div>
 									</a>
 									';
@@ -92,10 +94,10 @@
 								$fieldInput = preg_replace("/\+/", " ", $fieldInput);
 								$fields = preg_replace("/(:|`)/", "", $fields);
 								$queryDisplay = $queryDisplay . '
-								<a href="setting?action=editQueryScience&query=0" >
+								<a href="setting?action=editQueryScience&query=' . $queryId . '" >
 									<div class="queryTypeView">' . $queryFieldsName[$fields] . '</div>
 								</a>
-								<a href="setting?action=editQueryScience&query=0" >
+								<a href="setting?action=editQueryScience&query=' . $queryId . '" >
 									<div class="queryKeywordView">' . $fieldInput . '</div>
 								</a>';
 
@@ -104,7 +106,7 @@
 								{
 									$query = preg_replace("/^\)/", "", $query);
 									$queryDisplay = $queryDisplay . '
-									<a href="setting?action=editQueryScience&query=0" >
+									<a href="setting?action=editQueryScience&query=' . $queryId . '" >
 										<div class="queryParenthesisView">)</div>
 									</a>
 									';
@@ -116,7 +118,7 @@
 									$query = preg_replace("/^\+(AND|OR|NOTAND)\+/", "", $query);
 									preg_match("/.{1,3}/", $logicalConnector[1], $logicalConnector);
 									$queryDisplay = $queryDisplay . '
-									<a href="setting?action=editQueryScience&query=0" >
+									<a href="setting?action=editQueryScience&query=' . $queryId . '" >
 									<div class="query' . ucfirst(strtolower($logicalConnector[0])) . 'View">' . $logicalConnector[0] . '</div>
 									</a>
 									';

@@ -526,6 +526,94 @@ elseif ($userSettings['record_read'] == 1)
 	$recordRead = 'checked';
 }
 
+# Edit science query
+if (!empty($_GET['action']) AND !empty($_GET['query']) AND $_GET['action'] == 'editQueryScience')
+{
+	preg_match("/[0-9]+/", $_GET['query'], $queryId);
+	$delEditingScienceQuery = $queryId[0];
+
+	$req = $bdd->prepare('SELECT query_arxiv FROM queries_science_serge WHERE id = :queryId AND  owners LIKE :userId');
+	$req->execute(array(
+		'queryId' => $queryId[0],
+		'userId' => '%,' . $_SESSION['id'] . ',%'));
+		$queriesEdit = $req->fetch();
+		$req->closeCursor();
+
+		$query = urldecode($queriesEdit['query_arxiv']);
+		$query = preg_replace("/\"/", "", $query);
+		$query = preg_replace("/(\(|\)|[^: ]+:| AND | NOTAND | OR )/", "|$1", $query);
+		$query = preg_replace("/:/", "|", $query);
+		$queryArray = explode("|", $query);
+
+		$cpt = 0;
+		$typeQuery = '';
+		foreach ($queryArray as $queryPart)
+		{
+			$cptQuery = ceil($cpt/6) - 1;
+			if (preg_match("/(^ AND $|^ NOTAND $|^ OR $)/",$queryPart, $value))
+			{
+				if (($cpt / 6) != intval($cpt / 6))
+				{
+					$cpt = (intval($cpt / 6) + 1) * 6;
+					$cptQuery = ceil($cpt/6);
+				}
+				$value = preg_replace("/ /", "", $value[0]);
+				$_POST['andOrAndnot' . $cptQuery] = $value;
+			}
+			elseif (preg_match("/^\($/",$queryPart))
+			{
+				$_POST['openParenthesis' . $cptQuery] = 'active';
+			}
+			elseif (preg_match("/^\)$/",$queryPart))
+			{
+				$_POST['closeParenthesis' . $cptQuery] = 'active';
+			}
+			elseif (!empty($queryPart) AND $typeQuery != 'displayed')
+			{
+				$_POST['scienceType' . $cptQuery] = $queryPart;
+				$typeQuery = 'displayed';
+			}
+			elseif (!empty($queryPart))
+			{
+				$_POST['scienceQuery' . $cptQuery] = $queryPart;
+				$typeQuery = '';
+			}
+			$cpt++;
+		}
+
+		$_SESSION['cptScienceQuery'] = ceil(($cptQuery+1)/3) * 3;
+}
+
+
+# Delete editing query
+if (!empty($_POST['delEditingScienceQuery']) AND empty($_POST['extendScience']))
+{
+	preg_match("/[0-9]+/", $_POST['delEditingScienceQuery'], $idQueryToDel);
+
+	$_POST['delEditingScienceQuery'] = '';
+
+	$req = $bdd->prepare('SELECT owners, active FROM queries_science_serge WHERE id = :queryId AND  owners LIKE :userId');
+	$req->execute(array(
+		'queryId' => $idQueryToDel[0],
+		'userId' => '%,' . $_SESSION['id'] . ',%'));
+		$queriesEditOwners = $req->fetch();
+		$req->closeCursor();
+
+		if (!empty($queriesEditOwners))
+		{
+			$userId = $_SESSION['id'];
+			$queryOwnerNEW = preg_replace("/,!*$userId,/", ',', $queriesEditOwners['owners']);
+			$active = $queriesEditOwners['active'] - 1;
+
+			$req = $bdd->prepare('UPDATE queries_science_serge SET owners = :owners, active = :active WHERE id = :id');
+			$req->execute(array(
+				'owners' => $queryOwnerNEW,
+				'active' => $active,
+				'id' => $idQueryToDel[0]));
+				$req->closeCursor();
+		}
+}
+
 # Add new science query
 include_once('model/addNewScienceQuery.php');
 if (!empty($_POST['scienceQuerySubmit']) AND $_POST['scienceQuerySubmit'] == 'add')
@@ -591,6 +679,14 @@ if (!empty($_POST['scienceQuerySubmit']) AND $_POST['scienceQuerySubmit'] == 'ad
 			$queryScience_Arxiv = $queryScience_Arxiv . '%22' . $scienceQuery . '%22' . $closeParenthesis;
 			$queryScience_Doaj = $queryScience_Doaj . '%22' . $scienceQuery . '%22' . $closeParenthesis;
 		}
+
+		# Cleaning
+		$_POST['andOrAndnot' . $cpt] = '';
+		$_POST['openParenthesis' . $cpt] = '';
+		$_POST['scienceType' . $cpt] = '';
+		$_POST['scienceQuery' . $cpt] = '';
+		$_POST['closeParenthesis' . $cpt] = '';
+
 		$cpt ++;
 		$nbscienceType = 'scienceType' . $cpt;
 	}
@@ -816,12 +912,22 @@ if (!empty($_POST['activateQueryPatent']))
 if (!empty($_POST['extendScience']))
 {
 	$_SESSION['cptScienceQuery'] += 3;
+	if (!empty($_POST['delEditingScienceQuery']))
+	{
+		preg_match("/[0-9]+/", $_POST['delEditingScienceQuery'], $idQueryToDel);
+		$delEditingScienceQuery = $idQueryToDel[0];
+	}
 }
 
 # Extend patent query
 if (!empty($_POST['extendPatent']))
 {
 	$_SESSION['cptPatentQuery'] += 3;
+	if (!empty($_POST['delEditingScienceQuery']))
+	{
+		preg_match("/[0-9]+/", $_POST['delEditingPatentQuery'], $idQueryToDel);
+		$delEditingPatentQuery = $idQueryToDel[0];
+	}
 }
 
 include_once('view/nav/nav.php');
