@@ -786,6 +786,86 @@ if (!empty($_POST['activateQueryScience']))
 	}
 }
 
+# Edit patent query
+if (!empty($_GET['action']) AND !empty($_GET['query']) AND $_GET['action'] == 'editQueryPatent')
+{
+	preg_match("/[0-9]+/", $_GET['query'], $queryId);
+	$delEditingPatentQuery = $queryId[0];
+
+	$req = $bdd->prepare('SELECT query FROM queries_wipo_serge WHERE id = :queryId AND  owners LIKE :userId');
+	$req->execute(array(
+		'queryId' => $queryId[0],
+		'userId' => '%,' . $_SESSION['id'] . ',%'));
+		$queriesEdit = $req->fetch();
+		$req->closeCursor();
+
+		$query = urldecode($queriesEdit['query']);
+		$query = preg_replace("/\"/", "", $query);
+		$query = preg_replace("/(\(|\)|[^: ]+:| AND | OR )/", "|$1", $query);
+		$query = preg_replace("/:/", "|", $query);
+		$queryArray = explode("|", $query);
+
+		$cpt = 0;
+		$typeQuery = '';
+		foreach ($queryArray as $queryPart)
+		{
+			$cptQuery = ceil($cpt/6) - 1;
+			if (preg_match("/(^ AND $|^ OR $)/",$queryPart, $value))
+			{
+				if (($cpt / 6) != intval($cpt / 6))
+				{
+					$cpt = (intval($cpt / 6) + 1) * 6;
+					$cptQuery = ceil($cpt/6);
+				}
+				$value = preg_replace("/ /", "", $value[0]);
+				$_POST['andOrPatent' . $cptQuery] = $value;
+			}
+			elseif (!empty($queryPart) AND $typeQuery != 'displayed')
+			{
+				$_POST['patentType' . $cptQuery] = $queryPart;
+				$typeQuery = 'displayed';
+			}
+			elseif (!empty($queryPart))
+			{
+				$_POST['patentQuery' . $cptQuery] = $queryPart;
+				$typeQuery = '';
+			}
+			$cpt++;
+		}
+
+		$_SESSION['cptPatentQuery'] = ceil(($cptQuery+1)/3) * 3;
+}
+
+
+# Delete editing query
+if (!empty($_POST['delEditingPatentQuery']) AND empty($_POST['extendPatent']))
+{
+	preg_match("/[0-9]+/", $_POST['delEditingPatentQuery'], $idQueryToDel);
+
+	$_POST['delEditingPatentQuery'] = '';
+
+	$req = $bdd->prepare('SELECT owners, active FROM queries_wipo_serge WHERE id = :queryId AND  owners LIKE :userId');
+	$req->execute(array(
+		'queryId' => $idQueryToDel[0],
+		'userId' => '%,' . $_SESSION['id'] . ',%'));
+		$queriesEditOwners = $req->fetch();
+		$req->closeCursor();
+
+		if (!empty($queriesEditOwners))
+		{
+			$userId = $_SESSION['id'];
+			$queryOwnerNEW = preg_replace("/,!*$userId,/", ',', $queriesEditOwners['owners']);
+			$active = $queriesEditOwners['active'] - 1;
+
+			$req = $bdd->prepare('UPDATE queries_wipo_serge SET owners = :owners, active = :active WHERE id = :id');
+			$req->execute(array(
+				'owners' => $queryOwnerNEW,
+				'active' => $active,
+				'id' => $idQueryToDel[0]));
+				$req->closeCursor();
+		}
+}
+
 # Add new patents query
 if (!empty($_POST['patentQuerySubmit']) AND $_POST['patentQuerySubmit'] == 'add')
 {
@@ -802,9 +882,14 @@ if (!empty($_POST['patentQuerySubmit']) AND $_POST['patentQuerySubmit'] == 'add'
 			$_POST['patentType' . $cpt] = 'ALLNAMES';
 		}
 
-		$patentQueryInput = urlencode(preg_replace("/:/", "", $_POST['patentQuery' . $cpt]));
+		$patentQueryInput = urlencode(preg_replace("/(:| $)/", "", $_POST['patentQuery' . $cpt]));
 
 		$queryPatent = $queryPatent . $andOrPatent . $_POST['patentType' . $cpt] . '%3A' . $patentQueryInput . '+';
+
+		# Cleaning
+		$_POST['patentType' . $cpt ] = '';
+		$_POST['patentQuery' . $cpt ] = '';
+		$_POST['andOrPatent' . $cpt ] = '';
 
 		$cpt++;
 

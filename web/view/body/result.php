@@ -130,6 +130,8 @@
 						elseif ($type == "patents")
 						{
 							$queryDisplay = '';
+							preg_match("/,[0-9]+,/", $result[$keywordQueryId], $queryId);
+							$queryId = preg_replace("/,/", "", $queryId[0]);
 
 							$queryFieldsName['ALLNAMES'] = 'All Names';
 							$queryFieldsName['ALLNUM'] = 'All Numbers and IDs';
@@ -203,10 +205,10 @@
 								$fieldInput = preg_replace("/\+/", " ", $fieldInput);
 								$fields = preg_replace("/(\%3A|`)/", "", $fields);
 								$queryDisplay = $queryDisplay . '
-								<a href="setting?action=editQueryPatent&query=0" >
+								<a href="setting?action=editQueryPatent&query=' . $queryId . '" >
 									<div class="queryTypeView">' . $queryFieldsName[$fields] . '</div>
 								</a>
-								<a href="setting?action=editQueryPatent&query=0" >
+								<a href="setting?action=editQueryPatent&query=' . $queryId . '" >
 									<div class="queryKeywordView">' . $fieldInput . '</div>
 								</a>';
 
@@ -216,7 +218,7 @@
 									$query = preg_replace("/^(AND|OR)\+/", "", $query);
 									preg_match("/.{1,3}/", $logicalConnector[1], $logicalConnector);
 									$queryDisplay = $queryDisplay . '
-									<a href="setting?action=editQueryPatent&query=0" >
+									<a href="setting?action=editQueryPatent&query=' . $queryId . '" >
 									<div class="query' . ucfirst(strtolower($logicalConnector[0])) . 'View">' . $logicalConnector[0] . '</div>
 									</a>
 									';

@@ -8,11 +8,13 @@ function readResultKeyword($keywordIds, $readOwnerKeyword, $bdd, $queryColumn, $
 		foreach ($keywordIds_array[0] as $id)
 		{
 			$idK = preg_replace("/,/", "", $id);
+			$keywordId = $idK;
 
 			if ($idK == $OwnerKeyword['id'])
 			{
 				$keywordId = $idK;
 				$breaker   = TRUE;
+				break;
 			}
 		}
 
