@@ -1,5 +1,5 @@
 // Keep scroll position
-document.onclick = function()
+document.onsubmit = function()
 {
 	// Scroll position
 	var scrollPosition = document.body.scrollTop;
