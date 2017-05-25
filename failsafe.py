@@ -37,7 +37,7 @@ def checkMate(logger_info, logger_error):
 
 	num_tables = num_tables[0]
 
-	if num_tables < 13:
+	if num_tables < 14:
 		logger_error.critical("Missing Tables")
 	else:
 		call_extensions = database.cursor()
@@ -62,12 +62,12 @@ def checkMate(logger_info, logger_error):
 
 				optionnal_tables = optionnal_tables + amount_tables
 
-		if num_tables == (13+optionnal_tables):
+		if num_tables == (14+optionnal_tables):
 			logger_info.info("Number of tables : check")
-		elif num_tables < (13+optionnal_tables):
+		elif num_tables < (14+optionnal_tables):
 			logger_error.critical("Missing Tables, for at least one extension")
 			sys.exit()
-		elif num_tables > (13+optionnal_tables):
+		elif num_tables > (14+optionnal_tables):
 			logger_error.critical("Too Much Tables")
 			sys.exit()
 		else:
@@ -76,7 +76,7 @@ def checkMate(logger_info, logger_error):
 			sys.exit()
 
 	######### CHECKING TABLES' NAMES
-	expected_tables_list = ["admin_table_serge", "background_serge", "keyword_news_serge", "patents_sources_serge", "queries_science_serge", "queries_wipo_serge", "result_news_serge", "result_patents_serge", "result_science_serge", "rss_serge", "science_sources_serge", "miscellaneous_serge", "users_table_serge"]
+	expected_tables_list = ["admin_table_serge", "background_serge", "keyword_news_serge", "patents_sources_serge", "queries_science_serge", "queries_wipo_serge", "result_news_serge", "result_patents_serge", "result_science_serge", "rss_serge", "science_sources_serge", "miscellaneous_serge", "users_table_serge", "watch_pack_serge"]
 
 	checking.execute(check_tables_name)
 	name_tables = checking.fetchall()
@@ -106,6 +106,7 @@ def checkMate(logger_info, logger_error):
 	science_sources_serge_numbers = 3
 	miscellaneous_serge_numbers = 2
 	users_table_serge_numbers = 15
+	watch_pack_serge_numbers = 12
 
 	for name in expected_tables_list:
 		checking.execute(check_numbers_columns, (database_name, name))
@@ -145,6 +146,7 @@ def checkMate(logger_info, logger_error):
 	science_sources_serge_columns = ["id", "link", "name"]
 	miscellaneous_serge_columns = ["name", "value"]
 	users_table_serge_columns = ["id", "users", "email", "password", "last_mail", "send_condition", "frequency", "link_limit", "selected_days", "selected_hour", "mail_design", "language", "record_read", "history_lifetime", "background_result"]
+	watch_pack_serge_columns = ["id", "pack_id", "search_index", "name", "author", "users", "query", "source", "category", "language", "update_date", "rating"]
 
 	for name in expected_tables_list:
 
