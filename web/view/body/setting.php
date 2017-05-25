@@ -523,8 +523,8 @@
 			<?php echo $ERROR_MESSAGE; ?>
 
 			<div class="inlineButton">
-				<a class="buttonCreatesourcePack" href="sourcePack?action=creation">Create my own source pack</a>
-				<a class="buttonVisiteCommunitySourcePack" href="sourcePack?action=visite">Add community source pack</a>
+				<a class="buttonCreatesourcePack" href="watchPack?type=create">Create my own source pack</a>
+				<a class="buttonVisiteCommunitySourcePack" href="watchPack?type=add">Add community source pack</a>
 			</div>
 
 			<div>
