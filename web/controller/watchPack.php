@@ -57,7 +57,7 @@ if (!empty($_GET['type']))
 	else
 	{
 		$type           = 'add';
-		$createActive = 'class="active"';
+		$addActive = 'class="active"';
 		$tableName      = 'result_science_serge';
 		$tableNameQuery = 'queries_science_serge';
 		$tableNameSource = 'science_sources_serge';
@@ -73,7 +73,7 @@ if (!empty($_GET['type']))
 else
 {
 	$type           = 'add';
-	$createActive = 'class="active"';
+	$addActive = 'class="active"';
 	$tableName      = 'result_science_serge';
 	$tableNameQuery = 'queries_science_serge';
 	$tableNameSource = 'science_sources_serge';
