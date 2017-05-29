@@ -1794,6 +1794,40 @@ else
 		width: 100%;
 	}
 
+	select
+	{
+		position: relative;
+		width: 21px;
+		height: 26px;
+		font-size: 12px;
+		border: none;
+		color: #fff;
+		text-transform: uppercase;
+		-moz-appearance: none;
+		-webkit-appearance: none;
+		-o-appearance: none;
+		appearance: none;
+		background-color: rgba(0,0,0,0);
+		outline: none;
+		z-index: 2;
+		text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+	}
+
+	select:focus
+	{
+		outline: none;
+		outline-style: none
+	}
+
+	select option
+	{
+		background-color: rgb(51,59,68);
+		text-transform: capitalize;
+		border: none;
+		outline: none;
+		outline-style: none
+	}
+
 	.tableContainer
 	{
 		display: flex;
@@ -1848,12 +1882,17 @@ else
 
 	th:nth-child(6)
 	{
-		width: 50px;
+		width: 25px;
+	}
+
+	th select
+	{
+		cursor: pointer;
 	}
 
 	th:nth-child(7)
 	{
-		width: 50px;
+		width: 100px;
 	}
 
 	.submit
@@ -1879,12 +1918,12 @@ else
 
 	th:nth-child(3)
 	{
-		width: 20%;
+		width: 15%;
 	}
 
-	th:last-child
+	th:nth-child(4)
 	{
-		width: 50px;
+		width: 15%;
 	}
 
 	td
@@ -1922,28 +1961,38 @@ else
 	{
 		width: 30%;
 		text-align: left;
-		padding-left: 5px;
 	}
 
 	td:nth-child(3)
 	{
-		width: 20%;
-		padding-left: 5px;
+		width: 15%;
+	}
+
+	td:nth-child(4)
+	{
+		width: 15%;
 	}
 
 	td:nth-child(6)
 	{
-		width: 50px;
+		width: 25px;
 	}
 
 	td:nth-child(7)
 	{
-		width: 50px;
+		width: 100px;
 	}
 
-	td:last-child
+	.star
 	{
-		width: 50px;
+		font-size: 19px;
+		cursor: pointer;
+	}
+
+	.star:hover
+	{
+		color: rgb(15, 15, 15);
+		text-shadow: 0 0 0 rgba(0, 0, 0, 0);
 	}
 
 	[type="checkbox"]:not(:checked),

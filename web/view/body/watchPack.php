@@ -687,14 +687,14 @@
 	{
 	?>
 		<h1>Community watch packs</h1>
-		<form class="formSearch" method="get" action="result">
+		<form class="formSearch" method="get" action="watchPack">
 			<input type="text" name="search" id="search" placeholder="Search Serge" value="<?php echo $search; ?>"/>
 			<input type="hidden" name="orderBy" value="<?php echo preg_replace("/.*=/", "", $orderBy); ?>"/>
 			<input type="hidden" name="optionalCond" value="<?php echo $optionalCond; ?>"/>
 		</form>
 
 
-		<form class="tableContainer" method="post" action="result">
+		<form class="tableContainer" method="post" action="watchPack">
 			<div class="table-header">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<thead>
@@ -702,12 +702,12 @@
 							<th>Add</th>
 							<?php
 							echo '
-							<th><a href="?orderBy=title' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '&type=' . $type . '">Title ' . $colOrder['title'] . '</a></th>
-							<th>' . $displayColumn . '</th>
-							<th><a href="?orderBy=source' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '&type=' . $type . '">Source ' . $colOrder['source'] . '</a></th>
+							<th><a href="?orderBy=title' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '&type=' . $type . '">Name ' . $colOrder['name'] . '</a></th>
+							<th><a href="?orderBy=source' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '&type=' . $type . '">Author ' . $colOrder['author'] . '</a></th>
+							<th><a href="?orderBy=source' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '&type=' . $type . '">Category ' . $colOrder['category'] . '</a></th>
 							<th><a href="?orderBy=date' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '&type=' . $type . '">Date ' . $colOrder['date'] . '</a></th>
-							<th><a href="?optionalCond=send' . $colOrder['OCDESC'] . $searchSort . $orderBy . '&type=' . $type . '">' . $colOrder['send'] . '</a></th>
-							<th><a href="?optionalCond=read' . $colOrder['OCDESC'] . $searchSort . $orderBy . '&type=' . $type . '">' . $colOrder['read'] . '</a></th>';
+							<th>' . $colOrder['language'] . '</th>
+							<th><a href="?optionalCond=read' . $colOrder['OCDESC'] . $searchSort . $orderBy . '&type=' . $type . '">Rate' . $colOrder['read'] . '</a></th>';
 							?>
 						</tr>
 					</thead>
@@ -716,16 +716,21 @@
 			<div class="table-content">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tbody>
-						<tr>
-							<td><input title="Add watch pack" name="AddPack" class="submit" type="submit" value="Add" /></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-						</tr>
+						<?php
+						foreach ($watchPacks as $watchPack)
+						{
+							echo '
+							<tr>
+								<td><input title="Add watch pack" name="AddPack" class="submit" type="submit" value="Add" /></td>
+								<td>' . $watchPack['name'] . '</td>
+								<td>' . $watchPack['author'] . '</td>
+								<td>' . $watchPack['category'] . '</td>
+								<td>' . date("H:i d/m/o", $watchPack['update_date']) . '</td>
+								<td>' . $watchPack['language'] . '</td>
+								<td>' . $watchPack['rating'] . '&nbsp;<span class="star">&#9733;</span></td>
+							</tr>';
+						}
+						?>
 					</tbody>
 				</table>
 			</div>
