@@ -225,8 +225,16 @@ def ofSourceAndName(now, logger_info, logger_error):
 			num = num+1
 
 
-def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly) :
+def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, item, keyword_id_comma, logger_info, logger_error, need_jelly) :
 	"""insertOrUpdate manage links insertion or data update if the link is already present."""
+
+	########### ITEM EXTRACTION FOR OPERATIONS
+	post_title = item[0]
+	post_link = item[1]
+	post_date = int(item[2])
+	id_rss = item[3]
+	keyword_id_comma2 = item[4]
+	owners = item[5]
 
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
@@ -245,7 +253,7 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 		########### SEARCHING FOR AN IDENTICAL NEWS POST TITLE (LINK CHANGE)
 		if need_jelly is True:
 			call_data_cheking = database.cursor()
-			call_data_cheking.execute(query_jellychecking, (id_rss, ))
+			call_data_cheking.execute(query_jellychecking, (id_rss, post_date, post_date))
 			jellychecking = call_data_cheking.fetchall()
 			call_data_cheking.close()
 
@@ -319,6 +327,7 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 
 	########### IF POST LINK IN DATABASE
 	elif checking is not None and item[1] != "":
+		duplicate = False
 		field_id_keyword = checking[0]
 		item_owners = checking[1]
 		already_owners_list = owners.split(",")
@@ -343,7 +352,7 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 		########### SEARCHING FOR A MODIFICATED NEWS POST TITLE
 		if need_jelly is True:
 			call_data_cheking = database.cursor()
-			call_data_cheking.execute(query_jellychecking, (id_rss, ))
+			call_data_cheking.execute(query_jellychecking, (id_rss, post_date, post_date))
 			jellychecking = call_data_cheking.fetchall()
 			call_data_cheking.close()
 

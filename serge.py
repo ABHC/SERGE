@@ -165,7 +165,7 @@ def newscast(trio_sources_news):
 			missing_flux = True
 
 		rangemax = len(xmldoc.entries)
-		range = 0 #on initialise la variable range qui va servir pour pointer les articles
+		range = 0
 
 		prime_conditions = (couple_keyword_attribute for couple_keyword_attribute in keywords_and_id_news_list if missing_flux is False)
 
@@ -298,7 +298,7 @@ def newscast(trio_sources_news):
 
 						########### QUERY FOR DATABASE CHECKING
 						query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
-						query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s and UNIX_TIMESTAMP() < (`date`+86400)")
+						query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s AND `date` BETWEEN %s AND (%s+86400)")
 
 						########### QUERY FOR DATABASE INSERTION
 						query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
@@ -312,7 +312,7 @@ def newscast(trio_sources_news):
 						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
 						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly)
+						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, item, keyword_id_comma, logger_info, logger_error, need_jelly)
 
 				########### SIMPLE KEYWORDS RESEARCH
 				else:
@@ -320,7 +320,7 @@ def newscast(trio_sources_news):
 
 						########### QUERY FOR DATABASE CHECKING
 						query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
-						query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s and UNIX_TIMESTAMP() < (`date`+86400)")
+						query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s AND `date` BETWEEN %s AND (%s+86400)")
 
 						########### QUERY FOR DATABASE INSERTION
 						query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
@@ -334,7 +334,7 @@ def newscast(trio_sources_news):
 						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
 						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly)
+						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, item, keyword_id_comma, logger_info, logger_error, need_jelly)
 
 				range = range+1
 
@@ -448,7 +448,7 @@ def science():
 
 						########### QUERY FOR DATABASE CHECKING
 						query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
-						query_jellychecking = ("SELECT title, link, query_id, owners FROM result_science_serge WHERE id_source = %s and UNIX_TIMESTAMP() < (`date`+86400)")
+						query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s AND `date` BETWEEN %s AND (%s+86400)")
 
 						########### QUERY FOR DATABASE INSERTION
 						query_insertion = ("INSERT INTO result_science_serge(title, link, date, id_source, query_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
@@ -462,9 +462,9 @@ def science():
 						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
 						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly)
+						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, item, keyword_id_comma, logger_info, logger_error, need_jelly)
 
-						range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
+						range = range+1
 
 		else:
 			logger_info.warning("Error : the feed is unavailable")
@@ -535,7 +535,7 @@ def science():
 
 					########### QUERY FOR DATABASE CHECKING
 					query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
-					query_jellychecking = ("SELECT title, link, query_id, owners FROM result_science_serge WHERE id_source = %s and UNIX_TIMESTAMP() < (`date`+86400)")
+					query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s AND `date` BETWEEN %s AND (%s+86400)")
 
 					########### QUERY FOR DATABASE INSERTION
 					query_insertion = ("INSERT INTO result_science_serge(title, link, date, id_source, query_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
@@ -548,8 +548,8 @@ def science():
 					post_title = escaping(post_title)
 					item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
-					########### CALL insertOrUpdate FUNCTION
-					insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly)
+					########### CALL  FUNCTION
+					insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, item, keyword_id_comma, logger_info, logger_error, need_jelly)
 
 					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
@@ -579,6 +579,7 @@ def patents():
 	######### CALL TO TABLE queries_wipo
 	call_patents_key = database.cursor()
 	call_patents_key.execute("SELECT query, id, owners FROM queries_wipo_serge WHERE active > 0")
+	#call_patents_key.execute("SELECT query, id, owners, legal_research FROM queries_wipo_serge WHERE active > 0")
 	matrix_query = call_patents_key.fetchall()
 	call_patents_key.close()
 
@@ -591,6 +592,7 @@ def patents():
 		id_query_wipo = couple_query[1]
 		query_wipo = couple_query[0].strip().encode("utf8")
 		owners = couple_query[2].strip().encode("utf8")
+		#legal_research = bool(couple_query[3])
 
 		logger_info.info(query_wipo+"\n")
 		link = ('https://patentscope.wipo.int/search/rss.jsf?query='+query_wipo+'&office=&rss=true&sortOption=Pub+Date+Desc')
@@ -606,6 +608,7 @@ def patents():
 			logger_info.info("Link :"+str(link))
 			logger_info.info("Patentscope RSS length :"+unicode(rangemax)+"\n \n")
 
+			######### RESULT FILE PARSING
 			if (xmldoc):
 				if rangemax == 0:
 					logger_info.info("VOID QUERY : "+query_wipo+"\n")
@@ -639,6 +642,14 @@ def patents():
 							logger_error.warning(traceback.format_exc())
 							post_date = now
 
+						######### LEGAL STATUS RESEARCH
+						#if legal_research == True:
+							#Yolo=0
+							#aller avec beautifulsoup sur la page du brevet et recuperer le numéro et la classe
+
+						#else:
+							#Yolo=0
+
 						keyword_id_comma = str(id_query_wipo)+","
 						keyword_id_comma2 = ","+str(id_query_wipo)+","
 
@@ -655,10 +666,10 @@ def patents():
 
 						########### ITEM BUILDING
 						post_title = escaping(post_title)
-						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners,)
+						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
 
 						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, post_link, post_title, item, keyword_id_comma, keyword_id_comma2, id_rss, owners, logger_info, logger_error, need_jelly)
+						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, item, keyword_id_comma, logger_info, logger_error, need_jelly)
 
 						range = range+1
 
@@ -717,7 +728,7 @@ pydate = unicode(pydate)                          #TRANSFORM PYDATE INTO UNICODE
 logger_info.info(time.asctime(time.gmtime(now))+"\n")
 
 ######### DATABASE INTERGRITY CHECKING
-failsafe.checkMate(logger_info, logger_error)
+#failsafe.checkMate(logger_info, logger_error)
 
 ######### NUMBERS OF USERS
 call_users = database.cursor()
