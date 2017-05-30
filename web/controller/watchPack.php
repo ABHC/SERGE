@@ -253,13 +253,46 @@ if ($type == 'add')
 	$colOrder['language'] = $colOrder['language'] . PHP_EOL . '</select>';
 }
 
+# Add a star
+$pattern = '★ [0-9]+';
+if (!empty($_POST['AddStar']) AND preg_match("/$pattern/", $_POST['AddStar']))
+{
+	preg_match("/ [0-9]+/", $_POST['AddStar'], $packId);
+	$packId = $packId[0];
+
+	$req = $bdd->prepare('SELECT rating FROM watch_pack_serge WHERE id = :id');
+	$req->execute(array(
+		'id' => $packId));
+		$usersStars = $req->fetch();
+		$req->closeCursor();
+
+	if (empty($usersStars['rating']))
+	{
+		$usersStars['rating'] = ',';
+	}
+
+	$pattern = ',' . $_SESSION['id'] . ',';
+	if (preg_match("/$pattern/", $usersStars['rating']))
+	{
+		$usersStars = preg_replace("/$pattern/", ",", $usersStars['rating']);
+	}
+	else
+	{
+		$usersStars = $usersStars['rating'] . $_SESSION['id'] . ',';
+	}
+
+	$req = $bdd->prepare('UPDATE watch_pack_serge SET rating = :usersStars WHERE id = :id');
+	$req->execute(array(
+		'usersStars' => $usersStars,
+		'id' => $packId));
+		$req->closeCursor();
+}
+
 # Read watchPack
-$req = $bdd->prepare("SELECT name, author, users, category, language, update_date, rating, ((LENGTH(`rating`) - LENGTH(REPLACE(`rating`, ',', '')))-1) AS `NumberOfStars` FROM `watch_pack_serge` WHERE 1 ORDER BY `NumberOfStars` DESC;");
+$req = $bdd->prepare("SELECT id, name, author, users, category, language, update_date, rating, ((LENGTH(`rating`) - LENGTH(REPLACE(`rating`, ',', '')))-1) AS `NumberOfStars` FROM `watch_pack_serge` WHERE 1 ORDER BY `NumberOfStars` DESC;");
 $req->execute();
 	$watchPacks = $req->fetchAll();
 	$req->closeCursor();
-
-
 
 include_once('view/nav/nav.php');
 
