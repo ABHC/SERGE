@@ -289,7 +289,7 @@ if (!empty($_POST['AddStar']) AND preg_match("/$pattern/", $_POST['AddStar']))
 }
 
 # Read watchPack
-$req = $bdd->prepare("SELECT id, name, author, users, category, language, update_date, rating, ((LENGTH(`rating`) - LENGTH(REPLACE(`rating`, ',', '')))-1) AS `NumberOfStars` FROM `watch_pack_serge` WHERE 1 ORDER BY `NumberOfStars` DESC;");
+$req = $bdd->prepare("SELECT id, name, description, author, users, category, language, update_date, rating, ((LENGTH(`rating`) - LENGTH(REPLACE(`rating`, ',', '')))-1) AS `NumberOfStars` FROM `watch_pack_serge` WHERE 1 ORDER BY `NumberOfStars` DESC;");
 $req->execute();
 	$watchPacks = $req->fetchAll();
 	$req->closeCursor();

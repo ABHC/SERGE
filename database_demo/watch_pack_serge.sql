@@ -5,6 +5,7 @@ CREATE TABLE `watch_pack_serge` (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
 	`search_index` text COLLATE utf8mb4_bin DEFAULT NULL,
 	`name` text COLLATE utf8mb4_bin NOT NULL,
+	`description` text COLLATE utf8mb4_bin NOT NULL,
 	`author` text COLLATE utf8mb4_bin NOT NULL,
 	`users` text COLLATE utf8mb4_bin DEFAULT NULL,
 	`category` text COLLATE utf8mb4_bin NOT NULL,

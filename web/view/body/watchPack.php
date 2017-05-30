@@ -731,7 +731,7 @@
 							echo '
 							<tr>
 								<td><input title="Add watch pack" name="AddPack" class="submit" type="submit" value="Add" /></td>
-								<td>' . $watchPack['name'] . '</td>
+								<td title="' . $watchPack['description'] . '">' . $watchPack['name'] . '</td>
 								<td>' . $watchPack['author'] . '</td>
 								<td>' . $watchPack['category'] . '</td>
 								<td>' . date("H:i d/m/o", $watchPack['update_date']) . '</td>

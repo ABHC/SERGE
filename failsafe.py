@@ -107,7 +107,7 @@ def checkMate(logger_info, logger_error):
 	miscellaneous_serge_numbers = 2
 	users_table_serge_numbers = 15
 	watch_pack_queries_serge_numbers = 4
-	watch_pack_serge_numbers = 9
+	watch_pack_serge_numbers = 10
 
 	for name in expected_tables_list:
 		checking.execute(check_numbers_columns, (database_name, name))
@@ -148,7 +148,7 @@ def checkMate(logger_info, logger_error):
 	miscellaneous_serge_columns = ["name", "value"]
 	users_table_serge_columns = ["id", "users", "email", "password", "last_mail", "send_condition", "frequency", "link_limit", "selected_days", "selected_hour", "mail_design", "language", "record_read", "history_lifetime", "background_result"]
 	watch_pack_queries_serge_columns = ["id", "pack_id", "query", "source"]
-	watch_pack_serge_columns = ["id", "search_index", "name", "author", "users", "category", "language", "update_date", "rating"]
+	watch_pack_serge_columns = ["id", "search_index", "name", "description", "author", "users", "category", "language", "update_date", "rating"]
 
 	for name in expected_tables_list:
 
