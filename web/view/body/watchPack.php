@@ -719,6 +719,15 @@
 						<?php
 						foreach ($watchPacks as $watchPack)
 						{
+							# Color stars
+							$starTitle = "Add a star";
+							$colorStar = '';
+							$pattern = ',' . $_SESSION['id'] . ',';
+							if (preg_match("/$pattern/", $watchPack['rating']))
+							{
+								$colorStar = "colorStar";
+								$starTitle = "Unstar";
+							}
 							echo '
 							<tr>
 								<td><input title="Add watch pack" name="AddPack" class="submit" type="submit" value="Add" /></td>
@@ -727,7 +736,7 @@
 								<td>' . $watchPack['category'] . '</td>
 								<td>' . date("H:i d/m/o", $watchPack['update_date']) . '</td>
 								<td>' . $watchPack['language'] . '</td>
-								<td>' . $watchPack['rating'] . '&nbsp;<span class="star">&#9733;</span></td>
+								<td>' . $watchPack['NumberOfStars'] . '<input title="' . $starTitle . '" name="AddStar" class="star ' . $colorStar . '" type="submit" value="&#9733;" /></td>
 							</tr>';
 						}
 						?>

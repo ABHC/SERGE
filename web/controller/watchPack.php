@@ -254,10 +254,12 @@ if ($type == 'add')
 }
 
 # Read watchPack
-$req = $bdd->prepare('SELECT name, author, users, category, language, update_date, rating FROM watch_pack_serge GROUP BY pack_id');
+$req = $bdd->prepare("SELECT name, author, users, category, language, update_date, rating, ((LENGTH(`rating`) - LENGTH(REPLACE(`rating`, ',', '')))-1) AS `NumberOfStars` FROM `watch_pack_serge` WHERE 1 ORDER BY `NumberOfStars` DESC;");
 $req->execute();
 	$watchPacks = $req->fetchAll();
 	$req->closeCursor();
+
+
 
 include_once('view/nav/nav.php');
 

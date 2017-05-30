@@ -1983,13 +1983,25 @@ else
 		width: 100px;
 	}
 
-	.star
+	input[type='submit'].star
 	{
-		font-size: 19px;
+		width: 25px;
+		height: auto;
 		cursor: pointer;
+		background: none;
+		border: none;
+		font-size: 19px;
+		color: #fff;
+		text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
 	}
 
-	.star:hover
+	input[type='submit'].star.colorStar
+	{
+		color: rgb(15, 15, 15);
+		text-shadow: 0 0 0 rgba(0, 0, 0, 0);
+	}
+
+	input[type='submit'].star:hover
 	{
 		color: rgb(15, 15, 15);
 		text-shadow: 0 0 0 rgba(0, 0, 0, 0);
