@@ -16,10 +16,38 @@
 	{
 	?>
 	<h1>Creation of watch packs</h1>
-	<form method="post" action="setting">
+	<form method="post" action="watchPack?type=create">
 		<input type="hidden" name="scrollPos" id="scrollPos" value="0"/>
 		<input type="hidden" name="delEditingScienceQuery" value="<?php echo $delEditingScienceQuery; ?>"/>
 		<input type="hidden" name="delEditingPatentQuery" value="<?php echo $delEditingPatentQuery; ?>"/>
+
+		<div class="dataPackManagement">
+			<h2>Name</h2>
+			<div>
+				<select name="watchPackName" onchange="this.form.submit();">
+					<option value="NewPack">New watch Pack&nbsp;&nbsp;</option>
+					<?php
+					# List here watch Pack own by current user
+					$req = $bdd->prepare('SELECT id, name FROM watch_pack_serge WHERE author = :author');
+					$req->execute(array(
+						'author' => $_SESSION['pseudo']));
+						$ownerWatchPacks = $req->fetchAll();
+						$req->closeCursor();
+
+					foreach ($ownerWatchPacks as $ownerWatchPack)
+					{
+						echo '<option value="EditPack' . $ownerWatchPack['id'] . '">Edit: ' . $ownerWatchPack['name'] . '&nbsp;&nbsp;</option>';
+					}
+					 ?>
+				</select>
+				<span class="arrDownBorder">▾</span>
+				<input type="text" name="PackName" placeholder="Your package name" />
+			</div>
+
+			<h2>Description</h2>
+			<textarea name="PackDescription" minlength="50" maxlength="300" placeholder="Your package description"></textarea>
+		</div>
+
 		<div class="keywordManagement">
 			<h2>News management</h2>
 			<div class="newsInput">
@@ -50,22 +78,11 @@
 				<input alt="Add new source" title="Add" class="submit" type="submit" value="" />
 				<select name="sourceType" id="sourceKeyword">
 					<option value="inputSource">Add my own source</option>
-					<option value="sourceGeneralEN">General news source pack [English]</option>
-					<option value="sourceTechnologyEN">Technology source pack [English]</option>
-					<option value="sourceSpatialEN">Spatial source pack [English]</option>
-					<option value="sourceGeneralFR">General news source pack [French]</option>
-					<option value="sourceTechnologyFR">Technology source pack [French]</option>
-					<option value="sourceSpacialFR">Spatial source pack [French]</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
 				<input type="url" name="newSource" id="source" placeholder="Source" />
 			</div>
 			<?php echo $ERROR_MESSAGE; ?>
-
-			<div class="inlineButton">
-				<a class="buttonCreatesourcePack" href="watchPack?type=create">Create my own source pack</a>
-				<a class="buttonVisiteCommunitySourcePack" href="watchPack?type=add">Add community source pack</a>
-			</div>
 
 			<div>
 				<?php
@@ -730,7 +747,7 @@
 							}
 							echo '
 							<tr>
-								<td><input title="Add watch pack" name="AddPack" class="submit" type="submit" value="Add" /></td>
+								<td><input title="Add watch pack" name="AddPack" class="icoAddPack" type="submit" value="' . $watchPack['id'] . '" /></td>
 								<td title="' . $watchPack['description'] . '">' . $watchPack['name'] . '</td>
 								<td>' . $watchPack['author'] . '</td>
 								<td>' . $watchPack['category'] . '</td>

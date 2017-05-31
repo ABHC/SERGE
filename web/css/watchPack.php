@@ -126,19 +126,49 @@ if ($_SESSION['type'] == 'create')
 		align-items: center;
 	}
 
-	input
+	input,
+	textarea
 	{
 		border-radius: 3px;
 		border: 1px solid rgba(255,255,255, 0.15);
 		padding: 4px;
 		background-color: rgba(255, 255, 255, 0.2);
 		color: #fff;
+		font-family: Verdana, Geneva, sans-serif;
+		font-style: normal;
+		font-variant: normal;
 	}
 
-	input[type='text']
+	input[type='text'],
+	textarea
 	{
 		flex-grow: 1;
 		flex-shrink: 1;
+	}
+
+	.dataPackManagement textarea
+	{
+		width: 99%;
+		text-align: center;
+	}
+
+	.dataPackManagement div
+	{
+		display: flex;
+		flex-direction: row;
+		justify-content: space-around;
+		align-items: center;
+		width: 100%;
+	}
+
+	.dataPackManagement div *
+	{
+		margin: 1px;
+	}
+
+	*::placeholder
+	{
+		color: rgb(170,170,170);
 	}
 
 	select
@@ -294,6 +324,20 @@ if ($_SESSION['type'] == 'create')
 	{
 		width: 100%;
 		text-align: center;
+	}
+
+	.dataPackManagement
+	{
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-items: center;
+		width: calc(80% - 20px);
+		padding: 10px;
+		background-color: rgba(0, 0, 0, 0.4);
+		border-radius: 3px;
+		border: 1px solid rgba(255,255,255,0.1);
+		margin-top: 50px;
 	}
 
 	.keywordManagement
@@ -1956,7 +2000,6 @@ else
 		width: 40px;
 	}
 
-
 	td:nth-child(2)
 	{
 		width: 30%;
@@ -2189,6 +2232,18 @@ else
 		color: #fff;
 		font-size: 9px;
 		margin-right: 3px;
+	}
+
+	.icoAddPack
+	{
+		width: 25px;
+		height: 25px;
+		background: url(../images/icoAddNewPack.png) center no-repeat;
+		background-size: contain;
+		border: none;
+		outline: none;
+		cursor: pointer;
+		opacity: 0.9;
 	}
 
 	.pages

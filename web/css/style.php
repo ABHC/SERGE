@@ -10,6 +10,8 @@ body
 {
 	margin: 0;
 	font-family: Verdana, Geneva, sans-serif;
+	font-style: normal;
+	font-variant: normal;
 }
 
 *
