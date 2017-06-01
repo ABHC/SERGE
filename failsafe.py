@@ -97,7 +97,7 @@ def checkMate(logger_info, logger_error):
 	keyword_news_serge_numbers = 4
 	patents_sources_serge_numbers = 3
 	queries_science_serge_numbers = 5
-	queries_wipo_serge_numbers = 4
+	queries_wipo_serge_numbers = 5
 	result_news_serge_numbers = 10
 	result_patents_serge_numbers = 14
 	result_science_serge_numbers = 10
