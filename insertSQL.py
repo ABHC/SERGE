@@ -103,7 +103,7 @@ def ofSourceAndName(now, logger_info, logger_error):
 			########### FAVICON RECOVERY
 			favicon_results = sergenet.headToIcon(favicon_link, logger_info, logger_error)
 			icon = favicon_results[0]
-			ion_error = favicon_results[1]
+			icon_error = favicon_results[1]
 
 			########### FAVICON REPLACEMENT IF ERRORS OCCURS
 			if icon_error is True:

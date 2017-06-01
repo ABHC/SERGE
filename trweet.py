@@ -146,7 +146,6 @@ def trweetFishing(attributes, logger_info, logger_error):
 	query = attributes[1]
 	owners = attributes[2]
 	lang = attributes[4]
-	last_launch = attributes[5]
 
 	query_id_comma = str(query_id)+","
 	query_id_comma2 = ","+str(query_id)+","
@@ -197,7 +196,6 @@ def lakesOfTrweets(attributes, logger_info, logger_error):
 	query = attributes[1]
 	owners = attributes[2]
 	lang = attributes[4]
-	last_launch = attributes[5]
 
 	query_id_comma = str(query_id)+","
 	query_id_comma2 = ","+str(query_id)+","

@@ -17,7 +17,6 @@ def allCheckLong(link):
 		req = requests.get(link, headers={'User-Agent' : "Serge Browser"}, timeout=15)
 		req.encoding = "utf8"
 		rss = req.text
-		header = req.headers
 		rss_error = False
 		error_message = None
 	except requests.exceptions.ConnectionError:

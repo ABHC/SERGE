@@ -28,6 +28,7 @@ import MySQLdb
 import json
 import feedparser
 import traceback
+from bs4 import BeautifulSoup
 import logging
 from logging.handlers import RotatingFileHandler
 
@@ -37,6 +38,7 @@ import sergenet
 import failsafe
 import insertSQL
 import resultstation
+import decoder
 from handshake import databaseConnection
 
 ######### LOGGER CONFIG
@@ -158,12 +160,6 @@ def newscast(trio_sources_news):
 			logger_error.error(repr(except_type))
 
 		########### RSS ANALYZE
-		try:
-			source_title = xmldoc.feed.title
-		except AttributeError:
-			logger_info.warning("NO TITLE IN :"+link+"\n")
-			missing_flux = True
-
 		rangemax = len(xmldoc.entries)
 		range = 0
 
@@ -557,7 +553,7 @@ def science():
 			logger_info.warning("Error : the json API is unavailable")
 
 
-def patents():
+def patents(now):
 	"""Function for last patents published by the World Intellectual Property Organization.
 
 		Process :
@@ -578,8 +574,7 @@ def patents():
 
 	######### CALL TO TABLE queries_wipo
 	call_patents_key = database.cursor()
-	call_patents_key.execute("SELECT query, id, owners FROM queries_wipo_serge WHERE active > 0")
-	#call_patents_key.execute("SELECT query, id, owners, legal_research FROM queries_wipo_serge WHERE active > 0")
+	call_patents_key.execute("SELECT query, id, owners, legal_research FROM queries_wipo_serge WHERE active > 0")
 	matrix_query = call_patents_key.fetchall()
 	call_patents_key.close()
 
@@ -592,7 +587,7 @@ def patents():
 		id_query_wipo = couple_query[1]
 		query_wipo = couple_query[0].strip().encode("utf8")
 		owners = couple_query[2].strip().encode("utf8")
-		#legal_research = bool(couple_query[3])
+		legal_research = bool(couple_query[3])
 
 		logger_info.info(query_wipo+"\n")
 		link = ('https://patentscope.wipo.int/search/rss.jsf?query='+query_wipo+'&office=&rss=true&sortOption=Pub+Date+Desc')
@@ -642,23 +637,58 @@ def patents():
 							logger_error.warning(traceback.format_exc())
 							post_date = now
 
-						######### LEGAL STATUS RESEARCH
-						#if legal_research == True:
-							#Yolo=0
-							#aller avec beautifulsoup sur la page du brevet et recuperer le numéro et la classe
-
-						#else:
-							#Yolo=0
-
 						keyword_id_comma = str(id_query_wipo)+","
 						keyword_id_comma2 = ","+str(id_query_wipo)+","
+
+						########### PRESENCE CHECKING
+						query_presence_checking = ("SELECT legal_check_date, owners FROM result_patents_serge WHERE link = %s")
+
+						call_results_patents = database.cursor()
+						call_results_patents.execute(query_presence_checking, (post_link, ))
+						presence_checking = call_results_patents.fetchone()
+						call_results_patents.close()
+
+						if presence_checking is not None:
+							legal_check_date = presence_checking[0]
+							already_owners = presence_checking[1]
+						else :
+							legal_check_date = None
+							already_owners = None
+
+						######### LEGAL STATUS RESEARCH
+						if (legal_research == 1 or legal_research == 2) and owners !="," and legal_check_date is not None and (legal_check_date+15552000) <= now:
+							legal_results = legalScrapper(post_link, logger_info, logger_error)
+							legal_abstract = legal_results[0]
+							legal_status = legal_results[1]
+							lens_link = legal_results[2]
+							new_check_date = now
+
+						elif (legal_research == 1 or legal_research == 2) and owners !="," and legal_check_date is None:
+							legal_results = legalScrapper(post_link, logger_info, logger_error)
+							legal_abstract = legal_results[0]
+							legal_status = legal_results[1]
+							lens_link = legal_results[2]
+							new_check_date = now
+
+						elif (legal_research == 1 or legal_research == 2) and owners != "," and already_owners is not None and owners != already_owners:
+							legal_results = legalScrapper(post_link, logger_info, logger_error)
+							legal_abstract = legal_results[0]
+							legal_status = legal_results[1]
+							lens_link = legal_results[2]
+							new_check_date = now
+
+						else:
+							legal_status = None
+							lens_link = None
+							legal_abstract = None
+							new_check_date = None
 
 						########### QUERY FOR DATABASE CHECKING
 						query_checking = ("SELECT id_query_wipo, owners FROM result_patents_serge WHERE link = %s")
 						query_jellychecking = None
 
 						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_patents_serge(title, link, date, id_source, id_query_wipo, owners) VALUES(%s, %s, %s, %s, %s, %s)")
+						query_insertion = ("INSERT INTO result_patents_serge (title, link, date, id_source, id_query_wipo, owners, legal_abstract, legal_status, lens_link) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
 						########### QUERY FOR DATABASE UPDATE
 						query_update = ("UPDATE result_patents_serge SET id_query_wipo = %s, owners = %s WHERE link = %s")
@@ -666,10 +696,16 @@ def patents():
 
 						########### ITEM BUILDING
 						post_title = escaping(post_title)
-						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
+						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners, legal_abstract, legal_status, lens_link)
 
 						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, item, keyword_id_comma, logger_info, logger_error, need_jelly)
+						if legal_check_date is None or (legal_check_date+15552000) <= now:
+
+							if legal_research == 1 and legal_abstract == "INACTIVE":
+								insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, item, keyword_id_comma, logger_info, logger_error, need_jelly)
+
+							else:
+								insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, item, keyword_id_comma, logger_info, logger_error, need_jelly)
 
 						range = range+1
 
@@ -677,6 +713,82 @@ def patents():
 				logger_info.warning("\n Error : the feed is unavailable")
 		else:
 			logger_error.warning("\n UNKNOWN CONNEXION ERROR")
+
+
+def legalScrapper(post_link, logger_info, logger_error):
+	"""Scrapper for searchin patents publication number on WIPO and legal status on Patent Lens"""
+
+	######### GO TO WIPO WEBSITE
+	req_results = sergenet.allRequestLong(post_link, logger_info, logger_error)
+	wipo_rss = req_results[0]
+
+	######### PARSE HTML
+	wipo_soup = BeautifulSoup(wipo_rss, 'html.parser')
+
+	######### SEARCH PATENT PUBLICATION NUMBER
+	try:
+		patent_panel = wipo_soup.find("span", {"id": "resultPanel1"})
+		match_object = re.search('\([^\)]+\)', str(patent_panel))
+		patent_num = match_object.group(0).replace("(", "").replace(")", "")
+		country_code = patent_num[0:2]
+		publication_number = patent_num[2:len(patent_num)]
+	except:
+		country_code = None
+		publication_number = None
+		logger_info.warning("PATENT NUMBER CAN'T BE RECOVERED")
+
+	######### SEARCH PATENT KIND CODE
+	try :
+		patent_kind = wipo_soup.find("td", string = re.compile("Publication Kind"))
+		kind_code = str(patent_kind.find_next("td")).replace("<td>", "").replace("</td>", "")
+	except AttributeError:
+		kind_code = None
+		logger_info.warning("KIND CODE CAN'T BE RECOVERED")
+
+	######### BUILD PATENT LENS LINK
+	if country_code is not None and publication_number is not None and kind_code is not None:
+		lens_link = "https://www.lens.org/lens/patent/"+str(country_code)+"_"+str(publication_number)+"_"+str(kind_code)+"/regulatory"
+	else:
+		lens_link = None
+
+	######### GO TO PATENT LENS WEBSITE
+	if lens_link is not None:
+		lens_results = sergenet.allRequestLong(lens_link, logger_info, logger_error)
+		lens_rss = lens_results[0]
+
+		######### PARSE HTML
+		lens_soup = BeautifulSoup(lens_rss, 'html.parser')
+		strong_list = []
+
+		######### SEARCH PATENT LEGAL STATUS
+		for machin in lens_soup.findAll('strong'):
+			strong_list.append(machin)
+
+		i = 0
+		cut_index = None
+
+		for fulltext in strong_list:
+			if "Collection Management:" in fulltext:
+				cut_index = i
+			i=i+1
+
+		if cut_index is not None:
+			legal_status = strong_list[cut_index-1]
+			legal_status = str(legal_status).replace("<strong>", "").replace("</strong>", "").replace("+", "").replace("-", "")
+			legal_comparator = legal_status.lower()
+			legal_abstract = decoder.decodeLegal(legal_comparator)
+		else:
+			legal_abstract = None
+			legal_status = None
+			logger_info.warning("LEGAL STATUS CAN'T BE RECOVERED")
+
+	######### SET VARIABLES TO NONE IF LEGAL STATUS CAN'T BE RECOVERED
+	else:
+		legal_abstract = None
+		legal_status = None
+		logger_info.warning("LEGAL STATUS CAN'T BE RECOVERED")
+
+	return (legal_abstract, legal_status, lens_link)
 
 
 def extensions(database):
@@ -744,7 +856,7 @@ insertSQL.ofSourceAndName(now, logger_info, logger_error)
 
 ######### PROCESS CREATION FOR SCIENCE AND PATENTS
 procScience = Process(target=science, args=())
-procPatents = Process(target=patents, args=())
+procPatents = Process(target=patents, args=(now,))
 
 ######### RESEARCH OF LATEST SCIENTIFIC PUBLICATIONS AND PATENTS
 procScience.start()

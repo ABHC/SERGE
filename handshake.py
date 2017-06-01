@@ -16,7 +16,7 @@ def databaseConnection():
 	return database
 
 
-def highwayToMail(register, user, newsletter, database):
+def highwayToMail(register, newsletter, database):
 	"""Function for emails sending"""
 
 	######### SERGE MAIL

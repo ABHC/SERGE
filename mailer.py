@@ -130,7 +130,7 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 		newsletter = newsletterBySource(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list)
 
 	######### CALL TO highwayToMail FUNCTION
-	handshake.highwayToMail(register, user, newsletter, database)
+	handshake.highwayToMail(register, newsletter, database)
 
 
 def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate):

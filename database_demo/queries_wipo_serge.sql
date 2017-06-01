@@ -4,6 +4,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `queries_wipo_serge` (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
 	`query` text COLLATE utf8mb4_bin NOT NULL,
+	`legal_research` tinyint(1) NOT NULL,
 	`owners` text COLLATE utf8mb4_bin NOT NULL,
 	`active` int(11) NOT NULL,
 	PRIMARY KEY (id)
