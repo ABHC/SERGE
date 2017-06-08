@@ -16,7 +16,7 @@ def databaseConnection():
 	return database
 
 
-def highwayToMail(register, newsletter, database):
+def highwayToMail(register, newsletter, priority, database):
 	"""Function for emails sending"""
 
 	######### SERGE MAIL
@@ -35,8 +35,12 @@ def highwayToMail(register, newsletter, database):
 	toaddr = user_infos[0]
 
 	######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
-	subject_FR = "[SERGE] Veille Industrielle et Technologique"
-	subject_EN = "[SERGE] News monitoring and Technological watch"
+	if priority == "NORMAL":
+		subject_FR = "[SERGE] Veille Industrielle et Technologique"
+		subject_EN = "[SERGE] News monitoring and Technological watch"
+	elif priority == "HIGH":
+		subject_FR = "[ALERTE SERGE] Informations Prioritaires"
+		subject_EN = "[SERGE] Prioritary Informations"
 
 	try :
 		exec("translate_subject"+"="+"subject_"+user_infos[1])
@@ -57,7 +61,7 @@ def highwayToMail(register, newsletter, database):
 	######### EMAIL SERVER CONNEXION
 	server = smtplib.SMTP('smtp.cairn-devices.eu', 5025)
 	server.starttls()
-	server.login(fromaddr, mdp_mail) #mot de passe
+	server.login(fromaddr, mdp_mail)
 	text = msg.as_string()
 	server.sendmail(fromaddr, toaddr, text)
 	server.quit()

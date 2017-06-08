@@ -406,131 +406,135 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 			update_data.close()
 
 
-def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error):
+def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, predecessor, logger_info, logger_error):
 	"""stairwayToUpdate manage the send_status update in database."""
 
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
 	######### SEND_STATUS UPDATE IN result_news_serge
-	for attributes in not_send_news_list:
-		baselink = attributes[4]
+	if predecessor == "MAILER" or predecessor == "ALARM":
+		for attributes in not_send_news_list:
+			baselink = attributes[4]
 
-		query = ("SELECT send_status FROM result_news_serge WHERE link = %s")
+			query = ("SELECT send_status FROM result_news_serge WHERE link = %s")
 
-		call_news = database.cursor()
-		call_news.execute(query, (baselink,))
-		row = call_news.fetchone()
+			call_news = database.cursor()
+			call_news.execute(query, (baselink,))
+			row = call_news.fetchone()
 
-		send_status = row[0]
-		register_comma = register+","
-		register_comma2 = ","+register+","
+			send_status = row[0]
+			register_comma = register+","
+			register_comma2 = ","+register+","
 
-		if register_comma2 not in send_status :
-			complete_status = send_status+register_comma
+			if register_comma2 not in send_status :
+				complete_status = send_status+register_comma
 
-			update = ("UPDATE result_news_serge SET send_status = %s WHERE link = %s")
+				update = ("UPDATE result_news_serge SET send_status = %s WHERE link = %s")
 
-			try:
-				call_news.execute(update, (complete_status, baselink))
-				database.commit()
-			except Exception, except_type:
-				database.rollback()
-				logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
-				logger_error.error(repr(except_type))
+				try:
+					call_news.execute(update, (complete_status, baselink))
+					database.commit()
+				except Exception, except_type:
+					database.rollback()
+					logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
+					logger_error.error(repr(except_type))
 
-		elif register_comma2 in send_status:
-			pass
+			elif register_comma2 in send_status:
+				pass
 
-		else:
-			logger_error.warning("WARNING UNKNOWN ERROR") ###
+			else:
+				logger_error.warning("WARNING UNKNOWN ERROR") ###
 
-		call_news.close()
+			call_news.close()
 
 	######### SEND_STATUS UPDATE IN result_science_serge
-	for attributes in not_send_science_list:
-		baselink = attributes[4]
+	if predecessor == "MAILER":
+		for attributes in not_send_science_list:
+			baselink = attributes[4]
 
-		query = ("SELECT send_status FROM result_science_serge WHERE link = %s")
+			query = ("SELECT send_status FROM result_science_serge WHERE link = %s")
 
-		call_science = database.cursor()
-		call_science.execute(query, (baselink,))
-		row = call_science.fetchone()
+			call_science = database.cursor()
+			call_science.execute(query, (baselink,))
+			row = call_science.fetchone()
 
-		send_status = row[0]
-		register_comma = register+","
-		register_comma2 = ","+register+","
+			send_status = row[0]
+			register_comma = register+","
+			register_comma2 = ","+register+","
 
-		if register_comma2 not in send_status:
-			complete_status = send_status+register_comma
+			if register_comma2 not in send_status:
+				complete_status = send_status+register_comma
 
-			update = ("UPDATE result_science_serge SET send_status = %s WHERE link = %s")
+				update = ("UPDATE result_science_serge SET send_status = %s WHERE link = %s")
 
-			try:
-				call_science.execute(update, (complete_status, baselink))
-				database.commit()
-			except Exception, except_type:
-				database.rollback()
-				logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
-				logger_error.error(repr(except_type))
+				try:
+					call_science.execute(update, (complete_status, baselink))
+					database.commit()
+				except Exception, except_type:
+					database.rollback()
+					logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
+					logger_error.error(repr(except_type))
 
-		elif register_comma2 in send_status:
-			pass
+			elif register_comma2 in send_status:
+				pass
 
-		else:
-			logger_error.warning("WARNING UNKNOWN ERROR")
+			else:
+				logger_error.warning("WARNING UNKNOWN ERROR")
 
-		call_science.close()
+			call_science.close()
 
 	######### SEND_STATUS UPDATE IN result_patents_serge
-	for attributes in not_send_patents_list:
-		baselink = attributes[3]
+	if predecessor == "MAILER":
+		for attributes in not_send_patents_list:
+			baselink = attributes[3]
 
-		query = ("SELECT send_status FROM result_patents_serge WHERE link = %s")
+			query = ("SELECT send_status FROM result_patents_serge WHERE link = %s")
 
-		call_patents = database.cursor()
-		call_patents.execute(query, (baselink,))
-		row = call_patents.fetchone()
+			call_patents = database.cursor()
+			call_patents.execute(query, (baselink,))
+			row = call_patents.fetchone()
 
-		send_status = row[0]
-		register_comma = register+","
-		register_comma2 = ","+register+","
+			send_status = row[0]
+			register_comma = register+","
+			register_comma2 = ","+register+","
 
-		if register_comma2 not in send_status:
-			complete_status = send_status+register_comma
+			if register_comma2 not in send_status:
+				complete_status = send_status+register_comma
 
-			update = ("UPDATE result_patents_serge SET send_status = %s WHERE link = %s")
+				update = ("UPDATE result_patents_serge SET send_status = %s WHERE link = %s")
 
-			try:
-				call_patents.execute(update, (complete_status, baselink))
-				database.commit()
-			except Exception, except_type:
-				database.rollback()
-				logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
-				logger_error.error(repr(except_type))
+				try:
+					call_patents.execute(update, (complete_status, baselink))
+					database.commit()
+				except Exception, except_type:
+					database.rollback()
+					logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
+					logger_error.error(repr(except_type))
 
-		elif register_comma2 in send_status:
-			pass
+			elif register_comma2 in send_status:
+				pass
 
-		else:
-			logger_info.warning("UNKNOWN ERROR")
+			else:
+				logger_info.warning("UNKNOWN ERROR")
 
-		call_patents.close()
+			call_patents.close()
 
 	######### USER last_mail FIELD UPDATE
-	update = ("UPDATE users_table_serge SET last_mail = %s WHERE id = %s")
+	if predecessor == "MAILER":
+		update = ("UPDATE users_table_serge SET last_mail = %s WHERE id = %s")
 
-	call_users = database.cursor()
+		call_users = database.cursor()
 
-	try:
-		call_users.execute(update, (now, register))
-		database.commit()
-	except Exception, except_type:
-		database.rollback()
-		logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
-		logger_error.error(repr(except_type))
+		try:
+			call_users.execute(update, (now, register))
+			database.commit()
+		except Exception, except_type:
+			database.rollback()
+			logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
+			logger_error.error(repr(except_type))
 
-	call_users.close()
+		call_users.close()
 
 
 def backToTheFuture(etag, link):

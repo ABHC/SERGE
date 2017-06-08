@@ -30,6 +30,9 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 	pending_science = len(not_send_science_list)
 	pending_patents = len(not_send_patents_list)
 
+	######### PRIORITY VARIABLE
+	priority = "NORMAL"
+
 	######### SET LISTS AND VARIABLES FOR MAIL DESIGN
 	newswords_list = []
 	sciencewords_list = []
@@ -130,7 +133,7 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 		newsletter = newsletterBySource(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list)
 
 	######### CALL TO highwayToMail FUNCTION
-	handshake.highwayToMail(register, newsletter, database)
+	handshake.highwayToMail(register, newsletter, priority, database)
 
 
 def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate):
@@ -618,10 +621,10 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 	######### GOODBYE
 	newsletter = newsletter + ("""</div>
 		<br/>
-		<p style="width: 85%;margin-left: auto;margin-right: auto;align: left;"><font color="black" >Bonne journée {0},</font></p>
+		<p style="width: 85%;margin-left: auto;margin-right: auto;align: left;"><font color="black" >{0} {1},</font></p>
 		<p style="width: 85%;margin-left: auto;margin-right: auto;"><font color="black" >SERGE</font></p><br/>
 		<br/>
-		<div style="width: 100%;height: 1px;background-color: grey;margin: 0;"></div>""".format(user))
+		<div style="width: 100%;height: 1px;background-color: grey;margin: 0;"></div>""".format(translate_text[4], user))
 
 	######### FOOTER
 	newsletter = newsletter + ("""<div style="text-align: center;text-decoration: none;color: grey;margin-top: 5px;max-height: 130px;width: 100%;">

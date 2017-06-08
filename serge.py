@@ -25,20 +25,22 @@ import time
 from datetime import datetime as dt
 import datetime
 import MySQLdb
-import json
-import feedparser
+import json #DELETE after alert tests
+import feedparser #DELETE after alert tests
 import traceback
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup #DELETE after alert tests
 import logging
 from logging.handlers import RotatingFileHandler
 
 ######### IMPORT SERGE SPECIALS MODULES
+import alarm
 import mailer
+#import voyager
+import decoder
 import sergenet
 import failsafe
 import insertSQL
 import resultstation
-import decoder
 from handshake import databaseConnection
 
 ######### LOGGER CONFIG
@@ -239,7 +241,7 @@ def newscast(trio_sources_news):
 				try:
 					post_date = xmldoc.entries[range].published_parsed
 					post_date = time.mktime(post_date)
-				except AttributeError:
+				except:
 					logger_error.warning("BEACON ERROR : missing <date> in "+link)
 					logger_error.warning(traceback.format_exc())
 					post_date = now
@@ -266,6 +268,9 @@ def newscast(trio_sources_news):
 
 				########### AGGREGATED KEYWORDS RESEARCH
 				if "+" in keyword:
+					if "[!ALERT!]" in keyword:
+						keyword = keyword.replace("[!ALERT!]", "")
+
 					aggregated_keyword = keyword.split("+")
 
 					grain = 0
@@ -312,6 +317,9 @@ def newscast(trio_sources_news):
 
 				########### SIMPLE KEYWORDS RESEARCH
 				else:
+					if "[!ALERT!]" in keyword:
+						keyword = keyword.replace("[!ALERT!]", "")
+
 					if (re.search('[^a-z.]'+re.escape(keyword), post_title, re.IGNORECASE) or re.search('[^a-z.]'+re.escape(keyword), post_description, re.IGNORECASE) or re.search('[^a-z.]'+re.escape(keyword), tags_string, re.IGNORECASE) or re.search('^'+re.escape(':all@'+id_rss)+'$', keyword, re.IGNORECASE)) and owners is not None:
 
 						########### QUERY FOR DATABASE CHECKING
@@ -840,7 +848,7 @@ pydate = unicode(pydate)                          #TRANSFORM PYDATE INTO UNICODE
 logger_info.info(time.asctime(time.gmtime(now))+"\n")
 
 ######### DATABASE INTERGRITY CHECKING
-failsafe.checkMate(logger_info, logger_error)
+#failsafe.checkMate(logger_info, logger_error)
 
 ######### NUMBERS OF USERS
 call_users = database.cursor()
@@ -894,7 +902,6 @@ procScience.join()
 procPatents.join()
 pool.close()
 pool.join()
-
 
 ######### AFFECTATION
 logger_info.info("AFFECTATION")
@@ -952,6 +959,7 @@ for user in user_list_all:
 
 		if interval >= frequency and pending_all > 0:
 			logger_info.info("FREQUENCY REACHED")
+			predecessor = "MAILER"
 
 			######### CALL TO buildMail FUNCTION
 			mailer.buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list)
@@ -961,6 +969,52 @@ for user in user_list_all:
 
 		elif interval >= frequency and pending_all == 0:
 			logger_info.info("Frequency reached but no pending news")
+
+		########### ALERT MANAGEMENT
+		elif interval < frequency and pending_all > 0:
+			alert_news_list = []
+
+			for potential_alert in not_send_news_list:
+				id_list = []
+
+				for alert_id in potential_alert[3].split(","):
+					if alert_id != "":
+						id_list.append(alert_id)
+
+				for alert_id in id_list:
+					query = "SELECT keyword, applicable_owners_sources FROM keyword_news_serge WHERE id = %s and active > 0"
+
+					call_keywords = database.cursor()
+					call_keywords.execute(query, (alert_id,))
+					alert_comparator = call_keywords.fetchone()
+					call_keywords.close()
+
+					key_comparator = alert_comparator[0]
+					owner_source_comparator = alert_comparator[1]
+					owner_source_comparator = owner_source_comparator.split("|")
+					owner_comparator =[]
+
+					for correct_owner in owner_source_comparator:
+						if correct_owner != "":
+							correct_owner = correct_owner[0:1]
+							owner_comparator.append(correct_owner)
+
+					if "[!ALERT!]" in key_comparator and register in owner_comparator:
+						alert_id_comma = ","+alert_id+","
+						confirmed_alert = (potential_alert[0], potential_alert[1], potential_alert[2], alert_id_comma, potential_alert[4])
+						alert_news_list.append(confirmed_alert)
+
+			if len(alert_news_list) > 0:
+				logger_info.info("ALERT PROCESS")
+				not_send_science_list = []
+				not_send_patents_list = []
+				predecessor = "ALARM"
+
+				######### CALL TO buildAlert FUNCTION
+				alarm.buildAlert(user, user_id_comma, register, alert_news_list)
+
+				######### CALL TO stairwayToUpdate FUNCTION
+				insertSQL.stairwayToUpdate(register, alert_news_list, not_send_science_list, not_send_patents_list, now, predecessor, logger_info, logger_error)
 
 		else:
 			logger_info.info("FREQUENCY NOT REACHED")
@@ -978,12 +1032,59 @@ for user in user_list_all:
 
 		if pending_all >= limit:
 			logger_info.info("LIMIT REACHED")
+			predecessor = "MAILER"
 
 			######### CALL TO buildMail FUNCTION
 			mailer.buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list)
 
 			######### CALL TO stairwayToUpdate FUNCTION
-			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error)
+			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, predecessor, logger_info, logger_error)
+
+		########### ALERT MANAGEMENT
+		elif pending_all < limit and pending_all > 0:
+			alert_news_list = []
+
+			for potential_alert in not_send_news_list:
+				id_list = []
+
+				for alert_id in potential_alert[3].split(","):
+					if alert_id != "":
+						id_list.append(alert_id)
+
+				for alert_id in id_list:
+					query = "SELECT keyword, applicable_owners_sources FROM keyword_news_serge WHERE id = %s and active > 0"
+
+					call_keywords = database.cursor()
+					call_keywords.execute(query, (alert_id,))
+					alert_comparator = call_keywords.fetchone()
+					call_keywords.close()
+
+					key_comparator = alert_comparator[0]
+					owner_source_comparator = alert_comparator[1]
+					owner_source_comparator = owner_source_comparator.split("|")
+					owner_comparator =[]
+
+					for correct_owner in owner_source_comparator:
+						if correct_owner != "":
+							correct_owner = correct_owner[0:1]
+							owner_comparator.append(correct_owner)
+
+					if "[!ALERT!]" in key_comparator and register in owner_comparator:
+						alert_id_comma = ","+alert_id+","
+						confirmed_alert = (potential_alert[0], potential_alert[1], potential_alert[2], alert_id_comma, potential_alert[4])
+						alert_news_list.append(confirmed_alert)
+
+			if len(alert_news_list) > 0:
+				logger_info.info("ALERT PROCESS")
+				not_send_science_list = []
+				not_send_patents_list = []
+				predecessor = "ALARM"
+
+				######### CALL TO buildAlert FUNCTION
+				alarm.buildAlert(user, user_id_comma, register, alert_news_list)
+
+				######### CALL TO stairwayToUpdate FUNCTION
+				insertSQL.stairwayToUpdate(register, alert_news_list, not_send_science_list, not_send_patents_list, now, predecessor, logger_info, logger_error)
 
 		elif pending_all < limit:
 			logger_info.info("LIMIT NOT REACHED")
@@ -1005,12 +1106,59 @@ for user in user_list_all:
 
 		if today in some_days and hour == some_hour and pending_all > 0:
 			logger_info.info("GOOD DAY AND GOOD HOUR")
+			predecessor = "MAILER"
 
 			######### CALL TO buildMail FUNCTION
 			mailer.buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list)
 
 			######### CALL TO stairwayToUpdate FUNCTION
-			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, logger_info, logger_error)
+			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, predecessor, logger_info, logger_error)
+
+		########### ALERT MANAGEMENT
+		elif hour != some_hour and pending_all > 0:
+			alert_news_list = []
+
+			for potential_alert in not_send_news_list:
+				id_list = []
+
+				for alert_id in potential_alert[3].split(","):
+					if alert_id != "":
+						id_list.append(alert_id)
+
+				for alert_id in id_list:
+					query = "SELECT keyword, applicable_owners_sources FROM keyword_news_serge WHERE id = %s and active > 0"
+
+					call_keywords = database.cursor()
+					call_keywords.execute(query, (alert_id,))
+					alert_comparator = call_keywords.fetchone()
+					call_keywords.close()
+
+					key_comparator = alert_comparator[0]
+					owner_source_comparator = alert_comparator[1]
+					owner_source_comparator = owner_source_comparator.split("|")
+					owner_comparator =[]
+
+					for correct_owner in owner_source_comparator:
+						if correct_owner != "":
+							correct_owner = correct_owner[0:1]
+							owner_comparator.append(correct_owner)
+
+					if "[!ALERT!]" in key_comparator and register in owner_comparator:
+						alert_id_comma = ","+alert_id+","
+						confirmed_alert = (potential_alert[0], potential_alert[1], potential_alert[2], alert_id_comma, potential_alert[4])
+						alert_news_list.append(confirmed_alert)
+
+			if len(alert_news_list) > 0:
+				logger_info.info("ALERT PROCESS")
+				not_send_science_list = []
+				not_send_patents_list = []
+				predecessor = "ALARM"
+
+				######### CALL TO buildAlert FUNCTION
+				alarm.buildAlert(user, user_id_comma, register, alert_news_list)
+
+				######### CALL TO stairwayToUpdate FUNCTION
+				insertSQL.stairwayToUpdate(register, alert_news_list, not_send_science_list, not_send_patents_list, now, predecessor, logger_info, logger_error)
 
 		elif pending_all == 0:
 			logger_info.info("NO PENDING NEWS")
