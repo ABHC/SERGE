@@ -39,6 +39,7 @@ if (!empty($_GET['type']))
 		$specialColumn  = ', id_source, keyword_id ';
 		$displayColumn  = 'Keyword';
 		$_SESSION['type'] = 'add';
+		$limit = 15;
 	}
 	elseif ($type == 'create')
 	{
@@ -68,6 +69,7 @@ if (!empty($_GET['type']))
 		$specialColumn  = ',query_id, id_source ';
 		$displayColumn  = 'Query';
 		$_SESSION['type'] = 'add';
+		$limit = 15;
 	}
 }
 else
@@ -84,6 +86,7 @@ else
 	$specialColumn  = ',query_id, id_source ';
 	$displayColumn  = 'Query';
 	$_SESSION['type'] = 'add';
+	$limit = 15;
 }
 
 if ($type == 'add')

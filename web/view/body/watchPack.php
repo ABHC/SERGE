@@ -763,7 +763,7 @@
 		</form>
 		<div class="pages">
 			<?php
-			$nbPage = ceil(count($readOwnerResults) / $limit);
+			$nbPage = ceil(count($watchPacks) / $limit);
 			$page   = $page + 1;
 			$cpt    = 1;
 			$dotBetweenPageNumber = FALSE;
