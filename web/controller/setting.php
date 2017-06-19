@@ -261,17 +261,34 @@ if (isset($_POST['sourceKeyword']) AND isset($_POST['newKeyword']))
 		{
 			$newKeyword = preg_replace("/^ | *, *| $/", "", $keyword);
 			# Special keyword :all
-			if (preg_match("/^:all.*/", $newKeyword) AND $sourceId != '00')
+			if (preg_match("/^:all$/i", $newKeyword) AND $sourceId != '00')
 			{
 				$newKeyword = ':all@' . $sourceId;
 				$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd);
 			}
-			elseif (preg_match("/^:all.*/", $newKeyword) AND $sourceId == '00')
+			elseif (preg_match("/^:all$/i", $newKeyword) AND $sourceId == '00')
 			{
 				$updateBDD = FALSE;
 				foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
 				{
 					$newKeyword = ':all@' . $ownerSourcesList['id'];
+					$sourceId = $ownerSourcesList['id'];
+					$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd);
+				}
+			}
+			elseif (preg_match("/^alert:.+/i", $newKeyword) AND $sourceId != '00')
+			{
+				$newKeyword = preg_replace("/alert:/i", "", $newKeyword);
+				$newKeyword = '[!ALERT!]' . $newKeyword;
+				$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd);
+			}
+			elseif (preg_match("/^alert:.+/i", $newKeyword) AND $sourceId == '00')
+			{
+				$updateBDD = FALSE;
+				$newKeyword = preg_replace("/alert:/i", "", $newKeyword);
+				$newKeyword = '[!ALERT!]' . $newKeyword;
+				foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
+				{
 					$sourceId = $ownerSourcesList['id'];
 					$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd);
 				}
