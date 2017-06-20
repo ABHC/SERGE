@@ -1952,6 +1952,7 @@ else
 
 	th:nth-child(1)
 	{
+		cursor: default;
 		width: 40px;
 	}
 

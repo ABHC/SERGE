@@ -39,6 +39,7 @@ if (!empty($_GET['type']))
 		$specialColumn  = ', id_source, keyword_id ';
 		$displayColumn  = 'Keyword';
 		$_SESSION['type'] = 'add';
+		$limit = 15;
 	}
 	elseif ($type == 'create')
 	{
@@ -68,6 +69,7 @@ if (!empty($_GET['type']))
 		$specialColumn  = ',query_id, id_source ';
 		$displayColumn  = 'Query';
 		$_SESSION['type'] = 'add';
+		$limit = 15;
 	}
 }
 else
@@ -84,6 +86,7 @@ else
 	$specialColumn  = ',query_id, id_source ';
 	$displayColumn  = 'Query';
 	$_SESSION['type'] = 'add';
+	$limit = 15;
 }
 
 if ($type == 'add')
@@ -240,9 +243,10 @@ if ($type == 'add')
 
 	foreach ($language as $code => $languageName)
 	{
-		if ($_POST['language'] == $code)
+		if ($_GET['language'] == $code)
 		{
 			$colOrder['language'] = $colOrder['language'] . PHP_EOL . '<option value="' . $code . '" selected>' . $code . ' &nbsp;&nbsp;' . $languageName . '</option>';
+			$selectedLanguageCode = $code;
 		}
 		else
 		{
@@ -250,7 +254,10 @@ if ($type == 'add')
 		}
 	}
 
-	$colOrder['language'] = $colOrder['language'] . PHP_EOL . '</select>';
+	$orderBy = htmlspecialchars($_GET['orderBy']);
+
+	$colOrder['language'] = $colOrder['language'] . PHP_EOL . '</select>
+	<input type="hidden" name="orderBy" value="' . $orderBy . '"/>';
 
 	# Add a star
 	$pattern = '★ [0-9]+';
@@ -289,8 +296,119 @@ if ($type == 'add')
 			header('Location: watchPack');
 	}
 
+	$OPTIONALCOND = '1';
+
+	# Order results
+	if (!empty($_GET['orderBy']))
+	{
+		$orderBy = htmlspecialchars($_GET['orderBy']);
+		if ($orderBy == 'name')
+		{
+			$colOrder['name'] = '▾';
+			$colOrder['DESC'] = 'DESC';
+
+			# WARNING sensitive variable [SQLI]
+			$ORDERBY = 'ORDER BY name';
+		}
+		elseif ($orderBy == 'nameDESC')
+		{
+			$colOrder['name'] = '▴';
+			$colOrder['DESC'] = '';
+
+			# WARNING sensitive variable [SQLI]
+			$ORDERBY = 'ORDER BY name DESC';
+		}
+		elseif ($orderBy == 'author')
+		{
+			$colOrder['author'] = '▾';
+			$colOrder['DESC'] = 'DESC';
+
+			# WARNING sensitive variable [SQLI]
+			$ORDERBY = 'ORDER BY author';
+		}
+		elseif ($orderBy == 'authorDESC')
+		{
+			$colOrder['author'] = '▴';
+			$colOrder['DESC'] = '';
+
+			# WARNING sensitive variable [SQLI]
+			$ORDERBY = 'ORDER BY author DESC';
+		}
+		elseif ($orderBy == 'category')
+		{
+			$colOrder['category'] = '▾';
+			$colOrder['DESC'] = 'DESC';
+
+			# WARNING sensitive variable [SQLI]
+			$ORDERBY = 'ORDER BY category';
+		}
+		elseif ($orderBy == 'categoryDESC')
+		{
+			$colOrder['category'] = '▴';
+			$colOrder['DESC'] = '';
+
+			# WARNING sensitive variable [SQLI]
+			$ORDERBY = 'ORDER BY category DESC';
+		}
+		elseif ($orderBy == 'date')
+		{
+			$colOrder['date'] = '▾';
+			$colOrder['DESC'] = 'DESC';
+
+			# WARNING sensitive variable [SQLI]
+			$ORDERBY = 'ORDER BY update_date';
+		}
+		elseif ($orderBy == 'dateDESC')
+		{
+			$colOrder['date'] = '▴';
+			$colOrder['DESC'] = '';
+
+			# WARNING sensitive variable [SQLI]
+			$ORDERBY = 'ORDER BY update_date DESC';
+		}
+		elseif ($orderBy == 'rate')
+		{
+			$colOrder['rate'] = ' ▾';
+			$colOrder['DESC'] = 'DESC';
+
+			# WARNING sensitive variable [SQLI]
+			$ORDERBY = 'ORDER BY `NumberOfStars`';
+		}
+		elseif ($orderBy == 'rateDESC')
+		{
+			$colOrder['rate'] = ' ▴';
+			$colOrder['DESC'] = '';
+
+			# WARNING sensitive variable [SQLI]
+			$ORDERBY = 'ORDER BY `NumberOfStars` DESC';
+		}
+		else
+		{
+			$colOrder['rate'] = ' ▴';
+			$colOrder['DESC'] = '';
+
+			# WARNING sensitive variable [SQLI]
+			$ORDERBY = 'ORDER BY `NumberOfStars` DESC';
+		}
+
+		$orderBy = '&orderBy=' . $orderBy;
+	}
+	elseif (!empty($_GET['language']))
+	{
+		# WARNING sensitive variable [SQLI]
+		$OPTIONALCOND = 'language = UPPER(\'' . $selectedLanguageCode . '\')';
+	}
+	elseif (empty($_GET['search']))
+	{
+		$colOrder['rate'] = ' ▴';
+		$colOrder['DESC'] = '';
+
+		# WARNING sensitive variable [SQLI]
+		$ORDERBY = 'ORDER BY `NumberOfStars` DESC';
+	}
+
 	# Read watchPack
-	$req = $bdd->prepare("SELECT id, name, description, author, users, category, language, update_date, rating, ((LENGTH(`rating`) - LENGTH(REPLACE(`rating`, ',', '')))-1) AS `NumberOfStars` FROM `watch_pack_serge` WHERE 1 ORDER BY `NumberOfStars` DESC;");
+	$req = $bdd->prepare("SELECT id, name, description, author, users, category, language, update_date, rating, ((LENGTH(`rating`) - LENGTH(REPLACE(`rating`, ',', '')))-1) AS `NumberOfStars` FROM `watch_pack_serge` WHERE $OPTIONALCOND $ORDERBY;");
 	$req->execute();
 		$watchPacks = $req->fetchAll();
 		$req->closeCursor();
