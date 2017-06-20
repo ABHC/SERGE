@@ -4,6 +4,7 @@ import re
 import sys
 import time
 import tweepy
+import logging
 import hashlib
 import MySQLdb
 import datetime
@@ -52,11 +53,15 @@ def rate_limit():
 	return (remaining_search, reset_search, remaining_timeline, reset_timeline)
 
 
-def startingPoint(logger_info, logger_error):
+def startingPoint():
 	"""A kind of main"""
 
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
+
+	######### LOGGER CALL
+	logger_info = logging.getLogger("info_log")
+	logger_error = logging.getLogger("error_log")
 
 	######### RESEARCH ON TWITTER
 	logger_info.info("\n\n######### TWITTER EXTENSION \n\n")
@@ -105,7 +110,7 @@ def startingPoint(logger_info, logger_error):
 		if geo == 1:
 
 			if calls_research_count <= remaining_search:
-				trweetFishing(attributes, logger_info, logger_error)
+				trweetFishing(attributes)
 
 			elif calls_research_count > remaining_search:
 				logger_info.info("RATE LIMIT OF RESEARCH METHOD REACHED\n\n")
@@ -113,7 +118,7 @@ def startingPoint(logger_info, logger_error):
 		elif geo == 0:
 
 			if calls_research_count <= remaining_search:
-				lakesOfTrweets(attributes, logger_info, logger_error)
+				lakesOfTrweets(attributes)
 
 			elif calls_research_count > remaining_search:
 				logger_info.info("RATE LIMIT OF RESEARCH METHOD REACHED\n\n")
@@ -123,7 +128,7 @@ def startingPoint(logger_info, logger_error):
 	for attributes in target_list:
 
 		if calls_timeline_count <= remaining_timeline:
-			trweetTorrent(attributes, logger_info, logger_error)
+			trweetTorrent(attributes)
 
 		elif calls_timeline_count > remaining_timeline:
 			logger_info.info("RATE LIMIT OF TIMELINE METHOD REACHED\n\n")
@@ -133,8 +138,12 @@ def startingPoint(logger_info, logger_error):
 	logger_info.info("\n\n######### END OF TWITTER EXTENSION EXECUTION \n\n")
 
 
-def trweetFishing(attributes, logger_info, logger_error):
+def trweetFishing(attributes):
 	"""The goal of this function is to catch tweets that contains the query saved in the database"""
+
+	######### LOGGER CALL
+	logger_info = logging.getLogger("info_log")
+	logger_error = logging.getLogger("error_log")
 
 	########### CONNECTION TO TWITTER API
 	api = twitterConnection()
@@ -180,11 +189,15 @@ def trweetFishing(attributes, logger_info, logger_error):
 		geo_species = False
 
 		########### CALL trweetBucket FUNCTION
-		trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database, logger_info, logger_error)
+		trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database)
 
 
-def lakesOfTrweets(attributes, logger_info, logger_error):
+def lakesOfTrweets(attributes):
 	"""The goal of this function is to catch geolocalisation data in tweets that contains the query saved in the database"""
+
+	######### LOGGER CALL
+	logger_info = logging.getLogger("info_log")
+	logger_error = logging.getLogger("error_log")
 
 	########### CONNECTION TO TWITTER API
 	api = twitterConnection()
@@ -260,11 +273,15 @@ def lakesOfTrweets(attributes, logger_info, logger_error):
 			geo_species = True
 
 			########### CALL trweetBucket FUNCTION
-			trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database, logger_info, logger_error)
+			trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database)
 
 
-def trweetTorrent(attributes, logger_info, logger_error):
+def trweetTorrent(attributes):
 	"""The goal of this function is to catch entire timelines or specific tweets in timeline"""
+
+	######### LOGGER CALL
+	logger_info = logging.getLogger("info_log")
+	logger_error = logging.getLogger("error_log")
 
 	########### CONNECTION TO TWITTER API
 	api = twitterConnection()
@@ -312,11 +329,15 @@ def trweetTorrent(attributes, logger_info, logger_error):
 			geo_species = False
 
 			########### CALL trweetBucket FUNCTION
-			trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database, logger_info, logger_error)
+			trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database)
 
 
-def trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database, logger_info, logger_error):
+def trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database):
 	"""trweetBucket manage tweets insertion or data update if tweets are already present."""
+
+	######### LOGGER CALL
+	logger_info = logging.getLogger("info_log")
+	logger_error = logging.getLogger("error_log")
 
 	if geo_species is False:
 		link = item[7]

@@ -11,7 +11,6 @@ import MySQLdb
 import unicodedata
 import traceback
 import logging
-from logging.handlers import RotatingFileHandler
 import feedparser
 import jellyfish
 
@@ -20,11 +19,15 @@ import sergenet
 from handshake import databaseConnection
 
 
-def ofSourceAndName(now, logger_info, logger_error):
+def ofSourceAndName(now):
 	"""ofSourceAndName check the field 'name' in rss_serge and fill it if it is empty or update it"""
 
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
+
+	######### LOGGER CALL
+	logger_info = logging.getLogger("info_log")
+	logger_error = logging.getLogger("error_log")
 
 	logger_info.info("\n######### Feed titles retrieval (ofSourceAndName function) :\n\n")
 
@@ -68,7 +71,7 @@ def ofSourceAndName(now, logger_info, logger_error):
 			link = rows[0]
 
 			########### RSS FEED RECOVERY
-			req_results = sergenet.allRequestLong(link, logger_info, logger_error)
+			req_results = sergenet.allRequestLong(link)
 			rss = req_results[0]
 			rss_error = req_results[1]
 
@@ -101,7 +104,7 @@ def ofSourceAndName(now, logger_info, logger_error):
 				update_rss.close()
 
 			########### FAVICON RECOVERY
-			favicon_results = sergenet.headToIcon(favicon_link, logger_info, logger_error)
+			favicon_results = sergenet.headToIcon(favicon_link)
 			icon = favicon_results[0]
 			icon_error = favicon_results[1]
 
@@ -109,7 +112,7 @@ def ofSourceAndName(now, logger_info, logger_error):
 			if icon_error is True:
 				favicon_link = "https://www.google.com/s2/favicons?domain=LienDuFluxAvecOuSanshttp"
 
-				favicon_results = sergenet.headToIcon(favicon_link, logger_info, logger_error)
+				favicon_results = sergenet.headToIcon(favicon_link)
 				icon = req_results[0]
 				icon_error = req_results[1]
 
@@ -159,7 +162,7 @@ def ofSourceAndName(now, logger_info, logger_error):
 			if rss_name is None or refresh_string in rss_name:
 
 				########### RSS FEED RECOVERY
-				req_results = sergenet.allRequestLong(link, logger_info, logger_error)
+				req_results = sergenet.allRequestLong(link,)
 				rss = req_results[0]
 				rss_error = req_results[1]
 
@@ -195,7 +198,7 @@ def ofSourceAndName(now, logger_info, logger_error):
 			if favicon is None:
 
 				########### FAVICON RECOVERY
-				favicon_results = sergenet.headToIcon(favicon_link, logger_info, logger_error)
+				favicon_results = sergenet.headToIcon(favicon_link)
 				icon = favicon_results[0]
 				icon_error = favicon_results[1]
 
@@ -203,7 +206,7 @@ def ofSourceAndName(now, logger_info, logger_error):
 				if icon_error is True:
 					favicon_link = "https://www.google.com/s2/favicons?domain=LienDuFluxAvecOuSanshttp"
 
-					favicon_results = sergenet.headToIcon(favicon_link, logger_info, logger_error)
+					favicon_results = sergenet.headToIcon(favicon_link)
 					icon = req_results[0]
 					icon_error = req_results[1]
 
@@ -225,8 +228,12 @@ def ofSourceAndName(now, logger_info, logger_error):
 			num = num+1
 
 
-def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, item, keyword_id_comma, logger_info, logger_error, need_jelly) :
+def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, item, item_update, keyword_id_comma, need_jelly) :
 	"""insertOrUpdate manage links insertion or data update if the link is already present."""
+
+	######### LOGGER CALL
+	logger_info = logging.getLogger("info_log")
+	logger_error = logging.getLogger("error_log")
 
 	########### ITEM EXTRACTION FOR OPERATIONS
 	post_title = item[0]
@@ -349,6 +356,17 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 
 			split_index = split_index+1
 
+		########### ITEM UPDATE MODIFICATION (ADD complete_id AND complete_owners)
+		item_update_second = []
+		item_update_second.append(complete_id)
+		item_update_second.append(complete_owners)
+
+		for item_part in item_update:
+			item_update_second.append(item_part)
+
+		if len(item_update_second)> 3:
+			print item_update_second
+
 		########### SEARCHING FOR A MODIFICATED NEWS POST TITLE
 		if need_jelly is True:
 			call_data_cheking = database.cursor()
@@ -383,7 +401,7 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 			if duplicate is False:
 				update_data = database.cursor()
 				try:
-					update_data.execute(query_update, (complete_id, complete_owners, post_link))
+					update_data.execute(query_update, (item_update_second))
 					database.commit()
 				except Exception, except_type:
 					database.rollback()
@@ -396,7 +414,7 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 		else:
 			update_data = database.cursor()
 			try:
-				update_data.execute(query_update, (complete_id, complete_owners, post_link))
+				update_data.execute(query_update, (item_update_second))
 				database.commit()
 			except Exception, except_type:
 				database.rollback()
@@ -406,11 +424,15 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 			update_data.close()
 
 
-def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, predecessor, logger_info, logger_error):
+def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, predecessor):
 	"""stairwayToUpdate manage the send_status update in database."""
 
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
+
+	######### LOGGER CALL
+	logger_info = logging.getLogger("info_log")
+	logger_error = logging.getLogger("error_log")
 
 	######### SEND_STATUS UPDATE IN result_news_serge
 	if predecessor == "MAILER" or predecessor == "ALARM":
