@@ -618,15 +618,11 @@ def patents(now):
 						call_results_patents.close()
 
 						if presence_checking is not None:
-							legal_check_date = float(presence_checking[0])
+							legal_check_date = presence_checking[0]
 							already_owners = presence_checking[1]
 						else :
 							legal_check_date = None
 							already_owners = None
-
-						#print type(legal_check_date)
-						#print type(legal_research)
-						#print type(owners)
 
 						######### LEGAL STATUS RESEARCH
 						if (legal_research == 1 or legal_research == 2) and owners !="," and legal_check_date is not None and (legal_check_date+15552000) <= now:
