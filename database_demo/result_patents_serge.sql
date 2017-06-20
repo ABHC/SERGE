@@ -15,7 +15,7 @@ CREATE TABLE `result_patents_serge` (
 	`legal_abstract` text COLLATE utf8mb4_bin DEFAULT NULL,
 	`legal_status` text COLLATE utf8mb4_bin DEFAULT NULL,
 	`lens_link` text COLLATE utf8mb4_bin DEFAULT NULL,
-	`legal_check_date` text COLLATE utf8mb4_bin DEFAULT NULL,
+	`legal_check_date` double DEFAULT NULL,
 	PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
