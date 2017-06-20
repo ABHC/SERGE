@@ -364,9 +364,6 @@ def insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_u
 		for item_part in item_update:
 			item_update_second.append(item_part)
 
-		if len(item_update_second)> 3:
-			print item_update_second
-
 		########### SEARCHING FOR A MODIFICATED NEWS POST TITLE
 		if need_jelly is True:
 			call_data_cheking = database.cursor()
