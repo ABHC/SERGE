@@ -10,8 +10,12 @@ from shutil import copyfileobj
 from logging.handlers import RotatingFileHandler
 
 
-def aLinkToThePast(link, logger_info, logger_error):
+def aLinkToThePast(link):
 	"""Function for retrieve etag"""
+
+	######### LOGGER CALL
+	logger_info = logging.getLogger("info_log")
+	logger_error = logging.getLogger("error_log")
 
 	try:
 		etag = requests.head(link, headers={'User-Agent' : "Serge Browser"}, timeout=15).headers.get('etag')
@@ -70,8 +74,12 @@ def aLinkToThePast(link, logger_info, logger_error):
 	return etag_results
 
 
-def allRequestLong(link, logger_info, logger_error):
+def allRequestLong(link):
 	"""Function for standardized requests to feed and internet pages."""
+
+	######### LOGGER CALL
+	logger_info = logging.getLogger("info_log")
+	logger_error = logging.getLogger("error_log")
 
 	try:
 		req = requests.get(link, headers={'User-Agent' : "Serge Browser"}, timeout=15)
@@ -133,8 +141,12 @@ def allRequestLong(link, logger_info, logger_error):
 	return req_results
 
 
-def headToIcon(favicon_link, logger_info, logger_error):
+def headToIcon(favicon_link):
 	"""Function for retrieve favicons"""
+
+	######### LOGGER CALL
+	logger_info = logging.getLogger("info_log")
+	logger_error = logging.getLogger("error_log")
 
 	try:
 		req = requests.get(favicon_link, stream=True)

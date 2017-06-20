@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""File for building Serge Alerts"""
+"""SERGE alert functions (building and formatting an alert)"""
 
 import os
 import time

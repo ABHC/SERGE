@@ -3,13 +3,14 @@
 """failsafe contains all the functions related to the database verification."""
 
 import sys
+import logging
 import MySQLdb
 
 ######### IMPORT FROM SERGE MAIN
 from handshake import databaseConnection
 
 
-def checkMate(logger_info, logger_error):
+def checkMate():
 	"""checkMate check the integrity of the database.
 
 	Process :
@@ -20,6 +21,10 @@ def checkMate(logger_info, logger_error):
 
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
+
+	######### LOGGER CALL
+	logger_info = logging.getLogger("info_log")
+	logger_error = logging.getLogger("error_log")
 
 	serge = "%serge%"
 	database_name = "Serge"

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #TODO traduire également en français espagnol et l'allemand.
 
+"""decoder contains all the functions related to the translation of datas in human language"""
 
 def decodeQuery(ch):
 
@@ -173,7 +174,7 @@ def decodeLegal(legal_comparator):
 		elif "§" in legal_keyword and legal_abstract != "INACTIVE":
 			legal_keyword = legal_keyword.split("§")
 			legal_keyword = legal_keyword[1]
-			
+
 			if legal_keyword == legal_comparator:
 				legal_abstract = "INACTIVE"
 			else :
