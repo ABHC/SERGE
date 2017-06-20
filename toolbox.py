@@ -1,5 +1,7 @@
 # -*- coding: utf8 -*-
 
+"""Collection of useful little tools for SERGE"""
+
 import cgi
 import logging
 import traceback
@@ -20,6 +22,7 @@ def cemeteriesOfErrors(*exc_info):
 
 
 def loggerConfig():
+	"""The purpose of this function is to create and configure two loggers for SERGE"""
 
 	######### LOGGER CONFIG
 	formatter_error = logging.Formatter("%(asctime)s -- %(levelname)s -- %(message)s")

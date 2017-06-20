@@ -1,5 +1,7 @@
 # -*- coding: utf8 -*-
 
+"""Triage and formatting of results in order to insertion in SERGE database"""
+
 import os
 import re
 import sys

@@ -1,5 +1,7 @@
 # -*- coding: utf8 -*-
 
+"""insertSQL contains some functions for handshaking with Serge database"""
+
 import MySQLdb
 import smtplib
 from email.mime.multipart import MIMEMultipart

@@ -1,5 +1,7 @@
 # -*- coding: utf8 -*-
 
+"""SERGE extension for Twitter watch"""
+
 import re
 import sys
 import time
@@ -37,6 +39,7 @@ def twitterConnection():
 
 
 def rate_limit():
+	"""Twitter rate limits management"""
 
 	api = twitterConnection()
 
