@@ -69,6 +69,7 @@ def ofSourceAndName(now):
 			call_rss.close()
 
 			link = rows[0]
+			favicon_link = "https://www.google.com/s2/favicons?domain="+link
 
 			########### RSS FEED RECOVERY
 			req_results = sergenet.allRequestLong(link)
