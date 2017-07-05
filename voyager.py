@@ -624,6 +624,9 @@ def patents(now):
 							legal_check_date = None
 							already_owners = None
 
+						if legal_check_date is not None:
+							legal_check_date = float(legal_check_date)
+
 						######### LEGAL STATUS RESEARCH
 						if (legal_research == 1 or legal_research == 2) and owners !="," and legal_check_date is not None and (legal_check_date+15552000) <= now:
 							legal_results = legalScrapper(post_link)

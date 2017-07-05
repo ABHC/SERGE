@@ -95,14 +95,15 @@ def ofSourceAndName(now):
 
 				update_rss = database.cursor()
 
-				try:
-					update_rss.execute(update, (source_title, num))
-					database.commit()
-				except Exception, except_type:
-					database.rollback()
-					logger_error.error("ROLLBACK IN BIMENSUAL REFRESH IN ofSourceAndName")
-					logger_error.error(repr(except_type))
-				update_rss.close()
+				if source_title != "" or source_title is not None:
+					try:
+						update_rss.execute(update, (source_title, num))
+						database.commit()
+					except Exception, except_type:
+						database.rollback()
+						logger_error.error("ROLLBACK IN BIMENSUAL REFRESH IN ofSourceAndName")
+						logger_error.error(repr(except_type))
+					update_rss.close()
 
 			########### FAVICON RECOVERY
 			favicon_results = sergenet.headToIcon(favicon_link)
@@ -135,11 +136,19 @@ def ofSourceAndName(now):
 			num = num+1
 
 		now = unicode(now)
-		update = ("UPDATE miscellaneous_serge SET value = %s WHERE name = 'feedtitles_refresh'")
 
-		call_time = database.cursor()
-		call_time.execute(update, (now, ))
-		call_time.close()
+		########### CHECK DATE UPDATE
+		misc_update = ("UPDATE miscellaneous_serge SET value = %s WHERE name = 'feedtitles_refresh'")
+
+		update_misc = database.cursor()
+		try:
+			update_misc.execute(misc_update, (now, ))
+			database.commit()
+		except Exception, except_type:
+			database.rollback()
+			logger_error.error("ROLLBACK IN CHECK DATE UPDATE IN ofSourceAndName")
+			logger_error.error(repr(except_type))
+		update_misc.close()
 
 		logger_info.info("Timestamps update for refreshing feedtitles \n")
 
@@ -185,16 +194,29 @@ def ofSourceAndName(now):
 
 					update = ("UPDATE rss_serge SET name = %s WHERE id = %s")
 
-					########### LINK UPDATE
-					update_rss = database.cursor()
-					try:
-						update_rss.execute(update, (source_title, num))
-						database.commit()
-					except Exception, except_type:
-						database.rollback()
-						logger_error.error("ROLLBACK AT LINK UPDATE IN ofSourceAndName")
-						logger_error.error(repr(except_type))
-					update_rss.close()
+					########### UPDATE CALL
+					if source_title != "" or source_title is not None:
+						update_rss = database.cursor()
+						try:
+							update_rss.execute(update, (source_title, num))
+							database.commit()
+						except Exception, except_type:
+							database.rollback()
+							logger_error.error("ROLLBACK AT LINK UPDATE IN ofSourceAndName")
+							logger_error.error(repr(except_type))
+						update_rss.close()
+
+					else:
+						source_title = rss_name.replace("[!NEW!]", "")
+						update_rss = database.cursor()
+						try:
+							update_rss.execute(update, (source_title, num))
+							database.commit()
+						except Exception, except_type:
+							database.rollback()
+							logger_error.error("ROLLBACK AT LINK UPDATE IN ofSourceAndName")
+							logger_error.error(repr(except_type))
+						update_rss.close()
 
 			if favicon is None:
 
@@ -215,7 +237,7 @@ def ofSourceAndName(now):
 				if icon_error is False:
 					update_favicon = ("UPDATE rss_serge SET favicon = %s WHERE id = %s")
 
-					########### LINK UPDATE
+					########### UPDATE CALL
 					update_rss = database.cursor()
 					try:
 						update_rss.execute(update_favicon, (icon, num))
