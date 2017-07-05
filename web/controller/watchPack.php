@@ -415,7 +415,77 @@ if ($type == 'add')
 }
 else
 {
+	/*include_once('model/readOwnerSources.php');
+	include_once('model/readOwnerSourcesKeyword.php');*/
 
+	$userId = '%,' . $_SESSION['id'] . ',%';
+	$userIdDesactivated = '%,!' . $_SESSION['id'] . ',%';
+	$reqReadOwnerSources = $bdd->prepare('SELECT id, link, name, owners, active FROM rss_serge WHERE owners LIKE :user OR owners LIKE :userDesactivated ORDER BY name');
+	$reqReadOwnerSources->execute(array(
+		'user' => $userId,
+		'userDesactivated' => $userIdDesactivated));
+		$reqReadOwnerSourcestmp = $reqReadOwnerSources->fetchAll();
+		$reqReadOwnerSources->closeCursor();
+
+	$reqReadPackSources = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE pack_id = :pack_id');
+	$reqReadPackSources->execute(array(
+		'pack_id' => $pack_idInUse));
+		$reqReadPackSourcestmp = $reqReadPackSources->fetchAll();
+		$reqReadPackSources->closeCursor();
+
+	foreach ($reqReadPackSources as $readPackSources)
+	{
+		if (preg_match("/^[,0-9,]+$/", $reqReadPackSources))
+		{
+			$packSource = array_merge(explode(",", $reqReadPackSources), $packSource);
+		}
+	}
+
+	if (isset($_POST['addNewPack']) AND $_POST['watchPackList'] == 'NewPack' AND !empty($_POST['watchPackName']) AND !empty($_POST['watchPackDescription']))
+	{
+		$newWatchPackName = htmlspecialchars($_POST['watchPackName']);
+		$language = 'FR'; //A Faire en UI
+		$category = 'Aéronautique'; //A Faire en UI
+
+		// Check if the name already exist
+		$req = $bdd->prepare('SELECT id FROM watch_pack_serge WHERE LOWER(name) = LOWER(:newName)');
+		$req->execute(array(
+			'newName' => $newWatchPackName));
+			$result = $req->fetch();
+			$req->closeCursor();
+
+		// Add new pack in database
+		if (empty($result))
+		{
+			$update_date = time();
+
+			$req = $bdd->prepare('INSERT INTO watch_pack_serge (name, description, author, category, language, update_date) VALUES (:name, :description, :author, :category, :language, :update_date)');
+			$req->execute(array(
+				'name' => $newWatchPackName,
+				'description' =>  htmlspecialchars($_POST['watchPackDescription']),
+				'author' => $_SESSION['pseudo'],
+				'category' => $category,
+				'language' => $language,
+				'update_date' => $update_date));
+				$req->closeCursor();
+
+			$req = $bdd->prepare('SELECT id FROM watch_pack_serge WHERE LOWER(name) = LOWER(:newName)');
+			$req->execute(array(
+				'newName' => $newWatchPackName));
+				$result = $req->fetch();
+				$req->closeCursor();
+
+				header('Location: watchPack?type=create&packId=' . $result['id']);
+		}
+		else
+		{
+			$ERRORMESSAGENEWPACKNAME = "A watch pack with this name already exist, please change the name";
+		}
+	}
+	elseif (empty($_POST['watchPackName']) OR empty($_POST['watchPackDescription']))
+	{
+		$ERRORMESSAGEEMPTYNAMEORDESC = "You have to enter a name and a description for your watch pack";
+	}
 }
 
 include_once('view/nav/nav.php');

@@ -498,6 +498,11 @@
 						}
 
 						$ownerSourcesList['name'] = preg_replace("/\[!NEW!\]/", "", $ownerSourcesList['name']);
+						if (empty($ownerSourcesList['name']))
+						{
+							preg_match("/^https?:\/\/[^\/]*\//", $ownerSourcesList['link'], $sourceNameBaseLink);
+							$ownerSourcesList['name'] = preg_replace("/(https?|\/|:)/", "", $sourceNameBaseLink[0]);
+						}
 						echo '<option value="source' . $ownerSourcesList['id'] . '" ' . $amISelected . '>' . $ownerSourcesList['name'] . '</option>' . PHP_EOL;
 					}
 					?>
@@ -533,6 +538,11 @@
 				foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
 				{
 					$ownerSourcesList['name'] = preg_replace("/\[!NEW!\]/", "", $ownerSourcesList['name']);
+					if (empty($ownerSourcesList['name']))
+					{
+						preg_match("/^https?:\/\/[^\/]*\//", $ownerSourcesList['link'], $sourceNameBaseLink);
+						$ownerSourcesList['name'] = preg_replace("/(https?|\/|:)/", "", $sourceNameBaseLink[0]);
+					}
 					preg_match("/./", ucfirst($ownerSourcesList['name']), $rssFirstLetter);
 
 					if ($actualLetter != $rssFirstLetter[0])

@@ -24,7 +24,8 @@
 		<div class="dataPackManagement">
 			<h2>Name</h2>
 			<div>
-				<select name="watchPackName" onchange="this.form.submit();">
+				<input title="Add" class="submit" type="submit" name="addNewPack" value="" />
+				<select name="watchPackList" onchange="this.form.submit();">
 					<option value="NewPack">New watch Pack&nbsp;&nbsp;</option>
 					<?php
 					# List here watch Pack own by current user
@@ -36,16 +37,23 @@
 
 					foreach ($ownerWatchPacks as $ownerWatchPack)
 					{
-						echo '<option value="EditPack' . $ownerWatchPack['id'] . '">Edit: ' . $ownerWatchPack['name'] . '&nbsp;&nbsp;</option>';
+						if ($ownerWatchPack['id'] == $_GET['packId'])
+						{
+							echo '<option value="EditPack' . $ownerWatchPack['id'] . '" selected>Edit: ' . $ownerWatchPack['name'] . '&nbsp;&nbsp;</option>';
+						}
+						else
+						{
+							echo '<option value="EditPack' . $ownerWatchPack['id'] . '">Edit: ' . $ownerWatchPack['name'] . '&nbsp;&nbsp;</option>';
+						}
 					}
 					 ?>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" name="PackName" placeholder="Your package name" />
+				<input type="text" name="watchPackName" placeholder="Your package name" />
 			</div>
-
+			<?php echo $ERRORMESSAGENEWPACKNAME; ?>
 			<h2>Description</h2>
-			<textarea name="PackDescription" minlength="50" maxlength="300" placeholder="Your package description"></textarea>
+			<textarea name="watchPackDescription" minlength="50" maxlength="300" placeholder="Your package description"></textarea>
 		</div>
 
 		<div class="keywordManagement">
@@ -75,7 +83,7 @@
 				<input type="text" class="keywordInput" name="newKeyword" id="keyword" placeholder="Keyword,next keyword, ..." />
 			</div>
 			<div class="newsInput">
-				<input alt="Add new source" title="Add" class="submit" type="submit" value="" />
+				<input title="Add" class="submit" type="submit" value="" />
 				<select name="sourceType" id="sourceKeyword">
 					<option value="inputSource">Add my own source</option>
 				</select>
@@ -87,10 +95,10 @@
 			<div>
 				<?php
 				$cptSource = 0;
-				foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
+				foreach ($reqReadPackSourcestmp as $packSourcesList)
 				{
-					$ownerSourcesList['name'] = preg_replace("/\[!NEW!\]/", "", $ownerSourcesList['name']);
-					preg_match("/./", ucfirst($ownerSourcesList['name']), $rssFirstLetter);
+					$packSourcesList['name'] = preg_replace("/\[!NEW!\]/", "", $packSourcesList['name']);
+					preg_match("/./", ucfirst($packSourcesList['name']), $rssFirstLetter);
 
 					if ($actualLetter != $rssFirstLetter[0])
 					{
@@ -118,46 +126,46 @@
 							'</label>';
 					}
 
-					$foldKeywordName = 'radio-ks' . $ownerSourcesList['id'];
+					$foldKeywordName = 'radio-ks' . $packSourcesList['id'];
 					$amICheckFoldKeyword = '';
 					if (isset($_SESSION[$foldKeywordName]))
 					{
-						if ($_SESSION[$foldKeywordName] == $ownerSourcesList['id'])
+						if ($_SESSION[$foldKeywordName] == $packSourcesList['id'])
 						{
 							$amICheckFoldKeyword = 'checked';
 						}
 					}
 
-					if (preg_match("/," . $_SESSION['id'] . ",/", $ownerSourcesList['owners']))
+					if (preg_match("/," . $_SESSION['id'] . ",/", $packSourcesList['owners']))
 					{
 						echo
-						'<div class="tagSource Tactive" id="ks' . $ownerSourcesList['id'] . '">'.
-							'<input type="submit" title="Delete" name="delSource" value="source' . $ownerSourcesList['id'] . '&"/>'.
-							'<input type="submit" title="Disable" name="disableSource" value="source' . $ownerSourcesList['id']. '&"/>'.
-							'<a href="' . $ownerSourcesList['link']. '" target="_blank">'.
-								ucfirst($ownerSourcesList['name']).
+						'<div class="tagSource Tactive" id="ks' . $packSourcesList['id'] . '">'.
+							'<input type="submit" title="Delete" name="delSource" value="source' . $packSourcesList['id'] . '&"/>'.
+							'<input type="submit" title="Disable" name="disableSource" value="source' . $packSourcesList['id']. '&"/>'.
+							'<a href="' . $packSourcesList['link']. '" target="_blank">'.
+								ucfirst($packSourcesList['name']).
 							'</a>'.
 						'</div>';
 					}
-					elseif (preg_match("/,!" . $_SESSION['id'] . ",/", $ownerSourcesList['owners']))
+					elseif (preg_match("/,!" . $_SESSION['id'] . ",/", $packSourcesList['owners']))
 					{
 						echo
-						'<div class="tagSource Tdisable" id="ks' . $ownerSourcesList['id'] . '">'.
-							'<input type="submit" title="Delete" name="delSource" value="source' . $ownerSourcesList['id'] . '&"/>'.
-							'<input type="submit" title="Activate" name="activateSource" value="source' . $ownerSourcesList['id']. '&"/>'.
-							'<a href="' . $ownerSourcesList['link']. '" target="_blank">'.
-								ucfirst($ownerSourcesList['name']).
+						'<div class="tagSource Tdisable" id="ks' . $packSourcesList['id'] . '">'.
+							'<input type="submit" title="Delete" name="delSource" value="source' . $packSourcesList['id'] . '&"/>'.
+							'<input type="submit" title="Activate" name="activateSource" value="source' . $packSourcesList['id']. '&"/>'.
+							'<a href="' . $packSourcesList['link']. '" target="_blank">'.
+								ucfirst($packSourcesList['name']).
 							'</a>'.
 						'</div>';
 					}
 
 					echo
-					'<input type="checkbox" name="radio-ks' . $ownerSourcesList['id'] . '" id="unfold-ks' . $ownerSourcesList['id'] . '" value="' . $ownerSourcesList['id'] . '" ' . $amICheckFoldKeyword . '/>'.
-					'<div class="keywordList" id="keywordList' . $ownerSourcesList['id'] . '">'.
-						'<label for="unfold-ks' . $ownerSourcesList['id'] . '" id="unfold' . $ownerSourcesList['id'] . '"  class="unfoldTag">'.
+					'<input type="checkbox" name="radio-ks' . $packSourcesList['id'] . '" id="unfold-ks' . $packSourcesList['id'] . '" value="' . $packSourcesList['id'] . '" ' . $amICheckFoldKeyword . '/>'.
+					'<div class="keywordList" id="keywordList' . $packSourcesList['id'] . '">'.
+						'<label for="unfold-ks' . $packSourcesList['id'] . '" id="unfold' . $packSourcesList['id'] . '"  class="unfoldTag">'.
 							'Unfold keyword list ▾'.
 						'</label>'.
-						'<label for="unfold-ks' . $ownerSourcesList['id'] . '" id="fold' . $ownerSourcesList['id'] . '" class="foldTag">'.
+						'<label for="unfold-ks' . $packSourcesList['id'] . '" id="fold' . $packSourcesList['id'] . '" class="foldTag">'.
 							'Fold keyword list ▴'.
 						'</label>';
 
@@ -167,24 +175,24 @@
 					{
 						$applicable_owners_sources = $ownerKeywordList['applicable_owners_sources'];
 						$ownerKeywordList['keyword'] = preg_replace("/^:all@[0-9]+$/", ":All", $ownerKeywordList['keyword']);
-						if (preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*," . $ownerSourcesList['id'] . ",[,!0-9,]*\|/", $applicable_owners_sources))
+						if (preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*," . $packSourcesList['id'] . ",[,!0-9,]*\|/", $applicable_owners_sources))
 						{
 							echo
 							'<div class="tag Tactive">'.
-								'<input type="submit" title="Delete" name="delKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
-								'<input type="submit" title="Disable" name="disableKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
+								'<input type="submit" title="Delete" name="delKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
+								'<input type="submit" title="Disable" name="disableKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
 								'<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">'.
 									ucfirst($ownerKeywordList['keyword']).
 								'</a>'.
 							'</div>';
 							$cptKeyword++;
 						}
-						elseif (preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*,!" . $ownerSourcesList['id'] . ",[,!0-9,]*\|/", $applicable_owners_sources))
+						elseif (preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*,!" . $packSourcesList['id'] . ",[,!0-9,]*\|/", $applicable_owners_sources))
 						{
 							echo
 							'<div class="tag Tdisable">'.
-								'<input type="submit" title="Delete" name="delKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
-								'<input type="submit" title="Activate" name="activateKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
+								'<input type="submit" title="Delete" name="delKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
+								'<input type="submit" title="Activate" name="activateKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
 								'<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">'.
 									ucfirst($ownerKeywordList['keyword']).
 								'</a>'.
@@ -197,12 +205,12 @@
 					if ($cptKeyword < 7)
 					{
 						$style = $style . PHP_EOL .
-						'#unfold' . $ownerSourcesList['id'] . ',' . PHP_EOL .
-						'#fold' . $ownerSourcesList['id'] . PHP_EOL .
+						'#unfold' . $packSourcesList['id'] . ',' . PHP_EOL .
+						'#fold' . $packSourcesList['id'] . PHP_EOL .
 						'{' . PHP_EOL .
 						'	display: none;' . PHP_EOL .
 						'}' . PHP_EOL .
-						'#keywordList' . $ownerSourcesList['id'] . PHP_EOL .
+						'#keywordList' . $packSourcesList['id'] . PHP_EOL .
 						'{' . PHP_EOL .
 						'	width: 96%;' . PHP_EOL .
 						'	height: auto;' . PHP_EOL .
