@@ -415,6 +415,53 @@ if ($type == 'add')
 }
 else
 {
+
+	if (!empty($_GET['packId']))
+	{
+		preg_match("/[0-9]+/", $_GET['packId'], $pack_idInUse);
+
+		$req = $bdd->prepare('SELECT name, description, category, language FROM watch_pack_serge WHERE author = :pseudo AND id =  :pack_idInUse');
+		$req->execute(array(
+			'pseudo' => $_SESSION['pseudo'],
+			'pack_idInUse' => $pack_idInUse[0]));
+			$packDetails = $req->fetch();
+			$req->closeCursor();
+
+		$reqReadPackSources = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE pack_id = :pack_id');
+		$reqReadPackSources->execute(array(
+			'pack_id' => $pack_idInUse[0]));
+			$reqReadPackSourcestmp = $reqReadPackSources->fetchAll();
+			$reqReadPackSources->closeCursor();
+
+		$packSource = array();
+		foreach ($reqReadPackSourcestmp as $readPackSources)
+		{
+			if (preg_match("/^[,0-9,]+$/", $readPackSources['source']))
+			{
+				$packSource = array_merge(preg_split('/,/', $readPackSources['source'], -1, PREG_SPLIT_NO_EMPTY), $packSource);
+			}
+		}
+
+		$sourcesIds = implode(',', $packSource); echo $sourcesIds;
+
+		$userId = '%,' . $_SESSION['id'] . ',%';
+		$userIdDesactivated = '%,!' . $_SESSION['id'] . ',%';
+		$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE owners LIKE :user OR owners LIKE :userDesactivated OR id IN ($sourcesIds) ORDER BY name");
+		$req->execute(array(
+			'user' => $userId,
+			'userDesactivated' => $userIdDesactivated));
+			$listAllSources = $req->fetchAll();
+			$req->closeCursor();
+	}
+	else
+	{
+		$req = $bdd->prepare('SELECT language FROM users_table_serge WHERE id = :userId');
+		$req->execute(array(
+			'userId' => $_SESSION['id']));
+			$packDetails = $req->fetch();
+			$req->closeCursor();
+	}
+
 	# Language list
 	$language['aa'] = 'Afar';
 	$language['ab'] = 'Abkhazian';
@@ -562,13 +609,7 @@ else
 	$language['zh'] = 'Chinese';
 	$language['zu'] = 'Zulu';
 
-	$req = $bdd->prepare('SELECT language FROM users_table_serge WHERE id = :userId');
-	$req->execute(array(
-		'userId' => $_SESSION['id']));
-		$userLang = $req->fetch();
-		$req->closeCursor();
-
-	$userLang = strtolower($userLang['language']);
+	$userLang = strtolower($packDetails['language']);
 
 	$selectLanguage = '<select class="shortSelect" name="language">' . PHP_EOL;
 
@@ -589,29 +630,6 @@ else
 
 	/*include_once('model/readOwnerSources.php');
 	include_once('model/readOwnerSourcesKeyword.php');*/
-
-	$userId = '%,' . $_SESSION['id'] . ',%';
-	$userIdDesactivated = '%,!' . $_SESSION['id'] . ',%';
-	$reqReadOwnerSources = $bdd->prepare('SELECT id, link, name, owners, active FROM rss_serge WHERE owners LIKE :user OR owners LIKE :userDesactivated ORDER BY name');
-	$reqReadOwnerSources->execute(array(
-		'user' => $userId,
-		'userDesactivated' => $userIdDesactivated));
-		$reqReadOwnerSourcestmp = $reqReadOwnerSources->fetchAll();
-		$reqReadOwnerSources->closeCursor();
-
-	$reqReadPackSources = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE pack_id = :pack_id');
-	$reqReadPackSources->execute(array(
-		'pack_id' => $pack_idInUse));
-		$reqReadPackSourcestmp = $reqReadPackSources->fetchAll();
-		$reqReadPackSources->closeCursor();
-
-	foreach ($reqReadPackSources as $readPackSources)
-	{
-		if (preg_match("/^[,0-9,]+$/", $reqReadPackSources))
-		{
-			$packSource = array_merge(explode(",", $reqReadPackSources), $packSource);
-		}
-	}
 
 	if (isset($_POST['addNewPack']) AND $_POST['watchPackList'] == 'NewPack' AND !empty($_POST['watchPackName']) AND !empty($_POST['watchPackDescription']))
 	{
@@ -662,12 +680,25 @@ else
 			$ERRORMESSAGENEWPACKNAME = "A watch pack with this name already exist, please change the name";
 		}
 	}
-	elseif (empty($_POST['watchPackName']) OR empty($_POST['watchPackDescription']))
+	elseif (isset($_POST['addNewPack']) AND $_POST['watchPackList'] == 'NewPack' AND (empty($_POST['watchPackName']) OR empty($_POST['watchPackDescription'])))
 	{
 		$ERRORMESSAGEEMPTYNAMEORDESC = "You have to enter a name and a description for your watch pack";
 	}
-}
+	elseif (!empty($_POST['watchPackList']))
+	{
+		preg_match("/[0-9]+/", $_POST['watchPackList'], $pack_idInUse);
 
+		$req = $bdd->prepare('SELECT id FROM watch_pack_serge WHERE author = :pseudo AND id =  :pack_idInUse');
+		$req->execute(array(
+			'pseudo' => $_SESSION['pseudo'],
+			'pack_idInUse' => $pack_idInUse[0]));
+			$result = $req->fetch();
+			$req->closeCursor();
+
+		header('Location: watchPack?type=create&packId=' . $result['id']);
+	}
+
+}
 include_once('view/nav/nav.php');
 
 include_once('view/body/watchPack.php');

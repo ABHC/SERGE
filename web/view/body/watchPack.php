@@ -39,17 +39,17 @@
 					{
 						if ($ownerWatchPack['id'] == $_GET['packId'])
 						{
-							echo '<option value="EditPack' . $ownerWatchPack['id'] . '" selected>Edit: ' . $ownerWatchPack['name'] . '&nbsp;&nbsp;</option>';
+							echo '<option value="' . $ownerWatchPack['id'] . '" selected>Edit: ' . $ownerWatchPack['name'] . '&nbsp;&nbsp;</option>';
 						}
 						else
 						{
-							echo '<option value="EditPack' . $ownerWatchPack['id'] . '">Edit: ' . $ownerWatchPack['name'] . '&nbsp;&nbsp;</option>';
+							echo '<option value="' . $ownerWatchPack['id'] . '">Edit: ' . $ownerWatchPack['name'] . '&nbsp;&nbsp;</option>';
 						}
 					}
 					 ?>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" name="watchPackName" placeholder="Your package name" />
+				<input type="text" name="watchPackName" placeholder="Your package name" value="<?php echo  $packDetails['name']; ?>"/>
 			</div>
 			<div>
 				<?php echo $selectLanguage; ?>
@@ -65,7 +65,7 @@
 
 					foreach ($categoryWatchPacks as $categoryWatchPack)
 					{
-						if ($ownerWatchPack['id'] == $_GET['category']) // A remplacer par une info BDD
+						if ($categoryWatchPack['category'] == $packDetails['category'])
 						{
 							echo '<option value="' . $categoryWatchPack['category'] . '" selected>' . $categoryWatchPack['category'] . '&nbsp;&nbsp;</option>';
 						}
@@ -81,7 +81,7 @@
 			</div>
 			<?php echo $ERRORMESSAGENEWPACKNAME; ?>
 			<h2>Description</h2>
-			<textarea name="watchPackDescription" minlength="50" maxlength="300" placeholder="Your package description"></textarea>
+			<textarea name="watchPackDescription" minlength="50" maxlength="300" placeholder="Your package description"><?php echo $packDetails['description']; ?></textarea>
 		</div>
 
 		<div class="keywordManagement">
@@ -90,9 +90,9 @@
 				<input title="Add new keyword" class="submit" type="submit" value="" />
 				<select name="sourceKeyword" id="sourceKeyword">
 					<?php
-					foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
+					foreach ($listAllSources as $sourcesList)
 					{
-						if ($ownerSourcesList['id'] == $_SESSION['lastSourceUse'])
+						if ($sourcesList['id'] == $_SESSION['lastSourceUse'])
 						{
 							$amISelected = 'selected';
 						}
@@ -101,8 +101,8 @@
 							$amISelected = '';
 						}
 
-						$ownerSourcesList['name'] = preg_replace("/\[!NEW!\]/", "", $ownerSourcesList['name']);
-						echo '<option value="source' . $ownerSourcesList['id'] . '" ' . $amISelected . '>' . $ownerSourcesList['name'] . '</option>' . PHP_EOL;
+						$sourcesList['name'] = preg_replace("/\[!NEW!\]/", "", $sourcesList['name']);
+						echo '<option value="source' . $sourcesList['id'] . '" ' . $amISelected . '>' . $sourcesList['name'] . '</option>' . PHP_EOL;
 					}
 					?>
 					<option value="source00">All sources</option>
