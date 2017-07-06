@@ -51,6 +51,34 @@
 				<span class="arrDownBorder">▾</span>
 				<input type="text" name="watchPackName" placeholder="Your package name" />
 			</div>
+			<div>
+				<?php echo $selectLanguage; ?>
+				<span class="arrDownBorder">▾</span>
+				<select name="watchPackCategory">
+					<option value="NewCategory">New category&nbsp;&nbsp;</option>
+					<?php
+					# List here watch Pack own by current user
+					$req = $bdd->prepare('SELECT id, category FROM watch_pack_serge GROUP BY category');
+					$req->execute(array());
+						$categoryWatchPacks = $req->fetchAll();
+						$req->closeCursor();
+
+					foreach ($categoryWatchPacks as $categoryWatchPack)
+					{
+						if ($ownerWatchPack['id'] == $_GET['category']) // A remplacer par une info BDD
+						{
+							echo '<option value="category' . $categoryWatchPack['id'] . '" selected>' . $categoryWatchPack['category'] . '&nbsp;&nbsp;</option>';
+						}
+						else
+						{
+							echo '<option value="category' . $categoryWatchPack['id'] . '">' . $categoryWatchPack['category'] . '&nbsp;&nbsp;</option>';
+						}
+					}
+					 ?>
+				</select>
+				<span class="arrDownBorder">▾</span>
+				<input type="text" name="watchPackNewCategory" placeholder="Your category name" />
+			</div>
 			<?php echo $ERRORMESSAGENEWPACKNAME; ?>
 			<h2>Description</h2>
 			<textarea name="watchPackDescription" minlength="50" maxlength="300" placeholder="Your package description"></textarea>

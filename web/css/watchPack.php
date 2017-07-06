@@ -107,6 +107,18 @@ if ($_SESSION['type'] == 'create')
 		background-size: contain;
 	}
 
+	.shortSelect
+	{
+		width: 50px;
+		padding-right: 20px;
+		text-transform: uppercase;
+	}
+
+	.shortSelect option
+	{
+		text-transform: capitalize;
+	}
+
 	h1
 	{
 		font-size: 30px;
@@ -164,6 +176,7 @@ if ($_SESSION['type'] == 'create')
 	.dataPackManagement div *
 	{
 		margin: 1px;
+		margin-bottom: 10px;
 	}
 
 	*::placeholder
@@ -175,7 +188,7 @@ if ($_SESSION['type'] == 'create')
 	{
 		position: relative;
 		max-width: fit-content;
-		height: 26px;
+		height: 28px;
 		font-size: 17px;
 		padding: 4px;
 		padding-right: 10px;
