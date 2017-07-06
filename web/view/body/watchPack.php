@@ -67,11 +67,11 @@
 					{
 						if ($ownerWatchPack['id'] == $_GET['category']) // A remplacer par une info BDD
 						{
-							echo '<option value="category' . $categoryWatchPack['id'] . '" selected>' . $categoryWatchPack['category'] . '&nbsp;&nbsp;</option>';
+							echo '<option value="' . $categoryWatchPack['category'] . '" selected>' . $categoryWatchPack['category'] . '&nbsp;&nbsp;</option>';
 						}
 						else
 						{
-							echo '<option value="category' . $categoryWatchPack['id'] . '">' . $categoryWatchPack['category'] . '&nbsp;&nbsp;</option>';
+							echo '<option value="' . $categoryWatchPack['category'] . '">' . $categoryWatchPack['category'] . '&nbsp;&nbsp;</option>';
 						}
 					}
 					 ?>

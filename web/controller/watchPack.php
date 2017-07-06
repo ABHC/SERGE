@@ -616,8 +616,15 @@ else
 	if (isset($_POST['addNewPack']) AND $_POST['watchPackList'] == 'NewPack' AND !empty($_POST['watchPackName']) AND !empty($_POST['watchPackDescription']))
 	{
 		$newWatchPackName = htmlspecialchars($_POST['watchPackName']);
-		$language = 'FR'; //A Faire en UI
-		$category = 'Aéronautique'; //A Faire en UI
+		$language = strtoupper(htmlspecialchars($_POST['language']));
+		if ($_POST['watchPackCategory'] == 'NewCategory')
+		{
+			$category = htmlspecialchars($_POST['watchPackNewCategory']);
+		}
+		else
+		{
+			$category = htmlspecialchars($_POST['watchPackCategory']);
+		}
 
 		// Check if the name already exist
 		$req = $bdd->prepare('SELECT id FROM watch_pack_serge WHERE LOWER(name) = LOWER(:newName)');
