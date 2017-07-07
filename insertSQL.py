@@ -362,8 +362,6 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 				for item_part in item_update:
 					item_update_second.append(item_part)
 
-				print item_update_second
-
 				update_data = database.cursor()
 				try:
 					update_data.execute(query_update_title, (item_update_second))
