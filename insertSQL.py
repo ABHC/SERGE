@@ -353,7 +353,7 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 
 					split_index = split_index+1
 
-				########### ITEM UPDATE MODIFICATION (ADD complete_id AND complete_owners)
+				########### ITEM UPDATE MODIFICATION (ADD complete_id, complete_owners AND TITLE)
 				item_update_second = []
 				item_update_second.append(complete_id)
 				item_update_second.append(complete_owners)
@@ -415,7 +415,7 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 
 				########### IF JELLY GIVE NO RESULT
 				########### IF JELLYCHECKING IS NOT NEEDED
-				########### ADD LINK IN BDD
+				########### ADD LINK IN DATABASE
 				if duplicate is False:
 					insert_data = database.cursor()
 					try:
