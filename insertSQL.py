@@ -355,12 +355,14 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 
 				########### ITEM UPDATE MODIFICATION (ADD complete_id AND complete_owners)
 				item_update_second = []
+				item_update_second.append(post_title)
 				item_update_second.append(complete_id)
 				item_update_second.append(complete_owners)
-				item_update_second.append(post_title)
 
 				for item_part in item_update:
 					item_update_second.append(item_part)
+
+				print item_update_second
 
 				update_data = database.cursor()
 				try:
