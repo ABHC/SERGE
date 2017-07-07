@@ -247,14 +247,16 @@ def newscast(newscast_args):
 					if redundancy == len(aggregated_keyword):
 
 						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
-						query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s AND `date` BETWEEN %s AND (%s+86400)")
+						query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s AND title = %s")
+						query_link_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
+						query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s AND `date` BETWEEN %s AND (%s+43200)")
 
 						########### QUERY FOR DATABASE INSERTION
 						query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
 
 						########### QUERY FOR DATABASE UPDATE
 						query_update = ("UPDATE result_news_serge SET keyword_id = %s, owners = %s WHERE link = %s")
+						query_update_title = ("UPDATE result_news_serge SET title = %s, keyword_id = %s, owners = %s WHERE link = %s")
 						query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s, keyword_id = %s, owners = %s WHERE link = %s")
 
 						########### ITEM BUILDING
@@ -263,7 +265,7 @@ def newscast(newscast_args):
 						item_update = [post_link]
 
 						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
+						insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
 				########### SIMPLE KEYWORDS RESEARCH
 				else:
@@ -273,14 +275,16 @@ def newscast(newscast_args):
 					if (re.search('[^a-z.]'+re.escape(keyword), post_title, re.IGNORECASE) or re.search('[^a-z.]'+re.escape(keyword), post_description, re.IGNORECASE) or re.search('[^a-z.]'+re.escape(keyword), tags_string, re.IGNORECASE) or re.search('^'+re.escape(':all@'+id_rss)+'$', keyword, re.IGNORECASE)) and owners is not None:
 
 						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
-						query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s AND `date` BETWEEN %s AND (%s+86400)")
+						query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s  AND title = %s")
+						query_link_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
+						query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s AND `date` BETWEEN %s AND (%s+43200)")
 
 						########### QUERY FOR DATABASE INSERTION
 						query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
 
 						########### QUERIES FOR DATABASE UPDATE
 						query_update = ("UPDATE result_news_serge SET keyword_id = %s, owners = %s WHERE link = %s")
+						query_update_title = ("UPDATE result_news_serge SET title = %s, keyword_id = %s, owners = %s WHERE link = %s")
 						query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s, keyword_id = %s, owners = %s WHERE link = %s")
 
 						########### ITEM BUILDING
@@ -289,7 +293,7 @@ def newscast(newscast_args):
 						item_update = [post_link]
 
 						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
+						insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
 				range = range+1
 
@@ -406,14 +410,16 @@ def science(now):
 						id_rss = 1
 
 						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
-						query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s AND `date` BETWEEN %s AND (%s+86400)")
+						query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s AND title = %s")
+						query_link_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
+						query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s AND `date` BETWEEN %s AND (%s+43200)")
 
 						########### QUERY FOR DATABASE INSERTION
 						query_insertion = ("INSERT INTO result_science_serge(title, link, date, id_source, query_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
 
 						########### QUERY FOR DATABASE UPDATE
 						query_update = ("UPDATE result_science_serge SET query_id = %s, owners = %s WHERE link = %s")
+						query_update_title = ("UPDATE result_science_serge SET title = %s, query_id = %s, owners = %s WHERE link = %s")
 						query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s, query_id = %s, owners = %s WHERE link = %s")
 
 						########### ITEM BUILDING
@@ -422,7 +428,7 @@ def science(now):
 						item_update = [post_link]
 
 						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
+						insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
 						range = range+1
 
@@ -494,14 +500,16 @@ def science(now):
 					id_rss = 2
 
 					########### QUERY FOR DATABASE CHECKING
-					query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
-					query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s AND `date` BETWEEN %s AND (%s+86400)")
+					query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s AND title = %s")
+					query_link_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
+					query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s AND `date` BETWEEN %s AND (%s+43200)")
 
 					########### QUERY FOR DATABASE INSERTION
 					query_insertion = ("INSERT INTO result_science_serge(title, link, date, id_source, query_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
 
 					########### QUERY FOR DATABASE UPDATE
 					query_update = ("UPDATE result_science_serge SET query_id = %s, owners = %s WHERE link = %s")
+					query_update_title = ("UPDATE result_science_serge SET title = %s, query_id = %s, owners = %s WHERE link = %s")
 					query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s, query_id = %s, owners = %s WHERE link = %s")
 
 					########### ITEM BUILDING
@@ -510,7 +518,7 @@ def science(now):
 					item_update = [post_link]
 
 					########### CALL  FUNCTION
-					insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
+					insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
 					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
 
@@ -628,14 +636,14 @@ def patents(now):
 							legal_check_date = float(legal_check_date)
 
 						######### LEGAL STATUS RESEARCH
-						if (legal_research == 1 or legal_research == 2) and owners !="," and legal_check_date is not None and (legal_check_date+15552000) <= now:
+						if (legal_research == 1 or legal_research == 2) and owners != "," and legal_check_date is not None and (legal_check_date+15552000) <= now:
 							legal_results = legalScrapper(post_link)
 							legal_abstract = legal_results[0]
 							legal_status = legal_results[1]
 							lens_link = legal_results[2]
 							new_check_date = now
 
-						elif (legal_research == 1 or legal_research == 2) and owners !="," and legal_check_date is None:
+						elif (legal_research == 1 or legal_research == 2) and owners != "," and legal_check_date is None:
 							legal_results = legalScrapper(post_link)
 							legal_abstract = legal_results[0]
 							legal_status = legal_results[1]
@@ -656,7 +664,8 @@ def patents(now):
 							new_check_date = None
 
 						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT id_query_wipo, owners FROM result_patents_serge WHERE link = %s")
+						query_checking = ("SELECT id_query_wipo, owners FROM result_patents_serge WHERE link = %s AND title = %s")
+						query_link_checking = ("SELECT id_query_wipo, owners FROM result_patents_serge WHERE link = %s")
 						query_jellychecking = None
 
 						########### QUERY FOR DATABASE INSERTION
@@ -664,6 +673,7 @@ def patents(now):
 
 						########### QUERY FOR DATABASE UPDATE
 						query_update = ("UPDATE result_patents_serge SET id_query_wipo = %s, owners = %s, legal_abstract = %s, legal_status = %s, lens_link = %s, legal_check_date = %s WHERE link = %s")
+						query_update_title = ("UPDATE result_patents_serge SET title = %s, id_query_wipo = %s, owners = %s, legal_abstract = %s, legal_status = %s, lens_link = %s, legal_check_date = %s WHERE link = %s")
 						query_jelly_update = None
 
 						########### ITEM BUILDING
@@ -675,10 +685,10 @@ def patents(now):
 						if (legal_check_date is None or (legal_check_date+15552000) <= now) and legal_status is not None:
 
 							if legal_research == 1 and legal_abstract == "INACTIVE":
-								insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
+								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
 							else:
-								insertSQL.insertOrUpdate(query_checking, query_jellychecking, query_insertion, query_update, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
+								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
 						range = range+1
 
@@ -747,7 +757,7 @@ def legalScrapper(post_link):
 		for fulltext in strong_list:
 			if "Collection Management:" in fulltext:
 				cut_index = i
-			i=i+1
+			i = i + 1
 
 		if cut_index is not None:
 			legal_status = strong_list[cut_index-1]
