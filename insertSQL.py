@@ -324,14 +324,14 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 			########### DATABASE CHECKING ONLY LINK
 			call_data_cheking = database.cursor()
 			call_data_cheking.execute(query_link_checking, (post_link, ))
-			checking = call_data_cheking.fetchone()
+			checking_link = call_data_cheking.fetchone()
 			call_data_cheking.close()
 
 			########### IF LINK IS IN DATABASE
-			if checking is not None:
+			if checking_link is not None:
 				########### UPDATE WITH TITLE
-				field_id_keyword = checking[0]
-				item_owners = checking[1]
+				field_id_keyword = checking_link[0]
+				item_owners = checking_link[1]
 				already_owners_list = owners.split(",")
 				complete_id = field_id_keyword
 				complete_owners = item_owners
@@ -370,7 +370,7 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 				update_data.close()
 
 			########### IF LINK IS NOT IN DATABASE
-			elif checking is None:
+			elif checking_link is None:
 				########### IF JELLY CHECKING IS NEEDED
 				if need_jelly is True:
 					call_data_cheking = database.cursor()
