@@ -45,6 +45,57 @@ logger_info = logging.getLogger("info_log")
 logger_error = logging.getLogger("error_log")
 
 
+def redAlert(user, register, user_id_comma, not_send_science_list, not_send_patents_list, now):
+	"""Management of alerts :
+	- Search for potential alert keywords in results and if some are found redAlert build the list of them and of related news
+	- This list is given to alarm.py for building and formatting the e-mail alert"""
+
+	alert_news_list = []
+
+	for potential_alert in not_send_news_list:
+		id_list = []
+
+		for alert_id in potential_alert[3].split(","):
+			if alert_id != "":
+				id_list.append(alert_id)
+
+		for alert_id in id_list:
+			query = "SELECT keyword, applicable_owners_sources FROM keyword_news_serge WHERE id = %s AND active > 0"
+
+			call_keywords = database.cursor()
+			call_keywords.execute(query, (alert_id,))
+			alert_comparator = call_keywords.fetchone()
+			call_keywords.close()
+
+			if alert_comparator is not None:
+				key_comparator = alert_comparator[0]
+				owner_source_comparator = alert_comparator[1]
+				owner_source_comparator = owner_source_comparator.split("|")
+				owner_comparator = []
+
+				for correct_owner in owner_source_comparator:
+					if correct_owner != "":
+						correct_owner = correct_owner[0:1]
+						owner_comparator.append(correct_owner)
+
+				if "[!ALERT!]" in key_comparator and register in owner_comparator:
+					alert_id_comma = ","+alert_id+","
+					confirmed_alert = (potential_alert[0], potential_alert[1], potential_alert[2], alert_id_comma, potential_alert[4])
+					alert_news_list.append(confirmed_alert)
+
+	if len(alert_news_list) > 0:
+		logger_info.info("ALERT PROCESS")
+		not_send_science_list = []
+		not_send_patents_list = []
+		predecessor = "ALARM"
+
+		######### CALL TO buildAlert FUNCTION
+		alarm.buildAlert(user, user_id_comma, register, alert_news_list)
+
+		######### CALL TO stairwayToUpdate FUNCTION
+		insertSQL.stairwayToUpdate(register, alert_news_list, not_send_science_list, not_send_patents_list, now, predecessor)
+
+
 def extensions(database):
 	"""Call to optionnal function for content research. extensions are listed in miscellaneous_serge."""
 
@@ -217,51 +268,9 @@ for user in user_list_all:
 		elif interval >= frequency and pending_all == 0:
 			logger_info.info("Frequency reached but no pending news")
 
-		########### ALERT MANAGEMENT
 		elif interval < frequency and pending_all > 0:
-			alert_news_list = []
-
-			for potential_alert in not_send_news_list:
-				id_list = []
-
-				for alert_id in potential_alert[3].split(","):
-					if alert_id != "":
-						id_list.append(alert_id)
-
-				for alert_id in id_list:
-					query = "SELECT keyword, applicable_owners_sources FROM keyword_news_serge WHERE id = %s and active > 0"
-
-					call_keywords = database.cursor()
-					call_keywords.execute(query, (alert_id,))
-					alert_comparator = call_keywords.fetchone()
-					call_keywords.close()
-
-					key_comparator = alert_comparator[0]
-					owner_source_comparator = alert_comparator[1]
-					owner_source_comparator = owner_source_comparator.split("|")
-					owner_comparator =[]
-
-					for correct_owner in owner_source_comparator:
-						if correct_owner != "":
-							correct_owner = correct_owner[0:1]
-							owner_comparator.append(correct_owner)
-
-					if "[!ALERT!]" in key_comparator and register in owner_comparator:
-						alert_id_comma = ","+alert_id+","
-						confirmed_alert = (potential_alert[0], potential_alert[1], potential_alert[2], alert_id_comma, potential_alert[4])
-						alert_news_list.append(confirmed_alert)
-
-			if len(alert_news_list) > 0:
-				logger_info.info("ALERT PROCESS")
-				not_send_science_list = []
-				not_send_patents_list = []
-				predecessor = "ALARM"
-
-				######### CALL TO buildAlert FUNCTION
-				alarm.buildAlert(user, user_id_comma, register, alert_news_list)
-
-				######### CALL TO stairwayToUpdate FUNCTION
-				insertSQL.stairwayToUpdate(register, alert_news_list, not_send_science_list, not_send_patents_list, now, predecessor)
+			#########  ALERT MANAGEMENT : CALL TO redAlert FUNCTION
+			redAlert(user, register, user_id_comma, not_send_science_list, not_send_patents_list, now)
 
 		else:
 			logger_info.info("FREQUENCY NOT REACHED")
@@ -287,51 +296,9 @@ for user in user_list_all:
 			######### CALL TO stairwayToUpdate FUNCTION
 			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, predecessor)
 
-		########### ALERT MANAGEMENT
 		elif pending_all < limit and pending_all > 0:
-			alert_news_list = []
-
-			for potential_alert in not_send_news_list:
-				id_list = []
-
-				for alert_id in potential_alert[3].split(","):
-					if alert_id != "":
-						id_list.append(alert_id)
-
-				for alert_id in id_list:
-					query = "SELECT keyword, applicable_owners_sources FROM keyword_news_serge WHERE id = %s and active > 0"
-
-					call_keywords = database.cursor()
-					call_keywords.execute(query, (alert_id,))
-					alert_comparator = call_keywords.fetchone()
-					call_keywords.close()
-
-					key_comparator = alert_comparator[0]
-					owner_source_comparator = alert_comparator[1]
-					owner_source_comparator = owner_source_comparator.split("|")
-					owner_comparator =[]
-
-					for correct_owner in owner_source_comparator:
-						if correct_owner != "":
-							correct_owner = correct_owner[0:1]
-							owner_comparator.append(correct_owner)
-
-					if "[!ALERT!]" in key_comparator and register in owner_comparator:
-						alert_id_comma = ","+alert_id+","
-						confirmed_alert = (potential_alert[0], potential_alert[1], potential_alert[2], alert_id_comma, potential_alert[4])
-						alert_news_list.append(confirmed_alert)
-
-			if len(alert_news_list) > 0:
-				logger_info.info("ALERT PROCESS")
-				not_send_science_list = []
-				not_send_patents_list = []
-				predecessor = "ALARM"
-
-				######### CALL TO buildAlert FUNCTION
-				alarm.buildAlert(user, user_id_comma, register, alert_news_list)
-
-				######### CALL TO stairwayToUpdate FUNCTION
-				insertSQL.stairwayToUpdate(register, alert_news_list, not_send_science_list, not_send_patents_list, now, predecessor)
+			######### ALERT MANAGEMENT : CALL TO redAlert FUNCTION
+			redAlert(user, register, user_id_comma, not_send_science_list, not_send_patents_list, now)
 
 		elif pending_all < limit:
 			logger_info.info("LIMIT NOT REACHED")
@@ -361,51 +328,9 @@ for user in user_list_all:
 			######### CALL TO stairwayToUpdate FUNCTION
 			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, predecessor)
 
-		########### ALERT MANAGEMENT
 		elif hour != some_hour and pending_all > 0:
-			alert_news_list = []
-
-			for potential_alert in not_send_news_list:
-				id_list = []
-
-				for alert_id in potential_alert[3].split(","):
-					if alert_id != "":
-						id_list.append(alert_id)
-
-				for alert_id in id_list:
-					query = "SELECT keyword, applicable_owners_sources FROM keyword_news_serge WHERE id = %s and active > 0"
-
-					call_keywords = database.cursor()
-					call_keywords.execute(query, (alert_id,))
-					alert_comparator = call_keywords.fetchone()
-					call_keywords.close()
-
-					key_comparator = alert_comparator[0]
-					owner_source_comparator = alert_comparator[1]
-					owner_source_comparator = owner_source_comparator.split("|")
-					owner_comparator =[]
-
-					for correct_owner in owner_source_comparator:
-						if correct_owner != "":
-							correct_owner = correct_owner[0:1]
-							owner_comparator.append(correct_owner)
-
-					if "[!ALERT!]" in key_comparator and register in owner_comparator:
-						alert_id_comma = ","+alert_id+","
-						confirmed_alert = (potential_alert[0], potential_alert[1], potential_alert[2], alert_id_comma, potential_alert[4])
-						alert_news_list.append(confirmed_alert)
-
-			if len(alert_news_list) > 0:
-				logger_info.info("ALERT PROCESS")
-				not_send_science_list = []
-				not_send_patents_list = []
-				predecessor = "ALARM"
-
-				######### CALL TO buildAlert FUNCTION
-				alarm.buildAlert(user, user_id_comma, register, alert_news_list)
-
-				######### CALL TO stairwayToUpdate FUNCTION
-				insertSQL.stairwayToUpdate(register, alert_news_list, not_send_science_list, not_send_patents_list, now, predecessor)
+			######### ALERT MANAGEMENT : CALL TO redAlert FUNCTION
+			redAlert(user, register, user_id_comma, not_send_science_list, not_send_patents_list, now)
 
 		elif pending_all == 0:
 			logger_info.info("NO PENDING NEWS")
