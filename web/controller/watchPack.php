@@ -420,7 +420,7 @@ else
 	{
 		preg_match("/[0-9]+/", $_GET['packId'], $pack_idInUse);
 
-		$req = $bdd->prepare('SELECT name, description, category, language FROM watch_pack_serge WHERE author = :pseudo AND id =  :pack_idInUse');
+		$req = $bdd->prepare('SELECT name, description, category, language FROM watch_pack_serge WHERE author = :pseudo AND id = :pack_idInUse');
 		$req->execute(array(
 			'pseudo' => $_SESSION['pseudo'],
 			'pack_idInUse' => $pack_idInUse[0]));
@@ -433,25 +433,33 @@ else
 			$reqReadPackSourcestmp = $reqReadPackSources->fetchAll();
 			$reqReadPackSources->closeCursor();
 
-		$packSource = array();
-		foreach ($reqReadPackSourcestmp as $readPackSources)
+		if (!empty($reqReadPackSourcestmp))
 		{
-			if (preg_match("/^[,0-9,]+$/", $readPackSources['source']))
+			$packSource = array();
+			foreach ($reqReadPackSourcestmp as $readPackSources)
 			{
-				$packSource = array_merge(preg_split('/,/', $readPackSources['source'], -1, PREG_SPLIT_NO_EMPTY), $packSource);
+				if (preg_match("/^[,0-9,]+$/", $readPackSources['source']))
+				{
+					$packSource = array_merge(preg_split('/,/', $readPackSources['source'], -1, PREG_SPLIT_NO_EMPTY), $packSource);
+				}
 			}
+
+			$sourcesIds = implode(',', $packSource);
+
+			$userId = '%,' . $_SESSION['id'] . ',%';
+			$userIdDesactivated = '%,!' . $_SESSION['id'] . ',%';
+			$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE owners LIKE :user OR owners LIKE :userDesactivated OR id IN ($sourcesIds) ORDER BY name");
+			$req->execute(array(
+				'user' => $userId,
+				'userDesactivated' => $userIdDesactivated));
+				$listAllSources = $req->fetchAll();
+				$req->closeCursor();
+
+			$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE id IN ($sourcesIds) ORDER BY name");
+			$req->execute(array());
+				$readPackSources = $req->fetchAll();
+				$req->closeCursor();
 		}
-
-		$sourcesIds = implode(',', $packSource); echo $sourcesIds;
-
-		$userId = '%,' . $_SESSION['id'] . ',%';
-		$userIdDesactivated = '%,!' . $_SESSION['id'] . ',%';
-		$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE owners LIKE :user OR owners LIKE :userDesactivated OR id IN ($sourcesIds) ORDER BY name");
-		$req->execute(array(
-			'user' => $userId,
-			'userDesactivated' => $userIdDesactivated));
-			$listAllSources = $req->fetchAll();
-			$req->closeCursor();
 	}
 	else
 	{
@@ -688,7 +696,7 @@ else
 	{
 		preg_match("/[0-9]+/", $_POST['watchPackList'], $pack_idInUse);
 
-		$req = $bdd->prepare('SELECT id FROM watch_pack_serge WHERE author = :pseudo AND id =  :pack_idInUse');
+		$req = $bdd->prepare('SELECT id FROM watch_pack_serge WHERE author = :pseudo AND id = :pack_idInUse');
 		$req->execute(array(
 			'pseudo' => $_SESSION['pseudo'],
 			'pack_idInUse' => $pack_idInUse[0]));

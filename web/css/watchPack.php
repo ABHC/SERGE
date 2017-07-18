@@ -184,6 +184,11 @@ if ($_SESSION['type'] == 'create')
 		color: rgb(170,170,170);
 	}
 
+	input::-webkit-calendar-picker-indicator
+	{
+		display: none;
+	}
+
 	select
 	{
 		position: relative;

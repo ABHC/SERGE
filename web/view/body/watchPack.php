@@ -54,8 +54,8 @@
 			<div>
 				<?php echo $selectLanguage; ?>
 				<span class="arrDownBorder">▾</span>
-				<select name="watchPackCategory">
-					<option value="NewCategory">New category&nbsp;&nbsp;</option>
+				<input type="text" name="watchPackCategory" placeholder="Your category name" value="<?php echo $packDetails['category']; ?>" list="watchPackCategory"/>
+				<datalist id="watchPackCategory">
 					<?php
 					# List here watch Pack own by current user
 					$req = $bdd->prepare('SELECT id, category FROM watch_pack_serge GROUP BY category');
@@ -65,19 +65,10 @@
 
 					foreach ($categoryWatchPacks as $categoryWatchPack)
 					{
-						if ($categoryWatchPack['category'] == $packDetails['category'])
-						{
-							echo '<option value="' . $categoryWatchPack['category'] . '" selected>' . $categoryWatchPack['category'] . '&nbsp;&nbsp;</option>';
-						}
-						else
-						{
-							echo '<option value="' . $categoryWatchPack['category'] . '">' . $categoryWatchPack['category'] . '&nbsp;&nbsp;</option>';
-						}
+							echo '<option value="' . $categoryWatchPack['category'] . '"></option>';
 					}
 					 ?>
-				</select>
-				<span class="arrDownBorder">▾</span>
-				<input type="text" name="watchPackNewCategory" placeholder="Your category name" />
+				</datalist>
 			</div>
 			<?php echo $ERRORMESSAGENEWPACKNAME; ?>
 			<h2>Description</h2>
@@ -123,7 +114,7 @@
 			<div>
 				<?php
 				$cptSource = 0;
-				foreach ($reqReadPackSourcestmp as $packSourcesList)
+				foreach ($readPackSources as $packSourcesList)
 				{
 					$packSourcesList['name'] = preg_replace("/\[!NEW!\]/", "", $packSourcesList['name']);
 					preg_match("/./", ucfirst($packSourcesList['name']), $rssFirstLetter);
@@ -164,7 +155,7 @@
 						}
 					}
 
-					if (preg_match("/," . $_SESSION['id'] . ",/", $packSourcesList['owners']))
+					if (1 == 1) //Vérifier si la source est désactivé sur tout les keywords liés
 					{
 						echo
 						'<div class="tagSource Tactive" id="ks' . $packSourcesList['id'] . '">'.
@@ -175,7 +166,7 @@
 							'</a>'.
 						'</div>';
 					}
-					elseif (preg_match("/,!" . $_SESSION['id'] . ",/", $packSourcesList['owners']))
+					elseif (preg_match("/,!" . $_SESSION['id'] . ",/", $packSourcesList['owners']))//Vérifier si la source est désactivé sur tout les keywords liés
 					{
 						echo
 						'<div class="tagSource Tdisable" id="ks' . $packSourcesList['id'] . '">'.
