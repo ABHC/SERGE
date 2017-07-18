@@ -357,7 +357,14 @@
 			</div>
 			<?php echo $ERROR_SCIENCEQUERY; ?>
 			<?php
-			include_once('model/readOwnerScienceQuery.php');
+			// Read watchPack science query
+			preg_match("/[0-9]+/", $_GET['packId'], $pack_idInUse);
+			$req = $bdd->prepare('SELECT id, query FROM watch_pack_queries_serge WHERE pack_id = :packIdInUse AND (source = "Science" OR source = "!Science")');
+			$req->execute(array(
+				'packIdInUse' => $pack_idInUse[0]));
+				$queries = $req->fetchAll();
+				$req->closeCursor();
+
 			foreach ($queries as $query)
 			{
 				$queryDisplay = '';
@@ -365,8 +372,8 @@
 				$titleDisableActivate = "Disable";
 				$nameClassDisableActivate = "disable";
 
-				$pattern = ',!' . $_SESSION['id'] . ',';
-				if (preg_match("/$pattern/", $query['owners']))
+				$pattern = '!Science';
+				if (preg_match("/$pattern/", $query['source']))
 				{
 					$Qdisable = 'Qdisable';
 					$titleDisableActivate = "Activate";
@@ -388,7 +395,7 @@
 				$queryFieldsName['jr']  = 'Reference';
 				$queryFieldsName['all'] = 'All';
 
-				$query = $query['query_arxiv'];
+				$query = $query['query'];
 				$query = preg_replace("/%22/", "`", $query);
 				$query = preg_replace("/%28/", "(", $query);
 				$query = preg_replace("/%29/", ")", $query);
