@@ -359,7 +359,7 @@
 			<?php
 			// Read watchPack science query
 			preg_match("/[0-9]+/", $_GET['packId'], $pack_idInUse);
-			$req = $bdd->prepare('SELECT id, query FROM watch_pack_queries_serge WHERE pack_id = :packIdInUse AND (source = "Science" OR source = "!Science")');
+			$req = $bdd->prepare('SELECT id, query, source FROM watch_pack_queries_serge WHERE pack_id = :packIdInUse AND (source = "Science" OR source = "!Science")');
 			$req->execute(array(
 				'packIdInUse' => $pack_idInUse[0]));
 				$queries = $req->fetchAll();
