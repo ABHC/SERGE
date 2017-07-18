@@ -438,8 +438,9 @@ else
 			$packSource = array();
 			foreach ($reqReadPackSourcestmp as $readPackSources)
 			{
-				if (preg_match("/^[,0-9,]+$/", $readPackSources['source']))
+				if (preg_match("/^[,!0-9,]+$/", $readPackSources['source']))
 				{
+					$readPackSources['source'] = preg_replace("/!/", "", $readPackSources['source']);
 					$packSource = array_merge(preg_split('/,/', $readPackSources['source'], -1, PREG_SPLIT_NO_EMPTY), $packSource);
 				}
 			}

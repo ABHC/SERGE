@@ -189,31 +189,48 @@
 						'</label>';
 
 					# Keyword loop
+					preg_match("/[0-9]+/", $_GET['packId'], $pack_idInUse);
+					$req = $bdd->prepare('SELECT id, query, source FROM watch_pack_queries_serge WHERE pack_id = :packIdInUse AND source != "Science" AND source != "Patent" ORDER BY query');
+					$req->execute(array(
+						'packIdInUse' => $pack_idInUse[0]));
+						$reqKeywordList = $req->fetchAll();
+						$req->closeCursor();
 					$cptKeyword = 0;
-					foreach ($reqReadOwnerSourcesKeywordtmp as $ownerKeywordList)
+					foreach ($reqKeywordList as $ownerKeywordList)
 					{
 						$applicable_owners_sources = $ownerKeywordList['applicable_owners_sources'];
-						$ownerKeywordList['keyword'] = preg_replace("/^:all@[0-9]+$/", ":All", $ownerKeywordList['keyword']);
-						if (preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*," . $packSourcesList['id'] . ",[,!0-9,]*\|/", $applicable_owners_sources))
+						$ownerKeywordList['query'] = preg_replace("/^:all@[0-9]+$/", ":All", $ownerKeywordList['query']);
+						if (!empty($ownerKeywordList['source']))
 						{
-							echo
-							'<div class="tag Tactive">'.
-								'<input type="submit" title="Delete" name="delKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
-								'<input type="submit" title="Disable" name="disableKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
-								'<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">'.
-									ucfirst($ownerKeywordList['keyword']).
-								'</a>'.
-							'</div>';
-							$cptKeyword++;
+							$listSourceKeyword = array();
+							if (preg_match("/^[,!0-9,]+$/", $ownerKeywordList['source']))
+							{
+								$listSourceKeyword = array_merge(preg_split('/,/', $ownerKeywordList['source'], -1, PREG_SPLIT_NO_EMPTY), $listSourceKeyword);
+							}
 						}
-						elseif (preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*,!" . $packSourcesList['id'] . ",[,!0-9,]*\|/", $applicable_owners_sources))
+
+						$packSourcesListDesac = "!" . $packSourcesList['id'];
+
+						if (in_array($packSourcesListDesac, $listSourceKeyword))
 						{
 							echo
 							'<div class="tag Tdisable">'.
 								'<input type="submit" title="Delete" name="delKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
 								'<input type="submit" title="Activate" name="activateKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
 								'<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">'.
-									ucfirst($ownerKeywordList['keyword']).
+									ucfirst($ownerKeywordList['query']).
+								'</a>'.
+							'</div>';
+							$cptKeyword++;
+						}
+						elseif (in_array($packSourcesList['id'], $listSourceKeyword))
+						{
+							echo
+							'<div class="tag Tactive">'.
+								'<input type="submit" title="Delete" name="delKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
+								'<input type="submit" title="Disable" name="disableKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
+								'<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">'.
+									ucfirst($ownerKeywordList['query']).
 								'</a>'.
 							'</div>';
 							$cptKeyword++;
