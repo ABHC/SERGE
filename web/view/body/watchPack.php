@@ -628,7 +628,13 @@
 			</div>
 			<?php echo $ERROR_PATENTQUERY; ?>
 			<?php
-			include_once('model/readOwnerPatentQuery.php');
+			// Read watch pack patent query
+			preg_match("/[0-9]+/", $_GET['packId'], $pack_idInUse);
+			$req = $bdd->prepare('SELECT id, query, source FROM watch_pack_queries_serge WHERE  pack_id = :packIdInUse AND (source = "Patent" OR source = "!Patent")');
+			$req->execute(array(
+				'packIdInUse' => $pack_idInUse[0]));
+				$queries = $req->fetchAll();
+				$req->closeCursor();
 			foreach ($queries as $query)
 			{
 				$queryDisplay = '';
@@ -636,8 +642,8 @@
 				$titleDisableActivate = "Disable";
 				$nameClassDisableActivate = "disable";
 
-				$pattern = ',!' . $_SESSION['id'] . ',';
-				if (preg_match("/$pattern/", $query['owners']))
+				$pattern = '!Patent';
+				if (preg_match("/$pattern/", $query['source']))
 				{
 					$Qdisable = 'Qdisable';
 					$titleDisableActivate = "Activate";
