@@ -637,10 +637,43 @@ else
 
 	$selectLanguage = $selectLanguage . PHP_EOL . '</select>';
 
-	/*include_once('model/readOwnerSources.php');
-	include_once('model/readOwnerSourcesKeyword.php');*/
+	// Edit a pack
+	if (preg_match("/[0-9]+/", $_POST['watchPackList']) AND isset($_POST['addNewPack']) AND !empty($_POST['watchPackName']) AND !empty($_POST['watchPackDescription']))
+	{
+		preg_match("/[0-9]+/", $_POST['watchPackList'], $packIdEdit);
+		// Check if watch pack is own by the user
+		$req = $bdd->prepare('SELECT id FROM watch_pack_serge WHERE author = :username AND id = :packIdEdit');
+		$req->execute(array(
+			'username' => $_SESSION['pseudo'],
+			'packIdEdit' => $packIdEdit[0]));
+			$result = $req->fetch();
+			$req->closeCursor();
 
-	if (isset($_POST['addNewPack']) AND $_POST['watchPackList'] == 'NewPack' AND !empty($_POST['watchPackName']) AND !empty($_POST['watchPackDescription']))
+		$req = $bdd->prepare('SELECT id FROM watch_pack_serge WHERE name = :newName AND id <> :packIdEdit');
+		$req->execute(array(
+			'newName' => htmlspecialchars($_POST['watchPackName']),
+			'packIdEdit' => $packIdEdit[0]));
+			$resultName = $req->fetch();
+			$req->closeCursor();
+
+		if (!empty($result) AND empty($resultName))
+		{
+			$update_date = time();
+
+			$req = $bdd->prepare('UPDATE watch_pack_serge SET name = :name, description = :description, category = :category, language = :language, update_date = :update_date WHERE id = :packIdEdit');
+			$req->execute(array(
+				'name' => htmlspecialchars($_POST['watchPackName']),
+				'description' =>  htmlspecialchars($_POST['watchPackDescription']),
+				'category' => htmlspecialchars($_POST['watchPackCategory']),
+				'language' => strtoupper(htmlspecialchars($_POST['language'])),
+				'update_date' => $update_date,
+				'packIdEdit' => $packIdEdit[0]));
+				$req->closeCursor();
+
+			header('Location: watchPack?type=create&packId=' . $packIdEdit[0]);
+		}
+	}
+	elseif (isset($_POST['addNewPack']) AND $_POST['watchPackList'] == 'NewPack' AND !empty($_POST['watchPackName']) AND !empty($_POST['watchPackDescription']))
 	{
 		$newWatchPackName = htmlspecialchars($_POST['watchPackName']);
 		$language = strtoupper(htmlspecialchars($_POST['language']));
@@ -654,7 +687,7 @@ else
 		}
 
 		// Check if the name already exist
-		$req = $bdd->prepare('SELECT id FROM watch_pack_serge WHERE LOWER(name) = LOWER(:newName)');
+		$req = $bdd->prepare('SELECT id FROM watch_pack_serge WHERE name = :newName');
 		$req->execute(array(
 			'newName' => $newWatchPackName));
 			$result = $req->fetch();
