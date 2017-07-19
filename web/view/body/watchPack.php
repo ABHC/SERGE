@@ -16,7 +16,7 @@
 	{
 	?>
 	<h1>Creation of watch packs</h1>
-	<form method="post" action="watchPack?type=create">
+	<form method="post" action="watchPack?type=create&packId=<?php echo $pack_idInUse[0] ?>">
 		<input type="hidden" name="scrollPos" id="scrollPos" value="0"/>
 		<input type="hidden" name="delEditingScienceQuery" value="<?php echo $delEditingScienceQuery; ?>"/>
 		<input type="hidden" name="delEditingPatentQuery" value="<?php echo $delEditingPatentQuery; ?>"/>
@@ -78,7 +78,7 @@
 		<div class="keywordManagement">
 			<h2>News management</h2>
 			<div class="newsInput">
-				<input title="Add new keyword" class="submit" type="submit" value="" />
+				<input title="Add new keyword" class="submit" type="submit" value="" name="addNewKeyword"/>
 				<select name="sourceKeyword" id="sourceKeyword">
 					<?php
 					foreach ($listAllSources as $sourcesList)

@@ -415,7 +415,6 @@ if ($type == 'add')
 }
 else
 {
-
 	if (!empty($_GET['packId']))
 	{
 		preg_match("/[0-9]+/", $_GET['packId'], $pack_idInUse);
@@ -670,8 +669,88 @@ else
 				'packIdEdit' => $packIdEdit[0]));
 				$req->closeCursor();
 
-			header('Location: watchPack?type=create&packId=' . $packIdEdit[0]);
 		}
+	}
+	elseif (isset($_POST['addNewKeyword']) AND preg_match("/[0-9]+/", $_POST['sourceKeyword']) AND isset($_POST['newKeyword']))
+	{
+		preg_match("/[0-9]+/", $_POST['sourceKeyword'], $sourceId);
+
+		$newKeywordArray = preg_split('/,/', htmlspecialchars($_POST['newKeyword']), -1, PREG_SPLIT_NO_EMPTY);
+
+		if ($sourceId[0] == '00')
+		{
+			# Add keyword on all sources
+			foreach ($listAllSources as $sourcesList)
+			{
+				foreach ($newKeywordArray as $newKeyword)
+				{
+					$req = $bdd->prepare('SELECT id, source FROM watch_pack_queries_serge WHERE lower(query) = lower(:keyword) AND pack_id = :pack_id AND source <> "Science" AND source <> "Patent"');
+					$req->execute(array(
+						'keyword' => $newKeyword,
+						'pack_id' => $pack_idInUse[0]));
+						$resultKeyword = $req->fetch();
+						$req->closeCursor();
+
+					if (empty($resultKeyword))
+					{
+						$req = $bdd->prepare('INSERT INTO watch_pack_queries_serge (pack_id, query, source) VALUES (:pack_id, :query, :source)');
+						$req->execute(array(
+							'pack_id' => $pack_idInUse[0],
+							'query' =>  $newKeyword,
+							'source' => ',' . $sourcesList['id'] . ','));
+							$req->closeCursor();
+					}
+					else
+					{ # TODO Vérif qu'on ajoute pas deux fois les sources
+						$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :source WHERE id = :keywordId');
+						$req->execute(array(
+							'source' => $resultKeyword['source'] . $sourcesList['id'] . ',',
+							'keywordId' => $resultKeyword['id']));
+							$req->closeCursor();
+					}
+				}
+			}
+		}
+		else
+		{
+			foreach ($newKeywordArray as $newKeyword)
+			{
+				$req = $bdd->prepare('SELECT id FROM rss_serge WHERE id = :sourceId');
+				$req->execute(array(
+					'sourceId' => $sourceId[0]));
+					$resultSource = $req->fetch();
+					$req->closeCursor();
+
+				if (!empty($resultSource))
+				{
+					$req = $bdd->prepare('SELECT id, source FROM watch_pack_queries_serge WHERE lower(query) = lower(:keyword) AND pack_id = :pack_id AND source <> "Science" AND source <> "Patent"');
+					$req->execute(array(
+						'keyword' => $newKeyword,
+						'pack_id' => $pack_idInUse[0]));
+						$resultKeyword = $req->fetch();
+						$req->closeCursor();
+
+					if (empty($resultKeyword))
+					{
+						$req = $bdd->prepare('INSERT INTO watch_pack_queries_serge (pack_id, query, source) VALUES (:pack_id, :query, :source)');
+						$req->execute(array(
+							'pack_id' => $pack_idInUse[0],
+							'query' =>  $newKeyword,
+							'source' => ',' . $sourceId[0] . ','));
+							$req->closeCursor();
+					}
+					else
+					{
+						$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :source WHERE id = :keywordId');
+						$req->execute(array(
+							'source' => $resultKeyword['source'] . $sourceId[0] . ',',
+							'keywordId' => $resultKeyword['id']));
+							$req->closeCursor();
+					}
+				}
+			}
+		}
+
 	}
 	elseif (isset($_POST['addNewPack']) AND $_POST['watchPackList'] == 'NewPack' AND !empty($_POST['watchPackName']) AND !empty($_POST['watchPackDescription']))
 	{
@@ -736,9 +815,9 @@ else
 			'pack_idInUse' => $pack_idInUse[0]));
 			$result = $req->fetch();
 			$req->closeCursor();
-
-		header('Location: watchPack?type=create&packId=' . $result['id']);
 	}
+
+	# TODO Faire une fonction qui va relir toute les source et les mots clefs
 
 }
 include_once('view/nav/nav.php');
