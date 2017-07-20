@@ -107,7 +107,7 @@
 				<input type="text" class="keywordInput" name="newKeyword" id="keyword" placeholder="Keyword,next keyword, ..." />
 			</div>
 			<div class="newsInput">
-				<input title="Add" class="submit" type="submit" value="" />
+				<input title="Add" name="addNewSource" class="submit" type="submit" value="" />
 				<select name="sourceType" id="sourceKeyword">
 					<option value="inputSource">Add my own source</option>
 				</select>

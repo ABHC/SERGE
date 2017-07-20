@@ -750,7 +750,6 @@ else
 				}
 			}
 		}
-
 	}
 	elseif (isset($_POST['addNewPack']) AND $_POST['watchPackList'] == 'NewPack' AND !empty($_POST['watchPackName']) AND !empty($_POST['watchPackDescription']))
 	{
@@ -794,7 +793,30 @@ else
 				$result = $req->fetch();
 				$req->closeCursor();
 
-				header('Location: watchPack?type=create&packId=' . $result['id']);
+			// Creation of list of available sources
+			$userId = '%,' . $_SESSION['id'] . ',%';
+			$userIdDesactivated = '%,!' . $_SESSION['id'] . ',%';
+			$req = $bdd->prepare("SELECT id FROM rss_serge WHERE owners LIKE :user OR owners LIKE :userDesactivated ORDER BY id");
+			$req->execute(array(
+				'user' => $userId,
+				'userDesactivated' => $userIdDesactivated));
+				$listAllSources = $req->fetchAll();
+				$req->closeCursor();
+
+			$sources = ',';
+			foreach ($listAllSources as $allSources)
+			{
+				$sources = $sources . $allSources['id'] . ',';
+			}
+
+			$req = $bdd->prepare('INSERT INTO watch_pack_queries_serge (pack_id, query, source) VALUES (:pack_id, :query, :source)');
+			$req->execute(array(
+				'pack_id' => $result['id'],
+				'query' => '[!source!]',
+				'source' => $sources));
+				$req->closeCursor();
+
+			header('Location: watchPack?type=create&packId=' . $result['id']);
 		}
 		else
 		{
@@ -819,7 +841,7 @@ else
 		header('Location: watchPack?type=create&packId=' . $pack_idInUse[0]);
 	}
 
-	# TODO Faire une fonction qui va relir toute les source et les mots clefs
+	# TODO Faire une fonction qui va relir toute les sources et les mots clefs
 
 }
 include_once('view/nav/nav.php');
