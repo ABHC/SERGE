@@ -426,7 +426,12 @@ else
 			$packDetails = $req->fetch();
 			$req->closeCursor();
 
-		$reqReadPackSources = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE pack_id = :pack_id');
+		if (empty($packDetails))
+		{
+			header('Location: watchPack?type=create');
+		}
+
+		$reqReadPackSources = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE pack_id = :pack_id AND query <> "[!source!]"');
 		$reqReadPackSources->execute(array(
 			'pack_id' => $pack_idInUse[0]));
 			$reqReadPackSourcestmp = $reqReadPackSources->fetchAll();
@@ -448,7 +453,7 @@ else
 
 			$userId = '%,' . $_SESSION['id'] . ',%';
 			$userIdDesactivated = '%,!' . $_SESSION['id'] . ',%';
-			$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE owners LIKE :user OR owners LIKE :userDesactivated OR id IN ($sourcesIds) ORDER BY name");
+			$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE owner LIKE :user OR owner LIKE :userDesactivated OR id IN ($sourcesIds) ORDER BY name");
 			$req->execute(array(
 				'user' => $userId,
 				'userDesactivated' => $userIdDesactivated));
