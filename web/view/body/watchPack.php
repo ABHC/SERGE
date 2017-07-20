@@ -14,9 +14,14 @@
 	<?php
 	if ($type == 'create')
 	{
+		$packIdURL = '';
+		if (isset($pack_idInUse[0]))
+		{
+			$packIdURL = '&packId=' . $pack_idInUse[0];
+		}
 	?>
 	<h1>Creation of watch packs</h1>
-	<form method="post" action="watchPack?type=create&packId=<?php echo $pack_idInUse[0] ?>">
+	<form method="post" action="watchPack?type=create<?php echo $packIdURL ?>">
 		<input type="hidden" name="scrollPos" id="scrollPos" value="0"/>
 		<input type="hidden" name="delEditingScienceQuery" value="<?php echo $delEditingScienceQuery; ?>"/>
 		<input type="hidden" name="delEditingPatentQuery" value="<?php echo $delEditingPatentQuery; ?>"/>

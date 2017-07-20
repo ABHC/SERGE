@@ -815,6 +815,8 @@ else
 			'pack_idInUse' => $pack_idInUse[0]));
 			$result = $req->fetch();
 			$req->closeCursor();
+
+		header('Location: watchPack?type=create&packId=' . $pack_idInUse[0]);
 	}
 
 	# TODO Faire une fonction qui va relir toute les source et les mots clefs
