@@ -465,7 +465,7 @@
 			<h2>Patent watch management</h2>
 			<div class="newQueryContainer">
 				<div class="lineQuery">
-				<input title="Add new patents query" class="submit" type="submit" name="patentQuerySubmit" value="add" />
+				<input title="Add new patents query" class="submit" type="submit" name="patentQuerySubmit" value="" />
 				<?php
 				$cpt = 0;
 				$logicalConnector = '';

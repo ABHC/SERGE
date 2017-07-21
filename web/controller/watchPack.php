@@ -840,7 +840,7 @@ else
 			}
 		}
 	}
-	elseif (isset($_POST['scienceQuerySubmit']) AND 1 == 1)
+	elseif (isset($_POST['scienceQuerySubmit']))
 	{
 		$cpt = 0;
 		$open = 0;
@@ -929,6 +929,71 @@ else
 			else
 			{
 				$ERROR_SCIENCEQUERY = 'Query already exist';
+			}
+		}
+	}
+	elseif (isset($_POST['patentQuerySubmit']))
+	{
+		$cpt = 0;
+		$andOrPatent = '';
+		$queryPatent = '';
+		$_SESSION['cptPatentQuery'] = 3;
+
+		while(!empty($_POST['patentType' . $cpt]) AND !empty($_POST['patentQuery' . $cpt]))
+		{
+			if (!preg_match("/^[A-Z_]+$/", $_POST['patentType' . $cpt]))
+			{
+				$_POST['patentType' . $cpt] = 'ALLNAMES';
+			}
+
+			$patentQueryInput = urlencode(preg_replace("/(:| $)/", "", $_POST['patentQuery' . $cpt]));
+
+			$queryPatent = $queryPatent . $andOrPatent . $_POST['patentType' . $cpt] . '%3A' . $patentQueryInput . '+';
+
+			# Cleaning
+			$_POST['patentType' . $cpt ] = '';
+			$_POST['patentQuery' . $cpt ] = '';
+			$_POST['andOrPatent' . $cpt ] = '';
+
+			$cpt++;
+
+			if(empty($_POST['andOrPatent' . $cpt]))
+			{
+				$andOrPatent = 'AND+';
+			}
+			else
+			{
+				$andOrPatent = 'OR+';
+			}
+		}
+
+		if (!empty($queryPatent))
+		{
+			$userId = ',' . $_SESSION['id'] . ',';
+			$ERROR_SCIENCEQUERY = '';
+
+			// Check if science query is already in bdd
+			$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE LOWER(query) = LOWER(:newQuery) AND pack_id = :packIdInUse AND source = "Patent"');
+		$req->execute(array(
+				'newQuery' => $queryPatent,
+				'packIdInUse' => $pack_idInUse[0]));
+				$result = $req->fetch();
+				$req->closeCursor();
+
+			if (!$result)
+			{
+				$active = 1;
+				// Adding new query
+				$req = $bdd->prepare('INSERT INTO watch_pack_queries_serge (pack_id, query, source) VALUES (:packIdInUse, :query, :source)');
+				$req->execute(array(
+					'packIdInUse' => $pack_idInUse[0],
+					'query' => $queryPatent,
+					'source' => "Patent"));
+					$req->closeCursor();
+			}
+			else
+			{
+					$ERROR_PATENTQUERY = 'Query already exist';
 			}
 		}
 	}
