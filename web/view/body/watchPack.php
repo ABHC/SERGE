@@ -195,7 +195,7 @@
 
 					# Keyword loop
 					preg_match("/[0-9]+/", $_GET['packId'], $pack_idInUse);
-					$req = $bdd->prepare('SELECT id, query, source FROM watch_pack_queries_serge WHERE pack_id = :packIdInUse AND source != "Science" AND source != "Patent" ORDER BY query');
+					$req = $bdd->prepare('SELECT id, query, source FROM watch_pack_queries_serge WHERE pack_id = :packIdInUse AND source NOT LIKE "[!%" AND query NOT LIKE "[!%" ORDER BY query');
 					$req->execute(array(
 						'packIdInUse' => $pack_idInUse[0]));
 						$reqKeywordList = $req->fetchAll();

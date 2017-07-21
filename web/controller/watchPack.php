@@ -431,14 +431,12 @@ else
 			header('Location: watchPack?type=create');
 		}
 
-		$reqReadPackSources = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE pack_id = :pack_id AND query <> "[!source!]"');
+		$reqReadPackSources = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE pack_id = :pack_id AND query = "[!source!]"');
 		$reqReadPackSources->execute(array(
 			'pack_id' => $pack_idInUse[0]));
 			$reqReadPackSourcestmp = $reqReadPackSources->fetchAll();
 			$reqReadPackSources->closeCursor();
 
-		if (!empty($reqReadPackSourcestmp))
-		{
 			$packSource = array();
 			foreach ($reqReadPackSourcestmp as $readPackSources)
 			{
@@ -451,20 +449,35 @@ else
 
 			$sourcesIds = implode(',', $packSource);
 
-			$userId = '%,' . $_SESSION['id'] . ',%';
-			$userIdDesactivated = '%,!' . $_SESSION['id'] . ',%';
-			$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE owner LIKE :user OR owner LIKE :userDesactivated OR id IN ($sourcesIds) ORDER BY name");
+			$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE id IN ($sourcesIds) ORDER BY name");
 			$req->execute(array(
 				'user' => $userId,
 				'userDesactivated' => $userIdDesactivated));
 				$listAllSources = $req->fetchAll();
 				$req->closeCursor();
 
-			$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE id IN ($sourcesIds) ORDER BY name");
+			$reqReadPackSources = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE pack_id = :pack_id AND query <> "[!source!]"');
+			$reqReadPackSources->execute(array(
+				'pack_id' => $pack_idInUse[0]));
+				$reqReadPackSourcestmp = $reqReadPackSources->fetchAll();
+				$reqReadPackSources->closeCursor();
+
+				$packSourceUsed = array("0");
+				foreach ($reqReadPackSourcestmp as $readPackSources)
+				{
+					if (preg_match("/^[,!0-9,]+$/", $readPackSources['source']))
+					{
+						$readPackSources['source'] = preg_replace("/!/", "", $readPackSources['source']);
+						$packSourceUsed = array_merge(preg_split('/,/', $readPackSources['source'], -1, PREG_SPLIT_NO_EMPTY), $packSourceUsed);
+					}
+				}
+
+			$sourcesIdsUsed = implode(',', $packSourceUsed);
+
+			$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE id IN ($sourcesIdsUsed) ORDER BY name");
 			$req->execute(array());
 				$readPackSources = $req->fetchAll();
 				$req->closeCursor();
-		}
 	}
 	else
 	{
@@ -753,6 +766,78 @@ else
 							$req->closeCursor();
 					}
 				}
+			}
+		}
+	}
+	elseif (isset($_POST['addNewSource']) AND isset($_POST['newSource']))
+	{
+		$newSource = htmlspecialchars($_POST['newSource']);
+		$req = $bdd->prepare('SELECT id FROM rss_serge WHERE link = :newSource');
+		$req->execute(array(
+			'newSource' => $newSource));
+			$resultSource = $req->fetch();
+			$req->closeCursor();
+
+		if (!empty($resultSource))
+		{
+			$req = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE query = "[!source!]" AND pack_id = :packIdInUse');
+			$req->execute(array(
+				'packIdInUse' => $pack_idInUse[0]));
+				$sources = $req->fetch();
+				$req->closeCursor();
+
+			$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :source WHERE pack_id = :packIdInUse AND query = "[!source!]"');
+			$req->execute(array(
+				'source' => $sources['source'] . $resultSource['id'] . ',',
+				'packIdInUse' => $pack_idInUse[0]));
+				$req->closeCursor();
+		}
+		else
+		{
+			// Check if source is valid
+			$sourceToTest = escapeshellarg($newSource);
+			$cmd          = '/usr/bin/python /var/www/Serge/checkfeed.py ' . $sourceToTest;
+
+			# Check if the link is valid
+			exec($cmd, $linkValidation, $errorInCheckfeed);
+
+			if ($linkValidation[0] == 'valid link' AND $errorInCheckfeed == 0)
+			{
+				// Adding new source
+				$owners = ',' . $_SESSION['id'] . ',';
+				$active = 1;
+				preg_match('@^(?:http.*://[www.]*)?([^/]+)@i', $newSource, $matches);
+				$name = ucfirst($matches[1] . '[!NEW!]');
+				$req = $bdd->prepare('INSERT INTO rss_serge (link, owners, name, active) VALUES
+				(:link, :owners, :name, :active)');
+				$req->execute(array(
+					'link' => $newSource,
+					'owners' => $owners,
+					'name' => $name,
+					'active' => $active));
+					$req->closeCursor();
+
+				$req = $bdd->prepare('SELECT id FROM rss_serge WHERE link = :newSource');
+				$req->execute(array(
+					'newSource' => $newSource));
+					$resultSource = $req->fetch();
+					$req->closeCursor();
+
+					$req = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE query = "[!source!]" AND pack_id = :packIdInUse');
+					$req->execute(array(
+						'packIdInUse' => $pack_idInUse[0]));
+						$sources = $req->fetch();
+						$req->closeCursor();
+
+					$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :source WHERE pack_id = :packIdInUse AND query = "[!source!]"');
+					$req->execute(array(
+						'source' => $sources['source'] . $resultSource['id'] . ',',
+						'packIdInUse' => $pack_idInUse[0]));
+						$req->closeCursor();
+			}
+			else
+			{
+				$ERROR_MESSAGE = 'Your link ' . 'return ' . $linkValidation[0] . ',' . $linkValidation[1] . ', please correct your link';
 			}
 		}
 	}
