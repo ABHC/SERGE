@@ -932,6 +932,26 @@ else
 			}
 		}
 	}
+	# Extend science query
+	elseif (!empty($_POST['extendScience']))
+	{
+		$_SESSION['cptScienceQuery'] += 3;
+		if (!empty($_POST['delEditingScienceQuery']))
+		{
+			preg_match("/[0-9]+/", $_POST['delEditingScienceQuery'], $idQueryToDel);
+			$delEditingScienceQuery = $idQueryToDel[0];
+		}
+	}
+	# Extend patent query
+	elseif (!empty($_POST['extendPatent']))
+	{
+		$_SESSION['cptPatentQuery'] += 3;
+		if (!empty($_POST['delEditingScienceQuery']))
+		{
+			preg_match("/[0-9]+/", $_POST['delEditingPatentQuery'], $idQueryToDel);
+			$delEditingPatentQuery = $idQueryToDel[0];
+		}
+	}
 	elseif (isset($_POST['addNewPack']) AND $_POST['watchPackList'] == 'NewPack' AND !empty($_POST['watchPackName']) AND !empty($_POST['watchPackDescription']))
 	{
 		$newWatchPackName = htmlspecialchars($_POST['watchPackName']);
