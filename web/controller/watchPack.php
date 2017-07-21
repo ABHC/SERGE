@@ -778,13 +778,16 @@ else
 			$resultSource = $req->fetch();
 			$req->closeCursor();
 
-		if (!empty($resultSource))
+		$req = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE query = "[!source!]" AND pack_id = :packIdInUse');
+		$req->execute(array(
+			'packIdInUse' => $pack_idInUse[0]));
+			$sources = $req->fetch();
+			$req->closeCursor();
+
+		$newSourceId = ',' . $resultSource['id'] . ',';
+
+		if (!empty($resultSource) AND !preg_match("/$newSourceId/", $sources['source']))
 		{
-			$req = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE query = "[!source!]" AND pack_id = :packIdInUse');
-			$req->execute(array(
-				'packIdInUse' => $pack_idInUse[0]));
-				$sources = $req->fetch();
-				$req->closeCursor();
 
 			$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :source WHERE pack_id = :packIdInUse AND query = "[!source!]"');
 			$req->execute(array(
@@ -792,7 +795,7 @@ else
 				'packIdInUse' => $pack_idInUse[0]));
 				$req->closeCursor();
 		}
-		else
+		elseif (!preg_match("/$newSourceId/", $sources['source']))
 		{
 			// Check if source is valid
 			$sourceToTest = escapeshellarg($newSource);
@@ -822,12 +825,6 @@ else
 					'newSource' => $newSource));
 					$resultSource = $req->fetch();
 					$req->closeCursor();
-
-					$req = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE query = "[!source!]" AND pack_id = :packIdInUse');
-					$req->execute(array(
-						'packIdInUse' => $pack_idInUse[0]));
-						$sources = $req->fetch();
-						$req->closeCursor();
 
 					$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :source WHERE pack_id = :packIdInUse AND query = "[!source!]"');
 					$req->execute(array(
