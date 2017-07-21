@@ -274,7 +274,7 @@
 			<h2>Science watch management</h2>
 			<div class="newQueryContainer">
 				<div class="lineQuery">
-				<input title="Add new science query" class="submit" type="submit" name="scienceQuerySubmit" value="add" />
+				<input title="Add new science query" class="submit" type="submit" name="scienceQuerySubmit" value="" />
 				<?php
 				$cpt = 0;
 				$logicalConnector = '';

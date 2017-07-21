@@ -840,6 +840,98 @@ else
 			}
 		}
 	}
+	elseif (isset($_POST['scienceQuerySubmit']) AND 1 == 1)
+	{
+		$cpt = 0;
+		$open = 0;
+		$close = 0;
+		$nbscienceType = 'scienceType0';
+		$queryScience_Arxiv = '';
+		$_SESSION['cptScienceQuery'] = 3;
+
+		while(!empty($_POST[$nbscienceType]) AND !empty($_POST['scienceQuery' . $cpt]))
+		{
+			if (!empty($_POST['andOrAndnot' . $cpt])
+					AND preg_match("/(^AND$|^OR$|^NOTAND$)/", $_POST['andOrAndnot' . $cpt]))
+			{
+				$queryScience_Arxiv = $queryScience_Arxiv . '+' . $_POST['andOrAndnot' . $cpt] . '+';
+			}
+			elseif (!empty($_POST['andOrAndnot' . $cpt])
+							AND !preg_match("/(^AND$|^OR$|^NOTAND$)/", $_POST['andOrAndnot' . $cpt]))
+			{
+				$queryScience_Arxiv = $queryScience_Arxiv . '+OR+';
+			}
+
+			if (preg_match("/(^ti$|^au$|^abs$|^jr$|^cat$|^all$)/", $_POST['scienceType' . $cpt]))
+			{
+				$openParenthesis = '';
+				$closeParenthesis = '';
+				if ($_POST['openParenthesis' . $cpt] == 'active')
+				{
+					$openParenthesis = '%28';
+					$open ++;
+				}
+
+				if ($_POST['closeParenthesis' . $cpt] == 'active')
+				{
+					$closeParenthesis = '%29';
+					$close ++;
+				}
+
+				$queryScience_Arxiv = $queryScience_Arxiv . $openParenthesis . $_POST['scienceType' . $cpt] . ':';
+
+				$scienceQuery = htmlspecialchars($_POST['scienceQuery' . $cpt]);
+				$scienceQuery = urlencode($scienceQuery);
+				$scienceQuery = preg_replace("/( |:|`|%22|%28|%29)/", "+", $scienceQuery);
+				$queryScience_Arxiv = $queryScience_Arxiv . '%22' . $scienceQuery . '%22' . $closeParenthesis;
+			}
+
+			# Cleaning
+			$_POST['andOrAndnot' . $cpt] = '';
+			$_POST['openParenthesis' . $cpt] = '';
+			$_POST['scienceType' . $cpt] = '';
+			$_POST['scienceQuery' . $cpt] = '';
+			$_POST['closeParenthesis' . $cpt] = '';
+
+			$cpt ++;
+			$nbscienceType = 'scienceType' . $cpt;
+		}
+
+		if ($open != $close)
+		{
+			$ERROR_SCIENCEQUERY = 'Invalid query : parenthesis does not match';
+		}
+
+		if (empty($ERROR_SCIENCEQUERY) AND !empty($queryScience_Arxiv))
+		{
+			$userId = ',' . $_SESSION['id'] . ',';
+			$ERROR_SCIENCEQUERY = '';
+
+			// Check if science query is already in bdd
+			$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE LOWER(query) = LOWER(:newQuery) AND pack_id = :packIdInUse AND source = "Science"');
+			$req->execute(array(
+				'newQuery' => $queryScience_Arxiv,
+				'packIdInUse' => $pack_idInUse[0]));
+				$result = $req->fetch();
+				$req->closeCursor();
+
+			if (!$result)
+			{
+				$active = 1;
+				// Adding new query
+				$req = $bdd->prepare('INSERT INTO watch_pack_queries_serge (pack_id, query, source) VALUES (:packIdInUse, :query, :source)');
+				$req->execute(array(
+					'packIdInUse' => $pack_idInUse[0],
+					'query' => $queryScience_Arxiv,
+					'source' => "Science"));
+					$req->closeCursor();
+			}
+			else
+			{
+				$ERROR_SCIENCEQUERY = 'Query already exist';
+			}
+		}
+	}
 	elseif (isset($_POST['addNewPack']) AND $_POST['watchPackList'] == 'NewPack' AND !empty($_POST['watchPackName']) AND !empty($_POST['watchPackDescription']))
 	{
 		$newWatchPackName = htmlspecialchars($_POST['watchPackName']);
