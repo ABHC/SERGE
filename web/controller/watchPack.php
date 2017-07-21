@@ -748,6 +748,8 @@ else
 						$resultKeyword = $req->fetch();
 						$req->closeCursor();
 
+					$newKeywordSource = ',' . $sourceId[0] . ',';
+
 					if (empty($resultKeyword))
 					{
 						$req = $bdd->prepare('INSERT INTO watch_pack_queries_serge (pack_id, query, source) VALUES (:pack_id, :query, :source)');
@@ -757,7 +759,7 @@ else
 							'source' => ',' . $sourceId[0] . ','));
 							$req->closeCursor();
 					}
-					else
+					elseif (!preg_match("/$newKeywordSource/", $resultKeyword['source']))
 					{
 						$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :source WHERE id = :keywordId');
 						$req->execute(array(
