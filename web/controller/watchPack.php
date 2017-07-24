@@ -21,6 +21,45 @@ if (empty($_SESSION['cptPatentQuery']))
 	$_SESSION['cptPatentQuery'] = 3;
 }
 
+# Scroll position
+if (isset($_POST['scrollPos']))
+{
+	$_SESSION['scrollPos'] = htmlspecialchars($_POST['scrollPos']);
+}
+elseif (!isset($_SESSION['scrollPos']) OR $_SESSION['scrollPos'] == '')
+{
+	$_SESSION['scrollPos'] = 0;
+}
+
+# Save folding state
+if (isset($_POST['sourceType']))
+{
+	foreach($_SESSION as $key => $val)
+	{
+		if (preg_match("/radio-s./", $key))
+		{
+			$_SESSION[$key] = '';
+		}
+		elseif (preg_match("/radio-ks[0-9]+/", $key))
+		{
+			$_SESSION[$key] = '';
+		}
+	}
+	foreach($_POST as $key => $val)
+	{
+		$key = htmlspecialchars($key);
+		$val = htmlspecialchars($val);
+		if (preg_match("/radio-s./", $key))
+		{
+			$_SESSION[$key] = $val;
+		}
+		elseif (preg_match("/radio-ks[0-9]+/", $key))
+		{
+			$_SESSION[$key] = $val;
+		}
+	}
+}
+
 # Type
 if (!empty($_GET['type']))
 {
