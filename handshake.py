@@ -19,7 +19,7 @@ def databaseConnection():
 	return database
 
 
-def highwayToMail(register, newsletter, priority, database):
+def highwayToMail(register, newsletter, priority, database, pydate):
 	"""Function for emails sending"""
 
 	######### SERGE MAIL
@@ -39,11 +39,11 @@ def highwayToMail(register, newsletter, priority, database):
 
 	######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
 	if priority == "NORMAL":
-		subject_FR = "[SERGE] Veille Industrielle et Technologique"
-		subject_EN = "[SERGE] News monitoring and Technological watch"
+		subject_FR = "[SERGE] Veille Industrielle et Technologique "+pydate
+		subject_EN = "[SERGE] News monitoring and Technological watch "+pydate
 	elif priority == "HIGH":
-		subject_FR = "[ALERTE SERGE] Informations Prioritaires"
-		subject_EN = "[SERGE] Prioritary Informations"
+		subject_FR = "[ALERTE SERGE] Informations Prioritaires "+pydate
+		subject_EN = "[SERGE] Prioritary Informations "+pydate
 
 	try :
 		exec("translate_subject"+"="+"subject_"+user_infos[1])
