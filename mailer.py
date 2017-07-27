@@ -59,9 +59,59 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 	language = call_users.fetchone()
 	call_users.close()
 
+	######### BACKGROUND CHOSEN BY USER
+	query_background = "SELECT background_result FROM users_table_serge WHERE id = %s"
+
+	call_users = database.cursor()
+	call_users.execute(query_background, (register))
+	background = call_users.fetchone()
+	call_users.close()
+
+	query_background_filename = "SELECT filename FROM background_serge WHERE name = %s"
+	call_background = database.cursor()
+	call_background.execute(query_background_filename, (background))
+	background_filename = call_background.fetchone()
+	call_background.close()
+
 	######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
-	var_FR = ["Bonjour", "voici votre veille technologique et industrielle du", "Liens", "ACTUALITÉS", "PUBLICATIONS SCIENTIFIQUES", "BREVETS", "Bonne journée", "Afficher sur CairnGit", "Se désinscrire", "Retrouvez SERGE sur", "Propulsé par"]
-	var_EN = ["Hello", "here is your news monitoring of", "Links", "NEWS", "SCIENTIFIC PUBLICATIONS", "PATENTS", "Have a good day", "Visualize on CairnGit", "Unsuscribe", "Find SERGE on", "Powered by"]
+	var_FR = ["votre veille du", "liens dans", "ACTUALITÉS", "PUBLICATIONS SCIENTIFIQUES", "BREVETS", "Voir sur le web", "Se désinscrire", "Retrouvez SERGE sur", "Propulsé par"]
+	var_EN = ["your news monitoring of", "links in", "NEWS", "SCIENTIFIC PUBLICATIONS", "PATENTS", "View Online", "Unsuscribe", "Find SERGE on", "Powered by"]
+
+	style = """<style type="text/css">
+	/* CLIENT-SPECIFIC STYLES */
+	body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+	table, td{mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+	/* RESET STYLES */
+	img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+	table { border-collapse: collapse !important; }
+	body { background-color: #efefef !important; height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; }
+	/* MOBILE STYLES */
+	@media screen and (max-width: 600px)
+	{
+	.img-max
+	{
+	width: 100% !important;
+	max-width: 100% !important;
+	height: auto !important;
+	}
+	.max-width
+	{
+	max-width: 100% !important;
+	}
+	.mobile-wrapper
+	{
+	width: 85% !important;
+	max-width: 85% !important;
+	}
+	.mobile-padding
+	{
+	padding-left: 5% !important;
+	padding-right: 5% !important;
+	}
+	}
+	/* ANDROID CENTER FIX */
+	div[style*="margin: 16px 0;"] { margin: 0 !important; }
+	</style>"""
 
 	try:
 		exec("translate_text"+"="+"var_"+language[0])
@@ -74,7 +124,7 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 		not_send_science_list = sorted(not_send_science_list, key= lambda science_field : science_field[1])
 		not_send_patents_list = sorted(not_send_patents_list, key= lambda patents_field : patents_field[1])
 
-		newsletter = newsletterByType(user, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate)
+		newsletter = newsletterByType(user, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate, style, background_filename)
 
 	elif mail_design[0] == "masterword":
 		query_newswords = "SELECT keyword, id FROM keyword_news_serge WHERE applicable_owners_sources LIKE %s AND active > 0"
@@ -117,7 +167,7 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 			word_and_attribute = (human_query, word_and_attribute[1])
 			patent_master_queries_list.append(word_and_attribute)
 
-		newsletter = newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list)
+		newsletter = newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list, style, background_filename)
 
 	elif mail_design[0] == "origin":
 		query_news_origin = "SELECT name, id FROM rss_serge WHERE owners like %s and active > 0"
@@ -130,13 +180,13 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 		for source_and_attribute in news_origin:
 			news_origin_list.append(source_and_attribute)
 
-		newsletter = newsletterBySource(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list)
+		newsletter = newsletterBySource(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list, style, background_filename)
 
 	######### CALL TO highwayToMail FUNCTION
 	handshake.highwayToMail(register, newsletter, priority, database)
 
 
-def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate):
+def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate, style, background_filename):
 	"""Formatting function for emails, apply the default formatting"""
 
 	######### PENDING LINKS
@@ -144,31 +194,62 @@ def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_p
 
 	######### BANNER AND HELLO
 	newsletter = ("""<!doctype html>
-	<html lang="fr">
+	<html>
 	<head>
-	<meta charset="utf-8">
-	<title>[SERGE] Your news monitoring</title>
+	<meta charset="UTF-8">
+	<title>Serge your news monitoring of {3}</title>
+	{5}
 	</head>
-	<body>
-	<div style="width: 90%;margin-left: auto;margin-right: auto;display: flex; justify-content: flex-start; align-items: center;text-align: left;">
-	<div style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/serge_logo.png') no-repeat center / contain;background-size: contain;width: 26.5vw;height: 30vw; max-height: 170px;max-width: 150px;float: left;">
-	</div>
-	<p style="text-align: left;margin-left: 20px;margin-top: auto; margin-bottom: auto;font-size: 3vw;font-family: 'Overpass Mono', monospace , sans-serif; text-align: center;word-wrap: break-word; max-height: 170px; width: 60%;">Serge beats you the news</p>
-	</div>
-
-	<div style="width: 100%;height: 1px;background-color: grey;margin: 0;"></div>
-
-	<p style="width: 85%;margin-left: auto;margin-right: auto;">{0} {1}, {2} {3} :</p>
-
-	<div style="float: right; color: grey; margin-top: 10px; margin-bottom: 10px;">{4} {5}</div>
-
-	<div style="width: 80%;margin-left: auto;margin-right: auto;">""".format(translate_text[0], user.encode("utf_8"), translate_text[1], pydate, pending_all, translate_text[2]))
+	<body style="margin: 0 !important; padding: 0; !important background-color: #efefef;" bgcolor="#efefef">
+	<table border="0" cellpadding="0" cellspacing="0" width="100%" style="!important background-color: #efefef;" bgcolor="#efefef">
+	<tr bgcolor="#205d70" style="background: #205d70 url('https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/background/{6}') center; background-size: cover;">
+	<td align="center" valign="top" width="100%" style="background-color: rgba(0,0,0,0.2); padding: 20px 10px 2px 10px;" class="mobile-padding">
+	<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+	<tr>
+	<td align="center" valign="top" style="padding: 0; width: 146px; height: 146px;">
+	<img alt="Serge logo" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/SERGE_logo_norm.png" width="146" align="center" style="display: block;"/>
+	</td>
+	</tr>
+	<tr>
+	<td align="center" valign="top" style="padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif;">
+	<h1 style="font-size: 40px; color: #ffffff;margin-bottom: 5px; margin-top: 15px;">Serge</h1>
+	<p style="text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-size: 20px; line-height: 28px; margin: 0;">
+	beats you the news
+	</p>
+	</td>
+	</tr>
+	<tr>
+	<td>
+	<p align="left" style="display: inline-block; text-align: left; width: 20%; text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-family: Open Sans, Helvetica, Arial, sans-serif;font-size: 16px; line-height: 24px; margin: 0; padding: 0;margin-top: 10px;">
+	{1}
+	</p>
+	<p align="right" style="display: inline-block; text-align: right; width: 78%; text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-family: Open Sans, Helvetica, Arial, sans-serif;font-size: 16px; line-height: 24px; margin: 0; padding: 0;margin-top: 10px;">
+	{4} {2} {0} {3}
+	</p>
+	</td>
+	</tr>
+	</table>
+	</td>
+	</tr>""".format(translate_text[0], user.encode("utf_8"), translate_text[1], pydate, pending_all, style, background_filename[0]))
 
 	index = 0
 
 	######### ECRITURE NEWS
 	if pending_news > 0:
-		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[3]))
+		newsletter = newsletter + ("""<tr>
+		<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
+		<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+		<tr>
+		<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+		<table cellspacing="0" cellpadding="0" border="0" width="100%">
+		<tr>
+		<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
+		<table cellspacing="0" cellpadding="0" border="0" width="100%">
+		<tr>
+		<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+		<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
+		</td>
+		</tr>""".format(translate_text[2]))
 
 		while index < pending_news:
 			news_attributes = not_send_news_list[index]
@@ -176,16 +257,51 @@ def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_p
 			if news_attributes[1].isupper() is True:
 				news_attributes = (news_attributes[0], news_attributes[1].lower().capitalize())
 
-			newsletter = newsletter + ("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
-				•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
-			</p>""".format(news_attributes[0].strip().encode("utf8"), news_attributes[1].strip().encode("utf_8")))
+			newsletter = newsletter + ("""<tr>
+			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+			•&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
+			</td>
+			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+			<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+			<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
+			</a>
+			</td>
+			</tr>
+			<tr>
+			<td>
+			<br>
+			</td>
+			</tr>""".format(news_attributes[0].strip().encode("utf8"), news_attributes[1].strip().encode("utf_8")))
 			index = index+1
+
+		newsletter = newsletter + ("""</table>
+		</td>
+		</tr>
+		</table>
+		</td>
+		</tr>
+		</table>
+		</td>
+		</tr>""")
 
 	index = 0
 
 	######### ECRITURE SCIENCE
 	if pending_science > 0:
-		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[4]))
+		newsletter = newsletter + ("""<tr>
+		<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
+		<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+		<tr>
+		<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+		<table cellspacing="0" cellpadding="0" border="0" width="100%">
+		<tr>
+		<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
+		<table cellspacing="0" cellpadding="0" border="0" width="100%">
+		<tr>
+		<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+		<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
+		</td>
+		</tr>""".format(translate_text[4]))
 
 		while index < pending_science:
 			science_attributes = not_send_science_list[index]
@@ -193,16 +309,51 @@ def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_p
 			if science_attributes[1].isupper() is True:
 				science_attributes = (science_attributes[0], science_attributes[1].lower().capitalize())
 
-			newsletter = newsletter + ("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
-				•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
-			</p>""".format(science_attributes[0].strip().encode("utf_8"), science_attributes[1].strip().encode("utf_8")))
+			newsletter = newsletter + ("""<tr>
+			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+			•&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
+			</td>
+			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+			<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+			<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
+			</a>
+			</td>
+			</tr>
+			<tr>
+			<td>
+			<br>
+			</td>
+			</tr>""".format(science_attributes[0].strip().encode("utf_8"), science_attributes[1].strip().encode("utf_8")))
 			index = index+1
+
+		newsletter = newsletter + ("""</table>
+		</td>
+		</tr>
+		</table>
+		</td>
+		</tr>
+		</table>
+		</td>
+		</tr>""")
 
 	index = 0
 
 	######### ECRITURE PATENTS
 	if pending_patents > 0:
-		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[5]))
+		newsletter = newsletter + ("""<tr>
+		<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
+		<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+		<tr>
+		<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+		<table cellspacing="0" cellpadding="0" border="0" width="100%">
+		<tr>
+		<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
+		<table cellspacing="0" cellpadding="0" border="0" width="100%">
+		<tr>
+		<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+		<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
+		</td>
+		</tr>""".format(translate_text[5]))
 
 		while index < pending_patents:
 			patents_attributes = not_send_patents_list[index]
@@ -210,67 +361,72 @@ def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_p
 			if patents_attributes[1].isupper() is True:
 				patents_attributes = (patents_attributes[0], patents_attributes[1].lower().capitalize())
 
-			newsletter = newsletter + ("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
-				•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
-			</p>""".format(patents_attributes[0].strip().encode("utf_8"), patents_attributes[1].strip().encode("utf_8")))
+			newsletter = newsletter + ("""<tr>
+			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+			•&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
+			</td>
+			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+			<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+			<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
+			</a>
+			</td>
+			</tr>
+			<tr>
+			<td>
+			<br>
+			</td>
+			</tr>""".format(patents_attributes[0].strip().encode("utf_8"), patents_attributes[1].strip().encode("utf_8")))
 			index = index+1
+
+		newsletter = newsletter + ("""</table>
+		</td>
+		</tr>
+		</table>
+		</td>
+		</tr>
+		</table>
+		</td>
+		</tr>""")
 
 	index = 0
 
-	######### GOODBYE
-	newsletter = newsletter + ("""</div>
-		<br/>
-		<p style="width: 85%;margin-left: auto;margin-right: auto;align: left;"><font color="black" >{0} {1},</font></p>
-		<p style="width: 85%;margin-left: auto;margin-right: auto;"><font color="black" >SERGE</font></p><br/>
-		<br/>
-		<div style="width: 100%;height: 1px;background-color: grey;margin: 0;"></div>""".format(translate_text[6], user))
-
 	######### FOOTER
-	newsletter = newsletter + ("""<div style="text-align: center;text-decoration: none;color: grey;margin-top: 5px;max-height: 130px;width: 100%;">
-	<div style="display: inline-block;float: left;max-width: 33%;">
-	<a style="display:flex;justify-content: flex-start;align-items: center;text-decoration: none; color: grey;font-size: 12px;" href="https://cairn-devices.eu/">
-	<div style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/logo_CairnDevices.png') no-repeat center / contain;background-size: contain;width: 15vw;max-width: 120px; height: 11.6vw;max-height: 88px;"></div>
-	<div style="word-wrap: break-word;margin-top: auto;margin-bottom: auto;">&nbsp;&nbsp;Cairn Devices</div>
-	</a>
-	</div>
-
-	<div style="display: inline-block;text-align: center;margin-top: 7px;max-width: 33%;">
-	<div>
-	<a style="text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;" href="https://cairngit.eu/serge">
-	{0}
-	</a>
-	</div>
-	<br/>
-	<div>
-	<a style="text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;" href="https://cairngit.eu/unsubscribe">
-	{1}
-	</a>
-	</div>
-	</div>
-
-	<div style="display: inline-block;float: right;max-width: 33%;" >
-	<div style="margin:0;">
-	<a style="display: inline-block;text-align: right;text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;float: right;" href="https://github.com/ABHC/SERGE/">
-	{2}
-	<div style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GitHub.png') no-repeat center / contain;background-size: contain;width: 5.5vw;max-width: 50px;height: 5.5vw;max-height: 50px;display: inline-block;"></div>
-	</a>
-	</div>
-
-	<div style="margin:0;">
-	<a style="display: inline-block;text-align: right; text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;float: right;" href="https://www.gnu.org/licenses/gpl-3.0.fr.html">
-	{3}
-	<div style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GPLv3.png') no-repeat center / contain;background-size: contain;width: 5.5vw;max-width: 50px; height: 2.4vw;max-height: 24.8px;display: inline-block;"></div>
-	</a>
-	</div>
-	</div>
-	</div>
+	newsletter = newsletter + ("""<tr style="!important background-color: #efefef;" bgcolor="#efefef">
+	<tr bgcolor="#efefef">
+	<td align="center" valign="top" style="width: 100%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
+	<a style="text-decoration: none; color: #999999;" href=""><img alt="CairnGit" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/CairnGit_logo_norm.png" width="73" align="center" title="CairnGit"/></a>&nbsp;
+	<a style="text-decoration: none; color: #999999;" href=""><img alt="Cairn Devices" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/Cairn_Devices_logo_norm.png" width="73" align="center" title="Cairn Devices"/></a>&nbsp;
+	<a style="text-decoration: none; color: #999999;" href=""><img alt="Serge" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/SERGE_logo_norm.png" width="73" align="center" title="Serge"/></a>
+	</td>
+	</tr>
+	<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px; background-color: #efefef;" bgcolor="#efefef">
+	<tr>
+	<td align="left" valign="center" style="width: 30%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
+	<a style="text-decoration: none; color: #999999;" href="https://cairn-devices.eu"><img alt="Logo Cairn Devices" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_CairnDevices.png" width="130" align="center" /><br>Cairn Devices</a>
+	</td>
+	<td align="center" valign="top" style="padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
+	<p style="font-size: 14px; line-height: 20px;text-align: center;">
+	<br><br>
+	<a href="" style="color: #999999;" target="_blank">View Online</a>
+	&nbsp; &bull; &nbsp;
+	<a href="" style="color: #999999;" target="_blank">Unsubscribe</a>
+	</p>
+	</td>
+	<td align="center" valign="center" style="width: 30%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
+	<a style="text-decoration: none; color: #999999;" href="https://github.com/ABHC/SERGE/">Find Serge on <img alt="GitHub" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GitHub.png" width="50" align="center" title="GitHub" /></a><br><br>
+	<a style="text-decoration: none; color: #999999;" href="https://www.gnu.org/licenses/gpl-3.0.fr.html">Powered by <img alt="GPLv3" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GPLv3.png" width="50" align="center" title="GPLv3" /></a><br><br>
+	</td>
+	</tr>
+	</table>
+	</tr>
+	</table>
 	</body>
-	</html>""".format(translate_text[7], translate_text[8], translate_text[9], translate_text[10]))
+	</html>""".format(translate_text[5], translate_text[6], translate_text[7], translate_text[8]))
 
 	return newsletter
 
 
-def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list):
+def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list, style, background_filename):
 	"""Formatting function for emails, apply the formatting by keywords"""
 
 	######### PENDING LINKS
@@ -278,32 +434,49 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 
 	######### BANNER AND HELLO
 	newsletter = ("""<!doctype html>
-	<html lang="fr">
+	<html>
 	<head>
-	<meta charset="utf-8">
-	<title>[SERGE] Your news monitoring</title>
+	<meta charset="UTF-8">
+	<title>Serge your news monitoring of {3}</title>
+	{5}
 	</head>
-	<body>
-	<div style="width: 90%;margin-left: auto;margin-right: auto;display: flex; justify-content: flex-start; align-items: center;text-align: left;">
-	<div style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/serge_logo.png') no-repeat center / contain;background-size: contain;width: 26.5vw;height: 30vw; max-height: 170px;max-width: 150px;float: left;">
-	</div>
-	<p style="text-align: left;margin-left: 20px;margin-top: auto; margin-bottom: auto;font-size: 3vw;font-family: 'Overpass Mono', monospace , sans-serif; text-align: center;word-wrap: break-word; max-height: 170px; width: 60%;">Serge beats you the news</p>
-	</div>
-
-	<div style="width: 100%;height: 1px;background-color: grey;margin: 0;"></div>
-
-	<p style="width: 85%;margin-left: auto;margin-right: auto;">{0} {1}, {2} {3} :</p>
-
-	<div style="float: right; color: grey; margin-top: 10px; margin-bottom: 10px;">{4} {5}</div>
-
-	<div style="width: 80%;margin-left: auto;margin-right: auto;">""".format(translate_text[0], user.encode("utf_8"), translate_text[1], pydate, pending_all, translate_text[2]))
+	<body style="margin: 0 !important; padding: 0; !important background-color: #efefef;" bgcolor="#efefef">
+	<table border="0" cellpadding="0" cellspacing="0" width="100%" style="!important background-color: #efefef;" bgcolor="#efefef">
+	<tr bgcolor="#205d70" style="background: #205d70 url('https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/background/{6}') center; background-size: cover;">
+	<td align="center" valign="top" width="100%" style="background-color: rgba(0,0,0,0.2); padding: 20px 10px 2px 10px;" class="mobile-padding">
+	<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+	<tr>
+	<td align="center" valign="top" style="padding: 0; width: 146px; height: 146px;">
+	<img alt="Serge logo" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/SERGE_logo_norm.png" width="146" align="center" style="display: block;"/>
+	</td>
+	</tr>
+	<tr>
+	<td align="center" valign="top" style="padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif;">
+	<h1 style="font-size: 40px; color: #ffffff;margin-bottom: 5px; margin-top: 15px;">Serge</h1>
+	<p style="text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-size: 20px; line-height: 28px; margin: 0;">
+	beats you the news
+	</p>
+	</td>
+	</tr>
+	<tr>
+	<td>
+	<p align="left" style="display: inline-block; text-align: left; width: 20%; text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-family: Open Sans, Helvetica, Arial, sans-serif;font-size: 16px; line-height: 24px; margin: 0; padding: 0;margin-top: 10px;">
+	{1}
+	</p>
+	<p align="right" style="display: inline-block; text-align: right; width: 78%; text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-family: Open Sans, Helvetica, Arial, sans-serif;font-size: 16px; line-height: 24px; margin: 0; padding: 0;margin-top: 10px;">
+	{4} {2} {0} {3}
+	</p>
+	</td>
+	</tr>
+	</table>
+	</td>
+	</tr>""".format(translate_text[0], user.encode("utf_8"), translate_text[1], pydate, pending_all, style, background_filename[0]))
 
 	index = 0
 	already_in_the_list = []
 
 	######### ECRITURE NEWS
 	if pending_news > 0:
-		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[3]))
 
 		######### ECRITURE KEYWORDS FOR NEWS
 		for couple_word_attribute in sorted(newswords_list, key= lambda newswords_field : newswords_field[0]):
@@ -330,19 +503,52 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 			elements = len(process_result_list)
 
 			if elements > 0:
-				newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(word.capitalize()))
+				newsletter = newsletter + ("""<tr>
+				<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
+				<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+				<tr>
+				<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+				<table cellspacing="0" cellpadding="0" border="0" width="100%">
+				<tr>
+				<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
+				<table cellspacing="0" cellpadding="0" border="0" width="100%">
+				<tr>
+				<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+				<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
+				</td>
+				</tr>""".format(word.capitalize()))
 
 				for couple_results in process_result_list:
-					newsletter = newsletter + ("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
-					•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
-					</p>""".format(couple_results[0], couple_results[1]))
+					newsletter = newsletter + ("""<tr>
+					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+					•&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
+					</td>
+					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+					<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+					<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
+					</a>
+					</td>
+					</tr>
+					<tr>
+					<td>
+					<br>
+					</td>
+					</tr>""".format(couple_results[0], couple_results[1]))
+
+				newsletter = newsletter + ("""</table>
+				</td>
+				</tr>
+				</table>
+				</td>
+				</tr>
+				</table>
+				</td>
+				</tr>""")
 
 	index = 0
 
 	######### ECRITURE SCIENCE
 	if pending_science > 0:
-		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[4]))
-
 		######### ECRITURE KEYWORDS FOR SCIENCE
 		for couple_word_attribute in sorted(sciencewords_list, key= lambda sciencewords_field : sciencewords_field[0]):
 			word = couple_word_attribute[0].strip().encode("utf8")
@@ -367,17 +573,52 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 			elements = len(process_result_list)
 
 			if elements > 0:
-				newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(word))
+				newsletter = newsletter + ("""<tr>
+				<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
+				<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+				<tr>
+				<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+				<table cellspacing="0" cellpadding="0" border="0" width="100%">
+				<tr>
+				<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
+				<table cellspacing="0" cellpadding="0" border="0" width="100%">
+				<tr>
+				<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+				<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
+				</td>
+				</tr>""".format(word))
 
 				for couple_results in process_result_list:
-					newsletter = newsletter + ("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
-						•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
-					</p>""".format(couple_results[0], couple_results[1]))
+					newsletter = newsletter + ("""<tr>
+					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+					•&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
+					</td>
+					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+					<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+					<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
+					</a>
+					</td>
+					</tr>
+					<tr>
+					<td>
+					<br>
+					</td>
+					</tr>""".format(couple_results[0], couple_results[1]))
+
+				newsletter = newsletter + ("""</table>
+				</td>
+				</tr>
+				</table>
+				</td>
+				</tr>
+				</table>
+				</td>
+				</tr>""")
+
 	index = 0
 
 	######### ECRITURE PATENTS
 	if pending_patents > 0:
-		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[5]))
 
 		######### ECRITURE QUERY FOR PATENTS
 		for couple_query_attribute in sorted(patent_master_queries_list, key= lambda query_field : query_field[0]):
@@ -403,69 +644,89 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 			elements = len(process_result_list)
 
 			if elements > 0:
-				newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(plain_query))
+				newsletter = newsletter + ("""<tr>
+				<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
+				<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+				<tr>
+				<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+				<table cellspacing="0" cellpadding="0" border="0" width="100%">
+				<tr>
+				<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
+				<table cellspacing="0" cellpadding="0" border="0" width="100%">
+				<tr>
+				<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+				<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
+				</td>
+				</tr>""".format(plain_query))
 
 				for couple_results in process_result_list:
-					newsletter = newsletter + ("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
-						•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
-					</p>""".format(couple_results[0], couple_results[1]))
+					newsletter = newsletter + ("""<tr>
+					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+					•&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
+					</td>
+					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+					<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+					<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
+					</a>
+					</td>
+					</tr>
+					<tr>
+					<td>
+					<br>
+					</td>
+					</tr>""".format(couple_results[0], couple_results[1]))
+
+				newsletter = newsletter + ("""</table>
+				</td>
+				</tr>
+				</table>
+				</td>
+				</tr>
+				</table>
+				</td>
+				</tr>""")
 
 	index = 0
 
-	######### GOODBYE
-	newsletter = newsletter + ("""</div>
-		<br/>
-		<p style="width: 85%;margin-left: auto;margin-right: auto;align: left;"><font color="black" >{0} {1},</font></p>
-		<p style="width: 85%;margin-left: auto;margin-right: auto;"><font color="black" >SERGE</font></p><br/>
-		<br/>
-		<div style="width: 100%;height: 1px;background-color: grey;margin: 0;"></div>""".format(translate_text[6], user))
-
 	######### FOOTER
-	newsletter = newsletter + ("""<div style="text-align: center;text-decoration: none;color: grey;margin-top: 5px;max-height: 130px;width: 100%;">
-	<div style="display: inline-block;float: left;max-width: 33%;">
-	<a style="display:flex;justify-content: flex-start;align-items: center;text-decoration: none; color: grey;font-size: 12px;" href="https://cairn-devices.eu/">
-	<div style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/logo_CairnDevices.png') no-repeat center / contain;background-size: contain;width: 15vw;max-width: 120px; height: 11.6vw;max-height: 88px;"></div>
-	<div style="word-wrap: break-word;margin-top: auto;margin-bottom: auto;">&nbsp;&nbsp;Cairn Devices</div>
-	</a>
-	</div>
+	newsletter = newsletter + ("""<tr style="!important background-color: #efefef;" bgcolor="#efefef">
+	<tr bgcolor="#efefef">
+	<td align="center" valign="top" style="width: 100%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
+	<a style="text-decoration: none; color: #999999;" href=""><img alt="CairnGit" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/CairnGit_logo_norm.png" width="73" align="center" title="CairnGit"/></a>&nbsp;
+	<a style="text-decoration: none; color: #999999;" href=""><img alt="Cairn Devices" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/Cairn_Devices_logo_norm.png" width="73" align="center" title="Cairn Devices"/></a>&nbsp;
+	<a style="text-decoration: none; color: #999999;" href=""><img alt="Serge" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/SERGE_logo_norm.png" width="73" align="center" title="Serge"/></a>
+	</td>
+	</tr>
+	<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px; background-color: #efefef;" bgcolor="#efefef">
+	<tr>
+	<td align="left" valign="center" style="width: 30%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
+	<a style="text-decoration: none; color: #999999;" href="https://cairn-devices.eu"><img alt="Logo Cairn Devices" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_CairnDevices.png" width="130" align="center" /><br>Cairn Devices</a>
+	</td>
+	<td align="center" valign="top" style="padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
+	<p style="font-size: 14px; line-height: 20px;text-align: center;">
 
-	<div style="display: inline-block;text-align: center;margin-top: 7px;max-width: 33%;">
-	<div>
-	<a style="text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;" href="https://cairngit.eu/serge">
-	{0}
-	</a>
-	</div>
-	<br/>
-	<div>
-	<a style="text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;" href="https://cairngit.eu/unsubscribe">
-	{1}
-	</a>
-	</div>
-	</div>
+	<br><br>
 
-	<div style="display: inline-block;float: right;max-width: 33%;" >
-	<div style="margin:0;">
-	<a style="display: inline-block;text-align: right;text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;float: right;" href="https://github.com/ABHC/SERGE/">
-	{2}
-	<div style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GitHub.png') no-repeat center / contain;background-size: contain;width: 5.5vw;max-width: 50px;height: 5.5vw;max-height: 50px;display: inline-block;"></div>
-	</a>
-	</div>
-
-	<div style="margin:0;">
-	<a style="display: inline-block;text-align: right; text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;float: right;" href="https://www.gnu.org/licenses/gpl-3.0.fr.html">
-	{3}
-	<div style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GPLv3.png') no-repeat center / contain;background-size: contain;width: 5.5vw;max-width: 50px; height: 2.4vw;max-height: 24.8px;display: inline-block;"></div>
-	</a>
-	</div>
-	</div>
-	</div>
+	<a href="" style="color: #999999;" target="_blank">View Online</a>
+	&nbsp; &bull; &nbsp;
+	<a href="" style="color: #999999;" target="_blank">Unsubscribe</a>
+	</p>
+	</td>
+	<td align="center" valign="center" style="width: 30%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
+	<a style="text-decoration: none; color: #999999;" href="https://github.com/ABHC/SERGE/">Find Serge on <img alt="GitHub" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GitHub.png" width="50" align="center" title="GitHub" /></a><br><br>
+	<a style="text-decoration: none; color: #999999;" href="https://www.gnu.org/licenses/gpl-3.0.fr.html">Powered by <img alt="GPLv3" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GPLv3.png" width="50" align="center" title="GPLv3" /></a><br><br>
+	</td>
+	</tr>
+	</table>
+	</tr>
+	</table>
 	</body>
-	</html>""".format(translate_text[7], translate_text[8], translate_text[9], translate_text[10]))
+	</html>""".format(translate_text[5], translate_text[6], translate_text[7], translate_text[8]))
 
 	return newsletter
 
 
-def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list):
+def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list, style, background_filename):
 	"""Formatting function for emails, apply the formatting by sources"""
 
 	######### PENDING LINKS
@@ -473,32 +734,48 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 
 	######### BANNER AND HELLO
 	newsletter = ("""<!doctype html>
-	<html lang="fr">
+	<html>
 	<head>
-	<meta charset="utf-8">
-	<title>[SERGE] Your news monitoring</title>
+	<meta charset="UTF-8">
+	<title>Serge your news monitoring of {3}</title>
+	{5}
 	</head>
-	<body>
-	<div style="width: 90%;margin-left: auto;margin-right: auto;display: flex; justify-content: flex-start; align-items: center;text-align: left;">
-	<div style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/serge_logo.png') no-repeat center / contain;background-size: contain;width: 26.5vw;height: 30vw; max-height: 170px;max-width: 150px;float: left;">
-	</div>
-	<p style="text-align: left;margin-left: 20px;margin-top: auto; margin-bottom: auto;font-size: 3vw;font-family: 'Overpass Mono', monospace , sans-serif; text-align: center;word-wrap: break-word; max-height: 170px; width: 60%;">Serge beats you the news</p>
-	</div>
-
-	<div style="width: 100%;height: 1px;background-color: grey;margin: 0;"></div>
-
-	<p style="width: 85%;margin-left: auto;margin-right: auto;">{0} {1}, {2} {3} :</p>
-
-	<div style="float: right; color: grey; margin-top: 10px; margin-bottom: 10px;">{4} {5}</div>
-
-	<div style="width: 80%;margin-left: auto;margin-right: auto;">""".format(translate_text[0], user.encode("utf_8"), translate_text[1], pydate, pending_all, translate_text[2]))
+	<body style="margin: 0 !important; padding: 0; !important background-color: #efefef;" bgcolor="#efefef">
+	<table border="0" cellpadding="0" cellspacing="0" width="100%" style="!important background-color: #efefef;" bgcolor="#efefef">
+	<tr bgcolor="#205d70" style="background: #205d70 url('https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/background/{6}') center; background-size: cover;">
+	<td align="center" valign="top" width="100%" style="background-color: rgba(0,0,0,0.2); padding: 20px 10px 2px 10px;" class="mobile-padding">
+	<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+	<tr>
+	<td align="center" valign="top" style="padding: 0; width: 146px; height: 146px;">
+	<img alt="Serge logo" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/SERGE_logo_norm.png" width="146" align="center" style="display: block;"/>
+	</td>
+	</tr>
+	<tr>
+	<td align="center" valign="top" style="padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif;">
+	<h1 style="font-size: 40px; color: #ffffff;margin-bottom: 5px; margin-top: 15px;">Serge</h1>
+	<p style="text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-size: 20px; line-height: 28px; margin: 0;">
+	beats you the news
+	</p>
+	</td>
+	</tr>
+	<tr>
+	<td>
+	<p align="left" style="display: inline-block; text-align: left; width: 20%; text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-family: Open Sans, Helvetica, Arial, sans-serif;font-size: 16px; line-height: 24px; margin: 0; padding: 0;margin-top: 10px;">
+	{1}
+	</p>
+	<p align="right" style="display: inline-block; text-align: right; width: 78%; text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-family: Open Sans, Helvetica, Arial, sans-serif;font-size: 16px; line-height: 24px; margin: 0; padding: 0;margin-top: 10px;">
+	{4} {2} {0} {3}
+	</p>
+	</td>
+	</tr>
+	</table>
+	</td>
+	</tr>""".format(translate_text[0], user.encode("utf_8"), translate_text[1], pydate, pending_all, style, background_filename[0]))
 
 	index = 0
 
 	######### ECRITURE NEWS
 	if pending_news > 0:
-		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[3]))
-
 		######### ECRITURE ORIGIN FOR NEWS
 		for couple_source_attribute in sorted(news_origin_list, key= lambda news_origin_field : news_origin_field[0]):
 			origin_name = couple_source_attribute[0]
@@ -523,18 +800,52 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 			elements = len(process_result_list)
 
 			if elements > 0:
-				newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(origin_name.strip().encode("utf8")))
+				newsletter = newsletter + ("""<tr>
+				<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
+				<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+				<tr>
+				<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+				<table cellspacing="0" cellpadding="0" border="0" width="100%">
+				<tr>
+				<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
+				<table cellspacing="0" cellpadding="0" border="0" width="100%">
+				<tr>
+				<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+				<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
+				</td>
+				</tr>""".format(origin_name.strip().encode("utf8")))
 
 				for couple_results in process_result_list:
-					newsletter = newsletter + ("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
-						•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
-						</p>""".format(couple_results[0], couple_results[1]))
+					newsletter = newsletter + ("""<tr>
+					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+					•&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
+					</td>
+					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+					<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+					<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
+					</a>
+					</td>
+					</tr>
+					<tr>
+					<td>
+					<br>
+					</td>
+					</tr>""".format(couple_results[0], couple_results[1]))
+
+				newsletter = newsletter + ("""</table>
+				</td>
+				</tr>
+				</table>
+				</td>
+				</tr>
+				</table>
+				</td>
+				</tr>""")
 
 	index = 0
 
 	######### ECRITURE SCIENCE
 	if pending_science > 0:
-		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[4]))
 		new_papers = 0
 
 		######### CHECKING FOR ARXIV PAPERS
@@ -547,7 +858,20 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 			index = index+1
 
 		if new_papers > 0:
-			newsletter = newsletter + ("""<br/><br/><b>Arxiv.org</b><br/>""")
+			newsletter = newsletter + ("""<tr>
+			<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
+			<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+			<tr>
+			<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+			<table cellspacing="0" cellpadding="0" border="0" width="100%">
+			<tr>
+			<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
+			<table cellspacing="0" cellpadding="0" border="0" width="100%">
+			<tr>
+			<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+			<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">ArXiv.org</h2>
+			</td>
+			</tr>""")
 
 		index = 0
 
@@ -560,11 +884,33 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 				if science_attributes[1].isupper() is True:
 					science_attributes = (science_attributes[0], science_attributes[1].lower().capitalize(), science_attributes[2], science_attributes[3])
 
-				newsletter = newsletter + ("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
-					•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
-				</p>""".format(science_attributes[0].strip().encode("utf8"), science_attributes[1].strip().encode("utf8")))
+				newsletter = newsletter + ("""<tr>
+				<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+				•&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
+				</td>
+				<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+				<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+				<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
+				</a>
+				</td>
+				</tr>
+				<tr>
+				<td>
+				<br>
+				</td>
+				</tr>""".format(science_attributes[0].strip().encode("utf8"), science_attributes[1].strip().encode("utf8")))
 
 			index = index+1
+
+			newsletter = newsletter + ("""</table>
+			</td>
+			</tr>
+			</table>
+			</td>
+			</tr>
+			</table>
+			</td>
+			</tr>""")
 
 		index = 0
 		new_papers = 0
@@ -579,7 +925,20 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 			index = index+1
 
 		if new_papers > 0:
-			newsletter = newsletter + ("""<br/><br/><b>Directory Of Open Access Journals (DOAJ)</b><br/>""")
+			newsletter = newsletter + ("""<tr>
+			<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
+			<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+			<tr>
+			<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+			<table cellspacing="0" cellpadding="0" border="0" width="100%">
+			<tr>
+			<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
+			<table cellspacing="0" cellpadding="0" border="0" width="100%">
+			<tr>
+			<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+			<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">Directory Of Open Access Journals (DOAJ)</h2>
+			</td>
+			</tr>""")
 
 		index = 0
 
@@ -592,18 +951,52 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 				if science_attributes[1].isupper() is True:
 					science_attributes = (science_attributes[0], science_attributes[1].lower().capitalize(), science_attributes[2], science_attributes[3])
 
-				newsletter = newsletter + ("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
-					•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
-				</p>""".format(science_attributes[0].strip().encode("utf8"), science_attributes[1].strip().encode("utf8")))
+				newsletter = newsletter + ("""<tr>
+				<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+				•&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
+				</td>
+				<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+				<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+				<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
+				</a>
+				</td>
+				</tr>
+				<tr>
+				<td>
+				<br>
+				</td>
+				</tr>""".format(science_attributes[0].strip().encode("utf8"), science_attributes[1].strip().encode("utf8")))
 
 			index = index+1
+
+			newsletter = newsletter + ("""</table>
+			</td>
+			</tr>
+			</table>
+			</td>
+			</tr>
+			</table>
+			</td>
+			</tr>""")
 
 	index = 0
 
 	######### ECRITURE PATENTS
 	if pending_patents > 0:
-		newsletter = newsletter + ("""<br/><br/><b>{0}</b><br/>""".format(translate_text[5]))
-		newsletter = newsletter + ("""<br/><br/><b>OMPI : Organisation Mondiale de la Propriété Intellectuelle</b><br/>""")
+		newsletter = newsletter + ("""<tr>
+		<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
+		<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+		<tr>
+		<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+		<table cellspacing="0" cellpadding="0" border="0" width="100%">
+		<tr>
+		<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
+		<table cellspacing="0" cellpadding="0" border="0" width="100%">
+		<tr>
+		<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+		<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">OMPI : Organisation Mondiale de la Propriété Intellectuelle</h2>
+		</td>
+		</tr>""")
 
 		while index < pending_patents:
 			patents_attributes = not_send_patents_list[index]
@@ -611,61 +1004,66 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 			if patents_attributes[1].isupper() is True:
 				patents_attributes = (patents_attributes[0], science_attributes[1].lower().capitalize())
 
-			newsletter = newsletter + ("""<p style="display: flex; justify-content: flex-start;margin-left: 5px;margin-top: 5px;margin-bottom: 0;margin-right: 0;">
-			•&nbsp;<a style="margin-right: 10px;text-decoration: none;color: black;" href="{0}">{1}</a><a href="https://cairngit.eu/serge/addLinkInWiki?link={0}"><img src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWiki.png" width="20" align="right" alt="Add in the wiki" /></a>
-			</p>""".format(patents_attributes[0].strip().encode("utf8"), patents_attributes[1].strip().encode("utf8")))
+			newsletter = newsletter + ("""<tr>
+			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+			•&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
+			</td>
+			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+			<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+			<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
+			</a>
+			</td>
+			</tr>
+			<tr>
+			<td>
+			<br>
+			</td>
+			</tr>""".format(patents_attributes[0].strip().encode("utf8"), patents_attributes[1].strip().encode("utf8")))
 			index = index+1
+
+		newsletter = newsletter + ("""</table>
+		</td>
+		</tr>
+		</table>
+		</td>
+		</tr>
+		</table>
+		</td>
+		</tr>""")
 
 	index = 0
 
-	######### GOODBYE
-	newsletter = newsletter + ("""</div>
-		<br/>
-		<p style="width: 85%;margin-left: auto;margin-right: auto;align: left;"><font color="black" >{0} {1},</font></p>
-		<p style="width: 85%;margin-left: auto;margin-right: auto;"><font color="black" >SERGE</font></p><br/>
-		<br/>
-		<div style="width: 100%;height: 1px;background-color: grey;margin: 0;"></div>""".format(translate_text[4], user))
-
 	######### FOOTER
-	newsletter = newsletter + ("""<div style="text-align: center;text-decoration: none;color: grey;margin-top: 5px;max-height: 130px;width: 100%;">
-	<div style="display: inline-block;float: left;max-width: 33%;">
-	<a style="display:flex;justify-content: flex-start;align-items: center;text-decoration: none; color: grey;font-size: 12px;" href="https://cairn-devices.eu/">
-	<div style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/logo_CairnDevices.png') no-repeat center / contain;background-size: contain;width: 15vw;max-width: 120px; height: 11.6vw;max-height: 88px;"></div>
-	<div style="word-wrap: break-word;margin-top: auto;margin-bottom: auto;">&nbsp;&nbsp;Cairn Devices</div>
-	</a>
-	</div>
-
-	<div style="display: inline-block;text-align: center;margin-top: 7px;max-width: 33%;">
-	<div>
-	<a style="text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;" href="https://cairngit.eu/serge">
-	{0}
-	</a>
-	</div>
-	<br/>
-	<div>
-	<a style="text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;" href="https://cairngit.eu/unsubscribe">
-	{1}
-	</a>
-	</div>
-	</div>
-
-	<div style="display: inline-block;float: right;max-width: 33%;" >
-	<div style="margin:0;">
-	<a style="display: inline-block;text-align: right;text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;float: right;" href="https://github.com/ABHC/SERGE/">
-	{2}
-	<div style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GitHub.png') no-repeat center / contain;background-size: contain;width: 5.5vw;max-width: 50px;height: 5.5vw;max-height: 50px;display: inline-block;"></div>
-	</a>
-	</div>
-
-	<div style="margin:0;">
-	<a style="display: inline-block;text-align: right; text-decoration: none; color: grey;font-size: 12px;margin-top: auto;margin-bottom: auto;float: right;" href="https://www.gnu.org/licenses/gpl-3.0.fr.html">
-	{3}
-	<div style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GPLv3.png') no-repeat center / contain;background-size: contain;width: 5.5vw;max-width: 50px; height: 2.4vw;max-height: 24.8px;display: inline-block;"></div>
-	</a>
-	</div>
-	</div>
-	</div>
+	newsletter = newsletter + ("""<tr style="!important background-color: #efefef;" bgcolor="#efefef">
+	<tr bgcolor="#efefef">
+	<td align="center" valign="top" style="width: 100%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
+	<a style="text-decoration: none; color: #999999;" href=""><img alt="CairnGit" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/CairnGit_logo_norm.png" width="73" align="center" title="CairnGit"/></a>&nbsp;
+	<a style="text-decoration: none; color: #999999;" href=""><img alt="Cairn Devices" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/Cairn_Devices_logo_norm.png" width="73" align="center" title="Cairn Devices"/></a>&nbsp;
+	<a style="text-decoration: none; color: #999999;" href=""><img alt="Serge" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/SERGE_logo_norm.png" width="73" align="center" title="Serge"/></a>
+	</td>
+	</tr>
+	<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px; background-color: #efefef;" bgcolor="#efefef">
+	<tr>
+	<td align="left" valign="center" style="width: 30%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
+	<a style="text-decoration: none; color: #999999;" href="https://cairn-devices.eu"><img alt="Logo Cairn Devices" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_CairnDevices.png" width="130" align="center" /><br>Cairn Devices</a>
+	</td>
+	<td align="center" valign="top" style="padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
+	<p style="font-size: 14px; line-height: 20px;text-align: center;">
+	<br><br>
+	<a href="" style="color: #999999;" target="_blank">View Online</a>
+	&nbsp; &bull; &nbsp;
+	<a href="" style="color: #999999;" target="_blank">Unsubscribe</a>
+	</p>
+	</td>
+	<td align="center" valign="center" style="width: 30%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
+	<a style="text-decoration: none; color: #999999;" href="https://github.com/ABHC/SERGE/">Find Serge on <img alt="GitHub" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GitHub.png" width="50" align="center" title="GitHub" /></a><br><br>
+	<a style="text-decoration: none; color: #999999;" href="https://www.gnu.org/licenses/gpl-3.0.fr.html">Powered by <img alt="GPLv3" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GPLv3.png" width="50" align="center" title="GPLv3" /></a><br><br>
+	</td>
+	</tr>
+	</table>
+	</tr>
+	</table>
 	</body>
-	</html>""".format(translate_text[7], translate_text[8], translate_text[9], translate_text[10]))
+	</html>""".format(translate_text[5], translate_text[6], translate_text[7], translate_text[8]))
 
 	return newsletter

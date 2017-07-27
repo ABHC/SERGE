@@ -45,7 +45,7 @@ logger_info = logging.getLogger("info_log")
 logger_error = logging.getLogger("error_log")
 
 
-def redAlert(user, register, user_id_comma, not_send_science_list, not_send_patents_list, now):
+def redAlert(user, register, user_id_comma, not_send_news_list, not_send_science_list, not_send_patents_list, now, pydate):
 	"""Management of alerts :
 	- Search for potential alert keywords in results and if some are found redAlert build the list of them and of related news
 	- This list is given to alarm.py for building and formatting the e-mail alert"""
@@ -90,7 +90,7 @@ def redAlert(user, register, user_id_comma, not_send_science_list, not_send_pate
 		predecessor = "ALARM"
 
 		######### CALL TO buildAlert FUNCTION
-		alarm.buildAlert(user, user_id_comma, register, alert_news_list)
+		alarm.buildAlert(user, user_id_comma, register, alert_news_list, pydate)
 
 		######### CALL TO stairwayToUpdate FUNCTION
 		insertSQL.stairwayToUpdate(register, alert_news_list, not_send_science_list, not_send_patents_list, now, predecessor)
@@ -270,7 +270,7 @@ for user in user_list_all:
 
 		elif interval < frequency and pending_all > 0:
 			#########  ALERT MANAGEMENT : CALL TO redAlert FUNCTION
-			redAlert(user, register, user_id_comma, not_send_science_list, not_send_patents_list, now)
+			redAlert(user, register, user_id_comma, not_send_news_list, not_send_science_list, not_send_patents_list, now, pydate)
 
 		else:
 			logger_info.info("FREQUENCY NOT REACHED")
@@ -298,7 +298,7 @@ for user in user_list_all:
 
 		elif pending_all < limit and pending_all > 0:
 			######### ALERT MANAGEMENT : CALL TO redAlert FUNCTION
-			redAlert(user, register, user_id_comma, not_send_science_list, not_send_patents_list, now)
+			redAlert(user, register, user_id_comma, not_send_news_list, not_send_science_list, not_send_patents_list, now, pydate)
 
 		elif pending_all < limit:
 			logger_info.info("LIMIT NOT REACHED")
@@ -330,7 +330,7 @@ for user in user_list_all:
 
 		elif hour != some_hour and pending_all > 0:
 			######### ALERT MANAGEMENT : CALL TO redAlert FUNCTION
-			redAlert(user, register, user_id_comma, not_send_science_list, not_send_patents_list, now)
+			redAlert(user, register, user_id_comma, not_send_news_list, not_send_science_list, not_send_patents_list, now, pydate)
 
 		elif pending_all == 0:
 			logger_info.info("NO PENDING NEWS")
