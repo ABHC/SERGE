@@ -38,12 +38,13 @@ def highwayToMail(register, newsletter, priority, database, pydate):
 	toaddr = user_infos[0]
 
 	######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
+	pydate = " "+pydate
 	if priority == "NORMAL":
-		subject_FR = "[SERGE] Veille Industrielle et Technologique "+pydate
-		subject_EN = "[SERGE] News monitoring and Technological watch "+pydate
+		subject_FR = "[SERGE] Veille Industrielle et Technologique"+pydate
+		subject_EN = "[SERGE] News monitoring and Technological watch"+pydate
 	elif priority == "HIGH":
-		subject_FR = "[ALERTE SERGE] Informations Prioritaires "+pydate
-		subject_EN = "[SERGE] Prioritary Informations "+pydate
+		subject_FR = "[ALERTE SERGE] Informations Prioritaires"+pydate
+		subject_EN = "[SERGE] Prioritary Informations"+pydate
 
 	try :
 		exec("translate_subject"+"="+"subject_"+user_infos[1])
