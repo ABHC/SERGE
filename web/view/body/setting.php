@@ -358,9 +358,9 @@
 						<h3>Your email</h3>
 						<input type="email" name="email" id="email" value="<?php echo $userSettings['email']; ?>"/>
 					</p>
-					<h3>Result page</h3>
+					<h3 >Result page</h3>
 					<p>
-						Background <select class="selectCommResult" name="backgroundResult">
+						Background <select size="<?php echo count($backgroundList); ?>" id="selectBackgroundPreview" class="selectBackground" name="backgroundResult">
 						<?php
 						foreach ($backgroundList as $backgroundName)
 						{
@@ -373,12 +373,17 @@
 								$backgroundSelected = '';
 							}
 
-							echo '<option value="' . $backgroundName['name'] . '" ' . $backgroundSelected . '>' . $backgroundName['name'] . '</option>';
+							echo '<option value="' . $backgroundName['name'] . '" ' . $backgroundSelected . ' id="../images/background/' . $backgroundName['filename'] . '">' . $backgroundName['name'] . '</option>'.PHP_EOL;
 						}
 						?>
-							<option value="random">Random</option>
+							<!--<option value="random">Random</option>-->
 						</select>
-						<span class="arrDown">▾</span>
+						<?php
+						foreach ($backgroundList as $backgroundName)
+						{
+							echo '<img src=../images/background/' . $backgroundName['filename'] . ' style="display: none;" />';
+						}
+						?>
 					</p>
 				</div>
 				<div>

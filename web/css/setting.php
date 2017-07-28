@@ -116,6 +116,18 @@ select#sourceKeyword option
 	background-color: rgba(131, 49, 5, 0.8);
 }
 
+#backgroundPreview
+{
+	position: absolute;
+	display: none;
+	width: 200px;
+	color: #fff;
+	border: 1px solid rgba(255,255,255, 0.15);
+	border-radius: 3px;
+	overflow: hidden;
+	z-index: 4000;
+}
+
 input#email
 {
 	width: 80%;
@@ -795,6 +807,23 @@ h2
 	max-width: fit-content;
 	padding: 0;
 	padding-right: 8px;
+	border: none;
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	-o-appearance: none;
+	appearance: none;
+	background-color: rgba(0,0,0,0);
+	outline: none;
+	z-index: 2;
+}
+
+.selectBackground
+{
+	position: relative;
+	width: fit-content;
+	max-width: fit-content;
+	height: 38px;
+	padding: 0;
 	border: none;
 	-moz-appearance: none;
 	-webkit-appearance: none;
