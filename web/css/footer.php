@@ -14,7 +14,7 @@ footer
 	margin-right: 0;
 	margin-bottom: 0;
 	margin-top: 100px;
-	background-color: rgba(0, 0, 0, 0.55);
+	background-color: rgba(0, 0, 0, 0.6);
 	border-top: 1px solid rgba(255,255,255,0.2);
 }
 
@@ -54,13 +54,11 @@ footer
 
 .roundLinks a
 {
-	width: 50px;
-	height: 50px;
+	width: 80px;
+	height: 80px;
 	border-radius: 50%;
-	background-color: rgba(0,99,149, 0.55);
 	margin-left: 15px;
 	margin-right: 15px;
-	border: 1px solid rgba(255,255,255,0.1);
 }
 
 .subLinksContainer

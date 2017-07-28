@@ -6,9 +6,9 @@
 
 		<div class="links">
 			<div class="roundLinks">
-				<a href=""></a>
-				<a href=""></a>
-				<a href=""></a>
+				<a href=""><img alt="CairnGit" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/CairnGit_logo_norm.png" width="80" align="center" title="CairnGit"/></a>
+				<a href=""><img alt="Cairn Devices" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/Cairn_Devices_logo_norm.png" width="80" align="center" title="Cairn Devices"/></a>
+				<a href=""><img alt="Serge" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/SERGE_logo_norm.png" width="80" align="center" title="Serge"/></a>
 			</div>
 
 			<div class="subLinksContainer">
