@@ -1172,6 +1172,69 @@ else
 			}
 		}
 	}
+	#Delete science query
+	elseif (!empty($_POST['delQueryScience']))
+	{
+		preg_match("/[0-9]+/", $_POST['delQueryScience'], $idQueryToDel);
+
+		// Read owner science query
+		$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE id = :queryId AND pack_id = :packIdInUse AND (source = "Science" OR source = "!Science")');
+		$req->execute(array(
+			'queryId' => $idQueryToDel[0],
+			'packIdInUse' => $pack_idInUse[0]));
+			$result = $req->fetch();
+			$req->closeCursor();
+
+		if (!empty($result))
+		{
+			$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = "Delete" WHERE id = :id');
+			$req->execute(array(
+				'id' => $idQueryToDel[0]));
+				$req->closeCursor();
+		}
+	}
+	#Disable science query
+	elseif (!empty($_POST['disableQueryScience']))
+	{
+		preg_match("/[0-9]+/", $_POST['disableQueryScience'], $idQueryToDisable);
+
+		// Read owner science query
+		$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE id = :queryId AND pack_id = :packIdInUse  AND source = "Science"');
+		$req->execute(array(
+			'queryId' => $idQueryToDisable[0],
+			'packIdInUse' => $pack_idInUse[0]));
+			$result = $req->fetch();
+			$req->closeCursor();
+
+		if (!empty($result))
+		{
+			$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = "!Science" WHERE id = :id');
+			$req->execute(array(
+				'id' => $idQueryToDisable[0]));
+				$req->closeCursor();
+		}
+	}
+	#Activate science query
+	elseif (!empty($_POST['activateQueryScience']))
+	{
+		preg_match("/[0-9]+/", $_POST['activateQueryScience'], $idQueryToActivate);
+
+		// Read owner science query
+		$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE id = :queryId AND pack_id = :packIdInUse  AND source = "!Science"');
+		$req->execute(array(
+			'queryId' => $idQueryToActivate[0],
+			'packIdInUse' => $pack_idInUse[0]));
+			$result = $req->fetch();
+			$req->closeCursor();
+
+		if (!empty($result))
+		{
+			$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = "Science" WHERE id = :id');
+			$req->execute(array(
+				'id' => $idQueryToActivate[0]));
+				$req->closeCursor();
+		}
+	}
 	elseif (isset($_POST['patentQuerySubmit']))
 	{
 		$cpt = 0;
