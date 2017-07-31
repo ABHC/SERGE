@@ -1237,6 +1237,69 @@ else
 			}
 		}
 	}
+	#Delete patent query
+	elseif (!empty($_POST['delQueryPatent']))
+	{
+		preg_match("/[0-9]+/", $_POST['delQueryPatent'], $idQueryToDel);
+
+		// Read owner patent query
+		$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE id = :queryId AND pack_id = :packIdInUse AND (source = "Patent" OR source = "!Patent")');
+		$req->execute(array(
+			'queryId' => $idQueryToDel[0],
+			'packIdInUse' => $pack_idInUse[0]));
+			$result = $req->fetch();
+			$req->closeCursor();
+
+		if (!empty($result))
+		{
+			$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = "Delete" WHERE id = :id');
+			$req->execute(array(
+				'id' => $idQueryToDel[0]));
+				$req->closeCursor();
+		}
+	}
+	#Disable patent query
+	elseif (!empty($_POST['disableQueryPatent']))
+	{
+		preg_match("/[0-9]+/", $_POST['disableQueryPatent'], $idQueryToDisable);
+
+		// Read owner patent query
+		$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE id = :queryId AND pack_id = :packIdInUse  AND source = "Patent"');
+		$req->execute(array(
+			'queryId' => $idQueryToDisable[0],
+			'packIdInUse' => $pack_idInUse[0]));
+			$result = $req->fetch();
+			$req->closeCursor();
+
+		if (!empty($result))
+		{
+			$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = "!Patent" WHERE id = :id');
+			$req->execute(array(
+				'id' => $idQueryToDisable[0]));
+				$req->closeCursor();
+		}
+	}
+	#Activate patent query
+	elseif (!empty($_POST['activateQueryPatent']))
+	{
+		preg_match("/[0-9]+/", $_POST['activateQueryPatent'], $idQueryToActivate);
+
+		// Read owner patent query
+		$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE id = :queryId AND pack_id = :packIdInUse  AND source = "!Patent"');
+		$req->execute(array(
+			'queryId' => $idQueryToActivate[0],
+			'packIdInUse' => $pack_idInUse[0]));
+			$result = $req->fetch();
+			$req->closeCursor();
+
+		if (!empty($result))
+		{
+			$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = "Patent" WHERE id = :id');
+			$req->execute(array(
+				'id' => $idQueryToActivate[0]));
+				$req->closeCursor();
+		}
+	}
 	# Extend science query
 	elseif (!empty($_POST['extendScience']))
 	{

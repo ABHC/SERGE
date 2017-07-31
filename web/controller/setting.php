@@ -729,7 +729,7 @@ if (!empty($_POST['delQueryScience']))
 	$req->execute(array(
 		'queryId' => $idQueryToDel[0],
 		'userIdDisable' => '%,!' . $_SESSION['id'] . ',%',
-		'userIdActivate' => '%,' . $_SESSION['id'] . ',%',));
+		'userIdActivate' => '%,' . $_SESSION['id'] . ',%'));
 		$result = $req->fetch();
 		$req->closeCursor();
 
@@ -936,7 +936,7 @@ if (!empty($_POST['delQueryPatent']))
 	$req->execute(array(
 		'queryId' => $idQueryToDel[0],
 		'userIdDisable' => '%,!' . $_SESSION['id'] . ',%',
-		'userIdActivate' => '%,' . $_SESSION['id'] . ',%',));
+		'userIdActivate' => '%,' . $_SESSION['id'] . ',%'));
 		$result = $req->fetch();
 		$req->closeCursor();
 
