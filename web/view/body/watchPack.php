@@ -160,7 +160,14 @@
 						}
 					}
 
-					if (1 == 1) //Vérifier si la source est désactivé sur tout les keywords liés
+					$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE query = "[!source!]" AND source LIKE :sourceIdDesactivated AND pack_id = :packIdInUse');
+					$req->execute(array(
+						'sourceIdDesactivated' => "%,!" . $packSourcesList['id'] . ",%",
+						'packIdInUse' => $pack_idInUse[0]));
+						$resultDesactivatedSource = $req->fetch();
+						$req->closeCursor();
+
+					if (empty($resultDesactivatedSource))
 					{
 						echo
 						'<div class="tagSource Tactive" id="ks' . $packSourcesList['id'] . '">'.
@@ -171,7 +178,7 @@
 							'</a>'.
 						'</div>';
 					}
-					elseif (preg_match("/,!" . $_SESSION['id'] . ",/", $packSourcesList['owners']))//Vérifier si la source est désactivé sur tout les keywords liés
+					elseif (!empty($resultDesactivatedSource))
 					{
 						echo
 						'<div class="tagSource Tdisable" id="ks' . $packSourcesList['id'] . '">'.

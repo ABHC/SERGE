@@ -60,6 +60,11 @@ if (isset($_POST['sourceType']))
 	}
 }
 
+# Nav activation for this page
+$result  = '';
+$wiki    = '';
+$setting = "active";
+
 # Type
 if (!empty($_GET['type']))
 {
@@ -445,6 +450,8 @@ if ($type == 'add')
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY `NumberOfStars` DESC';
 	}
+
+	# Search engine
 
 	# Read watchPack
 	$req = $bdd->prepare("SELECT id, name, description, author, users, category, language, update_date, rating, ((LENGTH(`rating`) - LENGTH(REPLACE(`rating`, ',', '')))-1) AS `NumberOfStars` FROM `watch_pack_serge` WHERE $OPTIONALCOND $ORDERBY;");
@@ -876,6 +883,200 @@ else
 			else
 			{
 				$ERROR_MESSAGE = 'Your link ' . 'return ' . $linkValidation[0] . ',' . $linkValidation[1] . ', please correct your link';
+			}
+		}
+	}
+	elseif (isset($_POST['delKeyword']) OR isset($_POST['disableKeyword']) OR isset($_POST['activateKeyword']))
+	{
+		# Delete, disable, active keyword
+		if (isset($_POST['delKeyword']))
+		{
+			preg_match_all("/[0-9]*&/", htmlspecialchars($_POST['delKeyword']), $matchKeywordAndSource);
+			$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][0]);
+			$keywordIdAction = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][1]);
+			$action          = 'delKeyword';
+		}
+		elseif (isset($_POST['disableKeyword']))
+		{
+			preg_match_all("/[0-9]*&/", htmlspecialchars($_POST['disableKeyword']), $matchKeywordAndSource);
+			$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][0]);
+			$keywordIdAction = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][1]);
+			$action          = 'disableKeyword';
+		}
+		elseif (isset($_POST['activateKeyword']))
+		{
+			preg_match_all("/[0-9]*&/", htmlspecialchars($_POST['activateKeyword']), $matchKeywordAndSource);
+			$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][0]);
+			$keywordIdAction = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][1]);
+			$action          = 'activateKeyword';
+		}
+
+		if (isset($sourceIdAction) AND isset($keywordIdAction) AND isset($action))
+		{
+			# Check if keyword exist
+			$req = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE id = :keywordIdAction AND (source LIKE :sourceIdAction OR source LIKE :sourceIdActionDesactivated) AND pack_id = :packIdInUse');
+			$req->execute(array(
+				'keywordIdAction' => $keywordIdAction,
+				'sourceIdAction' => "%," . $sourceIdAction . ",%",
+				'sourceIdActionDesactivated' => "%,!" . $sourceIdAction . ",%",
+				'packIdInUse' => $pack_idInUse[0]));
+				$result = $req->fetch();
+				$req->closeCursor();
+
+			# Delete an existing keyword
+			if (!empty($result) AND $action == 'delKeyword')
+			{
+				$sourceNew = preg_replace("/,!*$sourceIdAction,/", ',', $result['source']);
+
+				$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :sources WHERE id = :id');
+				$req->execute(array(
+					'sources' => $sourceNew,
+					'id' => $keywordIdAction));
+					$req->closeCursor();
+			}
+			elseif (!empty($result) AND $action == 'disableKeyword')
+			{
+				$sourceNew = preg_replace("/,$sourceIdAction,/", ",!$sourceIdAction,", $result['source']);
+
+				$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :sources WHERE id = :id');
+				$req->execute(array(
+					'sources' => $sourceNew,
+					'id' => $keywordIdAction));
+					$req->closeCursor();
+			}
+			elseif (!empty($result) AND $action == 'activateKeyword')
+			{
+				$sourceNew = preg_replace("/,!$sourceIdAction,/", ",$sourceIdAction,", $result['source']);
+
+				$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :sources WHERE id = :id');
+				$req->execute(array(
+					'sources' => $sourceNew,
+					'id' => $keywordIdAction));
+					$req->closeCursor();
+			}
+			else
+			{
+				$ERROR_MESSAGE = 'Keyword doesn\'t exist or invalid action';
+			}
+		}
+	}
+	elseif (isset($_POST['delSource']) OR isset($_POST['disableSource']) OR isset($_POST['activateSource']))
+	{
+		# Delete, disable, active sources
+		if (isset($_POST['delSource']))
+		{
+			preg_match("/[0-9]*&/", htmlspecialchars($_POST['delSource']), $matchSourceId);
+			$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchSourceId[0]);
+			$action          = 'delSource';
+		}
+		elseif (isset($_POST['disableSource']))
+		{
+			preg_match("/[0-9]*&/", htmlspecialchars($_POST['disableSource']), $matchSourceId);
+			$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchSourceId[0]);
+			$action          = 'disableSource';
+		}
+		elseif (isset($_POST['activateSource']))
+		{
+			preg_match("/[0-9]*&/", htmlspecialchars($_POST['activateSource']), $matchSourceId);
+			$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchSourceId[0]);
+			$action          = 'activateSource';
+		}
+
+		if (isset($sourceIdAction) AND isset($action))
+		{
+			# Check if source exist for this owner
+			$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE query = "[!source!]" AND (source LIKE :sourceIdAction OR source LIKE :sourceIdActionDesactivated) AND pack_id = :packIdInUse');
+			$req->execute(array(
+				'sourceIdAction' => "%," . $sourceIdAction . ",%",
+				'sourceIdActionDesactivated' => "%,!" . $sourceIdAction . ",%",
+				'packIdInUse' => $pack_idInUse[0]));
+				$result = $req->fetch();
+				$req->closeCursor();
+
+			# Delete an existing sources
+			if (!empty($result) AND $action == 'delSource')
+			{
+				$req = $bdd->prepare('SELECT id FROM rss_serge WHERE owners LIKE :owner');
+				$req->execute(array(
+					'owner' => "%," . $_SESSION['id'] . ",%"));
+					$result = $req->fetchAll();
+					$req->closeCursor();
+
+				$isSourceOwned = ",";
+				foreach ($result as $ownerSource)
+				{
+					if ($ownerSource['id'] == $sourceIdAction)
+					{
+						$isSourceOwned = "'[!source!]'";
+						break;
+					}
+				}
+
+				// Remove source on all keywords
+				$req = $bdd->prepare("SELECT id, source FROM watch_pack_queries_serge WHERE pack_id = :packIdInUse AND (source LIKE :sourceIdAction OR source LIKE :sourceIdActionDesactivated) AND query <> $isSourceOwned");
+				$req->execute(array(
+					'packIdInUse' => $pack_idInUse[0],
+					'sourceIdAction' => "%," . $sourceIdAction . ",%",
+					'sourceIdActionDesactivated' => "%,!" . $sourceIdAction . ",%"));
+					$result = $req->fetchAll();
+					$req->closeCursor();
+
+				foreach ($result as $resultLine)
+				{
+					$sourceNew = preg_replace("/,!*$sourceIdAction,/", ',', $resultLine['source']);
+
+					$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :sources WHERE id = :id');
+					$req->execute(array(
+						'sources' => $sourceNew,
+						'id' => $resultLine['id']));
+						$req->closeCursor();
+				}
+			}
+			elseif (!empty($result) AND $action == 'disableSource')
+			{
+				// Disable source on all keywords
+				$req = $bdd->prepare('SELECT id, source FROM watch_pack_queries_serge WHERE pack_id = :packIdInUse AND source LIKE :sourceIdAction');
+				$req->execute(array(
+					'packIdInUse' => $pack_idInUse[0],
+					'sourceIdAction' => "%," . $sourceIdAction . ",%"));
+					$result = $req->fetchAll();
+					$req->closeCursor();
+
+				foreach ($result as $resultLine)
+				{
+					$sourceNew = preg_replace("/,$sourceIdAction,/", ",!$sourceIdAction,", $resultLine['source']);
+
+					$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :sources WHERE id = :id');
+					$req->execute(array(
+						'sources' => $sourceNew,
+						'id' => $resultLine['id']));
+						$req->closeCursor();
+				}
+			}
+			elseif (!empty($result) AND $action == 'activateSource')
+			{
+				// Activate source on all keywords
+				$req = $bdd->prepare('SELECT id, source FROM watch_pack_queries_serge WHERE pack_id = :packIdInUse AND source LIKE :sourceIdAction');
+				$req->execute(array(
+					'packIdInUse' => $pack_idInUse[0],
+					'sourceIdAction' => "%,!" . $sourceIdAction . ",%"));
+					$result = $req->fetchAll();
+					$req->closeCursor();
+
+				foreach ($result as $resultLine)
+				{
+					$sourceNew = preg_replace("/,!$sourceIdAction,/", ",$sourceIdAction,", $resultLine['source']);
+
+					$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :sources WHERE id = :id');
+					$req->execute(array(
+						'sources' => $sourceNew,
+						'id' => $resultLine['id']));
+						$req->closeCursor();
+				}
+			}
+			else
+			{
+				$ERROR_MESSAGE = 'Source doesn\'t exist or invalid action';
 			}
 		}
 	}

@@ -17,4 +17,4 @@ include_once('model/connection_sql.php');
 	?>
 </body>
 
-<html>
+</html>
