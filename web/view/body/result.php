@@ -25,10 +25,10 @@
 
 	<form class="tableContainer" method="post" action="result">
 		<div class="table-header">
-			<table cellpadding="0" cellspacing="0" border="0">
+			<table>
 				<thead>
 					<tr>
-						<th><input alt="Delete" title="Delete selected links" name="deleteLink" class="submit" type="submit" value="delete" /></th>
+						<th><input title="Delete selected links" name="deleteLink" class="submit" type="submit" value="delete" /></th>
 						<?php
 						echo '
 						<th><a href="?orderBy=title' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '&type=' . $type . '">Title ' . $colOrder['title'] . '</a></th>
@@ -44,7 +44,7 @@
 			</table>
 		</div>
 		<div class="table-content">
-			<table cellpadding="0" cellspacing="0" border="0">
+			<table>
 				<tbody>
 					<?php
 					$readOwnerResults = new ArrayIterator($readOwnerResults);
@@ -241,20 +241,20 @@
 						$userIdComma = ',' . $_SESSION['id'] . ',';
 						if (preg_match("/$userIdComma/", $result['send_status']))
 						{
-							$amISend = '<img src="images/iconSend.png" />';
+							$amISend = '<img alt="Send" src="images/iconSend.png" />';
 						}
 						else
 						{
-							$amISend = '<img src="images/iconNotSend.png" />';
+							$amISend = '<img alt="Not Send" src="images/iconNotSend.png" />';
 						}
 
 						if (preg_match("/$userIdComma/", $result['read_status']))
 						{
-							$amIRead = '<img src="images/iconRead.png" />';
+							$amIRead = '<img alt="Read" src="images/iconRead.png" />';
 						}
 						else
 						{
-							$amIRead = '<img src="images/iconUnread.png" />';
+							$amIRead = '<img alt="Unread" src="images/iconUnread.png" />';
 						}
 
 						if (!empty($recordLink))
@@ -273,7 +273,7 @@
 							<td>' . $amIRead . '</td>
 							<td>
 								<a href="link?link" class="wikiLogo">
-									<img src="../images/iconWikiWB.png"/>
+									<img alt="Add in wiki" title="Add in wiki" src="../images/iconWikiWB.png"/>
 								</a>
 							</td>
 						</tr>';

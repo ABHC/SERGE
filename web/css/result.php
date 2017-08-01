@@ -529,6 +529,13 @@ a.pageNumber.current
 	border: 1px solid rgba(255,255,255,0.5);
 }
 
+/*cellspacing="0" border="0"*/
+table
+{
+	border-spacing: 0;
+	border: none;
+}
+
 <?php
 include_once('footer.php');
 ?>

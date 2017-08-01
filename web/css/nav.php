@@ -85,6 +85,7 @@
 	font-size: 15px;
 	text-decoration: none;
 	color: rgb(240, 240, 240);
+	text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
 }
 
 .navlogo
