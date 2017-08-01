@@ -6,9 +6,9 @@
 
 		<div class="links">
 			<div class="roundLinks">
-				<a href=""><img alt="CairnGit" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/CairnGit_logo_norm.png" width="80" align="center" title="CairnGit"/></a>
-				<a href=""><img alt="Cairn Devices" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/Cairn_Devices_logo_norm.png" width="80" align="center" title="Cairn Devices"/></a>
-				<a href=""><img alt="Serge" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/SERGE_logo_norm.png" width="80" align="center" title="Serge"/></a>
+				<a href=""><img alt="CairnGit" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/CairnGit_logo_norm.png" width="80" title="CairnGit"/></a>
+				<a href=""><img alt="Cairn Devices" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/Cairn_Devices_logo_norm.png" width="80" title="Cairn Devices"/></a>
+				<a href=""><img alt="Serge" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/SERGE_logo_norm.png" width="80" title="Serge"/></a>
 			</div>
 
 			<div class="subLinksContainer">
@@ -30,10 +30,10 @@
 			</div>
 		</div>
 		<div class="social">
-			<a href="diaspora"><img src="../images/Diaspora.png"/></a>
-			<a href="twitter"><img src="../images/Twitter.png"/></a>
-			<a href="facebook"><img src="../images/Facebook.png"/></a>
-			<a href="rss"><img src="../images/RSS.png"/></a>
+			<a href="diaspora"><img alt="Diaspora" src="../images/Diaspora.png"/></a>
+			<a href="twitter"><img alt="Twitter" src="../images/Twitter.png"/></a>
+			<a href="facebook"><img alt="Facebook" src="../images/Facebook.png"/></a>
+			<a href="rss"><img alt="RSS" src="../images/RSS.png"/></a>
 		</div>
 	</div>
 

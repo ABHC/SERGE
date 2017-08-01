@@ -108,7 +108,7 @@
 			</div>
 			<div class="newsInput">
 				<input title="Add" name="addNewSource" class="submit" type="submit" value="" />
-				<select name="sourceType" id="sourceKeyword">
+				<select name="sourceType" id="sourceType">
 					<option value="inputSource">Add my own source</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
@@ -266,16 +266,10 @@
 					}
 					$cptSource++;
 				}
+				$_SESSION['additionalStyle'] = $style;
 				?>
 			</div>
 		</div>
-
-<?php
-	echo
-	'<style>' . PHP_EOL .
-	$style .
-	'</style>' . PHP_EOL;
-?>
 
 		<div class="scientificPublicationManagement">
 			<h2>Science watch management</h2>
@@ -364,7 +358,7 @@
 					</div>';
 				}
 				?>
-				<input alt="Extend" title="Extend" class="extend" type="submit" id="extendScience" name="extendScience" value=">>" />
+				<input title="Extend" class="extend" type="submit" id="extendScience" name="extendScience" value=">>" />
 			</div>
 			</div>
 			<?php echo $ERROR_SCIENCEQUERY; ?>
@@ -887,5 +881,3 @@
 		}
 		?>
 	</div>
-
-</div>

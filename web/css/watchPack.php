@@ -223,7 +223,8 @@ if ($_SESSION['type'] == 'create')
 		outline-style: none
 	}
 
-	select#sourceKeyword
+	select#sourceKeyword,
+	select#sourceType
 	{
 		flex-grow: 1;
 		flex-shrink: 1;
@@ -234,7 +235,8 @@ if ($_SESSION['type'] == 'create')
 		font-size: 14px;
 	}
 
-	select#sourceKeyword option
+	select#sourceKeyword option,
+	select#sourceType option
 	{
 		background-color: rgba(131, 49, 5, 0.8);
 	}
@@ -1641,7 +1643,13 @@ if ($_SESSION['type'] == 'create')
 		margin: 5px 10px 5px 0;
 	}
 
+	/*Additional style*/
 <?php
+	if (!empty($_SESSION['additionalStyle']))
+	{
+		echo $_SESSION['additionalStyle'];
+		$_SESSION['additionalStyle'] = '';
+	}
 }
 else
 {
