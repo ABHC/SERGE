@@ -1697,6 +1697,13 @@ else
 		width: 100%;
 	}
 
+	/*cellspacing="0" border="0"*/
+	table
+	{
+		border-spacing: 0;
+		border: none;
+	}
+
 	.selectType
 	{
 		position: absolute;
