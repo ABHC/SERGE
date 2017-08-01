@@ -100,7 +100,8 @@ select option
 	outline-style: none
 }
 
-select#sourceKeyword
+select#sourceKeyword,
+select#sourceType
 {
 	flex-grow: 1;
 	flex-shrink: 1;
@@ -111,7 +112,8 @@ select#sourceKeyword
 	font-size: 14px;
 }
 
-select#sourceKeyword option
+select#sourceKeyword option,
+select#sourceType option
 {
 	background-color: rgba(131, 49, 5, 0.8);
 }
@@ -275,8 +277,8 @@ h3
 	display: none;
 }
 
-label.prev,
-label.next
+div.prev,
+div.next
 {
 	display: flex;
 	justify-content: center;
@@ -293,8 +295,8 @@ label.next
 	transition: .7s;
 }
 
-label.prev .arrow,
-label.next .arrow
+div.prev label.arrow,
+div.next label.arrow
 {
 	display: flex;
 	flex-direction: row;
@@ -309,15 +311,15 @@ label.next .arrow
 	user-select: none;
 }
 
-label.prev:hover,
-label.next:hover
+div.prev:hover,
+div.next:hover
 {
 	opacity: 1;
 	transition: .5s;
 }
 
-label.prev::selection,
-label.next::selection
+div.prev::selection,
+div.next::selection
 {
 	background-color: rgba(0, 0, 0, 0);
 }
@@ -950,6 +952,7 @@ input:checked + .slider:before
 	flex-direction: row;
 	justify-content: flex-start;
 	align-items: center;
+	margin-top: 15px;
 }
 
 .deleteLogo
@@ -4239,6 +4242,13 @@ p.center-date
 }
 
 /**/
+
 <?php
+if (!empty($_SESSION['additionalStyle']))
+{
+	echo $_SESSION['additionalStyle'];
+	$_SESSION['additionalStyle'] = '';
+}
+
 include_once('footer.php');
 ?>

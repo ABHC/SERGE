@@ -12,7 +12,7 @@
 			<div class="graphSubContainer graphSubContainer00">
 				<input type="radio" name="radio-btn00" id="graph-0_00" checked />
 				<div id="graph_00_00" class="graph">
-					<label for="graph-2_00" class="prev"><div class="arrow">&#10096;</div></label>
+					<div class="prev"><label for="graph-2_00" class="arrow">&#10096;</label></div>
 					<div class="containerChart">
 						<div class="titleChart">Results by keyword</div>
 						<div class="bar-chart">
@@ -35,11 +35,11 @@
 							</ul>
 						</div>
 					</div>
-					<label for="graph-1_00" class="next"><div class="arrow">&#10097;</div></label>
+					<div class="next"><label for="graph-1_00" class="arrow">&#10097;</label></div>
 				</div>
 				<input type="radio" name="radio-btn00" id="graph-1_00" />
 				<div id="graph_00_01" class="graph">
-					<label for="graph-0_00" class="prev"><div class="arrow">&#10096;</div></label>
+					<div class="prev"><label for="graph-0_00" class="arrow">&#10096;</label></div>
 					<div class="containerChart">
 						<div class="titleChart">Distribution of results by source</div>
 						<div class="torChart">
@@ -60,11 +60,11 @@
 							<div class="center"></div>
 						</div>
 					</div>
-					<label for="graph-2_00" class="next"><div class="arrow">&#10097;</div></label>
+					<div class="next"><label for="graph-2_00" class="arrow">&#10097;</label></div>
 				</div>
 				<input type="radio" name="radio-btn00" id="graph-2_00" />
 				<div id="graph_00_02" class="graph">
-					<label for="graph-1_00" class="prev"><div class="arrow">&#10096;</div></label>
+					<div class="prev"><label for="graph-1_00" class="arrow">&#10096;</label></div>
 					<div class="containerChart">
 						<div class="titleChart">Results by query</div>
 						<div class="bar-chart">
@@ -87,13 +87,13 @@
 							</ul>
 						</div>
 					</div>
-					<label for="graph-0_00" class="next"><div class="arrow">&#10097;</div></label>
+					<div class="next"><label for="graph-0_00" class="arrow">&#10097;</label></div>
 				</div>
 			</div>
 			<div class="graphSubContainer graphSubContainer01">
 				<input type="radio" name="radio-btn01" id="graph-0_01" checked />
 				<div id="graph_01_00" class="graph">
-					<label for="graph-2_01" class="prev"><div class="arrow">&#10096;</div></label>
+					<div class="prev"><label for="graph-2_01" class="arrow">&#10096;</label></div>
 					<div class="containerChart">
 						<div class="titleChart">Results by query</div>
 						<div class="bar-chart">
@@ -116,11 +116,11 @@
 							</ul>
 						</div>
 					</div>
-					<label for="graph-1_01" class="next"><div class="arrow">&#10097;</div></label>
+					<div class="next"><label for="graph-1_01" class="arrow">&#10097;</label></div>
 				</div>
 				<input type="radio" name="radio-btn01" id="graph-1_01" />
 				<div id="graph_01_01" class="graph">
-					<label for="graph-0_01" class="prev"><div class="arrow">&#10096;</div></label>
+					<div class="prev"><label for="graph-0_01" class="arrow">&#10096;</label></div>
 					<div class="containerChart">
 						<div class="titleChart">Number of results per query</div>
 						<div class="backChart">
@@ -191,11 +191,11 @@
 							</div>
 						</div>
 					</div>
-					<label for="graph-2_01" class="next"><div class="arrow">&#10097;</div></label>
+					<div class="next"><label for="graph-2_01" class="arrow">&#10097;</label></div>
 				</div>
 				<input type="radio" name="radio-btn01" id="graph-2_01" />
 				<div id="graph_01_02" class="graph">
-					<label for="graph-1_01" class="prev"><div class="arrow">&#10096;</div></label>
+					<div class="prev"><label for="graph-1_01" class="arrow">&#10096;</label></div>
 					<div class="containerChart">
 						<div class="titleChart">Results read per query</div>
 						<div class="torChart">
@@ -216,13 +216,13 @@
 							<div class="center"></div>
 						</div>
 					</div>
-					<label for="graph-0_01" class="next"><div class="arrow">&#10097;</div></label>
+					<div class="next"><label for="graph-0_01" class="arrow">&#10097;</label></div>
 				</div>
 			</div>
 			<div class="graphSubContainer graphSubContainer02">
 				<input type="radio" name="radio-btn02" id="graph-0_02" checked />
 				<div id="graph_02_00" class="graph">
-					<label for="graph-2_02" class="prev"><div class="arrow">&#10096;</div></label>
+					<div class="prev"><label for="graph-2_02" class="arrow">&#10096;</label></div>
 					<div class="containerChart">
 						<div class="titleChart">Results by query</div>
 						<div class="bar-chart">
@@ -245,11 +245,11 @@
 							</ul>
 						</div>
 					</div>
-					<label for="graph-1_02" class="next"><div class="arrow">&#10097;</div></label>
+					<div class="next"><label for="graph-1_02" class="arrow">&#10097;</label></div>
 				</div>
 				<input type="radio" name="radio-btn02" id="graph-1_02" />
 				<div id="graph_02_01" class="graph">
-					<label for="graph-0_02" class="prev"><div class="arrow">&#10096;</div></label>
+					<div class="prev"><label for="graph-0_02" class="arrow">&#10096;</label></div>
 					<div class="containerChart">
 						<div class="titleChart">Number of results per query</div>
 						<div class="backChart">
@@ -320,11 +320,11 @@
 							</div>
 						</div>
 					</div>
-					<label for="graph-2_02" class="next"><div class="arrow">&#10097;</div></label>
+					<div class="next"><label for="graph-2_02" class="arrow">&#10097;</label></div>
 				</div>
 				<input type="radio" name="radio-btn02" id="graph-2_02" />
 				<div id="graph_02_02" class="graph">
-					<label for="graph-1_02" class="prev"><div class="arrow">&#10096;</div></label>
+					<div class="prev"><label for="graph-1_02" class="arrow">&#10096;</label></div>
 					<div class="containerChart">
 						<div class="titleChart">Results read per query</div>
 						<div class="torChart">
@@ -345,7 +345,7 @@
 							<div class="center"></div>
 						</div>
 					</div>
-					<label for="graph-0_02" class="next"><div class="arrow">&#10097;</div></label>
+					<div class="next"><label for="graph-0_02" class="arrow">&#10097;</label></div>
 				</div>
 			</div>
 		</div>
@@ -354,10 +354,10 @@
 			<h2>Communication of results</h2>
 			<div class="divRow">
 				<div>
-					<p>
+					<div>
 						<h3>Your email</h3>
 						<input type="email" name="email" id="email" value="<?php echo $userSettings['email']; ?>"/>
-					</p>
+					</div>
 					<h3 >Result page</h3>
 					<p>
 						Background <select size="<?php echo count($backgroundList); ?>" id="selectBackgroundPreview" class="selectBackground" name="backgroundResult">
@@ -381,7 +381,7 @@
 						<?php
 						foreach ($backgroundList as $backgroundName)
 						{
-							echo '<img src=../images/background/' . $backgroundName['filename'] . ' style="display: none;" />';
+							echo '<img alt="' . $backgroundName['name'] . '" src=../images/background/' . $backgroundName['filename'] . ' style="display: none;" />';
 						}
 						?>
 					</p>
@@ -454,17 +454,18 @@
 				<div>
 					<h3>Privacy</h3>
 					<div class="align">
-						<label class="switch">
-							<input type="checkbox" name="recordRead" value="active" <?php echo $recordRead; ?>>
-							<div class="slider"></div>
-						</label>
+						<div class="switch">
+							<label for="recordRead">
+								<input type="checkbox" id="recordRead" name="recordRead" value="active" <?php echo $recordRead; ?>>
+								<div class="slider"></div>
+							</label>
+						</div>
 						Record when a link is clicked
 					</div>
 					<div>
-						<h3></h3>
 						<div class="deleteContainer">
 							<div class="deleteLogo"></div>
-							<input alt="Delete" title="Delete" class="deleteButton" type="submit" name="buttonDeleteHistory" value="deleteHistory" />
+							<input title="Delete" class="deleteButton" type="submit" name="buttonDeleteHistory" value="deleteHistory" />
 							the last&nbsp;
 							<input class="number alpha" name="deleteHistoryValue" type="number" min="1" value="1"/>
 							&nbsp;
@@ -517,8 +518,8 @@
 				<input type="text" class="keywordInput" name="newKeyword" id="keyword" placeholder="Keyword,next keyword, ..." />
 			</div>
 			<div class="newsInput">
-				<input alt="Add new source" title="Add" class="submit" type="submit" value="" />
-				<select name="sourceType" id="sourceKeyword">
+				<input title="Add new source" class="submit" type="submit" value="" />
+				<select name="sourceType" id="sourceType">
 					<option value="inputSource">Add my own source</option>
 					<option value="sourceGeneralEN">General news source pack [English]</option>
 					<option value="sourceTechnologyEN">Technology source pack [English]</option>
@@ -669,16 +670,10 @@
 					}
 					$cptSource++;
 				}
+				$_SESSION['additionalStyle'] = $style;
 				?>
 			</div>
 		</div>
-
-<?php
-	echo
-	'<style>' . PHP_EOL .
-	$style .
-	'</style>' . PHP_EOL;
-?>
 
 		<div class="scientificPublicationManagement">
 			<h2>Science watch management</h2>
@@ -767,7 +762,7 @@
 					</div>';
 				}
 				?>
-				<input alt="Extend" title="Extend" class="extend" type="submit" id="extendScience" name="extendScience" value=">>" />
+				<input title="Extend" class="extend" type="submit" id="extendScience" name="extendScience" value=">>" />
 			</div>
 			</div>
 			<?php echo $ERROR_SCIENCEQUERY; ?>
