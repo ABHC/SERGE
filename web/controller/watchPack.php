@@ -1474,7 +1474,69 @@ else
 	}
 
 	# TODO Faire une fonction qui va relir toute les sources et les mots clefs
+	if (!empty($_GET['packId']))
+	{
+		preg_match("/[0-9]+/", $_GET['packId'], $pack_idInUse);
 
+		$req = $bdd->prepare('SELECT name, description, category, language FROM watch_pack_serge WHERE author = :pseudo AND id = :pack_idInUse');
+		$req->execute(array(
+			'pseudo' => $_SESSION['pseudo'],
+			'pack_idInUse' => $pack_idInUse[0]));
+			$packDetails = $req->fetch();
+			$req->closeCursor();
+
+		if (empty($packDetails))
+		{
+			header('Location: watchPack?type=create');
+		}
+		$reqReadPackSources = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE pack_id = :pack_id AND query = "[!source!]"');
+		$reqReadPackSources->execute(array(
+			'pack_id' => $pack_idInUse[0]));
+			$reqReadPackSourcestmp = $reqReadPackSources->fetchAll();
+			$reqReadPackSources->closeCursor();
+
+			$packSource = array();
+			foreach ($reqReadPackSourcestmp as $readPackSources)
+			{
+				if (preg_match("/^[,!0-9,]+$/", $readPackSources['source']))
+				{
+					$readPackSources['source'] = preg_replace("/!/", "", $readPackSources['source']);
+					$packSource = array_merge(preg_split('/,/', $readPackSources['source'], -1, PREG_SPLIT_NO_EMPTY), $packSource);
+				}
+			}
+
+			$sourcesIds = implode(',', $packSource);
+
+			$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE id IN ($sourcesIds) ORDER BY name");
+			$req->execute(array(
+				'user' => $userId,
+				'userDesactivated' => $userIdDesactivated));
+				$listAllSources = $req->fetchAll();
+				$req->closeCursor();
+
+			$reqReadPackSources = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE pack_id = :pack_id AND query <> "[!source!]"');
+			$reqReadPackSources->execute(array(
+				'pack_id' => $pack_idInUse[0]));
+				$reqReadPackSourcestmp = $reqReadPackSources->fetchAll();
+				$reqReadPackSources->closeCursor();
+
+				$packSourceUsed = array("0");
+				foreach ($reqReadPackSourcestmp as $readPackSources)
+				{
+					if (preg_match("/^[,!0-9,]+$/", $readPackSources['source']))
+					{
+						$readPackSources['source'] = preg_replace("/!/", "", $readPackSources['source']);
+						$packSourceUsed = array_merge(preg_split('/,/', $readPackSources['source'], -1, PREG_SPLIT_NO_EMPTY), $packSourceUsed);
+					}
+				}
+
+			$sourcesIdsUsed = implode(',', $packSourceUsed);
+
+			$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE id IN ($sourcesIdsUsed) ORDER BY name");
+			$req->execute(array());
+				$readPackSources = $req->fetchAll();
+				$req->closeCursor();
+	}
 }
 include_once('view/nav/nav.php');
 
