@@ -18,8 +18,8 @@
 					<a href="">Privacy</a>
 				</div>
 				<div class="subLinks">
-					<a href="">Lien de test</a>
-					<a href="">Lien de test</a>
+					<a href="index#signup">Sign up</a>
+					<a href="connection">Sign in</a>
 					<a href="">Support</a>
 				</div>
 				<div class="subLinks">
@@ -39,7 +39,7 @@
 
 	<div class="footerContainer2">
 		<div class="legal">
-			Test de footer footer legal
+			Use Serge as a Free Software GPLv3 2017, by Cairn Devices SAS, company with share capital of 10 005 € based in France SIRET : 82212518300019
 		</div>
 	</div>
 
