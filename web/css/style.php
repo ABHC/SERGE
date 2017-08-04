@@ -18,3 +18,9 @@ body
 {
 	outline: none;
 }
+
+.align
+{
+	display: flex;
+	flex-direction: row;
+}

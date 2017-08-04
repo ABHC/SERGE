@@ -59,7 +59,6 @@ input
 	padding: 4px;
 	background-color: rgba(255, 255, 255, 0.2);
 	color: #fff;
-
 }
 
 .connection
@@ -98,7 +97,7 @@ a.text_connection
 .submit_connection
 {
 	width: 100%;
-	background-color: rgb(0,85,127);
+	background-color: rgba(84,26,102, 0.55);
 	cursor: pointer;
 	color: rgb(230,230,230);
 	margin-top: 10px;
@@ -106,7 +105,7 @@ a.text_connection
 
 .submit_connection:hover
 {
-	background-color: rgb(6, 96, 140);
+	background-color: rgba(91, 37, 108, 0.75);
 	color: rgb(255,255,255);
 }
 

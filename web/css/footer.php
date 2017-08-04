@@ -29,7 +29,7 @@ footer
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background-color: rgba(0,99,149, 0.55);
+	background-color: rgba(84,26,102, 0.55);
 	color: grey;
 	font-size: 12px;
 	min-height: 60px;
@@ -110,7 +110,7 @@ footer
 	padding: 3px;
 	border-radius: 0 3px 3px 0;
 	border: 1px solid rgba(255,255,255, 0.1);
-	background-color: rgba(0,99,149, 0.55);
+	background-color: rgba(84,26,102, 0.55);
 }
 
 .copyright a
@@ -133,7 +133,7 @@ footer
 		padding: 3px;
 		border-radius: 0 3px 3px 0;
 		border: 1px solid rgba(255,255,255, 0.1);
-		background-color: rgba(0,99,149, 0.55);
+		background-color: rgba(84,26,102, 0.55);
 	}
 
 	.copyright a
