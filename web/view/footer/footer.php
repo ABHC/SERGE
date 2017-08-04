@@ -13,19 +13,19 @@
 
 			<div class="subLinksContainer">
 				<div class="subLinks">
-					<a href="">Lien de test</a>
-					<a href="">Lien de test</a>
-					<a href="">Lien de test</a>
+					<a href="">Cairn Devices</a>
+					<a href="">Legal</a>
+					<a href="">Privacy</a>
 				</div>
 				<div class="subLinks">
 					<a href="">Lien de test</a>
 					<a href="">Lien de test</a>
-					<a href="">Lien de test</a>
+					<a href="">Support</a>
 				</div>
 				<div class="subLinks">
 					<a href="logout">Logout</a>
-					<a href="">Lien de test</a>
-					<a href="">Lien de test</a>
+					<a href="">Contact us</a>
+					<a href="">Press</a>
 				</div>
 			</div>
 		</div>
