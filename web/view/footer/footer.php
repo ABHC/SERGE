@@ -23,7 +23,7 @@
 					<a href="">Lien de test</a>
 				</div>
 				<div class="subLinks">
-					<a href="">Lien de test</a>
+					<a href="logout">Logout</a>
 					<a href="">Lien de test</a>
 					<a href="">Lien de test</a>
 				</div>
