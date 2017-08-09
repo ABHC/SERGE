@@ -109,6 +109,14 @@ a.text_connection
 	color: rgb(255,255,255);
 }
 
+.cookiesAlert
+{
+	position: absolute;
+	float: right;
+	width: 20%;
+	background-color: rgba(84,26,102, 0.55);
+}
+
 /**/
 <?php
 include_once('footer.php');

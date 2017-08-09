@@ -112,7 +112,7 @@ h3
 	text-align: center;
 	background-color: rgba(84,26,102, 0.55);
 	border: 1px solid rgba(205, 205, 205, 0.05);
-	padding: 3px;
+	padding: 5px;
 	margin-left: 15px;
 	margin-right: 15px;
 }
@@ -126,7 +126,7 @@ a.buttonTry
 {
 	text-decoration: none;
 	color: rgb(247,247,247);
-	font-size: 1.88vw;
+	font-size: 22px;
 }
 
 .functionality
