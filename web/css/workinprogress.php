@@ -43,7 +43,7 @@ include_once('nav.php');
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	min-height: 100vh;
+	min-height: calc(100vh - 75px);
 	color: #fff;
 	text-shadow: 0 0 3px rgb(0, 0, 0.8);
 	text-transform: uppercase;
@@ -85,7 +85,7 @@ input
 	border: 1px solid rgba(255,255,255, 0.15);
 	border-radius: 50%;
 	font-weight: bold;
-	font-size: 18px;
+	font-size: 16px;
 }
 
 <?php

@@ -6,7 +6,7 @@ CREATE TABLE `users_table_serge` (
 	`users` text COLLATE utf8mb4_bin NOT NULL,
 	`email` text COLLATE utf8mb4_bin NOT NULL,
 	`password` text COLLATE utf8mb4_bin NOT NULL,
-	`signup_date` int(11) DEFAULT NOT NULL,
+	`signup_date` int(11) NOT NULL,
 	`last_mail` int(11) DEFAULT NULL,
 	`send_condition` text COLLATE utf8mb4_bin NOT NULL,
 	`frequency` int(11) DEFAULT NULL,
