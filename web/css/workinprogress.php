@@ -78,11 +78,13 @@ input
 {
 	width: 35px;
 	height: 35px;
+	border: 1px solid rgba(255,255,255, 0.15);
+	background: url('../images/>.png') center no-repeat;
+	background-size: contain;
 	background-color: rgba(84,26,102, 0.55);
 	cursor: pointer;
 	color: rgb(230,230,230);
 	margin-top: 10px;
-	border: 1px solid rgba(255,255,255, 0.15);
 	border-radius: 50%;
 	font-weight: bold;
 	font-size: 16px;
