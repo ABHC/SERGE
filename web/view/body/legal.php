@@ -221,10 +221,10 @@
 		Cairn Devices s'engage à considérer comme strictement confidentiel, et s’interdit de divulguer toute information, document, ou donnée échangés pour la réalisation ou durant l’exécution du présent contrat, y compris, et sans limitation, toutes données relatives au personnel du client et ses actions et opérations et de n’utiliser ces informations confidentielles que dans le cadre de la fourniture des services. Pour l’application de la présente clause, Cairn Devices répond de ses salariés comme de lui-même.<br>
 		<br>
 		12.2. Exceptions<br>
-		Les engagements de confidentialité définis ci-dessus ne s’appliquent pas aux informations dont la partie récipiendaire peut démontrer que :<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;- la partie récipiendaire en avait légitimement connaissance sans être obligée de les garder confidentielles, avant que l’autre partie ne les lui communique ou ne lui y donne accès<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;- elles se trouvent dans le domaine public autrement que du fait d’un manquement de la partie récipiendaire à l’obligation de confidentialité<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;- elles ont été communiquées à la partie récipiendaire par un tiers de manière légitime et avec autorisation de les divulguer<br>
+		Les engagements de confidentialité définis ci-dessus ne s’appliquent pas aux informations dont la partie peut démontrer que :<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;- la partie en avait légitimement connaissance sans être obligée de les garder confidentielles, avant que l’autre partie ne les lui communique ou ne lui y donne accès<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;- elles se trouvent dans le domaine public autrement que du fait d’un manquement de la partie à l’obligation de confidentialité<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;- elles ont été communiquées à la partie par un tiers de manière légitime et avec autorisation de les divulguer<br>
 		&nbsp;&nbsp;&nbsp;&nbsp;- le consentement écrit préalable du client a été recueilli<br>
 		&nbsp;&nbsp;&nbsp;&nbsp;- la divulgation desdites informations a été autorisée par l’autre partie dans les conditions prévues au contrat<br>
 		<br>
