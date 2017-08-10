@@ -1,6 +1,7 @@
 <?php
 
-//include_once('model/get_text.php');
+include_once('model/get_text.php');
+
 #Déclaration des varibales
 $error_pass_length = "";
 $error_bad_email = "";

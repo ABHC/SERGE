@@ -3,9 +3,8 @@
 </div>
 <div class="backgroundImage">
 </div>
-<h2>Stay always update with Serge</h2>
-<h3>Improving performance through news monitoring can often takes time.<br>
-	By searching the news, patents and scientific publications, Serge allows you to stay update effectively and gives you time to do other thing.</h3>
+<h2><?php get_t('main_title_index', $bdd); ?></h2>
+<h3><?php get_t('sub_title_index', $bdd); ?></h3>
 <div class="buttonArea">
 	<span class="line"></span>
 	<a href="#signup" class="buttonTry">Try for free</a>

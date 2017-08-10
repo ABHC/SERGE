@@ -24,6 +24,7 @@ if (isset($_POST['conn_pseudo']) && isset($_POST['conn_password']))
 		session_start();
 		$_SESSION['pseudo']            = $pseudo;
 		$_SESSION['id']                = $result['id'];
+		$_SESSION['lang']              = $result['language'];
 		$_SESSION['lastSourceUse']     = '';
 		$redirect                      = $_SESSION['redirectFrom'];
 
