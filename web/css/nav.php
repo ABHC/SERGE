@@ -26,7 +26,7 @@
 	align-items: center;
 	padding-right: 10px;
 	flex: 1;
-	background-color: rgba(0, 0, 0, 0.5);
+	background-color: rgba(0, 0, 0, 0.6);
 	border-bottom: 1px solid rgba(255,255,255,0.25);
 	text-decoration: none;
 	min-width: 150px;
@@ -94,7 +94,7 @@
 	justify-content: flex-start;
 	align-items: center;
 	flex: 1;
-	background-color: rgba(0, 0, 0, 0.5);
+	background-color: rgba(0, 0, 0, 0.6);
 	border-bottom: 1px solid rgba(255,255,255,0.25);
 	text-decoration: none;
 }

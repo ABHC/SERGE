@@ -161,6 +161,20 @@ h3
 	background-color: rgba(0,99,149, 0.55);
 }
 
+.helpModalWindow
+{
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	font-size: 0;
+	border: 1px solid rgba(255,255,255, 0.15);
+	background: url('../images/help.png') center no-repeat;
+	background-size: contain;
+	background-color: rgb(6, 85, 124);
+	cursor: pointer;
+	margin-right: 5px;
+}
+
 .newsInput
 {
 	display: flex;
