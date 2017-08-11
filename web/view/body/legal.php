@@ -21,6 +21,21 @@
 		In the datacenter of Strasbourg, France<br>
 	</div>
 
+	<div id="cookies" class="legalText">
+		<b>Cookie policy </b>:<br><br>
+		We use cookies to allow user to  stay connect on Serge, as well as enhance the user experience. These cookies are kept on your computer for the duration of your user session. We also use cookies to better understand how you interact with ours websites and services and to improve these same websites and services. The cokkies present on Serge are exempted from prior authorization (<a href="https://www.cnil.fr/fr/solutions-pour-la-mesure-daudience">More informations</a>)<br>
+		Session cookie on Serge website :<br>
+		PHPSESSID : PHP session cookie<br><br>
+
+		Other cookies :<br>
+		ÉCRIRE NOM DU/DES COOKIES : Piwik cookies<br>
+	</div>
+
+	<div class="legalText">
+	<b>Licence GPLv3</b> :<br><br>
+		See on fsf website : <a href="https://www.gnu.org/licenses/gpl-3.0.fr.html">lien</a>
+	</div>
+
 	<div class="legalText">
 		<b>CONDITIONS GÉNÉRALES DE SERVICE</b><br>
 		Version en date du 10 août 2017<br>
@@ -300,10 +315,6 @@
 		Dans le datacenter de Strasbourg, France<br>
 	</div>
 
-	<div class="legalText">
-		<b>CGS</b> :<br><br>
-	</div>
-
 	<div id="cookies" class="legalText">
 		<b>Politique de gestion des cookies </b>:<br><br>
 		Nous utilisons des cookies persistant afin de permettre à l'utilisateur de seconnecter sur Serge, ainsi que d'améliorer l'expérience utilisateur. Ces cookies sont conservés sur votre ordinateur le temps d'existance de votre session utilisateur sur Serge. Nous utilisons aussi des cookies afin de mieux comprendre comment vous interagissez avec nos sites et nos services et afin d'améliorer ces mêmes sites et services. Les cokkies présent sur Serge sont exempté de demande d'autorisation préalable, par la CNIL étant donné leurs natures (<a href="https://www.cnil.fr/fr/solutions-pour-la-mesure-daudience">plus d'information</a>)<br>
@@ -316,6 +327,6 @@
 
 	<div class="legalText">
 	<b>Licence GPLv3</b> :<br><br>
-		Voir sur le site de la fsf : <a href="">lien</a>
+		Voir sur le site de la fsf : <a href="https://www.gnu.org/licenses/gpl-3.0.fr.html">lien</a>
 	</div>
 </div>
