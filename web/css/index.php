@@ -135,8 +135,7 @@ a.buttonTry
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	width: 90%;
-	margin-left: 5%;
+	width: 100%;
 	margin-top: 50px;
 }
 
@@ -146,17 +145,18 @@ a.buttonTry
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
-	width: 100%;
-	height: 120px;
+	width: 90%;
+	height: 140px;
 	margin-bottom: 8vw;
 }
 
-.functionalityLine span
+.functionalityLine > div
 {
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-start;
 	width: 45%;
+	min-width: 400px;
 	margin-right: 5%;
 	margin-left: 5%;
 }
@@ -164,7 +164,7 @@ a.buttonTry
 .iconRSS
 {
 	width: 140px;
-	height: 120px;
+	height: 140px;
 	background: url('../images/iconFuncRss.png') no-repeat;
 	background-size: contain;
 	background-position: left bottom;
@@ -173,7 +173,7 @@ a.buttonTry
 .iconPatent
 {
 	width: 140px;
-	height: 120px;
+	height: 140px;
 	background: url('../images/iconFuncPatent.png') no-repeat;
 	background-size: contain;
 	background-position: left bottom;
@@ -182,7 +182,7 @@ a.buttonTry
 .iconScience
 {
 	width: 140px;
-	height: 120px;
+	height: 140px;
 	background: url('../images/iconFuncScience.png') no-repeat;
 	background-size: contain;
 	background-position: left bottom;
@@ -191,7 +191,7 @@ a.buttonTry
 .iconMail
 {
 	width: 140px;
-	height: 120px;
+	height: 140px;
 	background: url('../images/iconFuncMail.png') no-repeat;
 	background-size: contain;
 	background-position: left bottom;
@@ -200,7 +200,7 @@ a.buttonTry
 .iconOption
 {
 	width: 140px;
-	height: 120px;
+	height: 140px;
 	background: url('../images/iconFuncOption.png') no-repeat;
 	background-size: contain;
 	background-position: left bottom;
@@ -209,7 +209,7 @@ a.buttonTry
 .iconHistory
 {
 	width: 140px;
-	height: 120px;
+	height: 140px;
 	background: url('../images/iconFuncHistory.png') no-repeat;
 	background-size: contain;
 	background-position: left bottom;
@@ -218,7 +218,7 @@ a.buttonTry
 .iconSMS
 {
 	width: 140px;
-	height: 120px;
+	height: 140px;
 	background: url('../images/iconFuncSMS.png') no-repeat;
 	background-size: contain;
 	background-position: left bottom;
@@ -227,7 +227,7 @@ a.buttonTry
 .iconTwitter
 {
 	width: 140px;
-	height: 120px;
+	height: 140px;
 	background: url('../images/iconFuncTwitter.png') no-repeat;
 	background-size: contain;
 	background-position: left bottom;
@@ -236,7 +236,7 @@ a.buttonTry
 .iconWiki
 {
 	width: 140px;
-	height: 120px;
+	height: 140px;
 	background: url('../images/iconFuncWiki.png') no-repeat;
 	background-size: contain;
 	background-position: left bottom;
@@ -245,7 +245,7 @@ a.buttonTry
 .iconStats
 {
 	width: 140px;
-	height: 120px;
+	height: 140px;
 	background: url('../images/iconFuncStats.png') no-repeat;
 	background-size: contain;
 	background-position: left bottom;
@@ -258,10 +258,20 @@ a.buttonTry
 	justify-content: flex-end;
 	align-items: flex-start;
 	width: 100%;
-	height: 120px;
+	height: 140px;
 	overflow: hidden;
 	font-size: 15px;
 	color: rgb(175, 175, 175);
+}
+
+.functionalityText div
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	height: 120px;
+	width: 100%;
 }
 
 h5
