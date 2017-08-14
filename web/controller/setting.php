@@ -1,6 +1,7 @@
 <?php
 
 include_once('controller/accessLimitedToSignInPeople.php');
+include_once('model/update.php');
 
 // Define variables
 $actualLetter = '';
@@ -974,12 +975,16 @@ if (!empty($_POST['disableQueryPatent']))
 		$queryOwnerNEW = preg_replace("/,$userId,/", ",!$userId,", $result['owners']);
 
 		$active = $result['active'] - 1;
-		$req = $bdd->prepare('UPDATE queries_wipo_serge SET owners = :owners, active = :active WHERE id = :id');
+		/*$req = $bdd->prepare('UPDATE queries_wipo_serge SET owners = :owners, active = :active WHERE id = :id');
 		$req->execute(array(
 			'owners' => $queryOwnerNEW,
 			'active' => $active,
 			'id' => $idQueryToDisable[0]));
-			$req->closeCursor();
+			$req->closeCursor();*/
+			$updateCol = array(array("owners", $queryOwnerNEW),
+												array("active", $active));
+			$checkCol = array(array("id", "=", $idQueryToDisable[0], ""));
+			$execution = update('queries_wipo_serge', $updateCol, $checkCol, '', $bdd);
 	}
 }
 
@@ -988,7 +993,7 @@ if (!empty($_POST['activateQueryPatent']))
 {
 	preg_match("/[0-9]+/", $_POST['activateQueryPatent'], $idQueryToActivate);
 	// Read owner patent query
-	$req = $bdd->prepare('SELECT owners, active FROM queries_wipo_serge WHERE id =  :queryId AND owners LIKE :userId');
+	$req = $bdd->prepare('SELECT owners, active FROM queries_wipo_serge WHERE id = :queryId AND owners LIKE :userId');
 	$req->execute(array(
 		'queryId' => $idQueryToActivate[0],
 		'userId' => '%,!' . $_SESSION['id'] . ',%'));
