@@ -131,7 +131,7 @@
 				</p>
 
 				<p class="title_form_inscription" ><?php get_t('input3_signup_index', $bdd); ?><br>
-					<input class="inscription_field" type="password" name="reg_repassword" id="reg_repassword" placeholder=""/>
+					<input class="inscription_field" type="password" autocomplete="off" name="reg_repassword" id="reg_repassword" placeholder=""/>
 				</p>
 
 				<p class="title_form_inscription" ><?php get_t('input4_signup_index', $bdd); ?><br>
@@ -140,7 +140,7 @@
 
 				<div class="title_form_inscription" ><?php get_t('input5_signup_index', $bdd); ?>
 					<div class="align">
-						<input class="captcha_field" type="text" name="captcha" id="captcha" placeholder="" />
+						<input class="captcha_field" type="text" autocomplete="off" name="captcha" id="captcha" placeholder="" />
 						<div class="captcha" >
 							<div class="captcha1"></div>
 							<div class="captcha2"></div>

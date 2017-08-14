@@ -155,10 +155,10 @@ a.buttonTry
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-start;
-	width: 45%;
+	width: 47%;
 	min-width: 400px;
-	margin-right: 5%;
-	margin-left: 5%;
+	margin-right: 4%;
+	margin-left: 4%;
 }
 
 .iconRSS
@@ -261,7 +261,7 @@ a.buttonTry
 	height: 140px;
 	overflow: hidden;
 	font-size: 15px;
-	color: rgb(175, 175, 175);
+	color: rgb(200, 200, 200);
 }
 
 .functionalityText div

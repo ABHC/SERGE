@@ -1,7 +1,7 @@
 <?php
 
 include_once('model/get_text.php');
-include_once('model/check.php');
+include_once('model/read.php');
 
 # Initialization of variables
 $result       = '';
@@ -32,10 +32,10 @@ if(isset($_POST['reg_pseudo']) && isset($_POST['reg_mail']) && isset($_POST['reg
 			{
 				# Check
 				$checkCol = array(array("users", "=", $pseudo, ""));
-				$result_pseudo = check("users_table_serge", $checkCol, $bdd);
+				$result_pseudo = read("users_table_serge", '', $checkCol, '',$bdd);
 
 				$checkCol = array(array("email", "=", $email, ""));
-				$result_email = check("users_table_serge", $checkCol, $bdd);
+				$result_email = read("users_table_serge", '', $checkCol, '',$bdd);
 				if(filter_var($email, FILTER_VALIDATE_EMAIL) == FALSE)
 				{
 					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Invalid email <br>';
