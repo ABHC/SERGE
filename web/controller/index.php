@@ -31,7 +31,6 @@ if(isset($_POST['reg_pseudo']) && isset($_POST['reg_mail']) && isset($_POST['reg
 			else
 			{
 				# Check
-				#include_once('model/verif_mail_pseudo.php');
 				$checkCol = array(array("users", "=", $pseudo, ""));
 				$result_pseudo = check("users_table_serge", $checkCol, $bdd);
 

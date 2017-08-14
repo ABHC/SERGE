@@ -150,12 +150,7 @@
 					</div>
 				</div>
 
-				<p class="error_inscription" ><?php echo $error_pass_length;
-				echo $error_bad_email;
-				echo $error_existing_pseudo;
-				echo $error_existing_email;
-				echo $error_pass_doesnt_match;
-				echo $error_bad_captcha; ?></p>
+				<p class="error_inscription" ><?php echo $errorMessage; ?></p>
 				<input class="submit_inscription" type="submit" value="<?php get_t('submit_signup_index', $bdd); ?>" />
 			</form>
 		</div>

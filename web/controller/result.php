@@ -1,5 +1,6 @@
 <?php
 include_once('controller/accessLimitedToSignInPeople.php');
+include_once('model/select.php');
 
 //include_once('model/get_text.php');
 
@@ -128,8 +129,8 @@ if (isset($_POST['deleteLink']))
 
 # Record when a link is click
 include_once('model/readUserSettings.php');
-
-$recordRead = readUserSettings('id, password, record_read', $bdd);
+$checkCol = array(array("users", "=", $_SESSION['pseudo'], ""));
+$recordRead = select('users_table_serge', 'id, password, record_read', $checkCol, '', $bdd);
 
 if ($recordRead['record_read'] == 1)
 {
