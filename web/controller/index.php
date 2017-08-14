@@ -1,19 +1,14 @@
 <?php
 
 include_once('model/get_text.php');
+include_once('model/check.php');
 
-#Déclaration des varibales
-$error_pass_length = "";
-$error_bad_email = "";
-$error_existing_pseudo = "";
-$error_existing_email = "";
-$error_pass_doesnt_match = "";
-$error_bad_captcha = "";
+# Initialization of variables
+$result       = '';
+$wiki         = '';
+$setting      = '';
+$errorMessage = '';
 
-if(!isset($_SESSION['captcha']))
-{
-	$_SESSION['captcha']= "";
-}
 if(isset($_POST['reg_pseudo']) && isset($_POST['reg_mail']) && isset($_POST['reg_password']) && isset($_POST['reg_repassword']) && isset($_POST['captcha']))
 {
 	$pseudo       = preg_replace("#[^[:alnum:]-]#","", $_POST['reg_pseudo']);
@@ -22,38 +17,43 @@ if(isset($_POST['reg_pseudo']) && isset($_POST['reg_mail']) && isset($_POST['reg
 
 	if($_SESSION['captcha'] == $captcha_user)
 	{
-		unset($_SESSION['captcha']);
+		$_SESSION['captcha'] = "";
 		#Vérification des mots de passes
 		if(htmlspecialchars($_POST['reg_password']) == htmlspecialchars($_POST['reg_repassword']))
 		{
 			#Vérification de la taille des mots de passes
 			$nb_carac_password = iconv_strlen(htmlspecialchars($_POST['reg_password']));
 
-			if( $nb_carac_password < 8)
+			if($nb_carac_password < 8)
 			{
-				$error_pass_length = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Passphrase too short';
+				$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Passphrase too short <br>';
 			}
 			else
 			{
-				# Check email
-				include_once('model/verif_mail_pseudo.php');
+				# Check
+				#include_once('model/verif_mail_pseudo.php');
+				$checkCol = array(array("users", "=", $pseudo, ""));
+				$result_pseudo = check("users_table_serge", $checkCol, $bdd);
+
+				$checkCol = array(array("email", "=", $email, ""));
+				$result_email = check("users_table_serge", $checkCol, $bdd);
 				if(filter_var($email, FILTER_VALIDATE_EMAIL) == FALSE)
 				{
-					$error_bad_email = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Invalid email';
+					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Invalid email <br>';
 				}
 				else if($result_pseudo)
 				{
-					$error_existing_pseudo = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Existing pseudo';
+					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Existing pseudo <br>';
 				}
 				else if($result_email)
 				{
-					$error_existing_pseudo = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Existing email';
+					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Existing email <br>';
 				}
 				else
 				{
 					$password = hash('sha256', $_POST['reg_password']);
 					include_once('model/signup.php');
-					unset($password);
+					$password = "";
 
 					# Connexion
 					session_start();
@@ -65,12 +65,12 @@ if(isset($_POST['reg_pseudo']) && isset($_POST['reg_mail']) && isset($_POST['reg
 		}
 		else
 		{
-			$error_pass_doesnt_match = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Passphrases does not match';
+			$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Passphrases does not match <br>';
 		}
 	}
 	else
 	{
-		$error_bad_captcha = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Bad captcha';
+		$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Bad captcha <br>';
 		$_SESSION['captcha'] = "";
 	}
 }

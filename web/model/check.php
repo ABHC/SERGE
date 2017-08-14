@@ -2,12 +2,12 @@
 function check($tableName, $checkCol, $bdd)
 {
 	# USAGE
-	$checkCol = array(array("ColumnName", "=", "ColValue", "OR"),
+	/*$checkCol = array(array("ColumnName", "=", "ColValue", "OR"),
 										array("ColumnName", "l", "ColValue", "AND"),
-										array("ColumnName", "=", "ColValue", ""));
+										array("ColumnName", "=", "ColValue", ""));*/
 
 	$WHEREvar    = '';
-	$arrayValues = '';
+	$arrayValues = array();
 
 	foreach ($checkCol as $line)
 	{
@@ -24,17 +24,13 @@ function check($tableName, $checkCol, $bdd)
 			$op = " = ";
 		}
 
-		# Sanitize
-		$nameCol   = " " . $bdd->quote($line[0]);
-		$value     = $bdd->quote($line[2]) . " ";
-		$connector = $bdd->quote($line[3]);
+		$nameCol   = $line[0];
+		$value     = $line[2];
+		$connector = " " . $line[3] . " ";
 
-		$WHEREvar    = $WHEREvar . " " . $nameCol . $op . $nameCol . $connector;
-		$arrayValues = $arrayValues . array('nameCol' => $value);
+		$WHEREvar    = $WHEREvar . $nameCol . $op . ":" . $nameCol . $connector;
+		$arrayValues = array_merge($arrayValues, array($nameCol => $value));
 	}
-
-	# Sanitize
-	$tableName = $bdd->quote($tableName);
 
 	# SQL request
 	$req = $bdd->prepare("SELECT id FROM $tableName WHERE $WHEREvar");
@@ -43,14 +39,15 @@ function check($tableName, $checkCol, $bdd)
 	$req->closeCursor();
 
 
-	if (!empty($result))
+	if (empty($result))
 	{
-		$checkResult = TRUE;
+		$check = FALSE;
 	}
-	else {
-		$checkResult = FALSE;
+	else
+	{
+		$check = TRUE;
 	}
 
-	return $checkResult;
+	return $check;
 }
 ?>
