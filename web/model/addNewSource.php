@@ -9,18 +9,25 @@ $req->execute(array(
 if (!$result)
 {
 	// Adding new source
-	$owners = ',' . $_SESSION['id'] . ',';
-	$active = 1;
+	#$owners = ',' . $_SESSION['id'] . ',';
+	#$active = 1;
 	preg_match('@^(?:http.*://[www.]*)?([^/]+)@i', $source, $matches);
-	$name = ucfirst($matches[1] . '[!NEW!]');
-	$req = $bdd->prepare('INSERT INTO rss_serge (link, owners, name, active) VALUES
+	#$name = ucfirst($matches[1] . '[!NEW!]');
+
+	$insertCol = array(array("link", $source),
+										array("owners", ',' . $_SESSION['id'] . ','),
+										array("name", ucfirst($matches[1] . '[!NEW!]')),
+										array("active", 1));
+	$execution = insert('rss_serge', $insertCol, '', $bdd);
+
+	/*$req = $bdd->prepare('INSERT INTO rss_serge (link, owners, name, active) VALUES
 	(:link, :owners, :name, :active)');
 	$req->execute(array(
 		'link' => $source,
 		'owners' => $owners,
 		'name' => $name,
 		'active' => $active));
-		$req->closeCursor();
+		$req->closeCursor();*/
 }
 else
 {
