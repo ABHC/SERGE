@@ -1,5 +1,5 @@
 <?php
-function readResultKeyword($keywordIds, $readOwnerKeyword, $bdd, $queryColumn, $tableNameQuery)
+/*function readResultKeyword($keywordIds, $readOwnerKeyword, $bdd, $queryColumn, $tableNameQuery)
 {
 	$breaker = FALSE;
 	preg_match_all("/[0-9]+,/", $keywordIds, $keywordIds_array);
@@ -31,5 +31,5 @@ function readResultKeyword($keywordIds, $readOwnerKeyword, $bdd, $queryColumn, $
 		$reqKeywordResults->closeCursor();
 
 	return $keyword[$queryColumn];
-}
+}*/
 ?>

@@ -56,6 +56,7 @@ function update($tableName, $updateCol, $checkCol, $optional, $bdd)
 		$req = $bdd->prepare("UPDATE $tableName SET $SETvar WHERE $WHEREvar $optional");
 		$req->execute($arrayValues);
 		$req->closeCursor();
+		$execution = TRUE;
 	}
 	catch (Exception $e)
 	{

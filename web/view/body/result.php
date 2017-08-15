@@ -51,8 +51,33 @@
 					foreach (new LimitIterator($readOwnerResults, $base, $limit) as $result)
 					{
 						# Read keyword for current result
-						$keyword = readResultKeyword($result[$keywordQueryId], $readOwnerKeyword, $bdd, $queryColumn, $tableNameQuery);
-						$keyword = preg_replace("/^:all@[0-9]+$/", ":All", $keyword);
+						$breaker = FALSE;
+						$keywordIds = $result[$keywordQueryId];
+						preg_match_all("/[0-9]+,/", $keywordIds, $keywordIds_array);
+						foreach ($readOwnerKeyword as $OwnerKeyword)
+						{
+							foreach ($keywordIds_array[0] as $id)
+							{
+								$idK = preg_replace("/,/", "", $id);
+								$keywordId = $idK;
+
+								if ($idK == $OwnerKeyword['id'])
+								{
+									$keywordId = $idK;
+									$breaker   = TRUE;
+									break;
+								}
+							}
+
+							if ($breaker)
+							{
+								break;
+							}
+						}
+
+						$checkCol = array(array("id", "=", $keywordId, ""));
+						$keyword  = read($tableNameQuery, $queryColumn, $checkCol, '', $bdd);
+						$keyword  = preg_replace("/^:all@[0-9]+$/", ":All", $keyword[0][$queryColumn]);
 
 						# Read source for current result
 						if ($type == "sciences")
@@ -228,11 +253,9 @@
 							$keyword = '<div class="queryContainer">' . $queryDisplay . '</div>';
 						}
 
-						$reqSourceResults = $bdd->prepare("SELECT link, name FROM $tableNameSource WHERE id LIKE :id");
-						$reqSourceResults->execute(array(
-							'id' => $result['id_source']));
-							$source = $reqSourceResults->fetch();
-							$reqSourceResults->closeCursor();
+						$checkCol = array(array("id", "l", $result['id_source'], ""));
+						$source   = read($tableNameSource, 'link, name', $checkCol, '', $bdd);
+						$source   = $source[0];
 
 						preg_match("/^https?:\/\/[^\/]*\//", $source['link'], $sourceLink);
 

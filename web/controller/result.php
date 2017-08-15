@@ -1,6 +1,7 @@
 <?php
 include_once('controller/accessLimitedToSignInPeople.php');
 include_once('model/read.php');
+include_once('model/update.php');
 
 //include_once('model/get_text.php');
 
@@ -120,25 +121,33 @@ else
 $SELECTRESULT = '(SELECT id, title, link, send_status, read_status, `date`' . $specialColumn . 'FROM ' . $tableName . ' WHERE owners LIKE :user';
 
 # Delete results
-include_once('model/delResult.php');
+#include_once('model/delResult.php');
 
 if (isset($_POST['deleteLink']))
 {
 	foreach($_POST as $key => $val)
 	{
 		$key = htmlspecialchars($key);
-		$val = htmlspecialchars($val);
+		#$val = htmlspecialchars($val);
+		$pureID = $_SESSION['id'];
 
 		if (preg_match("/^delete[0-9]+$/", $key))
 		{
-				$resultId = preg_replace("/^delete/", "", $key);
-				deleteLink($bdd, $resultId);
+			$checkCol = array(array("id", "=", preg_replace("/^delete/", "", $key), ""));
+			$ownersResult = read('result_news_serge', 'owners', $checkCol, '', $bdd);
+
+			if (!empty($ownersResult))
+			{
+				$updateCol = array(array("owners", preg_replace("/,$pureID,/", ',', $ownersResult[0]['owners'])));
+				$checkCol = array(array("id", "=", preg_replace("/^delete/", "", $key), ""));
+				$execution = update('result_news_serge', $updateCol, $checkCol, '', $bdd);
+			}
 		}
 	}
 }
 
 # Record when a link is click
-include_once('model/readUserSettings.php');
+#include_once('model/readUserSettings.php');
 $checkCol = array(array("users", "=", $_SESSION['pseudo'], ""));
 $recordRead = read('users_table_serge', 'id, password, record_read', $checkCol, '', $bdd);
 
@@ -152,9 +161,11 @@ if ($recordRead[0]['record_read'] == 1)
 	$recordLink = 'redirect?id=' . $id . '&type=' . $type .'&hash=' . $hash . '&link=';
 }
 
-include_once('model/readOwnerKeyword.php');
+#include_once('model/readOwnerKeyword.php');
+$checkCol = array(array($ownersColumn, "l", '%' . $userId . '%', ""));
+$readOwnerKeyword = read($tableNameQuery, 'id', $checkCol, '', $bdd);
 
-include_once('model/readResultKeywordName.php');
+#include_once('model/readResultKeywordName.php');
 
 # Page number
 if (isset($_GET['page']) AND preg_match("/^[0-9]+$/", htmlspecialchars($_GET['page'])))

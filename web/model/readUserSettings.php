@@ -1,6 +1,6 @@
 <?php
 # Dynamic part
-function readUserSettings($column, $bdd)
+/*function readUserSettings($column, $bdd)
 {
 	$req = $bdd->prepare("SELECT $column FROM users_table_serge WHERE users = :pseudo");
 	$req->execute(array(
@@ -15,6 +15,6 @@ $req = $bdd->prepare('SELECT id, email, password, send_condition, frequency, lin
 $req->execute(array(
 	'pseudo' => $_SESSION['pseudo']));
 	$userSettings = $req->fetch();
-	$req->closeCursor();
+	$req->closeCursor();*/
 
 ?>
