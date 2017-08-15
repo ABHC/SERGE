@@ -38,6 +38,8 @@ if (!empty($_GET['type']))
 	{
 		$type           = 'news';
 		$newsActive     = 'class="active"';
+		$sciencesActive = '';
+		$patentsActive  = '';
 		$tableName      = 'result_news_serge';
 		$tableNameQuery = 'keyword_news_serge';
 		$tableNameSource = 'rss_serge';
@@ -52,11 +54,13 @@ if (!empty($_GET['type']))
 	{
 		$type           = 'sciences';
 		$sciencesActive = 'class="active"';
+		$patentsActive  = '';
+		$newsActive     = '';
 		$tableName      = 'result_science_serge';
 		$tableNameQuery = 'queries_science_serge';
 		$tableNameSource = 'science_sources_serge';
 		$ownersColumn   = 'owners';
-		$userId        = ',' . $_SESSION['id'] . ',';
+		$userId         = ',' . $_SESSION['id'] . ',';
 		$keywordQueryId = 'query_id';
 		$queryColumn    = 'query_arxiv';
 		$specialColumn  = ',query_id, id_source ';
@@ -66,6 +70,8 @@ if (!empty($_GET['type']))
 	{
 		$type           = 'patents';
 		$patentsActive  = 'class="active"';
+		$sciencesActive = '';
+		$newsActive     = '';
 		$tableName      = 'result_patents_serge';
 		$tableNameQuery = 'queries_wipo_serge';
 		$tableNameSource = 'patents_sources_serge';
@@ -80,6 +86,8 @@ if (!empty($_GET['type']))
 	{
 		$type           = 'news';
 		$newsActive     = 'class="active"';
+		$patentsActive  = '';
+		$sciencesActive = '';
 		$tableName      = 'result_news_serge';
 		$tableNameQuery = 'keyword_news_serge';
 		$tableNameSource = 'rss_serge';
@@ -95,6 +103,8 @@ else
 {
 	$type           = 'news';
 	$newsActive     = 'class="active"';
+	$patentsActive  = '';
+	$sciencesActive = '';
 	$tableName      = 'result_news_serge';
 	$tableNameQuery = 'keyword_news_serge';
 	$tableNameSource = 'rss_serge';
@@ -132,10 +142,10 @@ include_once('model/readUserSettings.php');
 $checkCol = array(array("users", "=", $_SESSION['pseudo'], ""));
 $recordRead = read('users_table_serge', 'id, password, record_read', $checkCol, '', $bdd);
 
-if ($recordRead['record_read'] == 1)
+if ($recordRead[0]['record_read'] == 1)
 {
-	$pass       = $recordRead['password'];
-	$id         = $recordRead['id'];
+	$pass       = $recordRead[0]['password'];
+	$id         = $recordRead[0]['id'];
 	$pseudo     = $_SESSION['pseudo'];
 	$salt       = 'blackSalt';
 	$hash       =  hash('sha256', $salt . ':' . $pass . $pseudo . $id);
