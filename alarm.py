@@ -177,7 +177,7 @@ def alertMailByType(user, translate_text, alert_news_list, pending_alerts, style
 	</head>
 	<body style="margin: 0 !important; padding: 0; !important background-color: #efefef;" bgcolor="#efefef">
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" style="!important background-color: #efefef;" bgcolor="#efefef">
-	<tr bgcolor="#205d70" style="background: #205d70 url('https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/background/{6}') center; background-size: cover;">
+	<tr bgcolor="#205d70" style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/background/{6}') center; background-size: cover;">
 	<td align="center" valign="top" width="100%" style="background-color: rgba(0,0,0,0.2); padding: 20px 10px 2px 10px;" class="mobile-padding">
 	<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
 	<tr>
@@ -211,7 +211,7 @@ def alertMailByType(user, translate_text, alert_news_list, pending_alerts, style
 		<h1 style="font-size: 30px; color: #ffffff;">ALERT</h1>
 	</td>
 	</tr>"
-	""".format(translate_text[0], user.encode("utf_8"), translate_text[1], pydate, pending_alerts, style, background_filename[0]))
+	""".format(translate_text[0], user.encode('ascii', errors='xmlcharrefreplace'), translate_text[1], pydate, pending_alerts, style, background_filename[0]))
 
 	index = 0
 
@@ -240,7 +240,7 @@ def alertMailByType(user, translate_text, alert_news_list, pending_alerts, style
 
 			alertmail = alertmail + ("""<tr>
 			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			•&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
+			&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
 			</td>
 			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
 			<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
@@ -252,7 +252,7 @@ def alertMailByType(user, translate_text, alert_news_list, pending_alerts, style
 			<td>
 			<br>
 			</td>
-			</tr>""".format(alerts_attributes[0].strip().encode("utf8"), alerts_attributes[1].strip().encode("utf_8")))
+			</tr>""".format(alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace')))
 			index = index+1
 
 		alertmail = alertmail + ("""</table>
@@ -314,7 +314,7 @@ def alertMailByKeyword(user, translate_text, alert_news_list, pending_alerts, al
 	</head>
 	<body style="margin: 0 !important; padding: 0; !important background-color: #efefef;" bgcolor="#efefef">
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" style="!important background-color: #efefef;" bgcolor="#efefef">
-	<tr bgcolor="#205d70" style="background: #205d70 url('https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/background/{6}') center; background-size: cover;">
+	<tr bgcolor="#205d70" style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/background/{6}') center; background-size: cover;">
 	<td align="center" valign="top" width="100%" style="background-color: rgba(0,0,0,0.2); padding: 20px 10px 2px 10px;" class="mobile-padding">
 	<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
 	<tr>
@@ -347,7 +347,7 @@ def alertMailByKeyword(user, translate_text, alert_news_list, pending_alerts, al
 	<td bgcolor="#b6082e" align="center" style="background-color: #b6082e; color: #ffffff; margin-bottom: 15px; margin-top: 15px; font-size: 27px;">
 		ALERT
 	</td>
-	</tr>""".format(translate_text[0], user.encode("utf_8"), translate_text[1], pydate, pending_alerts, style, background_filename[0]))
+	</tr>""".format(translate_text[0], user.encode('ascii', errors='xmlcharrefreplace'), translate_text[1], pydate, pending_alerts, style, background_filename[0]))
 
 	index = 0
 	already_in_the_list = []
@@ -355,7 +355,7 @@ def alertMailByKeyword(user, translate_text, alert_news_list, pending_alerts, al
 	######### ECRITURE ALERTS
 	######### ECRITURE KEYWORDS FOR NEWS
 	for couple_word_attribute in sorted(alertwords_list, key= lambda alertswords_field : alertswords_field[0]):
-		word = couple_word_attribute[0].replace("[!ALERT!]", "").strip().encode("utf_8")
+		word = couple_word_attribute[0].replace("[!ALERT!]", "").strip().encode('ascii', errors='xmlcharrefreplace')
 		word_attribute = ","+str(couple_word_attribute[1])+","
 		process_result_list = []
 		index = 0
@@ -366,12 +366,12 @@ def alertMailByKeyword(user, translate_text, alert_news_list, pending_alerts, al
 			if word_attribute in alerts_attributes[3] and alerts_attributes[0] not in already_in_the_list:
 
 				if alerts_attributes[1].isupper() is True:
-					process_result = (alerts_attributes[0].strip().encode("utf_8"), alerts_attributes[1].strip().encode("utf_8").lower().capitalize())
+					process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize())
 				else:
-					process_result = (alerts_attributes[0].strip().encode("utf_8"), alerts_attributes[1].strip().encode("utf_8"))
+					process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'))
 
 				process_result_list.append(process_result)
-				already_in_the_list.append(alerts_attributes[0].strip().encode("utf_8"))
+				already_in_the_list.append(alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'))
 
 			index = index+1
 
@@ -396,7 +396,7 @@ def alertMailByKeyword(user, translate_text, alert_news_list, pending_alerts, al
 			for couple_results in process_result_list:
 				alertmail = alertmail + ("""<tr>
 				<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				•&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
+				&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
 				</td>
 				<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
 				<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
@@ -469,7 +469,7 @@ def alertMailBySource(user, translate_text, alert_news_list, pending_alerts, ale
 	</head>
 	<body style="margin: 0 !important; padding: 0; !important background-color: #efefef;" bgcolor="#efefef">
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" style="!important background-color: #efefef;" bgcolor="#efefef">
-	<tr bgcolor="#205d70" style="background: #205d70 url('https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/background/{6}') center; background-size: cover;">
+	<tr bgcolor="#205d70" style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/background/{6}') center; background-size: cover;">
 	<td align="center" valign="top" width="100%" style="background-color: rgba(0,0,0,0.2); padding: 20px 10px 2px 10px;" class="mobile-padding">
 	<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
 	<tr>
@@ -497,7 +497,7 @@ def alertMailBySource(user, translate_text, alert_news_list, pending_alerts, ale
 	</tr>
 	</table>
 	</td>
-	</tr>""".format(translate_text[0], user.encode("utf_8"), translate_text[1], pydate, pending_alerts, style, background_filename[0]))
+	</tr>""".format(translate_text[0], user.encode('ascii', errors='xmlcharrefreplace'), translate_text[1], pydate, pending_alerts, style, background_filename[0]))
 
 	index = 0
 
@@ -515,9 +515,9 @@ def alertMailBySource(user, translate_text, alert_news_list, pending_alerts, ale
 			if origin_id == alerts_attributes[2]:
 
 				if alerts_attributes[1].isupper() is True:
-					process_result = (alerts_attributes[0].strip().encode("utf_8"), alerts_attributes[1].strip().encode("utf_8").lower().capitalize())
+					process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize())
 				else :
-					process_result = (alerts_attributes[0].strip().encode("utf8"), alerts_attributes[1].strip().encode("utf8"))
+					process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'))
 
 				process_result_list.append(process_result)
 
@@ -539,12 +539,12 @@ def alertMailBySource(user, translate_text, alert_news_list, pending_alerts, ale
 			<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
 			<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
 			</td>
-			</tr>""".format(origin_name.strip().encode("utf8")))
+			</tr>""".format(origin_name.strip().encode('ascii', errors='xmlcharrefreplace')))
 
 			for couple_results in process_result_list:
 				alertmail = alertmail + ("""<tr>
 				<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				•&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
+				&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
 				</td>
 				<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
 				<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
