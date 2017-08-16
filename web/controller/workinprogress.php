@@ -1,5 +1,7 @@
 <?php
 include_once('model/get_text.php');
+include_once('model/read.php');
+include_once('model/insert.php');
 include_once('view/nav/nav.php');
 
 $deleveryTime = 1504260000 ;
@@ -13,19 +15,14 @@ if (isset($_POST['newsletter']) AND !empty($_POST['email']))
 {
 	$email = htmlspecialchars($_POST['email']);
 
-	$req = $bdd->prepare('SELECT id FROM newsletter_table_serge WHERE email LIKE :email');
-	$req->execute(array(
-		'email' => $email));
-		$result = $req->fetchAll();
-		$req->closeCursor();
+	$checkCol = array(array("email", "=", $email, ""));
+	$result_email = read("newsletter_table_serge", '', $checkCol, '',$bdd);
 
 	if (empty($result))
 	{
-		$req = $bdd->prepare('INSERT INTO newsletter_table_serge(email, signup_date) VALUES(:email, :signup_date)');
-		$req->execute(array(
-			'email' => $email,
-			'signup_date' => time()));
-		$req->closeCursor();
+		$insertCol = array(array("email", $email),
+											array("signup_date", time()));
+		$execution = insert('newsletter_table_serge', $insertCol, '', $bdd);
 	}
 	sleep(1);
 }
