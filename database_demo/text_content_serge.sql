@@ -49,4 +49,8 @@ En recherchant les actualités, les brevets et les publications scientifiques, S
 ('input3_signup_index', 'Passphrase again', 'Phrase de passe à nouveau', NULL, NULL, NULL),
 ('input4_signup_index', 'Email', 'Email', NULL, NULL, NULL),
 ('input5_signup_index', 'Captcha', 'Captcha', NULL, NULL, NULL),
-('submit_signup_index', 'Sign up', 'Inscription', NULL, NULL, NULL);
+('submit_signup_index', 'Sign up', 'Inscription', NULL, NULL, NULL),
+('name_title_nav', 'Serge by Cairn Devices', 'Serge par Cairn Devices', NULL, NULL, NULL),
+('tab1_title_nav', 'Results', 'Résultats', NULL, NULL, NULL),
+('tab2_title_nav', 'Wiki', 'Wiki', NULL, NULL, NULL),
+('tab3_title_nav', 'Settings', 'Options', NULL, NULL, NULL);

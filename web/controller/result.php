@@ -1,5 +1,6 @@
 <?php
 include_once('controller/accessLimitedToSignInPeople.php');
+include_once('model/get_text.php');
 include_once('model/read.php');
 include_once('model/update.php');
 

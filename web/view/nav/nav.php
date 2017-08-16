@@ -3,7 +3,7 @@
 		<a class="navCairnDevicesLogo" href="index">
 		</a>
 		<a class="navTitle" href="index">
-			Serge by Cairn Devices
+			<?php get_t('name_title_nav', $bdd); ?>
 		</a>
 	</div>
 
@@ -12,7 +12,7 @@
 			<div class="navResultSergeLogo">
 			</div>
 			<div class="navTitle" >
-				Result
+				<?php get_t('tab1_title_nav', $bdd); ?>
 			</div>
 		</a>
 
@@ -20,7 +20,7 @@
 			<div class="navWikiLogo">
 			</div>
 			<div class="navTitle" >
-				Wiki
+				<?php get_t('tab2_title_nav', $bdd); ?>
 			</div>
 		</a>
 
@@ -28,7 +28,7 @@
 			<div class="navSergeSettingLogo">
 			</div>
 			<div class="navTitle" >
-				Settings
+				<?php get_t('tab3_title_nav', $bdd); ?>
 			</div>
 		</a>
 	</div>
