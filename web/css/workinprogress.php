@@ -63,6 +63,15 @@ include_once('nav.php');
 	margin-top: 20px;
 }
 
+form
+{
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	margin-top: 10px;
+}
+
 input
 {
 	width: 350px;
@@ -84,7 +93,6 @@ input
 	background-color: rgba(84,26,102, 0.55);
 	cursor: pointer;
 	color: rgb(230,230,230);
-	margin-top: 10px;
 	border-radius: 50%;
 	font-weight: bold;
 	font-size: 16px;
