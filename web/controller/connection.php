@@ -1,5 +1,15 @@
 <?php
 
+# Define variable
+$result             = '';
+$wiki               = '';
+$setting            = '';
+
+if (!isset($_POST['conn_pseudo']))
+{
+	$_POST['conn_pseudo'] = '';
+}
+
 include_once('model/get_text.php');
 
 include_once('model/read.php');
@@ -19,7 +29,7 @@ if (isset($_POST['conn_pseudo']) && isset($_POST['conn_password']))
 
 	$checkCol = array(array("users", "=", $pseudo, "AND"),
 										array("password", "=", $password, ""));
-	$result = read("users_table_serge", 'id, email, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, background_result', $checkCol, '',$bdd);
+	$result = read("users_table_serge", 'id, users, email, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, background_result', $checkCol, '',$bdd);
 
 	if (!$result)
 	{
@@ -28,8 +38,8 @@ if (isset($_POST['conn_pseudo']) && isset($_POST['conn_password']))
 	else
 	{
 		session_start();
-		$_SESSION['pseudo']            = $pseudo;
 		$_SESSION['id']                = $result[0]['id'];
+		$_SESSION['pseudo']            = $result[0]['users'];
 		$_SESSION['lang']              = $result[0]['language'];
 		$_SESSION['lastSourceUse']     = '';
 		$redirect                      = $_SESSION['redirectFrom'];
