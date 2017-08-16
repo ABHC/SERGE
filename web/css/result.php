@@ -8,8 +8,15 @@ session_start();
 include_once('../model/connection_sql.php');
 
 //include_once('../model/design.php');
+//include_once('../model/backgroundDesign.php');
 
-include_once('../model/backgroundDesign.php');
+include_once('../model/read.php');
+
+$checkCol = array(array("id", "=", $_SESSION['id'], ""));
+$backgroundName = read("users_table_serge", 'background_result', $checkCol, '',$bdd);
+
+$checkCol = array(array("name", "=", $backgroundName[0]['background_result'], ""));
+$background = read("background_serge", 'filename', $checkCol, '',$bdd);
 
 include_once('style.php');
 
@@ -33,7 +40,7 @@ include_once('nav.php');
 	width: 100%;
 	height: 100vh;
 	z-index: -1;
-	background: url('../images/background/<?php echo $background['filename']; ?>') center no-repeat;
+	background: url('../images/background/<?php echo $background[0]['filename']; ?>') center no-repeat;
 	background-size: cover;
 }
 

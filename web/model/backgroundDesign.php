@@ -1,5 +1,5 @@
 <?php
-$req = $bdd->prepare('SELECT background_result FROM users_table_serge WHERE id = :id');
+/*$req = $bdd->prepare('SELECT background_result FROM users_table_serge WHERE id = :id');
 $req->execute(array(
 	'id' => $_SESSION['id']));
 	$backgroundName = $req->fetch();
@@ -9,5 +9,5 @@ $req->execute(array(
 	$req->execute(array(
 		'name' => $backgroundName['background_result']));
 		$background = $req->fetch();
-		$req->closeCursor();
+		$req->closeCursor();*/
 ?>
