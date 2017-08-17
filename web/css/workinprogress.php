@@ -83,6 +83,11 @@ input
 	color: #fff;
 }
 
+input::placeholder
+{
+	color: rgb(190,190,190);
+}
+
 .submit
 {
 	width: 35px;

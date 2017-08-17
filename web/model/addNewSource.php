@@ -18,7 +18,7 @@ if (!$result)
 										array("owners", ',' . $_SESSION['id'] . ','),
 										array("name", ucfirst($matches[1] . '[!NEW!]')),
 										array("active", 1));
-	$execution = insert('rss_serge', $insertCol, '', $bdd);
+	$execution = insert('rss_serge', $insertCol, '', 'setting', $bdd);
 
 	/*$req = $bdd->prepare('INSERT INTO rss_serge (link, owners, name, active) VALUES
 	(:link, :owners, :name, :active)');

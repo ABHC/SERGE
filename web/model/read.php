@@ -11,6 +11,7 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 	$check       = FALSE;
 	$WHEREvar    = '';
 	$arrayValues = array();
+	$cpt = 0;
 
 	foreach ($checkCol as $line)
 	{
@@ -31,8 +32,9 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 		$value     = $line[2];
 		$connector = " " . $line[3] . " ";
 
-		$WHEREvar    = $WHEREvar . $nameCol . $op . ":" . $nameCol . $connector;
-		$arrayValues = array_merge($arrayValues, array($nameCol => $value));
+		$WHEREvar    = $WHEREvar . $nameCol . $op . ":" . $nameCol . $cpt . $connector;
+		$arrayValues = array_merge($arrayValues, array($nameCol . $cpt => $value));
+		$cpt++;
 	}
 
 	if (empty($selectedCol))

@@ -2,6 +2,7 @@
 
 include_once('controller/accessLimitedToSignInPeople.php');
 include_once('model/get_text.php');
+include_once('model/read.php');
 include_once('model/update.php');
 include_once('model/insert.php');
 
@@ -11,6 +12,9 @@ $style = '';
 $orderByKeyword = '';
 $orderBySource  = '';
 $orderByType    = '';
+$delEditingScienceQuery = '';
+$delEditingPatentQuery  = '';
+$userId = $_SESSION['id'];
 
 if (empty($_SESSION['cptScienceQuery']))
 {
@@ -88,9 +92,11 @@ include_once('model/readOwnerSources.php');
 include_once('model/readOwnerSourcesKeyword.php');
 
 # Read user settings
-include_once('model/readUserSettings.php');
+$checkCol = array(array("users", "=", $_SESSION['pseudo'], ""));
+$userSettings = read('users_table_serge', 'id, email, password, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, record_read, history_lifetime, background_result, record_read', $checkCol, '', $bdd);
+$userSettings = $userSettings[0];
 
-if (htmlspecialchars($_POST['settings']) == 'ChangeSettings')
+if (isset($_POST['settings']) AND htmlspecialchars($_POST['settings']) == 'ChangeSettings')
 {
 	# Change email
 	if (isset($_POST['email']))
@@ -434,17 +440,23 @@ if (isset($_POST['delSource']) OR isset($_POST['disableSource']) OR isset($_POST
 	}
 }
 
-# Sending condition
+	# Sending condition
 	if ($userSettings['send_condition'] == 'link_limit')
 	{
 		$condNbLink = 'checked';
+		$condFreq   = '';
+		$condDate   = '';
 	}
 	elseif ($userSettings['send_condition'] == 'freq')
 	{
+		$condNbLink = '';
 		$condFreq = 'checked';
+		$condDate   = '';
 	}
 	elseif ($userSettings['send_condition'] == 'deadline')
 	{
+		$condNbLink = '';
+		$condFreq   = '';
 		$condDate = 'checked';
 	}
 
@@ -456,7 +468,7 @@ if (isset($_POST['delSource']) OR isset($_POST['disableSource']) OR isset($_POST
 
 	$day2 = $day;
 
-	if ($day[1] == 'selected' AND $day[2] == 'selected' AND $day[3] == 'selected' AND $day[4] == 'selected' AND $day[5] == 'selected' AND $day[6] == 'selected' AND $day[7] == 'selected')
+	if (isset($day[1]) AND isset($day[2]) AND isset($day[3]) AND isset($day[4]) AND isset($day[5]) AND isset($day[6]) AND isset($day[7]))
 	{
 		$day[1] = '';
 		$day[2] = '';
@@ -474,7 +486,7 @@ if (isset($_POST['delSource']) OR isset($_POST['disableSource']) OR isset($_POST
 		$day2[7] = '';
 		$day[9] = 'selected';
 	}
-	elseif ($day[1] == 'selected' AND $day[2] == 'selected' AND $day[3] == 'selected' AND $day[4] == 'selected' AND $day[5] == 'selected')
+	elseif (isset($day[1]) AND isset($day[2]) AND isset($day[3]) AND isset($day[4]) AND isset($day[5]))
 	{
 		$day[1] = '';
 		$day[2] = '';
@@ -490,7 +502,7 @@ if (isset($_POST['delSource']) OR isset($_POST['disableSource']) OR isset($_POST
 		$day2[5] = '';
 		$day[0] = 'selected';
 	}
-	elseif($day[1] == 'selected' AND $day[3] == 'selected' AND $day[5] == 'selected')
+	elseif(isset($day[1]) AND isset($day[3]) AND isset($day[5]))
 	{
 		$day[1]  = '';
 		$day[2]  = '';
@@ -551,13 +563,18 @@ if (!empty($_GET['action']) AND !empty($_GET['query']) AND $_GET['action'] == 'e
 {
 	preg_match("/[0-9]+/", $_GET['query'], $queryId);
 	$delEditingScienceQuery = $queryId[0];
-
-	$req = $bdd->prepare('SELECT query_arxiv FROM queries_science_serge WHERE id = :queryId AND  owners LIKE :userId');
+/*
+	$req = $bdd->prepare('SELECT query_arxiv FROM queries_science_serge WHERE id = :queryId AND owners LIKE :userId');
 	$req->execute(array(
 		'queryId' => $queryId[0],
 		'userId' => '%,' . $_SESSION['id'] . ',%'));
 		$queriesEdit = $req->fetch();
-		$req->closeCursor();
+		$req->closeCursor();*/
+
+	$checkCol = array(array("id", "=", $queryId[0], "AND"),
+										array("owners", "l", '%,' . $_SESSION['id'] . ',%', ""));
+	$queriesEdit = read('queries_science_serge', 'query_arxiv', $checkCol, '', $bdd);
+	$queriesEdit = $queriesEdit[0];
 
 		$query = urldecode($queriesEdit['query_arxiv']);
 		$query = preg_replace("/\"/", "", $query);
@@ -611,17 +628,22 @@ if (!empty($_POST['delEditingScienceQuery']) AND empty($_POST['extendScience']))
 	preg_match("/[0-9]+/", $_POST['delEditingScienceQuery'], $idQueryToDel);
 
 	$_POST['delEditingScienceQuery'] = '';
-
-	$req = $bdd->prepare('SELECT owners, active FROM queries_science_serge WHERE id = :queryId AND  owners LIKE :userId');
+/*
+	$req = $bdd->prepare('SELECT owners, active FROM queries_science_serge WHERE id = :queryId AND owners LIKE :userId');
 	$req->execute(array(
 		'queryId' => $idQueryToDel[0],
 		'userId' => '%,' . $_SESSION['id'] . ',%'));
 		$queriesEditOwners = $req->fetch();
-		$req->closeCursor();
+		$req->closeCursor();*/
+
+	$checkCol = array(array("id", "=", $idQueryToDel[0], ""),
+										array("owners", "l", '%,' . $_SESSION['id'] . ',%', ""));
+	$queriesEditOwners = read('queries_science_serge', 'owners, active', $checkCol, '', $bdd);
+	$queriesEditOwners = $queriesEditOwners[0];
 
 		if (!empty($queriesEditOwners))
 		{
-			$userId = $_SESSION['id'];
+			/*$userId = $_SESSION['id'];
 			$queryOwnerNEW = preg_replace("/,!*$userId,/", ',', $queriesEditOwners['owners']);
 			$active = $queriesEditOwners['active'] - 1;
 
@@ -630,7 +652,13 @@ if (!empty($_POST['delEditingScienceQuery']) AND empty($_POST['extendScience']))
 				'owners' => $queryOwnerNEW,
 				'active' => $active,
 				'id' => $idQueryToDel[0]));
-				$req->closeCursor();
+				$req->closeCursor();*/
+
+			$userId = $_SESSION['id'];
+			$updateCol = array(array("owners", preg_replace("/,!*$userId,/", ',', $queriesEditOwners['owners'])),
+													array("active", $queriesEditOwners['active'] - 1));
+			$checkCol = array(array("id", "=", $idQueryToDel[0], ""));
+			$execution = update('queries_science_serge', $updateCol, $checkCol, '', $bdd);
 		}
 }
 
@@ -728,16 +756,23 @@ if (!empty($_POST['delQueryScience']))
 	preg_match("/[0-9]+/", $_POST['delQueryScience'], $idQueryToDel);
 
 	// Read owner science query
-	$req = $bdd->prepare('SELECT owners, active FROM queries_science_serge WHERE id = :queryId AND (owners LIKE :userIdDisable OR owners LIKE :userIdActivate)');
+	/*$req = $bdd->prepare('SELECT owners, active FROM queries_science_serge WHERE id = :queryId AND (owners LIKE :userIdDisable OR owners LIKE :userIdActivate)');
 	$req->execute(array(
 		'queryId' => $idQueryToDel[0],
 		'userIdDisable' => '%,!' . $_SESSION['id'] . ',%',
 		'userIdActivate' => '%,' . $_SESSION['id'] . ',%'));
 		$result = $req->fetch();
-		$req->closeCursor();
+		$req->closeCursor();*/
+
+	$checkCol = array(array("id", "=", $idQueryToDel[0], "AND"),
+										array("owners", "l", '%,' . $_SESSION['id'] . ',%', "OR"),
+										array("id", "=", $idQueryToDel[0], "AND"),
+										array("owners", "l", '%,!' . $_SESSION['id'] . ',%', ""));
+	$result = read('queries_science_serge', 'owners, active', $checkCol, '', $bdd);
+	$result = $result[0];
 
 	if (!empty($result))
-	{
+	{/*
 		$userId = $_SESSION['id'];
 		$queryOwnerNEW = preg_replace("/,!*$userId,/", ',', $result['owners']);
 
@@ -748,7 +783,13 @@ if (!empty($_POST['delQueryScience']))
 			'owners' => $queryOwnerNEW,
 			'active' => $active,
 			'id' => $idQueryToDel[0]));
-			$req->closeCursor();
+			$req->closeCursor();*/
+
+		$userId = $_SESSION['id'];
+		$updateCol = array(array("owners", preg_replace("/,!*$userId,/", ',', $result['owners'])),
+											array("active", $result['active'] - 1));
+		$checkCol = array(array("id", "=", $idQueryToDel[0], ""));
+		$execution = update('queries_science_serge', $updateCol, $checkCol, '', $bdd);
 	}
 }
 
@@ -757,25 +798,36 @@ if (!empty($_POST['disableQueryScience']))
 {
 	preg_match("/[0-9]+/", $_POST['disableQueryScience'], $idQueryToDisable);
 	// Read owner science query
-	$req = $bdd->prepare('SELECT owners, active FROM queries_science_serge WHERE id =  :queryId AND owners LIKE :userId');
+	/*$req = $bdd->prepare('SELECT owners, active FROM queries_science_serge WHERE id =  :queryId AND owners LIKE :userId');
 	$req->execute(array(
 		'queryId' => $idQueryToDisable[0],
 		'userId' => '%,' . $_SESSION['id'] . ',%'));
 		$result = $req->fetch();
-		$req->closeCursor();
+		$req->closeCursor();*/
+
+	$checkCol = array(array("id", "=",$idQueryToDisable[0], "AND"),
+										array("owners", "l", '%,' . $_SESSION['id'] . ',%', ""));
+	$result = read('queries_science_serge', 'owners, active', $checkCol, '', $bdd);
+	$result = $result[0];
+
 
 	if (!empty($result))
 	{
-		$userId = $_SESSION['id'];
 		$queryOwnerNEW = preg_replace("/,$userId,/", ",!$userId,", $result['owners']);
-
+/*
 		$active = $result['active'] - 1;
 		$req = $bdd->prepare('UPDATE queries_science_serge SET owners = :owners, active = :active WHERE id = :id');
 		$req->execute(array(
 			'owners' => $queryOwnerNEW,
 			'active' => $active,
 			'id' => $idQueryToDisable[0]));
-			$req->closeCursor();
+			$req->closeCursor();*/
+
+		$userId = $_SESSION['id'];
+		$updateCol = array(array("owners", preg_replace("/,$userId,/", ",!$userId,", $result['owners'])),
+											array("active", $result['active'] - 1));
+		$checkCol = array(array("id", "=", $idQueryToDisable[0], ""));
+		$execution = update('queries_science_serge', $updateCol, $checkCol, '', $bdd);
 	}
 }
 
@@ -784,16 +836,22 @@ if (!empty($_POST['activateQueryScience']))
 {
 	preg_match("/[0-9]+/", $_POST['activateQueryScience'], $idQueryToActivate);
 	// Read owner science query
-	$req = $bdd->prepare('SELECT owners, active FROM queries_science_serge WHERE id =  :queryId AND owners LIKE :userId');
+	/*$req = $bdd->prepare('SELECT owners, active FROM queries_science_serge WHERE id =  :queryId AND owners LIKE :userId');
 	$req->execute(array(
 		'queryId' => $idQueryToActivate[0],
 		'userId' => '%,!' . $_SESSION['id'] . ',%'));
 		$result = $req->fetch();
-		$req->closeCursor();
+		$req->closeCursor();*/
+
+	$checkCol = array(array("id", "=", $idQueryToActivate[0], "AND"),
+										array("owners", "l", '%,!' . $_SESSION['id'] . ',%', ""));
+	$result = read('queries_science_serge', 'owners, active', $checkCol, '', $bdd);
+	$result = $result[0];
+
 
 	if (!empty($result))
 	{
-		$userId = $_SESSION['id'];
+	/*	$userId = $_SESSION['id'];
 		$queryOwnerNEW = preg_replace("/,!$userId,/", ",$userId,", $result['owners']);
 
 		$active = $result['active'] + 1;
@@ -802,7 +860,13 @@ if (!empty($_POST['activateQueryScience']))
 			'owners' => $queryOwnerNEW,
 			'active' => $active,
 			'id' => $idQueryToActivate[0]));
-			$req->closeCursor();
+			$req->closeCursor();*/
+
+		$userId = $_SESSION['id'];
+		$updateCol = array(array("owners", preg_replace("/,!$userId,/", ",$userId,", $result['owners'])),
+											array("active", $result['active'] + 1));
+		$checkCol = array(array("id", "=", $idQueryToActivate[0], ""));
+		$execution = update('queries_science_serge', $updateCol, $checkCol, '', $bdd);
 	}
 }
 
@@ -811,19 +875,24 @@ if (!empty($_GET['action']) AND !empty($_GET['query']) AND $_GET['action'] == 'e
 {
 	preg_match("/[0-9]+/", $_GET['query'], $queryId);
 	$delEditingPatentQuery = $queryId[0];
-
+/*
 	$req = $bdd->prepare('SELECT query FROM queries_wipo_serge WHERE id = :queryId AND  owners LIKE :userId');
 	$req->execute(array(
 		'queryId' => $queryId[0],
 		'userId' => '%,' . $_SESSION['id'] . ',%'));
 		$queriesEdit = $req->fetch();
-		$req->closeCursor();
+		$req->closeCursor();*/
 
-		$query = urldecode($queriesEdit['query']);
-		$query = preg_replace("/\"/", "", $query);
-		$query = preg_replace("/(\(|\)|[^: ]+:| AND | OR )/", "|$1", $query);
-		$query = preg_replace("/:/", "|", $query);
-		$queryArray = explode("|", $query);
+	$checkCol = array(array("id", "=", $queryId[0], "AND"),
+										array("owners", "l", '%,' . $_SESSION['id'] . ',%', ""));
+	$queriesEdit = read('queries_wipo_serge', 'query', $checkCol, '', $bdd);
+	$queriesEdit = $queriesEdit[0];
+
+	$query = urldecode($queriesEdit['query']);
+	$query = preg_replace("/\"/", "", $query);
+	$query = preg_replace("/(\(|\)|[^: ]+:| AND | OR )/", "|$1", $query);
+	$query = preg_replace("/:/", "|", $query);
+	$queryArray = explode("|", $query);
 
 		$cpt = 0;
 		$typeQuery = '';
@@ -863,16 +932,21 @@ if (!empty($_POST['delEditingPatentQuery']) AND empty($_POST['extendPatent']))
 	preg_match("/[0-9]+/", $_POST['delEditingPatentQuery'], $idQueryToDel);
 
 	$_POST['delEditingPatentQuery'] = '';
-
+/*
 	$req = $bdd->prepare('SELECT owners, active FROM queries_wipo_serge WHERE id = :queryId AND  owners LIKE :userId');
 	$req->execute(array(
 		'queryId' => $idQueryToDel[0],
 		'userId' => '%,' . $_SESSION['id'] . ',%'));
 		$queriesEditOwners = $req->fetch();
-		$req->closeCursor();
+		$req->closeCursor();*/
+
+		$checkCol = array(array("id", "=", $idQueryToDel[0], "AND"),
+											array("owners", "l", '%,' . $_SESSION['id'] . ',%', ""));
+		$queriesEditOwners = read('queries_wipo_serge', 'owners, active', $checkCol, '', $bdd);
+		$queriesEditOwners = $queriesEditOwners[0];
 
 		if (!empty($queriesEditOwners))
-		{
+		{/*
 			$userId = $_SESSION['id'];
 			$queryOwnerNEW = preg_replace("/,!*$userId,/", ',', $queriesEditOwners['owners']);
 			$active = $queriesEditOwners['active'] - 1;
@@ -882,7 +956,13 @@ if (!empty($_POST['delEditingPatentQuery']) AND empty($_POST['extendPatent']))
 				'owners' => $queryOwnerNEW,
 				'active' => $active,
 				'id' => $idQueryToDel[0]));
-				$req->closeCursor();
+				$req->closeCursor();*/
+
+			$userId = $_SESSION['id'];
+			$updateCol = array(array("owners", preg_replace("/,!*$userId,/", ',', $queriesEditOwners['owners'])),
+												array("active", $result['active'] - 1));
+			$checkCol = array(array("id", "=",  $idQueryToDel[0], ""));
+			$execution = update('queries_wipo_serge', $updateCol, $checkCol, '', $bdd);
 		}
 }
 
@@ -935,17 +1015,24 @@ if (!empty($_POST['delQueryPatent']))
 	preg_match("/[0-9]+/", $_POST['delQueryPatent'], $idQueryToDel);
 
 	// Read owner patent query
-	$req = $bdd->prepare('SELECT owners, active FROM queries_wipo_serge WHERE id =  :queryId AND (owners LIKE :userIdDisable OR owners LIKE :userIdActivate)');
+	/*$req = $bdd->prepare('SELECT owners, active FROM queries_wipo_serge WHERE id =  :queryId AND (owners LIKE :userIdDisable OR owners LIKE :userIdActivate)');
 	$req->execute(array(
 		'queryId' => $idQueryToDel[0],
 		'userIdDisable' => '%,!' . $_SESSION['id'] . ',%',
 		'userIdActivate' => '%,' . $_SESSION['id'] . ',%'));
 		$result = $req->fetch();
-		$req->closeCursor();
+		$req->closeCursor();*/
+
+	$checkCol = array(array("id", "=", $idQueryToDel[0], "AND"),
+										array("owners", "l", '%,!' . $_SESSION['id'] . ',%', "OR"),
+										array("id", "=", $idQueryToDel[0], "AND"),
+										array("owners", "l", '%,' . $_SESSION['id'] . ',%', ""));
+	$result = read('queries_wipo_serge', 'owners, active', $checkCol, '', $bdd);
+	$result = $result[0];
 
 	if (!empty($result))
 	{
-		$userId = $_SESSION['id'];
+		/*$userId = $_SESSION['id'];
 		$queryOwnerNEW = preg_replace("/,!*$userId,/", ',', $result['owners']);
 
 		$active = $result['active'] - 1;
@@ -955,7 +1042,13 @@ if (!empty($_POST['delQueryPatent']))
 			'owners' => $queryOwnerNEW,
 			'active' => $active,
 			'id' => $idQueryToDel[0]));
-			$req->closeCursor();
+			$req->closeCursor();*/
+
+		$userId = $_SESSION['id'];
+		$updateCol = array(array("owners", preg_replace("/,!*$userId,/", ',', $result['owners'])),
+											array("active", $result['active'] - 1));
+		$checkCol = array(array("id", "=",  $idQueryToDel[0], ""));
+		$execution = update('queries_wipo_serge', $updateCol, $checkCol, '', $bdd);
 	}
 }
 
@@ -964,29 +1057,35 @@ if (!empty($_POST['disableQueryPatent']))
 {
 	preg_match("/[0-9]+/", $_POST['disableQueryPatent'], $idQueryToDisable);
 	// Read owner patent query
-	$req = $bdd->prepare('SELECT owners, active FROM queries_wipo_serge WHERE id =  :queryId AND owners LIKE :userId');
+	/*$req = $bdd->prepare('SELECT owners, active FROM queries_wipo_serge WHERE id =  :queryId AND owners LIKE :userId');
 	$req->execute(array(
 		'queryId' => $idQueryToDisable[0],
 		'userId' => '%,' . $_SESSION['id'] . ',%'));
 		$result = $req->fetch();
-		$req->closeCursor();
+		$req->closeCursor();*/
+
+	$checkCol = array(array("id", "=", $idQueryToDisable[0], "AND"),
+										array("owners", "l", '%,' . $_SESSION['id'] . ',%', ""));
+	$result = read('queries_wipo_serge', 'owners, active', $checkCol, '', $bdd);
+	$result = $result[0];
 
 	if (!empty($result))
 	{
-		$userId = $_SESSION['id'];
-		$queryOwnerNEW = preg_replace("/,$userId,/", ",!$userId,", $result['owners']);
+		/*$queryOwnerNEW = preg_replace("/,$userId,/", ",!$userId,", $result['owners']);
 
 		$active = $result['active'] - 1;
-		/*$req = $bdd->prepare('UPDATE queries_wipo_serge SET owners = :owners, active = :active WHERE id = :id');
+		$req = $bdd->prepare('UPDATE queries_wipo_serge SET owners = :owners, active = :active WHERE id = :id');
 		$req->execute(array(
 			'owners' => $queryOwnerNEW,
 			'active' => $active,
 			'id' => $idQueryToDisable[0]));
 			$req->closeCursor();*/
-			$updateCol = array(array("owners", $queryOwnerNEW),
-												array("active", $active));
-			$checkCol = array(array("id", "=", $idQueryToDisable[0], ""));
-			$execution = update('queries_wipo_serge', $updateCol, $checkCol, '', $bdd);
+
+		$userId = $_SESSION['id'];
+		$updateCol = array(array("owners", preg_replace("/,$userId,/", ",!$userId,", $result['owners'])),
+											array("active", $result['active'] - 1));
+		$checkCol = array(array("id", "=", $idQueryToDisable[0], ""));
+		$execution = update('queries_wipo_serge', $updateCol, $checkCol, '', $bdd);
 	}
 }
 
@@ -995,16 +1094,22 @@ if (!empty($_POST['activateQueryPatent']))
 {
 	preg_match("/[0-9]+/", $_POST['activateQueryPatent'], $idQueryToActivate);
 	// Read owner patent query
-	$req = $bdd->prepare('SELECT owners, active FROM queries_wipo_serge WHERE id = :queryId AND owners LIKE :userId');
+	/*$req = $bdd->prepare('SELECT owners, active FROM queries_wipo_serge WHERE id = :queryId AND owners LIKE :userId');
 	$req->execute(array(
 		'queryId' => $idQueryToActivate[0],
 		'userId' => '%,!' . $_SESSION['id'] . ',%'));
 		$result = $req->fetch();
-		$req->closeCursor();
+		$req->closeCursor();*/
+
+	$checkCol = array(array("id", "=", $idQueryToActivate[0], "AND"),
+										array("owners", "l", '%,!' . $_SESSION['id'] . ',%', ""));
+	$result = read('queries_wipo_serge', 'owners, active', $checkCol, '', $bdd);
+	$result = $result[0];
+
 
 	if (!empty($result))
 	{
-		$userId = $_SESSION['id'];
+		/*$userId = $_SESSION['id'];
 		$queryOwnerNEW = preg_replace("/,!$userId,/", ",$userId,", $result['owners']);
 
 		$active = $result['active'] + 1;
@@ -1013,7 +1118,13 @@ if (!empty($_POST['activateQueryPatent']))
 			'owners' => $queryOwnerNEW,
 			'active' => $active,
 			'id' => $idQueryToActivate[0]));
-			$req->closeCursor();
+			$req->closeCursor();*/
+
+		$userId = $_SESSION['id'];
+		$updateCol = array(array("owners", preg_replace("/,!$userId,/", ",$userId,", $result['owners'])),
+											array("active", $result['active'] + 1));
+		$checkCol = array(array("id", "=", $idQueryToActivate[0], ""));
+		$execution = update('queries_wipo_serge', $updateCol, $checkCol, '', $bdd);
 	}
 }
 

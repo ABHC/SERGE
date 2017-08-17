@@ -22,7 +22,7 @@ if (isset($_POST['newsletter']) AND !empty($_POST['email']))
 	{
 		$insertCol = array(array("email", $email),
 											array("signup_date", time()));
-		$execution = insert('newsletter_table_serge', $insertCol, '', $bdd);
+		$execution = insert('newsletter_table_serge', $insertCol, '', 'workinprogress', $bdd);
 	}
 	sleep(1);
 }

@@ -14,6 +14,7 @@ function update($tableName, $updateCol, $checkCol, $optional, $bdd)
 	$WHEREvar    = '';
 	$arrayValues = array();
 	$comma       = '';
+	$cpt         = 0;
 
 	foreach ($checkCol as $line)
 	{
@@ -34,9 +35,10 @@ function update($tableName, $updateCol, $checkCol, $optional, $bdd)
 		$value     = $line[2];
 		$connector = " " . $line[3] . " ";
 
-		$WHEREvar    = $WHEREvar . $nameCol . $op . ":" . 'check' . $nameCol . $connector;
-		$nameCol = 'check' . $nameCol;
+		$WHEREvar    = $WHEREvar . $nameCol . $op . ":" . 'check' . $nameCol . $cpt . $connector;
+		$nameCol = 'check' . $nameCol . $cpt;
 		$arrayValues = array_merge($arrayValues, array($nameCol => $value));
+		$cpt++;
 	}
 
 	foreach ($updateCol as $line)
@@ -44,10 +46,11 @@ function update($tableName, $updateCol, $checkCol, $optional, $bdd)
 		$nameCol = $line[0];
 		$value   = $line[1];
 
-		$SETvar = $SETvar . $comma . $nameCol . " = :new" . $nameCol;
-		$comma = ",";
-		$nameCol = 'new' . $nameCol;
+		$SETvar = $SETvar . $comma . $nameCol . " = :new" . $nameCol . $cpt;
+		$comma = ", ";
+		$nameCol = 'new' . $nameCol . $cpt;
 		$arrayValues = array_merge($arrayValues, array($nameCol => $value));
+		$cpt++;
 	}
 
 	# SQL request

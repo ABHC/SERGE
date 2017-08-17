@@ -1,5 +1,5 @@
 <?php
-function insert($tableName, $insertCol, $optional, $bdd)
+function insert($tableName, $insertCol, $optional, $redirectPage, $bdd)
 {
 	# USAGE
 	/*
@@ -28,6 +28,11 @@ function insert($tableName, $insertCol, $optional, $bdd)
 		$req = $bdd->prepare("INSERT INTO $tableName ($INSERTvar) VALUES ($VALUESvar) $optional");
 		$req->execute($arrayValues);
 		$req->closeCursor();
+
+		if (!empty($redirectPage))
+		{
+			header("Location: $redirectPage");
+		}
 	}
 	catch (Exception $e)
 	{

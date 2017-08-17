@@ -175,6 +175,27 @@ h3
 	margin-right: 5px;
 }
 
+#helpNews
+{
+	display: none;
+}
+
+#helpNews:target
+{
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: flex-start;
+	width: 40%;
+	margin-left: 20%;
+	padding: 10px;
+	background-color: rgba(0, 0, 0, 0.4);
+	border-radius: 3px;
+	border: 1px solid rgba(255,255,255,0.1);
+	z-index: 10;
+}
+
 .newsInput
 {
 	display: flex;

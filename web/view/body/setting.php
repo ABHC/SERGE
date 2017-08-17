@@ -407,28 +407,28 @@
 						<input class="number alpha" type="number" name="hours" min="0" max="23" step="2" placeholder="19" value="<?php echo $userSettings['selected_hour']; ?>"/> h
 						, every
 						<select class="selectCommResult" name="days">
-							<option value=",1,2,3,4,5," <?php echo $day[0]; ?>>business day</option>
-							<option value=",1,3,5," <?php echo $day[8]; ?>>second business day</option>
-							<option value=",1,2,3,4,5,6,7," <?php echo $day[9]; ?>>day</option>
-							<option value=",1," <?php echo $day[1]; ?>>monday</option>
-							<option value=",2," <?php echo $day[2]; ?>>tuesday</option>
-							<option value=",3," <?php echo $day[3]; ?>>wednesday</option>
-							<option value=",4," <?php echo $day[4]; ?>>thursday</option>
-							<option value=",5," <?php echo $day[5]; ?>>friday</option>
-							<option value=",6," <?php echo $day[6]; ?>>saturday</option>
-							<option value=",7," <?php echo $day[7]; ?>>sunday</option>
+							<option value=",1,2,3,4,5," <?php echo isset($day[0]) ? $day[0]:''; ?>>business day</option>
+							<option value=",1,3,5," <?php echo isset($day[8]) ? $day[8]:''; ?>>second business day</option>
+							<option value=",1,2,3,4,5,6,7," <?php echo isset($day[9]) ? $day[9]:''; ?>>day</option>
+							<option value=",1," <?php echo isset($day[1]) ? $day[1]:''; ?>>monday</option>
+							<option value=",2," <?php echo isset($day[2]) ? $day[2]:''; ?>>tuesday</option>
+							<option value=",3," <?php echo isset($day[3]) ? $day[3]:''; ?>>wednesday</option>
+							<option value=",4," <?php echo isset($day[4]) ? $day[4]:''; ?>>thursday</option>
+							<option value=",5," <?php echo isset($day[5]) ? $day[5]:''; ?>>friday</option>
+							<option value=",6," <?php echo isset($day[6]) ? $day[6]:''; ?>>saturday</option>
+							<option value=",7," <?php echo isset($day[7]) ? $day[7]:''; ?>>sunday</option>
 						</select>
 						<span class="arrDown">▾</span>
 						and
 						<select class="selectCommResult" name="secondDay">
 							<option value="">that's all</option>
-							<option value="1," <?php echo $day2[1]; ?>>monday</option>
-							<option value="2," <?php echo $day2[2]; ?>>tuesday</option>
-							<option value="3," <?php echo $day2[3]; ?>>wednesday</option>
-							<option value="4," <?php echo $day2[4]; ?>>thursday</option>
-							<option value="5," <?php echo $day2[5]; ?>>friday</option>
-							<option value="6," <?php echo $day2[6]; ?>>saturday</option>
-							<option value="7," <?php echo $day2[7]; ?>>sunday</option>
+							<option value="1," <?php echo isset($day2[1]) ? $day2[1]:''; ?>>monday</option>
+							<option value="2," <?php echo isset($day2[2]) ? $day2[2]:''; ?>>tuesday</option>
+							<option value="3," <?php echo isset($day2[3]) ? $day2[3]:''; ?>>wednesday</option>
+							<option value="4," <?php echo isset($day2[4]) ? $day2[4]:''; ?>>thursday</option>
+							<option value="5," <?php echo isset($day2[5]) ? $day2[5]:''; ?>>friday</option>
+							<option value="6," <?php echo isset($day2[6]) ? $day2[6]:''; ?>>saturday</option>
+							<option value="7," <?php echo isset($day2[7]) ? $day2[7]:''; ?>>sunday</option>
 						</select>
 						<span class="arrDown">▾</span>
 					</p>
@@ -488,6 +488,8 @@
 
 		<div class="keywordManagement">
 			<h2>News management</h2>
+			<a href="#helpNews" class="helpModalWindow"></a>
+			<div id="helpNews">Help</div>
 			<div class="newsInput">
 				<input title="Add new keyword" class="submit" type="submit" value="" />
 				<select name="sourceKeyword" id="sourceKeyword">
@@ -709,13 +711,30 @@
 					$selected['jr'] = '';
 					$selected['cat'] = '';
 					$selected['all'] = '';
-					$selected[$_POST['scienceType' . $cpt]] = 'selected';
 
+					if (isset($_POST['scienceType' . $cpt]))
+					{
+						$selected[$_POST['scienceType' . $cpt]] = 'selected';
+					}
 
-					if ($_POST['openParenthesis' . $cpt] == "active")
+					if (isset($_POST['openParenthesis' . $cpt]) AND $_POST['openParenthesis' . $cpt] == "active")
 					{
 						$checked['openParenthesis' . $cpt] = 'checked';
 					}
+					else
+					{
+						$checked['openParenthesis' . $cpt] = '';
+					}
+
+					if (isset($_POST['scienceQuery' . $cpt]))
+					{
+						$_POST['scienceQuery' . $cpt] = htmlspecialchars($_POST['scienceQuery' . $cpt]);
+					}
+					else
+					{
+						$_POST['scienceQuery' . $cpt] = '';
+					}
+
 					echo '
 					<input type="checkbox" id="openParenthesis' . $cpt . '" name="openParenthesis' . $cpt . '" value="active" ' . $checked['openParenthesis' . $cpt] . '/>
 					<label class="queryParenthesis" for="openParenthesis' . $cpt . '">(</label>
@@ -731,9 +750,13 @@
 					<input type="text" class="query" name="scienceQuery' . $cpt . '" id="scienceQuery0' . $cpt . '" placeholder="Keyword" value="' . $_POST['scienceQuery' . $cpt] . '"/>';
 
 
-					if ($_POST['closeParenthesis' . $cpt] == "active")
+					if (isset($_POST['closeParenthesis' . $cpt]) AND $_POST['closeParenthesis' . $cpt] == "active")
 					{
 						$checked['closeParenthesis' . $cpt] = 'checked';
+					}
+					else
+					{
+						$checked['closeParenthesis' . $cpt] = '';
 					}
 					echo '
 					<input type="checkbox" id="closeParenthesis' . $cpt . '" name="closeParenthesis' . $cpt . '" value="active" ' . $checked['closeParenthesis' . $cpt] . '/>
@@ -744,11 +767,13 @@
 					$checked['OR'] = '';
 					$checked['AND'] = '';
 					$checked['NOTAND'] = '';
-					$checked[$_POST['andOrAndnot' . $cpt]] = 'checked';
-
 					if (empty($_POST['andOrAndnot' . $cpt]))
 					{
 						$checked['OR'] = 'checked';
+					}
+					else
+					{
+						$checked[$_POST['andOrAndnot' . $cpt]] = 'checked';
 					}
 
 					$logicalConnector = '
@@ -765,7 +790,7 @@
 				<input title="Extend" class="extend" type="submit" id="extendScience" name="extendScience" value=">>" />
 			</div>
 			</div>
-			<?php echo $ERROR_SCIENCEQUERY; ?>
+			<?php echo isset($ERROR_SCIENCEQUERY) ? $ERROR_SCIENCEQUERY:''; ?>
 			<?php
 			include_once('model/readOwnerScienceQuery.php');
 			foreach ($queries as $query)
@@ -946,7 +971,19 @@
 					$selected['SIS'] = '';
 					$selected['TPO'] = '';
 					$selected['WO'] = '';
-					$selected[$_POST['patentType' . $cpt]] = 'selected';
+					if (isset($_POST['patentType' . $cpt]))
+					{
+						$selected[$_POST['patentType' . $cpt]] = 'selected';
+					}
+
+					if (isset($_POST['patentQuery' . $cpt]))
+					{
+						$_POST['patentQuery' . $cpt] = htmlspecialchars($_POST['patentQuery' . $cpt]);
+					}
+					else
+					{
+						$_POST['patentQuery' . $cpt] = '';
+					}
 
 					echo '
 				<select title="Type" class="queryType" name="patentType' . $cpt . '" id="patentType' . $cpt . '">
@@ -969,7 +1006,7 @@
 					<option value="EN_DE" ' . $selected['EN_DE'] . '>English Description</option>
 					<option value="EN_ALLTXT" ' . $selected['EN_ALLTXT'] . '>English Text</option>
 					<option value="EN_TI" ' . $selected['EN_TI'] . '>English Title</option>
-					<option value="EN_EX" ' . $selected['EN_EX'] . '>Exact IPC code</option>
+					<option value="EN_EX" ' . $selected['IC_EX'] . '>Exact IPC code</option>
 					<option value="LGF" ' . $selected['LGF'] . '>Filing Language</option>
 					<option value="FP" ' . $selected['FP'] . '>Front Page(FP)</option>
 					<option value="GN" ' . $selected['GN'] . '>Grant Number</option>
@@ -999,7 +1036,7 @@
 					<option value="OF" ' . $selected['OF'] . '>Office Code</option>
 					<option value="NPCC" ' . $selected['NPCC'] . '>National Phase Office Code</option>
 					<option value="PRIORPCTAN" ' . $selected['PRIORPCTAN'] . '>Prior PCT Application Number</option>
-					<option value="PRIORPCTW" ' . $selected['PRIORPCTW'] . '>Prior PCT WO Number</option>
+					<option value="PRIORPCTWO" ' . $selected['PRIORPCTWO'] . '>Prior PCT WO Number</option>
 					<option value="PI" ' . $selected['PI'] . '>Priority All Data</option>
 					<option value="PCN" ' . $selected['PCN'] . '>Priority Country</option>
 					<option value="PD" ' . $selected['PD'] . '>Priority Date</option>
@@ -1016,7 +1053,7 @@
 				$cpt++;
 
 				$checked = '';
-				if ($_POST['andOrPatent' . $cpt] == 'OR')
+				if (isset($_POST['andOrPatent' . $cpt]) AND $_POST['andOrPatent' . $cpt] == 'OR')
 				{
 					$checked = 'checked';
 				}
@@ -1029,7 +1066,7 @@
 				<input title="Extend" class="extend" type="submit" id="extend" name="extendPatent" value=">>" />
 			</div>
 			</div>
-			<?php echo $ERROR_PATENTQUERY; ?>
+			<?php echo isset($ERROR_PATENTQUERY) ? $ERROR_PATENTQUERY:''; ?>
 			<?php
 			include_once('model/readOwnerPatentQuery.php');
 			foreach ($queries as $query)
