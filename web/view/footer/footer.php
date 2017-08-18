@@ -1,7 +1,7 @@
 <footer>
 	<div class="footerContainer1">
 		<div class="copyright">
-			<a href="github">Cairn Devices 2017 GPLv3</a>
+			<a href="github"><?php get_t('copyright_title_footer', $bdd); ?></a>
 		</div>
 
 		<div class="links">
@@ -13,19 +13,19 @@
 
 			<div class="subLinksContainer">
 				<div class="subLinks">
-					<a href="workinprogress">Cairn Devices</a>
-					<a href="legal">Legal</a>
-					<a href="privacy">Privacy</a>
+					<a href="workinprogress"><?php get_t('link1_center_footer', $bdd); ?></a>
+					<a href="legal"><?php get_t('link2_center_footer', $bdd); ?></a>
+					<a href="privacy"><?php get_t('link3_center_footer', $bdd); ?></a>
 				</div>
 				<div class="subLinks">
-					<a href="index#signup">Sign up</a>
-					<a href="connection">Sign in</a>
-					<a href="mailto:support@cairn-devices.eu">Support</a>
+					<a href="index#signup"><?php get_t('link4_center_footer', $bdd); ?></a>
+					<a href="connection"><?php get_t('link5_center_footer', $bdd); ?></a>
+					<a href="mailto:support@cairn-devices.eu"><?php get_t('link6_center_footer', $bdd); ?></a>
 				</div>
 				<div class="subLinks">
-					<a href="logout">Logout</a>
-					<a href="mailto:contact@cairn-devices.eu">Contact us</a>
-					<a href="mailto:press@cairn-devices.eu">Press</a>
+					<a href="logout"><?php get_t('link7_center_footer', $bdd); ?></a>
+					<a href="mailto:contact@cairn-devices.eu"><?php get_t('link8_center_footer', $bdd); ?></a>
+					<a href="mailto:press@cairn-devices.eu"><?php get_t('link9_center_footer', $bdd); ?></a>
 				</div>
 			</div>
 		</div>
@@ -39,7 +39,7 @@
 
 	<div class="footerContainer2">
 		<div class="legal">
-			Use Serge as a Free Software GPLv3 2017, by Cairn Devices SAS, company with share capital of 10 005 € based in France SIRET : 822 125 183 00019
+			<?php get_t('legal_text_footer', $bdd); ?>
 		</div>
 	</div>
 

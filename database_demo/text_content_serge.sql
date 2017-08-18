@@ -53,4 +53,15 @@ En recherchant les actualités, les brevets et les publications scientifiques, S
 ('name_title_nav', 'Serge by Cairn Devices', 'Serge par Cairn Devices', NULL, NULL, NULL),
 ('tab1_title_nav', 'Results', 'Résultats', NULL, NULL, NULL),
 ('tab2_title_nav', 'Wiki', 'Wiki', NULL, NULL, NULL),
-('tab3_title_nav', 'Settings', 'Options', NULL, NULL, NULL);
+('tab3_title_nav', 'Settings', 'Options', NULL, NULL, NULL),
+('copyright_title_footer', 'Cairn Devices 2017 GPLv3', 'Cairn Devices 2017 GPLv3', 'Cairn Devices 2017 GPLv3', 'Cairn Devices 2017 GPLv3', 'Cairn Devices 2017 GPLv3'),
+('link1_center_footer', 'Cairn Devices', 'Cairn Devices', NULL, NULL, NULL),
+('link2_center_footer', 'Legal', 'Légal', NULL, NULL, NULL),
+('link3_center_footer', 'Privacy', 'Vie privée', NULL, NULL, NULL),
+('link4_center_footer', 'Sign up', 'Inscription', NULL, NULL, NULL),
+('link5_center_footer', 'Sign in', 'Connexion', NULL, NULL, NULL),
+('link6_center_footer', 'Support', 'Support', NULL, NULL, NULL),
+('link7_center_footer', 'Logout', 'Déconnexion', NULL, NULL, NULL),
+('link8_center_footer', 'Contact us', 'Contactez nous', NULL, NULL, NULL),
+('link9_center_footer', 'Press', 'Presse', NULL, NULL, NULL),
+('legal_text_footer', 'Use Serge as a Free Software GPLv3 2017, by Cairn Devices SAS, company with share capital of 10 005 € based in France SIRET : 822 125 183 00019', 'Utilisez Serge comme un logiciel libre sous GPLv3 2017, par Cairn Devices SAS, société avec capital social de 10 005 € basé en France SIRET: 822 125 183 00019', NULL, NULL, NULL);
