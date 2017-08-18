@@ -3,7 +3,17 @@
 	</div>
 </div>
 <form method="post" action="setting">
-	<input type="hidden" name="scrollPos" id="scrollPos" value="0"/>
+	<input type="hidden" name="scrollPos" id="scrollPos" value="
+	<?php
+	if (isset($_POST['scrollPos']))
+	{
+		echo htmlspecialchars($_POST['scrollPos']);
+	}
+	else
+	{
+		echo '0';
+	}
+	?>"/>
 	<input type="hidden" name="delEditingScienceQuery" value="<?php echo $delEditingScienceQuery; ?>"/>
 	<input type="hidden" name="delEditingPatentQuery" value="<?php echo $delEditingPatentQuery; ?>"/>
 	<div class="body">

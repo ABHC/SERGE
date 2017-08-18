@@ -1,19 +1,19 @@
 // Keep scroll position
 document.onsubmit = function()
 {
+	var $window = $(window);
 	// Scroll position
-	var scrollPosition = document.body.scrollTop;
-	if (scrollPosition == 0)
-	{
-		var scrollPosition = document.documentElement.scrollTop; // Firefox version
-	}
+	var scrollPosition = $window.scrollTop();
 	document.getElementById('scrollPos').value = scrollPosition;
 	return true;
 }
 
 //Onload
-window.onload = function()
-{
-	document.body.scrollTop = scrollPosition;
-	document.documentElement.scrollTop = scrollPosition;// Firefox version
-}
+$(document).ready(
+	function()
+	{
+		var $window = $(window);
+		scrollPosition = document.getElementById('scrollPos').value;
+		$window.scrollTop(scrollPosition);
+	}
+);
