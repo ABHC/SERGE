@@ -64,4 +64,10 @@ En recherchant les actualités, les brevets et les publications scientifiques, S
 ('link7_center_footer', 'Logout', 'Déconnexion', NULL, NULL, NULL),
 ('link8_center_footer', 'Contact us', 'Contactez nous', NULL, NULL, NULL),
 ('link9_center_footer', 'Press', 'Presse', NULL, NULL, NULL),
-('legal_text_footer', 'Use Serge as a Free Software GPLv3 2017, by Cairn Devices SAS, company with share capital of 10 005 € based in France SIRET : 822 125 183 00019', 'Utilisez Serge comme un logiciel libre sous GPLv3 2017, par Cairn Devices SAS, société avec capital social de 10 005 € basé en France SIRET: 822 125 183 00019', NULL, NULL, NULL);
+('legal_text_footer', 'Use Serge as a Free Software GPLv3 2017, by Cairn Devices SAS, company with share capital of 10 005 € based in France SIRET : 822 125 183 00019', 'Utilisez Serge comme un logiciel libre sous GPLv3 2017, par Cairn Devices SAS, société avec capital social de 10 005 € basé en France SIRET: 822 125 183 00019', NULL, NULL, NULL),
+('title_text_connection', 'Connection', 'Connexion', NULL, NULL, NULL),
+('input1_signin_connection', 'Username', 'Nom d\'utilisateur', NULL, NULL, NULL),
+('input2_signin_connection', 'Passphrase', 'Phrase de passe', NULL, NULL, NULL),
+('forgotPass_link_connection', 'Forgot your passphrase ?', 'Vous avez oublié votre mot de passe ?', NULL, NULL, NULL),
+('noAccount_link_connection', 'You don\'t have an account ? Sign Up', 'Vous n\'avez pas de compte ? Inscrivez vous', NULL, NULL, NULL),
+('submit_signin_connection', 'Sign in', 'Connexion', NULL, NULL, NULL);
