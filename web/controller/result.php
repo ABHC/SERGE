@@ -1,17 +1,16 @@
 <?php
 include_once('controller/accessLimitedToSignInPeople.php');
+include_once('model/get_text_var.php');
 include_once('model/get_text.php');
 include_once('model/read.php');
 include_once('model/update.php');
-
-//include_once('model/get_text.php');
 
 # Initialization of variables
 $result             = 'active';
 $wiki               = '';
 $setting            = '';
-$colOrder['read']   = 'Read';
-$colOrder['send']   = 'Send';
+$colOrder['read']   = var_get_t('title6Read_table_results', $bdd);
+$colOrder['send']   = var_get_t('title5Send_table_results', $bdd);
 $colOrder['DESC']   = '';
 $colOrder['title']  = '';
 $colOrder['source'] = '';
@@ -50,7 +49,7 @@ if (!empty($_GET['type']))
 		$keywordQueryId = 'keyword_id';
 		$queryColumn    = 'keyword';
 		$specialColumn  = ', id_source, keyword_id ';
-		$displayColumn  = 'Keyword';
+		$displayColumn  = var_get_t('title2News_table_results', $bdd);
 	}
 	elseif ($type == 'sciences')
 	{
@@ -66,7 +65,7 @@ if (!empty($_GET['type']))
 		$keywordQueryId = 'query_id';
 		$queryColumn    = 'query_arxiv';
 		$specialColumn  = ',query_id, id_source ';
-		$displayColumn  = 'Query';
+		$displayColumn  = var_get_t('title2Science_table_results', $bdd);
 	}
 	elseif ($type == 'patents')
 	{
@@ -82,7 +81,7 @@ if (!empty($_GET['type']))
 		$keywordQueryId = 'id_query_wipo';
 		$queryColumn    = 'query';
 		$specialColumn  = ', id_query_wipo, id_source ';
-		$displayColumn  = 'Query';
+		$displayColumn  = var_get_t('title2Patents_table_results', $bdd);
 	}
 	else
 	{
@@ -98,7 +97,7 @@ if (!empty($_GET['type']))
 		$keywordQueryId = 'keyword_id';
 		$queryColumn    = 'keyword';
 		$specialColumn  = ', id_source, keyword_id ';
-		$displayColumn  = 'Keyword';
+		$displayColumn  = var_get_t('title2News_table_results', $bdd);
 	}
 }
 else
@@ -115,7 +114,7 @@ else
 	$keywordQueryId = 'keyword_id';
 	$queryColumn    = 'keyword';
 	$specialColumn  = ', id_source, keyword_id ';
-	$displayColumn  = 'Keyword';
+	$displayColumn  = var_get_t('title2News_table_results', $bdd);
 }
 
 # Warning sensitive variables [SQLI]
@@ -254,7 +253,7 @@ if (!empty($_GET['optionalCond']))
 	$optionalCond = htmlspecialchars($_GET['optionalCond']);
 	if ($optionalCond == 'read')
 	{
-		$colOrder['read'] = 'Read';
+		$colOrder['read'] = var_get_t('title6Read_table_results', $bdd);
 		$colOrder['OCDESC'] = 'DESC';
 
 		# WARNING sensitive variable [SQLI]
@@ -262,7 +261,7 @@ if (!empty($_GET['optionalCond']))
 	}
 	elseif ($optionalCond == 'readDESC')
 	{
-		$colOrder['read'] = 'Unread';
+		$colOrder['read'] = var_get_t('title6Unread_table_results', $bdd);
 		$colOrder['OCDESC'] = '';
 
 		# WARNING sensitive variable [SQLI]
@@ -270,7 +269,7 @@ if (!empty($_GET['optionalCond']))
 	}
 	elseif ($optionalCond == 'send')
 	{
-		$colOrder['send'] = 'Send';
+		$colOrder['send'] = var_get_t('title5Send_table_results', $bdd);
 		$colOrder['OCDESC'] = 'DESC';
 
 		# WARNING sensitive variable [SQLI]
@@ -278,7 +277,7 @@ if (!empty($_GET['optionalCond']))
 	}
 	elseif ($optionalCond == 'sendDESC')
 	{
-		$colOrder['send'] = 'Not send';
+		$colOrder['send'] = var_get_t('title5NotSend_table_results', $bdd);
 		$colOrder['OCDESC'] = '';
 
 		# WARNING sensitive variable [SQLI]

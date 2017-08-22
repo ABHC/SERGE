@@ -106,7 +106,7 @@ input[type='text']::placeholder
 
 .selectResultsType a
 {
-	width: 60px;
+	width: 70px;
 	height: 98px;
 	background-color: rgba(0, 0, 0, 0.5);
 	text-decoration: none;
@@ -396,8 +396,8 @@ a.wikiLogo
 
 a.wikiLogo img
 {
-	width: 25px;
-	height: 25px;
+	width: 26px;
+	height: 34px;
 }
 
 tr:nth-child(2n)

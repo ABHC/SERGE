@@ -13,13 +13,13 @@
 	</form>
 	<div class="selectResultsType">
 		<a <?php echo $newsActive; ?> href="result?type=news">
-			<div class="selectResultsTypeNews">News</div>
+			<div class="selectResultsTypeNews"><?php get_t('title1_type_results', $bdd); ?></div>
 		</a>
 		<a <?php echo $sciencesActive; ?> href="result?type=sciences">
-			<div class="selectResultsTypeSciences">Sciences</div>
+			<div class="selectResultsTypeSciences"><?php get_t('title2_type_results', $bdd); ?></div>
 		</a>
 		<a <?php echo $patentsActive; ?> href="result?type=patents">
-			<div class="selectResultsTypePatents">Patents</div>
+			<div class="selectResultsTypePatents"><?php get_t('title3_type_results', $bdd); ?></div>
 		</a>
 	</div>
 
@@ -31,13 +31,18 @@
 						<th><input title="Delete selected links" name="deleteLink" class="submit" type="submit" value="delete" /></th>
 						<?php
 						echo '
-						<th><a href="?orderBy=title' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '&type=' . $type . '">Title ' . $colOrder['title'] . '</a></th>
+						<th><a href="?orderBy=title' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '&type=' . $type . '">'; get_t('title1_table_results', $bdd);
+						echo ' ' . $colOrder['title'] . '</a></th>
 						<th>' . $displayColumn . '</th>
-						<th><a href="?orderBy=source' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '&type=' . $type . '">Source ' . $colOrder['source'] . '</a></th>
-						<th><a href="?orderBy=date' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '&type=' . $type . '">Date ' . $colOrder['date'] . '</a></th>
+						<th><a href="?orderBy=source' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '&type=' . $type . '">';
+						get_t('title3_table_results', $bdd);
+						echo ' ' . $colOrder['source'] . '</a></th>
+						<th><a href="?orderBy=date' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '&type=' . $type . '">';
+						get_t('title4_table_results', $bdd);
+						echo ' ' . $colOrder['date'] . '</a></th>
 						<th><a href="?optionalCond=send' . $colOrder['OCDESC'] . $searchSort . $orderBy . '&type=' . $type . '">' . $colOrder['send'] . '</a></th>
 						<th><a href="?optionalCond=read' . $colOrder['OCDESC'] . $searchSort . $orderBy . '&type=' . $type . '">' . $colOrder['read'] . '</a></th>
-						<th><a href="wiki">Wiki</a></th>';
+						<th><a href="wiki">' . var_get_t('title7_table_results', $bdd) .  '</a></th>';
 						?>
 					</tr>
 				</thead>
@@ -77,7 +82,7 @@
 
 						$checkCol = array(array("id", "=", $keywordId, ""));
 						$keyword  = read($tableNameQuery, $queryColumn, $checkCol, '', $bdd);
-						$keyword  = preg_replace("/^:all@[0-9]+$/", ":All", $keyword[0][$queryColumn]);
+						$keyword  = preg_replace("/^:all@[0-9]+$/", var_get_t('all_specialKeyword_results', $bdd), $keyword[0][$queryColumn]);
 
 						# Read source for current result
 						if ($type == "sciences")
@@ -296,7 +301,7 @@
 							<td>' . $amIRead . '</td>
 							<td>
 								<a href="link?link" class="wikiLogo">
-									<img alt="Add in wiki" title="Add in wiki" src="../images/iconWikiWB.png"/>
+									<img alt="Add in wiki" title="Add in wiki" src="../images/iconWikiLight.png"/>
 								</a>
 							</td>
 						</tr>';
