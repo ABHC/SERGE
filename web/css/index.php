@@ -293,7 +293,7 @@ h5
 	margin-top: 100px;
 	margin-bottom: 5px;
 	margin-left: 35%;
-	border: 1px solid rgb(40,40,40,0.15);
+	border: 1px solid rgba(40,40,40,0.15);
 	border-radius: 3px;
 	font-size: 20px;
 	color: rgb(40, 40, 40);

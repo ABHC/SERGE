@@ -22,6 +22,17 @@
 	?>
 	<h1>Creation of watch packs</h1>
 	<form method="post" action="watchPack?type=create<?php echo $packIdURL ?>">
+		<input type="hidden" name="scrollPos" id="scrollPos" value="
+		<?php
+		if (isset($_POST['scrollPos']))
+		{
+			echo htmlspecialchars($_POST['scrollPos']);
+		}
+		else
+		{
+			echo '0';
+		}
+		?>"/>
 		<input type="hidden" name="scrollPos" id="scrollPos" value="0"/>
 		<input type="hidden" name="delEditingScienceQuery" value="<?php echo $delEditingScienceQuery; ?>"/>
 		<input type="hidden" name="delEditingPatentQuery" value="<?php echo $delEditingPatentQuery; ?>"/>
@@ -81,7 +92,7 @@
 		</div>
 
 		<div class="keywordManagement">
-			<h2>News management</h2>
+			<h2><?php get_t('window2_title_setting', $bdd); ?></h2>
 			<div class="newsInput">
 				<input title="Add new keyword" class="submit" type="submit" value="" name="addNewKeyword"/>
 				<select name="sourceKeyword" id="sourceKeyword">
@@ -101,7 +112,7 @@
 						echo '<option value="source' . $sourcesList['id'] . '" ' . $amISelected . '>' . $sourcesList['name'] . '</option>' . PHP_EOL;
 					}
 					?>
-					<option value="source00">All sources</option>
+					<option value="source00"><?php get_t('select1_window2_setting', $bdd); ?></option>
 				</select>
 				<span class="arrDownBorder">▾</span>
 				<input type="text" class="keywordInput" name="newKeyword" id="keyword" placeholder="Keyword,next keyword, ..." />
@@ -109,7 +120,7 @@
 			<div class="newsInput">
 				<input title="Add" name="addNewSource" class="submit" type="submit" value="" />
 				<select name="sourceType" id="sourceType">
-					<option value="inputSource">Add my own source</option>
+					<option value="inputSource"><?php get_t('select2_window2_setting', $bdd); ?></option>
 				</select>
 				<span class="arrDownBorder">▾</span>
 				<input type="url" name="newSource" id="source" placeholder="Source" />
@@ -272,7 +283,7 @@
 		</div>
 
 		<div class="scientificPublicationManagement">
-			<h2>Science watch management</h2>
+			<h2><?php get_t('window3_title_setting', $bdd); ?></h2>
 			<div class="newQueryContainer">
 				<div class="lineQuery">
 				<input title="Add new science query" class="submit" type="submit" name="scienceQuerySubmit" value="" />
@@ -463,7 +474,7 @@
 			?>
 		</div>
 		<div class="patentManagement">
-			<h2>Patent watch management</h2>
+			<h2><?php get_t('window4_title_setting', $bdd); ?></h2>
 			<div class="newQueryContainer">
 				<div class="lineQuery">
 				<input title="Add new patents query" class="submit" type="submit" name="patentQuerySubmit" value="" />

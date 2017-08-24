@@ -332,6 +332,8 @@ div.next
 	font-size: 30px;
 	cursor: pointer;
 	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
 	opacity: 0;
 	transition: .7s;
 }
@@ -350,6 +352,8 @@ div.next label.arrow
 	color: rgba(255, 255, 255, 0.4);
 	cursor: pointer;
 	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
 }
 
 div.prev:hover,

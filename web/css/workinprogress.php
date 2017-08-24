@@ -45,7 +45,7 @@ include_once('nav.php');
 	align-items: center;
 	min-height: calc(100vh - 75px);
 	color: #fff;
-	text-shadow: 0 0 3px rgb(0, 0, 0.8);
+	text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
 	text-transform: uppercase;
 	font-size: 30px;
 	font-family: ubuntu;

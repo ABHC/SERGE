@@ -18,7 +18,7 @@
 	<input type="hidden" name="delEditingPatentQuery" value="<?php echo $delEditingPatentQuery; ?>"/>
 	<div class="body">
 		<h1><?php get_t('main_title_setting', $bdd); ?></h1>
-		<div class="graphContainer">
+		<!--<div class="graphContainer">
 			<div class="graphSubContainer graphSubContainer00">
 				<input type="radio" name="radio-btn00" id="graph-0_00" checked />
 				<div id="graph_00_00" class="graph">
@@ -358,7 +358,7 @@
 					<div class="next"><label for="graph-0_02" class="arrow">&#10097;</label></div>
 				</div>
 			</div>
-		</div>
+		</div>-->
 
 		<div class="communicationResults">
 			<h2><?php get_t('window1_title_setting', $bdd); ?></h2>
