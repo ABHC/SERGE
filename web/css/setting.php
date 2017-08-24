@@ -227,9 +227,12 @@ h3
 
 .buttonCreatesourcePack
 {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	width: 40%;
 	max-width: 150px;
-	height: 40px;
+	height: 60px;
 	color: rgb(230,230,230);
 	text-decoration: none;
 	text-align: center;
@@ -246,9 +249,12 @@ h3
 
 .buttonVisiteCommunitySourcePack
 {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	width: 40%;
 	max-width: 150px;
-	height: 40px;
+	height: 60px;
 	color: rgb(230,230,230);
 	text-decoration: none;
 	text-align: center;
@@ -1006,7 +1012,7 @@ input:checked + .slider:before
 
 .deleteButton
 {
-	width: 100px;
+	width: 70px;
 	height: 31px;
 	border-radius: 0 3px 3px 0;
 	border: 1px solid rgba(255,255,255, 0.15);

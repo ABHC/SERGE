@@ -17,7 +17,7 @@
 	<input type="hidden" name="delEditingScienceQuery" value="<?php echo $delEditingScienceQuery; ?>"/>
 	<input type="hidden" name="delEditingPatentQuery" value="<?php echo $delEditingPatentQuery; ?>"/>
 	<div class="body">
-		<h1>Settings</h1>
+		<h1><?php get_t('main_title_setting', $bdd); ?></h1>
 		<div class="graphContainer">
 			<div class="graphSubContainer graphSubContainer00">
 				<input type="radio" name="radio-btn00" id="graph-0_00" checked />
@@ -361,16 +361,16 @@
 		</div>
 
 		<div class="communicationResults">
-			<h2>Communication of results</h2>
+			<h2><?php get_t('window1_title_setting', $bdd); ?></h2>
 			<div class="divRow">
 				<div>
 					<div>
-						<h3>Your email</h3>
+						<h3><?php get_t('input1_window1_setting', $bdd); ?></h3>
 						<input type="email" name="email" id="email" value="<?php echo $userSettings['email']; ?>"/>
 					</div>
-					<h3 >Result page</h3>
+					<h3 ><?php get_t('subtitle1_window1_setting', $bdd); ?></h3>
 					<p>
-						Background <select size="<?php echo count($backgroundList); ?>" id="selectBackgroundPreview" class="selectBackground" name="backgroundResult">
+						<?php get_t('selectTitle_window1_setting', $bdd); ?> <select size="<?php echo count($backgroundList); ?>" id="selectBackgroundPreview" class="selectBackground" name="backgroundResult">
 						<?php
 						foreach ($backgroundList as $backgroundName)
 						{
@@ -397,72 +397,106 @@
 					</p>
 				</div>
 				<div>
-					<h3>Sending condition</h3>
+					<h3><?php get_t('subtitle2_window1_setting', $bdd); ?></h3>
 					<p>
 						<input type="radio" id="condNbLink" name="cond" value="link_limit" <?php echo $condNbLink; ?>>
 						<label class="radio" for="condNbLink"></label>
-						by number of links :
+						<?php get_t('input2_window1_setting', $bdd); ?>
 						<input class="number alpha" type="number" name="numberLinks" min="5" placeholder="50" value="<?php echo $userSettings['link_limit']; ?>"/>
 					</p>
 					<p>
 						<input type="radio" id="condFreq" name="cond" value="freq" <?php echo $condFreq; ?>>
 						<label class="radio" for="condFreq"></label>
-						by frequency, every
-						<input class="number alpha" type="number" name="freq" min="2" max="500" step="2" placeholder="24" value="<?php echo $userSettings['frequency']; ?>"/> hours
+						<?php get_t('input3_window1_setting', $bdd); ?>
+						<input class="number alpha" type="number" name="freq" min="2" max="500" step="2" placeholder="24" value="<?php echo $userSettings['frequency']; ?>"/><?php get_t('input4_window1_setting', $bdd); ?>
 					</p>
 					<p>
 						<input type="radio" id="condDate" name="cond" value="deadline" <?php echo $condDate; ?>>
 						<label class="radio" for="condDate"></label>
-						at
-						<input class="number alpha" type="number" name="hours" min="0" max="23" step="2" placeholder="19" value="<?php echo $userSettings['selected_hour']; ?>"/> h
-						, every
+						<?php get_t('input5_window1_setting', $bdd); ?>
+						<input class="number alpha" type="number" name="hours" min="0" max="23" step="2" placeholder="19" value="<?php echo $userSettings['selected_hour']; ?>"/>h
+						<?php get_t('input6_window1_setting', $bdd); ?>
 						<select class="selectCommResult" name="days">
-							<option value=",1,2,3,4,5," <?php echo isset($day[0]) ? $day[0]:''; ?>>business day</option>
-							<option value=",1,3,5," <?php echo isset($day[8]) ? $day[8]:''; ?>>second business day</option>
-							<option value=",1,2,3,4,5,6,7," <?php echo isset($day[9]) ? $day[9]:''; ?>>day</option>
-							<option value=",1," <?php echo isset($day[1]) ? $day[1]:''; ?>>monday</option>
-							<option value=",2," <?php echo isset($day[2]) ? $day[2]:''; ?>>tuesday</option>
-							<option value=",3," <?php echo isset($day[3]) ? $day[3]:''; ?>>wednesday</option>
-							<option value=",4," <?php echo isset($day[4]) ? $day[4]:''; ?>>thursday</option>
-							<option value=",5," <?php echo isset($day[5]) ? $day[5]:''; ?>>friday</option>
-							<option value=",6," <?php echo isset($day[6]) ? $day[6]:''; ?>>saturday</option>
-							<option value=",7," <?php echo isset($day[7]) ? $day[7]:''; ?>>sunday</option>
+							<option value=",1,2,3,4,5," <?php echo isset($day[0]) ? $day[0]:''; ?>>
+								<?php get_t('select1_window1_setting', $bdd); ?>
+							</option>
+							<option value=",1,3,5," <?php echo isset($day[8]) ? $day[8]:''; ?>>
+								<?php get_t('select2_window1_setting', $bdd); ?>
+							</option>
+							<option value=",1,2,3,4,5,6,7," <?php echo isset($day[9]) ? $day[9]:''; ?>>
+								<?php get_t('select3_window1_setting', $bdd); ?>
+							</option>
+							<option value=",1," <?php echo isset($day[1]) ? $day[1]:''; ?>>
+								<?php get_t('select4_window1_setting', $bdd); ?>
+							</option>
+							<option value=",2," <?php echo isset($day[2]) ? $day[2]:''; ?>>
+								<?php get_t('select5_window1_setting', $bdd); ?>
+							</option>
+							<option value=",3," <?php echo isset($day[3]) ? $day[3]:''; ?>>
+								<?php get_t('select6_window1_setting', $bdd); ?>
+							</option>
+							<option value=",4," <?php echo isset($day[4]) ? $day[4]:''; ?>>
+								<?php get_t('select7_window1_setting', $bdd); ?>
+							</option>
+							<option value=",5," <?php echo isset($day[5]) ? $day[5]:''; ?>>
+								<?php get_t('select8_window1_setting', $bdd); ?>
+							</option>
+							<option value=",6," <?php echo isset($day[6]) ? $day[6]:''; ?>>
+								<?php get_t('select9_window1_setting', $bdd); ?>
+							</option>
+							<option value=",7," <?php echo isset($day[7]) ? $day[7]:''; ?>>
+								<?php get_t('select10_window1_setting', $bdd); ?>
+							</option>
 						</select>
 						<span class="arrDown">▾</span>
-						and
+						<?php get_t('input6.1_window1_setting', $bdd); ?>
 						<select class="selectCommResult" name="secondDay">
 							<option value="">that's all</option>
-							<option value="1," <?php echo isset($day2[1]) ? $day2[1]:''; ?>>monday</option>
-							<option value="2," <?php echo isset($day2[2]) ? $day2[2]:''; ?>>tuesday</option>
-							<option value="3," <?php echo isset($day2[3]) ? $day2[3]:''; ?>>wednesday</option>
-							<option value="4," <?php echo isset($day2[4]) ? $day2[4]:''; ?>>thursday</option>
-							<option value="5," <?php echo isset($day2[5]) ? $day2[5]:''; ?>>friday</option>
-							<option value="6," <?php echo isset($day2[6]) ? $day2[6]:''; ?>>saturday</option>
-							<option value="7," <?php echo isset($day2[7]) ? $day2[7]:''; ?>>sunday</option>
+							<option value="1," <?php echo isset($day2[1]) ? $day2[1]:''; ?>>
+								<?php get_t('select4_window1_setting', $bdd); ?>
+							</option>
+							<option value="2," <?php echo isset($day2[2]) ? $day2[2]:''; ?>>
+								<?php get_t('select5_window1_setting', $bdd); ?>
+							</option>
+							<option value="3," <?php echo isset($day2[3]) ? $day2[3]:''; ?>>
+								<?php get_t('select6_window1_setting', $bdd); ?>
+							</option>
+							<option value="4," <?php echo isset($day2[4]) ? $day2[4]:''; ?>>
+								<?php get_t('select7_window1_setting', $bdd); ?>
+							</option>
+							<option value="5," <?php echo isset($day2[5]) ? $day2[5]:''; ?>>
+								<?php get_t('select8_window1_setting', $bdd); ?>
+							</option>
+							<option value="6," <?php echo isset($day2[6]) ? $day2[6]:''; ?>>
+								<?php get_t('select9_window1_setting', $bdd); ?>
+							</option>
+							<option value="7," <?php echo isset($day2[7]) ? $day2[7]:''; ?>>
+								<?php get_t('select10_window1_setting', $bdd); ?>
+							</option>
 						</select>
 						<span class="arrDown">▾</span>
 					</p>
 				</div>
 				<div>
-					<h3>Sorting for links in email</h3>
+					<h3><?php get_t('subtitle3_window1_setting', $bdd); ?></h3>
 					<p>
 						<input type="radio" id="orderByKeyword" name="orderBy" value="masterword" <?php echo $orderByKeyword; ?>>
 						<label class="radio" for="orderByKeyword"></label>
-						by keyword
+						<?php get_t('input7_window1_setting', $bdd); ?>
 					</p>
 					<p>
 						<input type="radio" id="orderBySource" name="orderBy" value="origin" <?php echo $orderBySource; ?>>
 						<label class="radio" for="orderBySource"></label>
-						by source
+						<?php get_t('input8_window1_setting', $bdd); ?>
 					</p>
 					<p>
 						<input type="radio" id="orderByAlpha" name="orderBy" value="type" <?php echo $orderByType; ?>>
 						<label class="radio" for="orderByAlpha"></label>
-						by alphabetical order
+						<?php get_t('input9_window1_setting', $bdd); ?>
 					</p>
 				</div>
 				<div>
-					<h3>Privacy</h3>
+					<h3><?php get_t('subtitle4_window1_setting', $bdd); ?></h3>
 					<div class="align">
 						<div class="switch">
 							<label for="recordRead">
@@ -470,21 +504,30 @@
 								<div class="slider"></div>
 							</label>
 						</div>
-						Record when a link is clicked
+						<?php get_t('input10_window1_setting', $bdd); ?>
 					</div>
 					<div>
 						<div class="deleteContainer">
 							<div class="deleteLogo"></div>
-							<input title="Delete" class="deleteButton" type="submit" name="buttonDeleteHistory" value="deleteHistory" />
-							the last&nbsp;
+							<input title="Delete" class="deleteButton" type="submit" name="buttonDeleteHistory" value="<?php get_t('input11_window1_setting', $bdd); ?>" />
+							<?php get_t('input11.1_window1_setting', $bdd); ?>
 							<input class="number alpha" name="deleteHistoryValue" type="number" min="1" value="1"/>
-							&nbsp;
 							<select class="selectCommResult Unit" name="deleteHistoryUnit">
-								<option value="hour">Hour</option>
-								<option value="day">Day</option>
-								<option value="week">Week</option>
-								<option value="month">Month</option>
-								<option value="year">Year</option>
+								<option value="hour">
+									<?php get_t('select11_window1_setting', $bdd); ?>
+								</option>
+								<option value="day">
+									<?php get_t('select12_window1_setting', $bdd); ?>
+								</option>
+								<option value="week">
+									<?php get_t('select13_window1_setting', $bdd); ?>
+								</option>
+								<option value="month">
+									<?php get_t('select14_window1_setting', $bdd); ?>
+								</option>
+								<option value="year">
+									<?php get_t('select15_window1_setting', $bdd); ?>
+								</option>
 							</select>
 							<span class="arrDown">▾</span>
 						</div>
@@ -497,9 +540,9 @@
 		</div>
 
 		<div class="keywordManagement">
-			<h2>News management</h2>
-			<a href="#helpNews" class="helpModalWindow"></a>
-			<div id="helpNews">Help</div>
+			<h2><?php get_t('window2_title_setting', $bdd); ?></h2>
+			<!--<a href="#helpNews" class="helpModalWindow"></a>
+			<div id="helpNews">Help</div>-->
 			<div class="newsInput">
 				<input title="Add new keyword" class="submit" type="submit" value="" />
 				<select name="sourceKeyword" id="sourceKeyword">
@@ -524,7 +567,7 @@
 						echo '<option value="source' . $ownerSourcesList['id'] . '" ' . $amISelected . '>' . $ownerSourcesList['name'] . '</option>' . PHP_EOL;
 					}
 					?>
-					<option value="source00">All sources</option>
+					<option value="source00"><?php get_t('select1_window2_setting', $bdd); ?></option>
 				</select>
 				<span class="arrDownBorder">▾</span>
 				<input type="text" class="keywordInput" name="newKeyword" id="keyword" placeholder="Keyword,next keyword, ..." />
@@ -532,13 +575,13 @@
 			<div class="newsInput">
 				<input title="Add new source" class="submit" type="submit" value="" />
 				<select name="sourceType" id="sourceType">
-					<option value="inputSource">Add my own source</option>
-					<option value="sourceGeneralEN">General news source pack [English]</option>
+					<option value="inputSource"><?php get_t('select2_window2_setting', $bdd); ?></option>
+					<!--<option value="sourceGeneralEN">General news source pack [English]</option>
 					<option value="sourceTechnologyEN">Technology source pack [English]</option>
 					<option value="sourceSpatialEN">Spatial source pack [English]</option>
 					<option value="sourceGeneralFR">General news source pack [French]</option>
 					<option value="sourceTechnologyFR">Technology source pack [French]</option>
-					<option value="sourceSpacialFR">Spatial source pack [French]</option>
+					<option value="sourceSpacialFR">Spatial source pack [French]</option>-->
 				</select>
 				<span class="arrDownBorder">▾</span>
 				<input type="url" name="newSource" id="source" placeholder="Source" />
@@ -546,8 +589,8 @@
 			<?php echo $ERROR_MESSAGE; ?>
 
 			<div class="inlineButton">
-				<a class="buttonCreatesourcePack" href="watchPack?type=create">Create my own source pack</a>
-				<a class="buttonVisiteCommunitySourcePack" href="watchPack?type=add">Add community source pack</a>
+				<a class="buttonCreatesourcePack" href="watchPack?type=create"><?php get_t('Button1_window2_setting', $bdd); ?></a>
+				<a class="buttonVisiteCommunitySourcePack" href="watchPack?type=add"><?php get_t('Button2_window2_setting', $bdd); ?></a>
 			</div>
 
 			<div>
@@ -688,7 +731,7 @@
 		</div>
 
 		<div class="scientificPublicationManagement">
-			<h2>Science watch management</h2>
+			<h2><?php get_t('window3_title_setting', $bdd); ?></h2>
 			<div class="newQueryContainer">
 				<div class="lineQuery">
 				<input title="Add new science query" class="submit" type="submit" name="scienceQuerySubmit" value="add" />
@@ -895,7 +938,7 @@
 			?>
 		</div>
 		<div class="patentManagement">
-			<h2>Patent watch management</h2>
+			<h2><?php get_t('window4_title_setting', $bdd); ?></h2>
 			<div class="newQueryContainer">
 				<div class="lineQuery">
 				<input title="Add new patents query" class="submit" type="submit" name="patentQuerySubmit" value="add" />
