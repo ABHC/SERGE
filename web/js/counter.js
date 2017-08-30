@@ -1,5 +1,15 @@
-function counter(d,h,m,s,divId)
+function counter(d, h, m, s, divId)
 {
+	function escapeHtml(unsafe)
+	{
+		return unsafe
+				 .replace(/&/g, "&amp;")
+				 .replace(/</g, "&lt;")
+				 .replace(/>/g, "&gt;")
+				 .replace(/"/g, "&quot;")
+				 .replace(/'/g, "&#039;");
+ }
+
 	var e = document.getElementById(divId);
 
 	if (s < 0)
@@ -32,10 +42,10 @@ function counter(d,h,m,s,divId)
 		s = 0;
 	}
 
-	st = s;
-	mt = m;
-	ht = h;
-	dt = d;
+	var st = s;
+	var mt = m;
+	var ht = h;
+	var dt = d;
 
 	if (s < 10)
 	{
@@ -54,8 +64,8 @@ function counter(d,h,m,s,divId)
 		dt = "0"+d;
 	}
 
-	e.innerHTML = dt+":"+ht+":"+mt+":"+st;
+	e.innerHTML = escapeHtml(dt+":"+ht+":"+mt+":"+st);
 
 	s--;
-	var timer = setTimeout('counter('+d+','+h+','+m+','+s+',"'+divId+'")',1000);
+	var timer = setTimeout(escapeHtml('counter('+d+','+h+','+m+','+s+',"'+divId+'")'),1000);
 }

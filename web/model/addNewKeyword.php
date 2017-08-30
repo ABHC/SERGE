@@ -4,11 +4,15 @@ function addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSour
 $updateBDD = TRUE;
 
 // Check if keyword is already in bdd
-$req = $bdd->prepare('SELECT id, applicable_owners_sources, active FROM keyword_news_serge WHERE LOWER(keyword) = LOWER(:newKeyword)');
+/*$req = $bdd->prepare('SELECT id, applicable_owners_sources, active FROM keyword_news_serge WHERE LOWER(keyword) = LOWER(:newKeyword)');
 $req->execute(array(
 	'newKeyword' => $newKeyword));
 	$result = $req->fetch();
-	$req->closeCursor();
+	$req->closeCursor();*/
+
+$checkCol = array(array("LOWER(keyword)", "=", mb_strtolower($newKeyword), ""));
+$result = read('keyword_news_serge', 'id, applicable_owners_sources, active', $checkCol, '', $bdd);
+$result = $result[0];
 
 if (!$result)
 {
@@ -30,12 +34,17 @@ if (!$result)
 		$active = $active + 1;
 	}
 	// Adding new keyword
-	$req = $bdd->prepare('INSERT INTO keyword_news_serge (keyword, applicable_owners_sources, active) VALUES (:newKeyword, :applicable_owners_sources, :active)');
+	/*$req = $bdd->prepare('INSERT INTO keyword_news_serge (keyword, applicable_owners_sources, active) VALUES (:newKeyword, :applicable_owners_sources, :active)');
 	$req->execute(array(
 		'newKeyword' => $newKeyword,
 		'applicable_owners_sources' => $applicable_owners_sources,
 		'active' => $active));
-		$req->closeCursor();
+		$req->closeCursor();*/
+
+	$insertCol = array(array("keyword", $newKeyword),
+										array("applicable_owners_sources", '|' . $_SESSION['id'] . ':,' . $sourceId . ',|'),
+										array("active", $active + 1));
+	$execution = insert('keyword_news_serge', $insertCol, '', 'setting', $bdd);
 }
 else
 {
@@ -103,12 +112,17 @@ else
 
 	if ($updateBDD)
 	{
-		$req = $bdd->prepare('UPDATE keyword_news_serge SET applicable_owners_sources = :applicable_owners_sources, active = :active WHERE id = :id');
+		/*$req = $bdd->prepare('UPDATE keyword_news_serge SET applicable_owners_sources = :applicable_owners_sources, active = :active WHERE id = :id');
 		$req->execute(array(
 			'applicable_owners_sources' => $applicable_owners_sources,
 			'active' => $active,
 			'id' => $result['id']));
-			$req->closeCursor();
+			$req->closeCursor();*/
+
+		$updateCol = array(array("applicable_owners_sources", $applicable_owners_sources),
+												array("active", $active));
+		$checkCol = array(array("id", "=", $result['id'], ""));
+		$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
 	}
 }
 

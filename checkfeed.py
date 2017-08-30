@@ -6,7 +6,6 @@
 import sys
 import requests
 import traceback
-import logging
 import feedparser
 
 

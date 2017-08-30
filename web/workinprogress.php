@@ -6,7 +6,7 @@ $language = $language[0] . $language[1];
 ?>
 
 <!DOCTYPE html>
-<html lang="<?php echo $language; ?>">
+<html lang="<?php echo htmlspecialchars($language); ?>">
 <head>
 	<meta charset="utf-8" />
 	<title>Serge : your news monitoring</title>

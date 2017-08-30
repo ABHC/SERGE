@@ -3,14 +3,12 @@
 """Triage and formatting of results in order to insertion in SERGE database"""
 
 import os
-import re
 import sys
 import time
 import MySQLdb
 import hashlib
 import logging
 import traceback
-import unicodedata
 from urllib import pathname2url as pn
 
 ######### IMPORT SERGE SPECIALS MODULES

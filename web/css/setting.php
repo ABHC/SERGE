@@ -231,8 +231,8 @@ h3
 	justify-content: center;
 	align-items: center;
 	width: 40%;
-	max-width: 150px;
-	height: 60px;
+	max-width: 185px;
+	height: 55px;
 	color: rgb(230,230,230);
 	text-decoration: none;
 	text-align: center;
@@ -253,8 +253,8 @@ h3
 	justify-content: center;
 	align-items: center;
 	width: 40%;
-	max-width: 150px;
-	height: 60px;
+	max-width: 185px;
+	height: 55px;
 	color: rgb(230,230,230);
 	text-decoration: none;
 	text-align: center;

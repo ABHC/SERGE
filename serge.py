@@ -1,8 +1,5 @@
 # -*- coding: utf8 -*-
 
-#TODO Modifier le HTML/CSS pour introduire un code couleur
-#TODO Modifier le HTML/CSS pour modifier l'emplacement du logo pour le wiki et le mettre à gauche
-
 """SERGE (Serge Explore Research and Generate Emails) is a tool for news and technological monitoring.
 
 SERGE exlores XML and JSON files from RSS feeds and some specificals API in order to retrieve interesting contents for users. The contents research is based on keywords or specificals queries defined by users. Links to this contents are saved on a database and can be send to the users by mail or by a webpage.

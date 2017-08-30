@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-#TODO traduire également en français espagnol et l'allemand.
 
 """decoder contains all the functions related to the translation of datas in human language"""
+
 
 def decodeQuery(ch):
 
@@ -146,7 +146,7 @@ def decodeLegal(legal_comparator):
 			while legal_index <= (legal_keys_num-1):
 				if legal_keys[legal_index] in legal_comparator:
 					keys_find = keys_find+1
-				legal_index=legal_index+1
+				legal_index = legal_index+1
 
 			if keys_find == legal_keys_num:
 				legal_abstract = "INACTIVE"
@@ -163,7 +163,7 @@ def decodeLegal(legal_comparator):
 			while legal_index <= (legal_keys_num-1):
 				if legal_keys[0] in legal_comparator and legal_keys[legal_index] not in legal_comparator:
 					keys_find = keys_find+1
-				legal_index=legal_index+1
+				legal_index = legal_index+1
 
 			if keys_find == (legal_keys_num-1):
 				legal_abstract = "INACTIVE"

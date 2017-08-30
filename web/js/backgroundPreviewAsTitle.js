@@ -1,9 +1,9 @@
 this.backgroundPreviewAsTitle = function()
 {
-	yCorner = -10;
-	xCorner = 20;
+	var yCorner = -10;
+	var xCorner = 20;
 
-	$('#selectBackgroundPreview option').hover
+	$("#selectBackgroundPreview option").hover
 	(
 		function(e)
 		{
@@ -32,7 +32,7 @@ this.backgroundPreviewAsTitle = function()
 			.css("left",(e.pageX + xCorner) + "px");
 		}
 	);
-}
+};
 
 //Onload
 window.onload = function()

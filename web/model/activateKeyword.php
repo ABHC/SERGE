@@ -7,10 +7,15 @@
 
 	$active = $activeForCurrentKeyword + 1;
 
-	$req = $bdd->prepare('UPDATE keyword_news_serge SET applicable_owners_sources = :applicable_owners_sources, active = :active WHERE id = :id');
+/*	$req = $bdd->prepare('UPDATE keyword_news_serge SET applicable_owners_sources = :applicable_owners_sources, active = :active WHERE id = :id');
 	$req->execute(array(
 		'applicable_owners_sources' => $applicable_owners_sources,
 		'active' => $active,
 		'id' => $keywordIdAction));
-		$req->closeCursor();
+		$req->closeCursor();*/
+
+	$updateCol = array(array("applicable_owners_sources", $applicable_owners_sources),
+											array("active", $activeForCurrentKeyword + 1));
+	$checkCol = array(array("id", "=", $keywordIdAction, ""));
+	$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
 ?>

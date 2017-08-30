@@ -146,23 +146,29 @@ if (isset($_POST['settings']) AND htmlspecialchars($_POST['settings']) == 'Chang
 	}
 
 	# Change sorting for link in email
-	if (isset($_POST['orderBy']))
+	if (!empty($_POST['orderBy']) AND $_POST['orderBy'] == "masterword")
 	{
-		if (htmlspecialchars($_POST['orderBy']) != '')
-		{
-			$orderBy = htmlspecialchars($_POST['orderBy']);
-			include_once('model/changeSortEmail.php');
-		}
+		$orderBy = "masterword";
 	}
+	elseif (!empty($_POST['orderBy']) AND $_POST['orderBy'] == "origin")
+	{
+		$orderBy = "origin";
+	}
+	elseif (!empty($_POST['orderBy']) AND $_POST['orderBy'] == "type")
+	{
+		$orderBy = "type";
+	}
+	else
+	{
+		$orderBy = "masterword";
+	}
+	include_once('model/changeSortEmail.php');
 
 	# Change privacy settings
-	if (isset($_POST['recordRead']))
+	if (isset($_POST['recordRead']) AND $_POST['recordRead'] == 'active')
 	{
-		if (htmlspecialchars($_POST['recordRead']) == 'active')
-		{
-			$recordRead = 1;
-			include_once('model/changeRecordRead.php');
-		}
+		$recordRead = 1;
+		include_once('model/changeRecordRead.php');
 	}
 	elseif (!isset($_POST['recordRead']))
 	{
@@ -170,13 +176,11 @@ if (isset($_POST['settings']) AND htmlspecialchars($_POST['settings']) == 'Chang
 		include_once('model/changeRecordRead.php');
 	}
 
-	if (isset($_POST['historyLifetime']))
+	// TODO implement in serge AND in the UI
+	if (!empty($_POST['historyLifetime']))
 	{
-		if (htmlspecialchars($_POST['historyLifetime']) != '')
-		{
-			$historyLifetime = htmlspecialchars($_POST['historyLifetime']);
-			include_once('model/changeHistoryLifetime.php');
-		}
+		$historyLifetime = htmlspecialchars($_POST['historyLifetime']);
+		include_once('model/changeHistoryLifetime.php');
 	}
 
 	header('Location: setting');
