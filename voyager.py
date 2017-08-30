@@ -636,7 +636,7 @@ def patents(now):
 							legal_check_date = float(legal_check_date)
 
 						######### LEGAL STATUS RESEARCH
-						if (legal_research == 1 or legal_research == 2) and owners != "," and legal_check_date is not None and (legal_check_date+15552000) <= now:
+						if (legal_research == 1 or legal_research == 2) and owners != "," and already_owners is not None and owners != already_owners and legal_check_date is not None and (legal_check_date+15552000) <= now:
 							legal_results = legalScrapper(post_link)
 							legal_abstract = legal_results[0]
 							legal_status = legal_results[1]
@@ -644,13 +644,6 @@ def patents(now):
 							new_check_date = now
 
 						elif (legal_research == 1 or legal_research == 2) and owners != "," and legal_check_date is None:
-							legal_results = legalScrapper(post_link)
-							legal_abstract = legal_results[0]
-							legal_status = legal_results[1]
-							lens_link = legal_results[2]
-							new_check_date = now
-
-						elif (legal_research == 1 or legal_research == 2) and owners != "," and already_owners is not None and owners != already_owners:
 							legal_results = legalScrapper(post_link)
 							legal_abstract = legal_results[0]
 							legal_status = legal_results[1]
@@ -687,7 +680,7 @@ def patents(now):
 							if legal_research == 1 and legal_abstract == "INACTIVE":
 								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
-							else:
+							elif legal_research == 2:
 								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
 						range = range+1
