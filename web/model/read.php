@@ -13,28 +13,35 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 	$arrayValues = array();
 	$cpt = 0;
 
-	foreach ($checkCol as $line)
+	if (empty($checkcol))
 	{
-		if ($line[1] == "l")
+		$WHEREvar = 1;
+	}
+	else
+	{
+		foreach ($checkCol as $line)
 		{
-			$op = " LIKE ";
-		}
-		elseif ($line[1] == "=")
-		{
-			$op = " = ";
-		}
-		else
-		{
-			$op = " = ";
-		}
+			if ($line[1] == "l")
+			{
+				$op = " LIKE ";
+			}
+			elseif ($line[1] == "=")
+			{
+				$op = " = ";
+			}
+			else
+			{
+				$op = " = ";
+			}
 
-		$nameCol   = $line[0];
-		$value     = $line[2];
-		$connector = " " . $line[3] . " ";
+			$nameCol   = $line[0];
+			$value     = $line[2];
+			$connector = " " . $line[3] . " ";
 
-		$WHEREvar    = $WHEREvar . $nameCol . $op . ":" . $nameCol . $cpt . $connector;
-		$arrayValues = array_merge($arrayValues, array($nameCol . $cpt => $value));
-		$cpt++;
+			$WHEREvar    = $WHEREvar . $nameCol . $op . ":" . $nameCol . $cpt . $connector;
+			$arrayValues = array_merge($arrayValues, array($nameCol . $cpt => $value));
+			$cpt++;
+		}
 	}
 
 	if (empty($selectedCol))
