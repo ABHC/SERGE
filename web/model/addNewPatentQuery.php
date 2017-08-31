@@ -2,7 +2,7 @@
 function addNewPatentQuery($queryPatent, $bdd)
 {
 	$userId = ',' . $_SESSION['id'] . ',';
-	$ERROR_SCIENCEQUERY = '';
+	$ERROR_PATENTQUERY = '';
 
 	// Check if science query is already in bdd
 	/*$req = $bdd->prepare('SELECT id, owners, active FROM queries_wipo_serge WHERE LOWER(query) = LOWER(:newQuery)');

@@ -77,16 +77,17 @@ def feedMeUp(link):
 			sys.exit()
 
 		########### RSS ANALYZE
+		title_error = ""
+		entries_error = ""
+
 		try:
-			source_title = xmldoc.feed.title
-			title_error = ""
+			xmldoc.feed.title
 		except AttributeError:
 			title_error = "no title, "
 			missing_flux = True
 
 		try:
-			entries_test = xmldoc.entries[0]
-			entries_error = ""
+			xmldoc.entries[0]
 		except IndexError:
 			entries_error = "no entries, "
 			missing_flux = True
@@ -105,33 +106,34 @@ def feedMeUp(link):
 		while range < rangemax:
 
 			########### MANDATORY UNIVERSAL FEED PARSER VARIABLES
+			attribute_title = ""
+			attribute_description = ""
+			attribute_link = ""
+			attribute_date = ""
+
 			try:
-				post_title = xmldoc.entries[range].title
-				attribute_title = ""
+				xmldoc.entries[range].title
 			except AttributeError:
 				attribute_title = "title "
 				unvalid_count = unvalid_count+1
 				break
 
 			try:
-				post_description = xmldoc.entries[range].description
-				attribute_description = ""
+				xmldoc.entries[range].description
 			except AttributeError:
 				attribute_description = "description "
 				unvalid_count = unvalid_count+1
 				break
 
 			try:
-				post_link = xmldoc.entries[range].link
-				attribute_link = ""
+				xmldoc.entries[range].link
 			except AttributeError:
 				attribute_link = "link "
 				unvalid_count = unvalid_count+1
 				break
 
 			try:
-				post_date = xmldoc.entries[range].published_parsed
-				attribute_date = ""
+				xmldoc.entries[range].published_parsed
 			except AttributeError:
 				attribute_date = "date "
 				unvalid_count = unvalid_count+1

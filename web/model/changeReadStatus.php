@@ -13,9 +13,13 @@ elseif ($type == 'patents')
 }
 
 // Change record read
-$req = $bdd->prepare("UPDATE $tableName SET read_status = :userId WHERE link = :link");
+/*$req = $bdd->prepare("UPDATE $tableName SET read_status = :userId WHERE link = :link");
 $req->execute(array(
 	'userId' => $userId,
 	'link' => $link));
-	$req->closeCursor();
+	$req->closeCursor();*/
+
+$updateCol = array(array("read_status", $userId));
+$checkCol  = array(array("link", "=", $link, ""));
+$execution = update($tableName, $updateCol, $checkCol, '', $bdd);
 ?>

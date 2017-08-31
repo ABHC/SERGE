@@ -4,10 +4,10 @@
 </div>
 <div class="body">
 	<div class="selectType">
-		<a <?php echo $addActive; ?> href="watchPack?type=add">
+		<a <?php echo htmlspecialchars($addActive); ?> href="watchPack?type=add">
 			<div class="selectTypeAddPack">Add pack</div>
 		</a>
-		<a <?php echo $createActive; ?> href="watchPack?type=create">
+		<a <?php echo htmlspecialchars($createActive); ?> href="watchPack?type=create">
 			<div class="selectTypeCreatePack">Create pack</div>
 		</a>
 	</div>
@@ -21,7 +21,7 @@
 		}
 	?>
 	<h1>Creation of watch packs</h1>
-	<form method="post" action="watchPack?type=create<?php echo $packIdURL ?>">
+	<form method="post" action="watchPack?type=create<?php echo htmlspecialchars($packIdURL); ?>">
 		<input type="hidden" name="scrollPos" id="scrollPos" value="
 		<?php
 		if (isset($_POST['scrollPos']))
@@ -34,8 +34,8 @@
 		}
 		?>"/>
 		<input type="hidden" name="scrollPos" id="scrollPos" value="0"/>
-		<input type="hidden" name="delEditingScienceQuery" value="<?php echo $delEditingScienceQuery; ?>"/>
-		<input type="hidden" name="delEditingPatentQuery" value="<?php echo $delEditingPatentQuery; ?>"/>
+		<input type="hidden" name="delEditingScienceQuery" value="<?php echo htmlspecialchars($delEditingScienceQuery); ?>"/>
+		<input type="hidden" name="delEditingPatentQuery" value="<?php echo htmlspecialchars($delEditingPatentQuery); ?>"/>
 
 		<div class="dataPackManagement">
 			<h2>Name</h2>
@@ -55,22 +55,22 @@
 					{
 						if ($ownerWatchPack['id'] == $_GET['packId'])
 						{
-							echo '<option value="' . $ownerWatchPack['id'] . '" selected>Edit: ' . $ownerWatchPack['name'] . '&nbsp;&nbsp;</option>';
+							echo '<option value="' . htmlspecialchars($ownerWatchPack['id']) . '" selected>Edit: ' . htmlspecialchars($ownerWatchPack['name']) . '&nbsp;&nbsp;</option>';
 						}
 						else
 						{
-							echo '<option value="' . $ownerWatchPack['id'] . '">Edit: ' . $ownerWatchPack['name'] . '&nbsp;&nbsp;</option>';
+							echo '<option value="' . htmlspecialchars($ownerWatchPack['id']) . '">Edit: ' . htmlspecialchars($ownerWatchPack['name']) . '&nbsp;&nbsp;</option>';
 						}
 					}
 					 ?>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" name="watchPackName" placeholder="Your package name" value="<?php echo  $packDetails['name']; ?>"/>
+				<input type="text" name="watchPackName" placeholder="Your package name" value="<?php echo  htmlspecialchars($packDetails['name']); ?>"/>
 			</div>
 			<div>
 				<?php echo $selectLanguage; ?>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" name="watchPackCategory" placeholder="Your category name" value="<?php echo $packDetails['category']; ?>" list="watchPackCategory"/>
+				<input type="text" name="watchPackCategory" placeholder="Your category name" value="<?php echo htmlspecialchars($packDetails['category']); ?>" list="watchPackCategory"/>
 				<datalist id="watchPackCategory">
 					<?php
 					# List here watch Pack own by current user
@@ -81,14 +81,14 @@
 
 					foreach ($categoryWatchPacks as $categoryWatchPack)
 					{
-							echo '<option value="' . $categoryWatchPack['category'] . '"></option>';
+							echo '<option value="' . htmlspecialchars($categoryWatchPack['category']) . '"></option>';
 					}
 					 ?>
 				</datalist>
 			</div>
-			<?php echo $ERRORMESSAGENEWPACKNAME; ?>
+			<?php echo htmlspecialchars($ERRORMESSAGENEWPACKNAME); ?>
 			<h2>Description</h2>
-			<textarea name="watchPackDescription" minlength="50" maxlength="300" placeholder="Your package description"><?php echo $packDetails['description']; ?></textarea>
+			<textarea name="watchPackDescription" minlength="50" maxlength="300" placeholder="Your package description"><?php echo htmlspecialchars($packDetails['description']); ?></textarea>
 		</div>
 
 		<div class="keywordManagement">
@@ -109,7 +109,7 @@
 						}
 
 						$sourcesList['name'] = preg_replace("/\[!NEW!\]/", "", $sourcesList['name']);
-						echo '<option value="source' . $sourcesList['id'] . '" ' . $amISelected . '>' . $sourcesList['name'] . '</option>' . PHP_EOL;
+						echo '<option value="source' . htmlspecialchars($sourcesList['id']) . '" ' . htmlspecialchars($amISelected) . '>' . htmlspecialchars($sourcesList['name']) . '</option>' . PHP_EOL;
 					}
 					?>
 					<option value="source00"><?php get_t('select1_window2_setting', $bdd); ?></option>
@@ -125,7 +125,7 @@
 				<span class="arrDownBorder">▾</span>
 				<input type="url" name="newSource" id="source" placeholder="Source" />
 			</div>
-			<?php echo $ERROR_MESSAGE; ?>
+			<?php echo htmlspecialchars($ERROR_MESSAGE); ?>
 
 			<div>
 				<?php
@@ -151,13 +151,13 @@
 
 						echo '
 						</div>
-						<input type="checkbox" name="radio-s' . $rssFirstLetter[0] . '" id="unfold-s' . $rssFirstLetter[0] . '" value="' . $rssFirstLetter[0] . '" ' . $amICheckFoldSource . '/>'.
+						<input type="checkbox" name="radio-s' . htmlspecialchars($rssFirstLetter[0]) . '" id="unfold-s' . htmlspecialchars($rssFirstLetter[0]) . '" value="' . htmlspecialchars($rssFirstLetter[0]) . '" ' . htmlspecialchars($amICheckFoldSource) . '/>'.
 						'<div class="sourceList" >'.
-							'<label for="unfold-s' . $rssFirstLetter[0] . '" class="unfoldTag">'.
-								$rssFirstLetter[0] . ' ▾'.
+							'<label for="unfold-s' . htmlspecialchars($rssFirstLetter[0]) . '" class="unfoldTag">'.
+							 htmlspecialchars($rssFirstLetter[0]) . ' ▾'.
 							'</label>'.
-							'<label for="unfold-s' . $rssFirstLetter[0] . '" class="foldTag">'.
-								$rssFirstLetter[0] . ' ▴'.
+							'<label for="unfold-s' . htmlspecialchars($rssFirstLetter[0]) . '" class="foldTag">'.
+							 htmlspecialchars($rssFirstLetter[0]) . ' ▴'.
 							'</label>';
 					}
 
@@ -181,33 +181,33 @@
 					if (empty($resultDesactivatedSource))
 					{
 						echo
-						'<div class="tagSource Tactive" id="ks' . $packSourcesList['id'] . '">'.
-							'<input type="submit" title="Delete" name="delSource" value="source' . $packSourcesList['id'] . '&"/>'.
-							'<input type="submit" title="Disable" name="disableSource" value="source' . $packSourcesList['id']. '&"/>'.
-							'<a href="' . $packSourcesList['link']. '" target="_blank">'.
-								ucfirst($packSourcesList['name']).
+						'<div class="tagSource Tactive" id="ks' . htmlspecialchars($packSourcesList['id']) . '">'.
+							'<input type="submit" title="Delete" name="delSource" value="source' . htmlspecialchars($packSourcesList['id']) . '&"/>'.
+							'<input type="submit" title="Disable" name="disableSource" value="source' . htmlspecialchars($packSourcesList['id']) . '&"/>'.
+							'<a href="' . htmlspecialchars($packSourcesList['link']) . '" target="_blank">'.
+								 htmlspecialchars(ucfirst($packSourcesList['name'])).
 							'</a>'.
 						'</div>';
 					}
 					elseif (!empty($resultDesactivatedSource))
 					{
 						echo
-						'<div class="tagSource Tdisable" id="ks' . $packSourcesList['id'] . '">'.
-							'<input type="submit" title="Delete" name="delSource" value="source' . $packSourcesList['id'] . '&"/>'.
-							'<input type="submit" title="Activate" name="activateSource" value="source' . $packSourcesList['id']. '&"/>'.
-							'<a href="' . $packSourcesList['link']. '" target="_blank">'.
-								ucfirst($packSourcesList['name']).
+						'<div class="tagSource Tdisable" id="ks' . htmlspecialchars($packSourcesList['id']) . '">'.
+							'<input type="submit" title="Delete" name="delSource" value="source' . htmlspecialchars($packSourcesList['id']) . '&"/>'.
+							'<input type="submit" title="Activate" name="activateSource" value="source' . htmlspecialchars($packSourcesList['id']) . '&"/>'.
+							'<a href="' . htmlspecialchars($packSourcesList['link']) . '" target="_blank">'.
+								 htmlspecialchars(ucfirst($packSourcesList['name'])).
 							'</a>'.
 						'</div>';
 					}
 
 					echo
-					'<input type="checkbox" name="radio-ks' . $packSourcesList['id'] . '" id="unfold-ks' . $packSourcesList['id'] . '" value="' . $packSourcesList['id'] . '" ' . $amICheckFoldKeyword . '/>'.
-					'<div class="keywordList" id="keywordList' . $packSourcesList['id'] . '">'.
-						'<label for="unfold-ks' . $packSourcesList['id'] . '" id="unfold' . $packSourcesList['id'] . '"  class="unfoldTag">'.
+					'<input type="checkbox" name="radio-ks' . htmlspecialchars($packSourcesList['id']) . '" id="unfold-ks' . htmlspecialchars($packSourcesList['id']) . '" value="' . htmlspecialchars($packSourcesList['id']) . '" ' . htmlspecialchars($amICheckFoldKeyword) . '/>'.
+					'<div class="keywordList" id="keywordList' . htmlspecialchars($packSourcesList['id']) . '">'.
+						'<label for="unfold-ks' . htmlspecialchars($packSourcesList['id']) . '" id="unfold' . htmlspecialchars($packSourcesList['id']) . '"  class="unfoldTag">'.
 							'Unfold keyword list ▾'.
 						'</label>'.
-						'<label for="unfold-ks' . $packSourcesList['id'] . '" id="fold' . $packSourcesList['id'] . '" class="foldTag">'.
+						'<label for="unfold-ks' . htmlspecialchars($packSourcesList['id']) . '" id="fold' . htmlspecialchars($packSourcesList['id']) . '" class="foldTag">'.
 							'Fold keyword list ▴'.
 						'</label>';
 
@@ -238,10 +238,10 @@
 						{
 							echo
 							'<div class="tag Tdisable">'.
-								'<input type="submit" title="Delete" name="delKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
-								'<input type="submit" title="Activate" name="activateKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
-								'<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">'.
-									ucfirst($ownerKeywordList['query']).
+								'<input type="submit" title="Delete" name="delKeyword" value="source'. htmlspecialchars($packSourcesList['id']) . '&keyword' . htmlspecialchars($ownerKeywordList['id']) . '&"/>'.
+								'<input type="submit" title="Activate" name="activateKeyword" value="source'. htmlspecialchars($packSourcesList['id']) . '&keyword' . htmlspecialchars($ownerKeywordList['id']) . '&"/>'.
+								'<a href="setting?keyword=keyword' . htmlspecialchars($ownerKeywordList['id']) . '">'.
+									 htmlspecialchars(ucfirst($ownerKeywordList['query'])).
 								'</a>'.
 							'</div>';
 							$cptKeyword++;
@@ -250,10 +250,10 @@
 						{
 							echo
 							'<div class="tag Tactive">'.
-								'<input type="submit" title="Delete" name="delKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
-								'<input type="submit" title="Disable" name="disableKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
-								'<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">'.
-									ucfirst($ownerKeywordList['query']).
+								'<input type="submit" title="Delete" name="delKeyword" value="source'. htmlspecialchars($packSourcesList['id']) . '&keyword' . htmlspecialchars($ownerKeywordList['id']) . '&"/>'.
+								'<input type="submit" title="Disable" name="disableKeyword" value="source'. htmlspecialchars($packSourcesList['id']) . '&keyword' . htmlspecialchars($ownerKeywordList['id']) . '&"/>'.
+								'<a href="setting?keyword=keyword' . htmlspecialchars($ownerKeywordList['id']) . '">'.
+									 htmlspecialchars(ucfirst($ownerKeywordList['query'])).
 								'</a>'.
 							'</div>';
 							$cptKeyword++;
@@ -324,18 +324,18 @@
 						$checked['openParenthesis' . $cpt] = 'checked';
 					}
 					echo '
-					<input type="checkbox" id="openParenthesis' . $cpt . '" name="openParenthesis' . $cpt . '" value="active" ' . $checked['openParenthesis' . $cpt] . '/>
-					<label class="queryParenthesis" for="openParenthesis' . $cpt . '">(</label>
-					<select title="Type" class="queryType" name="scienceType' . $cpt . '" id="scienceType0' . $cpt . '">
-						<option value="ti" ' . $selected['ti'] . '>Title</option>
-						<option value="au" ' . $selected['au'] . '>Author</option>
-						<option value="abs" ' . $selected['abs'] . '>Abstract</option>
-						<option value="jr" ' . $selected['jr'] . '>Reference</option>
-						<option value="cat" ' . $selected['cat'] . '>Category</option>
-						<option value="all" ' . $selected['all'] . '>All</option>
+					<input type="checkbox" id="openParenthesis' . htmlspecialchars($cpt) . '" name="openParenthesis' . htmlspecialchars($cpt) . '" value="active" ' .  htmlspecialchars($checked['openParenthesis' . $cpt]) . '/>
+					<label class="queryParenthesis" for="openParenthesis' . htmlspecialchars($cpt) . '">(</label>
+					<select title="Type" class="queryType" name="scienceType' . htmlspecialchars($cpt) . '" id="scienceType0' . htmlspecialchars($cpt) . '">
+						<option value="ti" ' . htmlspecialchars($selected['ti']) . '>Title</option>
+						<option value="au" ' . htmlspecialchars($selected['au']) . '>Author</option>
+						<option value="abs" ' . htmlspecialchars($selected['abs']) . '>Abstract</option>
+						<option value="jr" ' . htmlspecialchars($selected['jr']) . '>Reference</option>
+						<option value="cat" ' . htmlspecialchars($selected['cat']) . '>Category</option>
+						<option value="all" ' . htmlspecialchars($selected['all']) . '>All</option>
 					</select>
 					<span class="arrDownBorder">▾</span>
-					<input type="text" class="query" name="scienceQuery' . $cpt . '" id="scienceQuery0' . $cpt . '" placeholder="Keyword" value="' . $_POST['scienceQuery' . $cpt] . '"/>';
+					<input type="text" class="query" name="scienceQuery' . htmlspecialchars($cpt) . '" id="scienceQuery0' . htmlspecialchars($cpt) . '" placeholder="Keyword" value="' .  htmlspecialchars($_POST['scienceQuery' . $cpt]) . '"/>';
 
 
 					if ($_POST['closeParenthesis' . $cpt] == "active")
@@ -343,8 +343,8 @@
 						$checked['closeParenthesis' . $cpt] = 'checked';
 					}
 					echo '
-					<input type="checkbox" id="closeParenthesis' . $cpt . '" name="closeParenthesis' . $cpt . '" value="active" ' . $checked['closeParenthesis' . $cpt] . '/>
-					<label class="queryParenthesis" for="closeParenthesis' . $cpt . '">)</label>';
+					<input type="checkbox" id="closeParenthesis' . htmlspecialchars($cpt) . '" name="closeParenthesis' . htmlspecialchars($cpt) . '" value="active" ' .  htmlspecialchars($checked['closeParenthesis' . $cpt]) . '/>
+					<label class="queryParenthesis" for="closeParenthesis' . htmlspecialchars($cpt) . '">)</label>';
 
 					$cpt++;
 
@@ -360,19 +360,19 @@
 
 					$logicalConnector = '
 					<div class="btnList">
-						<input type="radio" id="andOrNotand_AND0' . $cpt . '" name="andOrAndnot' . $cpt . '" value="AND" ' . $checked['AND'] . '>
-						<label class="ANDOrNotand" for="andOrNotand_AND0' . $cpt . '"></label>
-						<input type="radio" id="andOrNotand_OR0' . $cpt . '" name="andOrAndnot' . $cpt . '" value="OR" ' . $checked['OR'] . '>
-						<label class="andORNotand" for="andOrNotand_OR0' . $cpt . '"></label>
-						<input type="radio" id="andOrNotand_NOTAND0' . $cpt . '" name="andOrAndnot' . $cpt . '" value="NOTAND" ' . $checked['NOTAND'] . '>
-						<label class="andOrNOTAND" for="andOrNotand_NOTAND0' . $cpt . '"></label>
+						<input type="radio" id="andOrNotand_AND0' . htmlspecialchars($cpt) . '" name="andOrAndnot' . htmlspecialchars($cpt) . '" value="AND" ' . htmlspecialchars($checked['AND']) . '>
+						<label class="ANDOrNotand" for="andOrNotand_AND0' . htmlspecialchars($cpt) . '"></label>
+						<input type="radio" id="andOrNotand_OR0' . htmlspecialchars($cpt) . '" name="andOrAndnot' . htmlspecialchars($cpt) . '" value="OR" ' . htmlspecialchars($checked['OR']) . '>
+						<label class="andORNotand" for="andOrNotand_OR0' . htmlspecialchars($cpt) . '"></label>
+						<input type="radio" id="andOrNotand_NOTAND0' . htmlspecialchars($cpt) . '" name="andOrAndnot' . htmlspecialchars($cpt) . '" value="NOTAND" ' . htmlspecialchars($checked['NOTAND']) . '>
+						<label class="andOrNOTAND" for="andOrNotand_NOTAND0' . htmlspecialchars($cpt) . '"></label>
 					</div>';
 				}
 				?>
 				<input title="Extend" class="extend" type="submit" id="extendScience" name="extendScience" value=">>" />
 			</div>
 			</div>
-			<?php echo $ERROR_SCIENCEQUERY; ?>
+			<?php echo htmlspecialchars($ERROR_SCIENCEQUERY); ?>
 			<?php
 			// Read watchPack science query
 			preg_match("/[0-9]+/", $_GET['packId'], $pack_idInUse);
@@ -398,9 +398,9 @@
 				}
 
 				echo '
-				<div class="queryContainer ' . $Qdisable . '">
-					<input type="submit" title="Delete" class="deleteQuery" name="delQueryScience" value="query' . $query['id'] . '"/>
-					<input type="submit" title="' . $titleDisableActivate . '" class="' . $nameClassDisableActivate . 'Query" name="' . $nameClassDisableActivate . 'QueryScience" value="query' . $query['id'] . '"/>
+				<div class="queryContainer ' . htmlspecialchars($Qdisable) . '">
+					<input type="submit" title="Delete" class="deleteQuery" name="delQueryScience" value="query' . htmlspecialchars($query['id']) . '"/>
+					<input type="submit" title="' . htmlspecialchars($titleDisableActivate) . '" class="' . htmlspecialchars($nameClassDisableActivate) . 'Query" name="' . htmlspecialchars($nameClassDisableActivate) . 'QueryScience" value="query' . htmlspecialchars($query['id']) . '"/>
 				';
 
 				$queryId = $query['id'];
@@ -425,7 +425,7 @@
 					{
 						$query = preg_replace("/^\(/", "", $query);
 						$queryDisplay = $queryDisplay . '
-						<a href="setting?action=editQueryScience&query=' . $queryId . '" >
+						<a href="setting?action=editQueryScience&query=' . htmlspecialchars($queryId) . '" >
 							<div class="queryParenthesisView">(</div>
 						</a>
 						';
@@ -438,11 +438,11 @@
 					$fieldInput = preg_replace("/\+/", " ", $fieldInput);
 					$fields = preg_replace("/(:|`)/", "", $fields);
 					$queryDisplay = $queryDisplay . '
-					<a href="setting?action=editQueryScience&query=' . $queryId . '" >
-						<div class="queryTypeView">' . $queryFieldsName[$fields] . '</div>
+					<a href="setting?action=editQueryScience&query=' . htmlspecialchars($queryId) . '" >
+						<div class="queryTypeView">' . htmlspecialchars($queryFieldsName[$fields]) . '</div>
 					</a>
-					<a href="setting?action=editQueryScience&query=' . $queryId . '" >
-						<div class="queryKeywordView">' . $fieldInput . '</div>
+					<a href="setting?action=editQueryScience&query=' . htmlspecialchars($queryId) . '" >
+						<div class="queryKeywordView">' . htmlspecialchars($fieldInput) . '</div>
 					</a>';
 
 					preg_match("/^\)/", $query, $closeParenthesisDisplay);
@@ -450,7 +450,7 @@
 					{
 						$query = preg_replace("/^\)/", "", $query);
 						$queryDisplay = $queryDisplay . '
-						<a href="setting?action=editQueryScience&query=' . $queryId . '" >
+						<a href="setting?action=editQueryScience&query=' . htmlspecialchars($queryId) . '" >
 							<div class="queryParenthesisView">)</div>
 						</a>
 						';
@@ -462,7 +462,7 @@
 						$query = preg_replace("/^\+(AND|OR|NOTAND)\+/", "", $query);
 						preg_match("/.{1,3}/", $logicalConnector[1], $logicalConnector);
 						$queryDisplay = $queryDisplay . '
-						<a href="setting?action=editQueryScience&query=' . $queryId . '" >
+						<a href="setting?action=editQueryScience&query=' . htmlspecialchars($queryId) . '" >
 						<div class="query' . ucfirst(strtolower($logicalConnector[0])) . 'View">' . $logicalConnector[0] . '</div>
 						</a>
 						';
@@ -563,69 +563,69 @@
 					$selected[$_POST['patentType' . $cpt]] = 'selected';
 
 					echo '
-				<select title="Type" class="queryType" name="patentType' . $cpt . '" id="patentType' . $cpt . '">
-					<option value="ALLNAMES" ' . $selected['ALLNAMES'] . '>All Names</option>
-					<option value="ALLNUM" ' . $selected['ALLNUM'] . '>All Numbers and IDs</option>
-					<option value="AAD" ' . $selected['AAD'] . '>Applicant Address</option>
-					<option value="AADC" ' . $selected['AADC'] . '>Applicant Address Country</option>
-					<option value="PAA" ' . $selected['PAA'] . '>Applicant All Data</option>
-					<option value="PA" ' . $selected['PA'] . '>Applicant Name</option>
-					<option value="ANA" ' . $selected['ANA'] . '>Applicant Nationality</option>
-					<option value="ARE" ' . $selected['ARE'] . '>Applicant Residence</option>
-					<option value="AD" ' . $selected['AD'] . '>Application Date</option>
-					<option value="AN" ' . $selected['AN'] . '>Application Number</option>
-					<option value="CHEM" ' . $selected['CHEM'] . '>Chemical</option>
-					<option value="CTR" ' . $selected['CTR'] . '>Country</option>
-					<option value="DS" ' . $selected['DS'] . '>Designated States</option>
-					<option value="EN_AB" ' . $selected['EN_AB'] . '>English Abstract</option>
-					<option value="EN_ALL" ' . $selected['EN_ALL'] . '>English All</option>
-					<option value="EN_CL" ' . $selected['EN_CL'] . '>English Claims</option>
-					<option value="EN_DE" ' . $selected['EN_DE'] . '>English Description</option>
-					<option value="EN_ALLTXT" ' . $selected['EN_ALLTXT'] . '>English Text</option>
-					<option value="EN_TI" ' . $selected['EN_TI'] . '>English Title</option>
-					<option value="EN_EX" ' . $selected['EN_EX'] . '>Exact IPC code</option>
-					<option value="LGF" ' . $selected['LGF'] . '>Filing Language</option>
-					<option value="FP" ' . $selected['FP'] . '>Front Page(FP)</option>
-					<option value="GN" ' . $selected['GN'] . '>Grant Number</option>
-					<option value="IC" ' . $selected['IC'] . '>International Class</option>
-					<option value="ICI" ' . $selected['ICI'] . '>International Class Inventive</option>
-					<option value="ICN" ' . $selected['ICN'] . '>International Class N-Inventive</option>
-					<option value="IPE" ' . $selected['IPE'] . '>International Preliminary Examination</option>
-					<option value="ISA" ' . $selected['ISA'] . '>International Search Authority</option>
-					<option value="ISR" ' . $selected['ISR'] . '>International Search Report</option>
-					<option value="INA" ' . $selected['INA'] . '>Inventor All Data</option>
-					<option value="IN" ' . $selected['IN'] . '>Inventor Name</option>
-					<option value="IADC" ' . $selected['IADC'] . '>Inventor Nationality</option>
-					<option value="RPA" ' . $selected['RPA'] . '>Legal Representative All Data</option>
-					<option value="RCN" ' . $selected['RCN'] . '>Legal Representative Country</option>
-					<option value="RP" ' . $selected['RP'] . '>Legal Representative Name</option>
-					<option value="RAD" ' . $selected['RAD'] . '>Legal Representative Address</option>
-					<option value="LI" ' . $selected['LI'] . '>Licensing availability</option>
-					<option value="PAF" ' . $selected['PAF'] . '>Main Applicant Name</option>
-					<option value="ICF" ' . $selected['ICF'] . '>Main International Class</option>
-					<option value="INF" ' . $selected['INF'] . '>Main Inventor Name</option>
-					<option value="RPF" ' . $selected['RPF'] . '>Main Legal Rep Name</option>
-					<option value="NPA" ' . $selected['NPA'] . '>National Phase All Data</option>
-					<option value="NPAN" ' . $selected['NPAN'] . '>National Phase Application Number</option>
-					<option value="NPED" ' . $selected['NPED'] . '>National Phase Entry Date</option>
-					<option value="NPET" ' . $selected['NPET'] . '>National Phase Entry Type</option>
-					<option value="PN" ' . $selected['PN'] . '>National Publication Number</option>
-					<option value="OF" ' . $selected['OF'] . '>Office Code</option>
-					<option value="NPCC" ' . $selected['NPCC'] . '>National Phase Office Code</option>
-					<option value="PRIORPCTAN" ' . $selected['PRIORPCTAN'] . '>Prior PCT Application Number</option>
-					<option value="PRIORPCTW" ' . $selected['PRIORPCTW'] . '>Prior PCT WO Number</option>
-					<option value="PI" ' . $selected['PI'] . '>Priority All Data</option>
-					<option value="PCN" ' . $selected['PCN'] . '>Priority Country</option>
-					<option value="PD" ' . $selected['PD'] . '>Priority Date</option>
-					<option value="NP" ' . $selected['NP'] . '>Priority Number</option>
-					<option value="DP" ' . $selected['DP'] . '>Publication Date</option>
-					<option value="LGP" ' . $selected['LGP'] . '>Publication Language</option>
-					<option value="SIS" ' . $selected['SIS'] . '>Supplementary International Search</option>
-					<option value="TPO" ' . $selected['TPO'] . '>Third Party Observation</option>
-					<option value="WO" ' . $selected['WO'] . '>WIPO Publication Number</option>
+				<select title="Type" class="queryType" name="patentType' . htmlspecialchars($cpt) . '" id="patentType' . htmlspecialchars($cpt) . '">
+					<option value="ALLNAMES" ' . htmlspecialchars($selected['ALLNAMES']) . '>All Names</option>
+					<option value="ALLNUM" ' . htmlspecialchars($selected['ALLNUM']) . '>All Numbers and IDs</option>
+					<option value="AAD" ' . htmlspecialchars($selected['AAD']) . '>Applicant Address</option>
+					<option value="AADC" ' . htmlspecialchars($selected['AADC']) . '>Applicant Address Country</option>
+					<option value="PAA" ' . htmlspecialchars($selected['PAA']) . '>Applicant All Data</option>
+					<option value="PA" ' . htmlspecialchars($selected['PA']) . '>Applicant Name</option>
+					<option value="ANA" ' . htmlspecialchars($selected['ANA']) . '>Applicant Nationality</option>
+					<option value="ARE" ' . htmlspecialchars($selected['ARE']) . '>Applicant Residence</option>
+					<option value="AD" ' . htmlspecialchars($selected['AD']) . '>Application Date</option>
+					<option value="AN" ' . htmlspecialchars($selected['AN']) . '>Application Number</option>
+					<option value="CHEM" ' . htmlspecialchars($selected['CHEM']) . '>Chemical</option>
+					<option value="CTR" ' . htmlspecialchars($selected['CTR']) . '>Country</option>
+					<option value="DS" ' . htmlspecialchars($selected['DS']) . '>Designated States</option>
+					<option value="EN_AB" ' . htmlspecialchars($selected['EN_AB']) . '>English Abstract</option>
+					<option value="EN_ALL" ' . htmlspecialchars($selected['EN_ALL']) . '>English All</option>
+					<option value="EN_CL" ' . htmlspecialchars($selected['EN_CL']) . '>English Claims</option>
+					<option value="EN_DE" ' . htmlspecialchars($selected['EN_DE']) . '>English Description</option>
+					<option value="EN_ALLTXT" ' . htmlspecialchars($selected['EN_ALLTXT']) . '>English Text</option>
+					<option value="EN_TI" ' . htmlspecialchars($selected['EN_TI']) . '>English Title</option>
+					<option value="EN_EX" ' . htmlspecialchars($selected['EN_EX']) . '>Exact IPC code</option>
+					<option value="LGF" ' . htmlspecialchars($selected['LGF']) . '>Filing Language</option>
+					<option value="FP" ' . htmlspecialchars($selected['FP']) . '>Front Page(FP)</option>
+					<option value="GN" ' . htmlspecialchars($selected['GN']) . '>Grant Number</option>
+					<option value="IC" ' . htmlspecialchars($selected['IC']) . '>International Class</option>
+					<option value="ICI" ' . htmlspecialchars($selected['ICI']) . '>International Class Inventive</option>
+					<option value="ICN" ' . htmlspecialchars($selected['ICN']) . '>International Class N-Inventive</option>
+					<option value="IPE" ' . htmlspecialchars($selected['IPE']) . '>International Preliminary Examination</option>
+					<option value="ISA" ' . htmlspecialchars($selected['ISA']) . '>International Search Authority</option>
+					<option value="ISR" ' . htmlspecialchars($selected['ISR']) . '>International Search Report</option>
+					<option value="INA" ' . htmlspecialchars($selected['INA']) . '>Inventor All Data</option>
+					<option value="IN" ' . htmlspecialchars($selected['IN']) . '>Inventor Name</option>
+					<option value="IADC" ' . htmlspecialchars($selected['IADC']) . '>Inventor Nationality</option>
+					<option value="RPA" ' . htmlspecialchars($selected['RPA']) . '>Legal Representative All Data</option>
+					<option value="RCN" ' . htmlspecialchars($selected['RCN']) . '>Legal Representative Country</option>
+					<option value="RP" ' . htmlspecialchars($selected['RP']) . '>Legal Representative Name</option>
+					<option value="RAD" ' . htmlspecialchars($selected['RAD']) . '>Legal Representative Address</option>
+					<option value="LI" ' . htmlspecialchars($selected['LI']) . '>Licensing availability</option>
+					<option value="PAF" ' . htmlspecialchars($selected['PAF']) . '>Main Applicant Name</option>
+					<option value="ICF" ' . htmlspecialchars($selected['ICF']) . '>Main International Class</option>
+					<option value="INF" ' . htmlspecialchars($selected['INF']) . '>Main Inventor Name</option>
+					<option value="RPF" ' . htmlspecialchars($selected['RPF']) . '>Main Legal Rep Name</option>
+					<option value="NPA" ' . htmlspecialchars($selected['NPA']) . '>National Phase All Data</option>
+					<option value="NPAN" ' . htmlspecialchars($selected['NPAN']) . '>National Phase Application Number</option>
+					<option value="NPED" ' . htmlspecialchars($selected['NPED']) . '>National Phase Entry Date</option>
+					<option value="NPET" ' . htmlspecialchars($selected['NPET']) . '>National Phase Entry Type</option>
+					<option value="PN" ' . htmlspecialchars($selected['PN']) . '>National Publication Number</option>
+					<option value="OF" ' . htmlspecialchars($selected['OF']) . '>Office Code</option>
+					<option value="NPCC" ' . htmlspecialchars($selected['NPCC']) . '>National Phase Office Code</option>
+					<option value="PRIORPCTAN" ' . htmlspecialchars($selected['PRIORPCTAN']) . '>Prior PCT Application Number</option>
+					<option value="PRIORPCTW" ' . htmlspecialchars($selected['PRIORPCTW']) . '>Prior PCT WO Number</option>
+					<option value="PI" ' . htmlspecialchars($selected['PI']) . '>Priority All Data</option>
+					<option value="PCN" ' . htmlspecialchars($selected['PCN']) . '>Priority Country</option>
+					<option value="PD" ' . htmlspecialchars($selected['PD']) . '>Priority Date</option>
+					<option value="NP" ' . htmlspecialchars($selected['NP']) . '>Priority Number</option>
+					<option value="DP" ' . htmlspecialchars($selected['DP']) . '>Publication Date</option>
+					<option value="LGP" ' . htmlspecialchars($selected['LGP']) . '>Publication Language</option>
+					<option value="SIS" ' . htmlspecialchars($selected['SIS']) . '>Supplementary International Search</option>
+					<option value="TPO" ' . htmlspecialchars($selected['TPO']) . '>Third Party Observation</option>
+					<option value="WO" ' . htmlspecialchars($selected['WO']) . '>WIPO Publication Number</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" class="query" name="patentQuery' . $cpt . '" id="patentQuery' . $cpt . '" placeholder="Keyword" value="' . $_POST['patentQuery' . $cpt] . '" />';
+				<input type="text" class="query" name="patentQuery' . htmlspecialchars($cpt) . '" id="patentQuery' . htmlspecialchars($cpt) . '" placeholder="Keyword" value="' . htmlspecialchars($_POST['patentQuery' . $cpt]) . '" />';
 
 				$cpt++;
 
@@ -636,14 +636,14 @@
 				}
 
 				$logicalConnector = '
-				<input type="checkbox" id="patentAndOr' . $cpt . '" name="andOrPatent' . $cpt . '" value="OR" ' . $checked . '>
-				<label class="andOr" for="patentAndOr' . $cpt . '"></label>';
+				<input type="checkbox" id="patentAndOr' . htmlspecialchars($cpt) . '" name="andOrPatent' . htmlspecialchars($cpt) . '" value="OR" ' . htmlspecialchars($checked) . '>
+				<label class="andOr" for="patentAndOr' . htmlspecialchars($cpt) . '"></label>';
 				}
 				?>
 				<input title="Extend" class="extend" type="submit" id="extend" name="extendPatent" value=">>" />
 			</div>
 			</div>
-			<?php echo $ERROR_PATENTQUERY; ?>
+			<?php echo htmlspecialchars($ERROR_PATENTQUERY); ?>
 			<?php
 			// Read watch pack patent query
 			preg_match("/[0-9]+/", $_GET['packId'], $pack_idInUse);
@@ -668,9 +668,9 @@
 				}
 
 				echo '
-				<div class="queryContainer ' . $Qdisable . '">
-					<input type="submit" title="Delete" class="deleteQuery" name="delQueryPatent" value="query' . $query['id'] . '"/>
-					<input type="submit" title="' . $titleDisableActivate . '" class="' . $nameClassDisableActivate . 'Query" name="' . $nameClassDisableActivate . 'QueryPatent" value="query' . $query['id'] . '"/>
+				<div class="queryContainer ' . htmlspecialchars($Qdisable) . '">
+					<input type="submit" title="Delete" class="deleteQuery" name="delQueryPatent" value="query' . htmlspecialchars($query['id']) . '"/>
+					<input type="submit" title="' . htmlspecialchars($titleDisableActivate) . '" class="' . htmlspecialchars($nameClassDisableActivate) . 'Query" name="' . htmlspecialchars($nameClassDisableActivate) . 'QueryPatent" value="query' . htmlspecialchars($query['id']) . '"/>
 				';
 
 				$queryId = $query['id'];
@@ -747,11 +747,11 @@
 					$fieldInput = preg_replace("/\+/", " ", $fieldInput);
 					$fields = preg_replace("/(\%3A|`)/", "", $fields);
 					$queryDisplay = $queryDisplay . '
-					<a href="setting?action=editQueryPatent&query=' . $queryId . '" >
-						<div class="queryTypeView">' . $queryFieldsName[$fields] . '</div>
+					<a href="setting?action=editQueryPatent&query=' . htmlspecialchars($queryId) . '" >
+						<div class="queryTypeView">' . htmlspecialchars($queryFieldsName[$fields]) . '</div>
 					</a>
-					<a href="setting?action=editQueryPatent&query=' . $queryId . '" >
-						<div class="queryKeywordView">' . $fieldInput . '</div>
+					<a href="setting?action=editQueryPatent&query=' . htmlspecialchars($queryId) . '" >
+						<div class="queryKeywordView">' . htmlspecialchars($fieldInput) . '</div>
 					</a>';
 
 					preg_match("/^(AND|OR)\+/", $query, $logicalConnector);
@@ -760,7 +760,7 @@
 						$query = preg_replace("/^(AND|OR)\+/", "", $query);
 						preg_match("/.{1,3}/", $logicalConnector[1], $logicalConnector);
 						$queryDisplay = $queryDisplay . '
-						<a href="setting?action=editQueryPatent&query=' . $queryId . '" >
+						<a href="setting?action=editQueryPatent&query=' . htmlspecialchars($queryId) . '" >
 						<div class="query' . ucfirst(strtolower($logicalConnector[0])) . 'View">' . $logicalConnector[0] . '</div>
 						</a>
 						';
@@ -779,9 +779,9 @@
 	?>
 		<h1>Community watch packs</h1>
 		<form class="formSearch" method="get" action="watchPack">
-			<input type="text" name="search" id="search" placeholder="Search Serge" value="<?php echo $search; ?>"/>
-			<input type="hidden" name="orderBy" value="<?php echo preg_replace("/.*=/", "", $orderBy); ?>"/>
-			<input type="hidden" name="optionalCond" value="<?php echo $optionalCond; ?>"/>
+			<input type="text" name="search" id="search" placeholder="Search Serge" value="<?php echo htmlspecialchars($search); ?>"/>
+			<input type="hidden" name="orderBy" value="<?php echo  htmlspecialchars(preg_replace("/.*=/", "", $orderBy)); ?>"/>
+			<input type="hidden" name="optionalCond" value="<?php echo htmlspecialchars($optionalCond); ?>"/>
 		</form>
 
 
@@ -793,12 +793,12 @@
 							<th>Add</th>
 							<?php
 							echo '
-							<th><a href="?orderBy=name' . $colOrder['DESC'] . $searchSort . $actualPageLink . '&language=' . $selectedLanguageCode . '&type=' . $type . '">Name ' . $colOrder['name'] . '</a></th>
-							<th><a href="?orderBy=author' . $colOrder['DESC'] . $searchSort . $actualPageLink . '&language=' . $selectedLanguageCode . '&type=' . $type . '">Author ' . $colOrder['author'] . '</a></th>
-							<th><a href="?orderBy=category' . $colOrder['DESC'] . $searchSort . $actualPageLink . '&language=' . $selectedLanguageCode . '&type=' . $type . '">Category ' . $colOrder['category'] . '</a></th>
-							<th><a href="?orderBy=date' . $colOrder['DESC'] . $searchSort . $actualPageLink . '&language=' . $selectedLanguageCode . '&type=' . $type . '">Date ' . $colOrder['date'] . '</a></th>
+							<th><a href="?orderBy=name' . htmlspecialchars($colOrder['DESC']) . htmlspecialchars($searchSort) . htmlspecialchars($actualPageLink) . '&language=' . htmlspecialchars($selectedLanguageCode) . '&type=' . htmlspecialchars($type) . '">Name ' . htmlspecialchars($colOrder['name']) . '</a></th>
+							<th><a href="?orderBy=author' . htmlspecialchars($colOrder['DESC']) . htmlspecialchars($searchSort) . htmlspecialchars($actualPageLink) . '&language=' . htmlspecialchars($selectedLanguageCode) . '&type=' . htmlspecialchars($type) . '">Author ' . htmlspecialchars($colOrder['author']) . '</a></th>
+							<th><a href="?orderBy=category' . htmlspecialchars($colOrder['DESC']) . htmlspecialchars($searchSort) . htmlspecialchars($actualPageLink) . '&language=' . htmlspecialchars($selectedLanguageCode) . '&type=' . htmlspecialchars($type) . '">Category ' . htmlspecialchars($colOrder['category']) . '</a></th>
+							<th><a href="?orderBy=date' . htmlspecialchars($colOrder['DESC']) . htmlspecialchars($searchSort) . htmlspecialchars($actualPageLink) . '&language=' . htmlspecialchars($selectedLanguageCode) . '&type=' . htmlspecialchars($type) . '">Date ' . htmlspecialchars($colOrder['date']) . '</a></th>
 							<th>' . $colOrder['language'] . '</th>
-							<th><a href="?orderBy=rate' . $colOrder['DESC'] . $searchSort . '&language=' . $selectedLanguageCode . '&type=' . $type . '">Rate' . $colOrder['rate'] . '</a></th>';
+							<th><a href="?orderBy=rate' . htmlspecialchars($colOrder['DESC']) . htmlspecialchars($searchSort) . '&language=' . htmlspecialchars($selectedLanguageCode) . '&type=' . htmlspecialchars($type) . '">Rate' . htmlspecialchars($colOrder['rate']) . '</a></th>';
 							?>
 						</tr>
 					</thead>
@@ -821,13 +821,13 @@
 							}
 							echo '
 							<tr>
-								<td><input title="Add watch pack" name="AddPack" class="icoAddPack" type="submit" value="' . $watchPack['id'] . '" /></td>
-								<td title="' . $watchPack['description'] . '">' . $watchPack['name'] . '</td>
-								<td>' . $watchPack['author'] . '</td>
-								<td>' . $watchPack['category'] . '</td>
+								<td><input title="Add watch pack" name="AddPack" class="icoAddPack" type="submit" value="' . htmlspecialchars($watchPack['id']) . '" /></td>
+								<td title="' . htmlspecialchars($watchPack['description']) . '">' . htmlspecialchars($watchPack['name']) . '</td>
+								<td>' . htmlspecialchars($watchPack['author']) . '</td>
+								<td>' . htmlspecialchars($watchPack['category']) . '</td>
 								<td>' . date("H:i d/m/o", $watchPack['update_date']) . '</td>
-								<td>' . $watchPack['language'] . '</td>
-								<td><form method="post" action="watchPack">' . $watchPack['NumberOfStars'] . '<input title="' . $starTitle . '" name="AddStar" class="star ' . $colorStar . '" type="submit" value="&#9733; ' . $watchPack['id'] . '" /></form></td>
+								<td>' . htmlspecialchars($watchPack['language']) . '</td>
+								<td><form method="post" action="watchPack">' . htmlspecialchars($watchPack['NumberOfStars']) . '<input title="' . htmlspecialchars($starTitle) . '" name="AddStar" class="star ' . htmlspecialchars($colorStar) . '" type="submit" value="&#9733; ' . htmlspecialchars($watchPack['id']) . '" /></form></td>
 							</tr>';
 						}
 						?>
