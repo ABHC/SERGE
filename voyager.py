@@ -685,7 +685,7 @@ def patents(now):
 							else:
 								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
-						range_article = range+1
+						range_article = range_article+1
 
 			else:
 				logger_info.warning("\n Error : the feed is unavailable")
