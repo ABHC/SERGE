@@ -4,7 +4,7 @@ document.onsubmit = function()
 	var $window = $(window);
 	// Scroll position
 	var scrollPosition = $window.scrollTop();
-	document.getElementById('scrollPos').value = scrollPosition;
+	document.getElementById("scrollPos").value = scrollPosition;
 	return true;
 };
 
@@ -13,7 +13,7 @@ $(document).ready(
 	function()
 	{
 		var $window = $(window);
-		var scrollPosition = document.getElementById('scrollPos').value;
+		var scrollPosition = document.getElementById("scrollPos").value;
 		$window.scrollTop(scrollPosition);
 	}
 );
