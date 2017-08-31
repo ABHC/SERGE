@@ -5,10 +5,10 @@
 <div class="body">
 	<div class="selectType">
 		<a <?php echo htmlspecialchars($addActive); ?> href="watchPack?type=add">
-			<div class="selectTypeAddPack">Add pack</div>
+			<div class="selectTypeAddPack"><?php get_t('name1_type_watchpack', $bdd); ?></div>
 		</a>
 		<a <?php echo htmlspecialchars($createActive); ?> href="watchPack?type=create">
-			<div class="selectTypeCreatePack">Create pack</div>
+			<div class="selectTypeCreatePack"><?php get_t('name2_type_watchpack', $bdd); ?></div>
 		</a>
 	</div>
 	<?php
@@ -20,7 +20,7 @@
 			$packIdURL = '&packId=' . $pack_idInUse[0];
 		}
 	?>
-	<h1>Creation of watch packs</h1>
+	<h1><?php get_t('title_window0_watchpack', $bdd); ?></h1>
 	<form method="post" action="watchPack?type=create<?php echo htmlspecialchars($packIdURL); ?>">
 		<input type="hidden" name="scrollPos" id="scrollPos" value="
 		<?php
@@ -38,11 +38,11 @@
 		<input type="hidden" name="delEditingPatentQuery" value="<?php echo htmlspecialchars($delEditingPatentQuery); ?>"/>
 
 		<div class="dataPackManagement">
-			<h2>Name</h2>
+			<h2><?php get_t('input1_window0_watchpack', $bdd); ?></h2>
 			<div>
 				<input title="Add" class="submit" type="submit" name="addNewPack" value="" />
 				<select name="watchPackList" onchange="this.form.submit();">
-					<option value="NewPack">New watch Pack&nbsp;&nbsp;</option>
+					<option value="NewPack"><?php get_t('select1_window0_watchpack', $bdd); ?>&nbsp;&nbsp;</option>
 					<?php
 					# List here watch Pack own by current user
 					$req = $bdd->prepare('SELECT id, name FROM watch_pack_serge WHERE author = :author');
@@ -65,12 +65,12 @@
 					 ?>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" name="watchPackName" placeholder="Your package name" value="<?php echo  htmlspecialchars($packDetails['name']); ?>"/>
+				<input type="text" name="watchPackName" placeholder="<?php get_t('input2_window0_watchpack', $bdd); ?>" value="<?php echo  htmlspecialchars($packDetails['name']); ?>"/>
 			</div>
 			<div>
 				<?php echo $selectLanguage; ?>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" name="watchPackCategory" placeholder="Your category name" value="<?php echo htmlspecialchars($packDetails['category']); ?>" list="watchPackCategory"/>
+				<input type="text" name="watchPackCategory" placeholder="<?php get_t('input3_window0_watchpack', $bdd); ?>" value="<?php echo htmlspecialchars($packDetails['category']); ?>" list="watchPackCategory"/>
 				<datalist id="watchPackCategory">
 					<?php
 					# List here watch Pack own by current user
@@ -87,8 +87,8 @@
 				</datalist>
 			</div>
 			<?php echo htmlspecialchars($ERRORMESSAGENEWPACKNAME); ?>
-			<h2>Description</h2>
-			<textarea name="watchPackDescription" minlength="50" maxlength="300" placeholder="Your package description"><?php echo htmlspecialchars($packDetails['description']); ?></textarea>
+			<h2><?php get_t('titleInput4_window0_watchpack', $bdd); ?></h2>
+			<textarea name="watchPackDescription" minlength="50" maxlength="300" placeholder="<?php get_t('input4_window0_watchpack', $bdd); ?>"><?php echo htmlspecialchars($packDetails['description']); ?></textarea>
 		</div>
 
 		<div class="keywordManagement">
