@@ -3,13 +3,7 @@
 """insertSQL contains all the functions related to the insertion of datas in SERGE database."""
 
 ######### IMPORT CLASSICAL MODULES
-import os
-import time
-import re
 import sys
-import MySQLdb
-import unicodedata
-import traceback
 import logging
 import feedparser
 import jellyfish
@@ -255,7 +249,6 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 	"""insertOrUpdate manage links insertion or data update if the link is already present."""
 
 	######### LOGGER CALL
-	logger_info = logging.getLogger("info_log")
 	logger_error = logging.getLogger("error_log")
 
 	########### ITEM EXTRACTION FOR OPERATIONS
@@ -381,8 +374,8 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 					for jelly in jellychecking:
 						jelly_title = jelly[0]
 						jelly_link = jelly[1]
-						jelly_id_keyword = jelly[2]
-						jelly_owners = jelly[3]
+						jelly_id_keyword = jelly[2] # BUG jelly_owner pas utilisé
+						jelly_owners = jelly[3] # BUG jelly_owner pas utilisé
 						damerauLevenshtein_title_score = 4
 
 						levenshtein_title_score = jellyfish.levenshtein_distance(post_title, jelly_title)
