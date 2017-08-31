@@ -1,4 +1,6 @@
 <?php
+include_once('model/read.php');
+include_once('model/update.php');
 
 if (isset($_GET['link']) AND isset($_GET['id']) AND isset($_GET['hash']))
 {
