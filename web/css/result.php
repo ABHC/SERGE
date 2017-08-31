@@ -53,7 +53,7 @@ include_once('nav.php');
 	width: 100%;
 	height: 100vh;
 	z-index: -1;
-	background-color: rgba(0, 0, 0, 0.1);
+	background-color: rgba(0, 0, 0, 0.15);
 }
 
 h1
@@ -130,6 +130,7 @@ input[type='text']::placeholder
 	width: 40px;
 	height: 88px;
 	color: #fff;
+	text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
 	text-decoration: none;
 	text-transform: uppercase;
 	font-size: 10px;
