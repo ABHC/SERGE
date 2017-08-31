@@ -5,8 +5,6 @@
 ######### IMPORT CLASSICAL MODULES
 import requests
 import logging
-from shutil import copyfileobj
-from logging.handlers import RotatingFileHandler
 
 
 def aLinkToThePast(link):
@@ -14,7 +12,6 @@ def aLinkToThePast(link):
 
 	######### LOGGER CALL
 	logger_info = logging.getLogger("info_log")
-	logger_error = logging.getLogger("error_log")
 
 	try:
 		etag = requests.head(link, headers={'User-Agent' : "Serge Browser"}, timeout=15).headers.get('etag')
@@ -78,7 +75,6 @@ def allRequestLong(link):
 
 	######### LOGGER CALL
 	logger_info = logging.getLogger("info_log")
-	logger_error = logging.getLogger("error_log")
 
 	try:
 		req = requests.get(link, headers={'User-Agent' : "Serge Browser"}, timeout=15)
@@ -145,7 +141,6 @@ def headToIcon(favicon_link):
 
 	######### LOGGER CALL
 	logger_info = logging.getLogger("info_log")
-	logger_error = logging.getLogger("error_log")
 
 	try:
 		req = requests.get(favicon_link, stream=True)
