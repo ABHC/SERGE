@@ -1,4 +1,4 @@
-this.backgroundPreviewAsTitle = function()
+var backgroundPreviewAsTitle = function()
 {
 	var yCorner = -10;
 	var xCorner = 20;
@@ -38,4 +38,4 @@ this.backgroundPreviewAsTitle = function()
 window.onload = function()
 {
 	backgroundPreviewAsTitle();
-}
+};
