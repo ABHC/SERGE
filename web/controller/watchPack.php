@@ -2,6 +2,8 @@
 
 include_once('controller/accessLimitedToSignInPeople.php');
 include_once('model/get_text.php');
+include_once('model/read.php');
+include_once('model/update.php');
 
 // Define variables
 $actualLetter = '';
@@ -134,166 +136,24 @@ else
 
 if ($type == 'add')
 {
-	# Language list
-	$language['aa'] = 'Afar';
-	$language['ab'] = 'Abkhazian';
-	$language['af'] = 'Afrikaans';
-	$language['ak'] = 'Akan';
-	$language['am'] = 'Amharic';
-	$language['ar'] = 'Arabic';
-	$language['as'] = 'Assamese';
-	$language['ay'] = 'Aymara';
-	$language['az'] = 'Azerbaijani';
-	$language['ba'] = 'Bashkir';
-	$language['be'] = 'Belarusian';
-	$language['bg'] = 'Bulgarian';
-	$language['bm'] = 'Bambara';
-	$language['bn'] = 'Bengali';
-	$language['bo'] = 'Tibetan';
-	$language['br'] = 'Breton';
-	$language['bs'] = 'Bosnian';
-	$language['ca'] = 'Catalan';
-	$language['ce'] = 'Chechen';
-	$language['co'] = 'Corsican';
-	$language['cs'] = 'Czech';
-	$language['cv'] = 'Chuvash';
-	$language['cy'] = 'Welsh';
-	$language['da'] = 'Danish';
-	$language['de'] = 'German';
-	$language['dv'] = 'Divehi';
-	$language['dz'] = 'Dzongkha';
-	$language['ee'] = 'Ewe';
-	$language['el'] = 'Greek';
-	$language['en'] = 'English';
-	$language['eo'] = 'Esperanto';
-	$language['es'] = 'Spanish';
-	$language['et'] = 'Estonian';
-	$language['eu'] = 'Basque';
-	$language['fa'] = 'Persian';
-	$language['ff'] = 'Fulah';
-	$language['fi'] = 'Finnish';
-	$language['fj'] = 'Fijian';
-	$language['fo'] = 'Faroese';
-	$language['fr'] = 'French';
-	$language['fy'] = 'Western Frisian';
-	$language['ga'] = 'Irish';
-	$language['gd'] = 'Scottish Gaelic';
-	$language['gl'] = 'Galician';
-	$language['gn'] = 'Guarani';
-	$language['gu'] = 'Gujarati';
-	$language['ha'] = 'Hausa';
-	$language['he'] = 'Hebrew';
-	$language['hi'] = 'Hindi';
-	$language['hr'] = 'Croatian';
-	$language['ht'] = 'Haitian';
-	$language['hu'] = 'Hungarian';
-	$language['hy'] = 'Armenian';
-	$language['ia'] = 'Interlingua';
-	$language['id'] = 'Indonesian';
-	$language['ie'] = 'Interlingue';
-	$language['ig'] = 'Igbo';
-	$language['ii'] = 'Sichuan Yi';
-	$language['is'] = 'Icelandic';
-	$language['it'] = 'Italian';
-	$language['iu'] = 'Inuktitut';
-	$language['ja'] = 'Japanese';
-	$language['jv'] = 'Javanese';
-	$language['ka'] = 'Georgian';
-	$language['kg'] = 'Kongo';
-	$language['kk'] = 'Kazakh';
-	$language['kl'] = 'Kalaallisut';
-	$language['km'] = 'Khmer';
-	$language['kn'] = 'Kannada';
-	$language['ko'] = 'Korean';
-	$language['ks'] = 'Kashmiri';
-	$language['ku'] = 'Kurdish';
-	$language['kv'] = 'Komi';
-	$language['kw'] = 'Cornish';
-	$language['ky'] = 'Kirghiz';
-	$language['la'] = 'Latin';
-	$language['lb'] = 'Luxembourgish';
-	$language['lg'] = 'Ganda';
-	$language['li'] = 'Limburgish';
-	$language['ln'] = 'Lingala';
-	$language['lo'] = 'Lao';
-	$language['lt'] = 'Lithuanian';
-	$language['lu'] = 'Luba-Katanga';
-	$language['lv'] = 'Latvian';
-	$language['mh'] = 'Marshallese';
-	$language['mi'] = 'Māori';
-	$language['mk'] = 'Macedonian';
-	$language['ml'] = 'Malayalam';
-	$language['mn'] = 'Mongolian';
-	$language['mr'] = 'Marathi';
-	$language['ms'] = 'Malay';
-	$language['mt'] = 'Maltese';
-	$language['my'] = 'Burmese';
-	$language['nb'] = 'Norwegian Bokmål';
-	$language['nd'] = 'North Ndebele';
-	$language['ne'] = 'Nepali';
-	$language['nl'] = 'Dutch';
-	$language['nn'] = 'Norwegian Nynorsk';
-	$language['no'] = 'Norwegian';
-	$language['oc'] = 'Occitan';
-	$language['oj'] = 'Ojibwa';
-	$language['or'] = 'Oriya';
-	$language['os'] = 'Ossetian';
-	$language['pa'] = 'Panjabi';
-	$language['pi'] = 'Pāli';
-	$language['pl'] = 'Polish';
-	$language['pt'] = 'Portuguese';
-	$language['rm'] = 'Romansh';
-	$language['ro'] = 'Romanian';
-	$language['ru'] = 'Russian';
-	$language['rw'] = 'Kinyarwanda';
-	$language['sa'] = 'Sanskrit';
-	$language['sh'] = 'Serbo-croate';
-	$language['si'] = 'Sinhalese';
-	$language['sk'] = 'Slovak';
-	$language['sl'] = 'Slovene';
-	$language['sm'] = 'Samoan';
-	$language['sn'] = 'Shona';
-	$language['so'] = 'Somali';
-	$language['sq'] = 'Albanian';
-	$language['sr'] = 'Serbian';
-	$language['ss'] = 'Swati';
-	$language['su'] = 'Sundanese';
-	$language['sv'] = 'Swedish';
-	$language['sw'] = 'Swahili';
-	$language['ta'] = 'Tamil';
-	$language['th'] = 'Thai';
-	$language['ti'] = 'Tigrinya';
-	$language['tk'] = 'Turkmen';
-	$language['tl'] = 'Tagalog';
-	$language['tn'] = 'Tswana';
-	$language['to'] = 'Tonga';
-	$language['tr'] = 'Turkish';
-	$language['ts'] = 'Tsonga';
-	$language['tt'] = 'Tatar';
-	$language['tw'] = 'Twi';
-	$language['ug'] = 'Uighur';
-	$language['uk'] = 'Ukrainian';
-	$language['uz'] = 'Uzbek';
-	$language['vi'] = 'Viêt Namese';
-	$language['yi'] = 'Yiddish';
-	$language['yo'] = 'Yoruba';
-	$language['za'] = 'Zhuang';
-	$language['zh'] = 'Chinese';
-	$language['zu'] = 'Zulu';
+	$checkCol = array(array("1", " = ", "1", ""));
+	$languageBDD = read('language_serge', 'code, name', $checkCol, '', $bdd);
 
 	$colOrder['language'] = '<select name="language" onchange="this.form.submit();">';
 	$colOrder['language'] = $colOrder['language'] . PHP_EOL . '<option value="all" selected>All languages</option>';
 
-	foreach ($language as $code => $languageName)
+	$languageGET = preg_replace("/[^a-z]/", "", $_GET['language']);
+
+	foreach ($languageBDD as $languageLine)
 	{
-		if ($_GET['language'] == $code)
+		if ($languageGET == $languageLine['code'])
 		{
-			$colOrder['language'] = $colOrder['language'] . PHP_EOL . '<option value="' . $code . '" selected>' . $code . ' &nbsp;&nbsp;' . $languageName . '</option>';
-			$selectedLanguageCode = $code;
+			$colOrder['language'] = $colOrder['language'] . PHP_EOL . '<option value="' . $languageLine['code'] . '" selected>' . $languageLine['code'] . ' &nbsp;&nbsp;' . $languageLine['name'] . '</option>';
+			$selectedLanguageCode = $languageLine['code'];
 		}
 		else
 		{
-			$colOrder['language'] = $colOrder['language'] . PHP_EOL . '<option value="' . $code . '">' . $code . ' &nbsp;&nbsp;' . $languageName . '</option>';
+			$colOrder['language'] = $colOrder['language'] . PHP_EOL . '<option value="' . $languageLine['code'] . '">' . $languageLine['code'] . ' &nbsp;&nbsp;' . $languageLine['name'] . '</option>';
 		}
 	}
 
@@ -526,174 +386,34 @@ else
 	}
 	else
 	{
-		$req = $bdd->prepare('SELECT language FROM users_table_serge WHERE id = :userId');
+		/*$req = $bdd->prepare('SELECT language FROM users_table_serge WHERE id = :userId');
 		$req->execute(array(
 			'userId' => $_SESSION['id']));
 			$packDetails = $req->fetch();
-			$req->closeCursor();
+			$req->closeCursor();*/
+
+		$checkCol    = array(array("id", " = ", $_SESSION['id'], ""));
+		$packDetails = read('users_table_serge', 'language', $checkCol, '', $bdd);
+		$packDetails = $packDetails[0];
 	}
 
-	# Language list
-	$language['aa'] = 'Afar';
-	$language['ab'] = 'Abkhazian';
-	$language['af'] = 'Afrikaans';
-	$language['ak'] = 'Akan';
-	$language['am'] = 'Amharic';
-	$language['ar'] = 'Arabic';
-	$language['as'] = 'Assamese';
-	$language['ay'] = 'Aymara';
-	$language['az'] = 'Azerbaijani';
-	$language['ba'] = 'Bashkir';
-	$language['be'] = 'Belarusian';
-	$language['bg'] = 'Bulgarian';
-	$language['bm'] = 'Bambara';
-	$language['bn'] = 'Bengali';
-	$language['bo'] = 'Tibetan';
-	$language['br'] = 'Breton';
-	$language['bs'] = 'Bosnian';
-	$language['ca'] = 'Catalan';
-	$language['ce'] = 'Chechen';
-	$language['co'] = 'Corsican';
-	$language['cs'] = 'Czech';
-	$language['cv'] = 'Chuvash';
-	$language['cy'] = 'Welsh';
-	$language['da'] = 'Danish';
-	$language['de'] = 'German';
-	$language['dv'] = 'Divehi';
-	$language['dz'] = 'Dzongkha';
-	$language['ee'] = 'Ewe';
-	$language['el'] = 'Greek';
-	$language['en'] = 'English';
-	$language['eo'] = 'Esperanto';
-	$language['es'] = 'Spanish';
-	$language['et'] = 'Estonian';
-	$language['eu'] = 'Basque';
-	$language['fa'] = 'Persian';
-	$language['ff'] = 'Fulah';
-	$language['fi'] = 'Finnish';
-	$language['fj'] = 'Fijian';
-	$language['fo'] = 'Faroese';
-	$language['fr'] = 'French';
-	$language['fy'] = 'Western Frisian';
-	$language['ga'] = 'Irish';
-	$language['gd'] = 'Scottish Gaelic';
-	$language['gl'] = 'Galician';
-	$language['gn'] = 'Guarani';
-	$language['gu'] = 'Gujarati';
-	$language['ha'] = 'Hausa';
-	$language['he'] = 'Hebrew';
-	$language['hi'] = 'Hindi';
-	$language['hr'] = 'Croatian';
-	$language['ht'] = 'Haitian';
-	$language['hu'] = 'Hungarian';
-	$language['hy'] = 'Armenian';
-	$language['ia'] = 'Interlingua';
-	$language['id'] = 'Indonesian';
-	$language['ie'] = 'Interlingue';
-	$language['ig'] = 'Igbo';
-	$language['ii'] = 'Sichuan Yi';
-	$language['is'] = 'Icelandic';
-	$language['it'] = 'Italian';
-	$language['iu'] = 'Inuktitut';
-	$language['ja'] = 'Japanese';
-	$language['jv'] = 'Javanese';
-	$language['ka'] = 'Georgian';
-	$language['kg'] = 'Kongo';
-	$language['kk'] = 'Kazakh';
-	$language['kl'] = 'Kalaallisut';
-	$language['km'] = 'Khmer';
-	$language['kn'] = 'Kannada';
-	$language['ko'] = 'Korean';
-	$language['ks'] = 'Kashmiri';
-	$language['ku'] = 'Kurdish';
-	$language['kv'] = 'Komi';
-	$language['kw'] = 'Cornish';
-	$language['ky'] = 'Kirghiz';
-	$language['la'] = 'Latin';
-	$language['lb'] = 'Luxembourgish';
-	$language['lg'] = 'Ganda';
-	$language['li'] = 'Limburgish';
-	$language['ln'] = 'Lingala';
-	$language['lo'] = 'Lao';
-	$language['lt'] = 'Lithuanian';
-	$language['lu'] = 'Luba-Katanga';
-	$language['lv'] = 'Latvian';
-	$language['mh'] = 'Marshallese';
-	$language['mi'] = 'Māori';
-	$language['mk'] = 'Macedonian';
-	$language['ml'] = 'Malayalam';
-	$language['mn'] = 'Mongolian';
-	$language['mr'] = 'Marathi';
-	$language['ms'] = 'Malay';
-	$language['mt'] = 'Maltese';
-	$language['my'] = 'Burmese';
-	$language['nb'] = 'Norwegian Bokmål';
-	$language['nd'] = 'North Ndebele';
-	$language['ne'] = 'Nepali';
-	$language['nl'] = 'Dutch';
-	$language['nn'] = 'Norwegian Nynorsk';
-	$language['no'] = 'Norwegian';
-	$language['oc'] = 'Occitan';
-	$language['oj'] = 'Ojibwa';
-	$language['or'] = 'Oriya';
-	$language['os'] = 'Ossetian';
-	$language['pa'] = 'Panjabi';
-	$language['pi'] = 'Pāli';
-	$language['pl'] = 'Polish';
-	$language['pt'] = 'Portuguese';
-	$language['rm'] = 'Romansh';
-	$language['ro'] = 'Romanian';
-	$language['ru'] = 'Russian';
-	$language['rw'] = 'Kinyarwanda';
-	$language['sa'] = 'Sanskrit';
-	$language['sh'] = 'Serbo-croate';
-	$language['si'] = 'Sinhalese';
-	$language['sk'] = 'Slovak';
-	$language['sl'] = 'Slovene';
-	$language['sm'] = 'Samoan';
-	$language['sn'] = 'Shona';
-	$language['so'] = 'Somali';
-	$language['sq'] = 'Albanian';
-	$language['sr'] = 'Serbian';
-	$language['ss'] = 'Swati';
-	$language['su'] = 'Sundanese';
-	$language['sv'] = 'Swedish';
-	$language['sw'] = 'Swahili';
-	$language['ta'] = 'Tamil';
-	$language['th'] = 'Thai';
-	$language['ti'] = 'Tigrinya';
-	$language['tk'] = 'Turkmen';
-	$language['tl'] = 'Tagalog';
-	$language['tn'] = 'Tswana';
-	$language['to'] = 'Tonga';
-	$language['tr'] = 'Turkish';
-	$language['ts'] = 'Tsonga';
-	$language['tt'] = 'Tatar';
-	$language['tw'] = 'Twi';
-	$language['ug'] = 'Uighur';
-	$language['uk'] = 'Ukrainian';
-	$language['uz'] = 'Uzbek';
-	$language['vi'] = 'Viêt Namese';
-	$language['yi'] = 'Yiddish';
-	$language['yo'] = 'Yoruba';
-	$language['za'] = 'Zhuang';
-	$language['zh'] = 'Chinese';
-	$language['zu'] = 'Zulu';
+	$checkCol    = array();
+	$languageBDD = read('language_serge', 'code, name', $checkCol, '', $bdd);
 
 	$userLang = strtolower($packDetails['language']);
 
 	$selectLanguage = '<select class="shortSelect" name="language">' . PHP_EOL;
 
-	foreach ($language as $code => $languageName)
+	foreach ($languageBDD as $languageLine)
 	{
-		if ($userLang == $code)
+		if ($userLang == $languageLine['code'])
 		{
-			$selectLanguage = $selectLanguage . PHP_EOL . '<option value="' . $code . '" selected>' . $code . ' &nbsp;&nbsp;' . $languageName . '</option>';
+			$selectLanguage = $selectLanguage . PHP_EOL . '<option value="' . $languageLine['code'] . '" selected>' . $languageLine['code'] . ' &nbsp;&nbsp;' . $languageLine['name'] . '</option>';
 			$selectedLanguageCode = $code;
 		}
 		else
 		{
-			$selectLanguage = $selectLanguage . PHP_EOL . '<option value="' . $code . '">' . $code . ' &nbsp;&nbsp;' . $languageName . '</option>';
+			$selectLanguage = $selectLanguage . PHP_EOL . '<option value="' . $languageLine['code'] . '">' . $languageLine['code'] . ' &nbsp;&nbsp;' . $languageLine['name'] . '</option>';
 		}
 	}
 
