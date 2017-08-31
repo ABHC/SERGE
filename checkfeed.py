@@ -5,7 +5,6 @@
 ######### IMPORT CLASSICAL MODULES
 import sys
 import requests
-import traceback
 import feedparser
 
 
@@ -71,7 +70,7 @@ def feedMeUp(link):
 		########### RSS PARSING
 		try:
 			xmldoc = feedparser.parse(rss)
-		except Exception, except_type:
+		except Exception:
 			print ("unvalid link")
 			print ("parsing error in : "+link)
 			sys.exit()
@@ -99,11 +98,11 @@ def feedMeUp(link):
 			print complete_error
 			sys.exit()
 
-		rangemax = len(xmldoc.entries)
-		range = 0 #on initialise la variable range qui va servir pour pointer les articles
+		rangemax_article = len(xmldoc.entries)
+		range_article = 0 #on initialise la variable range_article qui va servir pour pointer les articles
 		unvalid_count = 0
 
-		while range < rangemax:
+		while range_article < rangemax_article :
 
 			########### MANDATORY UNIVERSAL FEED PARSER VARIABLES
 			attribute_title = ""
@@ -112,34 +111,34 @@ def feedMeUp(link):
 			attribute_date = ""
 
 			try:
-				xmldoc.entries[range].title
+				xmldoc.entries[range_article].title
 			except AttributeError:
 				attribute_title = "title "
 				unvalid_count = unvalid_count+1
 				break
 
 			try:
-				xmldoc.entries[range].description
+				xmldoc.entries[range_article].description
 			except AttributeError:
 				attribute_description = "description "
 				unvalid_count = unvalid_count+1
 				break
 
 			try:
-				xmldoc.entries[range].link
+				xmldoc.entries[range_article].link
 			except AttributeError:
 				attribute_link = "link "
 				unvalid_count = unvalid_count+1
 				break
 
 			try:
-				xmldoc.entries[range].published_parsed
+				xmldoc.entries[range_article].published_parsed
 			except AttributeError:
 				attribute_date = "date "
 				unvalid_count = unvalid_count+1
 				break
 
-			range = range+1
+			range_article = range_article+1
 
 		if unvalid_count > 0:
 			complete_attribute = "Missing beacon(s) : "+attribute_title+attribute_description+attribute_link+attribute_date

@@ -3,12 +3,9 @@
 """Serge Explorations functions"""
 
 ######### IMPORT CLASSICAL MODULES
-import os
 import re
-import sys
 import time
 import datetime
-import MySQLdb
 import json
 import feedparser
 import traceback
@@ -38,7 +35,6 @@ def newscast(newscast_args):
 	database = databaseConnection()
 
 	######### LOGGER CALL
-	logger_info = logging.getLogger("info_log")
 	logger_error = logging.getLogger("error_log")
 
 	need_jelly = True
@@ -110,8 +106,8 @@ def newscast(newscast_args):
 			logger_error.error(repr(except_type))
 
 		########### RSS ANALYZE
-		rangemax = len(xmldoc.entries)
-		range = 0
+		rangemax_article = len(xmldoc.entries)
+		range_article = 0
 
 		prime_conditions = (couple_keyword_attribute for couple_keyword_attribute in keywords_and_id_news_list if missing_flux is False)
 
@@ -160,34 +156,34 @@ def newscast(newscast_args):
 			if owners == ",":
 				owners = None
 
-			while range < rangemax and range < 500:
+			while range_article < rangemax_article and range_article < 500:
 
 				########### UNIVERSAL FEED PARSER VARIABLES
 				try:
-					post_title = xmldoc.entries[range].title
+					post_title = xmldoc.entries[range_article].title
 					if post_title == "":
 						post_title = "NO TITLE"
-				except AttributeError or title == "":
+				except (AttributeError, title == ""):
 					logger_error.warning("BEACON ERROR : missing <title> in "+link)
 					logger_error.warning(traceback.format_exc())
 					post_title = "NO TITLE"
 
 				try:
-					post_description = xmldoc.entries[range].description
+					post_description = xmldoc.entries[range_article].description
 				except AttributeError:
 					logger_error.warning("BEACON ERROR : missing <description> in "+link)
 					logger_error.warning(traceback.format_exc())
 					post_description = ""
 
 				try:
-					post_link = xmldoc.entries[range].link
+					post_link = xmldoc.entries[range_article].link
 				except AttributeError:
 					logger_error.warning("BEACON ERROR : missing <link> in "+link)
 					logger_error.warning(traceback.format_exc())
 					post_link = ""
 
 				try:
-					post_date = xmldoc.entries[range].published_parsed
+					post_date = xmldoc.entries[range_article].published_parsed
 					post_date = time.mktime(post_date)
 				except:
 					logger_error.warning("BEACON ERROR : missing <date> in "+link)
@@ -195,7 +191,7 @@ def newscast(newscast_args):
 					post_date = now
 
 				try :
-					post_tags = xmldoc.entries[range].tags
+					post_tags = xmldoc.entries[range_article].tags
 				except AttributeError:
 					post_tags = []
 
@@ -211,7 +207,7 @@ def newscast(newscast_args):
 				tags_string = ""
 
 				while tagdex < len(post_tags) :
-					tags_string = tags_string + xmldoc.entries[range].tags[tagdex].term.lower() + " "
+					tags_string = tags_string + xmldoc.entries[range_article].tags[tagdex].term.lower() + " "
 					tagdex = tagdex+1
 
 				########### AGGREGATED KEYWORDS RESEARCH
@@ -294,9 +290,9 @@ def newscast(newscast_args):
 						########### CALL insertOrUpdate FUNCTION
 						insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
-				range = range+1
+				range_article = range_article+1
 
-			range = 0
+			range_article = 0
 
 
 def science(now):
@@ -360,11 +356,11 @@ def science(now):
 				logger_error.error(repr(except_type))
 
 			if xmldoc is not None:
-				range = 0
-				rangemax = len(xmldoc.entries)
-				logger_info.info("numbers of papers :"+unicode(rangemax)+"\n \n")
+				range_article = 0
+				rangemax_article = len(xmldoc.entries)
+				logger_info.info("numbers of papers :"+unicode(rangemax_article)+"\n \n")
 
-				if rangemax == 0:
+				if rangemax_article == 0:
 					logger_info.info("VOID QUERY :"+link+"\n\n")
 
 				else:
@@ -378,10 +374,10 @@ def science(now):
 
 					query_id = rows[0]
 
-					while range < rangemax:
+					while range_article < rangemax_article:
 
 						try:
-							post_title = xmldoc.entries[range].title
+							post_title = xmldoc.entries[range_article].title
 							if post_title == "":
 								post_title = "NO TITLE"
 						except AttributeError:
@@ -390,14 +386,14 @@ def science(now):
 							post_title = "NO TITLE"
 
 						try:
-							post_link = xmldoc.entries[range].link
+							post_link = xmldoc.entries[range_article].link
 						except AttributeError:
 							logger_error.warning("BEACON ERROR : missing <link> in "+link)
 							logger_error.warning(traceback.format_exc())
 							post_link = ""
 
 						try:
-							post_date = xmldoc.entries[range].published_parsed
+							post_date = xmldoc.entries[range_article].published_parsed
 							post_date = time.mktime(post_date)
 						except AttributeError:
 							logger_error.warning("BEACON ERROR : missing <date> in "+link)
@@ -429,7 +425,7 @@ def science(now):
 						########### CALL insertOrUpdate FUNCTION
 						insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
-						range = range+1
+						range_article = range_article+1
 
 		else:
 			logger_info.warning("Error : the feed is unavailable")
@@ -451,11 +447,11 @@ def science(now):
 				logger_error.error(repr(except_type))
 
 			if data_doaj is not None:
-				range = 0
-				rangemax = len(data_doaj["results"])
-				logger_info.info("numbers of papers :"+unicode(rangemax)+"\n \n")
+				range_article = 0
+				rangemax_article = len(data_doaj["results"])
+				logger_info.info("numbers of papers :"+unicode(rangemax_article)+"\n \n")
 
-				if rangemax == 0:
+				if rangemax_article == 0:
 					logger_info.info("VOID QUERY :"+link_doaj+"\n\n")
 
 				else:
@@ -469,9 +465,9 @@ def science(now):
 
 					query_id = rows[0]
 
-				while range < rangemax:
+				while range_article < rangemax_article:
 					try:
-						post_title = data_doaj["results"][range]["bibjson"]["title"]
+						post_title = data_doaj["results"][range_article]["bibjson"]["title"]
 						if post_title == "":
 							post_title = "NO TITLE"
 					except Exception as json_error:
@@ -479,13 +475,13 @@ def science(now):
 						post_title = "NO TITLE"
 
 					try:
-						post_link = data_doaj["results"][range]["bibjson"]["link"][0]["url"]
+						post_link = data_doaj["results"][range_article]["bibjson"]["link"][0]["url"]
 					except Exception as json_error:
 						logger_error.warning("Error in json retrival of post_link : "+str(json_error))
 						post_link = ""
 
 					try:
-						post_date = data_doaj["results"][range]["last_updated"]
+						post_date = data_doaj["results"][range_article]["last_updated"]
 						post_date = post_date.replace("T", " ").replace("Z", " ").strip()
 						human_date = datetime.datetime.strptime(post_date, "%Y-%m-%d %H:%M:%S")
 						post_date = human_date.timetuple()
@@ -519,7 +515,7 @@ def science(now):
 					########### CALL  FUNCTION
 					insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
-					range = range+1 #On incrémente le pointeur range qui nous sert aussi de compteur
+					range_article = range_article+1 #On incrémente le pointeur range_article qui nous sert aussi de compteur
 
 		else:
 			logger_info.warning("Error : the json API is unavailable")
@@ -574,21 +570,21 @@ def patents(now):
 
 		if rss_error is False:
 			xmldoc = feedparser.parse(rss_wipo)
-			range = 0
-			rangemax = len(xmldoc.entries)
+			range_article = 0
+			rangemax_article = len(xmldoc.entries)
 			logger_info.info("Link :"+str(link))
-			logger_info.info("Patentscope RSS length :"+unicode(rangemax)+"\n \n")
+			logger_info.info("Patentscope RSS length :"+unicode(rangemax_article)+"\n \n")
 
 			######### RESULT FILE PARSING
 			if (xmldoc):
-				if rangemax == 0:
+				if rangemax_article == 0:
 					logger_info.info("VOID QUERY : "+query_wipo+"\n")
 
 				else:
-					while range < rangemax:
+					while range_article < rangemax_article:
 
 						try:
-							post_title = xmldoc.entries[range].title
+							post_title = xmldoc.entries[range_article].title
 							if post_title == "":
 								post_title = "NO TITLE"
 						except AttributeError:
@@ -597,7 +593,7 @@ def patents(now):
 							post_title = "NO TITLE"
 
 						try:
-							post_link = xmldoc.entries[range].link
+							post_link = xmldoc.entries[range_article].link
 							post_link = post_link.split("&")
 							post_link = post_link[0]
 						except AttributeError:
@@ -606,7 +602,7 @@ def patents(now):
 							post_link = ""
 
 						try:
-							post_date = xmldoc.entries[range].published_parsed
+							post_date = xmldoc.entries[range_article].published_parsed
 							post_date = time.mktime(post_date)
 						except AttributeError:
 							logger_error.warning("BEACON ERROR : missing <date> in "+link)
@@ -635,7 +631,7 @@ def patents(now):
 							legal_check_date = float(legal_check_date)
 
 						######### LEGAL STATUS RESEARCH
-						if (legal_research == 1 or legal_research == 2) and owners != "," and already_owners is not None and owners != already_owners and legal_check_date is not None and (legal_check_date+15552000) <= now:
+						if (legal_research == 1 or legal_research == 2) and owners != "," and legal_check_date is not None and (legal_check_date+15552000) <= now:
 							legal_results = legalScrapper(post_link)
 							legal_abstract = legal_results[0]
 							legal_status = legal_results[1]
@@ -643,6 +639,13 @@ def patents(now):
 							new_check_date = now
 
 						elif (legal_research == 1 or legal_research == 2) and owners != "," and legal_check_date is None:
+							legal_results = legalScrapper(post_link)
+							legal_abstract = legal_results[0]
+							legal_status = legal_results[1]
+							lens_link = legal_results[2]
+							new_check_date = now
+
+						elif (legal_research == 1 or legal_research == 2) and owners != "," and already_owners is not None and owners != already_owners:
 							legal_results = legalScrapper(post_link)
 							legal_abstract = legal_results[0]
 							legal_status = legal_results[1]
@@ -679,10 +682,10 @@ def patents(now):
 							if legal_research == 1 and legal_abstract == "INACTIVE":
 								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
-							elif legal_research == 2:
+							else:
 								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
-						range = range+1
+						range_article = range+1
 
 			else:
 				logger_info.warning("\n Error : the feed is unavailable")
@@ -695,7 +698,6 @@ def legalScrapper(post_link):
 
 	######### LOGGER CALL
 	logger_info = logging.getLogger("info_log")
-	logger_error = logging.getLogger("error_log")
 
 	######### GO TO WIPO WEBSITE
 	req_results = sergenet.allRequestLong(post_link)

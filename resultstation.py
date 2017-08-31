@@ -2,13 +2,7 @@
 
 """Triage and formatting of results in order to insertion in SERGE database"""
 
-import os
-import sys
-import time
-import MySQLdb
 import hashlib
-import logging
-import traceback
 from urllib import pathname2url as pn
 
 ######### IMPORT SERGE SPECIALS MODULES
