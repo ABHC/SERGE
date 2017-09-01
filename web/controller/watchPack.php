@@ -136,7 +136,7 @@ else
 
 if ($type == 'add')
 {
-	$checkCol = array(array("1", " = ", "1", ""));
+	$checkCol = array();
 	$languageBDD = read('language_serge', 'code, name', $checkCol, '', $bdd);
 
 	$colOrder['language'] = '<select name="language" onchange="this.form.submit();">';

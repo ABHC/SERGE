@@ -4,10 +4,10 @@
 </div>
 <div class="body">
 	<div class="selectType">
-		<a <?php echo htmlspecialchars($addActive); ?> href="watchPack?type=add">
+		<a <?php echo $addActive; ?> href="watchPack?type=add">
 			<div class="selectTypeAddPack"><?php get_t('name1_type_watchpack', $bdd); ?></div>
 		</a>
-		<a <?php echo htmlspecialchars($createActive); ?> href="watchPack?type=create">
+		<a <?php echo $createActive; ?> href="watchPack?type=create">
 			<div class="selectTypeCreatePack"><?php get_t('name2_type_watchpack', $bdd); ?></div>
 		</a>
 	</div>
