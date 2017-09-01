@@ -1,6 +1,6 @@
 <?php
 	$userId = $_SESSION['id'];
-	$sourceOwnerNEW = preg_replace("/,!*$userId,/", ',', $owners);
+	/*$sourceOwnerNEW = preg_replace("/,!*$userId,/", ',', $owners);
 
 	$active = $activeForCurrentSource - 1;
 
@@ -9,5 +9,10 @@
 		'owners' => $sourceOwnerNEW,
 		'active' => $active,
 		'id' => $sourceIdAction));
-		$req->closeCursor();
+		$req->closeCursor();*/
+
+	$updateCol = array(array("owners", preg_replace("/,!*$userId,/", ',', $owners)),
+										array("active", $activeForCurrentSource - 1));
+	$checkCol  = array(array("id", "=", $sourceIdAction, ""));
+	$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
 ?>
