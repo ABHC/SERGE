@@ -3,14 +3,15 @@ function counter(d, h, m, s, divId)
 	function escapeHtml(unsafe)
 	{
 		return unsafe
-				 .replace(/&/g, "&amp;")
-				 .replace(/</g, "&lt;")
-				 .replace(/>/g, "&gt;")
-				 .replace(/"/g, "&quot;")
-				 .replace(/'/g, "&#039;");
- }
+					.replace(/&/g, "&amp;")
+					.replace(/</g, "&lt;")
+					.replace(/>/g, "&gt;")
+					.replace(/"/g, "&quot;")
+					.replace(/'/g, "&#039;");
+	}
 
 	var e = document.getElementById(divId);
+	var timer;
 
 	if (s < 0)
 	{
@@ -67,5 +68,5 @@ function counter(d, h, m, s, divId)
 	e.innerHTML = escapeHtml(dt+":"+ht+":"+mt+":"+st);
 
 	s--;
-	var timer = setTimeout('counter('+d+','+h+','+m+','+s+',"'+divId+'")',1000);
+	var timer = setTimeout("counter("+d+","+h+","+m+","+s+",\""+divId+"\")",1000);
 }
