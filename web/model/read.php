@@ -9,29 +9,19 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 	*/
 
 	$check       = FALSE;
-	$WHEREvar    = '';
 	$arrayValues = array();
 	$cpt = 0;
+	$WHEREvar = 1;
 
-	if (empty($checkcol))
+	if (!empty($checkCol))
 	{
-		$WHEREvar = 1;
-	}
-	else
-	{
+		$WHEREvar = '';
 		foreach ($checkCol as $line)
 		{
+			$op = " = ";
 			if ($line[1] == "l")
 			{
 				$op = " LIKE ";
-			}
-			elseif ($line[1] == "=")
-			{
-				$op = " = ";
-			}
-			else
-			{
-				$op = " = ";
 			}
 
 			$nameCol   = $line[0];
@@ -48,6 +38,7 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 	{
 		$selectedCol = 'id';
 		$check = TRUE;
+		$result = TRUE;
 	}
 
 	# SQL request
@@ -59,10 +50,6 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 	if (empty($result) AND $check)
 	{
 		$result = FALSE;
-	}
-	elseif (!empty($result) AND $check)
-	{
-		$result = TRUE;
 	}
 
 	return $result;

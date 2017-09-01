@@ -18,17 +18,10 @@ function update($tableName, $updateCol, $checkCol, $optional, $bdd)
 
 	foreach ($checkCol as $line)
 	{
+		$op = " = ";
 		if ($line[1] == "l")
 		{
 			$op = " LIKE ";
-		}
-		elseif ($line[1] == "=")
-		{
-			$op = " = ";
-		}
-		else
-		{
-			$op = " = ";
 		}
 
 		$nameCol   = $line[0];
