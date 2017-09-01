@@ -9,6 +9,9 @@ include_once('model/connection_sql.php');
 	<meta charset="utf-8" />
 	<title>Serge : redirect to your link</title>
 	<link href="css/result" rel="stylesheet" />
+	<?php
+	include_once('favicon.php');
+	?>
 </head>
 
 <body>

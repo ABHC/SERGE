@@ -8,7 +8,7 @@
 	</div>
 
 	<div class="navBlockContainer">
-		<a class="navBlock <?php echo $result; ?>" href="result">
+		<a class="navBlock <?php echo $resultTab; ?>" href="result">
 			<div class="navResultSergeLogo">
 			</div>
 			<div class="navTitle" >
@@ -16,7 +16,7 @@
 			</div>
 		</a>
 
-		<a class="navBlock <?php echo $wiki; ?>" href="wiki">
+		<a class="navBlock <?php echo $wikiTab; ?>" href="workinprogress">
 			<div class="navWikiLogo">
 			</div>
 			<div class="navTitle" >
@@ -24,7 +24,7 @@
 			</div>
 		</a>
 
-		<a class="navBlock <?php echo $setting; ?>" href="setting">
+		<a class="navBlock <?php echo $settingTab; ?>" href="setting">
 			<div class="navSergeSettingLogo">
 			</div>
 			<div class="navTitle" >

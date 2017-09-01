@@ -13,6 +13,9 @@ $language = $language[0] . $language[1];
 	<link href="css/watchPack" rel="stylesheet" />
 	<script src="https://code.jquery.com/jquery.min.js" type="text/javascript"></script>
 	<script src="js/scrollPos.js?<?php echo time();?>" type="text/javascript"></script>
+	<?php
+	include_once('favicon.php');
+	?>
 </head>
 
 <body>

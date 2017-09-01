@@ -12,6 +12,9 @@ $language = $language[0] . $language[1];
 	<title>Serge : your news monitoring</title>
 	<link href="css/workinprogress" rel="stylesheet" />
 	<script src="js/counter.js" type="text/javascript"></script>
+	<?php
+	include_once('favicon.php');
+	?>
 </head>
 
 <body>
