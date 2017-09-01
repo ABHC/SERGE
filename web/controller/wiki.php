@@ -2,7 +2,9 @@
 
 include_once('model/get_text.php');
 
-$wiki="active";
+$resultTab  = "";
+$wikiTab    = "active";
+$settingTab = "";
 
 include_once('view/nav/nav.php');
 

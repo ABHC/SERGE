@@ -39,9 +39,9 @@ else
 /*include_once('model/get_text.php');*/
 
 # Nav activation for this page
-$result  = '';
-$wiki    = '';
-$setting = "active";
+$resultTab  = '';
+$wikiTab    = '';
+$settingTab = "active";
 
 # Scroll position
 if (isset($_POST['scrollPos']))

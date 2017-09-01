@@ -4,9 +4,9 @@ include_once('model/get_text.php');
 include_once('model/read.php');
 
 # Initialization of variables
-$result       = '';
-$wiki         = '';
-$setting      = '';
+$resultTab       = '';
+$wikiTab         = '';
+$settingTab      = '';
 $errorMessage = '';
 
 if(isset($_POST['reg_pseudo']) && isset($_POST['reg_mail']) && isset($_POST['reg_password']) && isset($_POST['reg_repassword']) && isset($_POST['captcha']))

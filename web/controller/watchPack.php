@@ -62,9 +62,9 @@ if (isset($_POST['sourceType']))
 }
 
 # Nav activation for this page
-$result  = '';
-$wiki    = '';
-$setting = "active";
+$resultTab  = '';
+$wikiTab    = '';
+$settingTab = "active";
 
 # Type
 if (!empty($_GET['type']))

@@ -1,9 +1,9 @@
 <?php
 
 # Define variable
-$result             = '';
-$wiki               = '';
-$setting            = '';
+$resultTab             = '';
+$wikiTab               = '';
+$settingTab            = '';
 
 if (!isset($_POST['conn_pseudo']))
 {

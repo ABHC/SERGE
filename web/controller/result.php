@@ -6,9 +6,9 @@ include_once('model/read.php');
 include_once('model/update.php');
 
 # Initialization of variables
-$result             = 'active';
-$wiki               = '';
-$setting            = '';
+$resultTab             = 'active';
+$wikiTab               = '';
+$settingTab            = '';
 $colOrder['read']   = var_get_t('title6Read_table_results', $bdd);
 $colOrder['send']   = var_get_t('title5Send_table_results', $bdd);
 $colOrder['DESC']   = '';
