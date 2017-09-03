@@ -23,9 +23,7 @@ include_once('view/footer/footer.php');
 if (isset($_POST['conn_pseudo']) && isset($_POST['conn_password']))
 {
 	$pseudo   = htmlspecialchars($_POST['conn_pseudo']);
-	$password = hash('sha256', $_POST['conn_password']);
-
-	#include_once('model/connection.php');
+	$password = hash('sha256', 'BlackSalt' . $_POST['conn_password']);
 
 	$checkCol = array(array("users", "=", $pseudo, "AND"),
 										array("password", "=", $password, ""));

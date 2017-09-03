@@ -50,7 +50,7 @@ if(isset($_POST['reg_pseudo']) && isset($_POST['reg_mail']) && isset($_POST['reg
 				}
 				else
 				{
-					$password = hash('sha256', $_POST['reg_password']);
+					$password = hash('sha256', 'BlackSalt' . $_POST['reg_password']);
 					include_once('model/signup.php');
 					$password = "";
 
