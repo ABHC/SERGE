@@ -2,6 +2,7 @@
 
 include_once('model/get_text.php');
 include_once('model/read.php');
+include_once('model/insert.php');
 
 # Initialization of variables
 $resultTab       = '';
