@@ -11,27 +11,37 @@ if (!isset($_POST['conn_pseudo']))
 }
 
 include_once('model/get_text.php');
-
 include_once('model/read.php');
+include_once('controller/generateNonce.php');
 
-include_once('view/nav/nav.php');
 
-include_once('view/body/connection.php');
-
-include_once('view/footer/footer.php');
-
-if (isset($_POST['conn_pseudo']) && isset($_POST['conn_password']))
+$unsafeData = array();
+if (isset($_POST['conn_pseudo']))
 {
-	$pseudo   = htmlspecialchars($_POST['conn_pseudo']);
-	$password = hash('sha256', 'BlackSalt' . $_POST['conn_password']);
+	$unsafeData = array_merge($unsafeData, array(array('pseudo', $_POST['conn_pseudo'], 'str')));
+}
+if (isset($_POST['conn_password']))
+{
+	$unsafeData = array_merge($unsafeData, array(array('password', $_POST['conn_password'], '')));
+}
 
-	$checkCol = array(array("users", "=", $pseudo, "AND"),
+include_once('controller/dataProcessing.php');
+
+# Nonce
+$nonceTime = time();
+$nonce = getNonce($nonceTime);
+
+if ($dataProcessing AND isset($data['pseudo']) AND isset($data['password']))
+{
+	$password = hash('sha256', 'BlackSalt' . $data['password']);
+
+	$checkCol = array(array("users", "=", $data['pseudo'], "AND"),
 										array("password", "=", $password, ""));
 	$result = read("users_table_serge", 'id, users, email, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, background_result', $checkCol, '',$bdd);
 
-	if (!$result)
+	if (empty($result))
 	{
-		echo 'Mauvais identifiant ou mot de passe !';
+		$ERRORMESSAGE = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Mauvais identifiant ou mot de passe !';
 	}
 	else
 	{
@@ -50,5 +60,11 @@ if (isset($_POST['conn_pseudo']) && isset($_POST['conn_password']))
 		header("Location: $redirect");
 	}
 }
+
+include_once('view/nav/nav.php');
+
+include_once('view/body/connection.php');
+
+include_once('view/footer/footer.php');
 
 ?>
