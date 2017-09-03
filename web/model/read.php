@@ -23,6 +23,10 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 			{
 				$op = " LIKE ";
 			}
+			elseif ($line[1] == ">=")
+			{
+				$op = " >= ";
+			}
 
 			$nameCol   = $line[0];
 			$value     = $line[2];
