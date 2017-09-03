@@ -169,11 +169,15 @@ if ($type == 'add')
 		preg_match("/ [0-9]+/", $_POST['AddStar'], $packId);
 		$packId = $packId[0];
 
-		$req = $bdd->prepare('SELECT rating FROM watch_pack_serge WHERE id = :id');
+		/*$req = $bdd->prepare('SELECT rating FROM watch_pack_serge WHERE id = :id');
 		$req->execute(array(
 			'id' => $packId));
 			$usersStars = $req->fetch();
-			$req->closeCursor();
+			$req->closeCursor();*/
+
+		$checkCol = array(array("id", "=", $packId, ""));
+		$result = read('watch_pack_serge', 'rating', $checkCol, '', $bdd);
+		$usersStars = $result[0];
 
 		if (empty($usersStars['rating']))
 		{
@@ -190,16 +194,18 @@ if ($type == 'add')
 			$usersStars = $usersStars['rating'] . $_SESSION['id'] . ',';
 		}
 
-		$req = $bdd->prepare('UPDATE watch_pack_serge SET rating = :usersStars WHERE id = :id');
+		/*$req = $bdd->prepare('UPDATE watch_pack_serge SET rating = :usersStars WHERE id = :id');
 		$req->execute(array(
 			'usersStars' => $usersStars,
 			'id' => $packId));
-			$req->closeCursor();
+			$req->closeCursor();*/
+
+		$updateCol = array(array("rating", $usersStars));
+		$checkCol = array(array("id", "=", $packId, ""));
+		$execution = update('watch_pack_serge', $updateCol, $checkCol, '', $bdd);
 
 			header('Location: watchPack');
 	}
-
-	$OPTIONALCOND = '1';
 
 	# Order results
 	if (!empty($_GET['orderBy']))
@@ -298,8 +304,7 @@ if ($type == 'add')
 	}
 	elseif (!empty($_GET['language']))
 	{
-		# WARNING sensitive variable [SQLI]
-		$OPTIONALCOND = 'language = UPPER(\'' . $selectedLanguageCode . '\')';
+		$checkCol = array(array("language", "=", mb_strtoupper($selectedLanguageCode), ""));
 	}
 	elseif (empty($_GET['search']))
 	{
@@ -313,10 +318,12 @@ if ($type == 'add')
 	# Search engine
 
 	# Read watchPack
-	$req = $bdd->prepare("SELECT id, name, description, author, users, category, language, update_date, rating, ((LENGTH(`rating`) - LENGTH(REPLACE(`rating`, ',', '')))-1) AS `NumberOfStars` FROM `watch_pack_serge` WHERE $OPTIONALCOND $ORDERBY;");
+	/*$req = $bdd->prepare("SELECT id, name, description, author, users, category, language, update_date, rating, ((LENGTH(`rating`) - LENGTH(REPLACE(`rating`, ',', '')))-1) AS `NumberOfStars` FROM `watch_pack_serge` WHERE $OPTIONALCOND $ORDERBY;");
 	$req->execute();
 		$watchPacks = $req->fetchAll();
-		$req->closeCursor();
+		$req->closeCursor();*/
+
+	$watchPacks = read('watch_pack_serge', 'id, name, description, author, users, category, language, update_date, rating, ((LENGTH(`rating`) - LENGTH(REPLACE(`rating`, \',\', \'\')))-1) AS `NumberOfStars`', $checkCol, $ORDERBY, $bdd);
 }
 else
 {
@@ -324,31 +331,40 @@ else
 	{
 		preg_match("/[0-9]+/", $_GET['packId'], $pack_idInUse);
 
-		$req = $bdd->prepare('SELECT name, description, category, language FROM watch_pack_serge WHERE author = :pseudo AND id = :pack_idInUse');
+		/*$req = $bdd->prepare('SELECT name, description, category, language FROM watch_pack_serge WHERE author = :pseudo AND id = :pack_idInUse');
 		$req->execute(array(
 			'pseudo' => $_SESSION['pseudo'],
 			'pack_idInUse' => $pack_idInUse[0]));
 			$packDetails = $req->fetch();
-			$req->closeCursor();
+			$req->closeCursor();*/
+
+		$checkCol = array(array("author", "=", $_SESSION['pseudo'], "AND"),
+											array("id", "=", $pack_idInUse[0], ""));
+		$result = read('watch_pack_serge', 'name, description, category, language', $checkCol, '', $bdd);
+		$packDetails = $result[0];
 
 		if (empty($packDetails))
 		{
 			header('Location: watchPack?type=create');
 		}
 
-		$reqReadPackSources = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE pack_id = :pack_id AND query = "[!source!]"');
+		/*$reqReadPackSources = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE pack_id = :pack_id AND query = "[!source!]"');
 		$reqReadPackSources->execute(array(
 			'pack_id' => $pack_idInUse[0]));
 			$reqReadPackSourcestmp = $reqReadPackSources->fetchAll();
-			$reqReadPackSources->closeCursor();
+			$reqReadPackSources->closeCursor();*/
+
+		$checkCol = array(array("pack_id", "=", pack_idInUse[0], "AND"),
+											array("query", "=", '[!source!]', ""));
+		$resultPackSources = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
 
 			$packSource = array();
-			foreach ($reqReadPackSourcestmp as $readPackSources)
+			foreach ($resultPackSources as $resultSources)
 			{
-				if (preg_match("/^[,!0-9,]+$/", $readPackSources['source']))
+				if (preg_match("/^[,!0-9,]+$/", $resultSources['source']))
 				{
-					$readPackSources['source'] = preg_replace("/!/", "", $readPackSources['source']);
-					$packSource = array_merge(preg_split('/,/', $readPackSources['source'], -1, PREG_SPLIT_NO_EMPTY), $packSource);
+					$resultSources['source'] = preg_replace("/!/", "", $resultSources['source']);
+					$packSource = array_merge(preg_split('/,/', $resultSources['source'], -1, PREG_SPLIT_NO_EMPTY), $packSource);
 				}
 			}
 
