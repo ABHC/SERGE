@@ -177,14 +177,14 @@ def decodeLegal(legal_comparator):
 
 			if legal_keyword == legal_comparator:
 				legal_abstract = "INACTIVE"
-			else :
+			else:
 				legal_abstract = "ACTIVE OR UNCERTAIN"
 
 		######### SEARCH A SPECIFIC EXPRESSION
-		elif legal_abstract != "INACTIVE" :
+		elif legal_abstract != "INACTIVE":
 			if legal_keyword in legal_comparator:
 				legal_abstract = "INACTIVE"
-			else :
+			else:
 				legal_abstract = "ACTIVE OR UNCERTAIN"
 
 	return legal_abstract

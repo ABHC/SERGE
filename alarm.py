@@ -116,7 +116,7 @@ def buildAlert(user, user_id_comma, register, alert_news_list, pydate):
 
 	######### CALL TO ALERTMAIL FUNCTION
 	if mail_design[0] == "type":
-		alert_news_list = sorted(alert_news_list, key= lambda alert_field : alert_field[1])
+		alert_news_list = sorted(alert_news_list, key=lambda alert_field: alert_field[1])
 
 		alertmail = alertMailByType(user, translate_text, alert_news_list, pending_alerts, style, pydate, background_filename)
 
@@ -129,7 +129,7 @@ def buildAlert(user, user_id_comma, register, alert_news_list, pydate):
 		call_words.close()
 
 		for word_and_attribute in alertwords:
-			if ":all@" in word_and_attribute[0] :
+			if ":all@" in word_and_attribute[0]:
 				split_for_all = word_and_attribute[0].split("@")
 
 				query_sitename = "SELECT name FROM rss_serge WHERE id = %s"
@@ -354,7 +354,7 @@ def alertMailByKeyword(user, translate_text, alert_news_list, pending_alerts, al
 
 	######### ECRITURE ALERTS
 	######### ECRITURE KEYWORDS FOR NEWS
-	for couple_word_attribute in sorted(alertwords_list, key= lambda alertswords_field : alertswords_field[0]):
+	for couple_word_attribute in sorted(alertwords_list, key=lambda alertswords_field: alertswords_field[0]):
 		word = couple_word_attribute[0].replace("[!ALERT!]", "").strip().encode('ascii', errors='xmlcharrefreplace')
 		word_attribute = ","+str(couple_word_attribute[1])+","
 		process_result_list = []
@@ -503,7 +503,7 @@ def alertMailBySource(user, translate_text, alert_news_list, pending_alerts, ale
 
 	######### ECRITURE NEWS
 	######### ECRITURE ORIGIN FOR NEWS
-	for couple_source_attribute in sorted(alert_origin_list, key= lambda alert_origin_field : alert_origin_field[0]):
+	for couple_source_attribute in sorted(alert_origin_list, key=lambda alert_origin_field: alert_origin_field[0]):
 		origin_name = couple_source_attribute[0]
 		origin_id = couple_source_attribute[1]
 		process_result_list = []
@@ -516,7 +516,7 @@ def alertMailBySource(user, translate_text, alert_news_list, pending_alerts, ale
 
 				if alerts_attributes[1].isupper() is True:
 					process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize())
-				else :
+				else:
 					process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'))
 
 				process_result_list.append(process_result)

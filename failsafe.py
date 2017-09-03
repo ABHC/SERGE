@@ -127,7 +127,7 @@ def checkMate():
 
 		if numbers_columns == expected_number:
 			logger_info.info("Number of columns in "+name+" : check")
-		else :
+		else:
 			logger_error.critical("Number of columns in "+name+" : FALSE")
 
 			if numbers_columns < expected_number:

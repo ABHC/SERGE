@@ -12,7 +12,7 @@ def allCheckLong(link):
 	"""Function for standardized requests to feed and internet pages."""
 
 	try:
-		req = requests.get(link, headers={'User-Agent' : "Serge Browser"}, timeout=15)
+		req = requests.get(link, headers={'User-Agent': "Serge Browser"}, timeout=15)
 		req.encoding = "utf8"
 		rss = req.text
 		rss_error = False
@@ -102,7 +102,7 @@ def feedMeUp(link):
 		range_article = 0 #on initialise la variable range_article qui va servir pour pointer les articles
 		unvalid_count = 0
 
-		while range_article < rangemax_article :
+		while range_article < rangemax_article:
 
 			########### MANDATORY UNIVERSAL FEED PARSER VARIABLES
 			attribute_title = ""

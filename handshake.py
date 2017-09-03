@@ -46,9 +46,9 @@ def highwayToMail(register, newsletter, priority, database, pydate):
 		subject_FR = "[ALERTE SERGE] Informations Prioritaires"+pydate
 		subject_EN = "[SERGE] Prioritary Informations"+pydate
 
-	try :
+	try:
 		exec("translate_subject"+"="+"subject_"+user_infos[1])
-	except NameError :
+	except NameError:
 		translate_subject = subject_EN
 
 	######### CONTENT WRITING IN EMAIL

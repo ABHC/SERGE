@@ -120,9 +120,9 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 
 	######### CALL TO NEWSLETTER FUNCTION
 	if mail_design[0] == "type":
-		not_send_news_list = sorted(not_send_news_list, key= lambda news_field : news_field[1])
-		not_send_science_list = sorted(not_send_science_list, key= lambda science_field : science_field[1])
-		not_send_patents_list = sorted(not_send_patents_list, key= lambda patents_field : patents_field[1])
+		not_send_news_list = sorted(not_send_news_list, key=lambda news_field: news_field[1])
+		not_send_science_list = sorted(not_send_science_list, key=lambda science_field: science_field[1])
+		not_send_patents_list = sorted(not_send_patents_list, key=lambda patents_field: patents_field[1])
 
 		newsletter = newsletterByType(user, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate, style, background_filename)
 
@@ -141,7 +141,7 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 		call_words.close()
 
 		for word_and_attribute in newswords:
-			if ":all@" in word_and_attribute[0] :
+			if ":all@" in word_and_attribute[0]:
 				split_for_all = word_and_attribute[0].split("@")
 
 				query_sitename = "SELECT name FROM rss_serge WHERE id = %s"
@@ -162,7 +162,7 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 			word_and_attribute = (human_query, word_and_attribute[1])
 			sciencewords_list.append(word_and_attribute)
 
-		for word_and_attribute in patents_master_queries :
+		for word_and_attribute in patents_master_queries:
 			human_query = decoder.decodeQuery(word_and_attribute[0])
 			word_and_attribute = (human_query, word_and_attribute[1])
 			patent_master_queries_list.append(word_and_attribute)
@@ -479,7 +479,7 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 	if pending_news > 0:
 
 		######### ECRITURE KEYWORDS FOR NEWS
-		for couple_word_attribute in sorted(newswords_list, key= lambda newswords_field : newswords_field[0]):
+		for couple_word_attribute in sorted(newswords_list, key=lambda newswords_field: newswords_field[0]):
 			word = couple_word_attribute[0].strip().encode('ascii', errors='xmlcharrefreplace')
 			word_attribute = ","+str(couple_word_attribute[1])+","
 			process_result_list = []
@@ -550,7 +550,7 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 	######### ECRITURE SCIENCE
 	if pending_science > 0:
 		######### ECRITURE KEYWORDS FOR SCIENCE
-		for couple_word_attribute in sorted(sciencewords_list, key= lambda sciencewords_field : sciencewords_field[0]):
+		for couple_word_attribute in sorted(sciencewords_list, key=lambda sciencewords_field: sciencewords_field[0]):
 			word = couple_word_attribute[0].strip().encode('ascii', errors='xmlcharrefreplace')
 			word_attribute = ","+str(couple_word_attribute[1])+","
 			process_result_list = []
@@ -621,7 +621,7 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 	if pending_patents > 0:
 
 		######### ECRITURE QUERY FOR PATENTS
-		for couple_query_attribute in sorted(patent_master_queries_list, key= lambda query_field : query_field[0]):
+		for couple_query_attribute in sorted(patent_master_queries_list, key=lambda query_field: query_field[0]):
 			plain_query = couple_query_attribute[0]
 			query_attribute = ","+str(couple_query_attribute[1])+","
 			process_result_list = []
@@ -777,7 +777,7 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 	######### ECRITURE NEWS
 	if pending_news > 0:
 		######### ECRITURE ORIGIN FOR NEWS
-		for couple_source_attribute in sorted(news_origin_list, key= lambda news_origin_field : news_origin_field[0]):
+		for couple_source_attribute in sorted(news_origin_list, key=lambda news_origin_field: news_origin_field[0]):
 			origin_name = couple_source_attribute[0]
 			origin_id = couple_source_attribute[1]
 			process_result_list = []
@@ -790,7 +790,7 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 
 					if news_attributes[1].isupper() is True:
 						process_result = (news_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize())
-					else :
+					else:
 						process_result = (news_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'))
 
 					process_result_list.append(process_result)

@@ -66,15 +66,15 @@ def newscast(newscast_args):
 		keywords_and_id_news_list.append(field)
 
 	########### ETAG COMPARISON
-	etag_results = sergenet.aLinkToThePast(link)
+	etag_results = sergenet.allRequestLong(link, 'etag')
 	etag = etag_results[0]
 	etag_error = etag_results[1]
 
 	if (etag is None and etag_error is False) or (etag != old_etag and etag_error is False):
 		greenlight = True
-	elif (etag == old_etag and etag_error is False) or etag_error is True :
+	elif (etag == old_etag and etag_error is False) or etag_error is True:
 		greenlight = False
-	else :
+	else:
 		greenlight = False
 		logger_error.critical("UNKNOWN ERROR WITH ETAG IN :"+link+"\n")
 
@@ -83,7 +83,7 @@ def newscast(newscast_args):
 		insertSQL.backToTheFuture(etag, link)
 
 		########### LINK CONNEXION
-		req_results = sergenet.allRequestLong(link)
+		req_results = sergenet.allRequestLong(link, 'rss')
 		rss = req_results[0]
 		rss_error = req_results[1]
 
@@ -190,7 +190,7 @@ def newscast(newscast_args):
 					logger_error.warning(traceback.format_exc())
 					post_date = now
 
-				try :
+				try:
 					post_tags = xmldoc.entries[range_article].tags
 				except AttributeError:
 					post_tags = []
@@ -206,7 +206,7 @@ def newscast(newscast_args):
 				tagdex = 0
 				tags_string = ""
 
-				while tagdex < len(post_tags) :
+				while tagdex < len(post_tags):
 					tags_string = tags_string + xmldoc.entries[range_article].tags[tagdex].term.lower() + " "
 					tagdex = tagdex+1
 
@@ -343,7 +343,7 @@ def science(now):
 		link = ('http://export.arxiv.org/api/query?search_query='+query_arxiv.encode("utf8")+'&sortBy=lastUpdatedDate&start=0&max_results=20')
 		logger_info.info(query_arxiv.encode("utf8")+"\n")
 
-		req_results = sergenet.allRequestLong(link)
+		req_results = sergenet.allRequestLong(link, 'rss')
 		rss_arxiv = req_results[0]
 		rss_error = req_results[1]
 
@@ -434,7 +434,7 @@ def science(now):
 		link_doaj = ('https://doaj.org/api/v1/search/articles/'+query_doaj.encode("utf8")+'?pageSize=20&sort=last_updated%3Adesc')
 		logger_info.info(query_doaj.encode("utf8")+"\n")
 
-		req_results = sergenet.allRequestLong(link_doaj)
+		req_results = sergenet.allRequestLong(link_doaj, 'rss')
 		web_doaj = req_results[0]
 		rss_error = req_results[1]
 
@@ -564,7 +564,7 @@ def patents(now):
 		logger_info.info(query_wipo+"\n")
 		link = ('https://patentscope.wipo.int/search/rss.jsf?query='+query_wipo+'&office=&rss=true&sortOption=Pub+Date+Desc')
 
-		req_results = sergenet.allRequestLong(link)
+		req_results = sergenet.allRequestLong(link, 'rss')
 		rss_wipo = req_results[0]
 		rss_error = req_results[1]
 
@@ -623,7 +623,7 @@ def patents(now):
 						if presence_checking is not None:
 							legal_check_date = presence_checking[0]
 							already_owners = presence_checking[1]
-						else :
+						else:
 							legal_check_date = None
 							already_owners = None
 
@@ -700,7 +700,7 @@ def legalScrapper(post_link):
 	logger_info = logging.getLogger("info_log")
 
 	######### GO TO WIPO WEBSITE
-	req_results = sergenet.allRequestLong(post_link)
+	req_results = sergenet.allRequestLong(post_link, 'rss')
 	wipo_rss = req_results[0]
 
 	######### PARSE HTML
@@ -719,7 +719,7 @@ def legalScrapper(post_link):
 		logger_info.warning("PATENT NUMBER CAN'T BE RECOVERED")
 
 	######### SEARCH PATENT KIND CODE
-	try :
+	try:
 		patent_kind = wipo_soup.find("td", string = re.compile("Publication Kind"))
 		kind_code = str(patent_kind.find_next("td")).replace("<td>", "").replace("</td>", "")
 	except AttributeError:
@@ -734,7 +734,7 @@ def legalScrapper(post_link):
 
 	######### GO TO PATENT LENS WEBSITE
 	if lens_link is not None:
-		lens_results = sergenet.allRequestLong(lens_link)
+		lens_results = sergenet.allRequestLong(lens_link, 'rss')
 		lens_rss = lens_results[0]
 
 		######### PARSE HTML

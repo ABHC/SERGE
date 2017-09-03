@@ -332,14 +332,14 @@ for user in user_list_all:
 		elif pending_all == 0:
 			logger_info.info("NO PENDING NEWS")
 
-		else :
+		else:
 			logger_info.info("BAD DAY OR/AND BAD HOUR")
 
 	######### WEB CONDITION
 	elif condition[0] == "web":
 		logger_info.info("WEB CONDITION")
 
-	else :
+	else:
 		logger_info.critical("ERROR : BAD CONDITION")
 
 	register = int(register)

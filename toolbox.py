@@ -29,13 +29,13 @@ def loggerConfig():
 	formatter_info = logging.Formatter("%(asctime)s -- %(levelname)s -- %(message)s")
 
 	logger_error = logging.getLogger("error_log")
-	handler_error = logging.handlers.RotatingFileHandler("logs/serge_error_log.txt", mode="a", maxBytes= 10000, backupCount= 1, encoding="utf8")
+	handler_error = logging.handlers.RotatingFileHandler("logs/serge_error_log.txt", mode="a", maxBytes=10000, backupCount=1, encoding="utf8")
 	handler_error.setFormatter(formatter_error)
 	logger_error.setLevel(logging.ERROR)
 	logger_error.addHandler(handler_error)
 
 	logger_info = logging.getLogger("info_log")
-	handler_info = logging.handlers.RotatingFileHandler("logs/serge_info_log.txt", mode="a", maxBytes= 5000000, backupCount= 1, encoding="utf8")
+	handler_info = logging.handlers.RotatingFileHandler("logs/serge_info_log.txt", mode="a", maxBytes=5000000, backupCount=1, encoding="utf8")
 	handler_info.setFormatter(formatter_info)
 	logger_info.setLevel(logging.INFO)
 	logger_info.addHandler(handler_info)
