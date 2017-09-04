@@ -142,7 +142,7 @@ def trweetFishing(attributes):
 	"""The goal of this function is to catch tweets that contains the query saved in the database"""
 
 	######### LOGGER CALL
-	logger_error = logging.getLogger("error_log")
+	logger_error = logging.getLogger("error_log") # BUG Unused variable
 
 	########### CONNECTION TO TWITTER API
 	api = twitterConnection()
@@ -195,7 +195,7 @@ def lakesOfTrweets(attributes):
 	"""The goal of this function is to catch geolocalisation data in tweets that contains the query saved in the database"""
 
 	######### LOGGER CALL
-	logger_info = logging.getLogger("info_log")
+	logger_info = logging.getLogger("info_log")# BUG Unused variable
 	logger_error = logging.getLogger("error_log")
 
 	########### CONNECTION TO TWITTER API
@@ -209,7 +209,7 @@ def lakesOfTrweets(attributes):
 	owners = attributes[2]
 	lang = attributes[4]
 
-	query_id_comma = str(query_id)+","
+	query_id_comma = str(query_id)+"," # BUG Unused variable
 	query_id_comma2 = ","+str(query_id)+","
 
 	if lang is None:
