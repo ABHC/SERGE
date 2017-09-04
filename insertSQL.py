@@ -106,7 +106,7 @@ def ofSourceAndName(now):
 
 			########### FAVICON REPLACEMENT IF ERRORS OCCURS
 			if icon_error is True:
-				favicon_link = "https://www.google.com/s2/favicons?domain=LienDuFluxAvecOuSanshttp" # BUG bad link
+				favicon_link = "https://www.google.com/s2/favicons?domain=LienDuFluxAvecOuSanshttp"
 
 				favicon_results = sergenet.allRequestLong(favicon_link, 'favicon')
 				icon = req_results[0]
@@ -221,7 +221,7 @@ def ofSourceAndName(now):
 
 				########### FAVICON REPLACEMENT IF ERRORS OCCURS
 				if icon_error is True:
-					favicon_link = "https://www.google.com/s2/favicons?domain=LienDuFluxAvecOuSanshttp" # BUG bad link
+					favicon_link = "https://www.google.com/s2/favicons?domain=LienDuFluxAvecOuSanshttp"
 
 					favicon_results = sergenet.allRequestLong(favicon_link, 'favicon')
 					icon = req_results[0]
