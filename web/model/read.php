@@ -31,6 +31,10 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 			{
 				$op = " IN ";
 			}
+			elseif ($line[1] == "<>")
+			{
+				$op = " <> ";
+			}
 
 			$nameCol   = $line[0];
 			$value     = $line[2];
