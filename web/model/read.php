@@ -27,12 +27,16 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 			{
 				$op = " >= ";
 			}
+			elseif ($line[1] == "IN")
+			{
+				$op = " IN ";
+			}
 
 			$nameCol   = $line[0];
 			$value     = $line[2];
 			$connector = " " . $line[3] . " ";
 
-			$WHEREvar    = $WHEREvar . $nameCol . $op . ":" . $nameCol . $cpt . $connector;
+			$WHEREvar    = $WHEREvar . $nameCol . $op . "(:" . $nameCol . $cpt . ")" . $connector;
 			$arrayValues = array_merge($arrayValues, array($nameCol . $cpt => $value));
 			$cpt++;
 		}
