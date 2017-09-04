@@ -7,20 +7,20 @@ import requests
 import logging
 
 
-def allRequestLong(link, type):
+def allRequestLong(link, content_type):
 	"""Function for standardized requests to feed and internet pages."""
 
 	######### LOGGER CALL
 	logger_info = logging.getLogger("info_log")
 
 	try:
-		if type == 'rss':
+		if content_type == 'rss':
 			req = requests.get(link, headers={'User-Agent': "Serge Browser"}, timeout=15)
 			req.encoding = "utf8"
 			content_link = req.text
-		elif type == 'etag':
+		elif content_type == 'etag':
 			content_link = requests.head(link, headers={'User-Agent': "Serge Browser"}, timeout=15).headers.get('etag')
-		elif type == 'favicon':
+		elif content_type == 'favicon':
 			req = requests.get(favicon_link, stream=True)
 			content_link = req.raw
 
