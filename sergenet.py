@@ -38,13 +38,7 @@ def allRequestLong(link, content_type):
 		logger_info.warning("Please check the availability of the feed\n \n")
 		content_link = None
 		content_link_error = True
-	except requests.exceptions.URLRequired:
-		link = link.replace("http://", "").replace("https://", "")
-		logger_info.warning("Error in the access "+link+" (Link is not an URL) \n")
-		logger_info.warning("Please check the link\n \n")
-		content_link = None
-		content_link_error = True
-	except requests.exceptions.MissingSchema:
+	except (requests.exceptions.URLRequired, requests.exceptions.MissingSchema) as e:
 		link = link.replace("http://", "").replace("https://", "")
 		logger_info.warning("Error in the access "+link+" (Link is not an URL) \n")
 		logger_info.warning("Please check the link\n \n")
