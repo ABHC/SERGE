@@ -16,11 +16,11 @@ if(isset($_POST['reg_pseudo']) && isset($_POST['reg_mail']) && isset($_POST['reg
 	$email        = htmlspecialchars($_POST['reg_mail']);
 	$captcha_user = hash('sha256', $_POST['captcha']);
 
-	if($_SESSION['captcha'] == $captcha_user)
+	if($_SESSION['captcha'] === $captcha_user)
 	{
 		$_SESSION['captcha'] = "";
 		#Vérification des mots de passes
-		if(htmlspecialchars($_POST['reg_password']) == htmlspecialchars($_POST['reg_repassword']))
+		if(htmlspecialchars($_POST['reg_password']) === htmlspecialchars($_POST['reg_repassword']))
 		{
 			#Vérification de la taille des mots de passes
 			$nb_carac_password = iconv_strlen(htmlspecialchars($_POST['reg_password']));
@@ -37,7 +37,7 @@ if(isset($_POST['reg_pseudo']) && isset($_POST['reg_mail']) && isset($_POST['reg
 
 				$checkCol = array(array("email", "=", $email, ""));
 				$result_email = read("users_table_serge", '', $checkCol, '',$bdd);
-				if(filter_var($email, FILTER_VALIDATE_EMAIL) == FALSE)
+				if(filter_var($email, FILTER_VALIDATE_EMAIL) === FALSE)
 				{
 					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Invalid email <br>';
 				}

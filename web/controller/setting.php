@@ -96,7 +96,7 @@ $checkCol = array(array("users", "=", $_SESSION['pseudo'], ""));
 $userSettings = read('users_table_serge', 'id, email, password, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, record_read, history_lifetime, background_result, record_read', $checkCol, '', $bdd);
 $userSettings = $userSettings[0];
 
-if (isset($_POST['settings']) AND htmlspecialchars($_POST['settings']) == 'ChangeSettings')
+if (isset($_POST['settings']) AND htmlspecialchars($_POST['settings']) === 'ChangeSettings')
 {
 	# Change email
 	if (isset($_POST['email']))
@@ -146,15 +146,15 @@ if (isset($_POST['settings']) AND htmlspecialchars($_POST['settings']) == 'Chang
 	}
 
 	# Change sorting for link in email
-	if (!empty($_POST['orderBy']) AND $_POST['orderBy'] == "masterword")
+	if (!empty($_POST['orderBy']) AND $_POST['orderBy'] === "masterword")
 	{
 		$orderBy = "masterword";
 	}
-	elseif (!empty($_POST['orderBy']) AND $_POST['orderBy'] == "origin")
+	elseif (!empty($_POST['orderBy']) AND $_POST['orderBy'] === "origin")
 	{
 		$orderBy = "origin";
 	}
-	elseif (!empty($_POST['orderBy']) AND $_POST['orderBy'] == "type")
+	elseif (!empty($_POST['orderBy']) AND $_POST['orderBy'] === "type")
 	{
 		$orderBy = "type";
 	}
@@ -165,7 +165,7 @@ if (isset($_POST['settings']) AND htmlspecialchars($_POST['settings']) == 'Chang
 	include_once('model/changeSortEmail.php');
 
 	# Change privacy settings
-	if (isset($_POST['recordRead']) AND $_POST['recordRead'] == 'active')
+	if (isset($_POST['recordRead']) AND $_POST['recordRead'] === 'active')
 	{
 		$recordRead = 1;
 		include_once('model/changeRecordRead.php');
@@ -189,29 +189,29 @@ if (isset($_POST['settings']) AND htmlspecialchars($_POST['settings']) == 'Chang
 # Delete history button
 if (!empty($_POST['buttonDeleteHistory']))
 {
-	if (htmlspecialchars($_POST['buttonDeleteHistory']) == 'deleteHistory')
+	if (htmlspecialchars($_POST['buttonDeleteHistory']) === 'deleteHistory')
 	{
 		include_once('model/delResult.php');
 		$deleteHistoryValue = htmlspecialchars($_POST['deleteHistoryValue']);
 		$deleteHistoryUnit  = htmlspecialchars($_POST['deleteHistoryUnit']);
 
-		if ($deleteHistoryUnit == 'hour')
+		if ($deleteHistoryUnit === 'hour')
 		{
 			$deleteTimeIntervale = $deleteHistoryValue * 3600;
 		}
-		elseif ($deleteHistoryUnit == 'day')
+		elseif ($deleteHistoryUnit === 'day')
 		{
 			$deleteTimeIntervale = $deleteHistoryValue * 3600 * 24;
 		}
-		elseif ($deleteHistoryUnit == 'week')
+		elseif ($deleteHistoryUnit === 'week')
 		{
 			$deleteTimeIntervale = $deleteHistoryValue * 3600 * 24 * 7;
 		}
-		elseif ($deleteHistoryUnit == 'month')
+		elseif ($deleteHistoryUnit === 'month')
 		{
 			$deleteTimeIntervale = $deleteHistoryValue * 3600 * 24 * 7 * 30;
 		}
-		elseif ($deleteHistoryUnit == 'year')
+		elseif ($deleteHistoryUnit === 'year')
 		{
 			$deleteTimeIntervale = $deleteHistoryValue * 3600 * 24 * 7 * 30 * 12;
 		}
@@ -233,7 +233,7 @@ if (!empty($_POST['buttonDeleteHistory']))
 # Adding new source
 if (isset($_POST['sourceType']) AND isset($_POST['newSource']))
 {
-	if (htmlspecialchars($_POST['sourceType']) == 'inputSource' AND htmlspecialchars($_POST['newSource']) != '')
+	if (htmlspecialchars($_POST['sourceType']) === 'inputSource' AND htmlspecialchars($_POST['newSource']) != '')
 	{
 		$source       = htmlspecialchars($_POST['newSource']);
 		$sourceToTest = escapeshellarg($source);
@@ -242,7 +242,7 @@ if (isset($_POST['sourceType']) AND isset($_POST['newSource']))
 		# Check if the link is valid
 		exec($cmd, $linkValidation, $errorInCheckfeed);
 
-		if ($linkValidation[0] == 'valid link' AND $errorInCheckfeed == 0)
+		if ($linkValidation[0] === 'valid link' AND $errorInCheckfeed === 0)
 		{
 			include_once('model/addNewSource.php');
 			if (isset($linkValidation[1]))
@@ -279,7 +279,7 @@ if (isset($_POST['sourceKeyword']) AND isset($_POST['newKeyword']))
 				$newKeyword = ':all@' . $sourceId;
 				$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd);
 			}
-			elseif (preg_match("/^:all$/i", $newKeyword) AND $sourceId == '00')
+			elseif (preg_match("/^:all$/i", $newKeyword) AND $sourceId === '00')
 			{
 				$updateBDD = FALSE;
 				foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
@@ -295,7 +295,7 @@ if (isset($_POST['sourceKeyword']) AND isset($_POST['newKeyword']))
 				$newKeyword = '[!ALERT!]' . $newKeyword;
 				$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd);
 			}
-			elseif (preg_match("/^alert:.+/i", $newKeyword) AND $sourceId == '00')
+			elseif (preg_match("/^alert:.+/i", $newKeyword) AND $sourceId === '00')
 			{
 				$updateBDD = FALSE;
 				$newKeyword = preg_replace("/alert:/i", "", $newKeyword);
@@ -353,7 +353,7 @@ if (isset($_POST['delKeyword']) OR isset($_POST['disableKeyword']) OR isset($_PO
 			# Search for source in applicable_owners_sources
 			$sourceInKeyword = preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*,!*" . $sourceIdAction . ",[,!0-9,]*\|/", $applicable_owners_sourcestmp, $applicable_owners_sourceForCurrentUser);
 
-			if ($ownerKeywordList['id'] == $keywordIdAction AND $sourceInKeyword)
+			if ($ownerKeywordList['id'] === $keywordIdAction AND $sourceInKeyword)
 			{
 				$applicable_owners_sourcesCurrentKeywordAndUser = $applicable_owners_sourceForCurrentUser[0];
 				$applicable_owners_sources = $ownerKeywordList['applicable_owners_sources'];
@@ -363,17 +363,17 @@ if (isset($_POST['delKeyword']) OR isset($_POST['disableKeyword']) OR isset($_PO
 		}
 
 		# Delete an existing keyword
-		if ($keywordExist AND $action == 'delKeyword')
+		if ($keywordExist AND $action === 'delKeyword')
 		{
 			include_once('model/delKeyword.php');
 			header('Location: setting');
 		}
-		elseif ($keywordExist AND $action == 'disableKeyword')
+		elseif ($keywordExist AND $action === 'disableKeyword')
 		{
 			include_once('model/disableKeyword.php');
 			header('Location: setting');
 		}
-		elseif ($keywordExist AND $action == 'activateKeyword')
+		elseif ($keywordExist AND $action === 'activateKeyword')
 		{
 			include_once('model/activateKeyword.php');
 			header('Location: setting');
@@ -413,7 +413,7 @@ if (isset($_POST['delSource']) OR isset($_POST['disableSource']) OR isset($_POST
 		$sourceExist = FALSE;
 		foreach ($reqReadOwnerSourcestmp as $sourceList)
 		{
-			if ($sourceList['id'] == $sourceIdAction)
+			if ($sourceList['id'] === $sourceIdAction)
 			{
 				$owners                 = $sourceList['owners'];
 				$activeForCurrentSource = $sourceList['active'];
@@ -422,17 +422,17 @@ if (isset($_POST['delSource']) OR isset($_POST['disableSource']) OR isset($_POST
 		}
 
 		# Delete an existing sources
-		if ($sourceExist AND $action == 'delSource')
+		if ($sourceExist AND $action === 'delSource')
 		{
 			include_once('model/delSource.php');
 			header('Location: setting');
 		}
-		elseif ($sourceExist AND $action == 'disableSource')
+		elseif ($sourceExist AND $action === 'disableSource')
 		{
 			include_once('model/disableSource.php');
 			header('Location: setting');
 		}
-		elseif ($sourceExist AND $action == 'activateSource')
+		elseif ($sourceExist AND $action === 'activateSource')
 		{
 			include_once('model/activateSource.php');
 			header('Location: setting');
@@ -445,19 +445,19 @@ if (isset($_POST['delSource']) OR isset($_POST['disableSource']) OR isset($_POST
 }
 
 	# Sending condition
-	if ($userSettings['send_condition'] == 'link_limit')
+	if ($userSettings['send_condition'] === 'link_limit')
 	{
 		$condNbLink = 'checked';
 		$condFreq   = '';
 		$condDate   = '';
 	}
-	elseif ($userSettings['send_condition'] == 'freq')
+	elseif ($userSettings['send_condition'] === 'freq')
 	{
 		$condNbLink = '';
 		$condFreq = 'checked';
 		$condDate   = '';
 	}
-	elseif ($userSettings['send_condition'] == 'deadline')
+	elseif ($userSettings['send_condition'] === 'deadline')
 	{
 		$condNbLink = '';
 		$condFreq   = '';
@@ -525,12 +525,12 @@ if (isset($_POST['delSource']) OR isset($_POST['disableSource']) OR isset($_POST
 	$cpt = 1;
 	while ($cpt <= 7)
 	{
-		if ($day[$cpt] == 'selected' AND $day2[$cpt] == 'selected' AND !$firstEntry)
+		if ($day[$cpt] === 'selected' AND $day2[$cpt] === 'selected' AND !$firstEntry)
 		{
 			$day2[$cpt] = '';
 			$firstEntry = TRUE;
 		}
-		elseif ($day[$cpt] == 'selected' AND $day2[$cpt] == 'selected' AND $firstEntry)
+		elseif ($day[$cpt] === 'selected' AND $day2[$cpt] === 'selected' AND $firstEntry)
 		{
 			$day[$cpt] = '';
 			$cpt = 8;
@@ -539,31 +539,31 @@ if (isset($_POST['delSource']) OR isset($_POST['disableSource']) OR isset($_POST
 	}
 
 # Sorting links in email
-if ($userSettings['mail_design'] == 'masterword')
+if ($userSettings['mail_design'] === 'masterword')
 {
 	$orderByKeyword = 'checked';
 }
-elseif ($userSettings['mail_design'] == 'origin')
+elseif ($userSettings['mail_design'] === 'origin')
 {
 	$orderBySource = 'checked';
 }
-elseif ($userSettings['mail_design'] == 'type')
+elseif ($userSettings['mail_design'] === 'type')
 {
 	$orderByType = 'checked';
 }
 
 # Privacy
-if ($userSettings['record_read'] == 0)
+if ($userSettings['record_read'] === 0)
 {
 	$recordRead = '';
 }
-elseif ($userSettings['record_read'] == 1)
+elseif ($userSettings['record_read'] === 1)
 {
 	$recordRead = 'checked';
 }
 
 # Edit science query
-if (!empty($_GET['action']) AND !empty($_GET['query']) AND $_GET['action'] == 'editQueryScience')
+if (!empty($_GET['action']) AND !empty($_GET['query']) AND $_GET['action'] === 'editQueryScience')
 {
 	preg_match("/[0-9]+/", $_GET['query'], $queryId);
 	$delEditingScienceQuery = $queryId[0];
@@ -668,7 +668,7 @@ if (!empty($_POST['delEditingScienceQuery']) AND empty($_POST['extendScience']))
 
 # Add new science query
 include_once('model/addNewScienceQuery.php');
-if (!empty($_POST['scienceQuerySubmit']) AND $_POST['scienceQuerySubmit'] == 'add')
+if (!empty($_POST['scienceQuerySubmit']) AND $_POST['scienceQuerySubmit'] === 'add')
 {
 	$cpt = 0;
 	$open = 0;
@@ -705,13 +705,13 @@ if (!empty($_POST['scienceQuerySubmit']) AND $_POST['scienceQuerySubmit'] == 'ad
 		{
 			$openParenthesis = '';
 			$closeParenthesis = '';
-			if ($_POST['openParenthesis' . $cpt] == 'active')
+			if ($_POST['openParenthesis' . $cpt] === 'active')
 			{
 				$openParenthesis = '%28';
 				$open ++;
 			}
 
-			if ($_POST['closeParenthesis' . $cpt] == 'active')
+			if ($_POST['closeParenthesis' . $cpt] === 'active')
 			{
 				$closeParenthesis = '%29';
 				$close ++;
@@ -875,7 +875,7 @@ if (!empty($_POST['activateQueryScience']))
 }
 
 # Edit patent query
-if (!empty($_GET['action']) AND !empty($_GET['query']) AND $_GET['action'] == 'editQueryPatent')
+if (!empty($_GET['action']) AND !empty($_GET['query']) AND $_GET['action'] === 'editQueryPatent')
 {
 	preg_match("/[0-9]+/", $_GET['query'], $queryId);
 	$delEditingPatentQuery = $queryId[0];
@@ -971,7 +971,7 @@ if (!empty($_POST['delEditingPatentQuery']) AND empty($_POST['extendPatent']))
 }
 
 # Add new patents query
-if (!empty($_POST['patentQuerySubmit']) AND $_POST['patentQuerySubmit'] == 'add')
+if (!empty($_POST['patentQuerySubmit']) AND $_POST['patentQuerySubmit'] === 'add')
 {
 	include_once('model/addNewPatentQuery.php');
 	$cpt = 0;

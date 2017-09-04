@@ -71,7 +71,7 @@ if (!empty($_GET['type']))
 {
 	$type = htmlspecialchars($_GET['type']);
 
-	if ($type == 'add')
+	if ($type === 'add')
 	{
 		$addActive     = 'class="active"';
 		$tableName      = 'result_news_serge';
@@ -86,7 +86,7 @@ if (!empty($_GET['type']))
 		$_SESSION['type'] = 'add';
 		$limit = 15;
 	}
-	elseif ($type == 'create')
+	elseif ($type === 'create')
 	{
 		$createActive = 'class="active"';
 		$tableName      = 'result_science_serge';
@@ -134,7 +134,7 @@ else
 	$limit = 15;
 }
 
-if ($type == 'add')
+if ($type === 'add')
 {
 	$checkCol = array();
 	$languageBDD = read('language_serge', 'code, name', $checkCol, '', $bdd);
@@ -146,7 +146,7 @@ if ($type == 'add')
 
 	foreach ($languageBDD as $languageLine)
 	{
-		if ($languageGET == $languageLine['code'])
+		if ($languageGET === $languageLine['code'])
 		{
 			$colOrder['language'] = $colOrder['language'] . PHP_EOL . '<option value="' . $languageLine['code'] . '" selected>' . $languageLine['code'] . ' &nbsp;&nbsp;' . $languageLine['name'] . '</option>';
 			$selectedLanguageCode = $languageLine['code'];
@@ -211,7 +211,7 @@ if ($type == 'add')
 	if (!empty($_GET['orderBy']))
 	{
 		$orderBy = htmlspecialchars($_GET['orderBy']);
-		if ($orderBy == 'name')
+		if ($orderBy === 'name')
 		{
 			$colOrder['name'] = '▾';
 			$colOrder['DESC'] = 'DESC';
@@ -219,7 +219,7 @@ if ($type == 'add')
 			# WARNING sensitive variable [SQLI]
 			$ORDERBY = 'ORDER BY name';
 		}
-		elseif ($orderBy == 'nameDESC')
+		elseif ($orderBy === 'nameDESC')
 		{
 			$colOrder['name'] = '▴';
 			$colOrder['DESC'] = '';
@@ -227,7 +227,7 @@ if ($type == 'add')
 			# WARNING sensitive variable [SQLI]
 			$ORDERBY = 'ORDER BY name DESC';
 		}
-		elseif ($orderBy == 'author')
+		elseif ($orderBy === 'author')
 		{
 			$colOrder['author'] = '▾';
 			$colOrder['DESC'] = 'DESC';
@@ -235,7 +235,7 @@ if ($type == 'add')
 			# WARNING sensitive variable [SQLI]
 			$ORDERBY = 'ORDER BY author';
 		}
-		elseif ($orderBy == 'authorDESC')
+		elseif ($orderBy === 'authorDESC')
 		{
 			$colOrder['author'] = '▴';
 			$colOrder['DESC'] = '';
@@ -243,7 +243,7 @@ if ($type == 'add')
 			# WARNING sensitive variable [SQLI]
 			$ORDERBY = 'ORDER BY author DESC';
 		}
-		elseif ($orderBy == 'category')
+		elseif ($orderBy === 'category')
 		{
 			$colOrder['category'] = '▾';
 			$colOrder['DESC'] = 'DESC';
@@ -251,7 +251,7 @@ if ($type == 'add')
 			# WARNING sensitive variable [SQLI]
 			$ORDERBY = 'ORDER BY category';
 		}
-		elseif ($orderBy == 'categoryDESC')
+		elseif ($orderBy === 'categoryDESC')
 		{
 			$colOrder['category'] = '▴';
 			$colOrder['DESC'] = '';
@@ -259,7 +259,7 @@ if ($type == 'add')
 			# WARNING sensitive variable [SQLI]
 			$ORDERBY = 'ORDER BY category DESC';
 		}
-		elseif ($orderBy == 'date')
+		elseif ($orderBy === 'date')
 		{
 			$colOrder['date'] = '▾';
 			$colOrder['DESC'] = 'DESC';
@@ -267,7 +267,7 @@ if ($type == 'add')
 			# WARNING sensitive variable [SQLI]
 			$ORDERBY = 'ORDER BY update_date';
 		}
-		elseif ($orderBy == 'dateDESC')
+		elseif ($orderBy === 'dateDESC')
 		{
 			$colOrder['date'] = '▴';
 			$colOrder['DESC'] = '';
@@ -275,7 +275,7 @@ if ($type == 'add')
 			# WARNING sensitive variable [SQLI]
 			$ORDERBY = 'ORDER BY update_date DESC';
 		}
-		elseif ($orderBy == 'rate')
+		elseif ($orderBy === 'rate')
 		{
 			$colOrder['rate'] = ' ▾';
 			$colOrder['DESC'] = 'DESC';
@@ -283,7 +283,7 @@ if ($type == 'add')
 			# WARNING sensitive variable [SQLI]
 			$ORDERBY = 'ORDER BY `NumberOfStars`';
 		}
-		elseif ($orderBy == 'rateDESC')
+		elseif ($orderBy === 'rateDESC')
 		{
 			$colOrder['rate'] = ' ▴';
 			$colOrder['DESC'] = '';
@@ -354,7 +354,7 @@ else
 			$reqReadPackSourcestmp = $reqReadPackSources->fetchAll();
 			$reqReadPackSources->closeCursor();*/
 
-		$checkCol = array(array("pack_id", "=", pack_idInUse[0], "AND"),
+		$checkCol = array(array("pack_id", "=", $pack_idInUse[0], "AND"),
 											array("query", "=", '[!source!]', ""));
 		$resultPackSources = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
 
@@ -368,37 +368,47 @@ else
 				}
 			}
 
-			$sourcesIds = implode(',', $packSource);
+			/*$sourcesIds = implode(',', $packSource);
 
 			$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE id IN ($sourcesIds) ORDER BY name");
 			$req->execute(array(
 				'user' => $userId,
 				'userDesactivated' => $userIdDesactivated));
 				$listAllSources = $req->fetchAll();
-				$req->closeCursor();
+				$req->closeCursor();*/
 
-			$reqReadPackSources = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE pack_id = :pack_id AND query <> "[!source!]"');
+			$checkCol = array(array("id", "IN", implode(',', $packSource), ""));
+			$listAllSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
+
+			/*$reqReadPackSources = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE pack_id = :pack_id AND query <> "[!source!]"');
 			$reqReadPackSources->execute(array(
 				'pack_id' => $pack_idInUse[0]));
 				$reqReadPackSourcestmp = $reqReadPackSources->fetchAll();
-				$reqReadPackSources->closeCursor();
+				$reqReadPackSources->closeCursor();*/
+
+			$checkCol = array(array("pack_id", "=", $pack_idInUse[0], "AND"),
+												array("query", "<>", "[!source!]", ""));
+			$packSources = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
 
 				$packSourceUsed = array("0");
-				foreach ($reqReadPackSourcestmp as $readPackSources)
+				foreach ($packSources as $packSourcesLine)
 				{
-					if (preg_match("/^[,!0-9,]+$/", $readPackSources['source']))
+					if (preg_match("/^[,!0-9,]+$/", $packSourcesLine['source']))
 					{
-						$readPackSources['source'] = preg_replace("/!/", "", $readPackSources['source']);
-						$packSourceUsed = array_merge(preg_split('/,/', $readPackSources['source'], -1, PREG_SPLIT_NO_EMPTY), $packSourceUsed);
+						$packSourcesLine['source'] = preg_replace("/!/", "", $packSourcesLine['source']);
+						$packSourceUsed = array_merge(preg_split('/,/', $packSourcesLine['source'], -1, PREG_SPLIT_NO_EMPTY), $packSourceUsed);
 					}
 				}
 
-			$sourcesIdsUsed = implode(',', $packSourceUsed);
+			/*$sourcesIdsUsed = implode(',', $packSourceUsed);
 
 			$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE id IN ($sourcesIdsUsed) ORDER BY name");
 			$req->execute(array());
 				$readPackSources = $req->fetchAll();
-				$req->closeCursor();
+				$req->closeCursor();*/
+
+			$checkCol = array(array("id", "IN", implode(',', $packSourceUsed), ""));
+			$readPackSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 	}
 	else
 	{
@@ -422,7 +432,7 @@ else
 
 	foreach ($languageBDD as $languageLine)
 	{
-		if ($userLang == $languageLine['code'])
+		if ($userLang === $languageLine['code'])
 		{
 			$selectLanguage = $selectLanguage . PHP_EOL . '<option value="' . $languageLine['code'] . '" selected>' . $languageLine['code'] . ' &nbsp;&nbsp;' . $languageLine['name'] . '</option>';
 			$selectedLanguageCode = $code;
@@ -476,7 +486,7 @@ else
 
 		$newKeywordArray = preg_split('/,/', htmlspecialchars($_POST['newKeyword']), -1, PREG_SPLIT_NO_EMPTY);
 
-		if ($sourceId[0] == '00')
+		if ($sourceId[0] === '00')
 		{
 			# Add keyword on all sources
 			foreach ($listAllSources as $sourcesList)
@@ -587,7 +597,7 @@ else
 			# Check if the link is valid
 			exec($cmd, $linkValidation, $errorInCheckfeed);
 
-			if ($linkValidation[0] == 'valid link' AND $errorInCheckfeed == 0)
+			if ($linkValidation[0] === 'valid link' AND $errorInCheckfeed === 0)
 			{
 				// Adding new source
 				$owners = ',' . $_SESSION['id'] . ',';
@@ -659,7 +669,7 @@ else
 				$req->closeCursor();
 
 			# Delete an existing keyword
-			if (!empty($result) AND $action == 'delKeyword')
+			if (!empty($result) AND $action === 'delKeyword')
 			{
 				$sourceNew = preg_replace("/,!*$sourceIdAction,/", ',', $result['source']);
 
@@ -669,7 +679,7 @@ else
 					'id' => $keywordIdAction));
 					$req->closeCursor();
 			}
-			elseif (!empty($result) AND $action == 'disableKeyword')
+			elseif (!empty($result) AND $action === 'disableKeyword')
 			{
 				$sourceNew = preg_replace("/,$sourceIdAction,/", ",!$sourceIdAction,", $result['source']);
 
@@ -679,7 +689,7 @@ else
 					'id' => $keywordIdAction));
 					$req->closeCursor();
 			}
-			elseif (!empty($result) AND $action == 'activateKeyword')
+			elseif (!empty($result) AND $action === 'activateKeyword')
 			{
 				$sourceNew = preg_replace("/,!$sourceIdAction,/", ",$sourceIdAction,", $result['source']);
 
@@ -729,7 +739,7 @@ else
 				$req->closeCursor();
 
 			# Delete an existing sources
-			if (!empty($result) AND $action == 'delSource')
+			if (!empty($result) AND $action === 'delSource')
 			{
 				$req = $bdd->prepare('SELECT id FROM rss_serge WHERE owners LIKE :owner');
 				$req->execute(array(
@@ -740,7 +750,7 @@ else
 				$isSourceOwned = ",";
 				foreach ($result as $ownerSource)
 				{
-					if ($ownerSource['id'] == $sourceIdAction)
+					if ($ownerSource['id'] === $sourceIdAction)
 					{
 						$isSourceOwned = "'[!source!]'";
 						break;
@@ -767,7 +777,7 @@ else
 						$req->closeCursor();
 				}
 			}
-			elseif (!empty($result) AND $action == 'disableSource')
+			elseif (!empty($result) AND $action === 'disableSource')
 			{
 				// Disable source on all keywords
 				$req = $bdd->prepare('SELECT id, source FROM watch_pack_queries_serge WHERE pack_id = :packIdInUse AND source LIKE :sourceIdAction');
@@ -788,7 +798,7 @@ else
 						$req->closeCursor();
 				}
 			}
-			elseif (!empty($result) AND $action == 'activateSource')
+			elseif (!empty($result) AND $action === 'activateSource')
 			{
 				// Activate source on all keywords
 				$req = $bdd->prepare('SELECT id, source FROM watch_pack_queries_serge WHERE pack_id = :packIdInUse AND source LIKE :sourceIdAction');
@@ -841,13 +851,13 @@ else
 			{
 				$openParenthesis = '';
 				$closeParenthesis = '';
-				if ($_POST['openParenthesis' . $cpt] == 'active')
+				if ($_POST['openParenthesis' . $cpt] === 'active')
 				{
 					$openParenthesis = '%28';
 					$open ++;
 				}
 
-				if ($_POST['closeParenthesis' . $cpt] == 'active')
+				if ($_POST['closeParenthesis' . $cpt] === 'active')
 				{
 					$closeParenthesis = '%29';
 					$close ++;
@@ -1118,11 +1128,11 @@ else
 			$delEditingPatentQuery = $idQueryToDel[0];
 		}
 	}
-	elseif (isset($_POST['addNewPack']) AND $_POST['watchPackList'] == 'NewPack' AND !empty($_POST['watchPackName']) AND !empty($_POST['watchPackDescription']))
+	elseif (isset($_POST['addNewPack']) AND $_POST['watchPackList'] === 'NewPack' AND !empty($_POST['watchPackName']) AND !empty($_POST['watchPackDescription']))
 	{
 		$newWatchPackName = htmlspecialchars($_POST['watchPackName']);
 		$language = strtoupper(htmlspecialchars($_POST['language']));
-		if ($_POST['watchPackCategory'] == 'NewCategory')
+		if ($_POST['watchPackCategory'] === 'NewCategory')
 		{
 			$category = htmlspecialchars($_POST['watchPackNewCategory']);
 		}
@@ -1190,7 +1200,7 @@ else
 			$ERRORMESSAGENEWPACKNAME = "A watch pack with this name already exist, please change the name";
 		}
 	}
-	elseif (isset($_POST['addNewPack']) AND $_POST['watchPackList'] == 'NewPack' AND (empty($_POST['watchPackName']) OR empty($_POST['watchPackDescription'])))
+	elseif (isset($_POST['addNewPack']) AND $_POST['watchPackList'] === 'NewPack' AND (empty($_POST['watchPackName']) OR empty($_POST['watchPackDescription'])))
 	{
 		$ERRORMESSAGEEMPTYNAMEORDESC = "You have to enter a name and a description for your watch pack";
 	}

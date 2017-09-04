@@ -35,7 +35,7 @@ if (!empty($_GET['type']))
 {
 	$type = htmlspecialchars($_GET['type']);
 
-	if ($type == 'news')
+	if ($type === 'news')
 	{
 		$type           = 'news';
 		$newsActive     = 'class="active"';
@@ -51,7 +51,7 @@ if (!empty($_GET['type']))
 		$specialColumn  = ', id_source, keyword_id ';
 		$displayColumn  = var_get_t('title2News_table_results', $bdd);
 	}
-	elseif ($type == 'sciences')
+	elseif ($type === 'sciences')
 	{
 		$type           = 'sciences';
 		$sciencesActive = 'class="active"';
@@ -67,7 +67,7 @@ if (!empty($_GET['type']))
 		$specialColumn  = ',query_id, id_source ';
 		$displayColumn  = var_get_t('title2Science_table_results', $bdd);
 	}
-	elseif ($type == 'patents')
+	elseif ($type === 'patents')
 	{
 		$type           = 'patents';
 		$patentsActive  = 'class="active"';
@@ -151,7 +151,7 @@ if (isset($_POST['deleteLink']))
 $checkCol = array(array("users", "=", $_SESSION['pseudo'], ""));
 $recordRead = read('users_table_serge', 'id, password, record_read', $checkCol, '', $bdd);
 
-if ($recordRead[0]['record_read'] == 1)
+if ($recordRead[0]['record_read'] === 1)
 {
 	$pass       = $recordRead[0]['password'];
 	$id         = $recordRead[0]['id'];
@@ -180,7 +180,7 @@ if (isset($_GET['page']) AND preg_match("/^[0-9]+$/", htmlspecialchars($_GET['pa
 if (!empty($_GET['orderBy']))
 {
 	$orderBy = htmlspecialchars($_GET['orderBy']);
-	if ($orderBy == 'title')
+	if ($orderBy === 'title')
 	{
 		$colOrder['title'] = '▾';
 		$colOrder['DESC'] = 'DESC';
@@ -188,7 +188,7 @@ if (!empty($_GET['orderBy']))
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY title';
 	}
-	elseif ($orderBy == 'titleDESC')
+	elseif ($orderBy === 'titleDESC')
 	{
 		$colOrder['title'] = '▴';
 		$colOrder['DESC'] = '';
@@ -196,7 +196,7 @@ if (!empty($_GET['orderBy']))
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY title DESC';
 	}
-	elseif ($orderBy == 'source')
+	elseif ($orderBy === 'source')
 	{
 		$colOrder['source'] = '▾';
 		$colOrder['DESC'] = 'DESC';
@@ -204,7 +204,7 @@ if (!empty($_GET['orderBy']))
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY id_source';
 	}
-	elseif ($orderBy == 'sourceDESC')
+	elseif ($orderBy === 'sourceDESC')
 	{
 		$colOrder['source'] = '▴';
 		$colOrder['DESC'] = '';
@@ -212,7 +212,7 @@ if (!empty($_GET['orderBy']))
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY id_source DESC';
 	}
-	elseif ($orderBy == 'date')
+	elseif ($orderBy === 'date')
 	{
 		$colOrder['date'] = '▾';
 		$colOrder['DESC'] = 'DESC';
@@ -220,7 +220,7 @@ if (!empty($_GET['orderBy']))
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY date';
 	}
-	elseif ($orderBy == 'dateDESC')
+	elseif ($orderBy === 'dateDESC')
 	{
 		$colOrder['date'] = '▴';
 		$colOrder['DESC'] = '';
@@ -251,7 +251,7 @@ elseif (empty($_GET['search']))
 if (!empty($_GET['optionalCond']))
 {
 	$optionalCond = htmlspecialchars($_GET['optionalCond']);
-	if ($optionalCond == 'read')
+	if ($optionalCond === 'read')
 	{
 		$colOrder['read'] = var_get_t('title6Read_table_results', $bdd);
 		$colOrder['OCDESC'] = 'DESC';
@@ -259,7 +259,7 @@ if (!empty($_GET['optionalCond']))
 		# WARNING sensitive variable [SQLI]
 		$OPTIONALCOND = ' AND read_status LIKE \'%' . $_SESSION['id'] .'%\'';
 	}
-	elseif ($optionalCond == 'readDESC')
+	elseif ($optionalCond === 'readDESC')
 	{
 		$colOrder['read'] = var_get_t('title6Unread_table_results', $bdd);
 		$colOrder['OCDESC'] = '';
@@ -267,7 +267,7 @@ if (!empty($_GET['optionalCond']))
 		# WARNING sensitive variable [SQLI]
 		$OPTIONALCOND = ' AND read_status NOT LIKE \'%' . $_SESSION['id'] . '%\'';
 	}
-	elseif ($optionalCond == 'send')
+	elseif ($optionalCond === 'send')
 	{
 		$colOrder['send'] = var_get_t('title5Send_table_results', $bdd);
 		$colOrder['OCDESC'] = 'DESC';
@@ -275,7 +275,7 @@ if (!empty($_GET['optionalCond']))
 		# WARNING sensitive variable [SQLI]
 		$OPTIONALCOND = ' AND send_status LIKE \'%' . $_SESSION['id'] .'%\'';
 	}
-	elseif ($optionalCond == 'sendDESC')
+	elseif ($optionalCond === 'sendDESC')
 	{
 		$colOrder['send'] = var_get_t('title5NotSend_table_results', $bdd);
 		$colOrder['OCDESC'] = '';

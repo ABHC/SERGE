@@ -21,7 +21,7 @@ if (isset($_GET['link']) AND isset($_GET['id']) AND isset($_GET['hash']))
 
 		$checkHash = hash('sha256', $salt . ':' . $pass . $pseudo . $id);
 
-		if ($hash == $checkHash)
+		if ($hash === $checkHash)
 		{
 			$userId = ',' . $id . ',';
 			include_once('model/changeReadStatus.php');
