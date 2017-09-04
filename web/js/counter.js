@@ -68,5 +68,5 @@ function counter(d, h, m, s, divId)
 	e.innerHTML = escapeHtml(dt+":"+ht+":"+mt+":"+st);
 
 	s--;
-	var timer = setTimeout("counter("+d+","+h+","+m+","+s+",\""+divId+"\")",1000);
+	timer = setTimeout("counter("+d+","+h+","+m+","+s+",\""+divId+"\")",1000);
 }
