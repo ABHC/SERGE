@@ -51,7 +51,40 @@ if(isset($_POST['reg_pseudo']) && isset($_POST['reg_mail']) && isset($_POST['reg
 				}
 				else
 				{
-					$password = hash('sha256', 'BlackSalt' . $_POST['reg_password']);
+					$resultToken = TRUE;
+					while ($resultToken)
+					{
+						// Génération du token
+						$bytes = random_bytes(4);
+						$cryptoToken = bin2hex($bytes);
+						$cpt = 0;
+
+						while($cpt < 8)
+						{
+							if(preg_match("/0/", $cryptoToken[$cpt]))
+							{
+								$token = $token . $cryptoToken[$cpt];
+							}
+							elseif(preg_match("/[0-9]/", $cryptoToken[$cpt]))
+							{
+								$token = $token . strtolower(chr(64 + $cryptoToken[$cpt]));
+							}
+							else
+							{
+								$token = $token . strtoupper($cryptoToken[$cpt]);
+							}
+							$cpt++;
+						}
+
+						$checkCol = array(array("token", "=", $token, ""));
+						$resultToken = read("users_table_serge", '', $checkCol, '',$bdd);
+					}
+
+					// Salt generation
+					$bytes = random_bytes(5);
+					$cryptoSalt = bin2hex($bytes);
+
+					$password = hash('sha256', $cryptoSalt . $_POST['reg_password']);
 					include_once('model/signup.php');
 					$password = "";
 

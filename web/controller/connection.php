@@ -33,17 +33,19 @@ $nonce = getNonce($nonceTime);
 
 if ($dataProcessing AND isset($data['pseudo']) AND isset($data['password']))
 {
-	$password = hash('sha256', 'BlackSalt' . $data['password']);
+	$checkCol = array(array("users", "=", $data['pseudo']));
+	$salt = read("users_table_serge", 'salt', $checkCol, '',$bdd);
 
-	$checkCol = array(array("users", "=", $data['pseudo'], "AND"),
-										array("password", "=", $password, ""));
-	$result = read("users_table_serge", 'id, users, email, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, background_result', $checkCol, '',$bdd);
-
-	if (empty($result))
+	if (!empty($salt))
 	{
-		$ERRORMESSAGE = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Mauvais identifiant ou mot de passe !';
+		$password = hash('sha256', $salt[0]['salt'] . $data['password']);
+
+		$checkCol = array(array("users", "=", $data['pseudo'], "AND"),
+		array("password", "=", $password, ""));
+		$result = read("users_table_serge", 'id, users, email, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, background_result', $checkCol, '',$bdd);
 	}
-	else
+
+	if (!empty($result))
 	{
 		session_start();
 		$_SESSION['id']                = $result[0]['id'];
@@ -59,6 +61,8 @@ if ($dataProcessing AND isset($data['pseudo']) AND isset($data['password']))
 
 		header("Location: $redirect");
 	}
+
+	$ERRORMESSAGE = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Mauvais identifiant ou mot de passe !';
 }
 
 include_once('view/nav/nav.php');

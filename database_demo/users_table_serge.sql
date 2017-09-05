@@ -6,6 +6,7 @@ CREATE TABLE `users_table_serge` (
 	`users` text COLLATE utf8mb4_bin NOT NULL,
 	`email` text COLLATE utf8mb4_bin NOT NULL,
 	`password` text COLLATE utf8mb4_bin NOT NULL,
+	`salt` text COLLATE utf8mb4_bin NOT NULL,
 	`signup_date` int(11) NOT NULL,
 	`last_mail` int(11) DEFAULT NULL,
 	`send_condition` text COLLATE utf8mb4_bin NOT NULL,
@@ -18,6 +19,8 @@ CREATE TABLE `users_table_serge` (
 	`record_read` BOOLEAN NOT NULL,
 	`history_lifetime` int(11) DEFAULT NULL,
 	`background_result` text COLLATE utf8mb4_bin NOT NULL,
+	`premium` BOOLEAN NOT NULL DEFAULT 0,
+	`token` text COLLATE utf8mb4_bin NOT NULL,
 	PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
