@@ -16,14 +16,8 @@ include_once('controller/generateNonce.php');
 
 
 $unsafeData = array();
-if (isset($_POST['conn_pseudo']))
-{
-	$unsafeData = array_merge($unsafeData, array(array('pseudo', $_POST['conn_pseudo'], 'str')));
-}
-if (isset($_POST['conn_password']))
-{
-	$unsafeData = array_merge($unsafeData, array(array('password', $_POST['conn_password'], '')));
-}
+$unsafeData = array_merge($unsafeData, array(array('pseudo', 'conn_pseudo', 'POST', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('password', 'conn_password', 'POST', '')));
 
 include_once('controller/dataProcessing.php');
 

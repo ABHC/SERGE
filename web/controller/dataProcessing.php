@@ -7,13 +7,27 @@ if ((isset($_POST['nonce']) AND isset($_SESSION['nonce :' . $_POST['nonce']]) AN
 	$dataProcessing = TRUE;
 	foreach ($unsafeData as $varDetails)
 	{
-		if (empty($varDetails[2]))
+		if (empty($varDetails[3]))
 		{
-			$data[$varDetails[0]] = $varDetails[1];
+			if ($varDetails[2] === 'POST')
+			{
+				$data[$varDetails[0]] = !empty($_POST[$varDetails[1]]) ? $_POST[$varDetails[1]]: "";
+			}
+			elseif ($varDetails[2] === 'GET')
+			{
+				$data[$varDetails[0]] = !empty($_GET[$varDetails[1]]) ? $_GET[$varDetails[1]]: "";
+			}
 		}
-		elseif ($varDetails[2] === 'str')
+		elseif ($varDetails[3] === 'str')
 		{
-			$data[$varDetails[0]] = htmlspecialchars($varDetails[1]);
+			if ($varDetails[2] === 'POST')
+			{
+				$data[$varDetails[0]] = !empty(htmlspecialchars($_POST[$varDetails[1]])) ? $_POST[$varDetails[1]]: "";
+			}
+			elseif ($varDetails[2] === 'GET')
+			{
+				$data[$varDetails[0]] = !empty(htmlspecialchars($_GET[$varDetails[1]])) ? $_GET[$varDetails[1]]: "";
+			}
 		}
 	}
 
