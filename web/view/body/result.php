@@ -12,7 +12,7 @@
 
 	</form>
 	<div class="selectResultsType">
-		<a <?php echo $newsActive; ?> href="result?type=news">
+		<a <?php echo $newsActive; ?> href="result">
 			<div class="selectResultsTypeNews"><?php get_t('title1_type_results', $bdd); ?></div>
 		</a>
 		<a <?php echo $sciencesActive; ?> href="result?type=sciences">
@@ -24,6 +24,7 @@
 	</div>
 
 	<form class="tableContainer" method="post" action="result">
+		<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
 		<div class="table-header">
 			<table>
 				<thead>

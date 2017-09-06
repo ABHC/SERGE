@@ -4,6 +4,29 @@ include_once('model/get_text_var.php');
 include_once('model/get_text.php');
 include_once('model/read.php');
 include_once('model/update.php');
+include_once('controller/generateNonce.php');
+
+# Data processing
+$unsafeData = array();
+$unsafeData = array_merge($unsafeData, array(array('resultType', 'type', 'GET', 'Az')));
+$unsafeData = array_merge($unsafeData, array(array('page', 'page', 'GET', '09')));
+$unsafeData = array_merge($unsafeData, array(array('orderBy', 'orderBy', 'GET', 'Az')));
+$unsafeData = array_merge($unsafeData, array(array('search', 'search', 'GET', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('optionalCond', 'optionalCond', 'GET', 'Az')));
+$unsafeData = array_merge($unsafeData, array(array('deleteLink', 'deleteLink', 'POST', 'Az')));
+foreach($_POST as $key => $val)
+{
+	if (preg_match("/^delete[0-9]+$/", $key, $name))
+	{
+		$unsafeData = array_merge($unsafeData, array(array(htmlspecialchars($name[0]), $name[0], 'POST', '09')));
+	}
+}
+
+include_once('controller/dataProcessing.php');
+
+# Nonce
+$nonceTime = time();
+$nonce = getNonce($nonceTime);
 
 # Initialization of variables
 $resultTab             = 'active';
@@ -21,37 +44,31 @@ $search             = '';
 $searchBoolean      = '';
 $searchInLink       = '';
 $searchSort         = '';
-$orderBy            = '';
+$data['orderBy']            = '';
 $ORDERBY            = '';
 $OPTIONALCOND       = '';
 $limit              = 15;
 $base               = 0;
 $page               = 0;
 $actualPageLink     = '';
-
+$type           = 'news';
+$newsActive     = 'class="active"';
+$patentsActive  = '';
+$sciencesActive = '';
+$tableName      = 'result_news_serge';
+$tableNameQuery = 'keyword_news_serge';
+$tableNameSource = 'rss_serge';
+$ownersColumn   = 'applicable_owners_sources';
+$userId         = '|' . $_SESSION['id'] . ':';
+$keywordQueryId = 'keyword_id';
+$queryColumn    = 'keyword';
+$specialColumn  = ', id_source, keyword_id ';
+$displayColumn  = var_get_t('title2News_table_results', $bdd);
 
 # Select results type
-if (!empty($_GET['type']))
+if (!empty($data['resultType']))
 {
-	$type = htmlspecialchars($_GET['type']);
-
-	if ($type === 'news')
-	{
-		$type           = 'news';
-		$newsActive     = 'class="active"';
-		$sciencesActive = '';
-		$patentsActive  = '';
-		$tableName      = 'result_news_serge';
-		$tableNameQuery = 'keyword_news_serge';
-		$tableNameSource = 'rss_serge';
-		$ownersColumn   = 'applicable_owners_sources';
-		$userId        = '|' . $_SESSION['id'] . ':';
-		$keywordQueryId = 'keyword_id';
-		$queryColumn    = 'keyword';
-		$specialColumn  = ', id_source, keyword_id ';
-		$displayColumn  = var_get_t('title2News_table_results', $bdd);
-	}
-	elseif ($type === 'sciences')
+	if ($data['resultType'] === 'sciences')
 	{
 		$type           = 'sciences';
 		$sciencesActive = 'class="active"';
@@ -67,7 +84,7 @@ if (!empty($_GET['type']))
 		$specialColumn  = ',query_id, id_source ';
 		$displayColumn  = var_get_t('title2Science_table_results', $bdd);
 	}
-	elseif ($type === 'patents')
+	elseif ($data['resultType'] === 'patents')
 	{
 		$type           = 'patents';
 		$patentsActive  = 'class="active"';
@@ -83,52 +100,16 @@ if (!empty($_GET['type']))
 		$specialColumn  = ', id_query_wipo, id_source ';
 		$displayColumn  = var_get_t('title2Patents_table_results', $bdd);
 	}
-	else
-	{
-		$type           = 'news';
-		$newsActive     = 'class="active"';
-		$patentsActive  = '';
-		$sciencesActive = '';
-		$tableName      = 'result_news_serge';
-		$tableNameQuery = 'keyword_news_serge';
-		$tableNameSource = 'rss_serge';
-		$ownersColumn   = 'applicable_owners_sources';
-		$userId         = '|' . $_SESSION['id'] . ':';
-		$keywordQueryId = 'keyword_id';
-		$queryColumn    = 'keyword';
-		$specialColumn  = ', id_source, keyword_id ';
-		$displayColumn  = var_get_t('title2News_table_results', $bdd);
-	}
-}
-else
-{
-	$type           = 'news';
-	$newsActive     = 'class="active"';
-	$patentsActive  = '';
-	$sciencesActive = '';
-	$tableName      = 'result_news_serge';
-	$tableNameQuery = 'keyword_news_serge';
-	$tableNameSource = 'rss_serge';
-	$ownersColumn   = 'applicable_owners_sources';
-	$userId         = '|' . $_SESSION['id'] . ':';
-	$keywordQueryId = 'keyword_id';
-	$queryColumn    = 'keyword';
-	$specialColumn  = ', id_source, keyword_id ';
-	$displayColumn  = var_get_t('title2News_table_results', $bdd);
 }
 
 # Warning sensitive variables [SQLI]
 $SELECTRESULT = '(SELECT id, title, link, send_status, read_status, `date`' . $specialColumn . 'FROM ' . $tableName . ' WHERE owners LIKE :user';
 
 # Delete results
-#include_once('model/delResult.php');
-
-if (isset($_POST['deleteLink']))
+if ($dataProcessing AND !empty($data['deleteLink']))
 {
-	foreach($_POST as $key => $val)
+	foreach($data as $key => $val)
 	{
-		$key = htmlspecialchars($key);
-		#$val = htmlspecialchars($val);
 		$pureID = $_SESSION['id'];
 
 		if (preg_match("/^delete[0-9]+$/", $key))
@@ -147,7 +128,6 @@ if (isset($_POST['deleteLink']))
 }
 
 # Record when a link is click
-#include_once('model/readUserSettings.php');
 $checkCol = array(array("users", "=", $_SESSION['pseudo'], ""));
 $recordRead = read('users_table_serge', 'id, password, record_read', $checkCol, '', $bdd);
 
@@ -161,26 +141,23 @@ if ($recordRead[0]['record_read'] === 1)
 	$recordLink = 'redirect?id=' . $id . '&type=' . $type .'&hash=' . $hash . '&link=';
 }
 
-#include_once('model/readOwnerKeyword.php');
 $checkCol = array(array($ownersColumn, "l", '%' . $userId . '%', ""));
 $readOwnerKeyword = read($tableNameQuery, 'id', $checkCol, '', $bdd);
 
-#include_once('model/readResultKeywordName.php');
 
 # Page number
-if (isset($_GET['page']) AND preg_match("/^[0-9]+$/", htmlspecialchars($_GET['page'])))
+if (!empty($data['page']))
 {
-	$actualPageLink = '&page=' . htmlspecialchars($_GET['page']);
+	$actualPageLink = '&page=' . $data['page'];
 	$limit          = 15;
-	$page           = $_GET['page'] - 1;
+	$page           = $data['page'] - 1;
 	$base           = $limit * $page;
 }
 
 # Order results
-if (!empty($_GET['orderBy']))
+if (!empty($data['orderBy']))
 {
-	$orderBy = htmlspecialchars($_GET['orderBy']);
-	if ($orderBy === 'title')
+	if ($data['orderBy'] === 'title')
 	{
 		$colOrder['title'] = '▾';
 		$colOrder['DESC'] = 'DESC';
@@ -188,7 +165,7 @@ if (!empty($_GET['orderBy']))
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY title';
 	}
-	elseif ($orderBy === 'titleDESC')
+	elseif ($data['orderBy'] === 'titleDESC')
 	{
 		$colOrder['title'] = '▴';
 		$colOrder['DESC'] = '';
@@ -196,7 +173,7 @@ if (!empty($_GET['orderBy']))
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY title DESC';
 	}
-	elseif ($orderBy === 'source')
+	elseif ($data['orderBy'] === 'source')
 	{
 		$colOrder['source'] = '▾';
 		$colOrder['DESC'] = 'DESC';
@@ -204,7 +181,7 @@ if (!empty($_GET['orderBy']))
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY id_source';
 	}
-	elseif ($orderBy === 'sourceDESC')
+	elseif ($data['orderBy'] === 'sourceDESC')
 	{
 		$colOrder['source'] = '▴';
 		$colOrder['DESC'] = '';
@@ -212,7 +189,7 @@ if (!empty($_GET['orderBy']))
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY id_source DESC';
 	}
-	elseif ($orderBy === 'date')
+	elseif ($data['orderBy'] === 'date')
 	{
 		$colOrder['date'] = '▾';
 		$colOrder['DESC'] = 'DESC';
@@ -220,7 +197,7 @@ if (!empty($_GET['orderBy']))
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY date';
 	}
-	elseif ($orderBy === 'dateDESC')
+	elseif ($data['orderBy'] === 'dateDESC')
 	{
 		$colOrder['date'] = '▴';
 		$colOrder['DESC'] = '';
@@ -237,7 +214,7 @@ if (!empty($_GET['orderBy']))
 		$ORDERBY = 'ORDER BY date DESC';
 	}
 
-	$orderBy = '&orderBy=' . $orderBy;
+	$data['orderBy'] = '&orderBy=' . $data['orderBy'];
 }
 elseif (empty($_GET['search']))
 {
@@ -248,10 +225,9 @@ elseif (empty($_GET['search']))
 	$ORDERBY = 'ORDER BY date DESC';
 }
 
-if (!empty($_GET['optionalCond']))
+if (!empty($data['optionalCond']))
 {
-	$optionalCond = htmlspecialchars($_GET['optionalCond']);
-	if ($optionalCond === 'read')
+	if ($data['optionalCond'] === 'read')
 	{
 		$colOrder['read'] = var_get_t('title6Read_table_results', $bdd);
 		$colOrder['OCDESC'] = 'DESC';
@@ -259,7 +235,7 @@ if (!empty($_GET['optionalCond']))
 		# WARNING sensitive variable [SQLI]
 		$OPTIONALCOND = ' AND read_status LIKE \'%' . $_SESSION['id'] .'%\'';
 	}
-	elseif ($optionalCond === 'readDESC')
+	elseif ($data['optionalCond'] === 'readDESC')
 	{
 		$colOrder['read'] = var_get_t('title6Unread_table_results', $bdd);
 		$colOrder['OCDESC'] = '';
@@ -267,7 +243,7 @@ if (!empty($_GET['optionalCond']))
 		# WARNING sensitive variable [SQLI]
 		$OPTIONALCOND = ' AND read_status NOT LIKE \'%' . $_SESSION['id'] . '%\'';
 	}
-	elseif ($optionalCond === 'send')
+	elseif ($data['optionalCond'] === 'send')
 	{
 		$colOrder['send'] = var_get_t('title5Send_table_results', $bdd);
 		$colOrder['OCDESC'] = 'DESC';
@@ -275,7 +251,7 @@ if (!empty($_GET['optionalCond']))
 		# WARNING sensitive variable [SQLI]
 		$OPTIONALCOND = ' AND send_status LIKE \'%' . $_SESSION['id'] .'%\'';
 	}
-	elseif ($optionalCond === 'sendDESC')
+	elseif ($data['optionalCond'] === 'sendDESC')
 	{
 		$colOrder['send'] = var_get_t('title5NotSend_table_results', $bdd);
 		$colOrder['OCDESC'] = '';
@@ -284,11 +260,7 @@ if (!empty($_GET['optionalCond']))
 		$OPTIONALCOND = ' AND send_status NOT LIKE \'%' . $_SESSION['id'] .'%\'';
 	}
 
-	$optionalCond = '&optionalCond=' . $optionalCond;
-}
-else
-{
-	$optionalCond = '';
+	$data['optionalCond'] = '&optionalCond=' . $data['optionalCond'];
 }
 
 include_once('controller/searchEngine.php');
