@@ -418,7 +418,7 @@ else
 			$packDetails = $req->fetch();
 			$req->closeCursor();*/
 
-		$checkCol    = array(array("id", " = ", $_SESSION['id'], ""));
+		$checkCol    = array(array("id", "=", $_SESSION['id'], ""));
 		$packDetails = read('users_table_serge', 'language', $checkCol, '', $bdd);
 		$packDetails = $packDetails[0];
 	}
@@ -450,21 +450,29 @@ else
 	{
 		preg_match("/[0-9]+/", $_POST['watchPackList'], $packIdEdit);
 		// Check if watch pack is own by the user
-		$req = $bdd->prepare('SELECT id FROM watch_pack_serge WHERE author = :username AND id = :packIdEdit');
+		/*$req = $bdd->prepare('SELECT id FROM watch_pack_serge WHERE author = :username AND id = :packIdEdit');
 		$req->execute(array(
 			'username' => $_SESSION['pseudo'],
 			'packIdEdit' => $packIdEdit[0]));
 			$result = $req->fetch();
-			$req->closeCursor();
+			$req->closeCursor();*/
 
-		$req = $bdd->prepare('SELECT id FROM watch_pack_serge WHERE name = :newName AND id <> :packIdEdit');
+		$checkCol  = array(array("author", "=", $_SESSION['pseudo'], "AND"),
+											array("id", "=", $packIdEdit[0], ""));
+		$packIsOwn = read('watch_pack_serge', '', $checkCol, '', $bdd);
+
+		/*$req = $bdd->prepare('SELECT id FROM watch_pack_serge WHERE name = :newName AND id <> :packIdEdit');
 		$req->execute(array(
 			'newName' => htmlspecialchars($_POST['watchPackName']),
 			'packIdEdit' => $packIdEdit[0]));
 			$resultName = $req->fetch();
-			$req->closeCursor();
+			$req->closeCursor();*/
 
-		if (!empty($result) AND empty($resultName))
+		$checkCol  = array(array("name", "=", htmlspecialchars($_POST['watchPackName']), "AND"),
+											array("id", "<>", $packIdEdit[0], ""));
+		$nameExist = read('watch_pack_serge', '', $checkCol, '', $bdd);
+
+		if (!$packIsOwn AND !$nameExist)
 		{
 			$update_date = time();
 
