@@ -44,7 +44,6 @@ $search             = '';
 $searchBoolean      = '';
 $searchInLink       = '';
 $searchSort         = '';
-$data['orderBy']            = '';
 $ORDERBY            = '';
 $OPTIONALCOND       = '';
 $limit              = 15;
