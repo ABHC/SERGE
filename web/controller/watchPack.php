@@ -474,7 +474,7 @@ else
 
 		if (!$packIsOwn AND !$nameExist)
 		{
-			$update_date = time();
+			/*$update_date = time();
 
 			$req = $bdd->prepare('UPDATE watch_pack_serge SET name = :name, description = :description, category = :category, language = :language, update_date = :update_date WHERE id = :packIdEdit');
 			$req->execute(array(
@@ -484,7 +484,15 @@ else
 				'language' => strtoupper(htmlspecialchars($_POST['language'])),
 				'update_date' => $update_date,
 				'packIdEdit' => $packIdEdit[0]));
-				$req->closeCursor();
+				$req->closeCursor();*/
+
+			$updateCol = array(array("names", htmlspecialchars($_POST['watchPackName'])),
+												array("description", htmlspecialchars($_POST['watchPackDescription'])),
+												array("category", htmlspecialchars($_POST['watchPackCategory']) ),
+												array("language", htmlspecialchars($_POST['language'])),
+												array("update_date", time()));
+			$checkCol = array(array("id", "=", $packIdEdit[0], ""));
+			$execution = update('watch_pack_serge', $updateCol, $checkCol, '', $bdd);
 
 		}
 	}
@@ -501,29 +509,45 @@ else
 			{
 				foreach ($newKeywordArray as $newKeyword)
 				{
-					$req = $bdd->prepare('SELECT id, source FROM watch_pack_queries_serge WHERE lower(query) = lower(:keyword) AND pack_id = :pack_id AND source <> "Science" AND source <> "Patent"');
+					/*$req = $bdd->prepare('SELECT id, source FROM watch_pack_queries_serge WHERE lower(query) = lower(:keyword) AND pack_id = :pack_id AND source <> "Science" AND source <> "Patent"');
 					$req->execute(array(
 						'keyword' => $newKeyword,
 						'pack_id' => $pack_idInUse[0]));
 						$resultKeyword = $req->fetch();
-						$req->closeCursor();
+						$req->closeCursor();*/
+
+					$checkCol = array(array("LOWER(query)", "=", mb_strtolower($newKeyword), "AND"),
+														array("pack_id", "=", $pack_idInUse[0], "AND"),
+														array("source", "<>", "Science", "AND"),
+														array("source", "<>", "Patent", ""));
+					$result = read('watch_pack_queries_serge', 'id, source', $checkCol, '', $bdd);
+					$resultKeyword = $result[0];
 
 					if (empty($resultKeyword))
 					{
-						$req = $bdd->prepare('INSERT INTO watch_pack_queries_serge (pack_id, query, source) VALUES (:pack_id, :query, :source)');
+						/*$req = $bdd->prepare('INSERT INTO watch_pack_queries_serge (pack_id, query, source) VALUES (:pack_id, :query, :source)');
 						$req->execute(array(
 							'pack_id' => $pack_idInUse[0],
 							'query' =>  $newKeyword,
 							'source' => ',' . $sourcesList['id'] . ','));
-							$req->closeCursor();
+							$req->closeCursor();*/
+
+						$insertCol = array(array("pack_id", $pack_idInUse[0]),
+															array("query",  $newKeyword),
+															array("source", ',' . $sourcesList['id'] . ','));
+						$execution = insert('watch_pack_queries_serge', $insertCol, '', '', $bdd);
 					}
 					else
 					{ # TODO Vérif qu'on ajoute pas deux fois les sources
-						$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :source WHERE id = :keywordId');
+						/*$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :source WHERE id = :keywordId');
 						$req->execute(array(
 							'source' => $resultKeyword['source'] . $sourcesList['id'] . ',',
 							'keywordId' => $resultKeyword['id']));
-							$req->closeCursor();
+							$req->closeCursor();*/
+
+							$updateCol = array(array("source", $resultKeyword['source'] . $sourcesList['id'] . ','));
+							$checkCol = array(array("id", "=", $resultKeyword['id'], ""));
+							$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
 					}
 				}
 			}
@@ -532,11 +556,15 @@ else
 		{
 			foreach ($newKeywordArray as $newKeyword)
 			{
-				$req = $bdd->prepare('SELECT id FROM rss_serge WHERE id = :sourceId');
+				/*$req = $bdd->prepare('SELECT id FROM rss_serge WHERE id = :sourceId');
 				$req->execute(array(
 					'sourceId' => $sourceId[0]));
 					$resultSource = $req->fetch();
-					$req->closeCursor();
+					$req->closeCursor();*/
+
+				$checkCol = array(array("id", "=", $sourceId[0], ""));
+				$result = read('rss_serge', 'id', $checkCol, '', $bdd);
+				$resultSource = $result[0];
 
 				if (!empty($resultSource))
 				{
