@@ -61,6 +61,13 @@ input
 	color: #fff;
 }
 
+.price
+{
+	width: 100%;
+	font-size: 50px;
+	text-align: center;
+}
+
 .purchase
 {
 	display: flex;
