@@ -99,6 +99,15 @@ if($dataProcessing AND !empty($data['pseudo']) AND !empty($data['email']) AND !e
 					$cryptoSalt = bin2hex($bytes);
 					$password = hash('sha256', $cryptoSalt . $data['password']);
 
+					// Language
+					$language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+					$language = strtoupper($language[0] . $language[1]);
+					$language = preg_replace("/[^A-Z]/", "", $language);
+					if (empty($language))
+					{
+						$language = 'EN';
+					}
+
 					// Insert new user in database
 					$insertCol = array(array("users", $pseudo),
 														array("email", $data['email']),
@@ -107,6 +116,7 @@ if($dataProcessing AND !empty($data['pseudo']) AND !empty($data['email']) AND !e
 														array("signup_date", time()),
 														array("send_condition", 'link_limit'),
 														array("mail_design", 'masterword'),
+														array("language", $language),
 														array("record_read", 1),
 														array("background_result", 'Skyscrapers'),
 														array("token", $token));
