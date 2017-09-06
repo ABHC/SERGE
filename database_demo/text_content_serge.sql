@@ -71,6 +71,7 @@ En recherchant les actualités, les brevets et les publications scientifiques, S
 ('forgotPass_link_connection', 'Forgot your passphrase ?', 'Vous avez oublié votre mot de passe ?', NULL, NULL, NULL),
 ('noAccount_link_connection', 'You don\'t have an account ? Sign Up', 'Vous n\'avez pas de compte ? Inscrivez vous', NULL, NULL, NULL),
 ('submit_signin_connection', 'Sign in', 'Connexion', NULL, NULL, NULL),
+('badIdOrPass_error_connection', 'Bad id of passphrase', 'Mauvais identifiant ou phrase de passe !', NULL, NULL, NULL),
 ('title1_type_results', 'News', 'Actualités', NULL, NULL, NULL),
 ('title2_type_results', 'Sciences', 'Sciences', NULL, NULL, NULL),
 ('title3_type_results', 'Patents', 'Brevets', NULL, NULL, NULL),

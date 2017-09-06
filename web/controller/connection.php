@@ -11,6 +11,7 @@ if (!isset($_POST['conn_pseudo']))
 }
 
 include_once('model/get_text.php');
+include_once('model/get_text_var.php');
 include_once('model/read.php');
 include_once('controller/generateNonce.php');
 
@@ -56,7 +57,7 @@ if ($dataProcessing AND isset($data['pseudo']) AND isset($data['password']))
 		header("Location: $redirect");
 	}
 
-	$ERRORMESSAGE = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Mauvais identifiant ou mot de passe !';
+	$ERRORMESSAGE = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px />' . var_get_t('badIdOrPass_error_connection', $bdd);
 }
 
 include_once('view/nav/nav.php');
