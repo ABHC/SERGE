@@ -3,6 +3,7 @@
 include_once('model/get_text.php');
 include_once('model/read.php');
 include_once('model/insert.php');
+include_once('controller/generateNonce.php');
 
 # Initialization of variables
 $resultTab       = '';
@@ -10,20 +11,33 @@ $wikiTab         = '';
 $settingTab      = '';
 $errorMessage = '';
 
-if(isset($_POST['reg_pseudo']) && isset($_POST['reg_mail']) && isset($_POST['reg_password']) && isset($_POST['reg_repassword']) && isset($_POST['captcha']))
+# Data processing
+$unsafeData = array();
+$unsafeData = array_merge($unsafeData, array(array('pseudo', 'reg_pseudo', 'POST', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('password', 'reg_password', 'POST', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('repassword', 'reg_repassword', 'POST', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('email', 'reg_mail', 'POST', 'email')));
+$unsafeData = array_merge($unsafeData, array(array('captcha', 'captcha', 'POST', 'Az')));
+
+include_once('controller/dataProcessing.php');
+
+# Nonce
+$nonceTime = time();
+$nonce = getNonce($nonceTime);
+
+if($dataProcessing AND !empty($data['pseudo']) AND !empty($data['email']) AND !empty($data['password']) AND !empty($data['repassword']) AND !empty($data['captcha']))
 {
-	$pseudo       = preg_replace("#[^[:alnum:]-]#","", $_POST['reg_pseudo']);
-	$email        = htmlspecialchars($_POST['reg_mail']);
-	$captcha_user = hash('sha256', $_POST['captcha']);
+	$pseudo       = preg_replace("#[^[:alnum:]-]#","", $data['pseudo']);
+	$captcha_user = hash('sha256', $data['captcha']);
 
 	if($_SESSION['captcha'] === $captcha_user)
 	{
 		$_SESSION['captcha'] = "";
 		#Vérification des mots de passes
-		if(htmlspecialchars($_POST['reg_password']) === htmlspecialchars($_POST['reg_repassword']))
+		if($data['password'] === $data['repassword'])
 		{
 			#Vérification de la taille des mots de passes
-			$nb_carac_password = iconv_strlen(htmlspecialchars($_POST['reg_password']));
+			$nb_carac_password = iconv_strlen($data['password']);
 
 			if($nb_carac_password < 8)
 			{
@@ -35,9 +49,9 @@ if(isset($_POST['reg_pseudo']) && isset($_POST['reg_mail']) && isset($_POST['reg
 				$checkCol = array(array("users", "=", $pseudo, ""));
 				$result_pseudo = read("users_table_serge", '', $checkCol, '',$bdd);
 
-				$checkCol = array(array("email", "=", $email, ""));
+				$checkCol = array(array("email", "=", $data['email'], ""));
 				$result_email = read("users_table_serge", '', $checkCol, '',$bdd);
-				if(filter_var($email, FILTER_VALIDATE_EMAIL) === FALSE)
+				if(filter_var($data['email'], FILTER_VALIDATE_EMAIL) === FALSE)
 				{
 					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Invalid email <br>';
 				}
@@ -84,14 +98,14 @@ if(isset($_POST['reg_pseudo']) && isset($_POST['reg_mail']) && isset($_POST['reg
 					$bytes = random_bytes(5);
 					$cryptoSalt = bin2hex($bytes);
 
-					$password = hash('sha256', $cryptoSalt . $_POST['reg_password']);
+					$password = hash('sha256', $cryptoSalt . $data['password']);
 					include_once('model/signup.php');
 					$password = "";
 
-					# Connexion
+					# Connection
 					session_start();
-					$_SESSION['pseudo'] = $pseudo;
-					$_SESSION['id'] = $idNewUser;
+					$_SESSION['pseudo'] = $result['users'];
+					$_SESSION['id'] = $result['id'];
 					header("Location: setting");
 				}
 			}

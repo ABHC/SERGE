@@ -1,7 +1,7 @@
 <?php
 // Insert new user in database
 $insertCol = array(array("users", $pseudo),
-									array("email", $email),
+									array("email", $data['email']),
 									array("password", $password),
 									array("salt", $cryptoSalt),
 									array("signup_date", time()),
@@ -15,8 +15,6 @@ $execution = insert('users_table_serge', $insertCol, '', '', $bdd);
 // Read new user information in order to connect it
 $checkCol = array(array("users", "=", $pseudo, "AND"),
 									array("password", "=", $password, ""));
-$result = read('users_table_serge', 'id', $checkCol, '', $bdd);
+$result = read('users_table_serge', 'id, users', $checkCol, '', $bdd);
 $result = $result[0];
-
-$idNewUser = $result['id'];
 ?>

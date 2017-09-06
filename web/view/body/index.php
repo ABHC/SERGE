@@ -122,6 +122,7 @@
 			<p class="title_inscription" ><?php get_t('signup_title_index', $bdd); ?></p>
 
 			<form method="post" action="index#signup" >
+				<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
 				<p class="title_form_inscription" ><?php get_t('input1_signup_index', $bdd); ?><br>
 					<input class="inscription_field" type="text" name="reg_pseudo" id="Pseudo" value="" />
 				</p>
