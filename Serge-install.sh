@@ -697,7 +697,7 @@ Install_mail_server()
 
 	# DNS
 	opendkimPubKey=$(sed -n '/-----BEGIN PUBLIC KEY-----/,/-----END PUBLIC KEY-----/{//d;p}' /etc/opendkim/opendkim.pub.key)
-	opendkimPubKey=$(echo $opendkimPubKey | sed s/' '/''/g)
+	opendkimPubKey=$($opendkimPubKey//' '/'')
 	dialog --backtitle "Installation of Serge by Cairn Devices" --title "DNS configuration" \
 	--ok-label "Next" --msgbox "
 	Consider to update your DNS like this :
@@ -1601,7 +1601,7 @@ Security_app()
 		do
 			dialog --backtitle "Cairngit installation" --title "Email for security reports"\
 			--inputbox "       /!\\ Should be external of this server /!\\" 7 60 2> $FICHTMP
-			email=`cat $FICHTMP`
+			email=$(cat $FICHTMP)
 		done
 		hostname=$(hostname)
 	}
@@ -1956,7 +1956,7 @@ Security_app()
 		do
 			dialog --backtitle "Installation of Serge by Cairn Devices" --title "Choix d'un port pour la connexion SSH" \
 			--inputbox "" 7 60 2> $FICHTMP
-			sshport=`cat $FICHTMP`
+			sshport=$(cat $FICHTMP)
 			test_port=$(netstat -paunt | grep :$sshport\ )
 			if [ "$test_port" != "" ]
 			then
@@ -2310,7 +2310,7 @@ Security_app()
 
 	if [ $? = 0 ]
 	then
-		for i in `cat $FICHTMP`
+		for i in $(cat $FICHTMP)
 		do
 			case $i in
 				"Rootkits") Check_rootkits ;;
@@ -2386,7 +2386,7 @@ Dev_utils()
 	do
 		dialog --backtitle "Cairngit installation" --title "Email for git"\
 		--inputbox "    /!\\ This email will be use in your commits /!\\" 7 60 2> $FICHTMP
-		gitemail=`cat $FICHTMP`
+		gitemail=$(cat $FICHTMP)
 	done
 	gitname=""
 	# Ask for git name
@@ -2394,7 +2394,7 @@ Dev_utils()
 	do
 		dialog --backtitle "Cairngit installation" --title "Name for git"\
 		--inputbox "    /!\\ This name will be use in your commits /!\\" 7 60 2> $FICHTMP
-		gitname=`cat $FICHTMP`
+		gitname=$(cat $FICHTMP)
 	done
 
 	echo "[user]
@@ -2516,7 +2516,7 @@ Install_Piwik()
 	do
 		dialog --backtitle "Cairngit installation" --title "Email for Piwik"\
 		--inputbox "    /!\\ This email will be sent to Piwik servers /!\\" 7 60 2> $FICHTMP
-		email=`cat $FICHTMP`
+		email=$(cat $FICHTMP)
 	done
 
 	curl -L -d "" "http$Sssl://piwik.$domainName/index.php?action=systemCheck"  >> /dev/null
@@ -2562,7 +2562,7 @@ $DIALOG --clear --backtitle "Installation of Serge by Cairn Devices" --title "In
 "Serveur mail" "Installation du serveur mail" \
 "Mode dev" "Mode développeur" 2> $FICHTMP # TODO Mettre tout le dialog en anglais
 valret=$?
-choix=`cat $FICHTMP`
+choix=$(cat $FICHTMP)
 case $valret in
 	0)	echo "'$choix' is your choice";;
 	1) 	exit 0;;
@@ -2575,7 +2575,7 @@ while [ "$mainUser" == "" ]
 do
 	dialog --backtitle "Cairngit installation" --title "Actual Linux user"\
 	--inputbox "Please enter the name of the actual Linux user" 7 60 2> $FICHTMP
-	mainUser=`cat $FICHTMP`
+	mainUser=$(cat $FICHTMP)
 done
 
 # Password for installation (Mysql, etc)
@@ -2585,11 +2585,11 @@ while [ "$passnohash" != "$repassnohash" ] || [ "$passnohash" == "" ]
 do
 	dialog --backtitle "Installation of Serge by Cairn Devices" --title "Choose the installation password" \
 	--insecure --passwordbox "" 7 60 2> $FICHTMP
-	passnohash=`cat $FICHTMP`
+	passnohash=$(cat $FICHTMP)
 
 	dialog --backtitle "Installation of Serge by Cairn Devices" --title "Retype the installation password" \
 	--insecure --passwordbox "" 7 60 2> $FICHTMP
-	repassnohash=`cat $FICHTMP`
+	repassnohash=$(cat $FICHTMP)
 done
 
 salt=$(date +%T)$(( RANDOM % 100 ))
@@ -2604,11 +2604,11 @@ while [ "$adminPass" != "$repass" ] || [ "$adminPass" == "" ]
 do
 	dialog --backtitle "Installation of Serge by Cairn Devices" --title "Choose the admin password" \
 	--insecure --passwordbox "" 7 60 2> $FICHTMP
-	adminPass=`cat $FICHTMP`
+	adminPass=$(cat $FICHTMP)
 
 	dialog --backtitle "Installation of Serge by Cairn Devices" --title "Retype the admin password" \
 	--insecure --passwordbox "" 7 60 2> $FICHTMP
-	repass=`cat $FICHTMP`
+	repass=$(cat $FICHTMP)
 done
 repass="0"
 
@@ -2618,7 +2618,7 @@ while [ "$domainName" == "" ]
 do
 	dialog --backtitle "Installation of Serge by Cairn Devices" --title "Domain name" \
 	--inputbox "" 7 60 2> $FICHTMP
-	domainName=`cat $FICHTMP`
+	domainName=$(cat $FICHTMP)
 done
 
 if [ "$choix" = "Dédié" ]
