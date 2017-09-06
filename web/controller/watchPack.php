@@ -674,11 +674,15 @@ else
 					'active' => $active));
 					$req->closeCursor();
 
-				$req = $bdd->prepare('SELECT id FROM rss_serge WHERE link = :newSource');
+				/*$req = $bdd->prepare('SELECT id FROM rss_serge WHERE link = :newSource');
 				$req->execute(array(
 					'newSource' => $newSource));
 					$resultSource = $req->fetch();
-					$req->closeCursor();
+					$req->closeCursor();*/
+
+				$checkCol = array(array("link", "=", $newSource, ""));
+				$result = read('rss_serge', 'id', $checkCol, '', $bdd);
+				$resultSource = $result[0];
 
 					$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :source WHERE pack_id = :packIdInUse AND query = "[!source!]"');
 					$req->execute(array(
@@ -720,14 +724,23 @@ else
 		if (isset($sourceIdAction) AND isset($keywordIdAction) AND isset($action))
 		{
 			# Check if keyword exist
-			$req = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE id = :keywordIdAction AND (source LIKE :sourceIdAction OR source LIKE :sourceIdActionDesactivated) AND pack_id = :packIdInUse');
+			/*$req = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE id = :keywordIdAction AND (source LIKE :sourceIdAction OR source LIKE :sourceIdActionDesactivated) AND pack_id = :packIdInUse');
 			$req->execute(array(
 				'keywordIdAction' => $keywordIdAction,
 				'sourceIdAction' => "%," . $sourceIdAction . ",%",
 				'sourceIdActionDesactivated' => "%,!" . $sourceIdAction . ",%",
 				'packIdInUse' => $pack_idInUse[0]));
 				$result = $req->fetch();
-				$req->closeCursor();
+				$req->closeCursor();*/
+
+			$checkCol = array(array("id", "=", $keywordIdAction, "AND"),
+												array("pack_id", "=", $pack_idInUse[0], "AND"),
+												array("source", "l", "%," . $sourceIdAction . ",%", "OR"),
+												array("id", "=", $keywordIdAction, "AND"),
+												array("source", "l", "%,!" . $sourceIdAction . ",%", "AND"),
+												array("pack_id", "=", $pack_idInUse[0], ""));
+			$result = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
+			$result = $result[0];
 
 			# Delete an existing keyword
 			if (!empty($result) AND $action === 'delKeyword')
@@ -791,16 +804,25 @@ else
 		if (isset($sourceIdAction) AND isset($action))
 		{
 			# Check if source exist for this owner
-			$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE query = "[!source!]" AND (source LIKE :sourceIdAction OR source LIKE :sourceIdActionDesactivated) AND pack_id = :packIdInUse');
+			/*$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE query = "[!source!]" AND (source LIKE :sourceIdAction OR source LIKE :sourceIdActionDesactivated) AND pack_id = :packIdInUse');
 			$req->execute(array(
 				'sourceIdAction' => "%," . $sourceIdAction . ",%",
 				'sourceIdActionDesactivated' => "%,!" . $sourceIdAction . ",%",
 				'packIdInUse' => $pack_idInUse[0]));
 				$result = $req->fetch();
-				$req->closeCursor();
+				$req->closeCursor();*/
+
+			$checkCol = array(array("query", "=", "[!source!]", "AND"),
+												array("pack_id", "=", $pack_idInUse[0], "AND"),
+												array("source", "l", "%," . $sourceIdAction . ",%", "OR"),
+												array("id", "=", $keywordIdAction, "AND"),
+												array("source", "l", "%,!" . $sourceIdAction . ",%", "AND"),
+												array("pack_id", "=", $pack_idInUse[0], ""));
+			$result = read('watch_pack_queries_serge', '', $checkCol, '', $bdd);
+			$sourceExist = $result[0];
 
 			# Delete an existing sources
-			if (!empty($result) AND $action === 'delSource')
+			if ($sourceExist AND $action === 'delSource')
 			{
 				$req = $bdd->prepare('SELECT id FROM rss_serge WHERE owners LIKE :owner');
 				$req->execute(array(
@@ -838,7 +860,7 @@ else
 						$req->closeCursor();
 				}
 			}
-			elseif (!empty($result) AND $action === 'disableSource')
+			elseif ($sourceExist AND $action === 'disableSource')
 			{
 				// Disable source on all keywords
 				$req = $bdd->prepare('SELECT id, source FROM watch_pack_queries_serge WHERE pack_id = :packIdInUse AND source LIKE :sourceIdAction');
@@ -859,7 +881,7 @@ else
 						$req->closeCursor();
 				}
 			}
-			elseif (!empty($result) AND $action === 'activateSource')
+			elseif ($sourceExist AND $action === 'activateSource')
 			{
 				// Activate source on all keywords
 				$req = $bdd->prepare('SELECT id, source FROM watch_pack_queries_serge WHERE pack_id = :packIdInUse AND source LIKE :sourceIdAction');
@@ -954,14 +976,20 @@ else
 			$ERROR_SCIENCEQUERY = '';
 
 			// Check if science query is already in bdd
-			$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE LOWER(query) = LOWER(:newQuery) AND pack_id = :packIdInUse AND source = "Science"');
+			/*$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE LOWER(query) = LOWER(:newQuery) AND pack_id = :packIdInUse AND source = "Science"');
 			$req->execute(array(
 				'newQuery' => $queryScience_Arxiv,
 				'packIdInUse' => $pack_idInUse[0]));
 				$result = $req->fetch();
-				$req->closeCursor();
+				$req->closeCursor();*/
 
-			if (!$result)
+			$checkCol = array(array("LOWER(query)", "=", mb_strtolower($queryScience_Arxiv), "AND"),
+												array("pack_id", "=", $pack_idInUse[0], "AND"),
+												array("source", "=", "Science", ""));
+			$result = read('watch_pack_queries_serge', '', $checkCol, '', $bdd);
+			$queryExist = $result[0];
+
+			if (!$queryExist)
 			{
 				$active = 1;
 				// Adding new query
@@ -984,14 +1012,23 @@ else
 		preg_match("/[0-9]+/", $_POST['delQueryScience'], $idQueryToDel);
 
 		// Read owner science query
-		$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE id = :queryId AND pack_id = :packIdInUse AND (source = "Science" OR source = "!Science")');
+		/*$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE id = :queryId AND pack_id = :packIdInUse AND (source = "Science" OR source = "!Science")');
 		$req->execute(array(
 			'queryId' => $idQueryToDel[0],
 			'packIdInUse' => $pack_idInUse[0]));
 			$result = $req->fetch();
-			$req->closeCursor();
+			$req->closeCursor();*/
 
-		if (!empty($result))
+		$checkCol = array(array("id", "=", $idQueryToDel[0], "AND"),
+											array("pack_id", "=", $pack_idInUse[0], "AND"),
+											array("source", "=", "Science", "OR"),
+											array("id", "=", $idQueryToDel[0], "AND"),
+											array("pack_id", "=", $pack_idInUse[0], "AND"),
+											array("source", "=", "!Science", ""),);
+		$result = read('watch_pack_queries_serge', '', $checkCol, '', $bdd);
+		$queryExist = $result[0];
+
+		if ($queryExist)
 		{
 			$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = "Delete" WHERE id = :id');
 			$req->execute(array(
