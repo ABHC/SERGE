@@ -5,11 +5,6 @@ $resultTab             = '';
 $wikiTab               = '';
 $settingTab            = '';
 
-if (!isset($_POST['conn_pseudo']))
-{
-	$_POST['conn_pseudo'] = '';
-}
-
 include_once('model/get_text.php');
 include_once('model/get_text_var.php');
 include_once('model/read.php');
