@@ -1,6 +1,16 @@
 function updatePrice(duration)
 {
-	price = duration * 30;
+	function escapeHTML(unsafe)
+	{
+		return unsafe
+					.replace(/&/g, "&amp;")
+					.replace(/</g, "&lt;")
+					.replace(/>/g, "&gt;")
+					.replace(/"/g, "&quot;")
+					.replace(/'/g, "&#039;");
+	}
 
-	document.getElementById('price').innerHTML = price+"€";
+	var price = duration * 30;
+
+	document.getElementById("price").innerHTML = escapeHTML(`${price}€`);
 }

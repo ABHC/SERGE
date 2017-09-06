@@ -1,6 +1,6 @@
 function counter(d, h, m, s, divId)
 {
-	function escapeHtml(unsafe)
+	function escapeHTML(unsafe)
 	{
 		return unsafe
 					.replace(/&/g, "&amp;")
@@ -65,7 +65,7 @@ function counter(d, h, m, s, divId)
 		dt = "0"+d;
 	}
 
-	e.innerHTML = escapeHtml(dt+":"+ht+":"+mt+":"+st);
+	e.innerHTML = escapeHTML(`${dt}:${ht}:${mt}:${st}`);
 
 	s--;
 	timer = setTimeout("counter("+d+","+h+","+m+","+s+",\""+divId+"\")",1000);
