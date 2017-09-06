@@ -1,67 +1,60 @@
 <?php
-
+// Processing data with nonce
+$_POST['nonce'] = isset($_POST['nonce']) ? $_POST['nonce']: "";
+$nonce = preg_replace("/[^a-z0-9]/", "", $_POST['nonce']);
 $dataProcessing = FALSE;
-if ((isset($_POST['nonce']) AND isset($_SESSION['nonce :' . $_POST['nonce']]) AND $_SESSION['nonce :' . $_POST['nonce']] === 0) OR
-	 ((isset($_GET['nonce']) AND isset($_SESSION['nonce :' . $_GET['nonce']]) AND $_SESSION['nonce :' . $_GET['nonce']] === 0)))
+if (!empty($nonce) AND isset($_SESSION['nonce :' . $nonce]) AND $_SESSION['nonce :' . $nonce] === 0)
 {
 	$dataProcessing = TRUE;
 	foreach ($unsafeData as $varDetails)
 	{
-		if (empty($varDetails[3]))
+		if (empty($varDetails[3]) AND $varDetails[2] === 'POST')
 		{
-			if ($varDetails[2] === 'POST')
-			{
-				$data[$varDetails[0]] = !empty($_POST[$varDetails[1]]) ? $_POST[$varDetails[1]]: "";
-			}
-			elseif ($varDetails[2] === 'GET')
-			{
-				$data[$varDetails[0]] = !empty($_GET[$varDetails[1]]) ? $_GET[$varDetails[1]]: "";
-			}
+			$data[$varDetails[0]] = !empty($_POST[$varDetails[1]]) ? $_POST[$varDetails[1]]: "";
 		}
-		elseif ($varDetails[3] === 'str')
+		elseif ($varDetails[3] === 'str' AND $varDetails[2] === 'POST')
 		{
-			if ($varDetails[2] === 'POST')
-			{
-				$data[$varDetails[0]] = !empty(htmlspecialchars($_POST[$varDetails[1]])) ? $_POST[$varDetails[1]]: "";
-			}
-			elseif ($varDetails[2] === 'GET')
-			{
-				$data[$varDetails[0]] = !empty(htmlspecialchars($_GET[$varDetails[1]])) ? $_GET[$varDetails[1]]: "";
-			}
+			$data[$varDetails[0]] = !empty(htmlspecialchars($_POST[$varDetails[1]])) ? $_POST[$varDetails[1]]: "";
 		}
-		elseif ($varDetails[3] === 'email')
+		elseif ($varDetails[3] === 'email' AND $varDetails[2] === 'POST')
 		{
-			if ($varDetails[2] === 'POST')
-			{
-				$data[$varDetails[0]] = !empty(filter_var($_POST[$varDetails[1]], FILTER_SANITIZE_EMAIL)) ? $_POST[$varDetails[1]]: "";
-			}
-			elseif ($varDetails[2] === 'GET')
-			{
-				$data[$varDetails[0]] = !empty(filter_var($_GET[$varDetails[1]], FILTER_SANITIZE_EMAIL)) ? $_GET[$varDetails[1]]: "";
-			}
+			$data[$varDetails[0]] = !empty(filter_var($_POST[$varDetails[1]], FILTER_SANITIZE_EMAIL)) ? $_POST[$varDetails[1]]: "";
 		}
-		elseif ($varDetails[3] === 'Az')
+		elseif ($varDetails[3] === 'Az' AND $varDetails[2] === 'POST')
 		{
-			if ($varDetails[2] === 'POST')
-			{
-				$data[$varDetails[0]] = !empty(preg_replace("/[^A-Za-z]/", "", $_POST[$varDetails[1]])) ? $_POST[$varDetails[1]]: "";
-			}
-			elseif ($varDetails[2] === 'GET')
-			{
-				$data[$varDetails[0]] = !empty(preg_replace("/[^A-Za-z]/", "", $_GET[$varDetails[1]])) ? $_GET[$varDetails[1]]: "";
-			}
+			$data[$varDetails[0]] = !empty(preg_replace("/[^A-Za-z]/", "", $_POST[$varDetails[1]])) ? $_POST[$varDetails[1]]: "";
 		}
-	}
-
-	if (!empty($_POST['nonce']))
-	{
-		$nonce = $_POST['nonce'];
-	}
-	elseif (!empty($_GET['nonce']))
-	{
-		$nonce = $_GET['nonce'];
+		elseif ($varDetails[3] === '09' AND $varDetails[2] === 'POST')
+		{
+			$data[$varDetails[0]] = !empty(preg_replace("/[^0-9]/", "", $_POST[$varDetails[1]])) ? $_POST[$varDetails[1]]: "";
+		}
 	}
 
 	unset($SESSION['nonce :' . $nonce]);
+}
+
+// Processing data without nonce
+foreach ($unsafeData as $varDetails)
+{
+	if (empty($varDetails[3]) AND $varDetails[2] === 'GET')
+	{
+		$data[$varDetails[0]] = !empty($_GET[$varDetails[1]]) ? $_GET[$varDetails[1]]: "";
+	}
+	elseif ($varDetails[3] === 'str' AND $varDetails[2] === 'GET')
+	{
+		$data[$varDetails[0]] = !empty(htmlspecialchars($_GET[$varDetails[1]])) ? $_GET[$varDetails[1]]: "";
+	}
+	elseif ($varDetails[3] === 'email' AND $varDetails[2] === 'GET')
+	{
+		$data[$varDetails[0]] = !empty(filter_var($_GET[$varDetails[1]], FILTER_SANITIZE_EMAIL)) ? $_GET[$varDetails[1]]: "";
+	}
+	elseif ($varDetails[3] === 'Az' AND $varDetails[2] === 'GET')
+	{
+		$data[$varDetails[0]] = !empty(preg_replace("/[^A-Za-z]/", "", $_GET[$varDetails[1]])) ? $_GET[$varDetails[1]]: "";
+	}
+	elseif ($varDetails[3] === '09' AND $varDetails[2] === 'GET')
+	{
+		$data[$varDetails[0]] = !empty(preg_replace("/[^0-9]/", "", $_GET[$varDetails[1]])) ? $_GET[$varDetails[1]]: "";
+	}
 }
 ?>
