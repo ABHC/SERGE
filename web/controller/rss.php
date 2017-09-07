@@ -1,15 +1,23 @@
 <?php
 include_once('model/read.php');
 
-$_GET['token'] = preg_replace("/\.php/", "", $_GET['token']);
-preg_match("/[A-Fa-f0]{8}/", $_GET['token'], $token);
+
+# Data processing
+$unsafeData = array();
+$unsafeData = array_merge($unsafeData, array(array('token', 'token', 'GET', 'str')));
+
+include_once('controller/dataProcessing.php');
+
+
+$data['token'] = preg_replace("/\.php/", "", $data['token']);
+preg_match("/[A-Fa-f0]{8}/", $data['token'], $token);
 
 $checkCol = array(array("token", "=", $token[0], "AND"),
 array("premium", "=" , 1, ""));
 $user = read('users_table_serge', 'id, users', $checkCol, '', $bdd);
 $user = $user[0];
 
-preg_match("/[sp]$/", $_GET['token'], $resultType);
+preg_match("/[sp]$/", $data['token'], $resultType);
 
 if (!empty($user))
 {
