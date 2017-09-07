@@ -143,10 +143,10 @@ a
 [type="checkbox"]:checked + label
 {
 	position: relative;
-	top: 5px;
-	margin-right: 15px;
-	width: 10px;
-	height: 10px;
+	top: 0;
+	margin-right: 20px;
+	width: 15px;
+	height: 15px;
 }
 
 [type="checkbox"]:not(:checked) + label:before
@@ -155,9 +155,10 @@ a
 	position: absolute;
 	left: 0;
 	top: 0;
-	height: 10px;
-	width: 10px;
+	height: 15px;
+	width: 15px;
 	border: 1px solid rgba(255,255,255, 0.15);
+	border-radius: 3px;
 	background-color: rgba(255, 255, 255, 0.15);
 	transition: all .3s;
 }
@@ -169,9 +170,10 @@ a
 	position: absolute;
 	left: 0;
 	top: 0;
-	height: 10px;
-	width: 10px;
+	height: 15px;
+	width: 15px;
 	border: 1px solid rgba(255,255,255, 0.15);
+	border-radius: 3px;
 	background-color: rgba(255, 255, 255, 0.3);
 	transition: all .3s;
 }
@@ -190,14 +192,14 @@ a
 	position: absolute;
 	top: -8px;
 	left: -1px;
-	font-size: 20px;
+	font-size: 25px;
 	color: #d5d3d3;
 	text-align: center;
 }
 
 h2
 {
-	font-size: 4vw;
+	font-size: 40px;
 	font-weight: bold;
 	letter-spacing: 1pt;
 	margin-bottom: 0;
@@ -205,7 +207,7 @@ h2
 
 h3
 {
-	font-size: 2.8vw;
+	font-size: 28px;
 	font-weight: 200;
 	letter-spacing: 1pt;
 	margin-top: 15px;
