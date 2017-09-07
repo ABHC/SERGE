@@ -553,11 +553,11 @@ elseif ($userSettings['mail_design'] === 'type')
 }
 
 # Privacy
-if ($userSettings['record_read'] === 0)
+if ($userSettings['record_read'] == 0)
 {
 	$recordRead = '';
 }
-elseif ($userSettings['record_read'] === 1)
+elseif ($userSettings['record_read'] == 1)
 {
 	$recordRead = 'checked';
 }

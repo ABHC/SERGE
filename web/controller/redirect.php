@@ -2,57 +2,55 @@
 include_once('model/read.php');
 include_once('model/update.php');
 
-if (isset($_GET['link']) AND isset($_GET['id']) AND isset($_GET['hash']))
+# Data processing
+$unsafeData = array();
+$unsafeData = array_merge($unsafeData, array(array('linkId', 'id', 'GET', '09')));
+$unsafeData = array_merge($unsafeData, array(array('token', 'token', 'GET', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('type', 'type', 'GET', 'Az')));
+
+include_once('controller/dataProcessing.php');
+
+$redirect = 'error404';
+
+if (!empty($data['linkId']) AND !empty($data['token']) AND !empty($data['type']))
 {
-	$link = urldecode($_GET['link']);
-	$id   = htmlspecialchars($_GET['id']);
-	$type = htmlspecialchars($_GET['type']);
-	$hash = htmlspecialchars($_GET['hash']);
+	# Read id bound to the token
+	$checkCol = array(array("token", "=", $data['token'], ""));
+	$result = read('users_table_serge', 'id', $checkCol, '', $bdd);
+	$userId = $result[0]['id'];
 
-	# Read hash password and pseudo for user with this id
-	$checkCol = array(array("id", "=", $id, ""));
-	$result = read('users_table_serge', 'users, password', $checkCol, '', $bdd);
-	$passwordPseudoWithId = $result[0];
-
-	if (!empty($passwordPseudoWithId))
+	if (!empty($userId))
 	{
-		$pass   = $passwordPseudoWithId['password'];
-		$pseudo = $passwordPseudoWithId['users'];
-		$salt   = 'blackSalt';
-
-		$checkHash = hash('sha256', $salt . ':' . $pass . $pseudo . $id);
-
-		if ($hash === $checkHash)
+		if ($data['type'] == 'news')
 		{
-			$userId = ',' . $id . ',';
-			if ($type == 'news')
-			{
-				$tableName = 'result_news_serge';
-			}
-			elseif ($type == 'sciences')
-			{
-				$tableName = 'result_science_serge';
-			}
-			elseif ($type == 'patents')
-			{
-				$tableName = 'result_patents_serge';
-			}
-			$updateCol = array(array("read_status", $userId));
-			$checkCol  = array(array("link", "=", $link, ""));
-			$execution = update($tableName, $updateCol, $checkCol, '', $bdd);
+			$tableName = 'result_news_serge';
 		}
+		elseif ($data['type'] == 'sciences')
+		{
+			$tableName = 'result_science_serge';
+		}
+		elseif ($data['type'] == 'patents')
+		{
+			$tableName = 'result_patents_serge';
+		}
+		$checkCol = array(array("id", "=", $data['linkId'], "AND"),
+		array("owners", "l", '%,' . $userId . ',%', ""));
+		$result = read($tableName, 'link, read_status', $checkCol, '', $bdd);
+		$link = $result[0]['link'];
+		$readStatus = $result[0]['read_status'];
 
-		header("Location: $link");
-	}
-	else
-	{
-		header("Location: error404");
+		if (!empty($link))
+		{
+			$arrayReadStatus = explode(",", $readStatus);
+			if (!in_array($userId, $arrayReadStatus))
+			{
+				$updateCol = array(array("read_status", $readStatus . $userId . ','));
+				$checkCol  = array(array("id", "=", $data['linkId'], ""));
+				$execution = update($tableName, $updateCol, $checkCol, '', $bdd);
+			}
+			$redirect = $link;
+		}
 	}
 }
-else
-{
-	header("Location: error404");
-}
-
-
+header("Location: $redirect");
 ?>

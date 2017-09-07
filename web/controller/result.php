@@ -128,16 +128,10 @@ if ($dataProcessing AND !empty($data['deleteLink']))
 
 # Record when a link is click
 $checkCol = array(array("users", "=", $_SESSION['pseudo'], ""));
-$recordRead = read('users_table_serge', 'id, password, record_read', $checkCol, '', $bdd);
-
-if ($recordRead[0]['record_read'] === 1)
+$recordRead = read('users_table_serge', 'record_read, token', $checkCol, '', $bdd);
+if ($recordRead[0]['record_read'] == 1)
 {
-	$pass       = $recordRead[0]['password'];
-	$id         = $recordRead[0]['id'];
-	$pseudo     = $_SESSION['pseudo'];
-	$salt       = 'blackSalt';
-	$hash       =  hash('sha256', $salt . ':' . $pass . $pseudo . $id);
-	$recordLink = 'redirect?id=' . $id . '&type=' . $type .'&hash=' . $hash . '&link=';
+	$recordLink = 'redirect?type=' . $type .'&token=' . $recordRead[0]['token'] . '&id=';
 }
 
 $checkCol = array(array($ownersColumn, "l", '%' . $userId . '%', ""));
