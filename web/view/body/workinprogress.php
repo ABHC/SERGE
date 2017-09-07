@@ -10,6 +10,7 @@
 	<script>counter(<?php echo $day; ?>,<?php echo $hour; ?>,<?php echo $minute; ?>,<?php echo $second; ?>,"timer");</script>
 
 	<form method="post" action="workinprogress">
-		<input type="email" name="email" id="email" placeholder="Enter your email adress" value=""/> <input title="Stay tuned" class="submit" type="submit" name="newsletter" value="" />
+		<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
+		<input type="email" name="email" id="email" placeholder="Enter your email adress" value=""/> <input title="Stay tuned" class="submit" type="submit" name="newsletter" value="submit" />
 	</form>
 </div>
