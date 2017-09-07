@@ -10,11 +10,12 @@ if (isset($_GET['link']) AND isset($_GET['id']) AND isset($_GET['hash']))
 	$hash = htmlspecialchars($_GET['hash']);
 
 	# Read hash password and pseudo for user with this id
-	include_once('model/readPasswordPseudoWithId.php');
+	$checkCol = array(array("id", "=", $id, ""));
+	$result = read('users_table_serge', 'users, password', $checkCol, '', $bdd);
+	$passwordPseudoWithId = $result[0];
 
 	if (!empty($passwordPseudoWithId))
 	{
-
 		$pass   = $passwordPseudoWithId['password'];
 		$pseudo = $passwordPseudoWithId['users'];
 		$salt   = 'blackSalt';
@@ -24,7 +25,21 @@ if (isset($_GET['link']) AND isset($_GET['id']) AND isset($_GET['hash']))
 		if ($hash === $checkHash)
 		{
 			$userId = ',' . $id . ',';
-			include_once('model/changeReadStatus.php');
+			if ($type == 'news')
+			{
+				$tableName = 'result_news_serge';
+			}
+			elseif ($type == 'sciences')
+			{
+				$tableName = 'result_science_serge';
+			}
+			elseif ($type == 'patents')
+			{
+				$tableName = 'result_patents_serge';
+			}
+			$updateCol = array(array("read_status", $userId));
+			$checkCol  = array(array("link", "=", $link, ""));
+			$execution = update($tableName, $updateCol, $checkCol, '', $bdd);
 		}
 
 		header("Location: $link");
