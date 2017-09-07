@@ -20,6 +20,10 @@ if (!empty($nonce) AND isset($_SESSION['nonce :' . $nonce]) AND $_SESSION['nonce
 		{
 			$data[$varDetails[0]] = !empty(filter_var($_POST[$varDetails[1]], FILTER_SANITIZE_EMAIL)) ? $_POST[$varDetails[1]]: "";
 		}
+		elseif ($varDetails[3] === 'url' AND $varDetails[2] === 'POST')
+		{
+			$data[$varDetails[0]] = !empty(filter_var($_POST[$varDetails[1]], FILTER_SANITIZE_URL)) ? $_POST[$varDetails[1]]: "";
+		}
 		elseif ($varDetails[3] === 'Az' AND $varDetails[2] === 'POST')
 		{
 			$data[$varDetails[0]] = !empty(preg_replace("/[^A-Za-z]/", "", $_POST[$varDetails[1]])) ? $_POST[$varDetails[1]]: "";
