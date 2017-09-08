@@ -22,11 +22,12 @@
 	?>
 	<h1><?php get_t('title_window0_watchpack', $bdd); ?></h1>
 	<form method="post" action="watchPack?type=create<?php echo htmlspecialchars($packIdURL); ?>">
+		<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
 		<input type="hidden" name="scrollPos" id="scrollPos" value="
 		<?php
-		if (isset($_POST['scrollPos']))
+		if (!empty($data['scrollPos']))
 		{
-			echo htmlspecialchars($_POST['scrollPos']);
+			echo $data['scrollPos'];
 		}
 		else
 		{
@@ -40,7 +41,7 @@
 		<div class="dataPackManagement">
 			<h2><?php get_t('input1_window0_watchpack', $bdd); ?></h2>
 			<div>
-				<input title="Add" class="submit" type="submit" name="addNewPack" value="" />
+				<input title="Add" class="submit" type="submit" name="addNewPack" value="add" />
 				<select name="watchPackList" onchange="this.form.submit();">
 					<option value="NewPack"><?php get_t('select1_window0_watchpack', $bdd); ?>&nbsp;&nbsp;</option>
 					<?php
@@ -94,7 +95,7 @@
 		<div class="keywordManagement">
 			<h2><?php get_t('window2_title_setting', $bdd); ?></h2>
 			<div class="newsInput">
-				<input title="Add new keyword" class="submit" type="submit" value="" name="addNewKeyword"/>
+				<input title="Add new keyword" class="submit" type="submit" value="add" name="addNewKeyword"/>
 				<select name="sourceKeyword" id="sourceKeyword">
 					<?php
 					foreach ($listAllSources as $sourcesList)
@@ -118,7 +119,7 @@
 				<input type="text" class="keywordInput" name="newKeyword" id="keyword" placeholder="Keyword,next keyword, ..." />
 			</div>
 			<div class="newsInput">
-				<input title="Add" name="addNewSource" class="submit" type="submit" value="" />
+				<input title="Add" name="addNewSource" class="submit" type="submit" value="add" />
 				<select name="sourceType" id="sourceType">
 					<option value="inputSource"><?php get_t('select2_window2_setting', $bdd); ?></option>
 				</select>
@@ -316,10 +317,10 @@
 					$selected['jr'] = '';
 					$selected['cat'] = '';
 					$selected['all'] = '';
-					$selected[$_POST['scienceType' . $cpt]] = 'selected';
+					$selected[$data['scienceType' . $cpt]] = 'selected';
 
 
-					if ($_POST['openParenthesis' . $cpt] == "active")
+					if ($data['openParenthesis' . $cpt] == "active")
 					{
 						$checked['openParenthesis' . $cpt] = 'checked';
 					}
@@ -335,10 +336,10 @@
 						<option value="all" ' . htmlspecialchars($selected['all']) . '>All</option>
 					</select>
 					<span class="arrDownBorder">▾</span>
-					<input type="text" class="query" name="scienceQuery' . htmlspecialchars($cpt) . '" id="scienceQuery0' . htmlspecialchars($cpt) . '" placeholder="Keyword" value="' .  htmlspecialchars($_POST['scienceQuery' . $cpt]) . '"/>';
+					<input type="text" class="query" name="scienceQuery' . htmlspecialchars($cpt) . '" id="scienceQuery0' . htmlspecialchars($cpt) . '" placeholder="Keyword" value="' .  htmlspecialchars($data['scienceQuery' . $cpt]) . '"/>';
 
 
-					if ($_POST['closeParenthesis' . $cpt] == "active")
+					if ($data['closeParenthesis' . $cpt] == "active")
 					{
 						$checked['closeParenthesis' . $cpt] = 'checked';
 					}
@@ -351,9 +352,9 @@
 					$checked['OR'] = '';
 					$checked['AND'] = '';
 					$checked['NOTAND'] = '';
-					$checked[$_POST['andOrAndnot' . $cpt]] = 'checked';
+					$checked[$data['andOrAndnot' . $cpt]] = 'checked';
 
-					if (empty($_POST['andOrAndnot' . $cpt]))
+					if (empty($data['andOrAndnot' . $cpt]))
 					{
 						$checked['OR'] = 'checked';
 					}
@@ -560,7 +561,7 @@
 					$selected['SIS'] = '';
 					$selected['TPO'] = '';
 					$selected['WO'] = '';
-					$selected[$_POST['patentType' . $cpt]] = 'selected';
+					$selected[$data['patentType' . $cpt]] = 'selected';
 
 					echo '
 				<select title="Type" class="queryType" name="patentType' . htmlspecialchars($cpt) . '" id="patentType' . htmlspecialchars($cpt) . '">
@@ -625,12 +626,12 @@
 					<option value="WO" ' . htmlspecialchars($selected['WO']) . '>WIPO Publication Number</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" class="query" name="patentQuery' . htmlspecialchars($cpt) . '" id="patentQuery' . htmlspecialchars($cpt) . '" placeholder="Keyword" value="' . htmlspecialchars($_POST['patentQuery' . $cpt]) . '" />';
+				<input type="text" class="query" name="patentQuery' . htmlspecialchars($cpt) . '" id="patentQuery' . htmlspecialchars($cpt) . '" placeholder="Keyword" value="' . $data['patentQuery' . $cpt] . '" />';
 
 				$cpt++;
 
 				$checked = '';
-				if ($_POST['andOrPatent' . $cpt] == 'OR')
+				if ($data['andOrPatent' . $cpt] == 'OR')
 				{
 					$checked = 'checked';
 				}
@@ -827,7 +828,7 @@
 								<td>' . htmlspecialchars($watchPack['category']) . '</td>
 								<td>' . date("H:i d/m/o", $watchPack['update_date']) . '</td>
 								<td>' . htmlspecialchars($watchPack['language']) . '</td>
-								<td><form method="post" action="watchPack">' . htmlspecialchars($watchPack['NumberOfStars']) . '<input title="' . htmlspecialchars($starTitle) . '" name="AddStar" class="star ' . htmlspecialchars($colorStar) . '" type="submit" value="&#9733; ' . htmlspecialchars($watchPack['id']) . '" /></form></td>
+								<td><form method="post" action="watchPack"><input type="hidden" name="nonce" value="' . $nonce . '"/>' . htmlspecialchars($watchPack['NumberOfStars']) . '<input title="' . htmlspecialchars($starTitle) . '" name="AddStar" class="star ' . htmlspecialchars($colorStar) . '" type="submit" value="&#9733; ' . htmlspecialchars($watchPack['id']) . '" /></form></td>
 							</tr>';
 						}
 						?>

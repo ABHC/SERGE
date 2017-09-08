@@ -4,6 +4,7 @@ include_once('controller/accessLimitedToSignInPeople.php');
 include_once('model/get_text.php');
 include_once('model/read.php');
 include_once('model/update.php');
+include_once('controller/generateNonce.php');
 
 // Define variables
 $actualLetter = '';
@@ -11,6 +12,101 @@ $style = '';
 $orderByKeyword = '';
 $orderBySource  = '';
 $orderByType    = '';
+
+
+# Data processing
+$unsafeData = array();
+$unsafeData = array_merge($unsafeData, array(array('action', 'action', 'GET', 'Az')));
+$unsafeData = array_merge($unsafeData, array(array('query', 'query', 'GET', '09')));
+$unsafeData = array_merge($unsafeData, array(array('type', 'type', 'GET', 'Az')));
+$unsafeData = array_merge($unsafeData, array(array('orderBy', 'orderBy', 'GET', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('packId', 'packId', 'GET', '09')));
+
+$unsafeData = array_merge($unsafeData, array(array('AddStar', 'AddStar', 'POST', '09')));
+$unsafeData = array_merge($unsafeData, array(array('watchPackList', 'watchPackList', 'POST', '09')));
+$unsafeData = array_merge($unsafeData, array(array('addNewPack', 'addNewPack', 'POST', 'Az')));
+$unsafeData = array_merge($unsafeData, array(array('watchPackName', 'watchPackName', 'POST', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('watchPackDescription', 'watchPackDescription', 'POST', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('watchPackCategory', 'watchPackCategory', 'POST', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('language', 'language', 'POST', 'str')));
+
+$unsafeData = array_merge($unsafeData, array(array('scrollPos', 'scrollPos', 'POST', '09')));
+$unsafeData = array_merge($unsafeData, array(array('sourceType', 'sourceType', 'POST', 'Az')));
+$unsafeData = array_merge($unsafeData, array(array('newSource', 'newSource', 'POST', 'url')));
+$unsafeData = array_merge($unsafeData, array(array('addNewKeyword', 'addNewKeyword', 'POST', 'Az')));
+$unsafeData = array_merge($unsafeData, array(array('sourceKeyword', 'sourceKeyword', 'POST', '09')));
+$unsafeData = array_merge($unsafeData, array(array('newKeyword', 'newKeyword', 'POST', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('delKeyword', 'delKeyword', 'POST', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('disableKeyword', 'disableKeyword', 'POST', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('activateKeyword', 'activateKeyword', 'POST', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('addNewSource', 'addNewSource', 'POST', 'Az')));
+$unsafeData = array_merge($unsafeData, array(array('delSource', 'delSource', 'POST', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('disableSource', 'disableSource', 'POST', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('activateSource', 'activateSource', 'POST', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('delEditingScienceQuery', 'delEditingScienceQuery', 'POST', '09')));
+$unsafeData = array_merge($unsafeData, array(array('extendScience', 'extendScience', 'POST', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('scienceQuerySubmit', 'scienceQuerySubmit', 'POST', 'Az')));
+$unsafeData = array_merge($unsafeData, array(array('delQueryScience', 'delQueryScience', 'POST', '09')));
+$unsafeData = array_merge($unsafeData, array(array('disableQueryScience', 'disableQueryScience', 'POST', '09')));
+$unsafeData = array_merge($unsafeData, array(array('activateQueryScience', 'activateQueryScience', 'POST', '09')));
+$unsafeData = array_merge($unsafeData, array(array('delEditingPatentQuery', 'delEditingPatentQuery', 'POST', '09')));
+$unsafeData = array_merge($unsafeData, array(array('extendPatent', 'extendPatent', 'POST', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('patentQuerySubmit', 'scienceQuerySubmit', 'POST', 'Az')));
+$unsafeData = array_merge($unsafeData, array(array('delQueryPatent', 'delQueryScience', 'POST', '09')));
+$unsafeData = array_merge($unsafeData, array(array('disableQueryPatent', 'disableQueryScience', 'POST', '09')));
+$unsafeData = array_merge($unsafeData, array(array('activateQueryPatent', 'activateQueryScience', 'POST', '09')));
+
+foreach($_POST as $key => $val)
+{
+		$key = htmlspecialchars($key);
+		if (preg_match("/radio-s./", $key, $name))
+		{
+			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
+		}
+		elseif (preg_match("/radio-ks[0-9]+/", $key, $name))
+		{
+			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
+		}
+		elseif(preg_match("/andOrAndnot[0-9]+/", $key, $name))
+		{
+			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
+		}
+		elseif(preg_match("/openParenthesis[0-9]+/", $key, $name))
+		{
+			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
+		}
+		elseif(preg_match("/closeParenthesis[0-9]+/", $key, $name))
+		{
+			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
+		}
+		elseif(preg_match("/scienceType[0-9]+/", $key, $name))
+		{
+			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
+		}
+		elseif(preg_match("/scienceQuery[0-9]+/", $key, $name))
+		{
+			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
+		}
+		elseif(preg_match("/andOrPatent[0-9]+/", $key, $name))
+		{
+			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
+		}
+		elseif(preg_match("/patentType[0-9]+/", $key, $name))
+		{
+			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
+		}
+		elseif(preg_match("/patentQuery[0-9]+/", $key, $name))
+		{
+			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
+		}
+}
+
+include_once('controller/dataProcessing.php');
+
+# Nonce
+$nonceTime = time();
+$nonce = getNonce($nonceTime);
+
 
 if (empty($_SESSION['cptScienceQuery']))
 {
@@ -23,17 +119,17 @@ if (empty($_SESSION['cptPatentQuery']))
 }
 
 # Scroll position
-if (isset($_POST['scrollPos']))
+if (!empty($data['scrollPos']))
 {
-	$_SESSION['scrollPos'] = htmlspecialchars($_POST['scrollPos']);
+	$_SESSION['scrollPos'] = $data['scrollPos'];
 }
-elseif (!isset($_SESSION['scrollPos']) OR $_SESSION['scrollPos'] == '')
+elseif (!empty($_SESSION['scrollPos']))
 {
 	$_SESSION['scrollPos'] = 0;
 }
 
 # Save folding state
-if (isset($_POST['sourceType']))
+if (!empty($data['sourceType']))
 {
 	foreach($_SESSION as $key => $val)
 	{
@@ -46,10 +142,9 @@ if (isset($_POST['sourceType']))
 			$_SESSION[$key] = '';
 		}
 	}
-	foreach($_POST as $key => $val)
+	foreach($data as $key => $val)
 	{
 		$key = htmlspecialchars($key);
-		$val = htmlspecialchars($val);
 		if (preg_match("/radio-s./", $key))
 		{
 			$_SESSION[$key] = $val;
@@ -69,7 +164,7 @@ $settingTab = "active";
 # Type
 if (!empty($_GET['type']))
 {
-	$type = htmlspecialchars($_GET['type']);
+	$type = $_GET['type'];
 
 	if ($type === 'add')
 	{
@@ -157,25 +252,21 @@ if ($type === 'add')
 		}
 	}
 
-	$orderBy = htmlspecialchars($_GET['orderBy']);
+	$orderBy = $data['orderBy'];
 
 	$colOrder['language'] = $colOrder['language'] . PHP_EOL . '</select>
 	<input type="hidden" name="orderBy" value="' . $orderBy . '"/>';
 
 	# Add a star
-	$pattern = '★ [0-9]+';
-	if (!empty($_POST['AddStar']) AND preg_match("/$pattern/", $_POST['AddStar']))
+	if (!empty($data['AddStar']))
 	{
-		preg_match("/ [0-9]+/", $_POST['AddStar'], $packId);
-		$packId = $packId[0];
-
 		/*$req = $bdd->prepare('SELECT rating FROM watch_pack_serge WHERE id = :id');
 		$req->execute(array(
 			'id' => $packId));
 			$usersStars = $req->fetch();
 			$req->closeCursor();*/
 
-		$checkCol = array(array("id", "=", $packId, ""));
+		$checkCol = array(array("id", "=", $data['packId'], ""));
 		$result = read('watch_pack_serge', 'rating', $checkCol, '', $bdd);
 		$usersStars = $result[0];
 
@@ -201,16 +292,16 @@ if ($type === 'add')
 			$req->closeCursor();*/
 
 		$updateCol = array(array("rating", $usersStars));
-		$checkCol = array(array("id", "=", $packId, ""));
+		$checkCol = array(array("id", "=", $data['packId'], ""));
 		$execution = update('watch_pack_serge', $updateCol, $checkCol, '', $bdd);
 
-			header('Location: watchPack');
+			//header('Location: watchPack');
 	}
 
 	# Order results
 	if (!empty($_GET['orderBy']))
 	{
-		$orderBy = htmlspecialchars($_GET['orderBy']);
+		$orderBy = $_GET['orderBy'];
 		if ($orderBy === 'name')
 		{
 			$colOrder['name'] = '▾';
@@ -327,19 +418,18 @@ if ($type === 'add')
 }
 else
 {
-	if (!empty($_GET['packId']))
+	if (!empty($data['packId']))
 	{
-		preg_match("/[0-9]+/", $_GET['packId'], $pack_idInUse);
 
 		/*$req = $bdd->prepare('SELECT name, description, category, language FROM watch_pack_serge WHERE author = :pseudo AND id = :pack_idInUse');
 		$req->execute(array(
 			'pseudo' => $_SESSION['pseudo'],
-			'pack_idInUse' => $pack_idInUse[0]));
+			'pack_idInUse' => $data['packId']));
 			$packDetails = $req->fetch();
 			$req->closeCursor();*/
 
 		$checkCol = array(array("author", "=", $_SESSION['pseudo'], "AND"),
-											array("id", "=", $pack_idInUse[0], ""));
+											array("id", "=", $data['packId'], ""));
 		$result = read('watch_pack_serge', 'name, description, category, language', $checkCol, '', $bdd);
 		$packDetails = $result[0];
 
@@ -350,11 +440,11 @@ else
 
 		/*$reqReadPackSources = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE pack_id = :pack_id AND query = "[!source!]"');
 		$reqReadPackSources->execute(array(
-			'pack_id' => $pack_idInUse[0]));
+			'pack_id' => $data['packId']));
 			$reqReadPackSourcestmp = $reqReadPackSources->fetchAll();
 			$reqReadPackSources->closeCursor();*/
 
-		$checkCol = array(array("pack_id", "=", $pack_idInUse[0], "AND"),
+		$checkCol = array(array("pack_id", "=", $data['packId'], "AND"),
 											array("query", "=", '[!source!]', ""));
 		$resultPackSources = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
 
@@ -368,9 +458,9 @@ else
 				}
 			}
 
-			/*$sourcesIds = implode(',', $packSource);
+			$sourcesIds = implode(',', $packSource);
 
-			$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE id IN ($sourcesIds) ORDER BY name");
+			/*$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE id IN ($sourcesIds) ORDER BY name");
 			$req->execute(array(
 				'user' => $userId,
 				'userDesactivated' => $userIdDesactivated));
@@ -382,11 +472,11 @@ else
 
 			/*$reqReadPackSources = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE pack_id = :pack_id AND query <> "[!source!]"');
 			$reqReadPackSources->execute(array(
-				'pack_id' => $pack_idInUse[0]));
+				'pack_id' => $data['packId']));
 				$reqReadPackSourcestmp = $reqReadPackSources->fetchAll();
 				$reqReadPackSources->closeCursor();*/
 
-			$checkCol = array(array("pack_id", "=", $pack_idInUse[0], "AND"),
+			$checkCol = array(array("pack_id", "=", $data['packId'], "AND"),
 												array("query", "<>", "[!source!]", ""));
 			$packSources = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
 
@@ -446,9 +536,8 @@ else
 	$selectLanguage = $selectLanguage . PHP_EOL . '</select>';
 
 	// Edit a pack
-	if (preg_match("/[0-9]+/", $_POST['watchPackList']) AND isset($_POST['addNewPack']) AND !empty($_POST['watchPackName']) AND !empty($_POST['watchPackDescription']))
+	if (!empty($data['watchPackList']) AND !empty($data['addNewPack']) AND !empty($data['watchPackName']) AND !empty($data['watchPackDescription']))
 	{
-		preg_match("/[0-9]+/", $_POST['watchPackList'], $packIdEdit);
 		// Check if watch pack is own by the user
 		/*$req = $bdd->prepare('SELECT id FROM watch_pack_serge WHERE author = :username AND id = :packIdEdit');
 		$req->execute(array(
@@ -458,7 +547,7 @@ else
 			$req->closeCursor();*/
 
 		$checkCol  = array(array("author", "=", $_SESSION['pseudo'], "AND"),
-											array("id", "=", $packIdEdit[0], ""));
+											array("id", "=", $data['watchPackList'], ""));
 		$packIsOwn = read('watch_pack_serge', '', $checkCol, '', $bdd);
 
 		/*$req = $bdd->prepare('SELECT id FROM watch_pack_serge WHERE name = :newName AND id <> :packIdEdit');
@@ -468,8 +557,8 @@ else
 			$resultName = $req->fetch();
 			$req->closeCursor();*/
 
-		$checkCol  = array(array("name", "=", htmlspecialchars($_POST['watchPackName']), "AND"),
-											array("id", "<>", $packIdEdit[0], ""));
+		$checkCol  = array(array("name", "=", $data['watchPackName'], "AND"),
+											array("id", "<>", $data['watchPackList'], ""));
 		$nameExist = read('watch_pack_serge', '', $checkCol, '', $bdd);
 
 		if (!$packIsOwn AND !$nameExist)
@@ -486,23 +575,21 @@ else
 				'packIdEdit' => $packIdEdit[0]));
 				$req->closeCursor();*/
 
-			$updateCol = array(array("names", htmlspecialchars($_POST['watchPackName'])),
-												array("description", htmlspecialchars($_POST['watchPackDescription'])),
-												array("category", htmlspecialchars($_POST['watchPackCategory']) ),
-												array("language", htmlspecialchars($_POST['language'])),
+			$updateCol = array(array("names", $data['watchPackName']),
+												array("description", $data['watchPackDescription']),
+												array("category", $data['watchPackCategory']),
+												array("language", $data['language']),
 												array("update_date", time()));
-			$checkCol = array(array("id", "=", $packIdEdit[0], ""));
+			$checkCol = array(array("id", "=", $data['watchPackList'], ""));
 			$execution = update('watch_pack_serge', $updateCol, $checkCol, '', $bdd);
 
 		}
 	}
-	elseif (isset($_POST['addNewKeyword']) AND preg_match("/[0-9]+/", $_POST['sourceKeyword']) AND isset($_POST['newKeyword']))
+	elseif (!empty($data['addNewKeyword']) AND !empty($data['sourceKeyword']) AND !empty($data['newKeyword']))
 	{
-		preg_match("/[0-9]+/", $_POST['sourceKeyword'], $sourceId);
+		$newKeywordArray = preg_split('/,/', $data['newKeyword'], -1, PREG_SPLIT_NO_EMPTY);
 
-		$newKeywordArray = preg_split('/,/', htmlspecialchars($_POST['newKeyword']), -1, PREG_SPLIT_NO_EMPTY);
-
-		if ($sourceId[0] === '00')
+		if ($data['sourceKeyword'] === '00')
 		{
 			# Add keyword on all sources
 			foreach ($listAllSources as $sourcesList)
@@ -512,12 +599,12 @@ else
 					/*$req = $bdd->prepare('SELECT id, source FROM watch_pack_queries_serge WHERE lower(query) = lower(:keyword) AND pack_id = :pack_id AND source <> "Science" AND source <> "Patent"');
 					$req->execute(array(
 						'keyword' => $newKeyword,
-						'pack_id' => $pack_idInUse[0]));
+						'pack_id' => $data['packId']));
 						$resultKeyword = $req->fetch();
 						$req->closeCursor();*/
 
 					$checkCol = array(array("LOWER(query)", "=", mb_strtolower($newKeyword), "AND"),
-														array("pack_id", "=", $pack_idInUse[0], "AND"),
+														array("pack_id", "=", $data['packId'], "AND"),
 														array("source", "<>", "Science", "AND"),
 														array("source", "<>", "Patent", ""));
 					$result = read('watch_pack_queries_serge', 'id, source', $checkCol, '', $bdd);
@@ -527,12 +614,12 @@ else
 					{
 						/*$req = $bdd->prepare('INSERT INTO watch_pack_queries_serge (pack_id, query, source) VALUES (:pack_id, :query, :source)');
 						$req->execute(array(
-							'pack_id' => $pack_idInUse[0],
+							'pack_id' => $data['packId'],
 							'query' =>  $newKeyword,
 							'source' => ',' . $sourcesList['id'] . ','));
 							$req->closeCursor();*/
 
-						$insertCol = array(array("pack_id", $pack_idInUse[0]),
+						$insertCol = array(array("pack_id", $data['packId']),
 															array("query",  $newKeyword),
 															array("source", ',' . $sourcesList['id'] . ','));
 						$execution = insert('watch_pack_queries_serge', $insertCol, '', '', $bdd);
@@ -562,7 +649,7 @@ else
 					$resultSource = $req->fetch();
 					$req->closeCursor();*/
 
-				$checkCol = array(array("id", "=", $sourceId[0], ""));
+				$checkCol = array(array("id", "=", $data['sourceKeyword'], ""));
 				$result = read('rss_serge', 'id', $checkCol, '', $bdd);
 				$resultSource = $result[0];
 
@@ -571,31 +658,31 @@ else
 					/*$req = $bdd->prepare('SELECT id, source FROM watch_pack_queries_serge WHERE lower(query) = lower(:keyword) AND pack_id = :pack_id AND source <> "Science" AND source <> "Patent"');
 					$req->execute(array(
 						'keyword' => $newKeyword,
-						'pack_id' => $pack_idInUse[0]));
+						'pack_id' => $data['packId']));
 						$resultKeyword = $req->fetch();
 						$req->closeCursor();*/
 
 					$checkCol = array(array("LOWER(query)", "=", mb_strtolower($newKeyword), "AND"),
-														array("pack_id", "=", $pack_idInUse[0], "AND"),
+														array("pack_id", "=", $data['packId'], "AND"),
 														array("source", "<>", "Science", "AND"),
 														array("source", "<>", "Patent", ""));
 					$result = read('watch_pack_queries_serge', 'id, source', $checkCol, '', $bdd);
 					$resultKeyword = $result[0];
 
-					$newKeywordSource = ',' . $sourceId[0] . ',';
+					$newKeywordSource = ',' . $data['sourceKeyword'] . ',';
 
 					if (empty($resultKeyword))
 					{
 						/*$req = $bdd->prepare('INSERT INTO watch_pack_queries_serge (pack_id, query, source) VALUES (:pack_id, :query, :source)');
 						$req->execute(array(
-							'pack_id' => $pack_idInUse[0],
+							'pack_id' => $data['packId'],
 							'query' =>  $newKeyword,
 							'source' => ',' . $sourceId[0] . ','));
 							$req->closeCursor();*/
 
-						$insertCol = array(array("pack_id", $pack_idInUse[0]),
+						$insertCol = array(array("pack_id", $data['packId']),
 															array("query", $newKeyword),
-															array("source", ',' . $sourceId[0] . ','));
+															array("source", ',' . $data['sourceKeyword'] . ','));
 						$execution = insert('watch_pack_queries_serge', $insertCol, '', '', $bdd);
 					}
 					elseif (!preg_match("/$newKeywordSource/", $resultKeyword['source']))
@@ -606,7 +693,7 @@ else
 							'keywordId' => $resultKeyword['id']));
 							$req->closeCursor();*/
 
-						$updateCol = array(array("source", $resultKeyword['source'] . $sourceId[0] . ','));
+						$updateCol = array(array("source", $resultKeyword['source'] . $data['sourceKeyword'] . ','));
 						$checkCol = array(array("id", "=", $resultKeyword['id'], ""));
 						$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
 					}
@@ -614,7 +701,7 @@ else
 			}
 		}
 	}
-	elseif (isset($_POST['addNewSource']) AND isset($_POST['newSource']))
+	elseif (!empty($data['addNewSource']) AND !empty($data['newSource']))
 	{
 		/*$newSource = htmlspecialchars($_POST['newSource']);
 		$req = $bdd->prepare('SELECT id FROM rss_serge WHERE link = :newSource');
@@ -629,12 +716,12 @@ else
 
 		/*$req = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE query = "[!source!]" AND pack_id = :packIdInUse');
 		$req->execute(array(
-			'packIdInUse' => $pack_idInUse[0]));
+			'packIdInUse' => $data['packId']));
 			$sources = $req->fetch();
 			$req->closeCursor();*/
 
 		$checkCol = array(array("query", "=", "[!source!]", "AND"),
-											array("pack_id", "=", $pack_idInUse[0], ""));
+											array("pack_id", "=", $data['packId'], ""));
 		$result = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
 		$sources = $result[0];
 
@@ -646,11 +733,11 @@ else
 			/*$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :source WHERE pack_id = :packIdInUse AND query = "[!source!]"');
 			$req->execute(array(
 				'source' => $sources['source'] . $resultSource['id'] . ',',
-				'packIdInUse' => $pack_idInUse[0]));
+				'packIdInUse' => $data['packId']));
 				$req->closeCursor();*/
 
 			$updateCol = array(array("source", $sources['source'] . $resultSource['id'] . ','));
-			$checkCol = array(array("pack_id", "=", $pack_idInUse[0], "AND"),
+			$checkCol = array(array("pack_id", "=", $data['packId'], "AND"),
 												array("query", "=", "[!source!]", ""));
 			$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
 		}
@@ -698,11 +785,11 @@ else
 					/*$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :source WHERE pack_id = :packIdInUse AND query = "[!source!]"');
 					$req->execute(array(
 						'source' => $sources['source'] . $resultSource['id'] . ',',
-						'packIdInUse' => $pack_idInUse[0]));
+						'packIdInUse' => $data['packId']));
 						$req->closeCursor();*/
 
 				$updateCol = array(array("source", $sources['source'] . $resultSource['id'] . ','));
-				$checkCol = array(array("pack_id", "=", $pack_idInUse[0], "AND"),
+				$checkCol = array(array("pack_id", "=", $data['packId'], "AND"),
 													array("query", "=", "[!source!]", ""));
 				$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
 			}
@@ -712,26 +799,26 @@ else
 			}
 		}
 	}
-	elseif (isset($_POST['delKeyword']) OR isset($_POST['disableKeyword']) OR isset($_POST['activateKeyword']))
+	elseif (!empty($data['delKeyword']) OR !empty($data['disableKeyword']) OR !empty($data['activateKeyword']))
 	{
 		# Delete, disable, active keyword
-		if (isset($_POST['delKeyword']))
+		if (!empty($data['delKeyword']))
 		{
-			preg_match_all("/[0-9]*&/", htmlspecialchars($_POST['delKeyword']), $matchKeywordAndSource);
+			preg_match_all("/[0-9]*&/", $data['delKeyword'], $matchKeywordAndSource);
 			$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][0]);
 			$keywordIdAction = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][1]);
 			$action          = 'delKeyword';
 		}
-		elseif (isset($_POST['disableKeyword']))
+		elseif (!empty($data['disableKeyword']))
 		{
-			preg_match_all("/[0-9]*&/", htmlspecialchars($_POST['disableKeyword']), $matchKeywordAndSource);
+			preg_match_all("/[0-9]*&/", $data['disableKeyword'], $matchKeywordAndSource);
 			$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][0]);
 			$keywordIdAction = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][1]);
 			$action          = 'disableKeyword';
 		}
-		elseif (isset($_POST['activateKeyword']))
+		elseif (!empty($data['activateKeyword']))
 		{
-			preg_match_all("/[0-9]*&/", htmlspecialchars($_POST['activateKeyword']), $matchKeywordAndSource);
+			preg_match_all("/[0-9]*&/", $data['activateKeyword'], $matchKeywordAndSource);
 			$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][0]);
 			$keywordIdAction = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][1]);
 			$action          = 'activateKeyword';
@@ -745,16 +832,16 @@ else
 				'keywordIdAction' => $keywordIdAction,
 				'sourceIdAction' => "%," . $sourceIdAction . ",%",
 				'sourceIdActionDesactivated' => "%,!" . $sourceIdAction . ",%",
-				'packIdInUse' => $pack_idInUse[0]));
+				'packIdInUse' => $data['packId']));
 				$result = $req->fetch();
 				$req->closeCursor();*/
 
 			$checkCol = array(array("id", "=", $keywordIdAction, "AND"),
-												array("pack_id", "=", $pack_idInUse[0], "AND"),
+												array("pack_id", "=", $data['packId'], "AND"),
 												array("source", "l", "%," . $sourceIdAction . ",%", "OR"),
 												array("id", "=", $keywordIdAction, "AND"),
 												array("source", "l", "%,!" . $sourceIdAction . ",%", "AND"),
-												array("pack_id", "=", $pack_idInUse[0], ""));
+												array("pack_id", "=", $data['packId'], ""));
 			$result = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
 			$result = $result[0];
 
@@ -804,24 +891,24 @@ else
 			}
 		}
 	}
-	elseif (isset($_POST['delSource']) OR isset($_POST['disableSource']) OR isset($_POST['activateSource']))
+	elseif (!empty($data['delSource']) OR !empty($data['disableSource']) OR !empty($data['activateSource']))
 	{
 		# Delete, disable, active sources
-		if (isset($_POST['delSource']))
+		if (!empty($data['delSource']))
 		{
-			preg_match("/[0-9]*&/", htmlspecialchars($_POST['delSource']), $matchSourceId);
+			preg_match("/[0-9]*&/", $data['delSource'], $matchSourceId);
 			$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchSourceId[0]);
 			$action          = 'delSource';
 		}
-		elseif (isset($_POST['disableSource']))
+		elseif (!empty($data['disableSource']))
 		{
-			preg_match("/[0-9]*&/", htmlspecialchars($_POST['disableSource']), $matchSourceId);
+			preg_match("/[0-9]*&/", $data['disableSource'], $matchSourceId);
 			$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchSourceId[0]);
 			$action          = 'disableSource';
 		}
-		elseif (isset($_POST['activateSource']))
+		elseif (!empty($data['activateSource']))
 		{
-			preg_match("/[0-9]*&/", htmlspecialchars($_POST['activateSource']), $matchSourceId);
+			preg_match("/[0-9]*&/", $data['activateSource'], $matchSourceId);
 			$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchSourceId[0]);
 			$action          = 'activateSource';
 		}
@@ -833,16 +920,16 @@ else
 			$req->execute(array(
 				'sourceIdAction' => "%," . $sourceIdAction . ",%",
 				'sourceIdActionDesactivated' => "%,!" . $sourceIdAction . ",%",
-				'packIdInUse' => $pack_idInUse[0]));
+				'packIdInUse' => $data['packId']));
 				$result = $req->fetch();
 				$req->closeCursor();*/
 
 			$checkCol = array(array("query", "=", "[!source!]", "AND"),
-												array("pack_id", "=", $pack_idInUse[0], "AND"),
+												array("pack_id", "=", $data['packId'], "AND"),
 												array("source", "l", "%," . $sourceIdAction . ",%", "OR"),
 												array("id", "=", $keywordIdAction, "AND"),
 												array("source", "l", "%,!" . $sourceIdAction . ",%", "AND"),
-												array("pack_id", "=", $pack_idInUse[0], ""));
+												array("pack_id", "=", $data['packId'], ""));
 			$sourceExist = read('watch_pack_queries_serge', '', $checkCol, '', $bdd);
 
 			# Delete an existing sources
@@ -870,16 +957,16 @@ else
 				// Remove source on all keywords
 				/*$req = $bdd->prepare("SELECT id, source FROM watch_pack_queries_serge WHERE pack_id = :packIdInUse AND (source LIKE :sourceIdAction OR source LIKE :sourceIdActionDesactivated) AND query <> $isSourceOwned");
 				$req->execute(array(
-					'packIdInUse' => $pack_idInUse[0],
+					'packIdInUse' => $data['packId'],
 					'sourceIdAction' => "%," . $sourceIdAction . ",%",
 					'sourceIdActionDesactivated' => "%,!" . $sourceIdAction . ",%"));
 					$result = $req->fetchAll();
 					$req->closeCursor();*/
 
-				$checkCol = array(array("pack_id", "=", $pack_idInUse[0], "AND"),
+				$checkCol = array(array("pack_id", "=", $data['packId'], "AND"),
 													array("query", "<>", $isSourceOwned, "AND"),
 													array("source", "l", "%," . $sourceIdAction . ",%", "OR"),
-													array("pack_id", "=", $pack_idInUse[0], "AND"),
+													array("pack_id", "=", $data['packId'], "AND"),
 													array("query", "<>", $isSourceOwned, "AND"),
 													array("source", "l","%,!" . $sourceIdAction . ",%", ""));
 				$result = read('watch_pack_queries_serge', 'id, source', $checkCol, '', $bdd);
@@ -904,12 +991,12 @@ else
 				// Disable source on all keywords
 				/*$req = $bdd->prepare('SELECT id, source FROM watch_pack_queries_serge WHERE pack_id = :packIdInUse AND source LIKE :sourceIdAction');
 				$req->execute(array(
-					'packIdInUse' => $pack_idInUse[0],
+					'packIdInUse' => $data['packId'],
 					'sourceIdAction' => "%," . $sourceIdAction . ",%"));
 					$result = $req->fetchAll();
 					$req->closeCursor();*/
 
-				$checkCol = array(array("pack_id", "=",$pack_idInUse[0], "AND"),
+				$checkCol = array(array("pack_id", "=",$data['packId'], "AND"),
 													array("source", "l", "%," . $sourceIdAction . ",%", ""));
 				$result = read('watch_pack_queries_serge', 'id, source', $checkCol, '', $bdd);
 
@@ -932,12 +1019,12 @@ else
 				// Activate source on all keywords
 				/*$req = $bdd->prepare('SELECT id, source FROM watch_pack_queries_serge WHERE pack_id = :packIdInUse AND source LIKE :sourceIdAction');
 				$req->execute(array(
-					'packIdInUse' => $pack_idInUse[0],
+					'packIdInUse' => $data['packId'],
 					'sourceIdAction' => "%,!" . $sourceIdAction . ",%"));
 					$result = $req->fetchAll();
 					$req->closeCursor();*/
 
-				$checkCol = array(array("pack_id", "=",$pack_idInUse[0], "AND"),
+				$checkCol = array(array("pack_id", "=",$data['packId'], "AND"),
 													array("source", "l", "%,!" . $sourceIdAction . ",%", ""));
 				$result = read('watch_pack_queries_serge', 'id, source', $checkCol, '', $bdd);
 
@@ -961,7 +1048,7 @@ else
 			}
 		}
 	}
-	elseif (isset($_POST['scienceQuerySubmit']))
+	elseif (!empty($data['scienceQuerySubmit']))
 	{
 		$cpt = 0;
 		$open = 0;
@@ -970,49 +1057,49 @@ else
 		$queryScience_Arxiv = '';
 		$_SESSION['cptScienceQuery'] = 3;
 
-		while(!empty($_POST[$nbscienceType]) AND !empty($_POST['scienceQuery' . $cpt]))
+		while(!empty($data[$nbscienceType]) AND !empty($data['scienceQuery' . $cpt]))
 		{
-			if (!empty($_POST['andOrAndnot' . $cpt])
-					AND preg_match("/(^AND$|^OR$|^NOTAND$)/", $_POST['andOrAndnot' . $cpt]))
+			if (!empty($data['andOrAndnot' . $cpt])
+					AND preg_match("/(^AND$|^OR$|^NOTAND$)/", $data['andOrAndnot' . $cpt]))
 			{
-				$queryScience_Arxiv = $queryScience_Arxiv . '+' . $_POST['andOrAndnot' . $cpt] . '+';
+				$queryScience_Arxiv = $queryScience_Arxiv . '+' . $data['andOrAndnot' . $cpt] . '+';
 			}
-			elseif (!empty($_POST['andOrAndnot' . $cpt])
-							AND !preg_match("/(^AND$|^OR$|^NOTAND$)/", $_POST['andOrAndnot' . $cpt]))
+			elseif (!empty($data['andOrAndnot' . $cpt])
+							AND !preg_match("/(^AND$|^OR$|^NOTAND$)/", $data['andOrAndnot' . $cpt]))
 			{
 				$queryScience_Arxiv = $queryScience_Arxiv . '+OR+';
 			}
 
-			if (preg_match("/(^ti$|^au$|^abs$|^jr$|^cat$|^all$)/", $_POST['scienceType' . $cpt]))
+			if (preg_match("/(^ti$|^au$|^abs$|^jr$|^cat$|^all$)/", $data['scienceType' . $cpt]))
 			{
 				$openParenthesis = '';
 				$closeParenthesis = '';
-				if ($_POST['openParenthesis' . $cpt] === 'active')
+				if ($data['openParenthesis' . $cpt] === 'active')
 				{
 					$openParenthesis = '%28';
 					$open ++;
 				}
 
-				if ($_POST['closeParenthesis' . $cpt] === 'active')
+				if ($data['closeParenthesis' . $cpt] === 'active')
 				{
 					$closeParenthesis = '%29';
 					$close ++;
 				}
 
-				$queryScience_Arxiv = $queryScience_Arxiv . $openParenthesis . $_POST['scienceType' . $cpt] . ':';
+				$queryScience_Arxiv = $queryScience_Arxiv . $openParenthesis . $data['scienceType' . $cpt] . ':';
 
-				$scienceQuery = htmlspecialchars($_POST['scienceQuery' . $cpt]);
+				$scienceQuery = $data['scienceQuery' . $cpt];
 				$scienceQuery = urlencode($scienceQuery);
 				$scienceQuery = preg_replace("/( |:|`|%22|%28|%29)/", "+", $scienceQuery);
 				$queryScience_Arxiv = $queryScience_Arxiv . '%22' . $scienceQuery . '%22' . $closeParenthesis;
 			}
 
 			# Cleaning
-			$_POST['andOrAndnot' . $cpt] = '';
-			$_POST['openParenthesis' . $cpt] = '';
-			$_POST['scienceType' . $cpt] = '';
-			$_POST['scienceQuery' . $cpt] = '';
-			$_POST['closeParenthesis' . $cpt] = '';
+			$data['andOrAndnot' . $cpt] = '';
+			$data['openParenthesis' . $cpt] = '';
+			$data['scienceType' . $cpt] = '';
+			$data['scienceQuery' . $cpt] = '';
+			$data['closeParenthesis' . $cpt] = '';
 
 			$cpt ++;
 			$nbscienceType = 'scienceType' . $cpt;
@@ -1032,12 +1119,12 @@ else
 			/*$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE LOWER(query) = LOWER(:newQuery) AND pack_id = :packIdInUse AND source = "Science"');
 			$req->execute(array(
 				'newQuery' => $queryScience_Arxiv,
-				'packIdInUse' => $pack_idInUse[0]));
+				'packIdInUse' => $data['packId']));
 				$result = $req->fetch();
 				$req->closeCursor();*/
 
 			$checkCol = array(array("LOWER(query)", "=", mb_strtolower($queryScience_Arxiv), "AND"),
-												array("pack_id", "=", $pack_idInUse[0], "AND"),
+												array("pack_id", "=", $data['packId'], "AND"),
 												array("source", "=", "Science", ""));
 			$queryExist = read('watch_pack_queries_serge', '', $checkCol, '', $bdd);
 
@@ -1047,12 +1134,12 @@ else
 				// Adding new query
 				/*$req = $bdd->prepare('INSERT INTO watch_pack_queries_serge (pack_id, query, source) VALUES (:packIdInUse, :query, :source)');
 				$req->execute(array(
-					'packIdInUse' => $pack_idInUse[0],
+					'packIdInUse' => $data['packId'],
 					'query' => $queryScience_Arxiv,
 					'source' => "Science"));
 					$req->closeCursor();*/
 
-				$insertCol = array(array("pack_id",  $pack_idInUse[0]),
+				$insertCol = array(array("pack_id",  $data['packId']),
 													array("query", $queryScience_Arxiv),
 													array("source", "Science"));
 				$execution = insert('watch_pack_queries_serge', $insertCol, '', '', $bdd);
@@ -1064,23 +1151,21 @@ else
 		}
 	}
 	#Delete science query
-	elseif (!empty($_POST['delQueryScience']))
+	elseif (!empty($data['delQueryScience']))
 	{
-		preg_match("/[0-9]+/", $_POST['delQueryScience'], $idQueryToDel);
-
 		// Read owner science query
 		/*$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE id = :queryId AND pack_id = :packIdInUse AND (source = "Science" OR source = "!Science")');
 		$req->execute(array(
 			'queryId' => $idQueryToDel[0],
-			'packIdInUse' => $pack_idInUse[0]));
+			'packIdInUse' => $data['packId']));
 			$result = $req->fetch();
 			$req->closeCursor();*/
 
-		$checkCol = array(array("id", "=", $idQueryToDel[0], "AND"),
-											array("pack_id", "=", $pack_idInUse[0], "AND"),
+		$checkCol = array(array("id", "=", $data['delQueryScience'], "AND"),
+											array("pack_id", "=", $data['packId'], "AND"),
 											array("source", "=", "Science", "OR"),
-											array("id", "=", $idQueryToDel[0], "AND"),
-											array("pack_id", "=", $pack_idInUse[0], "AND"),
+											array("id", "=", $data['delQueryScience'], "AND"),
+											array("pack_id", "=", $data['packId'], "AND"),
 											array("source", "=", "!Science", ""),);
 		$queryExist = read('watch_pack_queries_serge', '', $checkCol, '', $bdd);
 
@@ -1092,25 +1177,23 @@ else
 				$req->closeCursor();*/
 
 			$updateCol = array(array("source", "Delete"));
-			$checkCol = array(array("id", "=", $idQueryToDel[0], ""));
+			$checkCol = array(array("id", "=", $data['delQueryScience'], ""));
 			$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
 		}
 	}
 	#Disable science query
-	elseif (!empty($_POST['disableQueryScience']))
+	elseif (!empty($data['disableQueryScience']))
 	{
-		preg_match("/[0-9]+/", $_POST['disableQueryScience'], $idQueryToDisable);
-
 		// Read owner science query
 		/*$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE id = :queryId AND pack_id = :packIdInUse AND source = "Science"');
 		$req->execute(array(
 			'queryId' => $idQueryToDisable[0],
-			'packIdInUse' => $pack_idInUse[0]));
+			'packIdInUse' => $data['packId']));
 			$result = $req->fetch();
 			$req->closeCursor();*/
 
-		$checkCol = array(array("id", "=", $idQueryToDisable[0], "AND"),
-											array("pack_id", "=", $pack_idInUse[0], "AND"),
+		$checkCol = array(array("id", "=", $data['disableQueryScience'], "AND"),
+											array("pack_id", "=", $data['packId'], "AND"),
 											array("source", "=", "Science", ""));
 		$result = read('watch_pack_queries_serge', 'id', $checkCol, '', $bdd);
 		$result = $result[0];
@@ -1123,25 +1206,23 @@ else
 				$req->closeCursor();*/
 
 			$updateCol = array(array("source", "!Science"));
-			$checkCol = array(array("id", "=", $idQueryToDisable[0], ""));
+			$checkCol = array(array("id", "=", $data['disableQueryScience'], ""));
 			$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
 		}
 	}
 	#Activate science query
-	elseif (!empty($_POST['activateQueryScience']))
+	elseif (!empty($data['activateQueryScience']))
 	{
-		preg_match("/[0-9]+/", $_POST['activateQueryScience'], $idQueryToActivate);
-
 		// Read owner science query
 		/*$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE id = :queryId AND pack_id = :packIdInUse  AND source = "!Science"');
 		$req->execute(array(
 			'queryId' => $idQueryToActivate[0],
-			'packIdInUse' => $pack_idInUse[0]));
+			'packIdInUse' => $data['packId']));
 			$result = $req->fetch();
 			$req->closeCursor();*/
 
-		$checkCol = array(array("id", "=", $idQueryToActivate[0], "AND"),
-											array("pack_id", "=", $pack_idInUse[0], "AND"),
+		$checkCol = array(array("id", "=", $data['activateQueryScience'], "AND"),
+											array("pack_id", "=", $data['packId'], "AND"),
 											array("source", "=", "!Science", ""));
 		$result = read('watch_pack_queries_serge', 'id', $checkCol, '', $bdd);
 		$result = $result[0];
@@ -1154,36 +1235,36 @@ else
 				$req->closeCursor();*/
 
 			$updateCol = array(array("source", "Science"));
-			$checkCol = array(array("id", "=", $idQueryToActivate[0], ""));
+			$checkCol = array(array("id", "=", $data['activateQueryScience'], ""));
 			$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
 		}
 	}
-	elseif (isset($_POST['patentQuerySubmit']))
+	elseif (!empty($data['patentQuerySubmit']))
 	{
 		$cpt = 0;
 		$andOrPatent = '';
 		$queryPatent = '';
 		$_SESSION['cptPatentQuery'] = 3;
 
-		while(!empty($_POST['patentType' . $cpt]) AND !empty($_POST['patentQuery' . $cpt]))
+		while(!empty($data['patentType' . $cpt]) AND !empty($data['patentQuery' . $cpt]))
 		{
-			if (!preg_match("/^[A-Z_]+$/", $_POST['patentType' . $cpt]))
+			if (!preg_match("/^[A-Z_]+$/", $data['patentType' . $cpt]))
 			{
-				$_POST['patentType' . $cpt] = 'ALLNAMES';
+				$data['patentType' . $cpt] = 'ALLNAMES';
 			}
 
-			$patentQueryInput = urlencode(preg_replace("/(:| $)/", "", $_POST['patentQuery' . $cpt]));
+			$patentQueryInput = urlencode(preg_replace("/(:| $)/", "", $data['patentQuery' . $cpt]));
 
-			$queryPatent = $queryPatent . $andOrPatent . $_POST['patentType' . $cpt] . '%3A' . $patentQueryInput . '+';
+			$queryPatent = $queryPatent . $andOrPatent . $data['patentType' . $cpt] . '%3A' . $patentQueryInput . '+';
 
 			# Cleaning
-			$_POST['patentType' . $cpt ] = '';
-			$_POST['patentQuery' . $cpt ] = '';
-			$_POST['andOrPatent' . $cpt ] = '';
+			$data['patentType' . $cpt ] = '';
+			$data['patentQuery' . $cpt ] = '';
+			$data['andOrPatent' . $cpt ] = '';
 
 			$cpt++;
 
-			if(empty($_POST['andOrPatent' . $cpt]))
+			if(empty($data['andOrPatent' . $cpt]))
 			{
 				$andOrPatent = 'AND+';
 			}
@@ -1202,12 +1283,12 @@ else
 			/*$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE LOWER(query) = LOWER(:newQuery) AND pack_id = :packIdInUse AND source = "Patent"');
 			$req->execute(array(
 				'newQuery' => $queryPatent,
-				'packIdInUse' => $pack_idInUse[0]));
+				'packIdInUse' => $data['packId']));
 				$result = $req->fetch();
 				$req->closeCursor();*/
 
 			$checkCol = array(array("LOWER(query)", "=", mb_strtolower($queryPatent), "AND"),
-												array("pack_id", "=", $pack_idInUse[0], "AND"),
+												array("pack_id", "=", $data['packId'], "AND"),
 												array("source", "=", "Patent", ""));
 			$scienceQueryExist = read('watch_pack_queries_serge', '', $checkCol, '', $bdd);
 
@@ -1217,12 +1298,12 @@ else
 				// Adding new query
 				$req = $bdd->prepare('INSERT INTO watch_pack_queries_serge (pack_id, query, source) VALUES (:packIdInUse, :query, :source)');
 				$req->execute(array(
-					'packIdInUse' => $pack_idInUse[0],
+					'packIdInUse' => $data['packId'],
 					'query' => $queryPatent,
 					'source' => "Patent"));
 					$req->closeCursor();*/
 
-				$insertCol = array(array("pack_id", $pack_idInUse[0]),
+				$insertCol = array(array("pack_id", $data['packId']),
 													array("query", $queryPatent),
 													array("source", "Patent"));
 				$execution = insert('watch_pack_queries_serge', $insertCol, '', '', $bdd);
@@ -1234,23 +1315,21 @@ else
 		}
 	}
 	#Delete patent query
-	elseif (!empty($_POST['delQueryPatent']))
+	elseif (!empty($data['delQueryPatent']))
 	{
-		preg_match("/[0-9]+/", $_POST['delQueryPatent'], $idQueryToDel);
-
 		// Read owner patent query
 		/*$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE id = :queryId AND pack_id = :packIdInUse AND (source = "Patent" OR source = "!Patent")');
 		$req->execute(array(
 			'queryId' => $idQueryToDel[0],
-			'packIdInUse' => $pack_idInUse[0]));
+			'packIdInUse' => $data['packId']));
 			$result = $req->fetch();
 			$req->closeCursor();*/
 
-		$checkCol = array(array("id", "=", $idQueryToDel[0], "AND"),
-											array("pack_id", "=", $pack_idInUse[0], "AND"),
+		$checkCol = array(array("id", "=", $data['delQueryPatent'], "AND"),
+											array("pack_id", "=", $data['packId'], "AND"),
 											array("source", "=", "Patent", "OR"),
-											array("id", "=", $idQueryToDel[0], "AND"),
-											array("pack_id", "=", $pack_idInUse[0], "AND"),
+											array("id", "=", $data['delQueryPatent'], "AND"),
+											array("pack_id", "=", $data['packId'], "AND"),
 											array("source", "=", "!Patent", ""));
 		$result = read('queries_science_serge', 'id', $checkCol, '', $bdd);
 		$result = $result[0];
@@ -1263,25 +1342,23 @@ else
 				$req->closeCursor();*/
 
 			$updateCol = array(array("source", "Delete"));
-			$checkCol = array(array("id", "=", $idQueryToDel[0], ""));
+			$checkCol = array(array("id", "=", $data['delQueryPatent'], ""));
 			$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
 		}
 	}
 	#Disable patent query
-	elseif (!empty($_POST['disableQueryPatent']))
+	elseif (!empty($data['disableQueryPatent']))
 	{
-		preg_match("/[0-9]+/", $_POST['disableQueryPatent'], $idQueryToDisable);
-
 		// Read owner patent query
 		/*$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE id = :queryId AND pack_id = :packIdInUse  AND source = "Patent"');
 		$req->execute(array(
 			'queryId' => $idQueryToDisable[0],
-			'packIdInUse' => $pack_idInUse[0]));
+			'packIdInUse' => $data['packId']));
 			$result = $req->fetch();
 			$req->closeCursor();*/
 
-		$checkCol = array(array("id", "=", $idQueryToDisable[0], "AND"),
-											array("pack_id", "=", $pack_idInUse[0], "AND"),
+		$checkCol = array(array("id", "=", $data['disableQueryPatent'], "AND"),
+											array("pack_id", "=", $data['packId'], "AND"),
 											array("source", "=", "Patent", ""));
 		$queryExist = read('watch_pack_queries_serge', '', $checkCol, '', $bdd);
 
@@ -1293,25 +1370,23 @@ else
 				$req->closeCursor();*/
 
 			$updateCol = array(array("source", "!Patent"));
-			$checkCol = array(array("id", "=", $idQueryToDisable[0], ""));
+			$checkCol = array(array("id", "=", $data['disableQueryPatent'], ""));
 			$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
 		}
 	}
 	#Activate patent query
-	elseif (!empty($_POST['activateQueryPatent']))
+	elseif (!empty($data['activateQueryPatent']))
 	{
-		preg_match("/[0-9]+/", $_POST['activateQueryPatent'], $idQueryToActivate);
-
 		// Read owner patent query
 		/*$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE id = :queryId AND pack_id = :packIdInUse AND source = "!Patent"');
 		$req->execute(array(
 			'queryId' => $idQueryToActivate[0],
-			'packIdInUse' => $pack_idInUse[0]));
+			'packIdInUse' => $data['packId']));
 			$result = $req->fetch();
 			$req->closeCursor();*/
 
-		$checkCol = array(array("id", "=", $idQueryToActivate[0], "AND"),
-											array("pack_id", "=", $pack_idInUse[0], "AND"),
+		$checkCol = array(array("id", "=", $data['activateQueryPatent'], "AND"),
+											array("pack_id", "=", $data['packId'], "AND"),
 											array("source", "=", "!Patent", ""));
 		$queryExist = read('watch_pack_queries_serge', '', $checkCol, '', $bdd);
 
@@ -1323,41 +1398,39 @@ else
 				$req->closeCursor();*/
 
 				$updateCol = array(array("source", "Patent"));
-				$checkCol = array(array("id", "=", $idQueryToActivate[0], ""));
+				$checkCol = array(array("id", "=", $data['activateQueryPatent'], ""));
 				$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
 		}
 	}
 	# Extend science query
-	elseif (!empty($_POST['extendScience']))
+	elseif (!empty($data['extendScience']))
 	{
 		$_SESSION['cptScienceQuery'] += 3;
-		if (!empty($_POST['delEditingScienceQuery']))
+		if (!empty($data['delEditingScienceQuery']))
 		{
-			preg_match("/[0-9]+/", $_POST['delEditingScienceQuery'], $idQueryToDel);
-			$delEditingScienceQuery = $idQueryToDel[0];
+			$delEditingScienceQuery = $data['delEditingScienceQuery'];
 		}
 	}
 	# Extend patent query
-	elseif (!empty($_POST['extendPatent']))
+	elseif (!empty($data['extendPatent']))
 	{
 		$_SESSION['cptPatentQuery'] += 3;
-		if (!empty($_POST['delEditingScienceQuery']))
+		if (!empty($data['delEditingPatentQuery']))
 		{
-			preg_match("/[0-9]+/", $_POST['delEditingPatentQuery'], $idQueryToDel);
-			$delEditingPatentQuery = $idQueryToDel[0];
+			$delEditingPatentQuery = $data['delEditingPatentQuery'];
 		}
 	}
-	elseif (isset($_POST['addNewPack']) AND $_POST['watchPackList'] === 'NewPack' AND !empty($_POST['watchPackName']) AND !empty($_POST['watchPackDescription']))
+	elseif (!empty($data['addNewPack']) AND $data['watchPackList'] === 'NewPack' AND !empty($data['watchPackName']) AND !empty($data['watchPackDescription']))
 	{
-		$newWatchPackName = htmlspecialchars($_POST['watchPackName']);
-		$language = strtoupper(htmlspecialchars($_POST['language']));
-		if ($_POST['watchPackCategory'] === 'NewCategory')
+		$newWatchPackName = $data['watchPackName'];
+		$language = strtoupper($data['language']);
+		if ($data['watchPackCategory'] === 'NewCategory')
 		{
-			$category = htmlspecialchars($_POST['watchPackNewCategory']);
+			$category = $data['watchPackNewCategory'];
 		}
 		else
 		{
-			$category = htmlspecialchars($_POST['watchPackCategory']);
+			$category = $data['watchPackCategory'];
 		}
 
 		// Check if the name already exist
@@ -1387,7 +1460,7 @@ else
 				$req->closeCursor();*/
 
 			$insertCol = array(array("name", $newWatchPackName),
-												array("description", htmlspecialchars($_POST['watchPackDescription'])),
+												array("description", $data['watchPackDescription']),
 												array("author", $_SESSION['pseudo']),
 												array("category", $category),
 												array("language", $language),
@@ -1444,27 +1517,27 @@ else
 			$ERRORMESSAGENEWPACKNAME = "A watch pack with this name already exist, please change the name";
 		}
 	}
-	elseif (isset($_POST['addNewPack']) AND $_POST['watchPackList'] === 'NewPack' AND (empty($_POST['watchPackName']) OR empty($_POST['watchPackDescription'])))
+	elseif (!empty($data['addNewPack']) AND $data['watchPackList'] === 'NewPack' AND (empty($data['watchPackName']) OR empty($data['watchPackDescription'])))
 	{
 		$ERRORMESSAGEEMPTYNAMEORDESC = "You have to enter a name and a description for your watch pack";
 	}
-	elseif (!empty($_POST['watchPackList']))
+	elseif (!empty($data['watchPackList']))
 	{
-		preg_match("/[0-9]+/", $_POST['watchPackList'], $pack_idInUse);
+		preg_match("/[0-9]+/", $data['watchPackList'], $pack_idInUse);
 
 		/*$req = $bdd->prepare('SELECT id FROM watch_pack_serge WHERE author = :pseudo AND id = :pack_idInUse');
 		$req->execute(array(
 			'pseudo' => $_SESSION['pseudo'],
-			'pack_idInUse' => $pack_idInUse[0]));
+			'pack_idInUse' => $data['packId']));
 			$result = $req->fetch();
 			$req->closeCursor();*/
 
 		$checkCol = array(array("author", "=", $_SESSION['pseudo'], "AND"),
-											array("id", "=",$pack_idInUse[0], ""));
+											array("id", "=",$data['packId'], ""));
 		$result   = read('watch_pack_serge', 'id', $checkCol, '', $bdd);
 		$result = $result[0];
 
-		header('Location: watchPack?type=create&packId=' . $pack_idInUse[0]);
+		header('Location: watchPack?type=create&packId=' . $data['packId']);
 	}
 
 	# TODO Faire une fonction qui va relir toute les sources et les mots clefs
@@ -1475,12 +1548,12 @@ else
 		/*$req = $bdd->prepare('SELECT name, description, category, language FROM watch_pack_serge WHERE author = :pseudo AND id = :pack_idInUse');
 		$req->execute(array(
 			'pseudo' => $_SESSION['pseudo'],
-			'pack_idInUse' => $pack_idInUse[0]));
+			'pack_idInUse' => $data['packId']));
 			$packDetails = $req->fetch();
 			$req->closeCursor();*/
 
 		$checkCol = array(array("author", "=", $_SESSION['pseudo'], "AND"),
-											array("id", "=",$pack_idInUse[0], ""));
+											array("id", "=",$data['packId'], ""));
 		$result   = read('watch_pack_serge', 'name, description, category, language', $checkCol, '', $bdd);
 		$packDetails = $result[0];
 
@@ -1490,11 +1563,11 @@ else
 		}
 		/*$reqReadPackSources = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE pack_id = :pack_id AND query = "[!source!]"');
 		$reqReadPackSources->execute(array(
-			'pack_id' => $pack_idInUse[0]));
+			'pack_id' => $data['packId']));
 			$reqReadPackSourcestmp = $reqReadPackSources->fetchAll();
 			$reqReadPackSources->closeCursor();*/
 
-			$checkCol = array(array("pack_id", "=", $pack_idInUse[0], "AND"),
+			$checkCol = array(array("pack_id", "=", $data['packId'], "AND"),
 												array("query", "=", "[!source!]", ""));
 			$reqReadPackSourcestmp = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
 
@@ -1516,17 +1589,16 @@ else
 				$listAllSources = $req->fetchAll();
 				$req->closeCursor();*/
 
-				$checkCol = array(array("id", "IN", implode(',', $packSource), ""),
-													array("id", "=",$pack_idInUse[0], ""));
+				$checkCol = array(array("id", "IN", implode(',', $packSource), ""));
 				$listAllSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 
 			/*$reqReadPackSources = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE pack_id = :pack_id AND query <> "[!source!]"');
 			$reqReadPackSources->execute(array(
-				'pack_id' => $pack_idInUse[0]));
+				'pack_id' => $data['packId']));
 				$reqReadPackSourcestmp = $reqReadPackSources->fetchAll();
 				$reqReadPackSources->closeCursor();*/
 
-				$checkCol = array(array("pack_id", "=", $pack_idInUse[0], "AND"),
+				$checkCol = array(array("pack_id", "=", $data['packId'], "AND"),
 													array("query", "<>", "[!source!]", ""));
 				$reqReadPackSourcestmp = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
 
