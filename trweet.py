@@ -96,9 +96,7 @@ def startingPoint():
 	phonebox = rate_limit()
 
 	remaining_search = phonebox[0]
-	reset_search = phonebox[1] # BUG Variable unsed
 	remaining_timeline = phonebox[2]
-	reset_timeline = phonebox[3] # BUG Variable unsed
 
 	calls_research_count = 0
 	calls_timeline_count = 0
@@ -141,9 +139,6 @@ def startingPoint():
 def trweetFishing(attributes):
 	"""The goal of this function is to catch tweets that contains the query saved in the database"""
 
-	######### LOGGER CALL
-	logger_error = logging.getLogger("error_log") # BUG Unused variable
-
 	########### CONNECTION TO TWITTER API
 	api = twitterConnection()
 
@@ -155,7 +150,6 @@ def trweetFishing(attributes):
 	owners = attributes[2]
 	lang = attributes[4]
 
-	query_id_comma = str(query_id)+"," # BUG Unused variable
 	query_id_comma2 = ","+str(query_id)+","
 
 	if lang is None:
@@ -194,10 +188,6 @@ def trweetFishing(attributes):
 def lakesOfTrweets(attributes):
 	"""The goal of this function is to catch geolocalisation data in tweets that contains the query saved in the database"""
 
-	######### LOGGER CALL
-	logger_info = logging.getLogger("info_log")# BUG Unused variable
-	logger_error = logging.getLogger("error_log")
-
 	########### CONNECTION TO TWITTER API
 	api = twitterConnection()
 
@@ -209,7 +199,6 @@ def lakesOfTrweets(attributes):
 	owners = attributes[2]
 	lang = attributes[4]
 
-	query_id_comma = str(query_id)+"," # BUG Unused variable
 	query_id_comma2 = ","+str(query_id)+","
 
 	if lang is None:
@@ -291,7 +280,7 @@ def trweetTorrent(attributes):
 	query_id = attributes[0]
 	target_and_query = attributes[1]
 	owners = attributes[2]
-	last_launch = attributes[3] # BUG Unsed variable
+	last_launch = attributes[3]
 
 	target_and_query = target_and_query.split("|")
 	target = target_and_query[0]

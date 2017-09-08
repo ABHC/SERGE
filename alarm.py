@@ -2,18 +2,9 @@
 
 """SERGE alert functions (building and formatting an alert)"""
 
-import os # BUG Unused package
-import time # BUG Unused package
-import re # BUG Unused package
-import sys # BUG Unused package
-import MySQLdb # BUG Unused package
-import unicodedata # BUG Unused package
-import traceback # BUG Unused package
-import logging # BUG Unused package
-from logging.handlers import RotatingFileHandler # BUG Unused package
+import MySQLdb
 
 ######### IMPORT SERGE SPECIALS MODULES
-import decoder # BUG Unused package
 import handshake
 
 
