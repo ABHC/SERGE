@@ -3,11 +3,12 @@
 	</div>
 </div>
 <form method="post" action="setting">
+	<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
 	<input type="hidden" name="scrollPos" id="scrollPos" value="
 	<?php
-	if (isset($_POST['scrollPos']))
+	if (!empty($data['scrollPos']))
 	{
-		echo htmlspecialchars($_POST['scrollPos']);
+		echo $data['scrollPos'];
 	}
 	else
 	{
@@ -765,12 +766,12 @@
 					$selected['cat'] = '';
 					$selected['all'] = '';
 
-					if (isset($_POST['scienceType' . $cpt]))
+					if (isset($data['scienceType' . $cpt]))
 					{
-						$selected[$_POST['scienceType' . $cpt]] = 'selected';
+						$selected[$data['scienceType' . $cpt]] = 'selected';
 					}
 
-					if (isset($_POST['openParenthesis' . $cpt]) AND $_POST['openParenthesis' . $cpt] == "active")
+					if (isset($data['openParenthesis' . $cpt]) AND $data['openParenthesis' . $cpt] == "active")
 					{
 						$checked['openParenthesis' . $cpt] = 'checked';
 					}
@@ -779,13 +780,13 @@
 						$checked['openParenthesis' . $cpt] = '';
 					}
 
-					if (isset($_POST['scienceQuery' . $cpt]))
+					if (!empty($data['scienceQuery' . $cpt]))
 					{
-						$_POST['scienceQuery' . $cpt] = htmlspecialchars($_POST['scienceQuery' . $cpt]);
+						$data['scienceQuery' . $cpt] = $data['scienceQuery' . $cpt];
 					}
 					else
 					{
-						$_POST['scienceQuery' . $cpt] = '';
+						$data['scienceQuery' . $cpt] = '';
 					}
 
 					echo '
@@ -800,10 +801,10 @@
 						<option value="all" ' . $selected['all'] . '>All</option>
 					</select>
 					<span class="arrDownBorder">▾</span>
-					<input type="text" class="query" name="scienceQuery' . $cpt . '" id="scienceQuery0' . $cpt . '" placeholder="Keyword" value="' . $_POST['scienceQuery' . $cpt] . '"/>';
+					<input type="text" class="query" name="scienceQuery' . $cpt . '" id="scienceQuery0' . $cpt . '" placeholder="Keyword" value="' . $data['scienceQuery' . $cpt] . '"/>';
 
 
-					if (isset($_POST['closeParenthesis' . $cpt]) AND $_POST['closeParenthesis' . $cpt] == "active")
+					if (!empty($data['closeParenthesis' . $cpt]) AND $data['closeParenthesis' . $cpt] == "active")
 					{
 						$checked['closeParenthesis' . $cpt] = 'checked';
 					}
@@ -820,13 +821,13 @@
 					$checked['OR'] = '';
 					$checked['AND'] = '';
 					$checked['NOTAND'] = '';
-					if (empty($_POST['andOrAndnot' . $cpt]))
+					if (empty($data['andOrAndnot' . $cpt]))
 					{
 						$checked['OR'] = 'checked';
 					}
 					else
 					{
-						$checked[$_POST['andOrAndnot' . $cpt]] = 'checked';
+						$checked[$data['andOrAndnot' . $cpt]] = 'checked';
 					}
 
 					$logicalConnector = '
@@ -1024,18 +1025,18 @@
 					$selected['SIS'] = '';
 					$selected['TPO'] = '';
 					$selected['WO'] = '';
-					if (isset($_POST['patentType' . $cpt]))
+					if (!empty($data['patentType' . $cpt]))
 					{
-						$selected[$_POST['patentType' . $cpt]] = 'selected';
+						$selected[$data['patentType' . $cpt]] = 'selected';
 					}
 
-					if (isset($_POST['patentQuery' . $cpt]))
+					if (!empty($data['patentQuery' . $cpt]))
 					{
-						$_POST['patentQuery' . $cpt] = htmlspecialchars($_POST['patentQuery' . $cpt]);
+						$data['patentQuery' . $cpt] = $data['patentQuery' . $cpt];
 					}
 					else
 					{
-						$_POST['patentQuery' . $cpt] = '';
+						$data['patentQuery' . $cpt] = '';
 					}
 
 					echo '
@@ -1101,12 +1102,12 @@
 					<option value="WO" ' . $selected['WO'] . '>WIPO Publication Number</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" class="query" name="patentQuery' . $cpt . '" id="patentQuery' . $cpt . '" placeholder="Keyword" value="' . $_POST['patentQuery' . $cpt] . '" />';
+				<input type="text" class="query" name="patentQuery' . $cpt . '" id="patentQuery' . $cpt . '" placeholder="Keyword" value="' . $data['patentQuery' . $cpt] . '" />';
 
 				$cpt++;
 
 				$checked = '';
-				if (isset($_POST['andOrPatent' . $cpt]) AND $_POST['andOrPatent' . $cpt] == 'OR')
+				if (!empty($data['andOrPatent' . $cpt]) AND $data['andOrPatent' . $cpt] == 'OR')
 				{
 					$checked = 'checked';
 				}
