@@ -66,7 +66,7 @@ def newscast(newscast_args):
 		keywords_and_id_news_list.append(field)
 
 	########### ETAG COMPARISON
-	etag_results = sergenet.allRequestLong(link, 'etag')
+	etag_results = sergenet.aLinkToThePast(link, 'etag')
 	etag = etag_results[0]
 	etag_error = etag_results[1]
 
@@ -83,7 +83,7 @@ def newscast(newscast_args):
 		insertSQL.backToTheFuture(etag, link)
 
 		########### LINK CONNEXION
-		req_results = sergenet.allRequestLong(link, 'rss')
+		req_results = sergenet.aLinkToThePast(link, 'rss')
 		rss = req_results[0]
 		rss_error = req_results[1]
 
@@ -343,7 +343,7 @@ def science(now):
 		link = ('http://export.arxiv.org/api/query?search_query='+query_arxiv.encode("utf8")+'&sortBy=lastUpdatedDate&start=0&max_results=20')
 		logger_info.info(query_arxiv.encode("utf8")+"\n")
 
-		req_results = sergenet.allRequestLong(link, 'rss')
+		req_results = sergenet.aLinkToThePast(link, 'rss')
 		rss_arxiv = req_results[0]
 		rss_error = req_results[1]
 
@@ -434,7 +434,7 @@ def science(now):
 		link_doaj = ('https://doaj.org/api/v1/search/articles/'+query_doaj.encode("utf8")+'?pageSize=20&sort=last_updated%3Adesc')
 		logger_info.info(query_doaj.encode("utf8")+"\n")
 
-		req_results = sergenet.allRequestLong(link_doaj, 'rss')
+		req_results = sergenet.aLinkToThePast(link_doaj, 'rss')
 		web_doaj = req_results[0]
 		rss_error = req_results[1]
 
@@ -564,7 +564,7 @@ def patents(now):
 		logger_info.info(query_wipo+"\n")
 		link = ('https://patentscope.wipo.int/search/rss.jsf?query='+query_wipo+'&office=&rss=true&sortOption=Pub+Date+Desc')
 
-		req_results = sergenet.allRequestLong(link, 'rss')
+		req_results = sergenet.aLinkToThePast(link, 'rss')
 		rss_wipo = req_results[0]
 		rss_error = req_results[1]
 
@@ -700,7 +700,7 @@ def legalScrapper(post_link):
 	logger_info = logging.getLogger("info_log")
 
 	######### GO TO WIPO WEBSITE
-	req_results = sergenet.allRequestLong(post_link, 'rss')
+	req_results = sergenet.aLinkToThePast(post_link, 'rss')
 	wipo_rss = req_results[0]
 
 	######### PARSE HTML
@@ -734,7 +734,7 @@ def legalScrapper(post_link):
 
 	######### GO TO PATENT LENS WEBSITE
 	if lens_link is not None:
-		lens_results = sergenet.allRequestLong(lens_link, 'rss')
+		lens_results = sergenet.aLinkToThePast(lens_link, 'rss')
 		lens_rss = lens_results[0]
 
 		######### PARSE HTML

@@ -7,7 +7,7 @@ import requests
 import logging
 
 
-def allRequestLong(link, content_type):
+def aLinkToThePast(link, content_type):
 	"""Function for standardized requests to feed and internet pages."""
 
 	######### LOGGER CALL

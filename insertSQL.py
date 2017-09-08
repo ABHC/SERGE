@@ -66,7 +66,7 @@ def ofSourceAndName(now):
 			favicon_link = "https://www.google.com/s2/favicons?domain="+link
 
 			########### RSS FEED RECOVERY
-			req_results = sergenet.allRequestLong(link, 'rss')
+			req_results = sergenet.aLinkToThePast(link, 'rss')
 			rss = req_results[0]
 			rss_error = req_results[1]
 
@@ -100,7 +100,7 @@ def ofSourceAndName(now):
 					update_rss.close()
 
 			########### FAVICON RECOVERY
-			favicon_results = sergenet.allRequestLong(favicon_link, 'favicon')
+			favicon_results = sergenet.aLinkToThePast(favicon_link, 'favicon')
 			icon = favicon_results[0]
 			icon_error = favicon_results[1]
 
@@ -108,7 +108,7 @@ def ofSourceAndName(now):
 			if icon_error is True:
 				favicon_link = "https://www.google.com/s2/favicons?domain=LienDuFluxAvecOuSanshttp"
 
-				favicon_results = sergenet.allRequestLong(favicon_link, 'favicon')
+				favicon_results = sergenet.aLinkToThePast(favicon_link, 'favicon')
 				icon = req_results[0]
 				icon_error = req_results[1]
 
@@ -166,7 +166,7 @@ def ofSourceAndName(now):
 			if rss_name is None or refresh_string in rss_name:
 
 				########### RSS FEED RECOVERY
-				req_results = sergenet.allRequestLong(link, 'rss')
+				req_results = sergenet.aLinkToThePast(link, 'rss')
 				rss = req_results[0]
 				rss_error = req_results[1]
 
@@ -215,7 +215,7 @@ def ofSourceAndName(now):
 			if favicon is None:
 
 				########### FAVICON RECOVERY
-				favicon_results = sergenet.allRequestLong(favicon_link, 'favicon')
+				favicon_results = sergenet.aLinkToThePast(favicon_link, 'favicon')
 				icon = favicon_results[0]
 				icon_error = favicon_results[1]
 
@@ -223,7 +223,7 @@ def ofSourceAndName(now):
 				if icon_error is True:
 					favicon_link = "https://www.google.com/s2/favicons?domain=LienDuFluxAvecOuSanshttp"
 
-					favicon_results = sergenet.allRequestLong(favicon_link, 'favicon')
+					favicon_results = sergenet.aLinkToThePast(favicon_link, 'favicon')
 					icon = req_results[0]
 					icon_error = req_results[1]
 
