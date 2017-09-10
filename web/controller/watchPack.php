@@ -266,7 +266,7 @@ if ($type === 'add')
 			$usersStars = $req->fetch();
 			$req->closeCursor();*/
 
-		$checkCol = array(array("id", "=", $data['packId'], ""));
+		$checkCol = array(array("id", "=", $data['AddStar'], ""));
 		$result = read('watch_pack_serge', 'rating', $checkCol, '', $bdd);
 		$usersStars = $result[0];
 
@@ -292,10 +292,11 @@ if ($type === 'add')
 			$req->closeCursor();*/
 
 		$updateCol = array(array("rating", $usersStars));
-		$checkCol = array(array("id", "=", $data['packId'], ""));
+		$checkCol = array(array("id", "=", $data['AddStar'], ""));
 		$execution = update('watch_pack_serge', $updateCol, $checkCol, '', $bdd);
 
-			//header('Location: watchPack');
+
+		header('Location: watchPack');
 	}
 
 	# Order results
