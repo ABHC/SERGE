@@ -18,8 +18,10 @@ $orderByType    = '';
 $unsafeData = array();
 $unsafeData = array_merge($unsafeData, array(array('action', 'action', 'GET', 'Az')));
 $unsafeData = array_merge($unsafeData, array(array('query', 'query', 'GET', '09')));
+$unsafeData = array_merge($unsafeData, array(array('search', 'search', 'GET', 'str')));
 $unsafeData = array_merge($unsafeData, array(array('type', 'type', 'GET', 'Az')));
 $unsafeData = array_merge($unsafeData, array(array('orderBy', 'orderBy', 'GET', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('language', 'language', 'GET', 'Az')));
 $unsafeData = array_merge($unsafeData, array(array('packId', 'packId', 'GET', '09')));
 
 $unsafeData = array_merge($unsafeData, array(array('AddStar', 'AddStar', 'POST', '09')));
@@ -162,9 +164,9 @@ $wikiTab    = '';
 $settingTab = "active";
 
 # Type
-if (!empty($_GET['type']))
+if (!empty($data['type']))
 {
-	$type = $_GET['type'];
+	$type = $data['type'];
 
 	if ($type === 'add')
 	{
@@ -237,7 +239,7 @@ if ($type === 'add')
 	$colOrder['language'] = '<select name="language" onchange="this.form.submit();">';
 	$colOrder['language'] = $colOrder['language'] . PHP_EOL . '<option value="all" selected>All languages</option>';
 
-	$languageGET = preg_replace("/[^a-z]/", "", $_GET['language']);
+	$languageGET = preg_replace("/[^a-z]/", "", $data['language']);
 
 	foreach ($languageBDD as $languageLine)
 	{
@@ -300,9 +302,9 @@ if ($type === 'add')
 	}
 
 	# Order results
-	if (!empty($_GET['orderBy']))
+	if (!empty($data['orderBy']))
 	{
-		$orderBy = $_GET['orderBy'];
+		$orderBy = $data['orderBy'];
 		if ($orderBy === 'name')
 		{
 			$colOrder['name'] = '▾';
@@ -394,11 +396,11 @@ if ($type === 'add')
 
 		$orderBy = '&orderBy=' . $orderBy;
 	}
-	elseif (!empty($_GET['language']))
+	elseif (!empty($data['language']))
 	{
 		$checkCol = array(array("language", "=", mb_strtoupper($selectedLanguageCode), ""));
 	}
-	elseif (empty($_GET['search']))
+	elseif (empty($data['search']))
 	{
 		$colOrder['rate'] = ' ▴';
 		$colOrder['DESC'] = '';
@@ -1542,9 +1544,9 @@ else
 	}
 
 	# TODO Faire une fonction qui va relir toute les sources et les mots clefs
-	if (!empty($_GET['packId']))
+	if (!empty($data['packId']))
 	{
-		preg_match("/[0-9]+/", $_GET['packId'], $pack_idInUse);
+		preg_match("/[0-9]+/", $data['packId'], $pack_idInUse);
 
 		/*$req = $bdd->prepare('SELECT name, description, category, language FROM watch_pack_serge WHERE author = :pseudo AND id = :pack_idInUse');
 		$req->execute(array(

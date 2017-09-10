@@ -54,7 +54,7 @@
 
 					foreach ($ownerWatchPacks as $ownerWatchPack)
 					{
-						if ($ownerWatchPack['id'] == $_GET['packId'])
+						if ($ownerWatchPack['id'] == $data['packId'])
 						{
 							echo '<option value="' . htmlspecialchars($ownerWatchPack['id']) . '" selected>Edit: ' . htmlspecialchars($ownerWatchPack['name']) . '&nbsp;&nbsp;</option>';
 						}
@@ -213,10 +213,9 @@
 						'</label>';
 
 					# Keyword loop
-					preg_match("/[0-9]+/", $_GET['packId'], $pack_idInUse);
 					$req = $bdd->prepare('SELECT id, query, source FROM watch_pack_queries_serge WHERE pack_id = :packIdInUse AND source NOT LIKE "[!%" AND query NOT LIKE "[!%" ORDER BY query');
 					$req->execute(array(
-						'packIdInUse' => $pack_idInUse[0]));
+						'packIdInUse' => $data['packId']));
 						$reqKeywordList = $req->fetchAll();
 						$req->closeCursor();
 					$cptKeyword = 0;
@@ -376,10 +375,9 @@
 			<?php echo htmlspecialchars($ERROR_SCIENCEQUERY); ?>
 			<?php
 			// Read watchPack science query
-			preg_match("/[0-9]+/", $_GET['packId'], $pack_idInUse);
 			$req = $bdd->prepare('SELECT id, query, source FROM watch_pack_queries_serge WHERE pack_id = :packIdInUse AND (source = "Science" OR source = "!Science")');
 			$req->execute(array(
-				'packIdInUse' => $pack_idInUse[0]));
+				'packIdInUse' => $data['packId']));
 				$queries = $req->fetchAll();
 				$req->closeCursor();
 
@@ -647,10 +645,9 @@
 			<?php echo htmlspecialchars($ERROR_PATENTQUERY); ?>
 			<?php
 			// Read watch pack patent query
-			preg_match("/[0-9]+/", $_GET['packId'], $pack_idInUse);
 			$req = $bdd->prepare('SELECT id, query, source FROM watch_pack_queries_serge WHERE  pack_id = :packIdInUse AND (source = "Patent" OR source = "!Patent")');
 			$req->execute(array(
-				'packIdInUse' => $pack_idInUse[0]));
+				'packIdInUse' => $data['packId']));
 				$queries = $req->fetchAll();
 				$req->closeCursor();
 			foreach ($queries as $query)
