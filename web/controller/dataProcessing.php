@@ -2,10 +2,8 @@
 // Processing data with nonce
 $_POST['nonce'] = isset($_POST['nonce']) ? $_POST['nonce']: "";
 $nonce = preg_replace("/[^a-z0-9]/", "", $_POST['nonce']);
-$dataProcessing = FALSE;
 if (!empty($nonce) AND isset($_SESSION['nonce :' . $nonce]) AND $_SESSION['nonce :' . $nonce] === 0)
 {
-	$dataProcessing = TRUE;
 	foreach ($unsafeData as $varDetails)
 	{
 		if (empty($varDetails[3]) AND $varDetails[2] === 'POST')

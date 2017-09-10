@@ -21,7 +21,7 @@ include_once('controller/dataProcessing.php');
 $nonceTime = time();
 $nonce = getNonce($nonceTime);
 
-if ($dataProcessing AND isset($data['pseudo']) AND isset($data['password']))
+if (isset($data['pseudo']) AND isset($data['password']))
 {
 	$checkCol = array(array("users", "=", $data['pseudo']));
 	$salt = read("users_table_serge", 'salt', $checkCol, '',$bdd);

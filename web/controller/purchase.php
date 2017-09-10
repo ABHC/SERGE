@@ -22,7 +22,7 @@ include_once('controller/dataProcessing.php');
 $nonceTime = time();
 $nonce = getNonce($nonceTime);
 
-if ($dataProcessing AND isset($data['pseudo']) AND isset($data['password']))
+if (isset($data['pseudo']) AND isset($data['password']))
 {
 	$ERRORMESSAGE = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px />' . var_get_t('badIdOrPass_error_connection', $bdd);
 }

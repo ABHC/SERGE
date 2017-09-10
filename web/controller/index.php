@@ -25,7 +25,7 @@ include_once('controller/dataProcessing.php');
 $nonceTime = time();
 $nonce = getNonce($nonceTime);
 
-if($dataProcessing AND !empty($data['pseudo']) AND !empty($data['email']) AND !empty($data['password']) AND !empty($data['repassword']) AND !empty($data['captcha']))
+if(!empty($data['pseudo']) AND !empty($data['email']) AND !empty($data['password']) AND !empty($data['repassword']) AND !empty($data['captcha']))
 {
 	$pseudo       = preg_replace("#[^[:alnum:]-]#","", $data['pseudo']);
 	$captcha_user = hash('sha256', $data['captcha']);

@@ -105,7 +105,7 @@ if (!empty($data['resultType']))
 $SELECTRESULT = '(SELECT id, title, link, send_status, read_status, `date`' . $specialColumn . 'FROM ' . $tableName . ' WHERE owners LIKE :user';
 
 # Delete results
-if ($dataProcessing AND !empty($data['deleteLink']))
+if (!empty($data['deleteLink']))
 {
 	foreach($data as $key => $val)
 	{

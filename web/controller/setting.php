@@ -139,7 +139,7 @@ $wikiTab    = '';
 $settingTab = "active";
 
 # Scroll position
-if ($dataProcessing AND !empty($data['scrollPos']))
+if (!empty($data['scrollPos']))
 {
 	$_SESSION['scrollPos'] = $data['scrollPos'];
 }
@@ -149,7 +149,7 @@ elseif (empty($_SESSION['scrollPos']))
 }
 
 # Save folding state
-if ($dataProcessing AND !empty($data['sourceType']))
+if (!empty($data['sourceType']))
 {
 	foreach($_SESSION as $key => $val)
 	{
@@ -191,24 +191,24 @@ $checkCol = array(array("users", "=", $_SESSION['pseudo'], ""));
 $userSettings = read('users_table_serge', 'id, email, password, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, record_read, history_lifetime, background_result, record_read', $checkCol, '', $bdd);
 $userSettings = $userSettings[0];
 
-if ($dataProcessing AND !empty($data['settings']) AND $data['settings'] === 'ChangeSettings')
+if (!empty($data['settings']) AND $data['settings'] === 'ChangeSettings')
 {
 	# Change email
-	if ($dataProcessing AND !empty($data['email']))
+	if (!empty($data['email']))
 	{
 		$newEmail = $data['email'];
 		include_once('model/addNewEmail.php');
 	}
 
 	# Change result backgroundList
-	if ($dataProcessing AND !empty($data['backgroundResult']))
+	if (!empty($data['backgroundResult']))
 	{
 		$backgroundResult = $data['backgroundResult'];
 		include_once('model/changeBackgroundResult.php');
 	}
 
 	# change sending condition
-	if ($dataProcessing AND !empty($data['cond']))
+	if (!empty($data['cond']))
 	{
 		$secondDay = $data['secondDay'];
 		if (!preg_match("/$secondDay/", $data['days']))
@@ -232,7 +232,7 @@ if ($dataProcessing AND !empty($data['settings']) AND $data['settings'] === 'Cha
 
 	# Change sorting for link in email
 	$orderBy = "masterword";
-	if ($dataProcessing AND !empty($data['orderBy']) AND ($data['orderBy'] === "origin" OR $data['orderBy'] === "type"))
+	if (!empty($data['orderBy']) AND ($data['orderBy'] === "origin" OR $data['orderBy'] === "type"))
 	{
 		$orderBy = $data['orderBy'];
 	}
@@ -240,14 +240,14 @@ if ($dataProcessing AND !empty($data['settings']) AND $data['settings'] === 'Cha
 
 	# Change privacy settings
 	$recordRead = 0;
-	if ($dataProcessing AND !empty($data['recordRead']) AND $data['recordRead'] === 'active')
+	if (!empty($data['recordRead']) AND $data['recordRead'] === 'active')
 	{
 		$recordRead = 1;
 	}
 	include_once('model/changeRecordRead.php');
 
 	// TODO implement in serge AND in the UI
-	if ($dataProcessing AND !empty($data['historyLifetime']))
+	if (!empty($data['historyLifetime']))
 	{
 		$updateCol = array(array("history_lifetime", $data['historyLifetime']));
 		$checkCol = array(array("id", "=", $_SESSION['id'], ""));
@@ -258,7 +258,7 @@ if ($dataProcessing AND !empty($data['settings']) AND $data['settings'] === 'Cha
 }
 
 # Delete history button
-if ($dataProcessing AND !empty($data['buttonDeleteHistory']) AND $data['buttonDeleteHistory'] === 'deleteHistory')
+if (!empty($data['buttonDeleteHistory']) AND $data['buttonDeleteHistory'] === 'deleteHistory')
 {
 	include_once('model/delResult.php');
 	$deleteHistoryValue = $data['deleteHistoryValue'];
@@ -299,7 +299,7 @@ if ($dataProcessing AND !empty($data['buttonDeleteHistory']) AND $data['buttonDe
 }
 
 # Adding new source
-if ($dataProcessing AND !empty($data['sourceType']) AND !empty($data['newSource']) AND $data['sourceType'] === 'inputSource')
+if (!empty($data['sourceType']) AND !empty($data['newSource']) AND $data['sourceType'] === 'inputSource')
 {
 	$sourceToTest = escapeshellarg($data['newSource']);
 	$cmd          = '/usr/bin/python /var/www/Serge/checkfeed.py ' . $sourceToTest;
@@ -323,7 +323,7 @@ if ($dataProcessing AND !empty($data['sourceType']) AND !empty($data['newSource'
 }
 
 # Adding new keyword
-if ($dataProcessing AND !empty($data['sourceKeyword']) AND !empty($data['newKeyword']))
+if (!empty($data['sourceKeyword']) AND !empty($data['newKeyword']))
 {
 	include_once('model/addNewKeyword.php');
 	$sourceId    = $data['sourceKeyword'];
@@ -378,21 +378,21 @@ if ($dataProcessing AND !empty($data['sourceKeyword']) AND !empty($data['newKeyw
 }
 
 # Delete, disable, active keyword
-if ($dataProcessing AND !empty($data['delKeyword']))
+if (!empty($data['delKeyword']))
 {
 	preg_match_all("/[0-9]*&/", $data['delKeyword'], $matchKeywordAndSource);
 	$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][0]);
 	$keywordIdAction = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][1]);
 	$action          = 'delKeyword';
 }
-elseif ($dataProcessing AND !empty($data['disableKeyword']))
+elseif (!empty($data['disableKeyword']))
 {
 	preg_match_all("/[0-9]*&/", $data['disableKeyword'], $matchKeywordAndSource);
 	$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][0]);
 	$keywordIdAction = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][1]);
 	$action          = 'disableKeyword';
 }
-elseif ($dataProcessing AND !empty($data['activateKeyword']))
+elseif (!empty($data['activateKeyword']))
 {
 	preg_match_all("/[0-9]*&/", $data['activateKeyword'], $matchKeywordAndSource);
 	$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchKeywordAndSource[0][0]);
@@ -444,19 +444,19 @@ if (isset($sourceIdAction) AND isset($keywordIdAction) AND isset($action))
 }
 
 # Delete, disable, active sources
-if ($dataProcessing AND !empty($data['delSource']))
+if (!empty($data['delSource']))
 {
 	preg_match("/[0-9]*&/", $data['delSource'], $matchSourceId);
 	$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchSourceId[0]);
 	$action          = 'delSource';
 }
-elseif ($dataProcessing AND !empty($data['disableSource']))
+elseif (!empty($data['disableSource']))
 {
 	preg_match("/[0-9]*&/", $data['disableSource'], $matchSourceId);
 	$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchSourceId[0]);
 	$action          = 'disableSource';
 }
-elseif ($dataProcessing AND !empty($data['activateSource']))
+elseif (!empty($data['activateSource']))
 {
 	preg_match("/[0-9]*&/", $data['activateSource'], $matchSourceId);
 	$sourceIdAction  = preg_replace("/[^0-9]/", "", $matchSourceId[0]);
@@ -672,7 +672,7 @@ if (!empty($data['action']) AND !empty($data['query']) AND $data['action'] === '
 
 
 # Delete editing query
-if ($dataProcessing AND !empty($data['delEditingScienceQuery']) AND empty($data['extendScience']))
+if (!empty($data['delEditingScienceQuery']) AND empty($data['extendScience']))
 {
 	$checkCol = array(array("id", "=", $data['delEditingScienceQuery'], ""),
 										array("owners", "l", '%,' . $_SESSION['id'] . ',%', ""));
@@ -691,7 +691,7 @@ if ($dataProcessing AND !empty($data['delEditingScienceQuery']) AND empty($data[
 
 # Add new science query
 include_once('model/addNewScienceQuery.php');
-if ($dataProcessing AND !empty($data['scienceQuerySubmit']) AND $data['scienceQuerySubmit'] === 'add')
+if (!empty($data['scienceQuerySubmit']) AND $data['scienceQuerySubmit'] === 'add')
 {
 	$cpt = 0;
 	$open = 0;
@@ -778,7 +778,7 @@ if ($dataProcessing AND !empty($data['scienceQuerySubmit']) AND $data['scienceQu
 }
 
 #Delete science query
-if ($dataProcessing AND !empty($data['delQueryScience']))
+if (!empty($data['delQueryScience']))
 {
 	// Read owner science query
 	$checkCol = array(array("id", "=", $data['delQueryScience'], "AND"),
@@ -799,7 +799,7 @@ if ($dataProcessing AND !empty($data['delQueryScience']))
 }
 
 #Disable science query
-if ($dataProcessing AND !empty($data['disableQueryScience']))
+if (!empty($data['disableQueryScience']))
 {
 	$checkCol = array(array("id", "=",$data['disableQueryScience'], "AND"),
 										array("owners", "l", '%,' . $_SESSION['id'] . ',%', ""));
@@ -819,7 +819,7 @@ if ($dataProcessing AND !empty($data['disableQueryScience']))
 }
 
 #Activate science query
-if ($dataProcessing AND !empty($data['activateQueryScience']))
+if (!empty($data['activateQueryScience']))
 {
 	$checkCol = array(array("id", "=", $data['activateQueryScience'], "AND"),
 										array("owners", "l", '%,!' . $_SESSION['id'] . ',%', ""));
@@ -884,7 +884,7 @@ if (!empty($data['action']) AND !empty($data['query']) AND $data['action'] === '
 
 
 # Delete editing query
-if ($dataProcessing AND !empty($data['delEditingPatentQuery']) AND empty($data['extendPatent']))
+if (!empty($data['delEditingPatentQuery']) AND empty($data['extendPatent']))
 {
 		$checkCol = array(array("id", "=", $data['delEditingPatentQuery'], "AND"),
 											array("owners", "l", '%,' . $_SESSION['id'] . ',%', ""));
@@ -902,7 +902,7 @@ if ($dataProcessing AND !empty($data['delEditingPatentQuery']) AND empty($data['
 }
 
 # Add new patents query
-if ($dataProcessing AND !empty($data['patentQuerySubmit']) AND $data['patentQuerySubmit'] === 'add')
+if (!empty($data['patentQuerySubmit']) AND $data['patentQuerySubmit'] === 'add')
 {
 	include_once('model/addNewPatentQuery.php');
 	$cpt = 0;
@@ -945,7 +945,7 @@ if ($dataProcessing AND !empty($data['patentQuerySubmit']) AND $data['patentQuer
 }
 
 #Delete patent query
-if ($dataProcessing AND !empty($data['delQueryPatent']))
+if (!empty($data['delQueryPatent']))
 {
 	$checkCol = array(array("id", "=", $data['delQueryPatent'], "AND"),
 										array("owners", "l", '%,!' . $_SESSION['id'] . ',%', "OR"),
@@ -965,7 +965,7 @@ if ($dataProcessing AND !empty($data['delQueryPatent']))
 }
 
 #Disable patent query
-if ($dataProcessing AND !empty($data['disableQueryPatent']))
+if (!empty($data['disableQueryPatent']))
 {
 	$checkCol = array(array("id", "=", $data['disableQueryPatent'], "AND"),
 										array("owners", "l", '%,' . $_SESSION['id'] . ',%', ""));
@@ -983,7 +983,7 @@ if ($dataProcessing AND !empty($data['disableQueryPatent']))
 }
 
 #Activate patent query
-if ($dataProcessing AND !empty($data['activateQueryPatent']))
+if (!empty($data['activateQueryPatent']))
 {
 	$checkCol = array(array("id", "=", $data['activateQueryPatent'], "AND"),
 										array("owners", "l", '%,!' . $_SESSION['id'] . ',%', ""));
@@ -1001,7 +1001,7 @@ if ($dataProcessing AND !empty($data['activateQueryPatent']))
 }
 
 # Extend science query
-if ($dataProcessing AND !empty($data['extendScience']))
+if (!empty($data['extendScience']))
 {
 	$_SESSION['cptScienceQuery'] += 3;
 	if (!empty($data['delEditingScienceQuery']))
@@ -1011,7 +1011,7 @@ if ($dataProcessing AND !empty($data['extendScience']))
 }
 
 # Extend patent query
-if ($dataProcessing AND !empty($data['extendPatent']))
+if (!empty($data['extendPatent']))
 {
 	$_SESSION['cptPatentQuery'] += 3;
 	if (!empty($data['delEditingPatentQuery']))
