@@ -2,7 +2,6 @@
 
 """Triage and formatting of results in order to insertion in SERGE database"""
 
-import hashlib
 from urllib import pathname2url as pn
 
 ######### IMPORT SERGE SPECIALS MODULES

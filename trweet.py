@@ -267,10 +267,6 @@ def lakesOfTrweets(attributes):
 def trweetTorrent(attributes):
 	"""The goal of this function is to catch entire timelines or specific tweets in timeline"""
 
-	######### LOGGER CALL
-	logger_info = logging.getLogger("info_log")
-	logger_error = logging.getLogger("error_log")
-
 	########### CONNECTION TO TWITTER API
 	api = twitterConnection()
 
