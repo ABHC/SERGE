@@ -3,8 +3,8 @@ function insert($tableName, $insertCol, $optional, $redirectPage, $bdd)
 {
 	# USAGE
 	/*
-	$insertCol = array(array("ColumnName", "ColValue"),
-										array("ColumnName", "ColValue");
+	$insertCol = array(array('ColumnName', 'ColValue'),
+										array('ColumnName', 'ColValue');
 	*/
 
 	$INSERTvar      = '';
@@ -18,7 +18,7 @@ function insert($tableName, $insertCol, $optional, $redirectPage, $bdd)
 
 		$INSERTvar = $INSERTvar . $comma . $nameCol;
 		$VALUESvar = $VALUESvar . $comma . ':' . $nameCol;
-		$comma = ",";
+		$comma = ',';
 		$arrayValues = array_merge($arrayValues, array($nameCol => $value));
 	}
 
@@ -32,6 +32,7 @@ function insert($tableName, $insertCol, $optional, $redirectPage, $bdd)
 		if (!empty($redirectPage))
 		{
 			header("Location: $redirectPage");
+			die();
 		}
 	}
 	catch (Exception $e)

@@ -1,6 +1,6 @@
 <?php
 session_start();
-include_once('model/connection_sql.php');
+include('model/connection_sql.php');
 $language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
 $language = $language[0] . $language[1];
 ?>
@@ -12,13 +12,13 @@ $language = $language[0] . $language[1];
 	<title>Serge : your news monitoring</title>
 	<link href="css/legal" rel="stylesheet" />
 	<?php
-	include_once('favicon.php');
+	include('favicon.php');
 	?>
 </head>
 
 <body>
 	<?php
-	include_once('controller/legal.php');
+	include('controller/legal.php');
 	?>
 </body>
 

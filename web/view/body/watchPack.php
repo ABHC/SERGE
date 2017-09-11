@@ -232,7 +232,7 @@
 							}
 						}
 
-						$packSourcesListDesac = "!" . $packSourcesList['id'];
+						$packSourcesListDesac = '!' . $packSourcesList['id'];
 
 						if (in_array($packSourcesListDesac, $listSourceKeyword))
 						{
@@ -319,7 +319,7 @@
 					$selected[$data['scienceType' . $cpt]] = 'selected';
 
 
-					if ($data['openParenthesis' . $cpt] == "active")
+					if ($data['openParenthesis' . $cpt] == 'active')
 					{
 						$checked['openParenthesis' . $cpt] = 'checked';
 					}
@@ -338,7 +338,7 @@
 					<input type="text" class="query" name="scienceQuery' . htmlspecialchars($cpt) . '" id="scienceQuery0' . htmlspecialchars($cpt) . '" placeholder="Keyword" value="' .  htmlspecialchars($data['scienceQuery' . $cpt]) . '"/>';
 
 
-					if ($data['closeParenthesis' . $cpt] == "active")
+					if ($data['closeParenthesis' . $cpt] == 'active')
 					{
 						$checked['closeParenthesis' . $cpt] = 'checked';
 					}
@@ -385,15 +385,15 @@
 			{
 				$queryDisplay = '';
 				$Qdisable = '';
-				$titleDisableActivate = "Disable";
-				$nameClassDisableActivate = "disable";
+				$titleDisableActivate = 'Disable';
+				$nameClassDisableActivate = 'disable';
 
 				$pattern = '!Science';
 				if (preg_match("/$pattern/", $query['source']))
 				{
 					$Qdisable = 'Qdisable';
-					$titleDisableActivate = "Activate";
-					$nameClassDisableActivate = "activate";
+					$titleDisableActivate = 'Activate';
+					$nameClassDisableActivate = 'activate';
 				}
 
 				echo '
@@ -654,15 +654,15 @@
 			{
 				$queryDisplay = '';
 				$Qdisable = '';
-				$titleDisableActivate = "Disable";
-				$nameClassDisableActivate = "disable";
+				$titleDisableActivate = 'Disable';
+				$nameClassDisableActivate = 'disable';
 
 				$pattern = '!Patent';
 				if (preg_match("/$pattern/", $query['source']))
 				{
 					$Qdisable = 'Qdisable';
-					$titleDisableActivate = "Activate";
-					$nameClassDisableActivate = "activate";
+					$titleDisableActivate = 'Activate';
+					$nameClassDisableActivate = 'activate';
 				}
 
 				echo '
@@ -809,13 +809,13 @@
 						foreach ($watchPacks as $watchPack)
 						{
 							# Color stars
-							$starTitle = "Add a star";
+							$starTitle = 'Add a star';
 							$colorStar = '';
 							$pattern = ',' . $_SESSION['id'] . ',';
 							if (preg_match("/$pattern/", $watchPack['rating']))
 							{
-								$colorStar = "colorStar";
-								$starTitle = "Unstar";
+								$colorStar = 'colorStar';
+								$starTitle = 'Unstar';
 							}
 							echo '
 							<tr>

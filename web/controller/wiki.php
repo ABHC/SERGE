@@ -1,15 +1,15 @@
 <?php
 
-include_once('model/get_text.php');
+include('model/get_text.php');
 
-$resultTab  = "";
-$wikiTab    = "active";
-$settingTab = "";
+$resultTab  = '';
+$wikiTab    = 'active';
+$settingTab = '';
 
-include_once('view/nav/nav.php');
+include('view/nav/nav.php');
 
-include_once('view/body/wiki.php');
+include('view/body/wiki.php');
 
-include_once('view/footer/footer.php');
+include('view/footer/footer.php');
 
 ?>

@@ -3,9 +3,9 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 {
 	# USAGE
 	/*
-	$checkCol = array(array("ColumnName", "=", "ColValue", "OR"),
-										array("ColumnName", "l", "ColValue", "AND"),
-										array("ColumnName", "=", "ColValue", ""));
+	$checkCol = array(array('ColumnName', '=', 'ColValue', 'OR'),
+										array('ColumnName', 'l', 'ColValue', 'AND'),
+										array('ColumnName', '=', 'ColValue', ''));
 	*/
 
 	$check       = FALSE;
@@ -18,29 +18,29 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 		$WHEREvar = '';
 		foreach ($checkCol as $line)
 		{
-			$op = " = ";
-			if ($line[1] == "l")
+			$op = ' = ';
+			if ($line[1] == 'l')
 			{
-				$op = " LIKE ";
+				$op = ' LIKE ';
 			}
-			elseif ($line[1] == ">=")
+			elseif ($line[1] == '>=')
 			{
-				$op = " >= ";
+				$op = ' >= ';
 			}
-			elseif ($line[1] == "IN")
+			elseif ($line[1] == 'IN')
 			{
-				$op = " IN ";
+				$op = ' IN ';
 			}
-			elseif ($line[1] == "<>")
+			elseif ($line[1] == '<>')
 			{
-				$op = " <> ";
+				$op = ' <> ';
 			}
 
 			$nameCol   = $line[0];
 			$value     = $line[2];
-			$connector = " " . $line[3] . " ";
+			$connector = ' ' . $line[3] . ' ';
 
-			$WHEREvar    = $WHEREvar . $nameCol . $op . "(:" . $nameCol . $cpt . ")" . $connector;
+			$WHEREvar    = $WHEREvar . $nameCol . $op . '(:' . $nameCol . $cpt . ')' . $connector;
 			$arrayValues = array_merge($arrayValues, array($nameCol . $cpt => $value));
 			$cpt++;
 		}

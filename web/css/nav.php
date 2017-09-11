@@ -1,7 +1,7 @@
 <?php
-//include_once('../model/connexion_sql.php');
+//include('../model/connexion_sql.php');
 
-//include_once('../model/design.php');
+//include('../model/design.php');
 
 ?>
 

@@ -3,11 +3,11 @@ function update($tableName, $updateCol, $checkCol, $optional, $bdd)
 {
 	# USAGE
 	/*
-	$updateCol = array(array("ColumnName", "ColNewValue"),
-										array("ColumnName", "ColNewValue");
-	$checkCol = array(array("ColumnName", "=", "ColValue", "OR"),
-										array("ColumnName", "l", "ColValue", "AND"),
-										array("ColumnName", "=", "ColValue", ""));
+	$updateCol = array(array('ColumnName', 'ColNewValue'),
+										array('ColumnName', 'ColNewValue');
+	$checkCol = array(array('ColumnName', '=', 'ColValue', 'OR'),
+										array('ColumnName', 'l', 'ColValue', 'AND'),
+										array('ColumnName', '=', 'ColValue', ''));
 	*/
 
 	$SETvar      = '';
@@ -18,17 +18,17 @@ function update($tableName, $updateCol, $checkCol, $optional, $bdd)
 
 	foreach ($checkCol as $line)
 	{
-		$op = " = ";
-		if ($line[1] == "l")
+		$op = ' = ';
+		if ($line[1] == 'l')
 		{
-			$op = " LIKE ";
+			$op = ' LIKE ';
 		}
 
 		$nameCol   = $line[0];
 		$value     = $line[2];
-		$connector = " " . $line[3] . " ";
+		$connector = ' ' . $line[3] . ' ';
 
-		$WHEREvar    = $WHEREvar . $nameCol . $op . ":" . 'check' . $nameCol . $cpt . $connector;
+		$WHEREvar    = $WHEREvar . $nameCol . $op . ':' . 'check' . $nameCol . $cpt . $connector;
 		$nameCol = 'check' . $nameCol . $cpt;
 		$arrayValues = array_merge($arrayValues, array($nameCol => $value));
 		$cpt++;
@@ -39,8 +39,8 @@ function update($tableName, $updateCol, $checkCol, $optional, $bdd)
 		$nameCol = $line[0];
 		$value   = $line[1];
 
-		$SETvar = $SETvar . $comma . $nameCol . " = :new" . $nameCol . $cpt;
-		$comma = ", ";
+		$SETvar = $SETvar . $comma . $nameCol . ' = :new' . $nameCol . $cpt;
+		$comma = ', ';
 		$nameCol = 'new' . $nameCol . $cpt;
 		$arrayValues = array_merge($arrayValues, array($nameCol => $value));
 		$cpt++;

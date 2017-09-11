@@ -1,17 +1,17 @@
 <?php
 # Search in result
-if (!empty($_GET['search']))
+if (!empty($data['search']))
 {
-	include_once('model/updateSearchIndex.php');
+	include('model/updateSearchIndex.php');
 
-	$search        = htmlspecialchars($_GET['search']);
-	$searchBoolean = preg_replace("/(^|\ )[a-zA-Z]{1,3}(\ |$)/", " ", $search);
+	$search        = $data['search'];
+	$searchBoolean = preg_replace("/(^|\ )[a-zA-Z]{1,3}(\ |$)/", ' ', $search);
 	$searchBoolean = preg_replace("/[^ ]+/", '\'$0\'', $searchBoolean);
 	$searchBoolean = preg_replace("/[^ ]+'/", "$0*", $searchBoolean);
 	$searchBoolean = preg_replace("/^..*.$/", "($0$1)", $searchBoolean);
 
 	# Search with soundex
-	$searchArray = explode(" ", $search);
+	$searchArray = explode(' ', $search);
 	$searchSOUNDEX = '';
 	foreach($searchArray as $word)
 	{
@@ -21,8 +21,8 @@ if (!empty($_GET['search']))
 
 	# Search in link
 	$SEARCHINLINK     = '';
-	$searchInLink     = preg_replace("/(^|\ )[a-zA-Z]{1,2}(\ |$)/", " ", $search);
-	$searchInLinkList = explode(" ", $searchInLink);
+	$searchInLink     = preg_replace("/(^|\ )[a-zA-Z]{1,2}(\ |$)/", ' ', $search);
+	$searchInLinkList = explode(' ', $searchInLink);
 	$OR = '';
 
 	foreach ($searchInLinkList as $searchInLink)

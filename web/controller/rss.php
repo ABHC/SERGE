@@ -1,19 +1,19 @@
 <?php
-include_once('model/read.php');
+include('model/read.php');
 
 
 # Data processing
 $unsafeData = array();
 $unsafeData = array_merge($unsafeData, array(array('token', 'token', 'GET', 'str')));
 
-include_once('controller/dataProcessing.php');
+include('controller/dataProcessing.php');
 
 
-$data['token'] = preg_replace("/\.php/", "", $data['token']);
+$data['token'] = preg_replace("/\.php/", '', $data['token']);
 preg_match("/[A-Fa-f0]{8}/", $data['token'], $token);
 
-$checkCol = array(array("token", "=", $token[0], "AND"),
-array("premium", "=" , 1, ""));
+$checkCol = array(array('token', '=', $token[0], 'AND'),
+array('premium', '=' , 1, ''));
 $user = read('users_table_serge', 'id, users', $checkCol, '', $bdd);
 $user = $user[0];
 
@@ -24,22 +24,22 @@ if (!empty($user))
 	if ($resultType[0] === 's')
 	{
 		// read available results
-		$checkCol = array(array("owners", "l", ',' . $user['id'] . ',', ""));
-		$results = read("result_science_serge", 'title, link, date', $checkCol, 'ORDER BY date DESC LIMIT 30',$bdd);
+		$checkCol = array(array('owners', 'l', ',' . $user['id'] . ',', ''));
+		$results = read('result_science_serge', 'title, link, date', $checkCol, 'ORDER BY date DESC LIMIT 30',$bdd);
 		$description = 'Scientifique publication';
 	}
 	elseif ($resultType[0] === 'p')
 	{
 		// read available results
-		$checkCol = array(array("owners", "l", ',' . $user['id'] . ',', ""));
-		$results = read("result_patents_serge", 'title, link, date', $checkCol, 'ORDER BY date DESC LIMIT 30',$bdd);
+		$checkCol = array(array('owners', 'l', ',' . $user['id'] . ',', ''));
+		$results = read('result_patents_serge', 'title, link, date', $checkCol, 'ORDER BY date DESC LIMIT 30',$bdd);
 		$description = 'Patents';
 	}
 	elseif (empty($results))
 	{
 		// read available results
-		$checkCol = array(array("owners", "l", ',' . $user['id'] . ',', ""));
-		$results = read("result_news_serge", 'title, link, date', $checkCol, 'ORDER BY date DESC LIMIT 30',$bdd);
+		$checkCol = array(array('owners', 'l', ',' . $user['id'] . ',', ''));
+		$results = read('result_news_serge', 'title, link, date', $checkCol, 'ORDER BY date DESC LIMIT 30',$bdd);
 		$description = 'General news';
 	}
 
@@ -75,6 +75,6 @@ if (!empty($user))
 }
 else
 {
-	echo "You need to be a premium user to access to this functionality";
+	echo 'You need to be a premium user to access to this functionality';
 }
 ?>

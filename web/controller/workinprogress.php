@@ -1,23 +1,23 @@
 <?php
-include_once('model/get_text.php');
-include_once('model/read.php');
-include_once('model/insert.php');
-include_once('view/nav/nav.php');
-include_once('controller/generateNonce.php');
+include('model/get_text.php');
+include('model/read.php');
+include('model/insert.php');
+include('view/nav/nav.php');
+include('controller/generateNonce.php');
 
 # Data processing
 $unsafeData = array();
 $unsafeData = array_merge($unsafeData, array(array('email', 'email', 'POST', 'email')));
 $unsafeData = array_merge($unsafeData, array(array('newsletter', 'newsletter', 'POST', 'str')));
 
-include_once('controller/dataProcessing.php');
+include('controller/dataProcessing.php');
 
 # Nonce
-$nonceTime = time();
+$nonceTime = $_SERVER['REQUEST_TIME'];
 $nonce = getNonce($nonceTime);
 
 $deleveryTime = 1505260000 ;
-$timeLeft = $deleveryTime - time();
+$timeLeft = $deleveryTime - $_SERVER['REQUEST_TIME'];
 $day = floor($timeLeft / (24*3600));
 $hour = floor(($timeLeft - ($day*24*3600)) / (3600));
 $minute = floor(($timeLeft - ($day*24*3600) - ($hour*3600)) / 60);
@@ -25,20 +25,20 @@ $second = ($timeLeft - ($day*24*3600) - ($hour*3600) - ($minute*60));
 
 if (!empty($data['newsletter']) AND !empty($data['email']))
 {
-	$checkCol = array(array("email", "=", $data['email'], ""));
-	$result_email = read("newsletter_table_serge", '', $checkCol, '',$bdd);
+	$checkCol = array(array('email', '=', $data['email'], ''));
+	$result_email = read('newsletter_table_serge', '', $checkCol, '',$bdd);
 
 	if (empty($result))
 	{
-		$insertCol = array(array("email", $data['email']),
-											array("signup_date", time()));
+		$insertCol = array(array('email', $data['email']),
+											array('signup_date', $_SERVER['REQUEST_TIME']));
 		$execution = insert('newsletter_table_serge', $insertCol, '', 'workinprogress', $bdd);
 	}
 	sleep(1);
 }
 
-include_once('view/body/workinprogress.php');
+include('view/body/workinprogress.php');
 
-include_once('view/footer/footer.php');
+include('view/footer/footer.php');
 
 ?>

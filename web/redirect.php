@@ -1,6 +1,6 @@
 <?php
 session_start();
-include_once('model/connection_sql.php');
+include('model/connection_sql.php');
 ?>
 
 <!DOCTYPE html>
@@ -10,13 +10,13 @@ include_once('model/connection_sql.php');
 	<title>Serge : redirect to your link</title>
 	<link href="css/result" rel="stylesheet" />
 	<?php
-	include_once('favicon.php');
+	include('favicon.php');
 	?>
 </head>
 
 <body>
 	<?php
-	include_once('controller/redirect.php');
+	include('controller/redirect.php');
 	?>
 </body>
 

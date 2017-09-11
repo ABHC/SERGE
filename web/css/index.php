@@ -3,13 +3,13 @@ header('content-type: text/css');
 ob_start('ob_gzhandler');
 header('Cache-Control: max-age=31536000, must-revalidate');
 
-//include_once('../model/connexion_sql.php');
+//include('../model/connexion_sql.php');
 
-//include_once('../model/design.php');
+//include('../model/design.php');
 
-include_once('style.php');
+include('style.php');
 
-include_once('nav.php');
+include('nav.php');
 ?>
 
 .body
@@ -384,7 +384,7 @@ input
 .captcha1
 {
 	position: relative;
-	background-image: url(../images/captcha/captcha1.png?t=<?php echo time(); ?>);
+	background-image: url(../images/captcha/captcha1.png?t=<?php echo $_SERVER['REQUEST_TIME']; ?>);
 	height: 22px;
 	width: 22px;
 	background-size: cover;
@@ -393,7 +393,7 @@ input
 .captcha2
 {
 	position: relative;
-	background-image: url(../images/captcha/captcha2.png?t=<?php echo time(); ?>);
+	background-image: url(../images/captcha/captcha2.png?t=<?php echo $_SERVER['REQUEST_TIME']; ?>);
 	height: 22px;
 	width: 22px;
 	background-size: cover;
@@ -402,7 +402,7 @@ input
 .captcha3
 {
 	position: relative;
-	background-image: url(../images/captcha/captcha3.png?t=<?php echo time(); ?>);
+	background-image: url(../images/captcha/captcha3.png?t=<?php echo $_SERVER['REQUEST_TIME']; ?>);
 	height: 22px;
 	width: 22px;
 	background-size: cover;
@@ -410,7 +410,7 @@ input
 
 .captcha4
 {
-	background-image: url(../images/captcha/captcha4.png?t=<?php echo time(); ?>);
+	background-image: url(../images/captcha/captcha4.png?t=<?php echo $_SERVER['REQUEST_TIME']; ?>);
 	position: relative;
 	height: 22px;
 	width: 22px;
@@ -427,5 +427,5 @@ input
 /**/
 
 <?php
-include_once('footer.php');
+include('footer.php');
 ?>

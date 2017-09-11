@@ -86,7 +86,7 @@
 						$keyword  = preg_replace("/^:all@[0-9]+$/", var_get_t('all_specialKeyword_results', $bdd), $keyword[0][$queryColumn]);
 
 						# Read source for current result
-						if ($type == "sciences")
+						if ($type == 'sciences')
 						{
 							$queryDisplay = '';
 							preg_match("/,[0-9]+,/", $result[$keywordQueryId], $queryId);
@@ -158,7 +158,7 @@
 
 							$keyword = '<div class="queryContainer">' . $queryDisplay . '</div>';
 						}
-						elseif ($type == "patents")
+						elseif ($type == 'patents')
 						{
 							$queryDisplay = '';
 							preg_match("/,[0-9]+,/", $result[$keywordQueryId], $queryId);

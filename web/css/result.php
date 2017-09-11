@@ -5,12 +5,12 @@ header('Cache-Control: max-age=31536000, must-revalidate');
 
 session_start();
 
-include_once('../model/connection_sql.php');
+include('../model/connection_sql.php');
 
-//include_once('../model/design.php');
-//include_once('../model/backgroundDesign.php');
+//include('../model/design.php');
+//include('../model/backgroundDesign.php');
 
-include_once('../model/read.php');
+include('../model/read.php');
 
 $checkCol = array(array("id", "=", $_SESSION['id'], ""));
 $backgroundName = read("users_table_serge", 'background_result', $checkCol, '',$bdd);
@@ -18,9 +18,9 @@ $backgroundName = read("users_table_serge", 'background_result', $checkCol, '',$
 $checkCol = array(array("name", "=", $backgroundName[0]['background_result'], ""));
 $background = read("background_serge", 'filename', $checkCol, '',$bdd);
 
-include_once('style.php');
+include('style.php');
 
-include_once('nav.php');
+include('nav.php');
 ?>
 
 .body
@@ -545,5 +545,5 @@ table
 }
 
 <?php
-include_once('footer.php');
+include('footer.php');
 ?>

@@ -1,7 +1,7 @@
 <?php
 session_start();
-include_once('model/connection_sql.php');
+include('model/connection_sql.php');
 ?>
 <?php
-include_once('controller/rss.php');
+include('controller/rss.php');
 ?>

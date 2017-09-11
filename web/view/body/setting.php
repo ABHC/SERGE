@@ -771,7 +771,7 @@
 						$selected[$data['scienceType' . $cpt]] = 'selected';
 					}
 
-					if (isset($data['openParenthesis' . $cpt]) AND $data['openParenthesis' . $cpt] == "active")
+					if (isset($data['openParenthesis' . $cpt]) AND $data['openParenthesis' . $cpt] == 'active')
 					{
 						$checked['openParenthesis' . $cpt] = 'checked';
 					}
@@ -804,7 +804,7 @@
 					<input type="text" class="query" name="scienceQuery' . $cpt . '" id="scienceQuery0' . $cpt . '" placeholder="Keyword" value="' . $data['scienceQuery' . $cpt] . '"/>';
 
 
-					if (!empty($data['closeParenthesis' . $cpt]) AND $data['closeParenthesis' . $cpt] == "active")
+					if (!empty($data['closeParenthesis' . $cpt]) AND $data['closeParenthesis' . $cpt] == 'active')
 					{
 						$checked['closeParenthesis' . $cpt] = 'checked';
 					}
@@ -846,20 +846,20 @@
 			</div>
 			<?php echo isset($ERROR_SCIENCEQUERY) ? $ERROR_SCIENCEQUERY:''; ?>
 			<?php
-			include_once('model/readOwnerScienceQuery.php');
+			include('model/readOwnerScienceQuery.php');
 			foreach ($queries as $query)
 			{
 				$queryDisplay = '';
 				$Qdisable = '';
-				$titleDisableActivate = "Disable";
-				$nameClassDisableActivate = "disable";
+				$titleDisableActivate = 'Disable';
+				$nameClassDisableActivate = 'disable';
 
 				$pattern = ',!' . $_SESSION['id'] . ',';
 				if (preg_match("/$pattern/", $query['owners']))
 				{
 					$Qdisable = 'Qdisable';
-					$titleDisableActivate = "Activate";
-					$nameClassDisableActivate = "activate";
+					$titleDisableActivate = 'Activate';
+					$nameClassDisableActivate = 'activate';
 				}
 
 				echo '
@@ -1122,20 +1122,20 @@
 			</div>
 			<?php echo isset($ERROR_PATENTQUERY) ? $ERROR_PATENTQUERY:''; ?>
 			<?php
-			include_once('model/readOwnerPatentQuery.php');
+			include('model/readOwnerPatentQuery.php');
 			foreach ($queries as $query)
 			{
 				$queryDisplay = '';
 				$Qdisable = '';
-				$titleDisableActivate = "Disable";
-				$nameClassDisableActivate = "disable";
+				$titleDisableActivate = 'Disable';
+				$nameClassDisableActivate = 'disable';
 
 				$pattern = ',!' . $_SESSION['id'] . ',';
 				if (preg_match("/$pattern/", $query['owners']))
 				{
 					$Qdisable = 'Qdisable';
-					$titleDisableActivate = "Activate";
-					$nameClassDisableActivate = "activate";
+					$titleDisableActivate = 'Activate';
+					$nameClassDisableActivate = 'activate';
 				}
 
 				echo '

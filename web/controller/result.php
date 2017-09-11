@@ -1,10 +1,10 @@
 <?php
-include_once('controller/accessLimitedToSignInPeople.php');
-include_once('model/get_text_var.php');
-include_once('model/get_text.php');
-include_once('model/read.php');
-include_once('model/update.php');
-include_once('controller/generateNonce.php');
+include('controller/accessLimitedToSignInPeople.php');
+include('model/get_text_var.php');
+include('model/get_text.php');
+include('model/read.php');
+include('model/update.php');
+include('controller/generateNonce.php');
 
 # Data processing
 $unsafeData = array();
@@ -22,7 +22,7 @@ foreach($_POST as $key => $val)
 	}
 }
 
-include_once('controller/dataProcessing.php');
+include('controller/dataProcessing.php');
 
 # Nonce
 $nonceTime = time();
@@ -113,13 +113,13 @@ if (!empty($data['deleteLink']))
 
 		if (preg_match("/^delete[0-9]+$/", $key))
 		{
-			$checkCol = array(array("id", "=", preg_replace("/^delete/", "", $key), ""));
+			$checkCol = array(array('id', '=', preg_replace("/^delete/", '', $key), ''));
 			$ownersResult = read('result_news_serge', 'owners', $checkCol, '', $bdd);
 
 			if (!empty($ownersResult))
 			{
-				$updateCol = array(array("owners", preg_replace("/,$pureID,/", ',', $ownersResult[0]['owners'])));
-				$checkCol = array(array("id", "=", preg_replace("/^delete/", "", $key), ""));
+				$updateCol = array(array('owners', preg_replace("/,$pureID,/", ',', $ownersResult[0]['owners'])));
+				$checkCol = array(array('id', '=', preg_replace("/^delete/", '', $key), ''));
 				$execution = update('result_news_serge', $updateCol, $checkCol, '', $bdd);
 			}
 		}
@@ -127,14 +127,14 @@ if (!empty($data['deleteLink']))
 }
 
 # Record when a link is click
-$checkCol = array(array("users", "=", $_SESSION['pseudo'], ""));
+$checkCol = array(array('users', '=', $_SESSION['pseudo'], ''));
 $recordRead = read('users_table_serge', 'record_read, token', $checkCol, '', $bdd);
 if ($recordRead[0]['record_read'] == 1)
 {
 	$recordLink = 'redirect?type=' . $type .'&token=' . $recordRead[0]['token'] . '&id=';
 }
 
-$checkCol = array(array($ownersColumn, "l", '%' . $userId . '%', ""));
+$checkCol = array(array($ownersColumn, 'l', '%' . $userId . '%', ''));
 $readOwnerKeyword = read($tableNameQuery, 'id', $checkCol, '', $bdd);
 
 
@@ -209,7 +209,7 @@ if (!empty($data['orderBy']))
 
 	$data['orderBy'] = '&orderBy=' . $data['orderBy'];
 }
-elseif (empty($_GET['search']))
+elseif (empty($data['search']))
 {
 	$colOrder['date'] = '▴';
 	$colOrder['DESC'] = '';
@@ -256,14 +256,14 @@ if (!empty($data['optionalCond']))
 	$data['optionalCond'] = '&optionalCond=' . $data['optionalCond'];
 }
 
-include_once('controller/searchEngine.php');
+include('controller/searchEngine.php');
 
-include_once('model/readOwnerResult.php');
+include('model/readOwnerResult.php');
 
-include_once('view/nav/nav.php');
+include('view/nav/nav.php');
 
-include_once('view/body/result.php');
+include('view/body/result.php');
 
-include_once('view/footer/footer.php');
+include('view/footer/footer.php');
 
 ?>

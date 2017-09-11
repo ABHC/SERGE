@@ -29,13 +29,13 @@ foreach ($result as $line)
 			$result = $req->fetch();
 			$req->closeCursor();
 
-			if ($type == "sciences")
+			if ($type == 'sciences')
 			{
 				$step1 = preg_replace("/(%28|%29|%22|AND\+|OR\+|NOTAND\+[^+]+(\+|$))/", "", $result[$queryColumn]);
 				$step2 = preg_replace("/[^:\+]+:/", "", $step1);
 				$result[$queryColumn] = preg_replace("/\+/", " ", $step2);
 			}
-			elseif ($type == "patents")
+			elseif ($type == 'patents')
 			{
 				$step1 = urldecode($result[$queryColumn]);
 				$step2 = preg_replace("/(AND|OR)/", "", $step1);
