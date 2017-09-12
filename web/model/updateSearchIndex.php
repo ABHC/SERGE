@@ -9,7 +9,7 @@ function del_accent($str, $encoding='utf-8')
 		return $str;
 }
 
-$req = $bdd->prepare("SELECT id, title, $keywordQueryId FROM $tableName WHERE search_index IS NULL AND owners LIKE :user");
+$req = $bdd->prepare("SELECT id, title, link, $keywordQueryId FROM $tableName WHERE search_index IS NULL AND owners LIKE :user");
 $req->execute(array(
 	'user' => '%,' . $_SESSION['id'] . '%'));
 	$result = $req->fetchAll();
@@ -17,17 +17,19 @@ $req->execute(array(
 
 foreach ($result as $line)
 {
-	# Add keyword in Index
-	$keywordQueryIds = explode(",", $line[$keywordQueryId]);
-	$keywordQueryIndex= '';
-
-	foreach ($keywordQueryIds as $id)
+	if(!empty($tableNameQuery))
 	{
-		$req = $bdd->prepare("SELECT $queryColumn FROM $tableNameQuery WHERE id = :id");
-		$req->execute(array(
-			'id' => $id));
-			$result = $req->fetch();
-			$req->closeCursor();
+		# Add keyword in Index
+		$keywordQueryIds = explode(",", $line[$keywordQueryId]);
+		$keywordQueryIndex= '';
+
+		foreach ($keywordQueryIds as $id)
+		{
+			$req = $bdd->prepare("SELECT $queryColumn FROM $tableNameQuery WHERE id = :id");
+			$req->execute(array(
+				'id' => $id));
+				$result = $req->fetch();
+				$req->closeCursor();
 
 			if ($type == 'sciences')
 			{
@@ -43,9 +45,17 @@ foreach ($result as $line)
 			}
 
 			$keywordQueryIndex= $keywordQueryIndex. ' ' . $result[$queryColumn];
+		}
+
+		# Link studies
+		$linkKeywords = preg_replace("/([^A-za-z0-9]|https)/", " ", $lines['link']);
+		preg_match_all("/\w{5,}/", $linkKeywords, $linkKeywords_array);
+		$linkKeywords_array = array_unique($linkKeywords_array[0]);
+		$linkKeywords = implode(" ", $linkKeywords_array);
+		$title = $linkKeywords . ' ';
 	}
 
-	$title = $line['title'] . ' ' . $keywordQueryIndex;
+	$title = $title . $line['title'] . ' ' . $keywordQueryIndex;
 
 	$wordArray = explode(" ", $title);
 	$titleIndexLOWER = '';

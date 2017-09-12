@@ -302,6 +302,19 @@ if ($type === 'add')
 	}
 
 	# Order results
+	$colOrder['rate'] = ' ▴';
+	$colOrder['DESC'] = '';
+	# WARNING sensitive variable [SQLI]
+	$ORDERBY = 'ORDER BY `NumberOfStars` DESC';
+	if (!empty($data['search']))
+	{
+		# Order results
+		$colOrder['rate'] = '';
+		$colOrder['DESC'] = '';
+		# WARNING sensitive variable [SQLI]
+		$ORDERBY = '';
+	}
+
 	if (!empty($data['orderBy']))
 	{
 		$orderBy = $data['orderBy'];
@@ -385,39 +398,25 @@ if ($type === 'add')
 			# WARNING sensitive variable [SQLI]
 			$ORDERBY = 'ORDER BY `NumberOfStars` DESC';
 		}
-		else
-		{
-			$colOrder['rate'] = ' ▴';
-			$colOrder['DESC'] = '';
-
-			# WARNING sensitive variable [SQLI]
-			$ORDERBY = 'ORDER BY `NumberOfStars` DESC';
-		}
-
 		$orderBy = '&orderBy=' . $orderBy;
 	}
 	elseif (!empty($data['language']))
 	{
 		$checkCol = array(array('language', '=', mb_strtoupper($selectedLanguageCode), ''));
 	}
-	elseif (empty($data['search']))
-	{
-		$colOrder['rate'] = ' ▴';
-		$colOrder['DESC'] = '';
-
-		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'ORDER BY `NumberOfStars` DESC';
-	}
 
 	# Search engine
+	$tableName = 'watch_pack_serge';
+	$tableNameQuery = '';
+	# Warning sensitive variables [SQLI]
+	$SELECTRESULT = '(SELECT id, name, description, author, users, category, language, update_date, rating, ((LENGTH(`rating`) - LENGTH(REPLACE(`rating`, \',\', \'\')))-1) AS `NumberOfStars` FROM ' . $tableName . ' WHERE search_index IS NOT NULL';
+	$WP = 'WP';
+	$arrayValues = array();
+	include('controller/searchEngine.php');
 
-	# Read watchPack
-	/*$req = $bdd->prepare("SELECT id, name, description, author, users, category, language, update_date, rating, ((LENGTH(`rating`) - LENGTH(REPLACE(`rating`, ',', '')))-1) AS `NumberOfStars` FROM `watch_pack_serge` WHERE $OPTIONALCOND $ORDERBY;");
-	$req->execute();
-		$watchPacks = $req->fetchAll();
-		$req->closeCursor();*/
+	include('model/readOwnerResult.php');
 
-	$watchPacks = read('watch_pack_serge', 'id, name, description, author, users, category, language, update_date, rating, ((LENGTH(`rating`) - LENGTH(REPLACE(`rating`, \',\', \'\')))-1) AS `NumberOfStars`', $checkCol, $ORDERBY, $bdd);
+	$watchPacks = $readOwnerResults;
 }
 else
 {

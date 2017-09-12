@@ -25,7 +25,7 @@ foreach($_POST as $key => $val)
 include('controller/dataProcessing.php');
 
 # Nonce
-$nonceTime = time();
+$nonceTime = $_SERVER['REQUEST_TIME'];
 $nonce = getNonce($nonceTime);
 
 # Initialization of variables
@@ -101,9 +101,6 @@ if (!empty($data['resultType']))
 	}
 }
 
-# Warning sensitive variables [SQLI]
-$SELECTRESULT = '(SELECT id, title, link, send_status, read_status, `date`' . $specialColumn . 'FROM ' . $tableName . ' WHERE owners LIKE :user';
-
 # Delete results
 if (!empty($data['deleteLink']))
 {
@@ -148,6 +145,19 @@ if (!empty($data['page']))
 }
 
 # Order results
+$colOrder['date'] = '▴';
+$colOrder['DESC'] = '';
+# WARNING sensitive variable [SQLI]
+$ORDERBY = 'ORDER BY date DESC';
+if (!empty($data['search']))
+{
+	# Order results
+	$colOrder['rate'] = '';
+	$colOrder['DESC'] = '';
+	# WARNING sensitive variable [SQLI]
+	$ORDERBY = '';
+}
+
 if (!empty($data['orderBy']))
 {
 	if ($data['orderBy'] === 'title')
@@ -198,24 +208,7 @@ if (!empty($data['orderBy']))
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY date DESC';
 	}
-	else
-	{
-		$colOrder['date'] = '▴';
-		$colOrder['DESC'] = '';
-
-		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'ORDER BY date DESC';
-	}
-
 	$data['orderBy'] = '&orderBy=' . $data['orderBy'];
-}
-elseif (empty($data['search']))
-{
-	$colOrder['date'] = '▴';
-	$colOrder['DESC'] = '';
-
-	# WARNING sensitive variable [SQLI]
-	$ORDERBY = 'ORDER BY date DESC';
 }
 
 if (!empty($data['optionalCond']))
@@ -256,6 +249,10 @@ if (!empty($data['optionalCond']))
 	$data['optionalCond'] = '&optionalCond=' . $data['optionalCond'];
 }
 
+# Warning sensitive variables [SQLI]
+$SELECTRESULT = '(SELECT id, title, link, send_status, read_status, `date`' . $specialColumn . 'FROM ' . $tableName . ' WHERE owners LIKE :user';
+$WP = '';
+$arrayValues = array('user' => '%,' . $_SESSION['id'] . ',%');
 include('controller/searchEngine.php');
 
 include('model/readOwnerResult.php');
