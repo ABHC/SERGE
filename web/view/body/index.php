@@ -117,6 +117,9 @@
 		</div>
 	</div>
 
+	<?php
+	if (!isset($_SESSION['pseudo']))
+	{?>
 	<div id="signup">
 		<div class="inscription">
 			<p class="title_inscription" ><?php get_t('signup_title_index', $bdd); ?></p>
@@ -156,4 +159,5 @@
 			</form>
 		</div>
 	</div>
+	<?php }?>
 </div>
