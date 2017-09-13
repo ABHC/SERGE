@@ -50,7 +50,6 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 	{
 		$selectedCol = 'id';
 		$check = TRUE;
-		$result = TRUE;
 	}
 
 	# SQL request
@@ -62,6 +61,10 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 	if (empty($result) AND $check)
 	{
 		$result = FALSE;
+	}
+	elseif ($check)
+	{
+		$result = TRUE;
 	}
 
 	return $result;

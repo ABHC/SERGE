@@ -15,13 +15,13 @@
 	if ($type == 'create')
 	{
 		$packIdURL = '';
-		if (isset($pack_idInUse[0]))
+		if (!empty($data['packId']))
 		{
-			$packIdURL = '&packId=' . $pack_idInUse[0];
+			$packIdURL = '&packId=' . $data['packId'];
 		}
 	?>
 	<h1><?php get_t('title_window0_watchpack', $bdd); ?></h1>
-	<form method="post" action="watchPack?type=create<?php echo htmlspecialchars($packIdURL); ?>">
+	<form method="post" action="watchPack?type=create<?php echo $packIdURL; ?>">
 		<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
 		<input type="hidden" name="scrollPos" id="scrollPos" value="
 		<?php
@@ -56,11 +56,11 @@
 					{
 						if ($ownerWatchPack['id'] == $data['packId'])
 						{
-							echo '<option value="' . htmlspecialchars($ownerWatchPack['id']) . '" selected>Edit: ' . htmlspecialchars($ownerWatchPack['name']) . '&nbsp;&nbsp;</option>';
+							echo '<option value="' . $ownerWatchPack['id'] . '" selected>Edit: ' . $ownerWatchPack['name'] . '&nbsp;&nbsp;</option>';
 						}
 						else
 						{
-							echo '<option value="' . htmlspecialchars($ownerWatchPack['id']) . '">Edit: ' . htmlspecialchars($ownerWatchPack['name']) . '&nbsp;&nbsp;</option>';
+							echo '<option value="' . $ownerWatchPack['id'] . '">Edit: ' . $ownerWatchPack['name'] . '&nbsp;&nbsp;</option>';
 						}
 					}
 					 ?>
@@ -175,7 +175,7 @@
 					$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE query = "[!source!]" AND source LIKE :sourceIdDesactivated AND pack_id = :packIdInUse');
 					$req->execute(array(
 						'sourceIdDesactivated' => "%,!" . $packSourcesList['id'] . ",%",
-						'packIdInUse' => $pack_idInUse[0]));
+						'packIdInUse' => $data['packId']));
 						$resultDesactivatedSource = $req->fetch();
 						$req->closeCursor();
 

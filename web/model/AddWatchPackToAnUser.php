@@ -42,6 +42,34 @@ if ($result)
 	foreach ($result as $scienceQuery)
 	{
 		// Add query to actual user if query is not already own
+		$checkCol = array(array("query_arxiv", "=", $scienceQuery['query'], "AND"),
+											array("owners", "l", '%,' . $_SESSION['id'] . ',%', ""));
+		$queryExist = read('queries_science_serge', '', $checkCol, '', $bdd);
+
+		if (empty($queryExist))
+		{
+			$checkCol = array(array("query_arxiv", "=", $scienceQuery['query'], ""));
+			$queryExist = read('queries_science_serge', 'id, owners', $checkCol, '', $bdd);
+
+			if (!empty($queryExist))
+			{
+				$updateCol = array(array("owners", $queryExist['owners'] . $_SESSION['id'] . ','),
+														array("active", $result['active'] + 1));
+				$checkCol = array(array("id", "=", $queryExist['id'], ""));
+				$execution = update('queries_science_serge', $updateCol, $checkCol, '', $bdd);
+			}
+		}
+		else
+		{
+			// Creation of Doaj query
+
+
+			// Add query
+			$insertCol = array(array("query_arxiv", $scienceQuery['query']),
+			array("query_doaj", $queryDoaj),
+			array("active", 1));
+			$execution = insert('queries_science_serge', $insertCol, '', '', $bdd);
+		}
 	}
 
 	// récup les lignes WHERE packid est l'id du pack et source = patent ajouter chaque ligne dans le la table patent

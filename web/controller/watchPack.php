@@ -1,5 +1,4 @@
 <?php
-
 include('controller/accessLimitedToSignInPeople.php');
 include('model/get_text.php');
 include('model/read.php');
@@ -21,7 +20,7 @@ $unsafeData = array_merge($unsafeData, array(array('query', 'query', 'GET', '09'
 $unsafeData = array_merge($unsafeData, array(array('search', 'search', 'GET', 'str')));
 $unsafeData = array_merge($unsafeData, array(array('type', 'type', 'GET', 'Az')));
 $unsafeData = array_merge($unsafeData, array(array('orderBy', 'orderBy', 'GET', 'str')));
-$unsafeData = array_merge($unsafeData, array(array('language', 'language', 'GET', 'Az')));
+$unsafeData = array_merge($unsafeData, array(array('languageGET', 'language', 'GET', 'Az')));
 $unsafeData = array_merge($unsafeData, array(array('packId', 'packId', 'GET', '09')));
 
 $unsafeData = array_merge($unsafeData, array(array('AddStar', 'AddStar', 'POST', '09')));
@@ -239,7 +238,7 @@ if ($type === 'add')
 	$colOrder['language'] = '<select name="language" onchange="this.form.submit();">';
 	$colOrder['language'] = $colOrder['language'] . PHP_EOL . '<option value="all" selected>All languages</option>';
 
-	$languageGET = preg_replace("/[^a-z]/", '', $data['language']);
+	$languageGET = preg_replace("/[^a-z]/", '', $data['languageGET']);
 
 	foreach ($languageBDD as $languageLine)
 	{
@@ -539,7 +538,7 @@ else
 	$selectLanguage = $selectLanguage . PHP_EOL . '</select>';
 
 	// Edit a pack
-	if (!empty($data['watchPackList']) AND !empty($data['addNewPack']) AND !empty($data['watchPackName']) AND !empty($data['watchPackDescription']))
+	if (!empty($data['packId']) AND !empty($data['addNewPack']) AND !empty($data['watchPackName']) AND !empty($data['watchPackDescription']))
 	{
 		// Check if watch pack is own by the user
 		/*$req = $bdd->prepare('SELECT id FROM watch_pack_serge WHERE author = :username AND id = :packIdEdit');
@@ -550,23 +549,23 @@ else
 			$req->closeCursor();*/
 
 		$checkCol  = array(array('author', '=', $_SESSION['pseudo'], 'AND'),
-											array('id', '=', $data['watchPackList'], ''));
+											array('id', '=', $data['packId'], ''));
 		$packIsOwn = read('watch_pack_serge', '', $checkCol, '', $bdd);
 
 		$checkCol  = array(array('name', '=', $data['watchPackName'], 'AND'),
-											array('id', '<>', $data['watchPackList'], ''));
+											array('id', '<>', $data['packId'], ''));
 		$nameExist = read('watch_pack_serge', '', $checkCol, '', $bdd);
 
-		if (!$packIsOwn AND !$nameExist)
+		if ($packIsOwn AND !$nameExist)
 		{
-			$updateCol = array(array('names', $data['watchPackName']),
+			$updateCol = array(array('name', $data['watchPackName']),
 												array('description', $data['watchPackDescription']),
 												array('category', $data['watchPackCategory']),
 												array('language', $data['language']),
-												array('update_date', $_SERVER['REQUEST_TIME']));
-			$checkCol = array(array('id', '=', $data['watchPackList'], ''));
+												array('update_date', $_SERVER['REQUEST_TIME']),
+												array('search_index', NULL));
+			$checkCol = array(array('id', '=', $data['packId'], ''));
 			$execution = update('watch_pack_serge', $updateCol, $checkCol, '', $bdd);
-
 		}
 	}
 	elseif (!empty($data['addNewKeyword']) AND !empty($data['sourceKeyword']) AND !empty($data['newKeyword']))
@@ -1454,7 +1453,7 @@ else
 
 			$checkCol = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
 												array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
-			$result   = read('rss_serge', 'id', $checkCol, 'ORDER BY id', $bdd);
+			$listAllSources = read('rss_serge', 'id', $checkCol, 'ORDER BY id', $bdd);
 
 			$sources = ',';
 			foreach ($listAllSources as $allSources)
@@ -1488,8 +1487,6 @@ else
 	}
 	elseif (!empty($data['watchPackList']))
 	{
-		preg_match("/[0-9]+/", $data['watchPackList'], $pack_idInUse);
-
 		/*$req = $bdd->prepare('SELECT id FROM watch_pack_serge WHERE author = :pseudo AND id = :pack_idInUse');
 		$req->execute(array(
 			'pseudo' => $_SESSION['pseudo'],
@@ -1498,19 +1495,17 @@ else
 			$req->closeCursor();*/
 
 		$checkCol = array(array('author', '=', $_SESSION['pseudo'], 'AND'),
-											array('id', '=',$data['packId'], ''));
+											array('id', '=', $data['watchPackList'], ''));
 		$result   = read('watch_pack_serge', 'id', $checkCol, '', $bdd);
 		$result = $result[0];
 
-		header('Location: watchPack?type=create&packId=' . $data['packId']);
+		header('Location: watchPack?type=create&packId=' . $data['watchPackList']);
 		die();
 	}
 
 	# TODO Faire une fonction qui va relir toute les sources et les mots clefs
 	if (!empty($data['packId']))
 	{
-		preg_match("/[0-9]+/", $data['packId'], $pack_idInUse);
-
 		/*$req = $bdd->prepare('SELECT name, description, category, language FROM watch_pack_serge WHERE author = :pseudo AND id = :pack_idInUse');
 		$req->execute(array(
 			'pseudo' => $_SESSION['pseudo'],
@@ -1519,7 +1514,7 @@ else
 			$req->closeCursor();*/
 
 		$checkCol = array(array('author', '=', $_SESSION['pseudo'], 'AND'),
-											array('id', '=',$data['packId'], ''));
+											array('id', '=', $data['packId'], ''));
 		$result   = read('watch_pack_serge', 'name, description, category, language', $checkCol, '', $bdd);
 		$packDetails = $result[0];
 
