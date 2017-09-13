@@ -864,12 +864,20 @@ h2
 	z-index: 2;
 }
 
+.selectBackgroundBlock
+{
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+
 .selectBackground
 {
 	position: relative;
 	width: fit-content;
 	max-width: fit-content;
-	height: 38px;
+	height: 65px;
 	padding: 0;
 	border: none;
 	-moz-appearance: none;

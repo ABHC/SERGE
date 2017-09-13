@@ -370,8 +370,8 @@
 						<input type="email" name="email" id="email" value="<?php echo $userSettings['email']; ?>"/>
 					</div>
 					<h3 ><?php get_t('subtitle1_window1_setting', $bdd); ?></h3>
-					<p>
-						<?php get_t('selectTitle_window1_setting', $bdd); ?> <select size="<?php echo count($backgroundList); ?>" id="selectBackgroundPreview" class="selectBackground" name="backgroundResult">
+					<p class="selectBackgroundBlock">
+						<?php get_t('selectTitle_window1_setting', $bdd); ?>&nbsp;<select size="<?php echo count($backgroundList); ?>" id="selectBackgroundPreview" class="selectBackground" name="backgroundResult">
 						<?php
 						foreach ($backgroundList as $backgroundName)
 						{
