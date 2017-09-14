@@ -35,6 +35,10 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 			{
 				$op = ' <> ';
 			}
+			elseif ($line[1] == 'REGEXP')
+			{
+				$op = ' REGEXP ';
+			}
 
 			$nameCol   = $line[0];
 			$value     = $line[2];
