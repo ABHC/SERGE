@@ -44,8 +44,25 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 			$value     = $line[2];
 			$connector = ' ' . $line[3] . ' ';
 
-			$WHEREvar    = $WHEREvar . $nameCol . $op . '(:' . $nameCol . $cpt . ')' . $connector;
-			$arrayValues = array_merge($arrayValues, array($nameCol . $cpt => $value));
+			if (is_array($value))
+			{
+				$cptArray = 0;
+				$comma = '';
+				$WHEREvar = $WHEREvar . $nameCol . $op . '(';
+				foreach ($value as $arrayVariable)
+				{
+					$WHEREvar    = $WHEREvar . $comma . ':' . $nameCol . $cpt . $cptArray;
+					$arrayValues = array_merge($arrayValues, array($nameCol . $cpt . $cptArray => $arrayVariable));
+					$comma = ',';
+					$cptArray++;
+				}
+				$WHEREvar    = $WHEREvar . ')' . $connector;
+			}
+			else
+			{
+				$WHEREvar    = $WHEREvar . $nameCol . $op . '(:' . $nameCol . $cpt . ')' . $connector;
+				$arrayValues = array_merge($arrayValues, array($nameCol . $cpt => $value));
+			}
 			$cpt++;
 		}
 	}
