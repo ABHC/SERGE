@@ -23,6 +23,7 @@ $unsafeData = array_merge($unsafeData, array(array('orderBy', 'orderBy', 'GET', 
 $unsafeData = array_merge($unsafeData, array(array('languageGET', 'language', 'GET', 'Az')));
 $unsafeData = array_merge($unsafeData, array(array('packId', 'packId', 'GET', '09')));
 
+$unsafeData = array_merge($unsafeData, array(array('addPack', 'addPack', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('AddStar', 'AddStar', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('watchPackList', 'watchPackList', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('addNewPack', 'addNewPack', 'POST', 'Az')));
@@ -258,6 +259,11 @@ if ($type === 'add')
 	$colOrder['language'] = $colOrder['language'] . PHP_EOL . '</select>
 	<input type="hidden" name="orderBy" value="' . $orderBy . '"/>';
 
+	if (!empty($data['addPack']))
+	{
+		include('model/addWatchPackToAnUser.php');
+	}
+
 	# Add a star
 	if (!empty($data['AddStar']))
 	{
@@ -460,16 +466,15 @@ else
 				}
 			}
 
-			$sourcesIds = implode(',', $packSource);
-
-			/*$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE id IN ($sourcesIds) ORDER BY name");
+			/*$sourcesIds = implode(',', $packSource);
+			$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE id IN ($sourcesIds) ORDER BY name");
 			$req->execute(array(
 				'user' => $userId,
 				'userDesactivated' => $userIdDesactivated));
 				$listAllSources = $req->fetchAll();
 				$req->closeCursor();*/
 
-			$checkCol = array(array('id', 'IN', implode(',', $packSource), ''));
+			$checkCol = array(array('id', 'IN', $packSource, ''));
 			$listAllSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 
 			/*$reqReadPackSources = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE pack_id = :pack_id AND query <> "[!source!]"');
@@ -493,13 +498,12 @@ else
 				}
 
 			/*$sourcesIdsUsed = implode(',', $packSourceUsed);
-
 			$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE id IN ($sourcesIdsUsed) ORDER BY name");
 			$req->execute(array());
 				$readPackSources = $req->fetchAll();
 				$req->closeCursor();*/
 
-			$checkCol = array(array('id', 'IN', implode(',', $packSourceUsed), ''));
+			$checkCol = array(array('id', 'IN', $packSourceUsed, ''));
 			$readPackSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 	}
 	else
@@ -1551,9 +1555,8 @@ else
 				$listAllSources = $req->fetchAll();
 				$req->closeCursor();*/
 
-				$checkCol = array(array('id', 'IN', implode(',', $packSource), ''));
-				$listAllSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
-
+			$checkCol = array(array('id', 'IN', $packSource, ''));
+			$listAllSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 			/*$reqReadPackSources = $bdd->prepare('SELECT source FROM watch_pack_queries_serge WHERE pack_id = :pack_id AND query <> "[!source!]"');
 			$reqReadPackSources->execute(array(
 				'pack_id' => $data['packId']));
@@ -1574,16 +1577,14 @@ else
 					}
 				}
 
-			$sourcesIdsUsed = implode(',', $packSourceUsed);
-
-			/*$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE id IN ($sourcesIdsUsed) ORDER BY name");
+			/*$sourcesIdsUsed = implode(',', $packSourceUsed);
+			$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE id IN ($sourcesIdsUsed) ORDER BY name");
 			$req->execute(array());
 				$readPackSources = $req->fetchAll();
 				$req->closeCursor();*/
 
-			$checkCol = array(array('id', 'IN', implode(',', $packSourceUsed), ''));
-			$result   = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
-			$result = $result[0];
+			$checkCol = array(array('id', 'IN', $packSourceUsed, ''));
+			$readPackSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 	}
 }
 include('view/nav/nav.php');

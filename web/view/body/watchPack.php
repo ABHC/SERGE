@@ -46,11 +46,14 @@
 					<option value="NewPack"><?php get_t('select1_window0_watchpack', $bdd); ?>&nbsp;&nbsp;</option>
 					<?php
 					# List here watch Pack own by current user
-					$req = $bdd->prepare('SELECT id, name FROM watch_pack_serge WHERE author = :author');
+					/*$req = $bdd->prepare('SELECT id, name FROM watch_pack_serge WHERE author = :author');
 					$req->execute(array(
 						'author' => $_SESSION['pseudo']));
 						$ownerWatchPacks = $req->fetchAll();
-						$req->closeCursor();
+						$req->closeCursor();*/
+
+					$checkCol = array(array('author', '=', $_SESSION['pseudo'], ''));
+					$ownerWatchPacks = read('watch_pack_serge', 'id, name', $checkCol, '', $bdd);
 
 					foreach ($ownerWatchPacks as $ownerWatchPack)
 					{
@@ -74,11 +77,14 @@
 				<input type="text" name="watchPackCategory" placeholder="<?php get_t('input3_window0_watchpack', $bdd); ?>" value="<?php echo htmlspecialchars($packDetails['category']); ?>" list="watchPackCategory"/>
 				<datalist id="watchPackCategory">
 					<?php
-					# List here watch Pack own by current user
-					$req = $bdd->prepare('SELECT id, category FROM watch_pack_serge GROUP BY category');
+					# List here watch Pack category
+					/*$req = $bdd->prepare('SELECT id, category FROM watch_pack_serge GROUP BY category');
 					$req->execute(array());
 						$categoryWatchPacks = $req->fetchAll();
-						$req->closeCursor();
+						$req->closeCursor();*/
+
+					$checkCol = array();
+					$ownerWatchPacks = read('watch_pack_serge', 'id, category', $checkCol, 'GROUP BY category', $bdd);
 
 					foreach ($categoryWatchPacks as $categoryWatchPack)
 					{
@@ -97,7 +103,7 @@
 			<div class="newsInput">
 				<input title="Add new keyword" class="submit" type="submit" value="add" name="addNewKeyword"/>
 				<select name="sourceKeyword" id="sourceKeyword">
-					<?php
+				<?php
 					foreach ($listAllSources as $sourcesList)
 					{
 						if ($sourcesList['id'] == $_SESSION['lastSourceUse'])
@@ -779,7 +785,7 @@
 		<form class="formSearch" method="get" action="watchPack">
 			<input type="text" name="search" id="search" placeholder="Search Serge" value="<?php echo htmlspecialchars($search); ?>"/>
 			<input type="hidden" name="orderBy" value="<?php echo  htmlspecialchars(preg_replace("/.*=/", "", $orderBy)); ?>"/>
-			<input type="hidden" name="optionalCond" value="<?php echo htmlspecialchars($optionalCond); ?>"/>
+			<input type="hidden" name="optionalCond" value="<?php echo $optionalCond; ?>"/>
 		</form>
 
 
@@ -805,30 +811,33 @@
 			<div class="table-content">
 				<table>
 					<tbody>
-						<?php
-						foreach ($watchPacks as $watchPack)
-						{
-							# Color stars
-							$starTitle = 'Add a star';
-							$colorStar = '';
-							$pattern = ',' . $_SESSION['id'] . ',';
-							if (preg_match("/$pattern/", $watchPack['rating']))
+						<form method="post" action="watchPack">
+							<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
+							<?php
+							foreach ($watchPacks as $watchPack)
 							{
-								$colorStar = 'colorStar';
-								$starTitle = 'Unstar';
+								# Color stars
+								$starTitle = 'Add a star';
+								$colorStar = '';
+								$pattern = ',' . $_SESSION['id'] . ',';
+								if (preg_match("/$pattern/", $watchPack['rating']))
+								{
+									$colorStar = 'colorStar';
+									$starTitle = 'Unstar';
+								}
+								echo '
+								<tr>
+									<td><input title="Add watch pack" name="addPack" class="icoAddPack" type="submit" value="' . htmlspecialchars($watchPack['id']) . '" /></td>
+									<td title="' . htmlspecialchars($watchPack['description']) . '">' . htmlspecialchars($watchPack['name']) . '</td>
+									<td>' . htmlspecialchars($watchPack['author']) . '</td>
+									<td>' . htmlspecialchars($watchPack['category']) . '</td>
+									<td>' . date("H:i d/m/o", $watchPack['update_date']) . '</td>
+									<td>' . htmlspecialchars($watchPack['language']) . '</td>
+									<td>' . htmlspecialchars($watchPack['NumberOfStars']) . '<input title="' . htmlspecialchars($starTitle) . '" name="AddStar" class="star ' . htmlspecialchars($colorStar) . '" type="submit" value="&#9733; ' . htmlspecialchars($watchPack['id']) . '" /></td>
+								</tr>';
 							}
-							echo '
-							<tr>
-								<td><input title="Add watch pack" name="AddPack" class="icoAddPack" type="submit" value="' . htmlspecialchars($watchPack['id']) . '" /></td>
-								<td title="' . htmlspecialchars($watchPack['description']) . '">' . htmlspecialchars($watchPack['name']) . '</td>
-								<td>' . htmlspecialchars($watchPack['author']) . '</td>
-								<td>' . htmlspecialchars($watchPack['category']) . '</td>
-								<td>' . date("H:i d/m/o", $watchPack['update_date']) . '</td>
-								<td>' . htmlspecialchars($watchPack['language']) . '</td>
-								<td><form method="post" action="watchPack"><input type="hidden" name="nonce" value="' . $nonce . '"/>' . htmlspecialchars($watchPack['NumberOfStars']) . '<input title="' . htmlspecialchars($starTitle) . '" name="AddStar" class="star ' . htmlspecialchars($colorStar) . '" type="submit" value="&#9733; ' . htmlspecialchars($watchPack['id']) . '" /></form></td>
-							</tr>';
-						}
-						?>
+							?>
+						</form>
 					</tbody>
 				</table>
 			</div>

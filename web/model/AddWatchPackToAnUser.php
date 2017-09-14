@@ -46,29 +46,45 @@ if ($result)
 											array("owners", "l", '%,' . $_SESSION['id'] . ',%', ""));
 		$queryExist = read('queries_science_serge', '', $checkCol, '', $bdd);
 
-		if (empty($queryExist))
+		if (!$queryExist)
 		{
 			$checkCol = array(array("query_arxiv", "=", $scienceQuery['query'], ""));
 			$queryExist = read('queries_science_serge', 'id, owners', $checkCol, '', $bdd);
 
-			if (!empty($queryExist))
+			if ($queryExist)
 			{
 				$updateCol = array(array("owners", $queryExist['owners'] . $_SESSION['id'] . ','),
 														array("active", $result['active'] + 1));
 				$checkCol = array(array("id", "=", $queryExist['id'], ""));
 				$execution = update('queries_science_serge', $updateCol, $checkCol, '', $bdd);
 			}
-		}
-		else
-		{
-			// Creation of Doaj query
+			else
+			{
+				// Creation of Doaj query
+				$doajEq['ti']  = 'bibjson.title';
+				$doajEq['au']  = 'bibjson.author.name';
+				$doajEq['abs'] = 'bibjson.abstract';
+				$doajEq['cat'] = 'bibjson.subject.term';
+				$doajEq['all'] = '';
+				$doajEq['OR']   = 'OR';
+				$doajEq['AND']  = 'AND';
+				$doajEq['NOTAND'] = 'NOT';
+				$doajEq['+'] = ' ';
 
+				$scienceQuery['query'] = 'ti:%22Venus%22+OR+abs:%22Venus%22+AND+ti:%22planet%22+OR+abs:%22planet%22';
+				$queryDoaj = $scienceQuery['query'];
 
-			// Add query
-			$insertCol = array(array("query_arxiv", $scienceQuery['query']),
-			array("query_doaj", $queryDoaj),
-			array("active", 1));
-			$execution = insert('queries_science_serge', $insertCol, '', '', $bdd);
+				foreach($doajEq as $keyArxiv => $eqDoaj)
+				{
+				    $queryDoaj = str_replace($keyArxiv, $eqDoaj, $queryDoaj);
+				}
+
+				// Add query
+				$insertCol = array(array("query_arxiv", $scienceQuery['query']),
+				array("query_doaj", $queryDoaj),
+				array("active", 1));
+				$execution = insert('queries_science_serge', $insertCol, '', '', $bdd);
+			}
 		}
 	}
 
@@ -80,6 +96,30 @@ if ($result)
 	foreach ($result as $patentQuery)
 	{
 		// Add query to actual user if query is not already own
+		$checkCol = array(array("query", "=", $patentQuery['query'], "AND"),
+											array("owners", "l", '%,' . $_SESSION['id'] . ',%', ""));
+		$queryExist = read('queries_wipo_serge', '', $checkCol, '', $bdd);
+
+		if (!$queryExist)
+		{
+			$checkCol = array(array("query", "=", $patentQuery['query'], ""));
+			$queryExist = read('queries_wipo_serge', 'id, owners', $checkCol, '', $bdd);
+
+			if ($queryExist)
+			{
+				$updateCol = array(array("owners", $queryExist['owners'] . $_SESSION['id'] . ','),
+														array("active", $result['active'] + 1));
+				$checkCol = array(array("id", "=", $queryExist['id'], ""));
+				$execution = update('queries_wipo_serge', $updateCol, $checkCol, '', $bdd);
+			}
+			else
+			{
+				// Add query
+				$insertCol = array(array("query", $patentQuery['query']),
+													array("active", 1));
+				$execution = insert('queries_wipo_serge', $insertCol, '', '', $bdd);
+			}
+		}
 	}
 
 	// Récup toute les lignes qui ne contienne pas science et patent et ajouter chaque mot clef à chaque source
@@ -88,9 +128,50 @@ if ($result)
 										array("source", "<>" , "Patent", ""));
 	$result = read('watch_pack_serge', 'query, source', $checkCol, '', $bdd);
 
-	foreach ($result as $keyword)
+	foreach ($result as $couple)
 	{
 		// Add couple keyword, sources to actual user if couple is not already own
+		$checkCol = array(array("keyword", "=", $couple['query'], "AND"),
+											array("applicable_owners_sources", "REGEXP", '\\|' . $SESSION['id'] . ':[,0-9+,^\\|]*' . $couple['source'], ""));
+		$queryExist = read('keyword_news_serge', '', $checkCol, '', $bdd);
+
+		if (!$queryExist)
+		{
+			$checkCol = array(array("keyword", "=", $couple['query'], ""));
+			$queryExist = read('keyword_news_serge', 'id, owners', $checkCol, '', $bdd);
+
+			if ($queryExist)
+			{
+				// Faire vérif que l'user est dejà sur ce keyword need if
+				$checkCol = array(array("keyword", "=", $couple['query'], "AND"),
+													array("applicable_owners_sources", "l", '%|' . $SESSION['id'] . ':%', ""));
+				$userOwnKeyword = read('keyword_news_serge', 'id, applicable_owners_sources', $checkCol, '', $bdd);
+
+				if (empty($userOwnKeyword))
+				{
+					$updateCol = array(array("applicable_owners_sources", $userOwnKeyword['applicable_owners_sources'] . $_SESSION['id'] . ':' . $couple['source'] . '|'),
+					array("active", $userOwnKeyword['active'] + 1));
+					$checkCol = array(array("id", "=", $userOwnKeyword['id'], ""));
+					$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
+				}
+				else
+				{
+					$userId = $_SESSION['id'];
+					$updateCol = array(array("applicable_owners_sources", preg_replace("/(\|$userId:[,0-9+,]+),(.*)/", '$1' . $couple['source'] . '$2', $userOwnKeyword['applicable_owners_sources'])),
+					array("active", $userOwnKeyword['active'] + 1));
+					$checkCol = array(array("id", "=", $userOwnKeyword['id'], ""));
+					$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
+				}
+			}
+			else
+			{
+				// Add query
+				$insertCol = array(array("keyword", $couple['query']),
+													array("applicable_owners_sources", '|2:' . $couple['query'] . '|'),
+													array("active", 1));
+				$execution = insert('keyword_news_serge', $insertCol, '', '', $bdd);
+			}
+		}
 	}
 }
 ?>
