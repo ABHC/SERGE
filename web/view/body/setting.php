@@ -846,7 +846,12 @@
 			</div>
 			<?php echo isset($ERROR_SCIENCEQUERY) ? $ERROR_SCIENCEQUERY:''; ?>
 			<?php
-			include('model/readOwnerScienceQuery.php');
+
+			// Read owner science query
+			$checkCol = array(array("owners", "l", '%,' . $_SESSION['id'] . ',%', "OR"),
+												array("owners", "l", '%,!' . $_SESSION['id'] . ',%', ""));
+			$queries = read('queries_science_serge', 'id, query_arxiv, owners', $checkCol, '', $bdd);
+
 			foreach ($queries as $query)
 			{
 				$queryDisplay = '';
@@ -1122,7 +1127,12 @@
 			</div>
 			<?php echo isset($ERROR_PATENTQUERY) ? $ERROR_PATENTQUERY:''; ?>
 			<?php
-			include('model/readOwnerPatentQuery.php');
+
+			// Read owner patents queries
+			$checkCol = array(array("owners", "l", '%,' . $_SESSION['id'] . ',%', "OR"),
+												array("owners", "l", '%,!' . $_SESSION['id'] . ',%', ""));
+			$queries = read('queries_wipo_serge', 'id, query, owners', $checkCol, '', $bdd);
+
 			foreach ($queries as $query)
 			{
 				$queryDisplay = '';

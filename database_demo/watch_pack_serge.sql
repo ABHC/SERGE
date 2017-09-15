@@ -7,7 +7,7 @@ CREATE TABLE `watch_pack_serge` (
 	`name` text COLLATE utf8mb4_bin NOT NULL,
 	`description` text COLLATE utf8mb4_bin NOT NULL,
 	`author` text COLLATE utf8mb4_bin NOT NULL,
-	`users` text COLLATE utf8mb4_bin DEFAULT NULL,
+	`users` text COLLATE utf8mb4_bin DEFAULT ',',
 	`category` text COLLATE utf8mb4_bin NOT NULL,
 	`language` text COLLATE utf8mb4_bin NOT NULL,
 	`update_date` text COLLATE utf8mb4_bin NOT NULL,

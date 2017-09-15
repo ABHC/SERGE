@@ -46,11 +46,7 @@
 					<option value="NewPack"><?php get_t('select1_window0_watchpack', $bdd); ?>&nbsp;&nbsp;</option>
 					<?php
 					# List here watch Pack own by current user
-					/*$req = $bdd->prepare('SELECT id, name FROM watch_pack_serge WHERE author = :author');
-					$req->execute(array(
-						'author' => $_SESSION['pseudo']));
-						$ownerWatchPacks = $req->fetchAll();
-						$req->closeCursor();*/
+
 
 					$checkCol = array(array('author', '=', $_SESSION['pseudo'], ''));
 					$ownerWatchPacks = read('watch_pack_serge', 'id, name', $checkCol, '', $bdd);
@@ -78,13 +74,10 @@
 				<datalist id="watchPackCategory">
 					<?php
 					# List here watch Pack category
-					/*$req = $bdd->prepare('SELECT id, category FROM watch_pack_serge GROUP BY category');
-					$req->execute(array());
-						$categoryWatchPacks = $req->fetchAll();
-						$req->closeCursor();*/
+
 
 					$checkCol = array();
-					$ownerWatchPacks = read('watch_pack_serge', 'id, category', $checkCol, 'GROUP BY category', $bdd);
+					$categoryWatchPacks = read('watch_pack_serge', 'id, category', $checkCol, 'GROUP BY category', $bdd);
 
 					foreach ($categoryWatchPacks as $categoryWatchPack)
 					{
@@ -178,12 +171,14 @@
 						}
 					}
 
-					$req = $bdd->prepare('SELECT id FROM watch_pack_queries_serge WHERE query = "[!source!]" AND source LIKE :sourceIdDesactivated AND pack_id = :packIdInUse');
-					$req->execute(array(
-						'sourceIdDesactivated' => "%,!" . $packSourcesList['id'] . ",%",
-						'packIdInUse' => $data['packId']));
-						$resultDesactivatedSource = $req->fetch();
-						$req->closeCursor();
+
+
+					$checkCol = array(array("query", "=", "[!source!]", "AND"),
+														array("source", "=", "%,!" . $packSourcesList['id'] . ",%", "AND"),
+														array("pack_id", "=", $data['packId'], ""),
+				);
+					$result = read('watch_pack_queries_serge', 'id', $checkCol, '', $bdd);
+					$resultDesactivatedSource = $result[0];
 
 					if (empty($resultDesactivatedSource))
 					{
@@ -219,11 +214,13 @@
 						'</label>';
 
 					# Keyword loop
-					$req = $bdd->prepare('SELECT id, query, source FROM watch_pack_queries_serge WHERE pack_id = :packIdInUse AND source NOT LIKE "[!%" AND query NOT LIKE "[!%" ORDER BY query');
-					$req->execute(array(
-						'packIdInUse' => $data['packId']));
-						$reqKeywordList = $req->fetchAll();
-						$req->closeCursor();
+
+
+					$checkCol = array(array("pack_id", "=", $data['packId'], "AND"),
+														array("source", "nl", "[!%", "AND"),
+														array("query", "nl", "[!%", ""));
+					$reqKeywordList = read('watch_pack_queries_serge', 'id, query, source', $checkCol, 'ORDER BY query', $bdd);
+
 					$cptKeyword = 0;
 					foreach ($reqKeywordList as $ownerKeywordList)
 					{
@@ -381,11 +378,13 @@
 			<?php echo htmlspecialchars($ERROR_SCIENCEQUERY); ?>
 			<?php
 			// Read watchPack science query
-			$req = $bdd->prepare('SELECT id, query, source FROM watch_pack_queries_serge WHERE pack_id = :packIdInUse AND (source = "Science" OR source = "!Science")');
-			$req->execute(array(
-				'packIdInUse' => $data['packId']));
-				$queries = $req->fetchAll();
-				$req->closeCursor();
+
+
+			$checkCol = array(array("pack_id", "=", $data['packId'], "AND"),
+												array("source", "=", "Science", "OR"),
+												array("pack_id", "=", $data['packId'], "AND"),
+												array("source", "=", "!Science", ""));
+			$queries = read('watch_pack_queries_serge', 'id, query, source', $checkCol, '', $bdd);
 
 			foreach ($queries as $query)
 			{
@@ -651,11 +650,12 @@
 			<?php echo htmlspecialchars($ERROR_PATENTQUERY); ?>
 			<?php
 			// Read watch pack patent query
-			$req = $bdd->prepare('SELECT id, query, source FROM watch_pack_queries_serge WHERE  pack_id = :packIdInUse AND (source = "Patent" OR source = "!Patent")');
-			$req->execute(array(
-				'packIdInUse' => $data['packId']));
-				$queries = $req->fetchAll();
-				$req->closeCursor();
+			$checkCol = array(array("pack_id", "=", $data['packId'], "AND"),
+												array("source", "=", "Patent", "OR"),
+												array("pack_id", "=", $data['packId'], "AND"),
+												array("source", "=", "!Patent", ""));
+			$queries = read('watch_pack_queries_serge', 'id, query, source', $checkCol, '', $bdd);
+
 			foreach ($queries as $query)
 			{
 				$queryDisplay = '';
@@ -827,12 +827,12 @@
 								}
 								echo '
 								<tr>
-									<td><input title="Add watch pack" name="addPack" class="icoAddPack" type="submit" value="' . htmlspecialchars($watchPack['id']) . '" /></td>
+									<td><input title="Add watch pack" name="addPack" class="icoAddPack" type="submit" value="' . $watchPack['id'] . '" /></td>
 									<td title="' . htmlspecialchars($watchPack['description']) . '">' . htmlspecialchars($watchPack['name']) . '</td>
 									<td>' . htmlspecialchars($watchPack['author']) . '</td>
 									<td>' . htmlspecialchars($watchPack['category']) . '</td>
 									<td>' . date("H:i d/m/o", $watchPack['update_date']) . '</td>
-									<td>' . htmlspecialchars($watchPack['language']) . '</td>
+									<td>' . strtoupper($watchPack['language']) . '</td>
 									<td>' . htmlspecialchars($watchPack['NumberOfStars']) . '<input title="' . htmlspecialchars($starTitle) . '" name="AddStar" class="star ' . htmlspecialchars($colorStar) . '" type="submit" value="&#9733; ' . htmlspecialchars($watchPack['id']) . '" /></td>
 								</tr>';
 							}

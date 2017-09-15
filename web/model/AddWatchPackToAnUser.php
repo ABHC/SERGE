@@ -1,23 +1,22 @@
 <?php
-// Check if packId exist
-$checkCol = array(array("id", "=", $data['AddPack'], ""));
-$result = read('watch_pack_serge', '', $checkCol, '', $bdd);
+// Check if pack exist
+$checkCol = array(array("id", "=", $data['addPack'], ""));
+$packExist = read('watch_pack_serge', 'users', $checkCol, '', $bdd);
 
-if ($result)
+if (!empty($packExist))
 {
 	// Add current user in column users in watch_pack_serge
-	$userId = $_SESSION['id'];
-	$updateCol = array(array("users", $userId));
-	$checkCol = array(array("id", "=", $data['AddPack'], ""));
+	$updateCol = array(array("users", $packExist['users'] . $_SESSION['id'] . ','));
+	$checkCol = array(array("id", "=", $data['addPack'], ""));
 	$execution = update('watch_pack_serge', $updateCol, $checkCol, '', $bdd);
 
-	// read list of sources used by watch pack
-	$checkCol = array(array("pack_id", "=", $data['AddPack'], "AND"),
+	// Read list of sources used by watch pack
+	$checkCol = array(array("pack_id", "=", $data['addPack'], "AND"),
 										array("query", "=" , "[!source!]", ""));
-	$result = read('watch_pack_serge', 'source', $checkCol, '', $bdd);
+	$result = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
 	$listOfSource_array = explode(",", $result[0]);
 
-	$checkCol = array(array("users", "l", '%,' . $_SESSION['id'] . ',%', ""));
+	$checkCol = array(array("owners", "l", '%,' . $_SESSION['id'] . ',%', ""));
 	$ownerSources = read('rss_serge', 'id', $checkCol, '', $bdd);
 
 	foreach ($listOfSource_array as $source)
@@ -34,10 +33,10 @@ if ($result)
 		}
 	}
 
-	// récup les lignes WHERE packid est l'id du pack et source = science ajouter chaque ligne dans le la table science
-	$checkCol = array(array("pack_id", "=", $data['AddPack'], "AND"),
+	// Get entry where pack id is the id of the pack and source = science
+	$checkCol = array(array("pack_id", "=", $data['addPack'], "AND"),
 										array("source", "=" , "Science", ""));
-	$result = read('watch_pack_serge', 'query', $checkCol, '', $bdd);
+	$result = read('watch_pack_queries_serge', 'query', $checkCol, '', $bdd);
 
 	foreach ($result as $scienceQuery)
 	{
@@ -51,8 +50,9 @@ if ($result)
 			$checkCol = array(array("query_arxiv", "=", $scienceQuery['query'], ""));
 			$queryExist = read('queries_science_serge', 'id, owners', $checkCol, '', $bdd);
 
-			if ($queryExist)
+			if (!empty($queryExist))
 			{
+				// Update query with the new owner
 				$updateCol = array(array("owners", $queryExist['owners'] . $_SESSION['id'] . ','),
 														array("active", $result['active'] + 1));
 				$checkCol = array(array("id", "=", $queryExist['id'], ""));
@@ -76,22 +76,23 @@ if ($result)
 
 				foreach($doajEq as $keyArxiv => $eqDoaj)
 				{
-				    $queryDoaj = str_replace($keyArxiv, $eqDoaj, $queryDoaj);
+						$queryDoaj = str_replace($keyArxiv, $eqDoaj, $queryDoaj);
 				}
 
 				// Add query
 				$insertCol = array(array("query_arxiv", $scienceQuery['query']),
-				array("query_doaj", $queryDoaj),
-				array("active", 1));
+													array("query_doaj", $queryDoaj),
+													array("owners", ',' . $_SESSION['id'] . ','),
+													array("active", 1));
 				$execution = insert('queries_science_serge', $insertCol, '', '', $bdd);
 			}
 		}
 	}
 
-	// récup les lignes WHERE packid est l'id du pack et source = patent ajouter chaque ligne dans le la table patent
-	$checkCol = array(array("pack_id", "=", $data['AddPack'], "AND"),
+	// Get entry where pack id is the id of the pack and source = patent
+	$checkCol = array(array("pack_id", "=", $data['addPack'], "AND"),
 										array("source", "=" , "Patent", ""));
-	$result = read('watch_pack_serge', 'query', $checkCol, '', $bdd);
+	$result = read('watch_pack_queries_serge', 'query', $checkCol, '', $bdd);
 
 	foreach ($result as $patentQuery)
 	{
@@ -105,8 +106,9 @@ if ($result)
 			$checkCol = array(array("query", "=", $patentQuery['query'], ""));
 			$queryExist = read('queries_wipo_serge', 'id, owners', $checkCol, '', $bdd);
 
-			if ($queryExist)
+			if (!empty($queryExist))
 			{
+				// Update query with new owner
 				$updateCol = array(array("owners", $queryExist['owners'] . $_SESSION['id'] . ','),
 														array("active", $result['active'] + 1));
 				$checkCol = array(array("id", "=", $queryExist['id'], ""));
@@ -116,39 +118,42 @@ if ($result)
 			{
 				// Add query
 				$insertCol = array(array("query", $patentQuery['query']),
+													array("owners", ',' . $_SESSION['id'] . ','),
 													array("active", 1));
 				$execution = insert('queries_wipo_serge', $insertCol, '', '', $bdd);
 			}
 		}
 	}
 
-	// Récup toute les lignes qui ne contienne pas science et patent et ajouter chaque mot clef à chaque source
-	$checkCol = array(array("pack_id", "=", $data['AddPack'], "AND"),
+	// Get all entries that isn't contain science patnt or [!source!]
+	$checkCol = array(array("pack_id", "=", $data['addPack'], "AND"),
 										array("source", "<>" , "Science", "AND"),
-										array("source", "<>" , "Patent", ""));
-	$result = read('watch_pack_serge', 'query, source', $checkCol, '', $bdd);
+										array("source", "<>" , "Patent", "AND"),
+										array("source", "<>" , "[!source!]", ""),);
+	$result = read('watch_pack_queries_serge', 'query, source', $checkCol, '', $bdd);
 
 	foreach ($result as $couple)
 	{
 		// Add couple keyword, sources to actual user if couple is not already own
-		$checkCol = array(array("keyword", "=", $couple['query'], "AND"),
+		$checkCol = array(array("keyword", "=", strtolower($couple['query']), "AND"),
 											array("applicable_owners_sources", "REGEXP", '\\|' . $SESSION['id'] . ':[,0-9+,^\\|]*' . $couple['source'], ""));
 		$queryExist = read('keyword_news_serge', '', $checkCol, '', $bdd);
 
 		if (!$queryExist)
 		{
-			$checkCol = array(array("keyword", "=", $couple['query'], ""));
-			$queryExist = read('keyword_news_serge', 'id, owners', $checkCol, '', $bdd);
+			$checkCol = array(array("keyword", "=", strtolower($couple['query']), ""));
+			$queryExist = read('keyword_news_serge', '', $checkCol, '', $bdd);
 
 			if ($queryExist)
 			{
-				// Faire vérif que l'user est dejà sur ce keyword need if
-				$checkCol = array(array("keyword", "=", $couple['query'], "AND"),
+				// Check if user already own keyword
+				$checkCol = array(array("keyword", "=", strtolower($couple['query']), "AND"),
 													array("applicable_owners_sources", "l", '%|' . $SESSION['id'] . ':%', ""));
 				$userOwnKeyword = read('keyword_news_serge', 'id, applicable_owners_sources', $checkCol, '', $bdd);
 
-				if (empty($userOwnKeyword))
+				if (!empty($userOwnKeyword))
 				{
+					// Update with new source
 					$updateCol = array(array("applicable_owners_sources", $userOwnKeyword['applicable_owners_sources'] . $_SESSION['id'] . ':' . $couple['source'] . '|'),
 					array("active", $userOwnKeyword['active'] + 1));
 					$checkCol = array(array("id", "=", $userOwnKeyword['id'], ""));
@@ -156,6 +161,7 @@ if ($result)
 				}
 				else
 				{
+					// Update with new owner
 					$userId = $_SESSION['id'];
 					$updateCol = array(array("applicable_owners_sources", preg_replace("/(\|$userId:[,0-9+,]+),(.*)/", '$1' . $couple['source'] . '$2', $userOwnKeyword['applicable_owners_sources'])),
 					array("active", $userOwnKeyword['active'] + 1));
@@ -167,11 +173,14 @@ if ($result)
 			{
 				// Add query
 				$insertCol = array(array("keyword", $couple['query']),
-													array("applicable_owners_sources", '|2:' . $couple['query'] . '|'),
+													array("applicable_owners_sources", '|2:' . $couple['source'] . '|'),
 													array("active", 1));
 				$execution = insert('keyword_news_serge', $insertCol, '', '', $bdd);
 			}
 		}
 	}
+
+	header('Location: setting');
+	die();
 }
 ?>

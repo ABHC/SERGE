@@ -23,6 +23,10 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 			{
 				$op = ' LIKE ';
 			}
+			elseif ($line[1] == 'nl')
+			{
+				$op = ' NOT LIKE ';
+			}
 			elseif ($line[1] == '>=')
 			{
 				$op = ' >= ';

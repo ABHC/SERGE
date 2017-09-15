@@ -178,13 +178,17 @@ if (!empty($data['sourceType']))
 }
 
 # Read background list
-include('model/readBackgroundList.php');
 $type           = 'result';
-$backgroundList = readBackgroundList($type, $bdd);
+$checkCol = array(array("type", "=", $type, ""));
+$backgroundList = read('background_serge', 'id, name, filename', $checkCol, 'ORDER BY name', $bdd);
 
 # Read owner sources
-include('model/readOwnerSources.php');
-include('model/readOwnerSourcesKeyword.php');
+$checkCol = array(array("owners", "l", '%,' . $_SESSION['id'] . ',%', "OR"),
+									array("owners", "l", '%,!' . $_SESSION['id'] . ',%', ""));
+$reqReadOwnerSourcestmp = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
+
+$checkCol = array(array("applicable_owners_sources", "l", '%|' . $_SESSION['id'] . ':%', ""));
+$reqReadOwnerSourcesKeywordtmp = read('keyword_news_serge', 'id, keyword, applicable_owners_sources, active', $checkCol, 'ORDER BY keyword', $bdd);
 
 # Read user settings
 $checkCol = array(array('users', '=', $_SESSION['pseudo'], ''));
@@ -197,14 +201,19 @@ if (!empty($data['settings']) AND $data['settings'] === 'ChangeSettings')
 	if (!empty($data['email']))
 	{
 		$newEmail = $data['email'];
-		include('model/addNewEmail.php');
+		$updateCol = array(array("email", $newEmail));
+		$checkCol = array(array("id", "=", $_SESSION['id'], ""));
+		$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
 	}
 
 	# Change result backgroundList
 	if (!empty($data['backgroundResult']))
 	{
 		$backgroundResult = $data['backgroundResult'];
-		include('model/changeBackgroundResult.php');
+		// Update background result
+		$updateCol = array(array("background_result", $backgroundResult));
+		$checkCol  = array(array("id", "=", $_SESSION['id'], ""));
+		$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
 	}
 
 	# change sending condition
@@ -236,7 +245,11 @@ if (!empty($data['settings']) AND $data['settings'] === 'ChangeSettings')
 	{
 		$orderBy = $data['orderBy'];
 	}
-	include('model/changeSortEmail.php');
+
+	// Update background result
+	$updateCol = array(array("mail_design", $orderBy));
+	$checkCol  = array(array("id", "=", $_SESSION['id'], ""));
+	$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
 
 	# Change privacy settings
 	$recordRead = 0;
@@ -244,7 +257,11 @@ if (!empty($data['settings']) AND $data['settings'] === 'ChangeSettings')
 	{
 		$recordRead = 1;
 	}
-	include('model/changeRecordRead.php');
+
+	// Change record read
+	$updateCol = array(array("record_read", $recordRead));
+	$checkCol  = array(array("id", "=", $_SESSION['id'], ""));
+	$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
 
 	// TODO implement in serge AND in the UI
 	if (!empty($data['historyLifetime']))
@@ -261,7 +278,6 @@ if (!empty($data['settings']) AND $data['settings'] === 'ChangeSettings')
 # Delete history button
 if (!empty($data['buttonDeleteHistory']) AND $data['buttonDeleteHistory'] === 'deleteHistory')
 {
-	include('model/delResult.php');
 	$deleteHistoryValue = $data['deleteHistoryValue'];
 	$deleteHistoryUnit = $data['deleteHistoryUnit'];
 
@@ -291,11 +307,22 @@ if (!empty($data['buttonDeleteHistory']) AND $data['buttonDeleteHistory'] === 'd
 
 	$owner = '%,' . $_SESSION['id'] . ',%';
 
-	include('model/readOwnerResultByTimeInterval.php');
+	$checkCol = array(array("owners", "l", $owner, "AND"),
+										array("date", ">=", $deleteTime, ""));
+	$readIdResutlToDel = read('result_news_serge', 'id', $checkCol, '', $bdd);
 
 	foreach ($readIdResutlToDel as $idResultToDel)
 	{
-			deleteLink($bdd, $idResultToDel['id']);
+			$checkCol = array(array("id", "=", $idResultToDel['id'], ""));
+			$result = read('result_news_serge', 'owners', $checkCol, '', $bdd);
+			$result = $result[0];
+
+			if (!empty($result))
+			{
+				$updateCol = array(array("owners", preg_replace("/,$userId,/", ',', $ownersResult['owners'])));
+				$checkCol = array(array("id", "=", $idResultToDel['id'], ""));
+				$execution = update('result_news_serge', $updateCol, $checkCol, '', $bdd);
+			}
 	}
 }
 
@@ -310,7 +337,43 @@ if (!empty($data['sourceType']) AND !empty($data['newSource']) AND $data['source
 
 	if ($linkValidation[0] === 'valid link' AND $errorInCheckfeed === 0)
 	{
-		include('model/addNewSource.php');
+		// Check if source is already in bdd
+		$checkCol = array(array("link", "=", $source, ""));
+		$result = read('rss_serge', 'owners', $checkCol, '', $bdd);
+		$result = $result[0];
+
+		if (!$result)
+		{
+			// Adding new source
+			preg_match('@^(?:http.*://[www.]*)?([^/]+)@i', $source, $matches);
+
+			$insertCol = array(array("link", $source),
+												array("owners", ',' . $_SESSION['id'] . ','),
+												array("name", ucfirst($matches[1] . '[!NEW!]')),
+												array("active", 1));
+			$execution = insert('rss_serge', $insertCol, '', 'setting', $bdd);
+		}
+		else
+		{
+				$checkCol = array(array("owners", "l", '%,' . $_SESSION['id'] . ',%', "AND"),
+													array("link", "=", $source, ""));
+				$result = read('rss_serge', 'owners, active', $checkCol, '', $bdd);
+				$resultActualOwner = $result[0];
+
+				if (!$resultActualOwner)
+				{
+					// Update owners of existing source with the new onwer
+					$updateCol = array(array("owners", $resultActualOwner['owners'] . $_SESSION['id'] . ','),
+														array("active", $resultActualOwner['active'] + 1));
+					$checkCol  = array(array("link", "=", $source, ""));
+					$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
+				}
+				else
+				{
+					$_SESSION['ERROR_MESSAGE'] = 'This source is already in the database';
+				}
+		}
+
 		if (isset($linkValidation[1]))
 		{
 			$_SESSION['ERROR_MESSAGE'] = $linkValidation[1];
@@ -410,15 +473,15 @@ if (isset($sourceIdAction) AND isset($keywordIdAction) AND isset($action))
 	foreach ($reqReadOwnerSourcesKeywordtmp as $ownerKeywordList)
 	{
 		# Source of current keyword for current user
-		$applicable_owners_sourcestmp = $ownerKeywordList['applicable_owners_sources'];
+		$applicableOwnerstmp = $ownerKeywordList['applicable_owners_sources'];
 
 		# Search for source in applicable_owners_sources
-		$sourceInKeyword = preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*,!*" . $sourceIdAction . ",[,!0-9,]*\|/", $applicable_owners_sourcestmp, $applicable_owners_sourceForCurrentUser);
+		$sourceInKeyword = preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*,!*" . $sourceIdAction . ",[,!0-9,]*\|/", $applicableOwnerstmp, $applicable_owners_sourceForCurrentUser);
 
 		if ($ownerKeywordList['id'] === $keywordIdAction AND $sourceInKeyword)
 		{
-			$applicable_owners_sourcesCurrentKeywordAndUser = $applicable_owners_sourceForCurrentUser[0];
-			$applicable_owners_sources = $ownerKeywordList['applicable_owners_sources'];
+			$actualOwners = $applicable_owners_sourceForCurrentUser[0];
+			$applicableOwners = $ownerKeywordList['applicable_owners_sources'];
 			$activeForCurrentKeyword   = $ownerKeywordList['active'];
 			$keywordExist = TRUE;
 		}
@@ -427,19 +490,43 @@ if (isset($sourceIdAction) AND isset($keywordIdAction) AND isset($action))
 	# Delete an existing keyword
 	if ($keywordExist AND $action === 'delKeyword')
 	{
-		include('model/delKeyword.php');
+		$newOwners = preg_replace("/,!*$sourceIdAction,/", ',', $actualOwners);
+		$newOwners = preg_replace("/\|/", '', $newOwners);
+		$applicableOwners = preg_replace($actualOwners, $newOwners, $applicableOwners);
+
+		$updateCol = array(array("applicable_owners_sources", $applicableOwners),
+											array("active", $activeForCurrentKeyword - 1));
+		$checkCol = array(array("id", "=", $keywordIdAction, ""));
+		$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
+
 		header('Location: setting');
 		die();
 	}
 	elseif ($keywordExist AND $action === 'disableKeyword')
 	{
-		include('model/disableKeyword.php');
+		$newOwners = preg_replace("/,$sourceIdAction,/", ",!$sourceIdAction,", $actualOwners);
+		$newOwners = preg_replace("/\|/", '', $newOwners);
+		$applicableOwners = preg_replace($actualOwners, $newOwners, $applicableOwners);
+
+		$updateCol = array(array("applicable_owners_sources", $applicableOwners),
+											array("active", $activeForCurrentKeyword - 1));
+		$checkCol  = array(array("id", "=", $keywordIdAction, ""));
+		$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
+
 		header('Location: setting');
 		die();
 	}
 	elseif ($keywordExist AND $action === 'activateKeyword')
 	{
-		include('model/activateKeyword.php');
+		$newOwners = preg_replace("/,!$sourceIdAction,/", ",$sourceIdAction,", $actualOwners);
+		$newOwners = preg_replace("/\|/", '', $newOwners);
+		$applicableOwners = preg_replace($actualOwners, $newOwners, $applicableOwners);
+
+		$updateCol = array(array("applicable_owners_sources", $applicableOwners),
+												array("active", $activeForCurrentKeyword + 1));
+		$checkCol = array(array("id", "=", $keywordIdAction, ""));
+		$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
+
 		header('Location: setting');
 		die();
 	}
@@ -486,19 +573,34 @@ if (isset($sourceIdAction) AND isset($action))
 	# Delete an existing sources
 	if ($sourceExist AND $action === 'delSource')
 	{
-		include('model/delSource.php');
+		$userId    = $_SESSION['id'];
+		$updateCol = array(array("owners", preg_replace("/,!*$userId,/", ',', $owners)),
+											array("active", $activeForCurrentSource - 1));
+		$checkCol  = array(array("id", "=", $sourceIdAction, ""));
+		$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
+
 		header('Location: setting');
 		die();
 	}
 	elseif ($sourceExist AND $action === 'disableSource')
 	{
-		include('model/disableSource.php');
+		$userId = $_SESSION['id'];
+		$updateCol = array(array("owners", preg_replace("/,$userId,/", ",!$userId,", $owners)),
+											array("active", $activeForCurrentSource - 1));
+		$checkCol  = array(array("id", "=", $sourceIdAction, ""));
+		$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
+
 		header('Location: setting');
 		die();
 	}
 	elseif ($sourceExist AND $action === 'activateSource')
 	{
-		include('model/activateSource.php');
+		$userId = $_SESSION['id'];
+		$updateCol = array(array("owners", preg_replace("/,!$userId,/", ",$userId,", $owners)),
+												array("active", $activeForCurrentSource + 1));
+		$checkCol = array(array("id", "=", $sourceIdAction, ""));
+		$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
+
 		header('Location: setting');
 		die();
 	}
