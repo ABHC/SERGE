@@ -32,7 +32,7 @@ if (!empty($nonce) AND isset($_SESSION['nonce :' . $nonce]) AND $_SESSION['nonce
 		}
 	}
 
-	unset($SESSION['nonce :' . $nonce]);
+	unset($_SESSION['nonce :' . $nonce]);
 }
 
 // Processing data without nonce
