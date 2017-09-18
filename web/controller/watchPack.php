@@ -1029,7 +1029,7 @@ else
 	elseif (!empty($data['activateQueryScience']))
 	{
 		// Read owner science query
-		
+
 		$checkCol = array(array('id', '=', $data['activateQueryScience'], 'AND'),
 											array('pack_id', '=', $data['packId'], 'AND'),
 											array('source', '=', '!Science', ''));
@@ -1093,15 +1093,6 @@ else
 
 			if (!$scienceQueryExist)
 			{
-				/*$active = 1;
-				// Adding new query
-				$req = $bdd->prepare('INSERT INTO watch_pack_queries_serge (pack_id, query, source) VALUES (:packIdInUse, :query, :source)');
-				$req->execute(array(
-					'packIdInUse' => $data['packId'],
-					'query' => $queryPatent,
-					'source' => "Patent"));
-					$req->closeCursor();*/
-
 				$insertCol = array(array('pack_id', $data['packId']),
 													array('query', $queryPatent),
 													array('source', 'Patent'));
@@ -1225,15 +1216,6 @@ else
 			$result = $result[0];
 
 			// Creation of list of available sources
-			/*$userId = '%,' . $_SESSION['id'] . ',%';
-			$userIdDesactivated = '%,!' . $_SESSION['id'] . ',%';
-			$req = $bdd->prepare("SELECT id FROM rss_serge WHERE owners LIKE :user OR owners LIKE :userDesactivated ORDER BY id");
-			$req->execute(array(
-				'user' => $userId,
-				'userDesactivated' => $userIdDesactivated));
-				$listAllSources = $req->fetchAll();
-				$req->closeCursor();*/
-
 			$checkCol = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
 												array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
 			$listAllSources = read('rss_serge', 'id', $checkCol, 'ORDER BY id', $bdd);

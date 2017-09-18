@@ -136,7 +136,7 @@ if (!empty($packExist))
 	{
 		// Add couple keyword, sources to actual user if couple is not already own
 		$checkCol = array(array("keyword", "=", strtolower($couple['query']), "AND"),
-											array("applicable_owners_sources", "REGEXP", '\\|' . $SESSION['id'] . ':[,0-9+,^\\|]*' . $couple['source'], ""));
+											array("applicable_owners_sources", "REGEXP", '\\|' . $_SESSION['id'] . ':[,0-9+,^\\|]*' . $couple['source'], ""));
 		$queryExist = read('keyword_news_serge', '', $checkCol, '', $bdd);
 
 		if (!$queryExist)
@@ -148,7 +148,7 @@ if (!empty($packExist))
 			{
 				// Check if user already own keyword
 				$checkCol = array(array("keyword", "=", strtolower($couple['query']), "AND"),
-													array("applicable_owners_sources", "l", '%|' . $SESSION['id'] . ':%', ""));
+													array("applicable_owners_sources", "l", '%|' . $_SESSION['id'] . ':%', ""));
 				$userOwnKeyword = read('keyword_news_serge', 'id, applicable_owners_sources', $checkCol, '', $bdd);
 
 				if (!empty($userOwnKeyword))
