@@ -179,8 +179,8 @@ if (!empty($packExist))
 			}
 		}
 	}
-/*
+
 	header('Location: setting');
-	die();*/
+	die();
 }
 ?>
