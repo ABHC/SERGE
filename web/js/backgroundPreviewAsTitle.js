@@ -17,7 +17,6 @@ var backgroundPreviewAsTitle = function()
 		// Remove image when image goes out of the right area
 		function()
 		{
-			this.title = this.t;
 			$("#backgroundPreview").remove();
 		}
 	);
