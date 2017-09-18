@@ -161,6 +161,27 @@ h3
 	background-color: rgba(0,99,149, 0.55);
 }
 
+.removeWP
+{
+	width: 30px;
+	height: 29px;
+	background: url('../images/Trash.png') center no-repeat;
+	background-size: 22px;
+	background-color: rgb(50,50,50);
+	border-left: 1px solid rgba(255,255,255, 0.15);
+	border-top: 1px solid rgba(255,255,255, 0.15);
+	border-bottom: 1px solid rgba(255,255,255, 0.15);
+	border-radius: 3px;
+	margin-left: 10px;
+	cursor: pointer;
+	font-size: 0;
+}
+
+.removeWP:hover
+{
+		background-color: rgb(55, 55, 55);
+}
+
 .helpModalWindow
 {
 	width: 30px;

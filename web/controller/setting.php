@@ -177,17 +177,21 @@ if (!empty($data['sourceType']))
 	}
 }
 
+# Read watchPack used
+$checkCol          = array(array('users', 'l', '%,' . $_SESSION['id'] . ',%', ''));
+$watchPackUsedList = read('watch_pack_serge', 'id, name', $checkCol, 'ORDER BY name', $bdd);
+
 # Read background list
 $type           = 'result';
-$checkCol = array(array("type", "=", $type, ""));
+$checkCol       = array(array('type', '=', $type, ''));
 $backgroundList = read('background_serge', 'id, name, filename', $checkCol, 'ORDER BY name', $bdd);
 
 # Read owner sources
-$checkCol = array(array("owners", "l", '%,' . $_SESSION['id'] . ',%', "OR"),
-									array("owners", "l", '%,!' . $_SESSION['id'] . ',%', ""));
+$checkCol = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
+									array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
 $reqReadOwnerSourcestmp = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 
-$checkCol = array(array("applicable_owners_sources", "l", '%|' . $_SESSION['id'] . ':%', ""));
+$checkCol = array(array('applicable_owners_sources', 'l', '%|' . $_SESSION['id'] . ':%', ''));
 $reqReadOwnerSourcesKeywordtmp = read('keyword_news_serge', 'id, keyword, applicable_owners_sources, active', $checkCol, 'ORDER BY keyword', $bdd);
 
 # Read user settings
@@ -201,8 +205,8 @@ if (!empty($data['settings']) AND $data['settings'] === 'ChangeSettings')
 	if (!empty($data['email']))
 	{
 		$newEmail = $data['email'];
-		$updateCol = array(array("email", $newEmail));
-		$checkCol = array(array("id", "=", $_SESSION['id'], ""));
+		$updateCol = array(array('email', $newEmail));
+		$checkCol = array(array('id', '=', $_SESSION['id'], ''));
 		$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
 	}
 
@@ -211,8 +215,8 @@ if (!empty($data['settings']) AND $data['settings'] === 'ChangeSettings')
 	{
 		$backgroundResult = $data['backgroundResult'];
 		// Update background result
-		$updateCol = array(array("background_result", $backgroundResult));
-		$checkCol  = array(array("id", "=", $_SESSION['id'], ""));
+		$updateCol = array(array('background_result', $backgroundResult));
+		$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
 		$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
 	}
 
@@ -247,8 +251,8 @@ if (!empty($data['settings']) AND $data['settings'] === 'ChangeSettings')
 	}
 
 	// Update background result
-	$updateCol = array(array("mail_design", $orderBy));
-	$checkCol  = array(array("id", "=", $_SESSION['id'], ""));
+	$updateCol = array(array('mail_design', $orderBy));
+	$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
 	$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
 
 	# Change privacy settings
@@ -259,8 +263,8 @@ if (!empty($data['settings']) AND $data['settings'] === 'ChangeSettings')
 	}
 
 	// Change record read
-	$updateCol = array(array("record_read", $recordRead));
-	$checkCol  = array(array("id", "=", $_SESSION['id'], ""));
+	$updateCol = array(array('record_read', $recordRead));
+	$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
 	$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
 
 	// TODO implement in serge AND in the UI
@@ -307,20 +311,20 @@ if (!empty($data['buttonDeleteHistory']) AND $data['buttonDeleteHistory'] === 'd
 
 	$owner = '%,' . $_SESSION['id'] . ',%';
 
-	$checkCol = array(array("owners", "l", $owner, "AND"),
-										array("date", ">=", $deleteTime, ""));
+	$checkCol = array(array('owners', 'l', $owner, 'AND'),
+										array('date', '>=', $deleteTime, ''));
 	$readIdResutlToDel = read('result_news_serge', 'id', $checkCol, '', $bdd);
 
 	foreach ($readIdResutlToDel as $idResultToDel)
 	{
-			$checkCol = array(array("id", "=", $idResultToDel['id'], ""));
+			$checkCol = array(array('id', '=', $idResultToDel['id'], ''));
 			$result = read('result_news_serge', 'owners', $checkCol, '', $bdd);
 			$result = $result[0];
 
 			if (!empty($result))
 			{
-				$updateCol = array(array("owners", preg_replace("/,$userId,/", ',', $ownersResult['owners'])));
-				$checkCol = array(array("id", "=", $idResultToDel['id'], ""));
+				$updateCol = array(array('owners', preg_replace("/,$userId,/", ',', $ownersResult['owners'])));
+				$checkCol = array(array('id', '=', $idResultToDel['id'], ''));
 				$execution = update('result_news_serge', $updateCol, $checkCol, '', $bdd);
 			}
 	}
@@ -338,7 +342,7 @@ if (!empty($data['sourceType']) AND !empty($data['newSource']) AND $data['source
 	if ($linkValidation[0] === 'valid link' AND $errorInCheckfeed === 0)
 	{
 		// Check if source is already in bdd
-		$checkCol = array(array("link", "=", $source, ""));
+		$checkCol = array(array('link', '=', $source, ''));
 		$result = read('rss_serge', 'owners', $checkCol, '', $bdd);
 		$result = $result[0];
 
@@ -347,25 +351,25 @@ if (!empty($data['sourceType']) AND !empty($data['newSource']) AND $data['source
 			// Adding new source
 			preg_match('@^(?:http.*://[www.]*)?([^/]+)@i', $source, $matches);
 
-			$insertCol = array(array("link", $source),
-												array("owners", ',' . $_SESSION['id'] . ','),
-												array("name", ucfirst($matches[1] . '[!NEW!]')),
-												array("active", 1));
+			$insertCol = array(array('link', $source),
+												array('owners', ',' . $_SESSION['id'] . ','),
+												array('name', ucfirst($matches[1] . '[!NEW!]')),
+												array('active', 1));
 			$execution = insert('rss_serge', $insertCol, '', 'setting', $bdd);
 		}
 		else
 		{
-				$checkCol = array(array("owners", "l", '%,' . $_SESSION['id'] . ',%', "AND"),
-													array("link", "=", $source, ""));
+				$checkCol = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'AND'),
+													array('link', '=', $source, ''));
 				$result = read('rss_serge', 'owners, active', $checkCol, '', $bdd);
 				$resultActualOwner = $result[0];
 
 				if (!$resultActualOwner)
 				{
 					// Update owners of existing source with the new onwer
-					$updateCol = array(array("owners", $resultActualOwner['owners'] . $_SESSION['id'] . ','),
-														array("active", $resultActualOwner['active'] + 1));
-					$checkCol  = array(array("link", "=", $source, ""));
+					$updateCol = array(array('owners', $resultActualOwner['owners'] . $_SESSION['id'] . ','),
+														array('active', $resultActualOwner['active'] + 1));
+					$checkCol  = array(array('link', '=', $source, ''));
 					$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
 				}
 				else
@@ -476,7 +480,7 @@ if (isset($sourceIdAction) AND isset($keywordIdAction) AND isset($action))
 		$applicableOwnerstmp = $ownerKeywordList['applicable_owners_sources'];
 
 		# Search for source in applicable_owners_sources
-		$sourceInKeyword = preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*,!*" . $sourceIdAction . ",[,!0-9,]*\|/", $applicableOwnerstmp, $applicable_owners_sourceForCurrentUser);
+		$sourceInKeyword = preg_match("/\|" . $_SESSION['id'] . ':[,!0-9,]*,!*' . $sourceIdAction . ",[,!0-9,]*\|/", $applicableOwnerstmp, $applicable_owners_sourceForCurrentUser);
 
 		if ($ownerKeywordList['id'] === $keywordIdAction AND $sourceInKeyword)
 		{
@@ -494,9 +498,9 @@ if (isset($sourceIdAction) AND isset($keywordIdAction) AND isset($action))
 		$newOwners = preg_replace("/\|/", '', $newOwners);
 		$applicableOwners = preg_replace($actualOwners, $newOwners, $applicableOwners);
 
-		$updateCol = array(array("applicable_owners_sources", $applicableOwners),
-											array("active", $activeForCurrentKeyword - 1));
-		$checkCol = array(array("id", "=", $keywordIdAction, ""));
+		$updateCol = array(array('applicable_owners_sources', $applicableOwners),
+											array('active', $activeForCurrentKeyword - 1));
+		$checkCol = array(array('id', '=', $keywordIdAction, ''));
 		$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
 
 		header('Location: setting');
@@ -504,13 +508,13 @@ if (isset($sourceIdAction) AND isset($keywordIdAction) AND isset($action))
 	}
 	elseif ($keywordExist AND $action === 'disableKeyword')
 	{
-		$newOwners = preg_replace("/,$sourceIdAction,/", ",!$sourceIdAction,", $actualOwners);
+		$newOwners = preg_replace("/,$sourceIdAction,/', ',!$sourceIdAction,", $actualOwners);
 		$newOwners = preg_replace("/\|/", '', $newOwners);
 		$applicableOwners = preg_replace($actualOwners, $newOwners, $applicableOwners);
 
-		$updateCol = array(array("applicable_owners_sources", $applicableOwners),
-											array("active", $activeForCurrentKeyword - 1));
-		$checkCol  = array(array("id", "=", $keywordIdAction, ""));
+		$updateCol = array(array('applicable_owners_sources', $applicableOwners),
+											array('active', $activeForCurrentKeyword - 1));
+		$checkCol  = array(array('id', '=', $keywordIdAction, ''));
 		$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
 
 		header('Location: setting');
@@ -518,13 +522,13 @@ if (isset($sourceIdAction) AND isset($keywordIdAction) AND isset($action))
 	}
 	elseif ($keywordExist AND $action === 'activateKeyword')
 	{
-		$newOwners = preg_replace("/,!$sourceIdAction,/", ",$sourceIdAction,", $actualOwners);
+		$newOwners = preg_replace("/,!$sourceIdAction,/', ',$sourceIdAction,", $actualOwners);
 		$newOwners = preg_replace("/\|/", '', $newOwners);
 		$applicableOwners = preg_replace($actualOwners, $newOwners, $applicableOwners);
 
-		$updateCol = array(array("applicable_owners_sources", $applicableOwners),
-												array("active", $activeForCurrentKeyword + 1));
-		$checkCol = array(array("id", "=", $keywordIdAction, ""));
+		$updateCol = array(array('applicable_owners_sources', $applicableOwners),
+												array('active', $activeForCurrentKeyword + 1));
+		$checkCol = array(array('id', '=', $keywordIdAction, ''));
 		$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
 
 		header('Location: setting');
@@ -574,9 +578,9 @@ if (isset($sourceIdAction) AND isset($action))
 	if ($sourceExist AND $action === 'delSource')
 	{
 		$userId    = $_SESSION['id'];
-		$updateCol = array(array("owners", preg_replace("/,!*$userId,/", ',', $owners)),
-											array("active", $activeForCurrentSource - 1));
-		$checkCol  = array(array("id", "=", $sourceIdAction, ""));
+		$updateCol = array(array('owners', preg_replace("/,!*$userId,/", ',', $owners)),
+											array('active', $activeForCurrentSource - 1));
+		$checkCol  = array(array('id', '=', $sourceIdAction, ''));
 		$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
 
 		header('Location: setting');
@@ -585,9 +589,9 @@ if (isset($sourceIdAction) AND isset($action))
 	elseif ($sourceExist AND $action === 'disableSource')
 	{
 		$userId = $_SESSION['id'];
-		$updateCol = array(array("owners", preg_replace("/,$userId,/", ",!$userId,", $owners)),
-											array("active", $activeForCurrentSource - 1));
-		$checkCol  = array(array("id", "=", $sourceIdAction, ""));
+		$updateCol = array(array('owners', preg_replace("/,$userId,/', ',!$userId,", $owners)),
+											array('active', $activeForCurrentSource - 1));
+		$checkCol  = array(array('id', '=', $sourceIdAction, ''));
 		$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
 
 		header('Location: setting');
@@ -596,9 +600,9 @@ if (isset($sourceIdAction) AND isset($action))
 	elseif ($sourceExist AND $action === 'activateSource')
 	{
 		$userId = $_SESSION['id'];
-		$updateCol = array(array("owners", preg_replace("/,!$userId,/", ",$userId,", $owners)),
-												array("active", $activeForCurrentSource + 1));
-		$checkCol = array(array("id", "=", $sourceIdAction, ""));
+		$updateCol = array(array('owners', preg_replace("/,!$userId,/', ',$userId,", $owners)),
+												array('active', $activeForCurrentSource + 1));
+		$checkCol = array(array('id', '=', $sourceIdAction, ''));
 		$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
 
 		header('Location: setting');
@@ -738,9 +742,9 @@ if (!empty($data['action']) AND !empty($data['query']) AND $data['action'] === '
 
 		$query = urldecode($queriesEdit['query_arxiv']);
 		$query = preg_replace("/\"/", '', $query);
-		$query = preg_replace("/(\(|\)|[^: ]+:| AND | NOTAND | OR )/", "|$1", $query);
-		$query = preg_replace("/:/", "|", $query);
-		$queryArray = explode("|", $query);
+		$query = preg_replace("/(\(|\)|[^: ]+:| AND | NOTAND | OR )/', '|$1", $query);
+		$query = preg_replace("/:/', '|", $query);
+		$queryArray = explode('|', $query);
 
 		$cpt = 0;
 		$typeQuery = '';
@@ -920,9 +924,9 @@ if (!empty($data['disableQueryScience']))
 
 	if (!empty($result))
 	{
-		$queryOwnerNEW = preg_replace("/,$userId,/", ",!$userId,", $result['owners']);
+		$queryOwnerNEW = preg_replace("/,$userId,/', ',!$userId,", $result['owners']);
 		$userId = $_SESSION['id'];
-		$updateCol = array(array('owners', preg_replace("/,$userId,/", ",!$userId,", $result['owners'])),
+		$updateCol = array(array('owners', preg_replace("/,$userId,/', ',!$userId,", $result['owners'])),
 											array('active', $result['active'] - 1));
 		$checkCol = array(array('id', '=', $data['disableQueryScience'], ''));
 		$execution = update('queries_science_serge', $updateCol, $checkCol, '', $bdd);
@@ -941,7 +945,7 @@ if (!empty($data['activateQueryScience']))
 	if (!empty($result))
 	{
 		$userId = $_SESSION['id'];
-		$updateCol = array(array('owners', preg_replace("/,!$userId,/", ",$userId,", $result['owners'])),
+		$updateCol = array(array('owners', preg_replace("/,!$userId,/', ',$userId,", $result['owners'])),
 											array('active', $result['active'] + 1));
 		$checkCol = array(array('id', '=', $data['activateQueryScience'], ''));
 		$execution = update('queries_science_serge', $updateCol, $checkCol, '', $bdd);
@@ -958,9 +962,9 @@ if (!empty($data['action']) AND !empty($data['query']) AND $data['action'] === '
 
 	$query = urldecode($queriesEdit['query']);
 	$query = preg_replace("/\"/", '', $query);
-	$query = preg_replace("/(\(|\)|[^: ]+:| AND | OR )/", "|$1", $query);
-	$query = preg_replace("/:/", "|", $query);
-	$queryArray = explode("|", $query);
+	$query = preg_replace("/(\(|\)|[^: ]+:| AND | OR )/', '|$1", $query);
+	$query = preg_replace("/:/', '|", $query);
+	$queryArray = explode('|', $query);
 
 		$cpt = 0;
 		$typeQuery = '';
@@ -1086,7 +1090,7 @@ if (!empty($data['disableQueryPatent']))
 	if (!empty($result))
 	{
 		$userId = $_SESSION['id'];
-		$updateCol = array(array('owners', preg_replace("/,$userId,/", ",!$userId,", $result['owners'])),
+		$updateCol = array(array('owners', preg_replace("/,$userId,/', ',!$userId,", $result['owners'])),
 											array('active', $result['active'] - 1));
 		$checkCol = array(array('id', '=', $data['disableQueryPatent'], ''));
 		$execution = update('queries_wipo_serge', $updateCol, $checkCol, '', $bdd);
@@ -1104,7 +1108,7 @@ if (!empty($data['activateQueryPatent']))
 	if (!empty($result))
 	{
 		$userId = $_SESSION['id'];
-		$updateCol = array(array('owners', preg_replace("/,!$userId,/", ",$userId,", $result['owners'])),
+		$updateCol = array(array('owners', preg_replace("/,!$userId,/', ',$userId,", $result['owners'])),
 											array('active', $result['active'] + 1));
 		$checkCol = array(array('id', '=', $data['activateQueryPatent'], ''));
 		$execution = update('queries_wipo_serge', $updateCol, $checkCol, '', $bdd);
