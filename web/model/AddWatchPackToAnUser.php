@@ -14,7 +14,8 @@ if (!empty($packExist))
 	$checkCol = array(array("pack_id", "=", $data['addPack'], "AND"),
 										array("query", "=" , "[!source!]", ""));
 	$result = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
-	$listOfSource_array = explode(",", $result[0]);
+
+	$listOfSource_array = explode(",", $result[0]['source']);
 
 	$checkCol = array(array("owners", "l", '%,' . $_SESSION['id'] . ',%', ""));
 	$ownerSources = read('rss_serge', 'id', $checkCol, '', $bdd);
@@ -27,7 +28,7 @@ if (!empty($packExist))
 			$checkCol = array(array("id", "=", $source, ""));
 			$sourceOwners = read('rss_serge', 'owners', $checkCol, '', $bdd);
 
-			$updateCol = array(array("owners", $sourceOwners[0] . $_SESSION['id'] . ','));
+			$updateCol = array(array("owners", $sourceOwners[0]['owners'] . $_SESSION['id'] . ','));
 			$checkCol = array(array("id", "=", $source, ""));
 			$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
 		}
@@ -71,7 +72,6 @@ if (!empty($packExist))
 				$doajEq['NOTAND'] = 'NOT';
 				$doajEq['+'] = ' ';
 
-				$scienceQuery['query'] = 'ti:%22Venus%22+OR+abs:%22Venus%22+AND+ti:%22planet%22+OR+abs:%22planet%22';
 				$queryDoaj = $scienceQuery['query'];
 
 				foreach($doajEq as $keyArxiv => $eqDoaj)
@@ -179,8 +179,8 @@ if (!empty($packExist))
 			}
 		}
 	}
-
+/*
 	header('Location: setting');
-	die();
+	die();*/
 }
 ?>

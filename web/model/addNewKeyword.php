@@ -1,111 +1,111 @@
 <?php
-function addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd)
+function addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $ownerSources, $bdd)
 {
-$updateBDD = TRUE;
+	$updateBDD = TRUE;
 
-// Check if keyword is already in bdd
-$checkCol = array(array("keyword", "=", mb_strtolower($newKeyword), ""));
-$result = read('keyword_news_serge', 'id, applicable_owners_sources, active', $checkCol, '', $bdd);
-$result = $result[0];
+	// Check if keyword is already in bdd
+	$checkCol = array(array("keyword", "=", mb_strtolower($newKeyword), ""));
+	$result   = read('keyword_news_serge', 'id, applicable_owners_sources, active', $checkCol, '', $bdd);
+	$result   = $result[0];
 
-if (!$result)
-{
-	$active = 0;
-	if ($sourceId == '00')
+	if (empty($result))
 	{
-		$applicable_owners_sources = '|' . $_SESSION['id'] . ':,';
-		foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
+		$active = 0;
+		if ($sourceId == '00')
 		{
-			$applicable_owners_sources = $applicable_owners_sources . $ownerSourcesList['id'] . ',';
-			$active = $active + 1;
-		}
-		$applicable_owners_sources = $applicable_owners_sources . '|';
-	}
-	else
-	{
-		# TODO Test if sourceId is an existing sources
-		$applicable_owners_sources = '|' . $_SESSION['id'] . ':,' . $sourceId . ',|';
-		$active = $active + 1;
-	}
-	// Adding new keyword
-	$insertCol = array(array("keyword", strtolower($newKeyword)),
-										array("applicable_owners_sources", '|' . $_SESSION['id'] . ':,' . $sourceId . ',|'),
-										array("active", $active + 1));
-	$execution = insert('keyword_news_serge', $insertCol, '', 'setting', $bdd);
-}
-else
-{
-	$active = $result['active'];
-	// Update applicable_owners_sources
-	// Search in applicable_owners_sources if idUser: exist
-	$applicable_owners_sources = $result['applicable_owners_sources'];
-	$findme = '|' . $_SESSION['id'] . ':';
-	$pos = strpos($applicable_owners_sources, $findme);
-
-	if ($pos !== false)
-	{
-		preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*,\|/", $applicable_owners_sources, $userApplicable_owners_sources);
-
-		if (preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*," . $sourceId . ",[,0-9,]*\|/", $applicable_owners_sources) AND $sourceId != '00')
-		{
-			$updateBDD     = FALSE;
-			$ERROR_MESSAGE = 'The keyword: "' . $newKeyword . '" for this source was already in the database<br>' . $ERROR_MESSAGE;
+			$applicableOwners = '|' . $_SESSION['id'] . ':,';
+			foreach ($ownerSources as $ownerSourcesList)
+			{
+				$applicableOwners = $applicableOwners . $ownerSourcesList['id'] . ',';
+				$active = $active + 1;
+			}
+			$applicableOwners = $applicableOwners . '|';
 		}
 		else
 		{
-			// Add source in the end of source list for current user
-			if ($sourceId == '00')
+			# TODO Test if sourceId is an existing sources
+			$applicableOwners = '|' . $_SESSION['id'] . ':,' . $sourceId . ',|';
+			$active = $active + 1;
+		}
+		// Adding new keyword
+		$insertCol = array(array("keyword", strtolower($newKeyword)),
+											array("applicable_owners_sources", '|' . $_SESSION['id'] . ':,' . $sourceId . ',|'),
+											array("active", $active + 1));
+		$execution = insert('keyword_news_serge', $insertCol, '', 'setting', $bdd);
+	}
+	else
+	{
+		$active = $result['active'];
+		// Update applicable_owners_sources
+		// Search in applicable_owners_sources if idUser: exist
+		$applicableOwners = $result['applicable_owners_sources'];
+		$findme           = '|' . $_SESSION['id'] . ':';
+		$pos              = strpos($applicableOwners, $findme);
+
+		if ($pos !== false)
+		{
+			preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*,\|/", $applicableOwners, $userApplicable_owners_sources);
+
+			if (preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*," . $sourceId . ",[,0-9,]*\|/", $applicableOwners) AND $sourceId != '00')
 			{
-				$newSourceForAdding = ',';
-				foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
-				{
-					if (!preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*," . $ownerSourcesList['id'] . ",[,0-9,]*\|/", $applicable_owners_sources))
-					{
-						$newSourceForAdding = $newSourceForAdding . $ownerSourcesList['id'] . ',';
-						$active = $active + 1;
-					}
-				}
-				$applicable_owners_sources = $applicable_owners_sources . '|';
+				$updateBDD     = FALSE;
+				$ERROR_MESSAGE = 'The keyword: "' . $newKeyword . '" for this source was already in the database<br>' . $ERROR_MESSAGE;
 			}
 			else
 			{
-				$newSourceForAdding = ',' . $sourceId . ',|';
-				$active = $active + 1;
+				// Add source in the end of source list for current user
+				if ($sourceId == '00')
+				{
+					$newSourceForAdding = ',';
+					foreach ($ownerSources as $ownerSourcesList)
+					{
+						if (!preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*," . $ownerSourcesList['id'] . ",[,0-9,]*\|/", $applicableOwners))
+						{
+							$newSourceForAdding = $newSourceForAdding . $ownerSourcesList['id'] . ',';
+							$active = $active + 1;
+						}
+					}
+					$applicableOwners = $applicableOwners . '|';
+				}
+				else
+				{
+					$newSourceForAdding = ',' . $sourceId . ',|';
+					$active = $active + 1;
+				}
+				$newOwner = preg_replace("/,*\|$/", $newSourceForAdding, 		$userApplicable_owners_sources[0]);
+				$applicableOwners = preg_replace("/\|" . $_SESSION['id'] . ":[,0-9,]*,\|/", 		$newOwner, $applicableOwners);
 			}
-			$userApplicable_owners_sourcesNEW = preg_replace("/,*\|$/", $newSourceForAdding, 		$userApplicable_owners_sources[0]);
-			$applicable_owners_sources = preg_replace("/\|" . $_SESSION['id'] . ":[,0-9,]*,\|/", 		$userApplicable_owners_sourcesNEW, $applicable_owners_sources);
-		}
-	}
-	else
-	{
-		// Add user and source in applicable_owners_sources
-		if ($sourceId == '00')
-		{
-			$userApplicable_owners_sourcesNEW = '|' . $_SESSION['id'] . ':,';
-			foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
-			{
-				$userApplicable_owners_sourcesNEW = $userApplicable_owners_sourcesNEW . $ownerSourcesList['id'] . ',';
-				$active = $active + 1;
-			}
-			$userApplicable_owners_sourcesNEW = $userApplicable_owners_sourcesNEW . '|';
 		}
 		else
 		{
-			$userApplicable_owners_sourcesNEW = '|' . $_SESSION['id'] . ':,' . $sourceId . ',|';
-			$active = $active + 1;
+			// Add user and source in applicable_owners_sources
+			if ($sourceId == '00')
+			{
+				$newOwner = '|' . $_SESSION['id'] . ':,';
+				foreach ($ownerSources as $ownerSourcesList)
+				{
+					$newOwner = $newOwner . $ownerSourcesList['id'] . ',';
+					$active   = $active + 1;
+				}
+				$newOwner = $newOwner . '|';
+			}
+			else
+			{
+				$newOwner = '|' . $_SESSION['id'] . ':,' . $sourceId . ',|';
+				$active = $active + 1;
+			}
+			$applicableOwners = preg_replace("/\|$/", $newOwner,$applicableOwners);
 		}
-		$applicable_owners_sources = preg_replace("/\|$/", $userApplicable_owners_sourcesNEW,$applicable_owners_sources);
+
+		if ($updateBDD)
+		{
+			$updateCol = array(array("applicable_owners_sources", $applicableOwners),
+													array("active", $active));
+			$checkCol  = array(array("id", "=", $result['id'], ""));
+			$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
+		}
 	}
 
-	if ($updateBDD)
-	{
-		$updateCol = array(array("applicable_owners_sources", $applicable_owners_sources),
-												array("active", $active));
-		$checkCol = array(array("id", "=", $result['id'], ""));
-		$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
-	}
-}
-
-return $ERROR_MESSAGE;
+	return $ERROR_MESSAGE;
 }
 ?>
