@@ -407,14 +407,14 @@ def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_p
 	<td align="center" valign="top" style="padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
 	<p style="font-size: 14px; line-height: 20px;text-align: center;">
 	<br><br>
-	<a href="" style="color: #999999;" target="_blank">View Online</a>
+	<a href="" style="color: #999999;" target="_blank">{5}</a>
 	&nbsp; &bull; &nbsp;
-	<a href="" style="color: #999999;" target="_blank">Unsubscribe</a>
+	<a href="" style="color: #999999;" target="_blank">{6}</a>
 	</p>
 	</td>
 	<td align="center" valign="center" style="width: 30%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
-	<a style="text-decoration: none; color: #999999;" href="https://github.com/ABHC/SERGE/">Find Serge on <img alt="GitHub" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GitHub.png" width="50" align="center" title="GitHub" /></a><br><br>
-	<a style="text-decoration: none; color: #999999;" href="https://www.gnu.org/licenses/gpl-3.0.fr.html">Powered by <img alt="GPLv3" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GPLv3.png" width="50" align="center" title="GPLv3" /></a><br><br>
+	<a style="text-decoration: none; color: #999999;" href="https://github.com/ABHC/SERGE/">{7} <img alt="GitHub" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GitHub.png" width="50" align="center" title="GitHub" /></a><br><br>
+	<a style="text-decoration: none; color: #999999;" href="https://www.gnu.org/licenses/gpl-3.0.fr.html">{8} <img alt="GPLv3" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GPLv3.png" width="50" align="center" title="GPLv3" /></a><br><br>
 	</td>
 	</tr>
 	</table>
@@ -704,17 +704,15 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 	</td>
 	<td align="center" valign="top" style="padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
 	<p style="font-size: 14px; line-height: 20px;text-align: center;">
-
 	<br><br>
-
-	<a href="" style="color: #999999;" target="_blank">View Online</a>
+	<a href="" style="color: #999999;" target="_blank">{5}</a>
 	&nbsp; &bull; &nbsp;
-	<a href="" style="color: #999999;" target="_blank">Unsubscribe</a>
+	<a href="" style="color: #999999;" target="_blank">{6}</a>
 	</p>
 	</td>
 	<td align="center" valign="center" style="width: 30%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
-	<a style="text-decoration: none; color: #999999;" href="https://github.com/ABHC/SERGE/">Find Serge on <img alt="GitHub" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GitHub.png" width="50" align="center" title="GitHub" /></a><br><br>
-	<a style="text-decoration: none; color: #999999;" href="https://www.gnu.org/licenses/gpl-3.0.fr.html">Powered by <img alt="GPLv3" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GPLv3.png" width="50" align="center" title="GPLv3" /></a><br><br>
+	<a style="text-decoration: none; color: #999999;" href="https://github.com/ABHC/SERGE/">{7} <img alt="GitHub" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GitHub.png" width="50" align="center" title="GitHub" /></a><br><br>
+	<a style="text-decoration: none; color: #999999;" href="https://www.gnu.org/licenses/gpl-3.0.fr.html">{8} <img alt="GPLv3" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GPLv3.png" width="50" align="center" title="GPLv3" /></a><br><br>
 	</td>
 	</tr>
 	</table>
@@ -1050,14 +1048,14 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 	<td align="center" valign="top" style="padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
 	<p style="font-size: 14px; line-height: 20px;text-align: center;">
 	<br><br>
-	<a href="" style="color: #999999;" target="_blank">View Online</a>
+	<a href="" style="color: #999999;" target="_blank">{5}</a>
 	&nbsp; &bull; &nbsp;
-	<a href="" style="color: #999999;" target="_blank">Unsubscribe</a>
+	<a href="" style="color: #999999;" target="_blank">{6}</a>
 	</p>
 	</td>
 	<td align="center" valign="center" style="width: 30%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
-	<a style="text-decoration: none; color: #999999;" href="https://github.com/ABHC/SERGE/">Find Serge on <img alt="GitHub" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GitHub.png" width="50" align="center" title="GitHub" /></a><br><br>
-	<a style="text-decoration: none; color: #999999;" href="https://www.gnu.org/licenses/gpl-3.0.fr.html">Powered by <img alt="GPLv3" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GPLv3.png" width="50" align="center" title="GPLv3" /></a><br><br>
+	<a style="text-decoration: none; color: #999999;" href="https://github.com/ABHC/SERGE/">{7} <img alt="GitHub" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GitHub.png" width="50" align="center" title="GitHub" /></a><br><br>
+	<a style="text-decoration: none; color: #999999;" href="https://www.gnu.org/licenses/gpl-3.0.fr.html">{8} <img alt="GPLv3" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GPLv3.png" width="50" align="center" title="GPLv3" /></a><br><br>
 	</td>
 	</tr>
 	</table>
