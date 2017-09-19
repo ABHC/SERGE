@@ -780,12 +780,12 @@
 					$selected['cat'] = '';
 					$selected['all'] = '';
 
-					if (isset($data['scienceType' . $cpt]))
+					if (!empty($data['scienceType' . $cpt]))
 					{
 						$selected[$data['scienceType' . $cpt]] = 'selected';
 					}
 
-					if (isset($data['openParenthesis' . $cpt]) AND $data['openParenthesis' . $cpt] == 'active')
+					if (!empty($data['openParenthesis' . $cpt]) AND $data['openParenthesis' . $cpt] == 'active')
 					{
 						$checked['openParenthesis' . $cpt] = 'checked';
 					}

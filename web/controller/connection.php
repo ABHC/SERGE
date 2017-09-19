@@ -21,7 +21,7 @@ include('controller/dataProcessing.php');
 $nonceTime = $_SERVER['REQUEST_TIME'];
 $nonce = getNonce($nonceTime);
 
-if (isset($data['pseudo']) AND isset($data['password']))
+if (!empty($data['pseudo']) AND !empty($data['password']))
 {
 	$checkCol = array(array('users', '=', $data['pseudo']));
 	$salt = read('users_table_serge', 'salt', $checkCol, '',$bdd);

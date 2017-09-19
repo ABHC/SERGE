@@ -470,7 +470,7 @@ elseif (!empty($data['activateKeyword']))
 	$action          = 'activateKeyword';
 }
 
-if (isset($sourceIdAction) AND isset($keywordIdAction) AND isset($action))
+if (!empty($sourceIdAction) AND !empty($keywordIdAction) AND !empty($action))
 {
 	# Check if keyword exist for this ownerSourcesList
 	$keywordExist = FALSE;
@@ -560,7 +560,7 @@ elseif (!empty($data['activateSource']))
 	$action          = 'activateSource';
 }
 
-if (isset($sourceIdAction) AND isset($action))
+if (!empty($sourceIdAction) AND !empty($action))
 {
 	# Check if source exist for this owner
 	$sourceExist = FALSE;
