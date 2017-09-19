@@ -17,7 +17,8 @@ if (!empty($packExist))
 
 	$listOfSource_array = explode(",", $result[0]['source']);
 
-	$checkCol = array(array("owners", "l", '%,' . $_SESSION['id'] . ',%', ""));
+	$checkCol = array(array("owners", "l", '%,' . $_SESSION['id'] . ',%', "OR"),
+										array("owners", "l", '%,!' . $_SESSION['id'] . ',%', ""),);
 	$ownerSources = read('rss_serge', 'id', $checkCol, '', $bdd);
 
 	foreach ($listOfSource_array as $source)
@@ -36,14 +37,18 @@ if (!empty($packExist))
 
 	// Get entry where pack id is the id of the pack and source = science
 	$checkCol = array(array("pack_id", "=", $data['addPack'], "AND"),
-										array("source", "=" , "Science", ""));
+										array("source", "=" , "Science", "OR"),
+										array("pack_id", "=", $data['addPack'], "AND"),
+										array("source", "=" , "!Science", ""));
 	$result = read('watch_pack_queries_serge', 'query', $checkCol, '', $bdd);
 
 	foreach ($result as $scienceQuery)
 	{
 		// Add query to actual user if query is not already own
 		$checkCol = array(array("query_arxiv", "=", $scienceQuery['query'], "AND"),
-											array("owners", "l", '%,' . $_SESSION['id'] . ',%', ""));
+											array("owners", "l", '%,' . $_SESSION['id'] . ',%', "OR"),
+											array("query_arxiv", "=", $scienceQuery['query'], "AND"),
+											array("owners", "l", '%,!' . $_SESSION['id'] . ',%', ""));
 		$queryExist = read('queries_science_serge', '', $checkCol, '', $bdd);
 
 		if (!$queryExist)
@@ -55,7 +60,7 @@ if (!empty($packExist))
 			{
 				// Update query with the new owner
 				$updateCol = array(array("owners", $queryExist['owners'] . $_SESSION['id'] . ','),
-														array("active", $result['active'] + 1));
+													array("active", $result['active'] + 1));
 				$checkCol = array(array("id", "=", $queryExist['id'], ""));
 				$execution = update('queries_science_serge', $updateCol, $checkCol, '', $bdd);
 			}
@@ -91,14 +96,18 @@ if (!empty($packExist))
 
 	// Get entry where pack id is the id of the pack and source = patent
 	$checkCol = array(array("pack_id", "=", $data['addPack'], "AND"),
-										array("source", "=" , "Patent", ""));
+										array("source", "=" , "Patent", "OR"),
+										array("pack_id", "=", $data['addPack'], "AND"),
+										array("source", "=" , "!Patent", ""),);
 	$result = read('watch_pack_queries_serge', 'query', $checkCol, '', $bdd);
 
 	foreach ($result as $patentQuery)
 	{
 		// Add query to actual user if query is not already own
 		$checkCol = array(array("query", "=", $patentQuery['query'], "AND"),
-											array("owners", "l", '%,' . $_SESSION['id'] . ',%', ""));
+											array("owners", "l", '%,' . $_SESSION['id'] . ',%', "OR"),
+											array("query", "=", $patentQuery['query'], "AND"),
+											array("owners", "l", '%,!' . $_SESSION['id'] . ',%', ""));
 		$queryExist = read('queries_wipo_serge', '', $checkCol, '', $bdd);
 
 		if (!$queryExist)
@@ -135,28 +144,29 @@ if (!empty($packExist))
 	foreach ($result as $couple)
 	{
 		// Add couple keyword, sources to actual user if couple is not already own
+		$sourceId = preg_replace("/,([^$])/", ",!*$1", $couple['source']);
 		$checkCol = array(array("keyword", "=", strtolower($couple['query']), "AND"),
-											array("applicable_owners_sources", "REGEXP", '\\|' . $_SESSION['id'] . ':[,0-9+,^\\|]*' . $couple['source'], ""));
+											array("applicable_owners_sources", "REGEXP", '\\|' . $_SESSION['id'] . ':[,0-9+,^\\|]*' . $sourceId, ""));
 		$queryExist = read('keyword_news_serge', '', $checkCol, '', $bdd);
 
 		if (!$queryExist)
 		{
 			$checkCol = array(array("keyword", "=", strtolower($couple['query']), ""));
-			$queryExist = read('keyword_news_serge', '', $checkCol, '', $bdd);
+			$queryExist = read('keyword_news_serge', 'id, applicable_owners_sources', $checkCol, '', $bdd);
 
-			if ($queryExist)
+			if (!empty($queryExist))
 			{
 				// Check if user already own keyword
 				$checkCol = array(array("keyword", "=", strtolower($couple['query']), "AND"),
 													array("applicable_owners_sources", "l", '%|' . $_SESSION['id'] . ':%', ""));
 				$userOwnKeyword = read('keyword_news_serge', 'id, applicable_owners_sources', $checkCol, '', $bdd);
 
-				if (!empty($userOwnKeyword))
+				if (empty($userOwnKeyword))
 				{
 					// Update with new source
-					$updateCol = array(array("applicable_owners_sources", $userOwnKeyword['applicable_owners_sources'] . $_SESSION['id'] . ':' . $couple['source'] . '|'),
+					$updateCol = array(array("applicable_owners_sources", $queryExist['applicable_owners_sources'] . $_SESSION['id'] . ':' . $couple['source'] . '|'),
 					array("active", $userOwnKeyword['active'] + 1));
-					$checkCol = array(array("id", "=", $userOwnKeyword['id'], ""));
+					$checkCol = array(array("id", "=", $queryExist['id'], ""));
 					$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
 				}
 				else
