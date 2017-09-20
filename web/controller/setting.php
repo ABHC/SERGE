@@ -186,6 +186,10 @@ $type           = 'result';
 $checkCol       = array(array('type', '=', $type, ''));
 $backgroundList = read('background_serge', 'id, name, filename', $checkCol, 'ORDER BY name', $bdd);
 
+# Read token
+$checkCol = array(array('id', '=', $_SESSION['id'], ''));
+$token    = read('users_table_serge', 'token', $checkCol, '', $bdd);
+
 # Read owner sources
 $checkCol               = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
 																array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));

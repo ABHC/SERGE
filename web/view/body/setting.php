@@ -548,6 +548,16 @@
 					<input title="Remove selected watchPack" class="removeWP" type="submit" name="removeWP" value="removeWP" />
 				</p>
 				</div>
+				<div>
+					<h3><?php get_t('subtitle6_window1_setting', $bdd); ?></h3>
+					<div class="align">
+						<?php
+						$rssLink = 'https://' . $_SERVER['HTTP_HOST'] . '/rss/' . $token[0]['token'];
+						?>
+						<textarea class="falseInput" id="toCopy" ><?php echo $rssLink; ?></textarea>
+						<button class="copyButton" id="copy" title="Copy RSS link" type="button" onclick="copyToClipboard();"></button>
+					</div>
+				</div>
 			</div>
 			<div class="centerSubmit">
 				<input title="Submit settings" class="submit" type="submit" name="settings" value="ChangeSettings" />

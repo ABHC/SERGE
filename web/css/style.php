@@ -24,3 +24,8 @@ body
 	display: flex;
 	flex-direction: row;
 }
+
+.hidden
+{
+	visibility: hidden;
+}

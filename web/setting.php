@@ -14,6 +14,7 @@ $language = $language[0] . $language[1];
 	<script src="https://code.jquery.com/jquery.min.js" type="text/javascript"></script>
 	<script src="js/scrollPos.js?<?php echo $_SERVER['REQUEST_TIME'];?>" type="text/javascript"></script>
 	<script src="js/backgroundPreviewAsTitle.js" type="text/javascript"></script>
+	<script src="js/copyToClipboard.js" type="text/javascript"></script>
 	<?php
 	include('favicon.php');
 	?>

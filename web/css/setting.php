@@ -142,6 +142,20 @@ h3
 	margin-bottom: 20px;
 }
 
+.falseInput
+{
+	width: 100%;
+	height: 19px;
+	border-radius: 3px 0 0 3px;
+	border: 1px solid rgba(255,255,255, 0.15);
+	border-right: none;
+	padding: 4px;
+	background-color: rgba(255, 255, 255, 0.2);
+	color: #fff;
+	resize: none;
+	overflow: hidden;
+}
+
 .submit
 {
 	width: 30px;
@@ -159,6 +173,24 @@ h3
 .submit:hover
 {
 	background-color: rgba(0,99,149, 0.55);
+}
+
+.copyButton
+{
+	width: 30px;
+	height: 29px;
+	background: url('../images/icoCopy.png') center no-repeat;
+	background-size: 22px;
+	background-color: rgb(50,50,50);
+	border: 1px solid rgba(255,255,255, 0.15);
+	border-radius: 0 3px 3px 0;
+	cursor: pointer;
+	font-size: 0;
+}
+
+.copyButton:hover
+{
+		background-color: rgb(55, 55, 55);
 }
 
 .removeWP
@@ -403,7 +435,7 @@ div.next::selection
 
 .divRow > div
 {
-	max-width: 45%;
+	width: 45%;
 }
 
 h2

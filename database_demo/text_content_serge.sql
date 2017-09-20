@@ -114,6 +114,7 @@ En recherchant les actualités, les brevets et les publications scientifiques, S
 ('input9_window1_setting', 'by alphabetical order', 'par ordre alphabétique', NULL, NULL, NULL),
 ('subtitle4_window1_setting', 'Privacy', 'Vie privée', NULL, NULL, NULL),
 ('subtitle5_window1_setting', 'WatchPack used', 'Pack de veille utilisé', NULL, NULL, NULL),
+('subtitle6_window1_setting', 'RSS link', 'Lien du flux RSS', NULL, NULL, NULL),
 ('input10_window1_setting', 'Record when a link is clicked', 'Enregistrer quand un lien est cliqué', NULL, NULL, NULL),
 ('input11_window1_setting', 'History', 'Historique', NULL, NULL, NULL),
 ('input11.1_window1_setting', 'the last', 'les dernières', NULL, NULL, NULL),
