@@ -109,23 +109,14 @@ if (!empty($data['sourceType']))
 {
 	foreach($_SESSION as $key => $val)
 	{
-		if (preg_match("/radio-s./", $key))
-		{
-			$_SESSION[$key] = '';
-		}
-		elseif (preg_match("/radio-ks[0-9]+/", $key))
+		if (preg_match("/radio-s./", $key) || preg_match("/radio-ks[0-9]+/", $key))
 		{
 			$_SESSION[$key] = '';
 		}
 	}
 	foreach($data as $key => $val)
 	{
-		$key = htmlspecialchars($key);
-		if (preg_match("/radio-s./", $key))
-		{
-			$_SESSION[$key] = $val;
-		}
-		elseif (preg_match("/radio-ks[0-9]+/", $key))
+		if (preg_match("/radio-s./", $key) || preg_match("/radio-ks[0-9]+/", $key))
 		{
 			$_SESSION[$key] = $val;
 		}
