@@ -2,15 +2,8 @@
 
 """Mailer contains all the functions related to the construction and sending of e-mails"""
 
-import os
-import time
-import re
-import sys
 import MySQLdb
 import unicodedata
-import traceback
-import logging
-from logging.handlers import RotatingFileHandler
 
 ######### IMPORT SERGE SPECIALS MODULES
 import decoder

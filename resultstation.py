@@ -2,8 +2,6 @@
 
 """Triage and formatting of results in order to insertion in SERGE database"""
 
-from urllib import pathname2url as pn
-
 ######### IMPORT SERGE SPECIALS MODULES
 from handshake import databaseConnection
 
