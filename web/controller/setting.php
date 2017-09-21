@@ -644,7 +644,7 @@ if (!empty($sourceIdAction) && !empty($action))
 		$day2[5] = '';
 		$day[0]  = 'selected';
 	}
-	elseif(isset($day[1]) AND isset($day[3]) AND isset($day[5]))
+	elseif(isset($day[1]) && isset($day[3]) && isset($day[5]))
 	{
 		$day[1]  = '';
 		$day[2]  = '';
@@ -792,7 +792,7 @@ if (!empty($data['scienceQuerySubmit']) && $data['scienceQuerySubmit'] === 'add'
 	$queryScience_Doaj           = '';
 	$_SESSION['cptScienceQuery'] = 3;
 
-	while(!empty($data[$nbscienceType]) AND !empty($data['scienceQuery' . $cpt]))
+	while(!empty($data[$nbscienceType]) && !empty($data['scienceQuery' . $cpt]))
 	{
 		if (!empty($data['andOrAndnot' . $cpt])
 				AND preg_match("/(^AND$|^OR$|^NOTAND$)/", $data['andOrAndnot' . $cpt]))
@@ -993,7 +993,7 @@ if (!empty($data['patentQuerySubmit']) && $data['patentQuerySubmit'] === 'add')
 	$queryPatent = '';
 	$_SESSION['cptPatentQuery'] = 3;
 
-	while(!empty($data['patentType' . $cpt]) AND !empty($data['patentQuery' . $cpt]))
+	while(!empty($data['patentType' . $cpt]) && !empty($data['patentQuery' . $cpt]))
 	{
 		if (!preg_match("/^[A-Z_]+$/", $data['patentType' . $cpt]))
 		{

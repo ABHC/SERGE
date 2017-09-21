@@ -7,8 +7,8 @@ include('model/insert.php');
 include('controller/generateNonce.php');
 
 // Define variables
-$actualLetter = '';
-$style = '';
+$actualLetter   = '';
+$style          = '';
 $orderByKeyword = '';
 $orderBySource  = '';
 $orderByType    = '';
@@ -882,15 +882,15 @@ else
 		$queryScience_Arxiv = '';
 		$_SESSION['cptScienceQuery'] = 3;
 
-		while(!empty($data[$nbscienceType]) AND !empty($data['scienceQuery' . $cpt]))
+		while(!empty($data[$nbscienceType]) && !empty($data['scienceQuery' . $cpt]))
 		{
 			if (!empty($data['andOrAndnot' . $cpt])
-					AND preg_match("/(^AND$|^OR$|^NOTAND$)/", $data['andOrAndnot' . $cpt]))
+					&& preg_match("/(^AND$|^OR$|^NOTAND$)/", $data['andOrAndnot' . $cpt]))
 			{
 				$queryScience_Arxiv = $queryScience_Arxiv . '+' . $data['andOrAndnot' . $cpt] . '+';
 			}
 			elseif (!empty($data['andOrAndnot' . $cpt])
-							AND !preg_match("/(^AND$|^OR$|^NOTAND$)/", $data['andOrAndnot' . $cpt]))
+							&& !preg_match("/(^AND$|^OR$|^NOTAND$)/", $data['andOrAndnot' . $cpt]))
 			{
 				$queryScience_Arxiv = $queryScience_Arxiv . '+OR+';
 			}
@@ -997,9 +997,8 @@ else
 
 		if (!empty($result))
 		{
-
 			$updateCol = array(array('source', '!Science'));
-			$checkCol = array(array('id', '=', $data['disableQueryScience'], ''));
+			$checkCol  = array(array('id', '=', $data['disableQueryScience'], ''));
 			$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
 		}
 	}
@@ -1007,7 +1006,6 @@ else
 	elseif (!empty($data['activateQueryScience']))
 	{
 		// Read owner science query
-
 		$checkCol = array(array('id', '=', $data['activateQueryScience'], 'AND'),
 											array('pack_id', '=', $data['packId'], 'AND'),
 											array('source', '=', '!Science', ''));
@@ -1024,12 +1022,12 @@ else
 	}
 	elseif (!empty($data['patentQuerySubmit']))
 	{
-		$cpt = 0;
-		$andOrPatent = '';
-		$queryPatent = '';
+		$cpt                        = 0;
+		$andOrPatent                = '';
+		$queryPatent                = '';
 		$_SESSION['cptPatentQuery'] = 3;
 
-		while(!empty($data['patentType' . $cpt]) AND !empty($data['patentQuery' . $cpt]))
+		while(!empty($data['patentType' . $cpt]) && !empty($data['patentQuery' . $cpt]))
 		{
 			if (!preg_match("/^[A-Z_]+$/", $data['patentType' . $cpt]))
 			{
