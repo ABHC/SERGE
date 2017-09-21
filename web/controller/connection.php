@@ -19,20 +19,20 @@ include('controller/dataProcessing.php');
 
 # Nonce
 $nonceTime = $_SERVER['REQUEST_TIME'];
-$nonce = getNonce($nonceTime);
+$nonce     = getNonce($nonceTime);
 
-if (!empty($data['pseudo']) AND !empty($data['password']))
+if (!empty($data['pseudo']) && !empty($data['password']))
 {
-	$checkCol = array(array('users', '=', $data['pseudo']));
-	$salt = read('users_table_serge', 'salt', $checkCol, '',$bdd);
+	$checkCol = array(array('users', ' =', $data['pseudo']));
+	$salt     = read('users_table_serge', 'salt', $checkCol, '',$bdd);
 
 	if (!empty($salt))
 	{
 		$password = hash('sha256', $salt[0]['salt'] . $data['password']);
 
 		$checkCol = array(array('users', '=', $data['pseudo'], 'AND'),
-		array('password', '=', $password, ''));
-		$result = read('users_table_serge', 'id, users, email, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, background_result', $checkCol, '',$bdd);
+											array('password', '=', $password, ''));
+		$result   = read('users_table_serge', 'id, users, email, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, background_result', $checkCol, '',$bdd);
 	}
 
 	if (!empty($result))

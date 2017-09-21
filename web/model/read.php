@@ -10,8 +10,8 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 
 	$check       = FALSE;
 	$arrayValues = array();
-	$cpt = 0;
-	$WHEREvar = 1;
+	$cpt         = 0;
+	$WHEREvar    = 1;
 
 	if (!empty($checkCol))
 	{
@@ -59,13 +59,15 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 			if (is_array($value))
 			{
 				$cptArray = 0;
-				$comma = '';
+				$comma    = '';
 				$WHEREvar = $WHEREvar . $nameCol . $op . '(';
+
 				foreach ($value as $arrayVariable)
 				{
 					$WHEREvar    = $WHEREvar . $comma . ':' . $nameCol . $cpt . $cptArray;
 					$arrayValues = array_merge($arrayValues, array($nameCol . $cpt . $cptArray => $arrayVariable));
-					$comma = ',';
+					$comma       = ',';
+
 					$cptArray++;
 				}
 				$WHEREvar    = $WHEREvar . ')' . $connector;
@@ -82,7 +84,7 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 	if (empty($selectedCol))
 	{
 		$selectedCol = 'id';
-		$check = TRUE;
+		$check       = TRUE;
 	}
 
 	# SQL request
@@ -91,7 +93,7 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 	$result = $req->fetchAll();
 	$req->closeCursor();
 
-	if (empty($result) AND $check)
+	if (empty($result) && $check)
 	{
 		$result = FALSE;
 	}

@@ -10,7 +10,7 @@ function get_t($name, $bdd)
 		$language = $_SESSION['lang'];
 	}
 
-	if ($language != 'FR' AND $language != 'EN')
+	if ($language != 'FR' && $language != 'EN')
 	{
 		$language = 'EN';
 	}
