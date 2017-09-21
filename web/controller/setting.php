@@ -795,13 +795,13 @@ if (!empty($data['scienceQuerySubmit']) && $data['scienceQuerySubmit'] === 'add'
 	while(!empty($data[$nbscienceType]) && !empty($data['scienceQuery' . $cpt]))
 	{
 		if (!empty($data['andOrAndnot' . $cpt])
-				AND preg_match("/(^AND$|^OR$|^NOTAND$)/", $data['andOrAndnot' . $cpt]))
+				&& preg_match("/(^AND$|^OR$|^NOTAND$)/", $data['andOrAndnot' . $cpt]))
 		{
 			$queryScience_Arxiv = $queryScience_Arxiv . '+' . $data['andOrAndnot' . $cpt] . '+';
 			$queryScience_Doaj  = $queryScience_Doaj . ' ' . $queryBoundDoaj[$data['andOrAndnot' . $cpt]] . ' ';
 		}
 		elseif (!empty($data['andOrAndnot' . $cpt])
-						AND !preg_match("/(^AND$|^OR$|^NOTAND$)/", $data['andOrAndnot' . $cpt]))
+						&& !preg_match("/(^AND$|^OR$|^NOTAND$)/", $data['andOrAndnot' . $cpt]))
 		{
 			$queryScience_Arxiv = $queryScience_Arxiv . '+OR+';
 			$queryScience_Doaj  = $queryScience_Doaj . ' OR ';

@@ -62,43 +62,16 @@ $unsafeData = array_merge($unsafeData, array(array('activateQueryPatent', 'activ
 foreach($_POST as $key => $val)
 {
 		$key = htmlspecialchars($key);
-		if (preg_match("/radio-s./", $key, $name))
-		{
-			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
-		}
-		elseif (preg_match("/radio-ks[0-9]+/", $key, $name))
-		{
-			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
-		}
-		elseif(preg_match("/andOrAndnot[0-9]+/", $key, $name))
-		{
-			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
-		}
-		elseif(preg_match("/openParenthesis[0-9]+/", $key, $name))
-		{
-			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
-		}
-		elseif(preg_match("/closeParenthesis[0-9]+/", $key, $name))
-		{
-			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
-		}
-		elseif(preg_match("/scienceType[0-9]+/", $key, $name))
-		{
-			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
-		}
-		elseif(preg_match("/scienceQuery[0-9]+/", $key, $name))
-		{
-			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
-		}
-		elseif(preg_match("/andOrPatent[0-9]+/", $key, $name))
-		{
-			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
-		}
-		elseif(preg_match("/patentType[0-9]+/", $key, $name))
-		{
-			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
-		}
-		elseif(preg_match("/patentQuery[0-9]+/", $key, $name))
+		if (preg_match("/radio-s./", $key, $name) ||
+		preg_match("/radio-ks[0-9]+/", $key, $name) ||
+		preg_match("/andOrAndnot[0-9]+/", $key, $name) ||
+		preg_match("/openParenthesis[0-9]+/", $key, $name) ||
+		preg_match("/closeParenthesis[0-9]+/", $key, $name) ||
+		preg_match("/scienceType[0-9]+/", $key, $name) ||
+		preg_match("/scienceQuery[0-9]+/", $key, $name) ||
+		preg_match("/andOrPatent[0-9]+/", $key, $name) ||
+		preg_match("/patentType[0-9]+/", $key, $name) ||
+		preg_match("/patentQuery[0-9]+/", $key, $name))
 		{
 			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
 		}
@@ -165,71 +138,34 @@ $wikiTab    = '';
 $settingTab = 'active';
 
 # Type
-if (!empty($data['type']))
-{
-	$type = $data['type'];
+$type             = 'add';
+$addActive        = 'class="active"';
+$tableName        = 'result_science_serge';
+$tableNameQuery   = 'queries_science_serge';
+$tableNameSource  = 'science_sources_serge';
+$ownersColumn     = 'owners';
+$userId           = ',' . $_SESSION['id'] . ',';
+$keywordQueryId   = 'query_id';
+$queryColumn      = 'query_arxiv';
+$specialColumn    = ',query_id, id_source ';
+$displayColumn    = 'Query';
+$_SESSION['type'] = 'add';
+$limit            = 15;
 
-	if ($type === 'add')
-	{
-		$addActive     = 'class="active"';
-		$tableName      = 'result_news_serge';
-		$tableNameQuery = 'keyword_news_serge';
-		$tableNameSource = 'rss_serge';
-		$ownersColumn   = 'applicable_owners_sources';
-		$userId        = '|' . $_SESSION['id'] . ':';
-		$keywordQueryId = 'keyword_id';
-		$queryColumn    = 'keyword';
-		$specialColumn  = ', id_source, keyword_id ';
-		$displayColumn  = 'Keyword';
-		$_SESSION['type'] = 'add';
-		$limit = 15;
-	}
-	elseif ($type === 'create')
-	{
-		$createActive = 'class="active"';
-		$tableName      = 'result_science_serge';
-		$tableNameQuery = 'queries_science_serge';
-		$tableNameSource = 'science_sources_serge';
-		$ownersColumn   = 'owners';
-		$userId        = ',' . $_SESSION['id'] . ',';
-		$keywordQueryId = 'query_id';
-		$queryColumn    = 'query_arxiv';
-		$specialColumn  = ',query_id, id_source ';
-		$displayColumn  = 'Query';
-		$_SESSION['type'] = 'create';
-	}
-	else
-	{
-		$type           = 'add';
-		$addActive = 'class="active"';
-		$tableName      = 'result_science_serge';
-		$tableNameQuery = 'queries_science_serge';
-		$tableNameSource = 'science_sources_serge';
-		$ownersColumn   = 'owners';
-		$userId        = ',' . $_SESSION['id'] . ',';
-		$keywordQueryId = 'query_id';
-		$queryColumn    = 'query_arxiv';
-		$specialColumn  = ',query_id, id_source ';
-		$displayColumn  = 'Query';
-		$_SESSION['type'] = 'add';
-		$limit = 15;
-	}
-}
-else
+if (!empty($data['type']) && $data['type'] === 'create')
 {
-	$type           = 'add';
-	$addActive = 'class="active"';
-	$tableName      = 'result_science_serge';
-	$tableNameQuery = 'queries_science_serge';
-	$tableNameSource = 'science_sources_serge';
-	$ownersColumn   = 'owners';
-	$userId        = ',' . $_SESSION['id'] . ',';
-	$keywordQueryId = 'query_id';
-	$queryColumn    = 'query_arxiv';
-	$specialColumn  = ',query_id, id_source ';
-	$displayColumn  = 'Query';
-	$_SESSION['type'] = 'add';
-	$limit = 15;
+	$type             = 'create';
+	$createActive     = 'class="active"';
+	$tableName        = 'result_science_serge';
+	$tableNameQuery   = 'queries_science_serge';
+	$tableNameSource  = 'science_sources_serge';
+	$ownersColumn     = 'owners';
+	$userId           = ',' . $_SESSION['id'] . ',';
+	$keywordQueryId   = 'query_id';
+	$queryColumn      = 'query_arxiv';
+	$specialColumn    = ',query_id, id_source ';
+	$displayColumn    = 'Query';
+	$_SESSION['type'] = 'create';
 }
 
 if ($type === 'add')
