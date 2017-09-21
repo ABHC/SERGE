@@ -6,9 +6,9 @@ include('model/insert.php');
 include('controller/generateNonce.php');
 
 # Initialization of variables
-$resultTab       = '';
-$wikiTab         = '';
-$settingTab      = '';
+$resultTab    = '';
+$wikiTab      = '';
+$settingTab   = '';
 $errorMessage = '';
 
 # Data processing
@@ -44,10 +44,10 @@ if(!empty($data['pseudo']) AND !empty($data['email']) AND !empty($data['password
 			else
 			{
 				# Check
-				$checkCol = array(array('users', '=', $pseudo, ''));
+				$checkCol      = array(array('users', ' =', $pseudo, ''));
 				$result_pseudo = read('users_table_serge', '', $checkCol, '',$bdd);
 
-				$checkCol = array(array('email', '=', $data['email'], ''));
+				$checkCol     = array(array('email', ' =', $data['email'], ''));
 				$result_email = read('users_table_serge', '', $checkCol, '',$bdd);
 				if(filter_var($data['email'], FILTER_VALIDATE_EMAIL) === FALSE)
 				{
@@ -67,9 +67,9 @@ if(!empty($data['pseudo']) AND !empty($data['email']) AND !empty($data['password
 					while ($resultToken)
 					{
 						// Génération du token
-						$bytes = random_bytes(4);
+						$bytes       = random_bytes(4);
 						$cryptoToken = bin2hex($bytes);
-						$cpt = 0;
+						$cpt         = 0;
 
 						while($cpt < 8)
 						{
@@ -88,14 +88,14 @@ if(!empty($data['pseudo']) AND !empty($data['email']) AND !empty($data['password
 							$cpt++;
 						}
 
-						$checkCol = array(array('token', '=', $token, ''));
+						$checkCol    = array(array('token', ' =', $token, ''));
 						$resultToken = read('users_table_serge', '', $checkCol, '',$bdd);
 					}
 
 					// Salt generation
-					$bytes = random_bytes(5);
+					$bytes      = random_bytes(5);
 					$cryptoSalt = bin2hex($bytes);
-					$password = hash('sha256', $cryptoSalt . $data['password']);
+					$password   = hash('sha256', $cryptoSalt . $data['password']);
 
 					// Language
 					$language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
@@ -123,13 +123,18 @@ if(!empty($data['pseudo']) AND !empty($data['email']) AND !empty($data['password
 					// Read new user information in order to connect it
 					$checkCol = array(array('users', '=', $pseudo, 'AND'),
 														array('password', '=', $password, ''));
-					$result = read('users_table_serge', 'id, users', $checkCol, '', $bdd);
-					$result = $result[0];					$password = '';
+					$result   = read('users_table_serge', 'id, users', $checkCol, '', $bdd);
+					$result   = $result[0];
+
+					# Cleaning
+					unset($password);
+					unset($data['password']);
 
 					# Connection
 					session_start();
 					$_SESSION['pseudo'] = $result['users'];
-					$_SESSION['id'] = $result['id'];
+					$_SESSION['id']     = $result['id'];
+
 					header('Location: setting');
 					die();
 				}
@@ -146,18 +151,23 @@ if(!empty($data['pseudo']) AND !empty($data['email']) AND !empty($data['password
 		$_SESSION['captcha'] = '';
 	}
 }
+
 # Generate captcha
 include('model/captcha.php');
-$cpt=1;
+
+$cpt         = 1;
 $captcha_val = '';
+
 while ($cpt < 5)
 {
-	$nb_captcha=rand(1, 52);
-	$captcha_name='images/captcha/'.$nb_captcha.'.png';
+	$nb_captcha   =rand(1, 52);
+	$captcha_name ='images/captcha/'.$nb_captcha.'.png';
 	copy($captcha_name, 'images/captcha/captcha'.$cpt.'.png');
-	$captcha_val = $captcha_val.$captcha[$nb_captcha-1];
+	$captcha_val  = $captcha_val.$captcha[$nb_captcha-1];
+
 	$cpt++;
 }
+
 $_SESSION['captcha'] = hash('sha256', $captcha_val);
 
 include('view/nav/nav.php');
