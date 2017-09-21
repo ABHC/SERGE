@@ -37,16 +37,46 @@
 		</div>
 	</div>
 
+	<?php
+		if ($needToPay === TRUE)
+		{
+	?>
+	<div id="purchase" class="purchase">
+		<h3>Payment system choice :</h3><br>
+		<form action="purchase" method="POST">
+			<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
+			<input type="hidden" name="stripeAccess" value="true"/>
+			Stripe payment system &nbsp; <script
+			src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+			data-key="<?php echo $stripe['publishable_key']; ?>"
+			data-amount="<?php echo $price; ?>"
+			data-name="Cairn Devices"
+			data-description="Serge premium for <?php echo $data['months']; ?> month"
+			data-image="images/SERGE_logo_norm.png"
+			data-locale="auto"
+			data-zip-code="true"
+			data-currency="eur">
+			</script>
+		</form>
+	</div>
+	<?php
+		}
+		else
+		{
+	 ?>
 	<div class="purchase">
 		<span class="title_purchase"><?php get_t('title_text_purchase', $bdd); ?></span>
 		<div class="price" id="price">30€</div>
-		<form method="post" action="purchase">
+		<form method="post" action="purchase#purchase">
 			<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
 			<p class="title_form_purchase"><?php get_t('input1_purchase_purchase', $bdd); ?></p> <p><input class="number alpha" type="number" name="months" min="1" max="30" value="1" onchange="updatePrice(this.value);"/><?php get_t('input1_text_purchase', $bdd); ?></p>
 			<p class="title_form_purchase"><?php get_t('input2_purchase_purchase', $bdd); ?></p> <p><input class="purchase_field" type="text" name="premiumCode" id="code" /></p>
 			<?php echo $ERRORMESSAGE; ?>
-			<p><input type="checkbox" name="readCGS" id="CGS" required/><label class="checkbox" for="CGS"></label><a href="legal" ><?php get_t('input3_purchase_purchase', $bdd); ?></a></p>
-			<input class="submit_purchase" type="submit" value="<?php get_t('submit_button_purchase', $bdd); ?>"/>
+			<p><input type="checkbox" name="readCGS" id="CGS" value="true" required/><label class="checkbox" for="CGS"></label><a href="legal" ><?php get_t('input3_purchase_purchase', $bdd); ?></a></p>
+			<input class="submit_purchase" type="submit" value="<?php get_t('submit_button_purchase', $bdd); ?>" name="submitPurchase"/>
 		</form>
 	</div>
+	<?php
+	}
+	?>
 </div>

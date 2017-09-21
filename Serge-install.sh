@@ -1361,8 +1361,14 @@ Install_Serge()
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/rss_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/time_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/users_table_serge.sql
+	# TODO ajouter les tables qui manque + leurs valeurs de base
 
 	rm -r /var/www/Serge/database_demo/
+
+	# Install Stripe
+	# TODO Demander si l'user veux installer stripe
+	apt install composer
+	composer require stripe/stripe-php
 
 	# Install Mediawiki
 	# Dependency

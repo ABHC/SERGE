@@ -7,6 +7,7 @@ CREATE TABLE `premium_code_table_serge` (
 	`creation_date` int(11) NOT NULL,
 	`users` text COLLATE utf8mb4_bin NOT NULL,
 	`duration_premium` int(11) NOT NULL,
+	`expiration_date` int(11) NOT NULL,
 	PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
