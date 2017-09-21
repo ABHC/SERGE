@@ -18,7 +18,8 @@ function insert($tableName, $insertCol, $optional, $redirectPage, $bdd)
 
 		$INSERTvar = $INSERTvar . $comma . $nameCol;
 		$VALUESvar = $VALUESvar . $comma . ':' . $nameCol;
-		$comma = ',';
+		$comma     = ',';
+
 		$arrayValues = array_merge($arrayValues, array($nameCol => $value));
 	}
 

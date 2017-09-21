@@ -29,6 +29,7 @@ if (!empty($nonce) && isset($_SESSION['nonce :' . $nonce]) && $_SESSION['nonce :
 		elseif ($varDetails[3] === '09' && $varDetails[2] === 'POST')
 		{
 			$data[$varDetails[0]] = !empty(preg_replace("/[^0-9]/", '', $_POST[$varDetails[1]])) ? preg_replace("/[^0-9]/", '', $_POST[$varDetails[1]]): '';
+			settype($data[$varDetails[0]], "integer");
 		}
 	}
 

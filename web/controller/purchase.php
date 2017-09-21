@@ -1,14 +1,17 @@
 <?php
 
 # Define variable
-$resultTab             = '';
-$wikiTab               = '';
-$settingTab            = '';
+$resultTab     = '';
+$wikiTab       = '';
+$settingTab    = '';
+$premiumCodeId = 0;
 
 include('controller/accessLimitedToSignInPeople.php');
 include('model/get_text.php');
 include('model/get_text_var.php');
 include('model/read.php');
+include('model/update.php');
+include('model/insert.php');
 include('controller/generateNonce.php');
 
 
@@ -35,14 +38,13 @@ if (!empty($data['submitPurchase']) && !empty($data['readCGS']) && !empty($data[
 	$monthPrice = $result[0]['price'];
 
 	// Check if $data['month'] is min 1 and max 30 and int
-	if (!is_int($data['months']) || $data['months'] < 1 || $data['months'] > 30)
+	if ($data['months'] < 1 || $data['months'] > 30)
 	{
 		$data['months'] = 1;
 	}
 
 	$price = $monthPrice * $data['months'];
 
-	$premiumCodeId = 0;
 	if (!empty($data['premiumCode']))
 	{
 		// Check if premium code exist
@@ -160,12 +162,13 @@ elseif (!empty($data['stripeAccess']) && $data['stripeAccess'] === 'true')
 										array('purchase_date', $_SERVER['REQUEST_TIME']),
 										array('duration_premium', $premiumDuration * 30 * 24 * 3600),
 										array('invoice_number', 'FA' . $invoiceId . '-user' . $_SESSION['id']),
-										array('price', $price),
+										array('price', $_SESSION['price']),
 										array('premium_code_id', $premiumCodeId),
 										array('bank_details', 'none'));
 	$execution = insert('purchase_table_serge', $insertCol, '', '', $bdd);
 
 	$price = $_SESSION['price'] / 100;
+	unset($_SESSION['price']);
 	echo "<h1>Successfully charged $price € !</h1>";
 }
 
