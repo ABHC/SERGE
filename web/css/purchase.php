@@ -199,7 +199,7 @@ a
 
 h2
 {
-	font-size: 40px;
+	font-size: 30px;
 	font-weight: bold;
 	letter-spacing: 1pt;
 	margin-bottom: 0;
@@ -207,7 +207,7 @@ h2
 
 h3
 {
-	font-size: 28px;
+	font-size: 21px;
 	font-weight: 200;
 	letter-spacing: 1pt;
 	margin-top: 15px;

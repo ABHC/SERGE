@@ -5,6 +5,7 @@ $resultTab     = '';
 $wikiTab       = '';
 $settingTab    = '';
 $premiumCodeId = 0;
+$needToPay     = FALSE;
 
 include('controller/accessLimitedToSignInPeople.php');
 include('model/get_text.php');
@@ -49,11 +50,11 @@ if (!empty($data['submitPurchase']) && !empty($data['readCGS']) && !empty($data[
 	{
 		// Check if premium code exist
 		$checkCol = array(array('code', '=', $data['premiumCode'], 'AND'),
-											array('users', 'nl', '%,' . $_SESSION['id'] . ',%', ''),
-											array('expiration_date', '>', $_SERVER['REQUEST_TIME'], ''),);
+											array('users', 'nl', '%,' . $_SESSION['id'] . ',%', 'AND'),
+											array('expiration_date', '>', $_SERVER['REQUEST_TIME'], ''));
 		$result   = read('premium_code_table_serge', 'id, duration_premium, users', $checkCol, '',$bdd);
 
-		$premiumCodeId       = $result['id'];
+		$premiumCodeId       = $result[0]['id'];
 		$premiumCodeDuration = $result[0]['duration_premium'];
 
 		if (!empty($premiumCodeDuration))
@@ -63,7 +64,12 @@ if (!empty($data['submitPurchase']) && !empty($data['readCGS']) && !empty($data[
 			$checkCol  = array(array('id', '=', $premiumCodeId, ''));
 			$execution = update('premium_code_table_serge', $updateCol, $checkCol, '', $bdd);
 
-			$price = $price / ($premiumCodeDuration/3600*24*30);
+			$price = $price - (($premiumCodeDuration/3600*24*30) * $monthPrice);
+
+			if ($price < 0)
+			{
+				$price = 0;
+			}
 		}
 	}
 
@@ -115,7 +121,7 @@ if (!empty($data['submitPurchase']) && !empty($data['readCGS']) && !empty($data[
 											array('bank_details', 'none'));
 		$execution = insert('purchase_table_serge', $insertCol, '', '', $bdd);
 
-		header('Location : setting');
+		header('Location: setting');
 		die();
 	}
 }
