@@ -71,8 +71,8 @@ def feedMeUp(link):
 		try:
 			xmldoc = feedparser.parse(rss)
 		except Exception:
-			print ("unvalid link")
-			print ("parsing error in : "+link)
+			print('unvalid link')
+			print('parsing error in : '+link)
 			sys.exit()
 
 		########### RSS ANALYZE
@@ -94,8 +94,8 @@ def feedMeUp(link):
 		if missing_flux is True:
 			flux_error = "missing_flux, "
 			complete_error = flux_error+title_error+entries_error
-			print ("unvalid link")
-			print complete_error
+			print('unvalid link')
+			print(complete_error)
 			sys.exit()
 
 		rangemax_article = len(xmldoc.entries)
@@ -142,29 +142,29 @@ def feedMeUp(link):
 
 		if unvalid_count > 0:
 			complete_attribute = "Missing beacon(s) : "+attribute_title+attribute_description+attribute_link+attribute_date
-			print ("valid link")
-			print ("WARNING : Some beacons are missing, your research may be less efficient \n"+complete_attribute)
+			print('valid link')
+			print('WARNING : Some beacons are missing, your research may be less efficient \n'+complete_attribute)
 
 		if unvalid_count == 0:
-			print ("valid link")
+			print('valid link')
 
 	elif rss_error is True:
-		print ("unvalid link")
-		print req_results[2]
+		print('unvalid link')
+		print(req_results[2])
 
 
 ########### MAIN
 try:
 	link = sys.argv[1]
 except IndexError:
-	print ("URL required")
+	print('URL required')
 	sys.exit()
 
 split_link = link.split(":")
 
 if split_link[0] != "http" and split_link[0] != "https":
-	print ("unvalid link")
-	print ("URL required : protocol is missing")
+	print('unvalid link')
+	print('URL required : protocol is missing')
 	sys.exit()
 
 feedMeUp(link)
