@@ -12,24 +12,24 @@ include('controller/dataProcessing.php');
 
 $redirect = 'error404';
 
-if (!empty($data['linkId']) AND !empty($data['token']) AND !empty($data['type']))
+if (!empty($data['linkId']) && !empty($data['token']) && !empty($data['type']))
 {
 	# Read id bound to the token
-	$checkCol = array(array('token', '=', $data['token'], ''));
-	$result = read('users_table_serge', 'id', $checkCol, '', $bdd);
-	$userId = $result[0]['id'];
+	$checkCol = array(array('token', ' =', $data['token'], ''));
+	$result   = read('users_table_serge', 'id', $checkCol, '', $bdd);
+	$userId   = $result[0]['id'];
 
 	if (!empty($userId))
 	{
-		if ($data['type'] == 'news')
+		if ($data['type'] === 'news')
 		{
 			$tableName = 'result_news_serge';
 		}
-		elseif ($data['type'] == 'sciences')
+		elseif ($data['type'] === 'sciences')
 		{
 			$tableName = 'result_science_serge';
 		}
-		elseif ($data['type'] == 'patents')
+		elseif ($data['type'] === 'patents')
 		{
 			$tableName = 'result_patents_serge';
 		}

@@ -336,7 +336,7 @@
 				' . $cpt . '
 				</a>';
 			}
-			elseif (($cpt - 1) == $page OR ($cpt + 1) == $page)
+			elseif (($cpt - 1) === $page || ($cpt + 1) === $page)
 			{
 				echo '
 				<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '&type=' . $type . '" class="pageNumber">
@@ -344,7 +344,7 @@
 				</a>';
 				$dotBetweenPageNumber = FALSE;
 			}
-			elseif ($cpt == $nbPage OR ($cpt + 1) == $nbPage)
+			elseif ($cpt === $nbPage || ($cpt + 1) === $nbPage)
 			{
 				echo '
 				<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '&type=' . $type . '" class="pageNumber">

@@ -53,11 +53,11 @@ if(!empty($data['pseudo']) AND !empty($data['email']) AND !empty($data['password
 				{
 					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Invalid email <br>';
 				}
-				else if($result_pseudo)
+				elseif($result_pseudo)
 				{
 					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Existing pseudo <br>';
 				}
-				else if($result_email)
+				elseif($result_email)
 				{
 					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Existing email <br>';
 				}

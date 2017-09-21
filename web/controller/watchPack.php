@@ -514,7 +514,7 @@ else
 	$selectLanguage = $selectLanguage . PHP_EOL . '</select>';
 
 	// Edit a pack
-	if (!empty($data['packId']) AND !empty($data['addNewPack']) AND !empty($data['watchPackName']) AND !empty($data['watchPackDescription']))
+	if (!empty($data['packId']) && !empty($data['addNewPack']) && !empty($data['watchPackName']) && !empty($data['watchPackDescription']))
 	{
 		// Check if watch pack is own by the user
 
@@ -527,7 +527,7 @@ else
 											array('id', '<>', $data['packId'], ''));
 		$nameExist = read('watch_pack_serge', '', $checkCol, '', $bdd);
 
-		if ($packIsOwn AND !$nameExist)
+		if ($packIsOwn && !$nameExist)
 		{
 			$updateCol = array(array('name', $data['watchPackName']),
 												array('description', $data['watchPackDescription']),
@@ -539,7 +539,7 @@ else
 			$execution = update('watch_pack_serge', $updateCol, $checkCol, '', $bdd);
 		}
 	}
-	elseif (!empty($data['addNewKeyword']) AND !empty($data['sourceKeyword']) AND !empty($data['newKeyword']))
+	elseif (!empty($data['addNewKeyword']) && !empty($data['sourceKeyword']) && !empty($data['newKeyword']))
 	{
 		$newKeywordArray = preg_split('/,/', $data['newKeyword'], -1, PREG_SPLIT_NO_EMPTY);
 
@@ -619,7 +619,7 @@ else
 			}
 		}
 	}
-	elseif (!empty($data['addNewSource']) AND !empty($data['newSource']))
+	elseif (!empty($data['addNewSource']) && !empty($data['newSource']))
 	{
 		$checkCol = array(array('link', '=', $newSource, ''));
 		$result = read('rss_serge', 'id', $checkCol, '', $bdd);
@@ -633,7 +633,7 @@ else
 
 		$newSourceId = ',' . $resultSource['id'] . ',';
 
-		if (!empty($resultSource) AND !preg_match("/$newSourceId/", $sources['source']))
+		if (!empty($resultSource) && !preg_match("/$newSourceId/", $sources['source']))
 		{
 
 
@@ -651,7 +651,7 @@ else
 			# Check if the link is valid
 			exec($cmd, $linkValidation, $errorInCheckfeed);
 
-			if ($linkValidation[0] === 'valid link' AND $errorInCheckfeed === 0)
+			if ($linkValidation[0] === 'valid link' && $errorInCheckfeed === 0)
 			{
 				// Adding new source
 				preg_match('@^(?:http.*://[www.]*)?([^/]+)@i', $newSource, $matches);
@@ -690,7 +690,7 @@ else
 			}
 		}
 	}
-	elseif (!empty($data['delKeyword']) OR !empty($data['disableKeyword']) OR !empty($data['activateKeyword']))
+	elseif (!empty($data['delKeyword']) || !empty($data['disableKeyword']) || !empty($data['activateKeyword']))
 	{
 		# Delete, disable, active keyword
 		if (!empty($data['delKeyword']))
@@ -715,7 +715,7 @@ else
 			$action          = 'activateKeyword';
 		}
 
-		if (isset($sourceIdAction) AND isset($keywordIdAction) AND isset($action))
+		if (isset($sourceIdAction) && isset($keywordIdAction) && isset($action))
 		{
 			# Check if keyword exist
 
@@ -729,41 +729,20 @@ else
 			$result = $result[0];
 
 			# Delete an existing keyword
-			if (!empty($result) AND $action === 'delKeyword')
+			if (!empty($result) && $action === 'delKeyword')
 			{
-				/*$sourceNew = preg_replace("/,!*$sourceIdAction,/", ',', $result['source']);
-				$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :sources WHERE id = :id');
-				$req->execute(array(
-					'sources' => $sourceNew,
-					'id' => $keywordIdAction));
-					$req->closeCursor();*/
-
 				$updateCol = array(array('source', preg_replace("/,!*$sourceIdAction,/", ',', $result['source'])));
 				$checkCol = array(array('id', '=', $keywordIdAction, ''));
 				$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
 			}
-			elseif (!empty($result) AND $action === 'disableKeyword')
+			elseif (!empty($result) && $action === 'disableKeyword')
 			{
-				/*$sourceNew = preg_replace("/,$sourceIdAction,/", ",!$sourceIdAction,", $result['source']);
-				$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :sources WHERE id = :id');
-				$req->execute(array(
-					'sources' => $sourceNew,
-					'id' => $keywordIdAction));
-					$req->closeCursor();*/
-
 				$updateCol = array(array('source', preg_replace("/,$sourceIdAction,/", ",!$sourceIdAction,", $result['source'])));
 				$checkCol = array(array('id', '=', $keywordIdAction, ''));
 				$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
 			}
-			elseif (!empty($result) AND $action === 'activateKeyword')
+			elseif (!empty($result) && $action === 'activateKeyword')
 			{
-				/*$sourceNew = preg_replace("/,!$sourceIdAction,/", ",$sourceIdAction,", $result['source']);
-				$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :sources WHERE id = :id');
-				$req->execute(array(
-					'sources' => $sourceNew,
-					'id' => $keywordIdAction));
-					$req->closeCursor();*/
-
 				$updateCol = array(array('source', preg_replace("/,!$sourceIdAction,/", ",$sourceIdAction,", $result['source'])));
 				$checkCol = array(array('id', '=', $keywordIdAction, ''));
 				$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
@@ -774,7 +753,7 @@ else
 			}
 		}
 	}
-	elseif (!empty($data['delSource']) OR !empty($data['disableSource']) OR !empty($data['activateSource']))
+	elseif (!empty($data['delSource']) || !empty($data['disableSource']) || !empty($data['activateSource']))
 	{
 		# Delete, disable, active sources
 		if (!empty($data['delSource']))
@@ -796,10 +775,9 @@ else
 			$action          = 'activateSource';
 		}
 
-		if (isset($sourceIdAction) AND isset($action))
+		if (isset($sourceIdAction) && isset($action))
 		{
 			# Check if source exist for this owner
-
 			$checkCol = array(array('query', '=', '[!source!]', 'AND'),
 												array('pack_id', '=', $data['packId'], 'AND'),
 												array('source', 'l', '%,' . $sourceIdAction . ',%', 'OR'),
@@ -809,7 +787,7 @@ else
 			$sourceExist = read('watch_pack_queries_serge', '', $checkCol, '', $bdd);
 
 			# Delete an existing sources
-			if ($sourceExist AND $action === 'delSource')
+			if ($sourceExist && $action === 'delSource')
 			{
 
 				$checkCol = array(array('owners', 'l',  '%,' . $_SESSION['id'] . ',%', ''));
@@ -845,7 +823,7 @@ else
 					$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
 				}
 			}
-			elseif ($sourceExist AND $action === 'disableSource')
+			elseif ($sourceExist && $action === 'disableSource')
 			{
 				// Disable source on all keywords
 
@@ -867,7 +845,7 @@ else
 					$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
 				}
 			}
-			elseif ($sourceExist AND $action === 'activateSource')
+			elseif ($sourceExist && $action === 'activateSource')
 			{
 				// Activate source on all keywords
 
@@ -957,7 +935,7 @@ else
 			$ERROR_SCIENCEQUERY = 'Invalid query : parenthesis does not match';
 		}
 
-		if (empty($ERROR_SCIENCEQUERY) AND !empty($queryScience_Arxiv))
+		if (empty($ERROR_SCIENCEQUERY) && !empty($queryScience_Arxiv))
 		{
 			$userId = ',' . $_SESSION['id'] . ',';
 			$ERROR_SCIENCEQUERY = '';
@@ -1180,7 +1158,7 @@ else
 			$delEditingPatentQuery = $data['delEditingPatentQuery'];
 		}
 	}
-	elseif (!empty($data['addNewPack']) AND $data['watchPackList'] === 'NewPack' AND !empty($data['watchPackName']) AND !empty($data['watchPackDescription']))
+	elseif (!empty($data['addNewPack']) && $data['watchPackList'] === 'NewPack' && !empty($data['watchPackName']) && !empty($data['watchPackDescription']))
 	{
 		$newWatchPackName = $data['watchPackName'];
 		$language = strtoupper($data['language']);
@@ -1240,7 +1218,7 @@ else
 			$ERRORMESSAGENEWPACKNAME = 'A watch pack with this name already exist, please change the name';
 		}
 	}
-	elseif (!empty($data['addNewPack']) AND $data['watchPackList'] === 'NewPack' AND (empty($data['watchPackName']) OR empty($data['watchPackDescription'])))
+	elseif (!empty($data['addNewPack']) && $data['watchPackList'] === 'NewPack' && (empty($data['watchPackName']) || empty($data['watchPackDescription'])))
 	{
 		$ERRORMESSAGEEMPTYNAMEORDESC = 'You have to enter a name and a description for your watch pack';
 	}

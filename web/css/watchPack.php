@@ -12,7 +12,7 @@ include('style.php');
 
 include('nav.php');
 
-if ($_SESSION['type'] == 'create')
+if ($_SESSION['type'] === 'create')
 {
 ?>
 	.body

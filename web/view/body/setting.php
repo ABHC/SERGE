@@ -768,17 +768,17 @@
 				{
 					echo $logicalConnector;
 
-					if (intval($cpt/3) == ($cpt/3) AND $cpt != 0)
+					if (intval($cpt/3) === ($cpt/3) && $cpt != 0)
 					{
 						echo '</div>';
 					}
 
-					if (intval($cpt/3) == ($cpt/3) AND $cpt != 0)
+					if (intval($cpt/3) === ($cpt/3) && $cpt != 0)
 					{
 						echo '<div class="lineQuery">';
 					}
 
-					if (intval($cpt/3) == ($cpt/3) AND $cpt != 0)
+					if (intval($cpt/3) === ($cpt/3) && $cpt != 0)
 					{
 						echo '<div class="ghostSpace"></div>';
 					}
@@ -795,7 +795,7 @@
 						$selected[$data['scienceType' . $cpt]] = 'selected';
 					}
 
-					if (!empty($data['openParenthesis' . $cpt]) AND $data['openParenthesis' . $cpt] == 'active')
+					if (!empty($data['openParenthesis' . $cpt]) && $data['openParenthesis' . $cpt] === 'active')
 					{
 						$checked['openParenthesis' . $cpt] = 'checked';
 					}
@@ -828,7 +828,7 @@
 					<input type="text" class="query" name="scienceQuery' . $cpt . '" id="scienceQuery0' . $cpt . '" placeholder="Keyword" value="' . $data['scienceQuery' . $cpt] . '"/>';
 
 
-					if (!empty($data['closeParenthesis' . $cpt]) AND $data['closeParenthesis' . $cpt] == 'active')
+					if (!empty($data['closeParenthesis' . $cpt]) && $data['closeParenthesis' . $cpt] === 'active')
 					{
 						$checked['closeParenthesis' . $cpt] = 'checked';
 					}
@@ -980,17 +980,17 @@
 				{
 					echo $logicalConnector;
 
-					if (intval($cpt/3) == ($cpt/3) AND $cpt != 0)
+					if (intval($cpt/3) === ($cpt/3) && $cpt != 0)
 					{
 						echo '</div>';
 					}
 
-					if (intval($cpt/3) == ($cpt/3) AND $cpt != 0)
+					if (intval($cpt/3) === ($cpt/3) && $cpt != 0)
 					{
 						echo '<div class="lineQuery">';
 					}
 
-					if (intval($cpt/3) == ($cpt/3) AND $cpt != 0)
+					if (intval($cpt/3) === ($cpt/3) && $cpt != 0)
 					{
 						echo '<div class="ghostSpace"></div>';
 					}
@@ -1136,7 +1136,7 @@
 				$cpt++;
 
 				$checked = '';
-				if (!empty($data['andOrPatent' . $cpt]) AND $data['andOrPatent' . $cpt] == 'OR')
+				if (!empty($data['andOrPatent' . $cpt]) && $data['andOrPatent' . $cpt] === 'OR')
 				{
 					$checked = 'checked';
 				}

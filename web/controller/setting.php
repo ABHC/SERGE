@@ -203,7 +203,7 @@ $checkCol     = array(array('users', ' =', $_SESSION['pseudo'], ''));
 $userSettings = read('users_table_serge', 'id, email, password, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, record_read, history_lifetime, background_result, record_read', $checkCol, '', $bdd);
 $userSettings = $userSettings[0];
 
-if (!empty($data['settings']) AND $data['settings'] === 'ChangeSettings')
+if (!empty($data['settings']) && $data['settings'] === 'ChangeSettings')
 {
 	# Change email
 	if (!empty($data['email']))
@@ -249,7 +249,7 @@ if (!empty($data['settings']) AND $data['settings'] === 'ChangeSettings')
 
 	# Change sorting for link in email
 	$orderBy = 'masterword';
-	if (!empty($data['orderBy']) AND ($data['orderBy'] === 'origin' OR $data['orderBy'] === 'type'))
+	if (!empty($data['orderBy']) && ($data['orderBy'] === 'origin' || $data['orderBy'] === 'type'))
 	{
 		$orderBy = $data['orderBy'];
 	}
@@ -261,7 +261,7 @@ if (!empty($data['settings']) AND $data['settings'] === 'ChangeSettings')
 
 	# Change privacy settings
 	$recordRead = 0;
-	if (!empty($data['recordRead']) AND $data['recordRead'] === 'active')
+	if (!empty($data['recordRead']) && $data['recordRead'] === 'active')
 	{
 		$recordRead = 1;
 	}
@@ -284,7 +284,7 @@ if (!empty($data['settings']) AND $data['settings'] === 'ChangeSettings')
 }
 
 # Delete history button
-if (!empty($data['buttonDeleteHistory']) AND $data['buttonDeleteHistory'] === 'deleteHistory')
+if (!empty($data['buttonDeleteHistory']) && $data['buttonDeleteHistory'] === 'deleteHistory')
 {
 	$deleteHistoryValue = $data['deleteHistoryValue'];
 	$deleteHistoryUnit  = $data['deleteHistoryUnit'];
@@ -334,7 +334,7 @@ if (!empty($data['buttonDeleteHistory']) AND $data['buttonDeleteHistory'] === 'd
 }
 
 # Adding new source
-if (!empty($data['sourceType']) AND !empty($data['newSource']) AND $data['sourceType'] === 'inputSource')
+if (!empty($data['sourceType']) && !empty($data['newSource']) && $data['sourceType'] === 'inputSource')
 {
 	$sourceToTest = escapeshellarg($data['newSource']);
 	$cmd          = '/usr/bin/python /var/www/Serge/checkfeed.py ' . $sourceToTest;
@@ -342,7 +342,7 @@ if (!empty($data['sourceType']) AND !empty($data['newSource']) AND $data['source
 	# Check if the link is valid
 	exec($cmd, $linkValidation, $errorInCheckfeed);
 
-	if ($linkValidation[0] === 'valid link' AND $errorInCheckfeed === 0)
+	if ($linkValidation[0] === 'valid link' && $errorInCheckfeed === 0)
 	{
 		// Check if source is already in bdd
 		$checkCol = array(array('link', ' =', $source, ''));
@@ -395,7 +395,7 @@ if (!empty($data['sourceType']) AND !empty($data['newSource']) AND $data['source
 }
 
 # Adding new keyword
-if (!empty($data['sourceKeyword']) AND !empty($data['newKeyword']))
+if (!empty($data['sourceKeyword']) && !empty($data['newKeyword']))
 {
 	include('model/addNewKeyword.php');
 	$sourceId    = $data['sourceKeyword'];
@@ -408,12 +408,12 @@ if (!empty($data['sourceKeyword']) AND !empty($data['newKeyword']))
 	{
 		$newKeyword = preg_replace("/^ | *, *| $/", '', $keyword);
 		# Special keyword :all
-		if (preg_match("/^:all$/i", $newKeyword) AND $sourceId != '00')
+		if (preg_match("/^:all$/i", $newKeyword) && $sourceId != '00')
 		{
 			$newKeyword    = ':all@' . $sourceId;
 			$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd);
 		}
-		elseif (preg_match("/^:all$/i", $newKeyword) AND $sourceId === '00')
+		elseif (preg_match("/^:all$/i", $newKeyword) && $sourceId === '00')
 		{
 			$updateBDD = FALSE;
 			foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
@@ -423,13 +423,13 @@ if (!empty($data['sourceKeyword']) AND !empty($data['newKeyword']))
 				$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd);
 			}
 		}
-		elseif (preg_match("/^alert:.+/i", $newKeyword) AND $sourceId != '00')
+		elseif (preg_match("/^alert:.+/i", $newKeyword) && $sourceId != '00')
 		{
 			$newKeyword    = preg_replace("/alert:/i", '', $newKeyword);
 			$newKeyword    = '[!ALERT!]' . $newKeyword;
 			$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd);
 		}
-		elseif (preg_match("/^alert:.+/i", $newKeyword) AND $sourceId === '00')
+		elseif (preg_match("/^alert:.+/i", $newKeyword) && $sourceId === '00')
 		{
 			$updateBDD  = FALSE;
 			$newKeyword = preg_replace("/alert:/i", '', $newKeyword);
@@ -473,7 +473,7 @@ elseif (!empty($data['activateKeyword']))
 	$action          = 'activateKeyword';
 }
 
-if (!empty($sourceIdAction) AND !empty($keywordIdAction) AND !empty($action))
+if (!empty($sourceIdAction) && !empty($keywordIdAction) && !empty($action))
 {
 	# Check if keyword exist for this ownerSourcesList
 	$keywordExist = FALSE;
@@ -485,7 +485,7 @@ if (!empty($sourceIdAction) AND !empty($keywordIdAction) AND !empty($action))
 		# Search for source in applicable_owners_sources
 		$sourceInKeyword = preg_match("/\|" . $_SESSION['id'] . ':[,!0-9,]*,!*' . $sourceIdAction . ",[,!0-9,]*\|/", $applicableOwnerstmp, $applicable_owners_sourceForCurrentUser);
 
-		if ($ownerKeywordList['id'] === $keywordIdAction AND $sourceInKeyword)
+		if ($ownerKeywordList['id'] === $keywordIdAction && $sourceInKeyword)
 		{
 			$actualOwners            = $applicable_owners_sourceForCurrentUser[0];
 			$applicableOwners        = $ownerKeywordList['applicable_owners_sources'];
@@ -495,7 +495,7 @@ if (!empty($sourceIdAction) AND !empty($keywordIdAction) AND !empty($action))
 	}
 
 	# Delete an existing keyword
-	if ($keywordExist AND $action === 'delKeyword')
+	if ($keywordExist && $action === 'delKeyword')
 	{
 		$newOwners        = preg_replace("/,!*$sourceIdAction,/", ',', $actualOwners);
 		$newOwners        = preg_replace("/\|/", '', $newOwners);
@@ -509,7 +509,7 @@ if (!empty($sourceIdAction) AND !empty($keywordIdAction) AND !empty($action))
 		header('Location: setting');
 		die();
 	}
-	elseif ($keywordExist AND $action === 'disableKeyword')
+	elseif ($keywordExist && $action === 'disableKeyword')
 	{
 		$newOwners        = preg_replace("/,$sourceIdAction,/', ',!$sourceIdAction,", $actualOwners);
 		$newOwners        = preg_replace("/\|/", '', $newOwners);
@@ -523,7 +523,7 @@ if (!empty($sourceIdAction) AND !empty($keywordIdAction) AND !empty($action))
 		header('Location: setting');
 		die();
 	}
-	elseif ($keywordExist AND $action === 'activateKeyword')
+	elseif ($keywordExist && $action === 'activateKeyword')
 	{
 		$newOwners        = preg_replace("/,!$sourceIdAction,/', ',$sourceIdAction,", $actualOwners);
 		$newOwners        = preg_replace("/\|/", '', $newOwners);
@@ -563,7 +563,7 @@ elseif (!empty($data['activateSource']))
 	$action          = 'activateSource';
 }
 
-if (!empty($sourceIdAction) AND !empty($action))
+if (!empty($sourceIdAction) && !empty($action))
 {
 	# Check if source exist for this owner
 	$sourceExist = FALSE;
@@ -578,7 +578,7 @@ if (!empty($sourceIdAction) AND !empty($action))
 	}
 
 	# Delete an existing sources
-	if ($sourceExist AND $action === 'delSource')
+	if ($sourceExist && $action === 'delSource')
 	{
 		$userId    = $_SESSION['id'];
 		$updateCol = array(array('owners', preg_replace("/,!*$userId,/", ',', $owners)),
@@ -589,7 +589,7 @@ if (!empty($sourceIdAction) AND !empty($action))
 		header('Location: setting');
 		die();
 	}
-	elseif ($sourceExist AND $action === 'disableSource')
+	elseif ($sourceExist && $action === 'disableSource')
 	{
 		$userId    = $_SESSION['id'];
 		$updateCol = array(array('owners', preg_replace("/,$userId,/', ',!$userId,", $owners)),
@@ -600,7 +600,7 @@ if (!empty($sourceIdAction) AND !empty($action))
 		header('Location: setting');
 		die();
 	}
-	elseif ($sourceExist AND $action === 'activateSource')
+	elseif ($sourceExist && $action === 'activateSource')
 	{
 		$userId    = $_SESSION['id'];
 		$updateCol = array(array('owners', preg_replace("/,!$userId,/', ',$userId,", $owners)),
@@ -645,7 +645,7 @@ if (!empty($sourceIdAction) AND !empty($action))
 
 	$day2 = $day;
 
-	if (isset($day[1]) AND isset($day[2]) AND isset($day[3]) AND isset($day[4]) AND isset($day[5]) AND isset($day[6]) AND isset($day[7]))
+	if (isset($day[1]) && isset($day[2]) && isset($day[3]) && isset($day[4]) && isset($day[5]) && isset($day[6]) && isset($day[7]))
 	{
 		$day[1]  = '';
 		$day[2]  = '';
@@ -663,7 +663,7 @@ if (!empty($sourceIdAction) AND !empty($action))
 		$day2[7] = '';
 		$day[9]  = 'selected';
 	}
-	elseif (isset($day[1]) AND isset($day[2]) AND isset($day[3]) AND isset($day[4]) AND isset($day[5]))
+	elseif (isset($day[1]) && isset($day[2]) && isset($day[3]) && isset($day[4]) && isset($day[5]))
 	{
 		$day[1]  = '';
 		$day[2]  = '';
@@ -698,12 +698,12 @@ if (!empty($sourceIdAction) AND !empty($action))
 	$cpt = 1;
 	while ($cpt <= 7)
 	{
-		if ($day[$cpt] === 'selected' AND $day2[$cpt] === 'selected' AND !$firstEntry)
+		if ($day[$cpt] === 'selected' && $day2[$cpt] === 'selected' && !$firstEntry)
 		{
 			$day2[$cpt] = '';
 			$firstEntry = TRUE;
 		}
-		elseif ($day[$cpt] === 'selected' AND $day2[$cpt] === 'selected' AND $firstEntry)
+		elseif ($day[$cpt] === 'selected' && $day2[$cpt] === 'selected' && $firstEntry)
 		{
 			$day[$cpt] = '';
 			$cpt       = 8;
@@ -736,7 +736,7 @@ elseif ($userSettings['record_read'] == 1)
 }
 
 # Edit science query
-if (!empty($data['action']) AND !empty($data['query']) AND $data['action'] === 'editQueryScience')
+if (!empty($data['action']) && !empty($data['query']) && $data['action'] === 'editQueryScience')
 {
 	$checkCol = array(array('id', '=', $data['query'], 'AND'),
 										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
@@ -772,7 +772,7 @@ if (!empty($data['action']) AND !empty($data['query']) AND $data['action'] === '
 			{
 				$data['closeParenthesis' . $cptQuery] = 'active';
 			}
-			elseif (!empty($queryPart) AND $typeQuery != 'displayed')
+			elseif (!empty($queryPart) && $typeQuery != 'displayed')
 			{
 				$data['scienceType' . $cptQuery] = $queryPart;
 				$typeQuery = 'displayed';
@@ -790,7 +790,7 @@ if (!empty($data['action']) AND !empty($data['query']) AND $data['action'] === '
 
 
 # Delete editing query
-if (!empty($data['delEditingScienceQuery']) AND empty($data['extendScience']))
+if (!empty($data['delEditingScienceQuery']) && empty($data['extendScience']))
 {
 	$checkCol = array(array('id', '=', $data['delEditingScienceQuery'], ''),
 										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
@@ -809,7 +809,7 @@ if (!empty($data['delEditingScienceQuery']) AND empty($data['extendScience']))
 
 # Add new science query
 include('model/addNewScienceQuery.php');
-if (!empty($data['scienceQuerySubmit']) AND $data['scienceQuerySubmit'] === 'add')
+if (!empty($data['scienceQuerySubmit']) && $data['scienceQuerySubmit'] === 'add')
 {
 	$cpt                         = 0;
 	$open                        = 0;
@@ -889,7 +889,7 @@ if (!empty($data['scienceQuerySubmit']) AND $data['scienceQuerySubmit'] === 'add
 		$ERROR_SCIENCEQUERY = 'Invalid query : parenthesis does not match';
 	}
 
-	if (empty($ERROR_SCIENCEQUERY) AND !empty($queryScience_Arxiv) AND !empty($queryScience_Doaj))
+	if (empty($ERROR_SCIENCEQUERY) && !empty($queryScience_Arxiv) && !empty($queryScience_Doaj))
 	{
 		$ERROR_SCIENCEQUERY = addNewScienceQuery($queryScience_Arxiv, $queryScience_Doaj, $bdd);
 	}
@@ -956,7 +956,7 @@ if (!empty($data['activateQueryScience']))
 }
 
 # Edit patent query
-if (!empty($data['action']) AND !empty($data['query']) AND $data['action'] === 'editQueryPatent')
+if (!empty($data['action']) && !empty($data['query']) && $data['action'] === 'editQueryPatent')
 {
 	$checkCol    = array(array('id', '=', $data['query'], 'AND'),
 											array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
@@ -984,7 +984,7 @@ if (!empty($data['action']) AND !empty($data['query']) AND $data['action'] === '
 				$value = preg_replace("/ /", '', $value[0]);
 				$data['andOrPatent' . $cptQuery] = $value;
 			}
-			elseif (!empty($queryPart) AND $typeQuery != 'displayed')
+			elseif (!empty($queryPart) && $typeQuery != 'displayed')
 			{
 				$data['patentType' . $cptQuery] = $queryPart;
 				$typeQuery = 'displayed';
@@ -1002,7 +1002,7 @@ if (!empty($data['action']) AND !empty($data['query']) AND $data['action'] === '
 
 
 # Delete editing query
-if (!empty($data['delEditingPatentQuery']) AND empty($data['extendPatent']))
+if (!empty($data['delEditingPatentQuery']) && empty($data['extendPatent']))
 {
 		$checkCol = array(array('id', '=', $data['delEditingPatentQuery'], 'AND'),
 											array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
@@ -1020,7 +1020,7 @@ if (!empty($data['delEditingPatentQuery']) AND empty($data['extendPatent']))
 }
 
 # Add new patents query
-if (!empty($data['patentQuerySubmit']) AND $data['patentQuerySubmit'] === 'add')
+if (!empty($data['patentQuerySubmit']) && $data['patentQuerySubmit'] === 'add')
 {
 	include('model/addNewPatentQuery.php');
 	$cpt         = 0;

@@ -12,7 +12,7 @@
 		</a>
 	</div>
 	<?php
-	if ($type == 'create')
+	if ($type === 'create')
 	{
 		$packIdURL = '';
 		if (!empty($data['packId']))
@@ -298,17 +298,17 @@
 				{
 					echo $logicalConnector;
 
-					if (intval($cpt/3) == ($cpt/3) AND $cpt != 0)
+					if (intval($cpt/3) === ($cpt/3) && $cpt != 0)
 					{
 						echo '</div>';
 					}
 
-					if (intval($cpt/3) == ($cpt/3) AND $cpt != 0)
+					if (intval($cpt/3) === ($cpt/3) && $cpt != 0)
 					{
 						echo '<div class="lineQuery">';
 					}
 
-					if (intval($cpt/3) == ($cpt/3) AND $cpt != 0)
+					if (intval($cpt/3) === ($cpt/3) && $cpt != 0)
 					{
 						echo '<div class="ghostSpace"></div>';
 					}
@@ -322,7 +322,7 @@
 					$selected[$data['scienceType' . $cpt]] = 'selected';
 
 
-					if ($data['openParenthesis' . $cpt] == 'active')
+					if ($data['openParenthesis' . $cpt] === 'active')
 					{
 						$checked['openParenthesis' . $cpt] = 'checked';
 					}
@@ -341,7 +341,7 @@
 					<input type="text" class="query" name="scienceQuery' . htmlspecialchars($cpt) . '" id="scienceQuery0' . htmlspecialchars($cpt) . '" placeholder="Keyword" value="' .  htmlspecialchars($data['scienceQuery' . $cpt]) . '"/>';
 
 
-					if ($data['closeParenthesis' . $cpt] == 'active')
+					if ($data['closeParenthesis' . $cpt] === 'active')
 					{
 						$checked['closeParenthesis' . $cpt] = 'checked';
 					}
@@ -490,17 +490,17 @@
 				{
 					echo $logicalConnector;
 
-					if (intval($cpt/3) == ($cpt/3) AND $cpt != 0)
+					if (intval($cpt/3) === ($cpt/3) && $cpt != 0)
 					{
 						echo '</div>';
 					}
 
-					if (intval($cpt/3) == ($cpt/3) AND $cpt != 0)
+					if (intval($cpt/3) === ($cpt/3) && $cpt != 0)
 					{
 						echo '<div class="lineQuery">';
 					}
 
-					if (intval($cpt/3) == ($cpt/3) AND $cpt != 0)
+					if (intval($cpt/3) === ($cpt/3) && $cpt != 0)
 					{
 						echo '<div class="ghostSpace"></div>';
 					}
@@ -634,7 +634,7 @@
 				$cpt++;
 
 				$checked = '';
-				if ($data['andOrPatent' . $cpt] == 'OR')
+				if ($data['andOrPatent' . $cpt] === 'OR')
 				{
 					$checked = 'checked';
 				}
@@ -851,7 +851,7 @@
 
 			while ($cpt <= $nbPage)
 			{
-				if ($cpt == $page)
+				if ($cpt === $page)
 				{
 					echo '
 					<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '&type=' . $type . '" class="pageNumber current">
@@ -866,7 +866,7 @@
 					' . $cpt . '
 					</a>';
 				}
-				elseif (($cpt - 1) == $page OR ($cpt + 1) == $page)
+				elseif (($cpt - 1) === $page || ($cpt + 1) === $page)
 				{
 					echo '
 					<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '&type=' . $type . '" class="pageNumber">
@@ -874,7 +874,7 @@
 					</a>';
 					$dotBetweenPageNumber = FALSE;
 				}
-				elseif ($cpt == $nbPage OR ($cpt + 1) == $nbPage)
+				elseif ($cpt === $nbPage || ($cpt + 1) === $nbPage)
 				{
 					echo '
 					<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '&type=' . $type . '" class="pageNumber">
@@ -883,7 +883,7 @@
 				}
 				else
 				{
-					if ($dotBetweenPageNumber == FALSE)
+					if ($dotBetweenPageNumber === FALSE)
 					{
 						echo '...';
 						$dotBetweenPageNumber = TRUE;
