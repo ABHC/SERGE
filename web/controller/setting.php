@@ -64,43 +64,16 @@ $unsafeData = array_merge($unsafeData, array(array('activateQueryPatent', 'activ
 foreach($_POST as $key => $val)
 {
 		$key = htmlspecialchars($key);
-		if (preg_match("/radio-s./", $key, $name))
-		{
-			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
-		}
-		elseif (preg_match("/radio-ks[0-9]+/", $key, $name))
-		{
-			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
-		}
-		elseif(preg_match("/andOrAndnot[0-9]+/", $key, $name))
-		{
-			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
-		}
-		elseif(preg_match("/openParenthesis[0-9]+/", $key, $name))
-		{
-			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
-		}
-		elseif(preg_match("/closeParenthesis[0-9]+/", $key, $name))
-		{
-			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
-		}
-		elseif(preg_match("/scienceType[0-9]+/", $key, $name))
-		{
-			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
-		}
-		elseif(preg_match("/scienceQuery[0-9]+/", $key, $name))
-		{
-			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
-		}
-		elseif(preg_match("/andOrPatent[0-9]+/", $key, $name))
-		{
-			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
-		}
-		elseif(preg_match("/patentType[0-9]+/", $key, $name))
-		{
-			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
-		}
-		elseif(preg_match("/patentQuery[0-9]+/", $key, $name))
+		if (preg_match("/radio-s./", $key, $name) ||
+		preg_match("/radio-ks[0-9]+/", $key, $name) ||
+		preg_match("/andOrAndnot[0-9]+/", $key, $name) ||
+		preg_match("/openParenthesis[0-9]+/", $key, $name) ||
+		preg_match("/closeParenthesis[0-9]+/", $key, $name) ||
+		preg_match("/scienceType[0-9]+/", $key, $name) ||
+		preg_match("/scienceQuery[0-9]+/", $key, $name) ||
+		preg_match("/andOrPatent[0-9]+/", $key, $name) ||
+		preg_match("/patentType[0-9]+/", $key, $name) ||
+		preg_match("/patentQuery[0-9]+/", $key, $name))
 		{
 			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
 		}
