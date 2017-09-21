@@ -21,7 +21,7 @@ include('controller/dataProcessing.php');
 $nonceTime = $_SERVER['REQUEST_TIME'];
 $nonce     = getNonce($nonceTime);
 
-$deleveryTime = 1505260000 ;
+$deleveryTime = 1508260000 ;
 $timeLeft     = $deleveryTime - $_SERVER['REQUEST_TIME'];
 $day          = floor($timeLeft / (24*3600));
 $hour         = floor(($timeLeft - ($day*24*3600)) / (3600));

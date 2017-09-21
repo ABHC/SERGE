@@ -100,7 +100,7 @@ input::placeholder
 	color: rgb(230,230,230);
 	border-radius: 50%;
 	font-weight: bold;
-	font-size: 16px;
+	font-size: 0;
 }
 
 <?php

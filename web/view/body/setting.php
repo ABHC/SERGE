@@ -804,15 +804,6 @@
 						$checked['openParenthesis' . $cpt] = '';
 					}
 
-					if (!empty($data['scienceQuery' . $cpt]))
-					{
-						$data['scienceQuery' . $cpt] = $data['scienceQuery' . $cpt];
-					}
-					else
-					{
-						$data['scienceQuery' . $cpt] = '';
-					}
-
 					echo '
 					<input type="checkbox" id="openParenthesis' . $cpt . '" name="openParenthesis' . $cpt . '" value="active" ' . $checked['openParenthesis' . $cpt] . '/>
 					<label class="queryParenthesis" for="openParenthesis' . $cpt . '">(</label>
@@ -1057,15 +1048,6 @@
 					if (!empty($data['patentType' . $cpt]))
 					{
 						$selected[$data['patentType' . $cpt]] = 'selected';
-					}
-
-					if (!empty($data['patentQuery' . $cpt]))
-					{
-						$data['patentQuery' . $cpt] = $data['patentQuery' . $cpt];
-					}
-					else
-					{
-						$data['patentQuery' . $cpt] = '';
 					}
 
 					echo '
