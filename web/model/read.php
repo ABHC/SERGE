@@ -19,27 +19,35 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 		foreach ($checkCol as $line)
 		{
 			$op = ' = ';
-			if ($line[1] == 'l')
+			if ($line[1] === 'l')
 			{
 				$op = ' LIKE ';
 			}
-			elseif ($line[1] == 'nl')
+			elseif ($line[1] === 'nl')
 			{
 				$op = ' NOT LIKE ';
 			}
-			elseif ($line[1] == '>=')
+			elseif ($line[1] === '>=')
 			{
 				$op = ' >= ';
 			}
-			elseif ($line[1] == 'IN')
+			elseif ($line[1] === '>')
+			{
+				$op = ' > ';
+			}
+			elseif ($line[1] === '<')
+			{
+				$op = ' < ';
+			}
+			elseif ($line[1] === 'IN')
 			{
 				$op = ' IN ';
 			}
-			elseif ($line[1] == '<>')
+			elseif ($line[1] === '<>')
 			{
 				$op = ' <> ';
 			}
-			elseif ($line[1] == 'REGEXP')
+			elseif ($line[1] === 'REGEXP')
 			{
 				$op = ' REGEXP ';
 			}
