@@ -43,7 +43,7 @@ include('nav.php');
 	width: 100%;
 	height: calc(100vh - 75px);
 	margin: 0;
-	background: url(../images/Error404.png) scroll center no-repeat;
+	background: url(../images/Error401.png) scroll no-repeat;
 	background-size: contain;
 	z-index: 1;
 }
