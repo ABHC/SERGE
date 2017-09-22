@@ -397,6 +397,102 @@
 						?>
 					</p>
 				</div>
+				<div>
+					<h3><?php get_t('premiumPart_window1_setting', $bdd); ?></h3>
+					<?php
+					if ($userIsPremium)
+					{
+						?>
+						Your are premium user until <?php echo date("H:i d/m/o", $userSettings['premium_expiration_date']); ?><br>
+
+						<a href="purchase" class="ExtendPremiumButton">Extend your premium account duration</a><br>
+
+						Your payment history :<br>
+						<div class="boxScroll">
+							<?php
+							foreach ($paymentList as $payment)
+							{
+								$numberOfMonths = $payment['duration_premium'] / (30*24*3600);
+								$price = $payment['price'] / 100;
+
+								echo date("H:i d/m/o", $payment['purchase_date']) . '&nbsp;&nbsp' . $numberOfMonths . ' months' . '&nbsp;&nbsp' . $price . '€' . '<br>';
+							}
+							?>
+						</div>
+						<?php
+					}
+					else
+					{
+						?>
+						<a href="purchase" class="UpgradeToPremiumButton">Upgrade your account to premium</a><br>
+						Your payment history :<br>
+						<div class="boxScroll">
+							<?php
+							foreach ($paymentList as $payment)
+							{
+								$numberOfMonths = $payment['duration_premium'] / (30*24*3600);
+								$price = $payment['price'] / 100;
+
+								echo date("H:i d/m/o", $payment['purchase_date']) . '&nbsp;&nbsp' . $numberOfMonths . ' months' . '&nbsp;&nbsp' . $price . '€' . '<br>';
+							}
+							?>
+						</div>
+						<?php
+					}
+					?>
+				</div>
+				<div>
+					<h3><?php get_t('subtitle4_window1_setting', $bdd); ?></h3>
+					<div class="align">
+						<div class="switch">
+							<label for="recordRead">
+								<input type="checkbox" id="recordRead" name="recordRead" value="active" <?php echo $recordRead; ?>>
+								<div class="slider"></div>
+							</label>
+						</div>
+						<?php get_t('input10_window1_setting', $bdd); ?>
+					</div>
+					<div>
+						<div class="deleteContainer">
+							<div class="deleteLogo"></div>
+							<input title="Delete" class="deleteButton" type="submit" name="buttonDeleteHistory" value="<?php get_t('input11_window1_setting', $bdd); ?>" />
+							<?php get_t('input11.1_window1_setting', $bdd); ?>
+							<input class="number alpha" name="deleteHistoryValue" type="number" min="1" value="1"/>
+							<select class="selectCommResult Unit" name="deleteHistoryUnit">
+								<option value="hour">
+									<?php get_t('select11_window1_setting', $bdd); ?>
+								</option>
+								<option value="day">
+									<?php get_t('select12_window1_setting', $bdd); ?>
+								</option>
+								<option value="week">
+									<?php get_t('select13_window1_setting', $bdd); ?>
+								</option>
+								<option value="month">
+									<?php get_t('select14_window1_setting', $bdd); ?>
+								</option>
+								<option value="year">
+									<?php get_t('select15_window1_setting', $bdd); ?>
+								</option>
+							</select>
+							<span class="arrDown">▾</span>
+						</div>
+					</div>
+				</div>
+				<div>
+					<h3><?php get_t('subtitle5_window1_setting', $bdd); ?></h3>
+					<p class="align">
+					<select size="<?php echo count($watchPackUsedList); ?>" class="selectBackground" name="watchPackName" multiple>
+					<?php
+					foreach ($watchPackUsedList as $watchPackUsed)
+					{
+						echo '<option value="' . $watchPackUsed['id'] . '">' . $watchPackUsed['name'] . '</option>'.PHP_EOL;
+					}
+					?>
+					</select>
+					<input title="Remove selected watchPack" class="removeWP" type="submit" name="removeWP" value="removeWP" />
+				</p>
+				</div>
 				<div <?php echo $classNoPremium; ?>>
 					<h3><?php get_t('subtitle2_window1_setting', $bdd); ?></h3>
 					<p>
@@ -495,58 +591,6 @@
 						<label class="radio" for="orderByAlpha"></label>
 						<?php get_t('input9_window1_setting', $bdd); ?>
 					</p>
-				</div>
-				<div>
-					<h3><?php get_t('subtitle4_window1_setting', $bdd); ?></h3>
-					<div class="align">
-						<div class="switch">
-							<label for="recordRead">
-								<input type="checkbox" id="recordRead" name="recordRead" value="active" <?php echo $recordRead; ?>>
-								<div class="slider"></div>
-							</label>
-						</div>
-						<?php get_t('input10_window1_setting', $bdd); ?>
-					</div>
-					<div>
-						<div class="deleteContainer">
-							<div class="deleteLogo"></div>
-							<input title="Delete" class="deleteButton" type="submit" name="buttonDeleteHistory" value="<?php get_t('input11_window1_setting', $bdd); ?>" />
-							<?php get_t('input11.1_window1_setting', $bdd); ?>
-							<input class="number alpha" name="deleteHistoryValue" type="number" min="1" value="1"/>
-							<select class="selectCommResult Unit" name="deleteHistoryUnit">
-								<option value="hour">
-									<?php get_t('select11_window1_setting', $bdd); ?>
-								</option>
-								<option value="day">
-									<?php get_t('select12_window1_setting', $bdd); ?>
-								</option>
-								<option value="week">
-									<?php get_t('select13_window1_setting', $bdd); ?>
-								</option>
-								<option value="month">
-									<?php get_t('select14_window1_setting', $bdd); ?>
-								</option>
-								<option value="year">
-									<?php get_t('select15_window1_setting', $bdd); ?>
-								</option>
-							</select>
-							<span class="arrDown">▾</span>
-						</div>
-					</div>
-				</div>
-				<div>
-					<h3><?php get_t('subtitle5_window1_setting', $bdd); ?></h3>
-					<p class="align">
-					<select size="<?php echo count($watchPackUsedList); ?>" class="selectBackground" name="watchPackName" multiple>
-					<?php
-					foreach ($watchPackUsedList as $watchPackUsed)
-					{
-						echo '<option value="' . $watchPackUsed['id'] . '">' . $watchPackUsed['name'] . '</option>'.PHP_EOL;
-					}
-					?>
-					</select>
-					<input title="Remove selected watchPack" class="removeWP" type="submit" name="removeWP" value="removeWP" />
-				</p>
 				</div>
 				<div <?php echo $classNoPremium; ?>>
 					<h3><?php get_t('subtitle6_window1_setting', $bdd); ?></h3>

@@ -950,6 +950,14 @@ h2
 	z-index: 2;
 }
 
+.boxScroll
+{
+	height: 65px;
+	width: 100%;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
 .arrDown
 {
 	position: relative;

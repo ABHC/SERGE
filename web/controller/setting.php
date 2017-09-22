@@ -166,6 +166,10 @@ if (!$userIsPremium)
 	$classNoPremium = 'class="noPremium"';
 }
 
+# Read user payments history
+$checkCol    = array(array('user_id', ' =', $_SESSION['id'], ''));
+$paymentList = read('purchase_table_serge', 'purchase_date, duration_premium, price', $checkCol, '', $bdd);
+
 # Read owner sources
 $checkCol  = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
 									array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
@@ -176,7 +180,7 @@ $reqReadOwnerSourcesKeywordtmp = read('keyword_news_serge', 'id, keyword, applic
 
 # Read user settings
 $checkCol     = array(array('users', ' =', $_SESSION['pseudo'], ''));
-$userSettings = read('users_table_serge', 'id, email, password, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, record_read, history_lifetime, background_result, record_read', $checkCol, '', $bdd);
+$userSettings = read('users_table_serge', 'id, email, password, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, record_read, history_lifetime, background_result, record_read, premium_expiration_date', $checkCol, '', $bdd);
 $userSettings = $userSettings[0];
 
 if (!empty($data['settings']) && $data['settings'] === 'ChangeSettings')

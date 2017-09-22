@@ -92,6 +92,7 @@ En recherchant les actualités, les brevets et les publications scientifiques, S
 ('input1_window1_setting', 'Your email', 'Votre email', NULL, NULL, NULL),
 ('subtitle1_window1_setting', 'Results page', 'Page de résultats', NULL, NULL, NULL),
 ('subtitle2_window1_setting', 'Sending condition', 'Condition d\'envoi', NULL, NULL, NULL),
+('premiumPart_window1_setting', 'Premium account', 'Compte premium', NULL, NULL, NULL),
 ('input2_window1_setting', 'by number of links :', 'par nombre de liens', NULL, NULL, NULL),
 ('input3_window1_setting', 'by frequency, every', 'par fréquence, toutes les', NULL, NULL, NULL),
 ('input4_window1_setting', 'hours', 'heures', NULL, NULL, NULL),
