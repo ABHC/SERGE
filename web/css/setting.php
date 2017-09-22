@@ -46,6 +46,12 @@ include('nav.php');
 	z-index: -1;
 }
 
+.noPremium
+{
+	z-index: -1;
+	user-select: none;
+}
+
 form
 {
 	width: 100%;
@@ -145,7 +151,7 @@ h3
 .falseInput
 {
 	width: 100%;
-	height: 19px;
+	height: 14px;
 	border-radius: 3px 0 0 3px;
 	border: 1px solid rgba(255,255,255, 0.15);
 	border-right: none;
@@ -178,7 +184,7 @@ h3
 .copyButton
 {
 	width: 30px;
-	height: 29px;
+	height: 24px;
 	background: url('../images/icoCopy.png') center no-repeat;
 	background-size: 22px;
 	background-color: rgb(50,50,50);
@@ -436,6 +442,8 @@ div.next::selection
 .divRow > div
 {
 	width: 45%;
+	height: 245px;
+	overflow: hidden;
 }
 
 h2

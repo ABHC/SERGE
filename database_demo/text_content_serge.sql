@@ -114,7 +114,7 @@ En recherchant les actualités, les brevets et les publications scientifiques, S
 ('input9_window1_setting', 'by alphabetical order', 'par ordre alphabétique', NULL, NULL, NULL),
 ('subtitle4_window1_setting', 'Privacy', 'Vie privée', NULL, NULL, NULL),
 ('subtitle5_window1_setting', 'WatchPack used', 'Pack de veille utilisé', NULL, NULL, NULL),
-('subtitle6_window1_setting', 'RSS link', 'Lien du flux RSS', NULL, NULL, NULL),
+('subtitle6_window1_setting', 'RSS links', 'Lien des flux RSS', NULL, NULL, NULL),
 ('subsubtitle1_window1_setting', 'RSS link for news', 'Lien RSS pour les actualités', NULL, NULL, NULL),
 ('subsubtitle2_window1_setting', 'RSS link for science', 'Lien RSS pour les articles scientifiques', NULL, NULL, NULL),
 ('subsubtitle3_window1_setting', 'RSS link for patents', 'Lien RSS pour les brevets', NULL, NULL, NULL),

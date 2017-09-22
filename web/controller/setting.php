@@ -16,6 +16,7 @@ $orderByType            = '';
 $delEditingScienceQuery = '';
 $delEditingPatentQuery  = '';
 $userId                 = $_SESSION['id'];
+$classNoPremium         = '';
 
 # Data processing
 $unsafeData = array();
@@ -159,6 +160,11 @@ $token    = read('users_table_serge', 'token', $checkCol, '', $bdd);
 $checkCol      = array(array('id', '=', $_SESSION['id'], 'AND'),
 											array('premium_expiration_date', '>', $_SERVER['REQUEST_TIME'], ''));
 $userIsPremium = read('users_table_serge', '', $checkCol, '', $bdd);
+
+if (!$userIsPremium)
+{
+	$classNoPremium = 'class="noPremium"';
+}
 
 # Read owner sources
 $checkCol  = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),

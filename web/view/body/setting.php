@@ -397,7 +397,7 @@
 						?>
 					</p>
 				</div>
-				<div>
+				<div <?php echo $classNoPremium; ?>>
 					<h3><?php get_t('subtitle2_window1_setting', $bdd); ?></h3>
 					<p>
 						<input type="radio" id="condNbLink" name="cond" value="link_limit" <?php echo $condNbLink; ?>>
@@ -478,7 +478,7 @@
 						<span class="arrDown">▾</span>
 					</p>
 				</div>
-				<div>
+				<div <?php echo $classNoPremium; ?>>
 					<h3><?php get_t('subtitle3_window1_setting', $bdd); ?></h3>
 					<p>
 						<input type="radio" id="orderByKeyword" name="orderBy" value="masterword" <?php echo $orderByKeyword; ?>>
@@ -548,7 +548,7 @@
 					<input title="Remove selected watchPack" class="removeWP" type="submit" name="removeWP" value="removeWP" />
 				</p>
 				</div>
-				<div>
+				<div <?php echo $classNoPremium; ?>>
 					<h3><?php get_t('subtitle6_window1_setting', $bdd); ?></h3>
 						<?php
 						$rssLink = 'https://' . $_SERVER['HTTP_HOST'] . '/rss/' . $token[0]['token'];
