@@ -1,7 +1,7 @@
-function copyToClipboard()
+function copyToClipboard(type)
 {
-	var btnCopy = document.getElementById("copy");
-	var toCopy  = document.getElementById("toCopy");
+	var btnCopy = document.getElementById("copy"+type);
+	var toCopy  = document.getElementById("toCopy"+type);
 	btnCopy.title = "Copied !";
 	toCopy.select();
 	document.execCommand("copy");

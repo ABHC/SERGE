@@ -550,12 +550,23 @@
 				</div>
 				<div>
 					<h3><?php get_t('subtitle6_window1_setting', $bdd); ?></h3>
-					<div class="align">
 						<?php
 						$rssLink = 'https://' . $_SERVER['HTTP_HOST'] . '/rss/' . $token[0]['token'];
 						?>
+						<?php get_t('subsubtitle1_window1_setting', $bdd); ?>
+					<div class="align">
 						<textarea class="falseInput" id="toCopy" ><?php echo $rssLink; ?></textarea>
-						<button class="copyButton" id="copy" title="Copy RSS link" type="button" onclick="copyToClipboard();"></button>
+						<button class="copyButton" id="copy" title="Copy RSS link" type="button" onclick="copyToClipboard('');"></button>
+					</div><br>
+					<?php get_t('subsubtitle2_window1_setting', $bdd); ?>
+					<div class="align">
+						<textarea class="falseInput" id="toCopyS" ><?php echo $rssLink; ?>s</textarea>
+						<button class="copyButton" id="copyS" title="Copy RSS link" type="button" onclick="copyToClipboard('S');"></button>
+					</div><br>
+					<?php get_t('subsubtitle3_window1_setting', $bdd); ?>
+					<div class="align">
+						<textarea class="falseInput" id="toCopyP" ><?php echo $rssLink; ?>p</textarea>
+						<button class="copyButton" id="copyP" title="Copy RSS link" type="button" onclick="copyToClipboard('P');"></button>
 					</div>
 				</div>
 			</div>
