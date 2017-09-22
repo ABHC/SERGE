@@ -503,14 +503,12 @@ def alertMailBySource(user, translate_text, alert_news_list, pending_alerts, ale
 		while index < pending_alerts:
 			alerts_attributes = alert_news_list[index]
 
-			if origin_id == alerts_attributes[2]:
+			if alerts_attributes[1].isupper() is True and origin_id == alerts_attributes[2]:
+				process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize())
+			elif origin_id == alerts_attributes[2]:
+				process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'))
 
-				if alerts_attributes[1].isupper() is True:
-					process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize())
-				else:
-					process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'))
-
-				process_result_list.append(process_result)
+			process_result_list.append(process_result)
 
 			index = index+1
 
