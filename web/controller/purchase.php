@@ -30,6 +30,16 @@ include('controller/dataProcessing.php');
 $nonceTime = $_SERVER['REQUEST_TIME'];
 $nonce     = getNonce($nonceTime);
 
+# Read user details
+$checkCol    = array(array('id', '=', $_SESSION['id'], ''));
+$userDetails = read('users_table_serge', 'premium_expiration_date', $checkCol, '', $bdd);
+$userDetails = $userDetails[0];
+
+if ($userDetails['premium_expiration_date'] < $_SERVER['REQUEST_TIME'])
+{
+	$userDetails['premium_expiration_date'] = $_SERVER['REQUEST_TIME'] - 1;
+}
+
 if (!empty($data['submitPurchase']) && !empty($data['readCGS']) && !empty($data['months']))
 {
 	// Read month price
@@ -44,7 +54,8 @@ if (!empty($data['submitPurchase']) && !empty($data['readCGS']) && !empty($data[
 		$data['months'] = 1;
 	}
 
-	$price = $monthPrice * $data['months'];
+	$price           = $monthPrice * $data['months'];
+	$premiumDuration = $data['months'] * 30 *24 * 3600;
 
 	if (!empty($data['premiumCode']))
 	{
@@ -91,13 +102,14 @@ if (!empty($data['submitPurchase']) && !empty($data['readCGS']) && !empty($data[
 
 		\Stripe\Stripe::setApiKey($stripe['secret_key']);
 
-		$_SESSION['price']    = $price;
-		$_SESSION['currency'] = 'eur';
+		$_SESSION['price']           = $price;
+		$_SESSION['premiumDuration'] = $premiumDuration;
+		$_SESSION['currency']        = 'eur';
 	}
 	elseif ($price === 0)
 	{
-		// Set true to premium user entry
-		$updateCol = array(array('premium', 1));
+		// Set user to premium
+		$updateCol = array(array('premium_expiration_date', $userDetails['premium_expiration_date'] + $premiumDuration));
 		$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
 		$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
 
@@ -114,8 +126,8 @@ if (!empty($data['submitPurchase']) && !empty($data['readCGS']) && !empty($data[
 		// Add details in purchase table
 		$insertCol = array(array('user_id', $_SESSION['id']),
 											array('purchase_date', $_SERVER['REQUEST_TIME']),
-											array('duration_premium', $premiumDuration * 30 * 24 * 3600),
-											array('invoice_number', 'FA' . $invoiceId . '-user' . $_SESSION['id']),
+											array('duration_premium', $premiumDuration),
+											array('invoice_number', 'FA' . $invoiceId . '-user-' . $_SESSION['id']),
 											array('price', 0),
 											array('premium_code_id', $premiumCodeId),
 											array('bank_details', 'none'));
@@ -130,18 +142,18 @@ elseif (!empty($data['stripeAccess']) && $data['stripeAccess'] === 'true')
 	require_once('vendor/autoload.php');
 
 	// Read stripe keys
-	$checkCol = array(array('account_name', '=', 'Cairn Devices Serge TEST', ''));
+	$checkCol = array(array('account_name', '=', 'Cairn Devices Serge TEST', '')); // TODO Add in installation script
 	$result   = read('stripe_table_serge', 'secret_key, publishable_key', $checkCol, '',$bdd);
 	$result = $result[0];
 
 	$stripe = array(
-		'secret_key'      => $result['secret_key'],
-		'publishable_key' => $result['publishable_key']
+		'secret_key'      => $result['secret_key'],// TODO Add in installation script
+		'publishable_key' => $result['publishable_key']// TODO Add in installation script
 	);
 
 	\Stripe\Stripe::setApiKey($stripe['secret_key']);
 
-	$token  = $data['stripeToken'];
+	$token = $data['stripeToken'];
 
 	$customer = \Stripe\Customer::create(array(
 			'email' => $_SESSION['email'],
@@ -153,6 +165,11 @@ elseif (!empty($data['stripeAccess']) && $data['stripeAccess'] === 'true')
 			'amount'   => $_SESSION['price'],
 			'currency' => $_SESSION['currency']
 	));
+
+	// Set user to premium
+	$updateCol = array(array('premium_expiration_date', $userDetails['premium_expiration_date'] + $_SESSION['premiumDuration']));
+	$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
+	$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
 
 	$checkCol = array();
 	$result   = read('purchase_table_serge', 'id', $checkCol, 'ORDER BY id DESC LIMIT 1',$bdd);
@@ -166,8 +183,8 @@ elseif (!empty($data['stripeAccess']) && $data['stripeAccess'] === 'true')
 
 	$insertCol = array(array('user_id', $_SESSION['id']),
 										array('purchase_date', $_SERVER['REQUEST_TIME']),
-										array('duration_premium', $premiumDuration * 30 * 24 * 3600),
-										array('invoice_number', 'FA' . $invoiceId . '-user' . $_SESSION['id']),
+										array('duration_premium', $_SESSION['premiumDuration']),
+										array('invoice_number', 'FA' . $invoiceId . '-user-' . $_SESSION['id']),
 										array('price', $_SESSION['price']),
 										array('premium_code_id', $premiumCodeId),
 										array('bank_details', 'none'));
@@ -175,6 +192,7 @@ elseif (!empty($data['stripeAccess']) && $data['stripeAccess'] === 'true')
 
 	$price = $_SESSION['price'] / 100;
 	unset($_SESSION['price']);
+	unset($_SESSION['premiumDuration']);
 	echo "<h1>Successfully charged $price € !</h1>";
 }
 

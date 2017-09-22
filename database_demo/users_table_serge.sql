@@ -19,7 +19,7 @@ CREATE TABLE `users_table_serge` (
 	`record_read` BOOLEAN NOT NULL,
 	`history_lifetime` int(11) DEFAULT NULL,
 	`background_result` text COLLATE utf8mb4_bin NOT NULL,
-	`premium` BOOLEAN NOT NULL DEFAULT 0,
+	`premium_expiration_date` int(11) DEFAULT 0,
 	`token` text COLLATE utf8mb4_bin NOT NULL,
 	PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;

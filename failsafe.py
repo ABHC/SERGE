@@ -118,7 +118,7 @@ def checkMate():
 	text_content_serge_numbers = 6
 	miscellaneous_serge_numbers = 2
 	newsletter_table_serge_numbers = 3
-	users_table_serge_numbers = 20
+	users_table_serge_numbers = 19
 	watch_pack_queries_serge_numbers = 4
 	watch_pack_serge_numbers = 10
 	captcha_serge_numbers = 1
@@ -153,7 +153,7 @@ def checkMate():
 	keyword_news_serge_columns = ["id", "keyword", "applicable_owners_sources", "active"]
 	language_serge_columns = ["code", "name"]
 	patents_sources_serge_columns = ["id", "link", "name"]
-	premium_code_table_serge_columns = ["id", "code", "creation_date", "users", "duration_premium", "expiration_date"]
+	premium_code_table_serge_columns = ["id", "code", "creation_date", "users", "duration_premium", "premium_expiration_date"]
 	price_table_serge_columns = ["id", "price", "currency", "type"]
 	purchase_table_serge_columns = ["id", "user_id", "purchase_date", "duration_premium", "invoice_number", "price", "premium_code_id", "bank_details"]
 	queries_science_serge_columns = ["id", "query_arxiv", "query_doaj", "owners", "active"]
@@ -167,7 +167,7 @@ def checkMate():
 	text_content_serge_columns = ["index_name", "EN", "FR", "ES", "DE", "CN"]
 	miscellaneous_serge_columns = ["name", "value"]
 	newsletter_table_serge_columns = ["id", "email", "signup_date"]
-	users_table_serge_columns = ["id", "users", "email", "password", "salt", "signup_date", "last_mail", "send_condition", "frequency", "link_limit", "selected_days", "selected_hour", "mail_design", "language", "record_read", "history_lifetime", "background_result", "premium", "expiration_date", "token"]
+	users_table_serge_columns = ["id", "users", "email", "password", "salt", "signup_date", "last_mail", "send_condition", "frequency", "link_limit", "selected_days", "selected_hour", "mail_design", "language", "record_read", "history_lifetime", "background_result", "premium_expiration_date", "token"]
 	watch_pack_queries_serge_columns = ["id", "pack_id", "query", "source"]
 	watch_pack_serge_columns = ["id", "search_index", "name", "description", "author", "users", "category", "language", "update_date", "rating"]
 	captcha_serge_columns = ["name"]

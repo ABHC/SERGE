@@ -155,9 +155,14 @@ $backgroundList = read('background_serge', 'id, name, filename', $checkCol, 'ORD
 $checkCol = array(array('id', '=', $_SESSION['id'], ''));
 $token    = read('users_table_serge', 'token', $checkCol, '', $bdd);
 
+# Read if user is premium
+$checkCol      = array(array('id', '=', $_SESSION['id'], 'AND'),
+											array('premium_expiration_date', '>', $_SERVER['REQUEST_TIME'], ''));
+$userIsPremium = read('users_table_serge', '', $checkCol, '', $bdd);
+
 # Read owner sources
-$checkCol               = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
-																array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
+$checkCol  = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
+									array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
 $reqReadOwnerSourcestmp = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 
 $checkCol                      = array(array('applicable_owners_sources', 'l', '%|' . $_SESSION['id'] . ':%', ''));
