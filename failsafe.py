@@ -153,7 +153,7 @@ def checkMate():
 	keyword_news_serge_columns = ["id", "keyword", "applicable_owners_sources", "active"]
 	language_serge_columns = ["code", "name"]
 	patents_sources_serge_columns = ["id", "link", "name"]
-	premium_code_table_serge_columns = ["id", "code", "creation_date", "users", "duration_premium", "premium_expiration_date"]
+	premium_code_table_serge_columns = ["id", "code", "creation_date", "users", "duration_premium", "expiration_date"]
 	price_table_serge_columns = ["id", "price", "currency", "type"]
 	purchase_table_serge_columns = ["id", "user_id", "purchase_date", "duration_premium", "invoice_number", "price", "premium_code_id", "bank_details"]
 	queries_science_serge_columns = ["id", "query_arxiv", "query_doaj", "owners", "active"]
