@@ -56,8 +56,9 @@ function update($tableName, $updateCol, $checkCol, $optional, $bdd)
 	}
 	catch (Exception $e)
 	{
-		$execution            = FALSE;
-		//$internalErrorMessage = $e->getMessage();
+		$execution = FALSE;
+		// Error in log $internalErrorMessage = $e->getMessage();
+		error_log($e->getMessage(), 0);
 	}
 
 	return $execution;

@@ -88,10 +88,18 @@ function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
 	}
 
 	# SQL request
-	$req = $bdd->prepare("SELECT $selectedCol FROM $tableName WHERE $WHEREvar $optional");
-	$req->execute($arrayValues);
-	$result = $req->fetchAll();
-	$req->closeCursor();
+	try
+	{
+		$req = $bdd->prepare("SELECT $selectedCol FROM $tableName WHERE $WHEREvar $optional");
+		$req->execute($arrayValues);
+		$result = $req->fetchAll();
+		$req->closeCursor();
+	}
+	catch (Exception $e)
+	{
+		// Error in log $internalErrorMessage = $e->getMessage();
+		error_log($e->getMessage(), 0);
+	}
 
 	if (empty($result) && $check)
 	{

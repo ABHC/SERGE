@@ -38,8 +38,9 @@ function insert($tableName, $insertCol, $optional, $redirectPage, $bdd)
 	}
 	catch (Exception $e)
 	{
-		$execution            = FALSE;
-		//$internalErrorMessage = $e->getMessage();
+		$execution = FALSE;
+		// Error in log $internalErrorMessage = $e->getMessage();
+		error_log($e->getMessage(), 0);
 	}
 
 	return $execution;
