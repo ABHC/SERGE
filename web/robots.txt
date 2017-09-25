@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /rss*
+Disallow: /redirect*
+Disallow: /purchase*
+Disallow: /result*
+Disallow: /setting*
+Disallow: /watchPack*
+Disallow: /logout*
