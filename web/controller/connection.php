@@ -40,11 +40,13 @@ if (!empty($data['pseudo']) && !empty($data['password']))
 	{
 		session_regenerate_id();
 		session_start();
-		$_SESSION['id']                = $result[0]['id'];
-		$_SESSION['pseudo']            = $result[0]['users'];
-		$_SESSION['lang']              = $result[0]['language'];
-		$_SESSION['lastSourceUse']     = '';
-		$redirect                      = $_SESSION['redirectFrom'];
+		$_SESSION['id']            = $result[0]['id'];
+		$_SESSION['pseudo']        = $result[0]['users'];
+		$_SESSION['lang']          = $result[0]['language'];
+		$_SESSION['ip']            = $_SERVER['REMOTE_ADDR'];
+		$_SESSION['user-agent']    = $_SERVER['HTTP_USER_AGENT'];
+		$_SESSION['lastSourceUse'] = '';
+		$redirect                  = $_SESSION['redirectFrom'];
 
 		if (empty($redirect))
 		{
