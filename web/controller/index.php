@@ -187,7 +187,7 @@ if (!empty($data['emailCheckToken']) && !empty($data['checker']))
 
 	$checker = hash('sha256', $cryptoSalt . preg_replace("/...$/", "", $_SERVER['REQUEST_TIME']));
 
-	if (!empty($userId) AND $checker === $data['checker'])
+	if (!empty($userId) && $checker === $data['checker'])
 	{
 		$updateCol = array(array('email_validation', 1));
 		$checkCol  = array(array('id', '=', $userId, ''));
