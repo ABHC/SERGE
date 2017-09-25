@@ -10,7 +10,7 @@
 	<a href="#signup" class="buttonTry"><?php get_t('try1_button_index', $bdd); ?></a>
 	<div class="line"></div>
 </div>
-
+<?php echo $ErrorMessageCheckMail; ?>
 <div class="body">
 	<div class="functionality">
 		<div class="functionalityLine">

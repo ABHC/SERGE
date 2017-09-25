@@ -1244,7 +1244,7 @@ Install_Serge()
 	echo "# Pass the default character set" >> /etc/apache2/sites-available/Serge.conf
 	echo "AddDefaultCharset utf-8" >> /etc/apache2/sites-available/Serge.conf
 	echo "# Containment of Serge webUI" >> /etc/apache2/sites-available/Serge.conf
-	echo "php_admin_value open_basedir /var/www/Serge/web" >> /etc/apache2/sites-available/Serge.conf
+	echo "php_admin_value open_basedir /var/www/Serge/web:/usr/share/php/" >> /etc/apache2/sites-available/Serge.conf
 	echo "# Prohibit access to files starting with a dot" >> /etc/apache2/sites-available/Serge.conf
 	echo "<FilesMatch ^\\.>" >> /etc/apache2/sites-available/Serge.conf
 	echo "    Order allow,deny" >> /etc/apache2/sites-available/Serge.conf
@@ -1384,6 +1384,9 @@ Install_Serge()
 	echo $internalPass > /var/www/Serge/permission/passmail.txt
 	echo "smtp.$domainName" > /var/www/Serge/permission/mailserver.txt
 	chown -R Serge:Serge /var/www/Serge/permission/
+
+	echo serge@$domainName > /var/www/Serge/web/.mailaddr
+	chown www-data:www-data /var/www/Serge/web/.mailaddr
 
 	# Give access to database
 	echo $internalPass > /var/www/Serge/permission/password.txt

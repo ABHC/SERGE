@@ -2,17 +2,22 @@
 
 include('model/get_text.php');
 include('model/read.php');
+include('model/update.php');
 include('model/insert.php');
 include('controller/generateNonce.php');
 
 # Initialization of variables
-$resultTab    = '';
-$wikiTab      = '';
-$settingTab   = '';
-$errorMessage = '';
+$resultTab             = '';
+$wikiTab               = '';
+$settingTab            = '';
+$errorMessage          = '';
+$ErrorMessageCheckMail = '';
 
 # Data processing
 $unsafeData = array();
+$unsafeData = array_merge($unsafeData, array(array('emailCheckToken', 'emailCheck', 'GET', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('checker', 'checker', 'GET', 'str')));
+
 $unsafeData = array_merge($unsafeData, array(array('pseudo', 'reg_pseudo', 'POST', 'str')));
 $unsafeData = array_merge($unsafeData, array(array('password', 'reg_password', 'POST', 'str')));
 $unsafeData = array_merge($unsafeData, array(array('repassword', 'reg_repassword', 'POST', 'str')));
@@ -44,10 +49,10 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 			else
 			{
 				# Check
-				$checkCol      = array(array('users', ' =', $pseudo, ''));
+				$checkCol      = array(array('users', '=', $pseudo, ''));
 				$result_pseudo = read('users_table_serge', '', $checkCol, '',$bdd);
 
-				$checkCol     = array(array('email', ' =', $data['email'], ''));
+				$checkCol     = array(array('email', '=', $data['email'], ''));
 				$result_email = read('users_table_serge', '', $checkCol, '',$bdd);
 				if(filter_var($data['email'], FILTER_VALIDATE_EMAIL) === FALSE)
 				{
@@ -88,7 +93,7 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 							$cpt++;
 						}
 
-						$checkCol    = array(array('token', ' =', $token, ''));
+						$checkCol    = array(array('token', '=', $token, ''));
 						$resultToken = read('users_table_serge', '', $checkCol, '',$bdd);
 					}
 
@@ -106,17 +111,38 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 						$language = 'EN';
 					}
 
+					$checker = hash('sha256', $cryptoSalt . preg_replace("/...$/", "", $_SERVER['REQUEST_TIME']));
+
+					$verifyLink = 'https://' . $_SERVER['HTTP_HOST'] . '/index?emailCheck=' . $token . '&checker='. $checker;
+
+					// Send email verification
+					$to      = $data['email'];
+					$subject = 'Serge : Email verification';
+					$body    = "Please verify your email by clicking on the link below :  $verifyLink";
+
+					# Read mail address
+					$mailAddr  = fopen('/var/www/Serge/web/.mailaddr', 'r+');
+					$emailAddr = fgets($mailAddr);
+					fclose($mailAddr);
+
+					#Cleaning value
+					$emailAddr = preg_replace("/(\r\n|\n|\r)/", "", $emailAddr);
+
+					$headers = "From: $emailAddr" . "\r\n" .
+					"Reply-To: $emailAddr" . "\r\n" .
+					'X-Mailer: PHP/' . phpversion();
+
+					mail($to, $subject, $body, $headers);
+
+
 					// Insert new user in database
 					$insertCol = array(array('users', $pseudo),
 														array('email', $data['email']),
 														array('password', $password),
 														array('salt', $cryptoSalt),
 														array('signup_date', $_SERVER['REQUEST_TIME']),
-														array('send_condition', 'link_limit'),
-														array('mail_design', 'masterword'),
 														array('language', $language),
 														array('record_read', 1),
-														array('background_result', 'Skyscrapers'),
 														array('token', $token));
 					$execution = insert('users_table_serge', $insertCol, '', '', $bdd);
 
@@ -150,6 +176,28 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 		$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Bad captcha <br>';
 		$_SESSION['captcha'] = '';
 	}
+}
+
+if (!empty($data['emailCheckToken']) && !empty($data['checker']))
+{
+	$checkCol   = array(array('token', ' =', $data['emailCheckToken'], ''));
+	$result     = read('users_table_serge', 'id, salt', $checkCol, '',$bdd);
+	$userId     = $result[0]['id'];
+	$cryptoSalt = $result[0]['salt'];
+
+	$checker = hash('sha256', $cryptoSalt . preg_replace("/...$/", "", $_SERVER['REQUEST_TIME']));
+
+	if (!empty($userId) AND $checker === $data['checker'])
+	{
+		$updateCol = array(array('email_validation', 1));
+		$checkCol  = array(array('id', '=', $userId, ''));
+		$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
+
+		header('Location: setting');
+		die();
+	}
+
+	$ErrorMessageCheckMail = '<script>alert("Unvalid email validation link");</script>';
 }
 
 # Generate captcha
