@@ -19,6 +19,7 @@ try
 }
 catch (Exception $e)
 {
-	die('Error : ' . $e->getMessage());
+	error_log('Error : ' . $e->getMessage());
+	die('Something happend : Sorry for the inconvenience');
 }
 ?>

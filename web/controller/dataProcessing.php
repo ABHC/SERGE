@@ -62,6 +62,7 @@ foreach ($unsafeData as $varDetails)
 	elseif ($varDetails[3] === '09' && $varDetails[2] === 'GET')
 	{
 		$data[$varDetails[0]] = !empty(preg_replace("/[^0-9]/", '', $_GET[$varDetails[1]])) ? preg_replace("/[^0-9]/", '', $_GET[$varDetails[1]]): '';
+		settype($data[$varDetails[0]], "integer");
 	}
 }
 ?>

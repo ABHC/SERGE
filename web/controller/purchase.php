@@ -91,7 +91,7 @@ if (!empty($data['submitPurchase']) && !empty($data['readCGS']) && !empty($data[
 		require_once('vendor/autoload.php');
 
 		// Read stripe keys
-		$checkCol = array(array('account_name', ' =', 'Cairn Devices Serge TEST', ''));
+		$checkCol = array(array('account_name', '=', 'Cairn Devices Serge TEST', ''));
 		$result   = read('stripe_table_serge', 'secret_key, publishable_key', $checkCol, '',$bdd);
 		$result   = $result[0];
 

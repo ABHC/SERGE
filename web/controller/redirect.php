@@ -15,7 +15,7 @@ $redirect = 'error404';
 if (!empty($data['linkId']) && !empty($data['token']) && !empty($data['type']))
 {
 	# Read id bound to the token
-	$checkCol = array(array('token', ' =', $data['token'], ''));
+	$checkCol = array(array('token', '=', $data['token'], ''));
 	$result   = read('users_table_serge', 'id', $checkCol, '', $bdd);
 	$userId   = $result[0]['id'];
 

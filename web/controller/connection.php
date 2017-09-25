@@ -1,9 +1,10 @@
 <?php
 
 # Define variable
-$resultTab             = '';
-$wikiTab               = '';
-$settingTab            = '';
+$resultTab    = '';
+$wikiTab      = '';
+$settingTab   = '';
+$ERRORMESSAGE = '';
 
 include('model/get_text.php');
 include('model/get_text_var.php');
@@ -23,7 +24,7 @@ $nonce     = getNonce($nonceTime);
 
 if (!empty($data['pseudo']) && !empty($data['password']))
 {
-	$checkCol = array(array('users', ' =', $data['pseudo']));
+	$checkCol = array(array('users', '=', $data['pseudo']));
 	$salt     = read('users_table_serge', 'salt', $checkCol, '',$bdd);
 
 	if (!empty($salt))

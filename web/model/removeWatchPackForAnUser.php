@@ -1,6 +1,6 @@
 <?php
 // Check if pack exist
-$checkCol  = array(array('id', ' =', $data['removePack'], ''));
+$checkCol  = array(array('id', '=', $data['removePack'], ''));
 $packExist = read('watch_pack_serge', 'users', $checkCol, '', $bdd);
 
 if (!empty($packExist))
@@ -88,7 +88,7 @@ if (!empty($packExist))
 
 	// Remove unsed sources
 	// Read list of sources used by the watch pack
-	$checkCol           = array(array('pack_id', ' =', $data['removePack'], 'AND'),
+	$checkCol           = array(array('pack_id', '=', $data['removePack'], 'AND'),
 															array('query', '    =' , '[!source!]', ''));
 	$result             = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
 	$listOfSource_array = explode(',', $result[0]['source']);
