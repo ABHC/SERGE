@@ -548,7 +548,7 @@ else
 	}
 	elseif (!empty($data['addNewSource']) && !empty($data['newSource']))
 	{
-		$checkCol = array(array('link', '=', $newSource, ''));
+		$checkCol = array(array('link', '=', $data['newSource'], ''));
 		$result = read('rss_serge', 'id', $checkCol, '', $bdd);
 		$resultSource = $result[0];
 
@@ -572,7 +572,7 @@ else
 		elseif (!preg_match("/$newSourceId/", $sources['source']))
 		{
 			// Check if source is valid
-			$sourceToTest = escapeshellarg($newSource);
+			$sourceToTest = escapeshellarg($data['newSource']);
 			$cmd          = '/usr/bin/python /var/www/Serge/checkfeed.py ' . $sourceToTest;
 
 			# Check if the link is valid
@@ -581,27 +581,15 @@ else
 			if ($linkValidation[0] === 'valid link' && $errorInCheckfeed === 0)
 			{
 				// Adding new source
-				preg_match('@^(?:http.*://[www.]*)?([^/]+)@i', $newSource, $matches);
-				/*$owners = ',' . $_SESSION['id'] . ',';
-				$active = 1;
-				$name = ucfirst($matches[1] . '[!NEW!]');
-				$req = $bdd->prepare('INSERT INTO rss_serge (link, owners, name, active) VALUES
-				(:link, :owners, :name, :active)');
-				$req->execute(array(
-					'link' => $newSource,
-					'owners' => $owners,
-					'name' => $name,
-					'active' => $active));
-					$req->closeCursor();*/
-
-				$insertCol = array(array('link', $newSource),
+				preg_match('@^(?:http.*://[www.]*)?([^/]+)@i', $data['newSource'], $matches);
+				$insertCol = array(array('link', $data['newSource']),
 													array('owners', ',' . $_SESSION['id'] . ','),
 													array('name', ucfirst($matches[1] . '[!NEW!]')),
 													array('active', 1));
 				$execution = insert('rss_serge', $insertCol, '', '', $bdd);
 
 
-				$checkCol = array(array('link', '=', $newSource, ''));
+				$checkCol = array(array('link', '=', $data['newSource'], ''));
 				$result = read('rss_serge', 'id', $checkCol, '', $bdd);
 				$resultSource = $result[0];
 

@@ -457,7 +457,7 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 					logger_error.error(repr(except_type))
 
 			elif register_comma2 in send_status:
-				pass
+				pass # BUG
 
 			else:
 				logger_error.warning("WARNING UNKNOWN ERROR") ###
@@ -493,7 +493,7 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 					logger_error.error(repr(except_type))
 
 			elif register_comma2 in send_status:
-				pass
+				pass # BUG
 
 			else:
 				logger_error.warning("WARNING UNKNOWN ERROR")
@@ -529,7 +529,7 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 					logger_error.error(repr(except_type))
 
 			elif register_comma2 in send_status:
-				pass
+				pass # BUG
 
 			else:
 				logger_info.warning("UNKNOWN ERROR")
