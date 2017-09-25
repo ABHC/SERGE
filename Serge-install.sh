@@ -131,6 +131,10 @@ Install_mail_server()
 	rm postfixadmin-3.0.tar.gz
 	chown -R www-data:www-data /var/www/postfixadmin
 
+	# Install Postfixadmin-cli
+	chmod +x /var/www/postfixadmin/scripts/postfixadmin-cli
+	ln -s /var/www/postfixadmin/scripts/postfixadmin-cli /usr/bin/postfixadmin-cli
+
 	# Configuration of Postfixadmin
 	sed -i "25 s/false/true/g" /var/www/postfixadmin/config.inc.php
 	pass_MD5=$(echo -n $adminPass | md5sum | sed 's/  -//g')
@@ -340,6 +344,7 @@ Install_mail_server()
 	echo "### SMTP ###" >> /etc/postfix/master.cf
 	echo "############" >> /etc/postfix/master.cf
 	echo "smtp      inet  n       -       -       -       -       smtpd" >> /etc/postfix/master.cf
+	echo "5025      inet  n       -       -       -       -       smtpd" >>  /etc/postfix/master.cf
 	echo "  -o strict_rfc821_envelopes=yes" >> /etc/postfix/master.cf
 	echo "  -o smtpd_proxy_options=speed_adjust" >> /etc/postfix/master.cf
 	echo "" >> /etc/postfix/master.cf
@@ -739,6 +744,9 @@ Install_mail_server()
 	echo "#SOCKET=\"inet:12345@localhost\" # listen on loopback on port 12345" >> /etc/default/opendmarc
 	echo "#SOCKET=\"inet:12345@192.0.2.1\" # listen on 192.0.2.1 on port 12345" >> /etc/default/opendmarc
 	echo "SOCKET=\"inet:8892:localhost\"" >> /etc/default/opendmarc
+
+	# Create domain
+	postfixadmin-cli domain add $domainName --aliases 0 --mailboxes 0
 
 	systemctl restart apache2
 	systemctl restart postfix
@@ -1218,13 +1226,13 @@ Install_Serge()
 	echo "Creation of Serge user"
 	useradd -p $internalPass -s /bin/bash -d /var/www/Serge/ Serge
 
-	#Add crontab for Serge
+	# Add crontab for Serge
 	crontab -u Serge -l > /tmp/crontab.tmp
 	echo "0 */2 * * * /usr/bin/python /var/www/Serge/serge.py" >> /tmp/crontab.tmp
 	crontab -u Serge /tmp/crontab.tmp
 	rm /tmp/crontab.tmp
 
-	#Give Serge to Serge
+	# Give Serge to Serge
 	chown -R Serge:Serge /var/www/Serge/
 
 	# Configuration apache
@@ -1365,6 +1373,31 @@ Install_Serge()
 
 	rm -r /var/www/Serge/database_demo/
 
+	# Create mailbox for Serge
+	postfixadmin-cli mailbox add serge@$domainName --password $internalPass --password2 $internalPass --name Serge --quota 20
+
+	# Create folder permission
+	mkdir /var/www/Serge/permission
+
+	# Give to Serge access to a mail server
+	echo serge@$domainName > /var/www/Serge/permission/sergemail.txt
+	echo $internalPass > /var/www/Serge/permission/passmail.txt
+	echo "smtp.$domainName" > /var/www/Serge/permission/mailserver.txt
+	chown -R Serge:Serge /var/www/Serge/permission/
+
+	# Give access to database
+	echo $internalPass > /var/www/Serge/permission/password.txt
+
+	# Install Trweet
+	# TODO Demander si l'user veux installer stripe
+	mkdir /var/www/Serge/permission/SergeChirp
+	# TODO recup depuis l'user les info sur access_token_secret.txt  access_token.txt  consumer_key.txt  consumer_secret.txt
+	echo $accessTokenSecret > /var/www/Serge/permission/SergeChirp/access_token_secret.txt
+	echo $accessToken > /var/www/Serge/permission/SergeChirp/access_token.txt
+	echo $consumerKey > /var/www/Serge/permission/SergeChirp/consumer_key.txt
+	echo $consumerSecret > /var/www/Serge/permission/SergeChirp/consumer_secret.txt
+	chown -R Serge:Serge /var/www/Serge/permission/
+
 	# Install Stripe
 	# TODO Demander si l'user veux installer stripe
 	apt install composer
@@ -1424,7 +1457,7 @@ Install_Serge()
 	a2ensite mediawiki.conf
 	systemctl restart apache2
 
-	# DNS for esmweb
+	# DNS for mediawiki
 	dialog --backtitle "Installation of Serge by Cairn Devices" --title "DNS" \
 	--ok-label "Next" --msgbox "
 	Installation of mediawiki need to update your DNS configuration :

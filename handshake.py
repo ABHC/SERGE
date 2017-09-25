@@ -62,8 +62,12 @@ def highwayToMail(register, newsletter, priority, database, pydate):
 	mdp_mail = passmail.read().strip()
 	passmail.close()
 
+	mailserver = open("permission/mailserver.txt", "r")
+	mailserveraddr = mailserver.read().strip()
+	mailserver.close()
+
 	######### EMAIL SERVER CONNEXION
-	server = smtplib.SMTP('smtp.cairn-devices.eu', 5025)
+	server = smtplib.SMTP(mailserveraddr, 5025)
 	server.starttls()
 	server.login(fromaddr, mdp_mail)
 	text = msg.as_string()
