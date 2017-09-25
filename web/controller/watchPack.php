@@ -373,14 +373,6 @@ else
 				}
 			}
 
-			/*$sourcesIds = implode(',', $packSource);
-			$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE id IN ($sourcesIds) ORDER BY name");
-			$req->execute(array(
-				'user' => $userId,
-				'userDesactivated' => $userIdDesactivated));
-				$listAllSources = $req->fetchAll();
-				$req->closeCursor();*/
-
 			$checkCol = array(array('id', 'IN', $packSource, ''));
 			$listAllSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 
@@ -399,12 +391,6 @@ else
 						$packSourceUsed = array_merge(preg_split('/,/', $packSourcesLine['source'], -1, PREG_SPLIT_NO_EMPTY), $packSourceUsed);
 					}
 				}
-
-			/*$sourcesIdsUsed = implode(',', $packSourceUsed);
-			$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE id IN ($sourcesIdsUsed) ORDER BY name");
-			$req->execute(array());
-				$readPackSources = $req->fetchAll();
-				$req->closeCursor();*/
 
 			$checkCol = array(array('id', 'IN', $packSourceUsed, ''));
 			$readPackSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
@@ -748,13 +734,6 @@ else
 
 				foreach ($result as $resultLine)
 				{
-					/*$sourceNew = preg_replace("/,$sourceIdAction,/", ",!$sourceIdAction,", $resultLine['source']);
-					$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :sources WHERE id = :id');
-					$req->execute(array(
-						'sources' => $sourceNew,
-						'id' => $resultLine['id']));
-						$req->closeCursor();*/
-
 					$updateCol = array(array('source', preg_replace("/,$sourceIdAction,/", ",!$sourceIdAction,", $resultLine['source'])));
 					$checkCol = array(array('id', '=', $resultLine['id'], ''));
 					$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
@@ -770,13 +749,6 @@ else
 
 				foreach ($result as $resultLine)
 				{
-					/*$sourceNew = preg_replace("/,!$sourceIdAction,/", ",$sourceIdAction,", $resultLine['source']);
-					$req = $bdd->prepare('UPDATE watch_pack_queries_serge SET source = :sources WHERE id = :id');
-					$req->execute(array(
-						'sources' => $sourceNew,
-						'id' => $resultLine['id']));
-						$req->closeCursor();*/
-
 					$updateCol = array(array('source', preg_replace("/,!$sourceIdAction,/", ",$sourceIdAction,", $resultLine['source'])));
 					$checkCol = array(array('id', '=', $resultLine['id'], ''));
 					$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
@@ -1176,14 +1148,6 @@ else
 				}
 			}
 
-			/*$sourcesIds = implode(',', $packSource);
-			$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE id IN ($sourcesIds) ORDER BY name");
-			$req->execute(array(
-				'user' => $userId,
-				'userDesactivated' => $userIdDesactivated));
-				$listAllSources = $req->fetchAll();
-				$req->closeCursor();*/
-
 			$checkCol = array(array('id', 'IN', $packSource, ''));
 			$listAllSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 
@@ -1200,12 +1164,6 @@ else
 						$packSourceUsed = array_merge(preg_split('/,/', $readPackSources['source'], -1, PREG_SPLIT_NO_EMPTY), $packSourceUsed);
 					}
 				}
-
-			/*$sourcesIdsUsed = implode(',', $packSourceUsed);
-			$req = $bdd->prepare("SELECT id, link, name, owners, active FROM rss_serge WHERE id IN ($sourcesIdsUsed) ORDER BY name");
-			$req->execute(array());
-				$readPackSources = $req->fetchAll();
-				$req->closeCursor();*/
 
 			$checkCol = array(array('id', 'IN', $packSourceUsed, ''));
 			$readPackSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
