@@ -287,6 +287,7 @@ h5
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	text-align: center;
 	width: 30%;
 	background-color: rgb(230, 230, 230);
 	padding: 10px;
@@ -372,6 +373,7 @@ input
 	display: flex;
 	flex-direction: row;
 	justify-content: space-around;
+	align-items: center;
 	width: 100px;
 	margin-left: calc(100% - 100px);
 	margin-left: 0px;
@@ -424,8 +426,74 @@ input
 	border-radius: 2px 0px 0px 2px;
 }
 
-/**/
+/* Responsive */
+@media all and (max-width: 1000px)
+{
+	.backgroundImage
+	{
+		height: 60vh;
+		filter: brightness(0.8);
+	}
 
+	h2
+	{
+		margin-top: 11vh;
+	}
+
+	h3
+	{
+		font-size: 2vw;
+		margin-top: 2.5vh;
+		margin-bottom: 7vh;
+	}
+
+	.body
+	{
+		margin-top: 12vh;
+	}
+
+	.inscription
+	{
+		width: 80%;
+		margin-left: 10%;
+	}
+
+	input
+	{
+		height: 40px;
+		font-size: 28px;
+	}
+
+	.title_inscription
+	{
+		font-size: 36px;
+	}
+
+	.title_form_inscription
+	{
+		font-size: 30px;
+	}
+
+	.captcha
+	{
+		width: 140px;
+	}
+
+	.captcha1,
+	.captcha2,
+	.captcha3,
+	.captcha4
+	{
+		height: 30px;
+		width: 30px;
+	}
+
+	.submit_inscription
+	{
+		height: 50px;
+		font-size: 30px;
+	}
+}
 <?php
 include('footer.php');
 ?>
