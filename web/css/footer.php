@@ -62,6 +62,12 @@ footer
 	margin-right: 15px;
 }
 
+.roundLinks a img
+{
+	width: 80px;
+	height: 80px;
+}
+
 .subLinksContainer
 {
 	display: flex;
@@ -144,5 +150,46 @@ footer
 		font-size: 16px;
 		text-align: center;
 		color: rgb(255,255,255);
+	}
+}
+
+@media all and (max-width: 1000px)
+{
+	.footerContainer1
+	{
+		font-size: 25px;
+	}
+
+	.footerContainer2
+	{
+		font-size: 17px;
+	}
+
+	.roundLinks a
+	{
+		width: 120px;
+		height: 120px;
+	}
+
+	.roundLinks a img
+	{
+		width: 119px;
+		height: 119px;
+	}
+
+	.social a img
+	{
+		width: 63px;
+		height: 63px;
+	}
+
+	.copyright a
+	{
+		font-size: 25px;
+	}
+
+	.copyright
+	{
+		height: 50px;
 	}
 }

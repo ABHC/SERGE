@@ -6,9 +6,9 @@
 
 		<div class="links">
 			<div class="roundLinks">
-				<a href=""><img alt="CairnGit" src="images/CairnGit_logo_norm.png" width="80" title="CairnGit"/></a>
-				<a href="workinprogress"><img alt="Cairn Devices" src="images/Cairn_Devices_logo_norm.png" width="80" title="Cairn Devices"/></a>
-				<a href=""><img alt="Serge" src="images/SERGE_logo_norm.png" width="80" title="Serge"/></a>
+				<a href=""><img alt="CairnGit" src="images/CairnGit_logo_norm.png" title="CairnGit"/></a>
+				<a href="workinprogress"><img alt="Cairn Devices" src="images/Cairn_Devices_logo_norm.png" title="Cairn Devices"/></a>
+				<a href=""><img alt="Serge" src="images/SERGE_logo_norm.png" title="Serge"/></a>
 			</div>
 
 			<div class="subLinksContainer">
