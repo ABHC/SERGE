@@ -19,57 +19,72 @@ def databaseConnection():
 	return database
 
 
-def highwayToMail(register, newsletter, priority, database, pydate):
+def highwayToMail(register, newsletter, priority, pydate):
 	"""Function for emails sending"""
 
-	######### SERGE MAIL
-	sergemail = open("permission/sergemail.txt", "r")
-	fromaddr = sergemail.read().strip()
-	sergemail.close
+	########### CONNECTION TO SERGE DATABASE
+	database = databaseConnection()
 
-	######### ADRESSES AND LANGUAGE RECOVERY
-	query = "SELECT email, language FROM users_table_serge WHERE id = %s"
+	######### PREMIUM STATUS CHECKING
+	query_status_checking = "SELECT premium_expiration_date FROM users_table_serge WHERE id = %s"
 
 	call_users = database.cursor()
-	call_users.execute(query, (register))
-	user_infos = call_users.fetchone()
+	call_users.execute(query_status_checking, (register))
+	expiration_date = call_users.fetchone()
 	call_users.close()
 
-	toaddr = user_infos[0]
+	verif_time = time.time()
 
-	######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
-	pydate = " "+pydate
-	if priority == "NORMAL":
-		subject_FR = "[SERGE] Veille Industrielle et Technologique"+pydate
-		subject_EN = "[SERGE] News monitoring and Technological watch"+pydate
-	elif priority == "HIGH":
-		subject_FR = "[ALERTE SERGE] Informations Prioritaires"+pydate
-		subject_EN = "[SERGE] Prioritary Informations"+pydate
+	if expiration_date < verif_time :
 
-	try:
-		exec("translate_subject"+"="+"subject_"+user_infos[1])
-	except NameError:
-		translate_subject = subject_EN
+		######### SERGE MAIL
+		sergemail = open("permission/sergemail.txt", "r")
+		fromaddr = sergemail.read().strip()
+		sergemail.close
 
-	######### CONTENT WRITING IN EMAIL
-	msg = MIMEText(newsletter, 'html')
+		######### ADRESSES AND LANGUAGE RECOVERY
+		query_user_infos = "SELECT email, language FROM users_table_serge WHERE id = %s"
 
-	msg['From'] = fromaddr
-	msg['To'] = toaddr
-	msg['Subject'] = translate_subject
+		call_users = database.cursor()
+		call_users.execute(query_user_infos, (register))
+		user_infos = call_users.fetchone()
+		call_users.close()
 
-	passmail = open("permission/passmail.txt", "r")
-	mdp_mail = passmail.read().strip()
-	passmail.close()
+		toaddr = user_infos[0]
 
-	mailserver = open("permission/mailserver.txt", "r")
-	mailserveraddr = mailserver.read().strip()
-	mailserver.close()
+		######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
+		pydate = " "+pydate
+		if priority == "NORMAL":
+			subject_FR = "[SERGE] Veille Industrielle et Technologique"+pydate
+			subject_EN = "[SERGE] News monitoring and Technological watch"+pydate
+		elif priority == "HIGH":
+			subject_FR = "[ALERTE SERGE] Informations Prioritaires"+pydate
+			subject_EN = "[SERGE] Prioritary Informations"+pydate
 
-	######### EMAIL SERVER CONNEXION
-	server = smtplib.SMTP(mailserveraddr, 5025)
-	server.starttls()
-	server.login(fromaddr, mdp_mail)
-	text = msg.as_string()
-	server.sendmail(fromaddr, toaddr, text)
-	server.quit()
+		try:
+			exec("translate_subject"+"="+"subject_"+user_infos[1])
+		except NameError:
+			translate_subject = subject_EN
+
+		######### CONTENT WRITING IN EMAIL
+		msg = MIMEText(newsletter, 'html')
+
+		msg['From'] = fromaddr
+		msg['To'] = toaddr
+		msg['Subject'] = translate_subject
+
+		passmail = open("permission/passmail.txt", "r")
+		mdp_mail = passmail.read().strip()
+		passmail.close()
+
+		mailserver = open("permission/mailserver.txt", "r")
+		mailserveraddr = mailserver.read().strip()
+		mailserver.close()
+
+		######### EMAIL SERVER CONNEXION
+		server = smtplib.SMTP(mailserveraddr, 5025)
+		server.starttls()
+		server.login(fromaddr, mdp_mail)
+		text = msg.as_string()
+		server.sendmail(fromaddr, toaddr, text)
+		server.quit()
