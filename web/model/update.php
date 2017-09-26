@@ -1,5 +1,5 @@
 <?php
-function update(string $tableName, array $updateCol, array $checkCol, string $optional, object $bdd)
+function update(string $tableName, array $updateCol, array $checkCol, string $optional, $bdd)
 {
 	# USAGE
 	/*

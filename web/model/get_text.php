@@ -1,5 +1,5 @@
 <?php
-function get_t(string $name, object $bdd)
+function get_t(string $name, $bdd)
 {
 	$language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
 	$language = strtoupper($language[0] . $language[1]);
