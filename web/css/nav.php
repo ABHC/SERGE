@@ -47,7 +47,6 @@
 	margin-left: 10px;
 	background: url(../images/SERGE_logo_norm.png) center no-repeat;
 	background-size: cover;
-	border-radius: 50%;
 }
 
 .navResultSergeLogo
@@ -104,4 +103,47 @@
 	background: none;
 	color: rgb(255, 255, 255);
 	border-bottom: none;
+}
+
+@media all and (max-width: 1000px)
+{
+	.nav
+	{
+		height: 140px;
+	}
+
+	.navTitle
+	{
+		font-size: 25px;
+		text-align: center;
+	}
+
+	.navlogo > .navTitle
+	{
+		width: 60%;
+	}
+
+	.navCairnDevicesLogo
+	{
+		width: 90px;
+		height: 90px;
+		margin-right: 5px;
+	}
+
+	.navResultSergeLogo
+	{
+		width: 124px;
+	}
+
+	.navSergeSettingLogo
+	{
+		width: 79px;
+		height: 79px;
+	}
+
+	.navWikiLogo
+	{
+		width: 95px;
+		height: 79px;
+	}
 }
