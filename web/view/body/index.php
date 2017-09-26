@@ -63,6 +63,15 @@
 				</div>
 			</div>
 		</div>
+		<div class="functionalityLine">
+			<div>
+				<div class="iconRSS"></div>
+				<div class="functionalityText">
+					<h5><?php get_t('functionality7_title_index', $bdd); ?></h5>
+					<div><?php get_t('functionality7_text_index', $bdd); ?></div>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<div class="buttonArea">
@@ -78,10 +87,10 @@
 	<div class="functionality">
 		<div class="functionalityLine">
 			<div>
-				<div class="iconRSS"></div>
+				<div class="iconStats"></div>
 				<div class="functionalityText">
-					<h5><?php get_t('functionality7_title_index', $bdd); ?></h5>
-					<div><?php get_t('functionality7_text_index', $bdd); ?></div>
+					<h5><?php get_t('functionality11_title_index', $bdd); ?></h5>
+					<div><?php get_t('functionality11_text_index', $bdd); ?></div>
 				</div>
 			</div>
 			<div>
@@ -105,15 +114,6 @@
 				<div class="functionalityText">
 					<h5><?php get_t('functionality10_title_index', $bdd); ?></h5>
 					<div><?php get_t('functionality10_text_index', $bdd); ?></div>
-				</div>
-			</div>
-		</div>
-		<div class="functionalityLine">
-			<div>
-				<div class="iconStats"></div>
-				<div class="functionalityText">
-					<h5><?php get_t('functionality11_title_index', $bdd); ?></h5>
-					<div><?php get_t('functionality11_text_index', $bdd); ?></div>
 				</div>
 			</div>
 		</div>

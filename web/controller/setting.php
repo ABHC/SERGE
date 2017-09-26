@@ -170,6 +170,11 @@ if (!$userIsPremium)
 $checkCol    = array(array('user_id', '=', $_SESSION['id'], ''));
 $paymentList = read('purchase_table_serge', 'purchase_date, duration_premium, price', $checkCol, '', $bdd);
 
+# Read if user mail is check
+$checkCol     = array(array('email_validation', '=', 1, 'AND'),
+											array('id', '=', $_SESSION['id'], ''));
+$emailIsCheck = read('users_table_serge', '', $checkCol, '', $bdd);
+
 # Read owner sources
 $checkCol  = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
 									array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));

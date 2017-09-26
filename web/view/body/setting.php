@@ -439,6 +439,12 @@
 						</div>
 						<?php
 					}
+					if (!$emailIsCheck)
+					{
+						?>
+						Your email need to be verify if you want to change options
+						 <?php
+					}
 					?>
 				</div>
 				<div>
