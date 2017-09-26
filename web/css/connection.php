@@ -109,15 +109,42 @@ a.text_connection
 	color: rgb(255,255,255);
 }
 
-.cookiesAlert
+/* Responsive */
+@media all and (max-width: 1000px)
 {
-	position: absolute;
-	float: right;
-	width: 20%;
-	background-color: rgba(84,26,102, 0.55);
+	.connection
+	{
+		width: 80%;
+	}
+
+	.connection a
+	{
+		font-size: 30px;
+	}
+
+	input
+	{
+		height: 40px;
+		font-size: 28px;
+	}
+
+	.title_connection
+	{
+		font-size: 36px;
+	}
+
+	.title_form_connection
+	{
+		font-size: 30px;
+	}
+
+	.submit_connection
+	{
+		height: 50px;
+		font-size: 30px;
+	}
 }
 
-/**/
 <?php
 include('footer.php');
 ?>
