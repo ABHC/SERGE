@@ -31,6 +31,12 @@ include('nav.php');
 	z-index: -1;
 }
 
+.backgroundDetails
+{
+	position: relative;
+	width: 100%;
+}
+
 h2
 {
 	font-size: 4.8vw;
@@ -431,7 +437,9 @@ input
 {
 	.backgroundImage
 	{
-		height: 60vh;
+		height: 52vh;
+		min-height: 500px;
+		max-height: 1000px;
 		filter: brightness(0.8);
 	}
 
@@ -449,7 +457,7 @@ input
 
 	.body
 	{
-		margin-top: 12vh;
+		margin-top: 40px;
 	}
 
 	.inscription

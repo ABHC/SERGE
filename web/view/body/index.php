@@ -3,12 +3,14 @@
 </div>
 <div class="backgroundImage">
 </div>
-<h2><?php get_t('main_title_index', $bdd); ?></h2>
-<h3><?php get_t('sub_title_index', $bdd); ?></h3>
-<div class="buttonArea">
-	<div class="line"></div>
-	<a href="#signup" class="buttonTry"><?php get_t('try1_button_index', $bdd); ?></a>
-	<div class="line"></div>
+<div class="backgroundDetails">
+	<h2><?php get_t('main_title_index', $bdd); ?></h2>
+	<h3><?php get_t('sub_title_index', $bdd); ?></h3>
+	<div class="buttonArea">
+		<div class="line"></div>
+		<a href="#signup" class="buttonTry"><?php get_t('try1_button_index', $bdd); ?></a>
+		<div class="line"></div>
+	</div>
 </div>
 <?php echo $ErrorMessageCheckMail; ?>
 <div class="body">

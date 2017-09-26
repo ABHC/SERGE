@@ -112,6 +112,11 @@ a.text_connection
 /* Responsive */
 @media all and (max-width: 1000px)
 {
+	.body
+	{
+		min-height: calc(100vh - 500px);
+	}
+
 	.connection
 	{
 		width: 80%;
