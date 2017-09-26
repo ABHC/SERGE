@@ -514,34 +514,34 @@
 						<input class="number alpha" type="number" name="hours" min="0" max="23" step="2" placeholder="19" value="<?php echo $userSettings['selected_hour']; ?>"/>h
 						<?php get_t('input6_window1_setting', $bdd); ?>
 						<select class="selectCommResult" name="days">
-							<option value=",1,2,3,4,5," <?php echo isset($day[0]) ? $day[0]:''; ?>>
+							<option value=",1,2,3,4,5," <?php echo $day[0] ?? ''; ?>>
 								<?php get_t('select1_window1_setting', $bdd); ?>
 							</option>
-							<option value=",1,3,5," <?php echo isset($day[8]) ? $day[8]:''; ?>>
+							<option value=",1,3,5," <?php echo $day[8] ?? ''; ?>>
 								<?php get_t('select2_window1_setting', $bdd); ?>
 							</option>
-							<option value=",1,2,3,4,5,6,7," <?php echo isset($day[9]) ? $day[9]:''; ?>>
+							<option value=",1,2,3,4,5,6,7," <?php echo $day[9] ?? ''; ?>>
 								<?php get_t('select3_window1_setting', $bdd); ?>
 							</option>
-							<option value=",1," <?php echo isset($day[1]) ? $day[1]:''; ?>>
+							<option value=",1," <?php echo $day[1] ?? ''; ?>>
 								<?php get_t('select4_window1_setting', $bdd); ?>
 							</option>
-							<option value=",2," <?php echo isset($day[2]) ? $day[2]:''; ?>>
+							<option value=",2," <?php echo $day[2] ?? ''; ?>>
 								<?php get_t('select5_window1_setting', $bdd); ?>
 							</option>
-							<option value=",3," <?php echo isset($day[3]) ? $day[3]:''; ?>>
+							<option value=",3," <?php echo $day[3] ?? ''; ?>>
 								<?php get_t('select6_window1_setting', $bdd); ?>
 							</option>
-							<option value=",4," <?php echo isset($day[4]) ? $day[4]:''; ?>>
+							<option value=",4," <?php echo $day[4] ?? ''; ?>>
 								<?php get_t('select7_window1_setting', $bdd); ?>
 							</option>
-							<option value=",5," <?php echo isset($day[5]) ? $day[5]:''; ?>>
+							<option value=",5," <?php echo $day[5] ?? ''; ?>>
 								<?php get_t('select8_window1_setting', $bdd); ?>
 							</option>
-							<option value=",6," <?php echo isset($day[6]) ? $day[6]:''; ?>>
+							<option value=",6," <?php echo $day[6] ?? ''; ?>>
 								<?php get_t('select9_window1_setting', $bdd); ?>
 							</option>
-							<option value=",7," <?php echo isset($day[7]) ? $day[7]:''; ?>>
+							<option value=",7," <?php echo $day[7] ?? ''; ?>>
 								<?php get_t('select10_window1_setting', $bdd); ?>
 							</option>
 						</select>
@@ -549,25 +549,25 @@
 						<?php get_t('input6.1_window1_setting', $bdd); ?>
 						<select class="selectCommResult" name="secondDay">
 							<option value="">that's all</option>
-							<option value="1," <?php echo isset($day2[1]) ? $day2[1]:''; ?>>
+							<option value="1," <?php echo $day2[1] ?? ''; ?>>
 								<?php get_t('select4_window1_setting', $bdd); ?>
 							</option>
-							<option value="2," <?php echo isset($day2[2]) ? $day2[2]:''; ?>>
+							<option value="2," <?php echo $day2[2] ?? ''; ?>>
 								<?php get_t('select5_window1_setting', $bdd); ?>
 							</option>
-							<option value="3," <?php echo isset($day2[3]) ? $day2[3]:''; ?>>
+							<option value="3," <?php echo $day2[3] ?? ''; ?>>
 								<?php get_t('select6_window1_setting', $bdd); ?>
 							</option>
-							<option value="4," <?php echo isset($day2[4]) ? $day2[4]:''; ?>>
+							<option value="4," <?php echo $day2[4] ?? ''; ?>>
 								<?php get_t('select7_window1_setting', $bdd); ?>
 							</option>
-							<option value="5," <?php echo isset($day2[5]) ? $day2[5]:''; ?>>
+							<option value="5," <?php echo $day2[5] ?? ''; ?>>
 								<?php get_t('select8_window1_setting', $bdd); ?>
 							</option>
-							<option value="6," <?php echo isset($day2[6]) ? $day2[6]:''; ?>>
+							<option value="6," <?php echo $day2[6] ?? ''; ?>>
 								<?php get_t('select9_window1_setting', $bdd); ?>
 							</option>
-							<option value="7," <?php echo isset($day2[7]) ? $day2[7]:''; ?>>
+							<option value="7," <?php echo $day2[7] ?? ''; ?>>
 								<?php get_t('select10_window1_setting', $bdd); ?>
 							</option>
 						</select>
@@ -914,7 +914,7 @@
 				<input title="Extend" class="extend" type="submit" id="extendScience" name="extendScience" value=">>" />
 			</div>
 			</div>
-			<?php echo isset($ERROR_SCIENCEQUERY) ? $ERROR_SCIENCEQUERY:''; ?>
+			<?php echo $ERROR_SCIENCEQUERY ?? ''; ?>
 			<?php
 
 			// Read owner science query
@@ -1186,7 +1186,7 @@
 				<input title="Extend" class="extend" type="submit" id="extend" name="extendPatent" value=">>" />
 			</div>
 			</div>
-			<?php echo isset($ERROR_PATENTQUERY) ? $ERROR_PATENTQUERY:''; ?>
+			<?php echo $ERROR_PATENTQUERY ?? ''; ?>
 			<?php
 
 			// Read owner patents queries

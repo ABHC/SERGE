@@ -1,5 +1,5 @@
 <?php
-function addNewScienceQuery($queryScience_Arxiv, $queryScience_Doaj, $bdd)
+function addNewScienceQuery(string $queryScience_Arxiv, string $queryScience_Doaj, object $bdd)
 {
 	$userId = ',' . $_SESSION['id'] . ',';
 	$ERROR_SCIENCEQUERY = '';

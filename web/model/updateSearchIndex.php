@@ -1,5 +1,5 @@
 <?php
-function del_accent($str, $encoding='utf-8')
+function del_accent(string $str, $encoding='utf-8')
 {
 		$str = htmlentities($str, ENT_NOQUOTES, $encoding);
 		$str = preg_replace('#&([A-za-z])(?:acute|grave|cedil|circ|orn|ring|slash|th|tilde|uml);#', '\1', $str);

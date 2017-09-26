@@ -213,11 +213,6 @@ if (!empty($data['settings']) && $data['settings'] === 'ChangeSettings')
 			$data['days'] = $data['days'] . $data['secondDay'];
 		}
 
-		$data['numberLinks'] = ($data['numberLinks'] == '' ? NULL : $data['numberLinks']);
-		$data['freq']        = ($data['freq'] == '' ? NULL : $data['freq']);
-		$data['days']        = ($data['days'] == '' ? NULL : $data['days']);
-		$data['hours']       = ($data['hours'] == '' ? NULL : $data['hours']);
-
 		$updateCol = array(array('send_condition', $data['cond']),
 											array('link_limit', $data['numberLinks']),
 											array('frequency', $data['freq']),

@@ -1,5 +1,5 @@
 <?php
-function insert($tableName, $insertCol, $optional, $redirectPage, $bdd)
+function insert(string $tableName, array $insertCol, string $optional, string $redirectPage, object $bdd)
 {
 	# USAGE
 	/*

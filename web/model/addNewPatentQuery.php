@@ -1,5 +1,5 @@
 <?php
-function addNewPatentQuery($queryPatent, $bdd)
+function addNewPatentQuery(string $queryPatent, object $bdd)
 {
 	$userId = ',' . $_SESSION['id'] . ',';
 	$ERROR_PATENTQUERY = '';

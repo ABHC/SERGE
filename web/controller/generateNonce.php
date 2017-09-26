@@ -1,5 +1,5 @@
 <?php
-function getNonce($time)
+function getNonce(int $time)
 {
 	$bytes = random_bytes(5);
 	$cryptoSalt = bin2hex($bytes);

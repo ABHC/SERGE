@@ -1,5 +1,5 @@
 <?php
-function read($tableName, $selectedCol, $checkCol, $optional, $bdd)
+function read(string $tableName, array $selectedCol, array $checkCol, string $optional, object $bdd)
 {
 	# USAGE
 	/*
