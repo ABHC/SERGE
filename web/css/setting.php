@@ -328,6 +328,46 @@ h3
 	color: #fff;
 }
 
+.extendPremiumButton
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 80%;
+	height: auto;
+	padding: 2px;
+	margin: 5px;
+	margin-left: 10%;
+	color: rgb(230,230,230);
+	text-decoration: none;
+	text-align: center;
+	background-color: rgba(92,53,102,0.6);
+	border-radius: 3px;
+	border: 1px solid rgba(255,255,255, 0.15);
+}
+
+.extendPremiumButton:hover
+{
+	background-color: rgba(92,53,102,0.8);
+}
+
+.redAlertPicto
+{
+	width: 30px;
+	height: 30px;
+	background: url('../images/pictogrammes/redAlertPicto.png') center no-repeat;
+	background-size: contain;
+}
+
+.redAlert
+{
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+	margin-top: 4px;
+}
+
 .graphContainer
 {
 	display: flex;
@@ -952,10 +992,12 @@ h2
 
 .boxScroll
 {
-	height: 65px;
+	height: 40px;
 	width: 100%;
 	overflow-y: scroll;
 	overflow-x: hidden;
+	margin-top: 2px;
+	margin-bottom: 2px;
 }
 
 .arrDown

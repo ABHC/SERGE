@@ -403,10 +403,9 @@
 					if ($userIsPremium)
 					{
 						?>
-						Your are premium user until <?php echo date("H:i d/m/o", $userSettings['premium_expiration_date']); ?><br>
+						Premium expiration date : <?php echo date("d/m/o", $userSettings['premium_expiration_date']); ?><br>
 
-						<a href="purchase" class="ExtendPremiumButton">Extend your premium account duration</a><br>
-
+						<a href="purchase" class="extendPremiumButton">Extend your premium account duration</a>
 						Your payment history :<br>
 						<div class="boxScroll">
 							<?php
@@ -424,7 +423,7 @@
 					else
 					{
 						?>
-						<a href="purchase" class="UpgradeToPremiumButton">Upgrade your account to premium</a><br>
+						<a href="purchase" class="UpgradeToPremiumButton">Upgrade your account to premium</a>
 						Your payment history :<br>
 						<div class="boxScroll">
 							<?php
@@ -442,7 +441,7 @@
 					if (!$emailIsCheck)
 					{
 						?>
-						Your email need to be verify if you want to change options
+						<div class="redAlert"><div class="redAlertPicto"></div>Your email need to be verify</div>
 						 <?php
 					}
 					?>
