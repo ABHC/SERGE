@@ -463,6 +463,11 @@ input
 		margin-bottom: 7vh;
 	}
 
+	h5
+	{
+		font-size: 30px;
+	}
+
 	.body
 	{
 		margin-top: 40px;
