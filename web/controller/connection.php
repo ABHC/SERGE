@@ -38,6 +38,7 @@ if (!empty($data['pseudo']) && !empty($data['password']))
 
 	if (!empty($result))
 	{
+		$redirect                  = $_SESSION['redirectFrom'];
 		session_regenerate_id();
 		session_start();
 		$_SESSION['id']            = $result[0]['id'];
@@ -46,7 +47,6 @@ if (!empty($data['pseudo']) && !empty($data['password']))
 		$_SESSION['ip']            = $_SERVER['REMOTE_ADDR'];
 		$_SESSION['user-agent']    = $_SERVER['HTTP_USER_AGENT'];
 		$_SESSION['lastSourceUse'] = '';
-		$redirect                  = $_SESSION['redirectFrom'];
 
 		if (empty($redirect))
 		{
