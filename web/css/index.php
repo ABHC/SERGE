@@ -443,9 +443,17 @@ input
 		filter: brightness(0.8);
 	}
 
+	.backgroundDetails
+	{
+		height: calc(42vh - 140px);
+		min-height: 360px;
+		max-height: 860px;
+		padding-top: 10vh;
+	}
+
 	h2
 	{
-		margin-top: 11vh;
+		margin-top: 0;
 	}
 
 	h3
@@ -458,6 +466,59 @@ input
 	.body
 	{
 		margin-top: 40px;
+	}
+
+	.buttonTry
+	{
+		margin-bottom: 20px;
+	}
+
+	.buttonArea
+	{
+		margin-top: 50px;
+	}
+
+	.titleButton
+	{
+		margin-top: 50px;
+	}
+
+	.functionalityLine
+	{
+		flex-wrap: wrap;
+		height: auto;
+		width: 90%;
+		margin-bottom: 0;
+		overflow: hidden;
+	}
+
+	.functionalityLine > div
+	{
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		width: 100%;
+		min-width: 0;
+		margin-right: 2%;
+		margin-left: 2%;
+		margin-bottom: 20px;
+	}
+
+	.functionalityLine > div > div:first-child
+	{
+		height: 200px;
+		width: 200px;
+	}
+
+	.functionalityText
+	{
+		height: 200px;
+		font-size: 25px;
+	}
+
+	.functionalityText div
+	{
+		height: auto;
 	}
 
 	.inscription
