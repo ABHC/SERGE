@@ -109,6 +109,66 @@ a.text_connection
 	color: rgb(255,255,255);
 }
 
+
+.captcha
+{
+	position: relative;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	align-items: center;
+	width: 100px;
+	margin-left: calc(100% - 100px);
+	margin-left: 0px;
+	border-radius: 0px 3px 3px 0px;
+	border: 1px solid rgba(255,255,255, 0.15);
+	background-color: rgba(255, 255, 255, 0.2);
+	background-size: cover;
+}
+
+.captcha1
+{
+	position: relative;
+	background-image: url(../images/captcha/captcha1.png?t=<?php echo $_SERVER['REQUEST_TIME']; ?>);
+	height: 22px;
+	width: 22px;
+	background-size: cover;
+}
+
+.captcha2
+{
+	position: relative;
+	background-image: url(../images/captcha/captcha2.png?t=<?php echo $_SERVER['REQUEST_TIME']; ?>);
+	height: 22px;
+	width: 22px;
+	background-size: cover;
+}
+
+.captcha3
+{
+	position: relative;
+	background-image: url(../images/captcha/captcha3.png?t=<?php echo $_SERVER['REQUEST_TIME']; ?>);
+	height: 22px;
+	width: 22px;
+	background-size: cover;
+}
+
+.captcha4
+{
+	background-image: url(../images/captcha/captcha4.png?t=<?php echo $_SERVER['REQUEST_TIME']; ?>);
+	position: relative;
+	height: 22px;
+	width: 22px;
+	border-radius: 0px 2px 2px 0px;
+	background-size: cover;
+}
+
+.captcha_field
+{
+	width: calc(100% - 100px);
+	border-radius: 2px 0px 0px 2px;
+}
+
 /* Responsive */
 @media all and (max-width: 1000px)
 {
@@ -141,6 +201,20 @@ a.text_connection
 	.title_form_connection
 	{
 		font-size: 30px;
+	}
+
+	.captcha
+	{
+		width: 140px;
+	}
+
+	.captcha1,
+	.captcha2,
+	.captcha3,
+	.captcha4
+	{
+		height: 30px;
+		width: 30px;
 	}
 
 	.submit_connection

@@ -11,7 +11,7 @@ $language = $language[0] . $language[1];
 <head>
 	<meta charset="utf-8" />
 	<title>Serge : your news monitoring</title>
-	<link href="css/connection" rel="stylesheet" />
+	<link href="css/connection?<?php echo $_SERVER['REQUEST_TIME']; ?>" rel="stylesheet" />
 	<?php
 	include('favicon.php');
 	?>

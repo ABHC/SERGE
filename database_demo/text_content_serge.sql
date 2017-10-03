@@ -150,4 +150,6 @@ En recherchant les actualités, les brevets et les publications scientifiques, S
 ('input1_text_purchase', 'months of premium subscription', 'mois d\'abonement premium', NULL, NULL, NULL),
 ('input2_purchase_purchase', 'Discount code', 'Code de réduction', NULL, NULL, NULL),
 ('input3_purchase_purchase', 'I have read the term of service.', 'J\'ai lu les conditions générales de service', NULL, NULL, NULL),
+('errorMessageCaptcha', 'Bad captcha', 'Mauvais captcha', NULL, NULL, NULL),
+('errorMessagePassphrase', 'Passphrase is too short or passphrase do not match', 'La phrase de passe est trop courte ou les phrases de passe ne correspondent pas', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);

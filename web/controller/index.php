@@ -38,13 +38,14 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 	if($_SESSION['captcha'] === $captcha_user)
 	{
 		$_SESSION['captcha'] = '';
-		#Vérification des mots de passes
+
+		# Check passphrase
 		if($data['password'] === $data['repassword'])
 		{
-			#Vérification de la taille des mots de passes
+			# Check size of passphrase
 			if(!isset($data['password']{8}))
 			{
-				$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Passphrase too short <br>';
+				$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> ' . var_get_t('errorMessagePassphrase', $bdd) . '<br>';
 			}
 			else
 			{
@@ -68,8 +69,8 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 				}
 				else
 				{
-					$resultToken = TRUE;
-					while ($resultToken)
+					$tokenExist = TRUE;
+					while ($tokenExist)
 					{
 						// Génération du token
 						$bytes       = random_bytes(4);
@@ -93,8 +94,8 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 							$cpt++;
 						}
 
-						$checkCol    = array(array('token', '=', $token, ''));
-						$resultToken = read('users_table_serge', '', $checkCol, '',$bdd);
+						$checkCol   = array(array('token', '=', $token, ''));
+						$tokenExist = read('users_table_serge', '', $checkCol, '',$bdd);
 					}
 
 					// Salt generation
@@ -168,12 +169,12 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 		}
 		else
 		{
-			$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Passphrases does not match <br>';
+			$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> ' . var_get_t('errorMessagePassphrase', $bdd) . '<br>';
 		}
 	}
 	else
 	{
-		$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Bad captcha <br>';
+		$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> ' . var_get_t('errorMessageCaptcha', $bdd) . '<br>';
 		$_SESSION['captcha'] = '';
 	}
 }
@@ -208,8 +209,8 @@ $captcha_val = '';
 
 while ($cpt < 5)
 {
-	$nb_captcha   =rand(1, 52);
-	$captcha_name ='images/captcha/'.$nb_captcha.'.png';
+	$nb_captcha   = rand(1, 52);
+	$captcha_name = 'images/captcha/'.$nb_captcha.'.png';
 	copy($captcha_name, 'images/captcha/captcha'.$cpt.'.png');
 	$captcha_val  = $captcha_val.$captcha[$nb_captcha-1];
 
