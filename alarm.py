@@ -152,7 +152,7 @@ def buildAlert(user, user_id_comma, register, alert_news_list, pydate):
 		alertmail = alertMailBySource(user, translate_text, alert_news_list, pending_alerts, alert_origin_list, style, pydate, background_filename)
 
 	######### CALL TO highwayToMail FUNCTION
-	handshake.highwayToMail(register, alertmail, priority, database, pydate)
+	handshake.highwayToMail(register, alertmail, priority, pydate)
 
 
 def alertMailByType(user, translate_text, alert_news_list, pending_alerts, style, pydate, background_filename):
