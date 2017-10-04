@@ -187,13 +187,13 @@ if ($type === 'add')
 	$colOrder['language'] = $colOrder['language'] . PHP_EOL . '</select>
 	<input type="hidden" name="orderBy" value="' . $orderBy . '"/>';
 
-	if (!empty($data['addPack']))
+	if ($emailIsCheck && !empty($data['addPack']))
 	{
 		include('model/AddWatchPackToAnUser.php');
 	}
 
 	# Add a star
-	if (!empty($data['AddStar']))
+	if ($emailIsCheck && !empty($data['AddStar']))
 	{
 		$checkCol = array(array('id', '=', $data['AddStar'], ''));
 		$result = read('watch_pack_serge', 'rating', $checkCol, '', $bdd);
@@ -343,9 +343,6 @@ else
 {
 	if (!empty($data['packId']))
 	{
-
-
-
 		$checkCol = array(array('author', '=', $_SESSION['pseudo'], 'AND'),
 											array('id', '=', $data['packId'], ''));
 		$result = read('watch_pack_serge', 'name, description, category, language', $checkCol, '', $bdd);
@@ -356,7 +353,6 @@ else
 			header('Location: watchPack?type=create');
 			die();
 		}
-
 
 
 		$checkCol = array(array('pack_id', '=', $data['packId'], 'AND'),
@@ -375,7 +371,6 @@ else
 
 			$checkCol = array(array('id', 'IN', $packSource, ''));
 			$listAllSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
-
 
 
 			$checkCol = array(array('pack_id', '=', $data['packId'], 'AND'),
@@ -397,8 +392,6 @@ else
 	}
 	else
 	{
-
-
 		$checkCol    = array(array('id', '=', $_SESSION['id'], ''));
 		$packDetails = read('users_table_serge', 'language', $checkCol, '', $bdd);
 		$packDetails = $packDetails[0];
@@ -407,8 +400,7 @@ else
 	$checkCol    = array();
 	$languageBDD = read('language_serge', 'code, name', $checkCol, '', $bdd);
 
-	$userLang = strtolower($packDetails['language']);
-
+	$userLang       = strtolower($packDetails['language']);
 	$selectLanguage = '<select class="shortSelect" name="language">' . PHP_EOL;
 
 	foreach ($languageBDD as $languageLine)
@@ -427,7 +419,7 @@ else
 	$selectLanguage = $selectLanguage . PHP_EOL . '</select>';
 
 	// Edit a pack
-	if (!empty($data['packId']) && !empty($data['addNewPack']) && !empty($data['watchPackName']) && !empty($data['watchPackDescription']))
+	if ($emailIsCheck && !empty($data['packId']) && !empty($data['addNewPack']) && !empty($data['watchPackName']) && !empty($data['watchPackDescription']))
 	{
 		// Check if watch pack is own by the user
 
@@ -452,7 +444,7 @@ else
 			$execution = update('watch_pack_serge', $updateCol, $checkCol, '', $bdd);
 		}
 	}
-	elseif (!empty($data['addNewKeyword']) && !empty($data['sourceKeyword']) && !empty($data['newKeyword']))
+	elseif ($emailIsCheck && !empty($data['addNewKeyword']) && !empty($data['sourceKeyword']) && !empty($data['newKeyword']))
 	{
 		$newKeywordArray = preg_split('/,/', $data['newKeyword'], -1, PREG_SPLIT_NO_EMPTY);
 
@@ -532,7 +524,7 @@ else
 			}
 		}
 	}
-	elseif (!empty($data['addNewSource']) && !empty($data['newSource']))
+	elseif ($emailIsCheck && !empty($data['addNewSource']) && !empty($data['newSource']))
 	{
 		$checkCol = array(array('link', '=', $data['newSource'], ''));
 		$result = read('rss_serge', 'id', $checkCol, '', $bdd);
@@ -591,7 +583,7 @@ else
 			}
 		}
 	}
-	elseif (!empty($data['delKeyword']) || !empty($data['disableKeyword']) || !empty($data['activateKeyword']))
+	elseif ($emailIsCheck && (!empty($data['delKeyword']) || !empty($data['disableKeyword']) || !empty($data['activateKeyword'])))
 	{
 		# Delete, disable, active keyword
 		if (!empty($data['delKeyword']))
@@ -654,7 +646,7 @@ else
 			}
 		}
 	}
-	elseif (!empty($data['delSource']) || !empty($data['disableSource']) || !empty($data['activateSource']))
+	elseif ($emailIsCheck && (!empty($data['delSource']) || !empty($data['disableSource']) || !empty($data['activateSource'])))
 	{
 		# Delete, disable, active sources
 		if (!empty($data['delSource']))
@@ -760,7 +752,7 @@ else
 			}
 		}
 	}
-	elseif (!empty($data['scienceQuerySubmit']))
+	elseif ($emailIsCheck && !empty($data['scienceQuerySubmit']))
 	{
 		$cpt = 0;
 		$open = 0;
@@ -851,7 +843,7 @@ else
 		}
 	}
 	#Delete science query
-	elseif (!empty($data['delQueryScience']))
+	elseif ($emailIsCheck && !empty($data['delQueryScience']))
 	{
 		// Read owner science query
 
@@ -872,7 +864,7 @@ else
 		}
 	}
 	#Disable science query
-	elseif (!empty($data['disableQueryScience']))
+	elseif ($emailIsCheck && !empty($data['disableQueryScience']))
 	{
 		// Read owner science query
 
@@ -890,7 +882,7 @@ else
 		}
 	}
 	#Activate science query
-	elseif (!empty($data['activateQueryScience']))
+	elseif ($emailIsCheck && !empty($data['activateQueryScience']))
 	{
 		// Read owner science query
 		$checkCol = array(array('id', '=', $data['activateQueryScience'], 'AND'),
@@ -907,7 +899,7 @@ else
 			$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
 		}
 	}
-	elseif (!empty($data['patentQuerySubmit']))
+	elseif ($emailIsCheck && !empty($data['patentQuerySubmit']))
 	{
 		$cpt                        = 0;
 		$andOrPatent                = '';
@@ -968,7 +960,7 @@ else
 		}
 	}
 	#Delete patent query
-	elseif (!empty($data['delQueryPatent']))
+	elseif ($emailIsCheck && !empty($data['delQueryPatent']))
 	{
 		// Read owner patent query
 
@@ -990,7 +982,7 @@ else
 		}
 	}
 	#Disable patent query
-	elseif (!empty($data['disableQueryPatent']))
+	elseif ($emailIsCheck && !empty($data['disableQueryPatent']))
 	{
 		// Read owner patent query
 
@@ -1008,7 +1000,7 @@ else
 		}
 	}
 	#Activate patent query
-	elseif (!empty($data['activateQueryPatent']))
+	elseif ($emailIsCheck && !empty($data['activateQueryPatent']))
 	{
 		// Read owner patent query
 
@@ -1043,7 +1035,7 @@ else
 			$delEditingPatentQuery = $data['delEditingPatentQuery'];
 		}
 	}
-	elseif (!empty($data['addNewPack']) && $data['watchPackList'] === 'NewPack' && !empty($data['watchPackName']) && !empty($data['watchPackDescription']))
+	elseif ($emailIsCheck && !empty($data['addNewPack']) && $data['watchPackList'] === 'NewPack' && !empty($data['watchPackName']) && !empty($data['watchPackDescription']))
 	{
 		$newWatchPackName = $data['watchPackName'];
 		$language = strtoupper($data['language']);
@@ -1103,7 +1095,7 @@ else
 			$ERRORMESSAGENEWPACKNAME = 'A watch pack with this name already exist, please change the name';
 		}
 	}
-	elseif (!empty($data['addNewPack']) && $data['watchPackList'] === 'NewPack' && (empty($data['watchPackName']) || empty($data['watchPackDescription'])))
+	elseif ($emailIsCheck && !empty($data['addNewPack']) && $data['watchPackList'] === 'NewPack' && (empty($data['watchPackName']) || empty($data['watchPackDescription'])))
 	{
 		$ERRORMESSAGEEMPTYNAMEORDESC = 'You have to enter a name and a description for your watch pack';
 	}

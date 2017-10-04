@@ -188,7 +188,7 @@ $checkCol     = array(array('users', '=', $_SESSION['pseudo'], ''));
 $userSettings = read('users_table_serge', 'id, email, password, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, record_read, history_lifetime, background_result, record_read, premium_expiration_date', $checkCol, '', $bdd);
 $userSettings = $userSettings[0];
 
-if (!empty($data['settings']) && $data['settings'] === 'ChangeSettings')
+if ($emailIsCheck && !empty($data['settings']) && $data['settings'] === 'ChangeSettings')
 {
 	# Change email
 	if (!empty($data['email']))
@@ -264,7 +264,7 @@ if (!empty($data['settings']) && $data['settings'] === 'ChangeSettings')
 }
 
 # Delete history button
-if (!empty($data['buttonDeleteHistory']) && $data['buttonDeleteHistory'] === 'deleteHistory')
+if ($emailIsCheck && !empty($data['buttonDeleteHistory']) && $data['buttonDeleteHistory'] === 'deleteHistory')
 {
 	$deleteHistoryValue = $data['deleteHistoryValue'];
 	$deleteHistoryUnit  = $data['deleteHistoryUnit'];
@@ -314,7 +314,7 @@ if (!empty($data['buttonDeleteHistory']) && $data['buttonDeleteHistory'] === 'de
 }
 
 # Adding new source
-if (!empty($data['sourceType']) && !empty($data['newSource']) && $data['sourceType'] === 'inputSource')
+if ($emailIsCheck && !empty($data['sourceType']) && !empty($data['newSource']) && $data['sourceType'] === 'inputSource')
 {
 	$sourceToTest = escapeshellarg($data['newSource']);
 	$cmd          = '/usr/bin/python /var/www/Serge/checkfeed.py ' . $sourceToTest;
@@ -375,7 +375,7 @@ if (!empty($data['sourceType']) && !empty($data['newSource']) && $data['sourceTy
 }
 
 # Adding new keyword
-if (!empty($data['sourceKeyword']) && !empty($data['newKeyword']))
+if ($emailIsCheck && !empty($data['sourceKeyword']) && !empty($data['newKeyword']))
 {
 	include('model/addNewKeyword.php');
 	$sourceId    = $data['sourceKeyword'];
@@ -431,21 +431,21 @@ if (!empty($data['sourceKeyword']) && !empty($data['newKeyword']))
 }
 
 # Delete, disable, active keyword
-if (!empty($data['delKeyword']))
+if ($emailIsCheck && !empty($data['delKeyword']))
 {
 	preg_match_all("/[0-9]*&/", $data['delKeyword'], $matchKeywordAndSource);
 	$sourceIdAction  = preg_replace("/[^0-9]/", '', $matchKeywordAndSource[0][0]);
 	$keywordIdAction = preg_replace("/[^0-9]/", '', $matchKeywordAndSource[0][1]);
 	$action          = 'delKeyword';
 }
-elseif (!empty($data['disableKeyword']))
+elseif ($emailIsCheck && !empty($data['disableKeyword']))
 {
 	preg_match_all("/[0-9]*&/", $data['disableKeyword'], $matchKeywordAndSource);
 	$sourceIdAction  = preg_replace("/[^0-9]/", '', $matchKeywordAndSource[0][0]);
 	$keywordIdAction = preg_replace("/[^0-9]/", '', $matchKeywordAndSource[0][1]);
 	$action          = 'disableKeyword';
 }
-elseif (!empty($data['activateKeyword']))
+elseif ($emailIsCheck && !empty($data['activateKeyword']))
 {
 	preg_match_all("/[0-9]*&/", $data['activateKeyword'], $matchKeywordAndSource);
 	$sourceIdAction  = preg_replace("/[^0-9]/", '', $matchKeywordAndSource[0][0]);
@@ -453,7 +453,7 @@ elseif (!empty($data['activateKeyword']))
 	$action          = 'activateKeyword';
 }
 
-if (!empty($sourceIdAction) && !empty($keywordIdAction) && !empty($action))
+if ($emailIsCheck && !empty($sourceIdAction) && !empty($keywordIdAction) && !empty($action))
 {
 	# Check if keyword exist for this ownerSourcesList
 	$keywordExist = FALSE;
@@ -524,26 +524,26 @@ if (!empty($sourceIdAction) && !empty($keywordIdAction) && !empty($action))
 }
 
 # Delete, disable, active sources
-if (!empty($data['delSource']))
+if ($emailIsCheck && !empty($data['delSource']))
 {
 	preg_match("/[0-9]*&/", $data['delSource'], $matchSourceId);
 	$sourceIdAction  = preg_replace("/[^0-9]/", '', $matchSourceId[0]);
 	$action          = 'delSource';
 }
-elseif (!empty($data['disableSource']))
+elseif ($emailIsCheck && !empty($data['disableSource']))
 {
 	preg_match("/[0-9]*&/", $data['disableSource'], $matchSourceId);
 	$sourceIdAction  = preg_replace("/[^0-9]/", '', $matchSourceId[0]);
 	$action          = 'disableSource';
 }
-elseif (!empty($data['activateSource']))
+elseif ($emailIsCheck && !empty($data['activateSource']))
 {
 	preg_match("/[0-9]*&/", $data['activateSource'], $matchSourceId);
 	$sourceIdAction  = preg_replace("/[^0-9]/", '', $matchSourceId[0]);
 	$action          = 'activateSource';
 }
 
-if (!empty($sourceIdAction) && !empty($action))
+if ($emailIsCheck && !empty($sourceIdAction) && !empty($action))
 {
 	# Check if source exist for this owner
 	$sourceExist = FALSE;
@@ -597,99 +597,99 @@ if (!empty($sourceIdAction) && !empty($action))
 	}
 }
 
-	# Sending condition
-	if ($userSettings['send_condition'] === 'link_limit')
-	{
-		$condNbLink = 'checked';
-		$condFreq   = '';
-		$condDate   = '';
-	}
-	elseif ($userSettings['send_condition'] === 'freq')
-	{
-		$condNbLink = '';
-		$condFreq   = 'checked';
-		$condDate   = '';
-	}
-	elseif ($userSettings['send_condition'] === 'deadline')
-	{
-		$condNbLink = '';
-		$condFreq   = '';
-		$condDate   = 'checked';
-	}
+# Sending condition
+if ($userSettings['send_condition'] === 'link_limit')
+{
+	$condNbLink = 'checked';
+	$condFreq   = '';
+	$condDate   = '';
+}
+elseif ($userSettings['send_condition'] === 'freq')
+{
+	$condNbLink = '';
+	$condFreq   = 'checked';
+	$condDate   = '';
+}
+elseif ($userSettings['send_condition'] === 'deadline')
+{
+	$condNbLink = '';
+	$condFreq   = '';
+	$condDate   = 'checked';
+}
 
-	preg_match_all("/[1-7]/", $userSettings['selected_days'], $selected_days);
-	foreach ($selected_days[0] as $value)
-	{
-		$day[$value] = 'selected';
-	}
+preg_match_all("/[1-7]/", $userSettings['selected_days'], $selected_days);
+foreach ($selected_days[0] as $value)
+{
+	$day[$value] = 'selected';
+}
 
-	$day2 = $day;
+$day2 = $day;
 
-	if (isset($day[1]) && isset($day[2]) && isset($day[3]) && isset($day[4]) && isset($day[5]) && isset($day[6]) && isset($day[7]))
-	{
-		$day[1]  = '';
-		$day[2]  = '';
-		$day[3]  = '';
-		$day[4]  = '';
-		$day[5]  = '';
-		$day[6]  = '';
-		$day[7]  = '';
-		$day2[1] = '';
-		$day2[2] = '';
-		$day2[3] = '';
-		$day2[4] = '';
-		$day2[5] = '';
-		$day2[6] = '';
-		$day2[7] = '';
-		$day[9]  = 'selected';
-	}
-	elseif (isset($day[1]) && isset($day[2]) && isset($day[3]) && isset($day[4]) && isset($day[5]))
-	{
-		$day[1]  = '';
-		$day[2]  = '';
-		$day[3]  = '';
-		$day[4]  = '';
-		$day[5]  = '';
-		$day[6]  = '';
-		$day[7]  = '';
-		$day2[1] = '';
-		$day2[2] = '';
-		$day2[3] = '';
-		$day2[4] = '';
-		$day2[5] = '';
-		$day[0]  = 'selected';
-	}
-	elseif(isset($day[1]) && isset($day[3]) && isset($day[5]))
-	{
-		$day[1]  = '';
-		$day[2]  = '';
-		$day[3]  = '';
-		$day[4]  = '';
-		$day[5]  = '';
-		$day[6]  = '';
-		$day[7]  = '';
-		$day2[1] = '';
-		$day2[3] = '';
-		$day2[5] = '';
-		$day[8]  = 'selected';
-	}
+if (isset($day[1]) && isset($day[2]) && isset($day[3]) && isset($day[4]) && isset($day[5]) && isset($day[6]) && isset($day[7]))
+{
+	$day[1]  = '';
+	$day[2]  = '';
+	$day[3]  = '';
+	$day[4]  = '';
+	$day[5]  = '';
+	$day[6]  = '';
+	$day[7]  = '';
+	$day2[1] = '';
+	$day2[2] = '';
+	$day2[3] = '';
+	$day2[4] = '';
+	$day2[5] = '';
+	$day2[6] = '';
+	$day2[7] = '';
+	$day[9]  = 'selected';
+}
+elseif (isset($day[1]) && isset($day[2]) && isset($day[3]) && isset($day[4]) && isset($day[5]))
+{
+	$day[1]  = '';
+	$day[2]  = '';
+	$day[3]  = '';
+	$day[4]  = '';
+	$day[5]  = '';
+	$day[6]  = '';
+	$day[7]  = '';
+	$day2[1] = '';
+	$day2[2] = '';
+	$day2[3] = '';
+	$day2[4] = '';
+	$day2[5] = '';
+	$day[0]  = 'selected';
+}
+elseif(isset($day[1]) && isset($day[3]) && isset($day[5]))
+{
+	$day[1]  = '';
+	$day[2]  = '';
+	$day[3]  = '';
+	$day[4]  = '';
+	$day[5]  = '';
+	$day[6]  = '';
+	$day[7]  = '';
+	$day2[1] = '';
+	$day2[3] = '';
+	$day2[5] = '';
+	$day[8]  = 'selected';
+}
 
-	$firstEntry = FALSE;
-	$cpt = 1;
-	while ($cpt <= 7)
+$firstEntry = FALSE;
+$cpt = 1;
+while ($cpt <= 7)
+{
+	if ($day[$cpt] === 'selected' && $day2[$cpt] === 'selected' && !$firstEntry)
 	{
-		if ($day[$cpt] === 'selected' && $day2[$cpt] === 'selected' && !$firstEntry)
-		{
-			$day2[$cpt] = '';
-			$firstEntry = TRUE;
-		}
-		elseif ($day[$cpt] === 'selected' && $day2[$cpt] === 'selected' && $firstEntry)
-		{
-			$day[$cpt] = '';
-			$cpt       = 8;
-		}
-		$cpt++;
+		$day2[$cpt] = '';
+		$firstEntry = TRUE;
 	}
+	elseif ($day[$cpt] === 'selected' && $day2[$cpt] === 'selected' && $firstEntry)
+	{
+		$day[$cpt] = '';
+		$cpt       = 8;
+	}
+	$cpt++;
+}
 
 # Sorting links in email
 if ($userSettings['mail_design'] === 'masterword')
@@ -716,7 +716,7 @@ elseif ($userSettings['record_read'] == 1)
 }
 
 # Edit science query
-if (!empty($data['action']) && !empty($data['query']) && $data['action'] === 'editQueryScience')
+if ($emailIsCheck && !empty($data['action']) && !empty($data['query']) && $data['action'] === 'editQueryScience')
 {
 	$checkCol = array(array('id', '=', $data['query'], 'AND'),
 										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
@@ -770,7 +770,7 @@ if (!empty($data['action']) && !empty($data['query']) && $data['action'] === 'ed
 
 
 # Delete editing query
-if (!empty($data['delEditingScienceQuery']) && empty($data['extendScience']))
+if ($emailIsCheck && !empty($data['delEditingScienceQuery']) && empty($data['extendScience']))
 {
 	$checkCol = array(array('id', '=', $data['delEditingScienceQuery'], ''),
 										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
@@ -789,7 +789,7 @@ if (!empty($data['delEditingScienceQuery']) && empty($data['extendScience']))
 
 # Add new science query
 include('model/addNewScienceQuery.php');
-if (!empty($data['scienceQuerySubmit']) && $data['scienceQuerySubmit'] === 'add')
+if ($emailIsCheck && !empty($data['scienceQuerySubmit']) && $data['scienceQuerySubmit'] === 'add')
 {
 	$cpt                         = 0;
 	$open                        = 0;
@@ -876,7 +876,7 @@ if (!empty($data['scienceQuerySubmit']) && $data['scienceQuerySubmit'] === 'add'
 }
 
 #Delete science query
-if (!empty($data['delQueryScience']))
+if ($emailIsCheck && !empty($data['delQueryScience']))
 {
 	// Read owner science query
 	$checkCol = array(array('id', '=', $data['delQueryScience'], 'AND'),
@@ -897,7 +897,7 @@ if (!empty($data['delQueryScience']))
 }
 
 #Disable science query
-if (!empty($data['disableQueryScience']))
+if ($emailIsCheck && !empty($data['disableQueryScience']))
 {
 	$checkCol = array(array('id', '=',$data['disableQueryScience'], 'AND'),
 										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
@@ -917,7 +917,7 @@ if (!empty($data['disableQueryScience']))
 }
 
 #Activate science query
-if (!empty($data['activateQueryScience']))
+if ($emailIsCheck && !empty($data['activateQueryScience']))
 {
 	$checkCol = array(array('id', '=', $data['activateQueryScience'], 'AND'),
 										array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
@@ -936,7 +936,7 @@ if (!empty($data['activateQueryScience']))
 }
 
 # Edit patent query
-if (!empty($data['action']) && !empty($data['query']) && $data['action'] === 'editQueryPatent')
+if ($emailIsCheck && !empty($data['action']) && !empty($data['query']) && $data['action'] === 'editQueryPatent')
 {
 	$checkCol    = array(array('id', '=', $data['query'], 'AND'),
 											array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
@@ -982,7 +982,7 @@ if (!empty($data['action']) && !empty($data['query']) && $data['action'] === 'ed
 
 
 # Delete editing query
-if (!empty($data['delEditingPatentQuery']) && empty($data['extendPatent']))
+if ($emailIsCheck && !empty($data['delEditingPatentQuery']) && empty($data['extendPatent']))
 {
 		$checkCol = array(array('id', '=', $data['delEditingPatentQuery'], 'AND'),
 											array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
@@ -1000,7 +1000,7 @@ if (!empty($data['delEditingPatentQuery']) && empty($data['extendPatent']))
 }
 
 # Add new patents query
-if (!empty($data['patentQuerySubmit']) && $data['patentQuerySubmit'] === 'add')
+if ($emailIsCheck && !empty($data['patentQuerySubmit']) && $data['patentQuerySubmit'] === 'add')
 {
 	include('model/addNewPatentQuery.php');
 	$cpt         = 0;
@@ -1043,7 +1043,7 @@ if (!empty($data['patentQuerySubmit']) && $data['patentQuerySubmit'] === 'add')
 }
 
 #Delete patent query
-if (!empty($data['delQueryPatent']))
+if ($emailIsCheck && !empty($data['delQueryPatent']))
 {
 	$checkCol = array(array('id', '=', $data['delQueryPatent'], 'AND'),
 										array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', 'OR'),
@@ -1063,7 +1063,7 @@ if (!empty($data['delQueryPatent']))
 }
 
 #Disable patent query
-if (!empty($data['disableQueryPatent']))
+if ($emailIsCheck && !empty($data['disableQueryPatent']))
 {
 	$checkCol = array(array('id', '=', $data['disableQueryPatent'], 'AND'),
 										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
@@ -1081,7 +1081,7 @@ if (!empty($data['disableQueryPatent']))
 }
 
 #Activate patent query
-if (!empty($data['activateQueryPatent']))
+if ($emailIsCheck && !empty($data['activateQueryPatent']))
 {
 	$checkCol = array(array('id', '=', $data['activateQueryPatent'], 'AND'),
 										array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
