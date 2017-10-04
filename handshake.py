@@ -36,7 +36,7 @@ def highwayToMail(register, newsletter, priority, pydate):
 
 	verif_time = time.time()
 
-	if expiration_date < verif_time :
+	if expiration_date > verif_time :
 
 		######### SERGE MAIL
 		sergemail = open("permission/sergemail.txt", "r")
