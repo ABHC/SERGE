@@ -374,8 +374,6 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 					for jelly in jellychecking:
 						jelly_title = jelly[0]
 						jelly_link = jelly[1]
-						jelly_id_keyword = jelly[2] # BUG jelly_owner pas utilisé
-						jelly_owners = jelly[3] # BUG jelly_owner pas utilisé
 						damerauLevenshtein_title_score = 4
 
 						levenshtein_title_score = jellyfish.levenshtein_distance(post_title, jelly_title)
@@ -425,7 +423,6 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 	database = databaseConnection()
 
 	######### LOGGER CALL
-	logger_info = logging.getLogger("info_log")
 	logger_error = logging.getLogger("error_log")
 
 	######### SEND_STATUS UPDATE IN result_news_serge
@@ -455,6 +452,12 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 					database.rollback()
 					logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
 					logger_error.error(repr(except_type))
+
+			elif register_comma2 in send_status:
+				pass # BUG
+
+			else:
+				logger_error.warning("WARNING UNKNOWN ERROR") ###
 
 			call_news.close()
 
@@ -486,6 +489,12 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 					logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
 					logger_error.error(repr(except_type))
 
+			elif register_comma2 in send_status:
+				pass # BUG
+
+			else:
+				logger_error.warning("WARNING UNKNOWN ERROR")
+
 			call_science.close()
 
 	######### SEND_STATUS UPDATE IN result_patents_serge
@@ -515,6 +524,12 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 					database.rollback()
 					logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
 					logger_error.error(repr(except_type))
+
+			elif register_comma2 in send_status:
+				pass # BUG
+
+			else:
+				logger_info.warning("UNKNOWN ERROR")
 
 			call_patents.close()
 
