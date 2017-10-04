@@ -14,10 +14,10 @@ SET NAMES utf8mb4;
 CREATE INDEX index_text ON text_content_serge (index_name(30));
 
 INSERT INTO `text_content_serge` (`index_name`, `EN`, `FR`, `ES`, `DE`, `CN`) VALUES
-('main_title_index', 'Stay always update with Serge', 'Restez toujours à jour avec Serge', NULL, NULL, NULL),
+('main_title_index', 'Stay always up to date with Serge', 'Restez toujours à jour avec Serge', NULL, NULL, NULL),
 ('sub_title_index', 'Improving performance through news monitoring can often takes time.<br>
-	By searching the news, patents and scientific publications, Serge allows you to stay update effectively and gives you time to do other thing', 'L\'amélioration des performances grâce à la veille peut souvent prendre du temps.
-En recherchant les actualités, les brevets et les publications scientifiques, Serge vous permet de rester informé efficacement et vous donne le temps de faire autre chose', NULL, NULL, NULL),
+	By researching current news, patents and scientific publications, Serge allows you to stay informed efficiently and gives you time to do something else', 'L\'amélioration des performances grâce à la veille peut souvent prendre du temps.
+En faisant des recherches dans l\'actualité, les brevets et les publications scientifiques, Serge vous permet de rester informé efficacement et vous donne le temps de faire autre chose', NULL, NULL, NULL),
 ('try1_button_index', 'Try for free', 'Essayer gratuitement', NULL, NULL, NULL),
 ('try2_button_index', 'Let me try !', 'Laissez moi essayer !', NULL, NULL, NULL),
 ('comingSoon_button_index', 'Coming soon', 'Fonctionnalités à venir', NULL, NULL, NULL),
@@ -152,4 +152,10 @@ En recherchant les actualités, les brevets et les publications scientifiques, S
 ('input3_purchase_purchase', 'I have read the term of service.', 'J\'ai lu les conditions générales de service', NULL, NULL, NULL),
 ('errorMessageCaptcha', 'Bad captcha', 'Mauvais captcha', NULL, NULL, NULL),
 ('errorMessagePassphrase', 'Passphrase is too short or passphrase do not match', 'La phrase de passe est trop courte ou les phrases de passe ne correspondent pas', NULL, NULL, NULL),
+('title0_forgotPass_connection', 'Forgot passphrase', 'Phrase de passe oubliée', NULL, NULL, NULL),
+('submit0_forgotPass_connection', 'Submit', 'Envoyer', NULL, NULL, NULL),
+('title1_forgotPass_connection', 'Reset passphrase', 'Changer la phrase de passe', NULL, NULL, NULL),
+('checkMail_forgotPass_connection', 'Your request has been successfully sent, please check your emails to reset your password', 'Votre demande a été envoyée avec succès, veuillez vérifier vos emails, afin de réinitialiser votre mot de passe', NULL, NULL, NULL),
+('invalidRequest_forgotPass_connection', 'Your request is invalid or too old', 'Votre demande est invalide ou trop ancienne', NULL, NULL, NULL),
+('', '', '', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);

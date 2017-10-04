@@ -5,12 +5,12 @@
 	{
 		?>
 		<div class="connection">
-			<span class="title_connection">Forgot passphrase</span>
+			<span class="title_connection"><?php get_t('title0_forgotPass_connection', $bdd); ?></span>
 
 			<form method="post" action="connection?action=forgotPassphraseProcessing">
 				<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
 
-				<p class="title_form_connection">Email</p> <p><input class="connection_field" type="email" name="forg_email" id="Email" value="" /></p>
+				<p class="title_form_connection"><?php get_t('input4_signup_index', $bdd); ?></p> <p><input class="connection_field" type="email" name="forg_email" id="Email" value="" /></p>
 
 				<div class="title_form_inscription" ><?php get_t('input5_signup_index', $bdd); ?>
 					<div class="align">
@@ -26,7 +26,7 @@
 
 				<?php echo $errorMessage; ?>
 				<a class="text_connection" href="index#signup"><?php get_t('noAccount_link_connection', $bdd); ?></a>
-				<input class="submit_connection" type="submit" value="Submit"/>
+				<input class="submit_connection" type="submit" value="<?php get_t('submit0_forgotPass_connection', $bdd); ?>"/>
 			</form>
 		</div>
 		<?php
@@ -35,7 +35,7 @@
 	{
 		?>
 		<div class="connection">
-			<span class="title_connection">Reset passphrase</span>
+			<span class="title_connection"><?php get_t('title1_forgotPass_connection', $bdd); ?></span>
 
 			<form method="post" action="connection?action=resetPassphraseProcessing&token=<?php echo $data['token'];?>&checker=<?php echo $data['checker'];?>">
 				<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
@@ -56,7 +56,7 @@
 				</div>
 
 				<?php echo $errorMessage; ?>
-				<input class="submit_connection" type="submit" value="Reset passphrase"/>
+				<input class="submit_connection" type="submit" value="<?php get_t('title1_forgotPass_connection', $bdd); ?>"/>
 			</form>
 		</div>
 		<?php
@@ -65,7 +65,7 @@
 	{
 		?>
 		<div class="connection">
-			Your request was succesfully send, please check yours emails, in order to reset your password.
+			<?php get_t('checkMail_forgotPass_connection', $bdd); ?>
 		</div>
 		<?php
 	}
@@ -73,7 +73,7 @@
 	{
 		?>
 		<div class="connection">
-			Your request is unvalid or too old.
+			<?php get_t('invalidRequest_forgotPass_connection', $bdd); ?>
 		</div>
 		<?php
 	}
