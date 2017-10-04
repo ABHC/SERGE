@@ -175,6 +175,12 @@ $checkCol     = array(array('email_validation', '=', 1, 'AND'),
 											array('id', '=', $_SESSION['id'], ''));
 $emailIsCheck = read('users_table_serge', '', $checkCol, '', $bdd);
 
+if (!$emailIsCheck)
+{
+	# Javascript message if the user has not checked his email address
+	echo '<script>alert("Your email is not verified, you will not be able to use Serge")</script>';
+}
+
 # Read owner sources
 $checkCol  = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
 									array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
