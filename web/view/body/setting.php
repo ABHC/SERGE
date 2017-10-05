@@ -407,17 +407,6 @@
 
 						<a href="purchase" class="extendPremiumButton">Extend your premium account duration</a>
 						Your payment history :<br>
-						<div class="boxScroll">
-							<?php
-							foreach ($paymentList as $payment)
-							{
-								$numberOfMonths = $payment['duration_premium'] / (30*24*3600);
-								$price = $payment['price'] / 100;
-
-								echo date("H:i d/m/o", $payment['purchase_date']) . '&nbsp;&nbsp' . $numberOfMonths . ' months' . '&nbsp;&nbsp' . $price . '€' . '<br>';
-							}
-							?>
-						</div>
 						<?php
 					}
 					else
@@ -425,19 +414,21 @@
 						?>
 						<a href="purchase" class="UpgradeToPremiumButton">Upgrade your account to premium</a>
 						Your payment history :<br>
-						<div class="boxScroll">
-							<?php
-							foreach ($paymentList as $payment)
-							{
-								$numberOfMonths = $payment['duration_premium'] / (30*24*3600);
-								$price = $payment['price'] / 100;
-
-								echo date("H:i d/m/o", $payment['purchase_date']) . '&nbsp;&nbsp' . $numberOfMonths . ' months' . '&nbsp;&nbsp' . $price . '€' . '<br>';
-							}
-							?>
-						</div>
 						<?php
 					}
+					?>
+					<div class="boxScroll">
+						<?php
+						foreach ($paymentList as $payment)
+						{
+							$numberOfMonths = $payment['duration_premium'] / (30*24*3600);
+							$price = $payment['price'] / 100;
+
+							echo '<div><span>' . date("H:i d/m/o", $payment['purchase_date']) . '</span><span>' . $numberOfMonths . ' months' . '</span><span>' . $price . '€</span></div>';
+						}
+						?>
+					</div>
+					<?php
 					if (!$emailIsCheck)
 					{
 						?>

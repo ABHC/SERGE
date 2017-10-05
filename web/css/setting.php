@@ -1000,6 +1000,15 @@ h2
 	margin-bottom: 2px;
 }
 
+.boxScroll > div
+{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-around;
+	align-items: flex-start;
+}
+
 .arrDown
 {
 	position: relative;
