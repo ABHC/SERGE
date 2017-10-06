@@ -25,6 +25,7 @@ Install_dependency()
 	apt-get -y install git
 	apt-get -y install unzip
 	apt-get -y install apt-transport-https
+	apt-get -y install rsync
 }
 
 
@@ -1627,11 +1628,21 @@ echo "" >> /var/www/mediawiki/LocalSettings.php
 	chmod 600 /var/www/mediawiki/LocalSettings.php
 	chown www-data:www-data /var/www/mediawiki/LocalSettings.php
 
+	# Create serge repository
+	cd ~ || { echo "FATAL ERROR : cd command fail to go to ~"; exit 1; }
+	mkdir stableRepository
+	cd stableRepository || { echo "FATAL ERROR : cd command fail to go to ~/stableRepository"; exit 1; }
+	git clone https://github.com/ABHC/SERGE.git
+
 	# Create update stable command
 	echo "#!/bin/bash" > /usr/bin/SergeUpdate
 	echo "latestStable=\$(git tag | grep "\-alpha" | sort -V -r | cut -d$'\n' -f1)" >> /usr/bin/SergeUpdate
 	echo "git checkout \$latestStable" >> /usr/bin/SergeUpdate
+	echo "rsync -a --exclude='logs' /home/$mainUser/Depots/SERGE/web/ /var/www/Serge/web/ || { echo 'FATAL ERROR in rsync action for /home/$mainUser/Depots/SERGE/web/'; exit 1; }" >>  /usr/bin/SergeUpdate
+	echo "chown -R www-data:www-data /var/www/Serge/web/ || { echo 'FATAL ERROR in chown action for /var/www/Serge/web/'; exit 1; }" >>  /usr/bin/SergeUpdate
+	echo 'echo "Update to stable version success !"' >> /usr/bin/SergeUpdate
 
+	chmod +x /usr/bin/SergeUpdate
 
 	serge="installed"
 }
