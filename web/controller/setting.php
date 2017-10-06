@@ -330,7 +330,7 @@ if ($emailIsCheck && !empty($data['sourceType']) && !empty($data['newSource']) &
 	{
 		// Check if source is already in bdd
 		$checkCol   = array(array('link', ' =', $data['newSource'], ''));
-		$result     = read('rss_serge', 'owners', $checkCol, '', $bdd);
+		$result     = read('rss_serge', 'owners, active', $checkCol, '', $bdd);
 		$sourceInDB = $result[0];
 
 		if (empty($sourceInDB))
@@ -354,8 +354,8 @@ if ($emailIsCheck && !empty($data['sourceType']) && !empty($data['newSource']) &
 				if (empty($resultActualOwner))
 				{
 					// Update owners of existing source with the new onwer
-					$updateCol = array(array('owners', $resultActualOwner['owners'] . $_SESSION['id'] . ','),
-														array('active', $resultActualOwner['active'] + 1));
+					$updateCol = array(array('owners', $sourceInDB['owners'] . $_SESSION['id'] . ','),
+														array('active', $sourceInDB['active'] + 1));
 					$checkCol  = array(array('link', '=', $data['newSource'], ''));
 					$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
 				}

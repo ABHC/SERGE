@@ -1627,6 +1627,12 @@ echo "" >> /var/www/mediawiki/LocalSettings.php
 	chmod 600 /var/www/mediawiki/LocalSettings.php
 	chown www-data:www-data /var/www/mediawiki/LocalSettings.php
 
+	# Create update stable command
+	echo "#!/bin/bash" > /usr/bin/SergeUpdate
+	echo "latestStable=\$(git tag | grep "\-alpha" | sort -V -r | cut -d$'\n' -f1)" >> /usr/bin/SergeUpdate
+	echo "git checkout \$latestStable" >> /usr/bin/SergeUpdate
+
+
 	serge="installed"
 }
 
