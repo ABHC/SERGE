@@ -380,15 +380,16 @@ if ($emailIsCheck && !empty($data['sourceType']) && !empty($data['newSource']) &
 if ($emailIsCheck && !empty($data['sourceKeyword']) && !empty($data['newKeyword']))
 {
 	include('model/addNewKeyword.php');
-	$sourceId    = $data['sourceKeyword'];
-	$newKeyword  = ucfirst($data['newKeyword']);
+	$sourceId = $data['sourceKeyword'];
 
 	$_SESSION['lastSourceUse'] = $sourceId;
-	preg_match_all("/,?[^,]*,?/", $newKeyword, $newKeyword_array);
+	preg_match_all("/,?[^,]*,?/", $data['newKeyword'], $newKeyword_array);
 	array_pop($newKeyword_array[0]);
+
 	foreach ($newKeyword_array[0] as $keyword)
 	{
-		$newKeyword = preg_replace("/^ | *, *| $/", '', $keyword);
+		$keyword = ucfirst($keyword);
+		$keyword = preg_replace("/^ | *, *| $/", '', $keyword);
 		# Special keyword :all
 		if (preg_match("/^:all$/i", $newKeyword) && $sourceId != '00')
 		{
