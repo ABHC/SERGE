@@ -329,16 +329,16 @@ if ($emailIsCheck && !empty($data['sourceType']) && !empty($data['newSource']) &
 	if ($linkValidation[0] === 'valid link' && $errorInCheckfeed === 0)
 	{
 		// Check if source is already in bdd
-		$checkCol = array(array('link', '=', $source, ''));
-		$result   = read('rss_serge', 'owners', $checkCol, '', $bdd);
-		$result   = $result[0];
+		$checkCol   = array(array('link', ' =', $data['newSource'], ''));
+		$result     = read('rss_serge', 'owners', $checkCol, '', $bdd);
+		$sourceInDB = $result[0];
 
-		if (!$result)
+		if (empty($sourceInDB))
 		{
 			// Adding new source
-			preg_match('@^(?:http.*://[www.]*)?([^/]+)@i', $source, $matches);
+			preg_match('@^(?:http.*://[www.]*)?([^/]+)@i', $data['newSource'], $matches);
 
-			$insertCol = array(array('link', $source),
+			$insertCol = array(array('link', $data['newSource']),
 												array('owners', ',' . $_SESSION['id'] . ','),
 												array('name', ucfirst($matches[1] . '[!NEW!]')),
 												array('active', 1));
@@ -347,16 +347,16 @@ if ($emailIsCheck && !empty($data['sourceType']) && !empty($data['newSource']) &
 		else
 		{
 				$checkCol = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'AND'),
-													array('link', '=', $source, ''));
+													array('link', '=', $data['newSource'], ''));
 				$result   = read('rss_serge', 'owners, active', $checkCol, '', $bdd);
 				$resultActualOwner = $result[0];
 
-				if (!$resultActualOwner)
+				if (empty($resultActualOwner))
 				{
 					// Update owners of existing source with the new onwer
 					$updateCol = array(array('owners', $resultActualOwner['owners'] . $_SESSION['id'] . ','),
 														array('active', $resultActualOwner['active'] + 1));
-					$checkCol  = array(array('link', '=', $source, ''));
+					$checkCol  = array(array('link', '=', $data['newSource'], ''));
 					$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
 				}
 				else
