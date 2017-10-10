@@ -1,4 +1,4 @@
-Cleaning#!/bin/bash
+#!/bin/bash
 
 # Error log
 exec 2> >(tee -a error.log)
