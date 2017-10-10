@@ -17,8 +17,6 @@ Update_sys()
 	apt-get -y upgrade
 	echo -e "Mise à jour.......\033[32mDone\033[00m"
 	sleep 4
-	# Remove
-	read giveMeTheTime
 }
 
 Install_dependency()
@@ -28,8 +26,6 @@ Install_dependency()
 	apt-get -y install unzip
 	apt-get -y install apt-transport-https
 	apt-get -y install rsync
-	# Remove
-	read giveMeTheTime
 }
 
 
@@ -47,8 +43,6 @@ Install_Apache2()
 	systemctl restart apache2
 	echo -e "Installation d'apache2.......\033[32mDone\033[00m"
 	sleep 4
-	# Remove
-	read giveMeTheTime
 }
 
 Install_Mysql()
@@ -56,9 +50,6 @@ Install_Mysql()
 	echo "mysql-server mysql-server/root_password password $adminPass" | sudo debconf-set-selections
 	echo "mysql-server mysql-server/root_password_again password $adminPass" | sudo debconf-set-selections
 	apt-get -y install mysql-server
-
-	# Remove
-	read giveMeTheTime
 
 	# Secure MySQL installation
 	mysql -u root -p${adminPass} -e "DELETE FROM mysql.user WHERE User=''"
@@ -84,8 +75,6 @@ Install_PHP()
 	systemctl restart apache2
 	echo -e "Installation de PHP.......\033[32mDone\033[00m"
 	sleep 4
-	# Remove
-	read giveMeTheTime
 }
 
 Install_phpmyadmin()
@@ -102,16 +91,12 @@ Install_phpmyadmin()
 	systemctl restart apache2
 	echo -e "Installation de PHPmyadmin.......\033[32mDone\033[00m"
 	sleep 4
-	# Remove
-	read giveMeTheTime
 }
 
 Install_mail_server()
 {
 	# Install dependency
 	apt-get -y install php7.0-imap php7.0-curl
-	# Remove
-	read giveMeTheTime
 
 	# DNS
 	dialog --backtitle "Installation of Serge by Cairn Devices" --title "DNS configuration" \
@@ -132,9 +117,6 @@ Install_mail_server()
 	echo "postfix postfix/mailname string $domainName" | debconf-set-selections
 	echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections
 	apt-get -y install postfix postfix-mysql postfix-policyd-spf-python
-
-	# Remove
-	read giveMeTheTime
 
 	# Create database
 	mysql -u root -p${adminPass} -e "CREATE DATABASE postfix;"
@@ -494,9 +476,6 @@ Install_mail_server()
 	# Installation of Dovecot
 	apt-get -y install dovecot-core dovecot-imapd dovecot-lmtpd dovecot-mysql dovecot-sieve dovecot-managesieved
 
-	# Remove
-	read giveMeTheTime
-
 	# Configuration of Dovecot
 	echo "## Dovecot configuration file" > /etc/dovecot/dovecot.conf
 	echo "">> /etc/dovecot/dovecot.conf
@@ -652,9 +631,6 @@ Install_mail_server()
 	# Installation of OpenDKIM
 	apt-get -y install opendkim
 
-	# Remove
-	read giveMeTheTime
-
 	# Generate public/private key
 	mkdir -p /etc/opendkim/
 	mv /etc/opendkim.conf /etc/opendkim/
@@ -735,9 +711,6 @@ Install_mail_server()
 
 	# Installation of OpenDMARC
 	apt-get -y install opendmarc
-
-	# Remove
-	read giveMeTheTime
 
 	# Configuration of OpenDMARC
 	echo "AutoRestart             Yes" > /etc/opendmarc.conf
@@ -1209,9 +1182,6 @@ Install_Postgrey()
 	# Installation of Postgrey
 	apt-get -y install postgrey
 
-	# Remove
-	read giveMeTheTime
-
 	# Configuration of Postgrey
 	echo "# postgrey startup options, created for Debian" > /etc/default/postgrey
 	echo "# you may want to set" >> /etc/default/postgrey
@@ -1246,16 +1216,17 @@ Install_Serge()
 {
 	# Download Serge
 	git clone https://github.com/ABHC/SERGE.git
+	cd SERGE || { echo "FATAL ERROR : cd command fail to go to ~/SERGE"; exit 1; }
 	git fetch --all --tags --prune
 	latestStable=$(git tag | grep "\-stable" | sort -V -r | cut -d$'\n' -f1)
 	git checkout $latestStable
 	mkdir /var/www/Serge/
-	unzip master.zip -d /var/www/Serge/
 	rsync -a SERGE /var/www/Serge/
 	chmod -R 777 /var/www/Serge
+	cd ~ || { echo "FATAL ERROR : cd command fail to go to ~"; exit 1; }
 	rm -r SERGE
 
-	# Creation of CairnDevices user
+	# Creation of Serge user
 	echo "Creation of Serge user"
 	useradd -p $internalPass -s /bin/bash -d /var/www/Serge/ Serge
 
@@ -1451,9 +1422,6 @@ Install_Serge()
 	apt-get -y install composer
 	composer require stripe/stripe-php
 
-	# Remove
-	read giveMeTheTime
-
 	dialog --backtitle "Serge installation" --title "Stripe keys"\
 	--inputbox "Stripe account name" 7 60 2> $FICHTMP
 	accountName=$(cat $FICHTMP)
@@ -1467,7 +1435,7 @@ Install_Serge()
 	publishableKey=$(cat $FICHTMP)
 
 	# Add Stripe Keys in database
-	mysql -u root -p${adminPass} -e "INSERT INTO `stripe_table_serge`(`account_name`, `secret_key`, `publishable_key`) VALUES ('$accountName','$secretKey','$publishableKey')"
+	mysql -u root -p${adminPass} -e 'INSERT INTO `stripe_table_serge`(`account_name`, `secret_key`, `publishable_key`) VALUES ('$accountName','$secretKey','$publishableKey')'
 
 	# Cleaning
 	secretKey=""
@@ -1476,8 +1444,6 @@ Install_Serge()
 	# Dependency
 	apt-get -y install php-apcu
 	apt-get -y install php7.0-intl
-	# Remove
-	read giveMeTheTime
 
 	wget https://releases.wikimedia.org/mediawiki/1.28/mediawiki-1.28.0.tar.gz
 	tar -xvzf mediawiki-*.tar.gz
@@ -1721,8 +1687,6 @@ Security_app()
 	{
 		# Install dependency
 		apt-get -y install mailutils
-		# Remove
-		read giveMeTheTime
 
 		email=""
 		# Ask for email adress for security report
@@ -1742,10 +1706,9 @@ Security_app()
 		letsencrypt --apache  --email $email -d $domainName -d rainloop.$domainName  -d postfixadmin.$domainName -d piwik.$domainName
 		echo -e "Installation de let's encrypt.......\033[32mDone\033[00m"
 		sleep 4
-		# Remove
-		read giveMeTheTime
+
 		# Redirect http to https
-		sed -i "s/<\/Directory>/<\/Directory>\nRedirect permanent \/ https:\/\/$domainName\//g" /etc/apache2/sites-available/CairnDevices.conf
+		sed -i "s/<\/Directory>/<\/Directory>\nRedirect permanent \/ https:\/\/$domainName\//g" /etc/apache2/sites-available/Serge.conf
 		sed -i "s/<\/Directory>/<\/Directory>\nRedirect permanent \/ https:\/\/postfixadmin.$domainName\//g" /etc/apache2/sites-available/postfixadmin.conf
 		sed -i "s/<\/Directory>/<\/Directory>\nRedirect permanent \/ https:\/\/rainloop.$domainName\//g" /etc/apache2/sites-available/rainloop.conf
 		sed -i "s/<\/Directory>/<\/Directory>\nRedirect permanent \/ https:\/\/piwik.$domainName\//g" /etc/apache2/sites-available/piwik.conf
@@ -1782,8 +1745,7 @@ Security_app()
 	Check_rootkits()
 	{
 		apt-get -y install rkhunter chkrootkit lynis
-		# Remove
-		read giveMeTheTime
+
 		# Configuration of rkhunter
 		rkhunter --propupd
 		sed -i "s/#ALLOW_SSH_ROOT_USER=no/ALLOW_SSH_ROOT_USER=yes/g" /etc/rkhunter.conf
@@ -1835,8 +1797,7 @@ Security_app()
 	{
 		#Install and configure mod-security
 		apt-get -y install libapache2-mod-security2
-		# Remove
-		read giveMeTheTime
+
 		systemctl restart apache2
 
 		ln -s /usr/share/modsecurity-crs/modsecurity_crs_10_setup.conf /usr/share/modsecurity-crs/activated_rules/modsecurity_crs_10_setup.conf
@@ -1880,8 +1841,7 @@ Security_app()
 	Install_Fail2ban()
 	{
 		apt-get -y install fail2ban
-		# Remove
-		read giveMeTheTime
+
 		echo "[ssh-ddos]
 		enabled  = true
 		port     = ssh,sftp,$sshport
@@ -2108,8 +2068,6 @@ Security_app()
 	{
 		apt-get -y install unattended-upgrades
 		sed -i "s/\/\/Unattended-Upgrade::Mail \"root\";/Unattended-Upgrade::Mail \"$email\";/g" /etc/apt/apt.conf.d/50unattended-upgrades
-		# Remove
-		read giveMeTheTime
 	}
 
 	DOSDDOSOtherattacks_protection()
@@ -2120,8 +2078,6 @@ Security_app()
 		chown -R apache:apache /var/lock/mod_evasive
 
 		systemctl restart apache2
-		# Remove
-		read giveMeTheTime
 		# Remove blacklist ip
 		crontab -l > /tmp/crontab.tmp
 		echo "0 5 * * * find /var/lock/mod_evasive -mtime +1 -type f -exec rm -f '{}' \;" >> /tmp/crontab.tmp
@@ -2155,8 +2111,7 @@ Security_app()
 	{
 		# Install dependency
 		apt-get -y install php-xml
-		# Remove
-		read giveMeTheTime
+
 		wget http://www.ezservermonitor.com/esm-web/downloads/version/2.5
 		mkdir -p /var/www/esmweb/logs/
 		unzip 2.5 -d /var/www/esmweb
@@ -2342,12 +2297,12 @@ Security_app()
 		systemctl restart apache2
 
 		# Phpmyadmin htpasswd protection
-		sed -i "s/<\/Directory>/<\/Directory>\n<Location \/phpmyadmin>\n AuthUserFile \/var\/www\/CairnDevices\/.htpassword\n AuthGroupFile \/dev\/null\n AuthName \"Restricted access\"\n AuthType Basic\n require valid-user\n<\/Location>\n/g" /etc/apache2/sites-available/CairnDevices.conf
+		sed -i "s/<\/Directory>/<\/Directory>\n<Location \/phpmyadmin>\n AuthUserFile \/var\/www\/Serge\/.htpassword\n AuthGroupFile \/dev\/null\n AuthName \"Restricted access\"\n AuthType Basic\n require valid-user\n<\/Location>\n/g" /etc/apache2/sites-available/Serge.conf
 
-		htpasswd -bcB -C 8 /var/www/CairnDevices/.htpassword $email $passnohash
+		htpasswd -bcB -C 8 /var/www/Serge/.htpassword $email $passnohash
 
-		chmod 644 /var/www/CairnDevices/.htpassword
-		chown www-data:www-data /var/www/CairnDevices/.htpassword
+		chmod 644 /var/www/Serge/.htpassword
+		chown www-data:www-data /var/www/Serge/.htpassword
 
 		# Explain how to access to phpmyadmin
 		dialog --backtitle "Installation of Serge by Cairn Devices" --title "Htpasswd protection" \
@@ -2545,10 +2500,8 @@ Dev_utils()
 
 # TODO les fichiers supprimés reste présent dans le dossier www
 	echo "#!/bin/bash" >>  /usr/bin/SergeUpdateDev
-	echo "rsync -a --exclude=\"Repository\" --exclude='logs' --exclude='WebsiteCD-install.sh' --exclude='SQL' --exclude='js/piwik.js' /home/$mainUser/Depots/WebSiteCD/ /var/www/CairnDevices/ || { echo 'FATAL ERROR in rsync action for /home/$mainUser/Depots/WebSiteCD/'; exit 1; }" >>  /usr/bin/SergeUpdateDev
 	echo "rsync -a --exclude='logs' /home/$mainUser/Depots/SERGE/web/ /var/www/Serge/web/ || { echo 'FATAL ERROR in rsync action for /home/$mainUser/Depots/SERGE/web/'; exit 1; }" >>  /usr/bin/SergeUpdateDev
 	echo "rsync -a --exclude='.git' --exclude='.gitignore' --exclude='gitinfo.json' --exclude='.gitreview' --exclude='version' /home/$mainUser/Depots/Modern_Monobook/ /var/www/mediawiki/skins/ModernMonobook/ || { echo 'FATAL ERROR in rsync action for /home/$mainUser/Depots/Modern_Monobook/'; exit 1; }" >> /usr/bin/SergeUpdateDev
-	echo "chown -R www-data:www-data /var/www/CairnDevices/ || { echo 'FATAL ERROR in chown action for /var/www/CairnDevices/'; exit 1; }" >>  /usr/bin/SergeUpdateDev
 	echo "chown -R www-data:www-data /var/www/Serge/web/ || { echo 'FATAL ERROR in chown action for /var/www/Serge/web/'; exit 1; }" >>  /usr/bin/SergeUpdateDev
 	echo "chown -R www-data:www-data /var/www/mediawiki/ || { echo 'FATAL ERROR in chown action for /var/www/mediawiki/'; exit 1; }" >> /usr/bin/SergeUpdateDev
 	echo 'echo "Update Success !"' >> /usr/bin/SergeUpdateDev
@@ -2664,7 +2617,7 @@ Install_Piwik()
 	curl -L -d "" "http$Sssl://piwik.$domainName/index.php?action=finished&module=Installation&site_idSite=1&site_name=$domainName"  >> /dev/null
 
 	sed -i "s/installation_in_progress = 1//g" /var/www/piwik/config/config.ini.php
-	sed -i "6 s/IP.IP.IP.IP/piwik.$domainName/g" /var/www/CairnDevices/js/piwik/piwik.js
+	sed -i "6 s/IP.IP.IP.IP/piwik.$domainName/g" /var/www/Serge/js/piwik/piwik.js
 
 	chown www-data:www-data /var/www/piwik/ -Rf
 	chmod 750 piwik/ -Rf
