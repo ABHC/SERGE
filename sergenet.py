@@ -21,7 +21,7 @@ def aLinkToThePast(link, content_type):
 		elif content_type == 'etag':
 			content_link = requests.head(link, headers={'User-Agent': "Serge Browser"}, timeout=15).headers.get('etag')
 		elif content_type == 'favicon':
-			req = requests.get(favicon_link, stream=True)
+			req = requests.get(link, stream=True)
 			content_link = req.raw
 
 		logger_info.info("READ : "+link+"\n")
