@@ -1393,7 +1393,7 @@ Install_Serge()
 	echo $internalPass > /var/www/Serge/permission/password.txt
 
 	# Install Trweet
-	# TODO Demander si l'user veux installer stripe
+	# TODO Demander si l'user veux installer Twreet
 	mkdir /var/www/Serge/permission/SergeChirp
 	# TODO recup depuis l'user les info sur access_token_secret.txt  access_token.txt  consumer_key.txt  consumer_secret.txt
 	echo $accessTokenSecret > /var/www/Serge/permission/SergeChirp/access_token_secret.txt
@@ -1403,9 +1403,23 @@ Install_Serge()
 	chown -R Serge:Serge /var/www/Serge/permission/
 
 	# Install Stripe
-	# TODO Demander si l'user veux installer stripe
 	apt install composer
 	composer require stripe/stripe-php
+
+	dialog --backtitle "Serge installation" --title "Stripe keys"\
+	--inputbox "Stripe account name" 7 60 2> $FICHTMP
+	accountName=$(cat $FICHTMP)
+
+	dialog --backtitle "Serge installation" --title "Stripe keys"\
+	--inputbox "Stripe secret key" 7 60 2> $FICHTMP
+	secretKey=$(cat $FICHTMP)
+
+	dialog --backtitle "Serge installation" --title "Stripe keys"\
+	--inputbox "Stripe publishable key" 7 60 2> $FICHTMP
+	publishableKey=$(cat $FICHTMP)
+
+	# Add Stripe Keys in database
+	mysql -u root -p${adminPass} -e "INSERT INTO `stripe_table_serge`(`account_name`, `secret_key`, `publishable_key`) VALUES ('$accountName','$secretKey','$publishableKey')"
 
 	# Install Mediawiki
 	# Dependency
