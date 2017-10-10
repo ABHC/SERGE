@@ -2678,6 +2678,9 @@ Cleaning()
 	adminPass="0"
 	echo -e "Cleaning .............\033[32mDone\033[00m"
 
+	usermod --expiredate 1 root
+	passwd -l root
+
 	echo "We will now reboot your server"
 	sleep 5
 	reboot
