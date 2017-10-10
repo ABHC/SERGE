@@ -1,4 +1,4 @@
-#!/bin/bash
+Cleaning#!/bin/bash
 
 # Error log
 exec 2> >(tee -a error.log)
@@ -1215,13 +1215,15 @@ Install_Postgrey()
 Install_Serge()
 {
 	# Download Serge
-	wget https://github.com/ABHC/SERGE/archive/master.zip
+	git clone https://github.com/ABHC/SERGE.git
+	git fetch --all --tags --prune
+	latestStable=$(git tag | grep "\-stable" | sort -V -r | cut -d$'\n' -f1)
+	git checkout $latestStable
 	mkdir /var/www/Serge/
 	unzip master.zip -d /var/www/Serge/
-	rsync -a /var/www/Serge/SERGE-master/ /var/www/Serge/
+	rsync -a SERGE /var/www/Serge/
 	chmod -R 777 /var/www/Serge
-	rm master.zip
-	rm -r /var/www/Serge/SERGE-master/
+	rm -r SERGE
 
 	# Creation of CairnDevices user
 	echo "Creation of Serge user"
@@ -1361,16 +1363,29 @@ Install_Serge()
 	mysql -u root -p${adminPass} -e "CREATE USER 'Serge'@'localhost' IDENTIFIED BY '$internalPass';"
 	mysql -u root -p${adminPass} -e "GRANT ALL PRIVILEGES ON Serge.* TO Serge@localhost;"
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/admin_table_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/background_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/captcha_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/keyword_news_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/language_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/miscellaneous_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/newsletter_table_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/patents_sources_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/premium_code_table_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/price_table_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/purchase_table_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/queries_science_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/queries_wipo_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/result_news_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/result_patents_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/result_science_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/rss_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/science_sources_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/stripe_table_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/text_content_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/time_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/users_table_serge.sql
-	# TODO ajouter les tables qui manque + leurs valeurs de base
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/watch_pack_queries_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/watch_pack_serge.sql
 
 	rm -r /var/www/Serge/database_demo/
 
@@ -1420,6 +1435,9 @@ Install_Serge()
 
 	# Add Stripe Keys in database
 	mysql -u root -p${adminPass} -e "INSERT INTO `stripe_table_serge`(`account_name`, `secret_key`, `publishable_key`) VALUES ('$accountName','$secretKey','$publishableKey')"
+
+	# Cleaning
+	secretKey=""
 
 	# Install Mediawiki
 	# Dependency
@@ -2481,16 +2499,16 @@ Dev_utils()
 	cd ~ || { echo "FATAL ERROR : cd command fail to go to ~"; exit 1; }
 
 # TODO les fichiers supprimés reste présent dans le dossier www
-	echo "#!/bin/bash" >>  /usr/bin/updateCG
-	echo "rsync -a --exclude=\"Repository\" --exclude='logs' --exclude='WebsiteCD-install.sh' --exclude='SQL' --exclude='js/piwik.js' /home/$mainUser/Depots/WebSiteCD/ /var/www/CairnDevices/ || { echo 'FATAL ERROR in rsync action for /home/$mainUser/Depots/WebSiteCD/'; exit 1; }" >>  /usr/bin/updateCG
-	echo "rsync -a --exclude='logs' /home/$mainUser/Depots/SERGE/web/ /var/www/Serge/web/ || { echo 'FATAL ERROR in rsync action for /home/$mainUser/Depots/SERGE/web/'; exit 1; }" >>  /usr/bin/updateCG
-	echo "rsync -a --exclude='.git' --exclude='.gitignore' --exclude='gitinfo.json' --exclude='.gitreview' --exclude='version' /home/$mainUser/Depots/Modern_Monobook/ /var/www/mediawiki/skins/ModernMonobook/ || { echo 'FATAL ERROR in rsync action for /home/$mainUser/Depots/Modern_Monobook/'; exit 1; }" >> /usr/bin/updateCG
-	echo "chown -R www-data:www-data /var/www/CairnDevices/ || { echo 'FATAL ERROR in chown action for /var/www/CairnDevices/'; exit 1; }" >>  /usr/bin/updateCG
-	echo "chown -R www-data:www-data /var/www/Serge/web/ || { echo 'FATAL ERROR in chown action for /var/www/Serge/web/'; exit 1; }" >>  /usr/bin/updateCG
-	echo "chown -R www-data:www-data /var/www/mediawiki/ || { echo 'FATAL ERROR in chown action for /var/www/mediawiki/'; exit 1; }" >> /usr/bin/updateCG
-	echo 'echo "Update Success !"' >> /usr/bin/updateCG
+	echo "#!/bin/bash" >>  /usr/bin/SergeUpdateDev
+	echo "rsync -a --exclude=\"Repository\" --exclude='logs' --exclude='WebsiteCD-install.sh' --exclude='SQL' --exclude='js/piwik.js' /home/$mainUser/Depots/WebSiteCD/ /var/www/CairnDevices/ || { echo 'FATAL ERROR in rsync action for /home/$mainUser/Depots/WebSiteCD/'; exit 1; }" >>  /usr/bin/SergeUpdateDev
+	echo "rsync -a --exclude='logs' /home/$mainUser/Depots/SERGE/web/ /var/www/Serge/web/ || { echo 'FATAL ERROR in rsync action for /home/$mainUser/Depots/SERGE/web/'; exit 1; }" >>  /usr/bin/SergeUpdateDev
+	echo "rsync -a --exclude='.git' --exclude='.gitignore' --exclude='gitinfo.json' --exclude='.gitreview' --exclude='version' /home/$mainUser/Depots/Modern_Monobook/ /var/www/mediawiki/skins/ModernMonobook/ || { echo 'FATAL ERROR in rsync action for /home/$mainUser/Depots/Modern_Monobook/'; exit 1; }" >> /usr/bin/SergeUpdateDev
+	echo "chown -R www-data:www-data /var/www/CairnDevices/ || { echo 'FATAL ERROR in chown action for /var/www/CairnDevices/'; exit 1; }" >>  /usr/bin/SergeUpdateDev
+	echo "chown -R www-data:www-data /var/www/Serge/web/ || { echo 'FATAL ERROR in chown action for /var/www/Serge/web/'; exit 1; }" >>  /usr/bin/SergeUpdateDev
+	echo "chown -R www-data:www-data /var/www/mediawiki/ || { echo 'FATAL ERROR in chown action for /var/www/mediawiki/'; exit 1; }" >> /usr/bin/SergeUpdateDev
+	echo 'echo "Update Success !"' >> /usr/bin/SergeUpdateDev
 
-	chmod +x  /usr/bin/updateCG
+	chmod +x  /usr/bin/SergeUpdateDev
 
 	# Create dev user
 	devPassCrypt=$(mkpasswd  -m sha-512 -S blacksalt -s <<< $adminPass)
@@ -2607,7 +2625,7 @@ Install_Piwik()
 	chmod 750 piwik/ -Rf
 }
 
-Cleanning()
+Cleaning()
 {
 	apt-get -y autoremove
 	passnohash="0"
@@ -2708,7 +2726,7 @@ then
 	Install_Piwik
 	Security_app
 	ItsCert
-	Cleanning
+	Cleaning
 elif [ "$choix" = "Serveur mail" ]
 then
 	Install_Apache2
@@ -2719,7 +2737,7 @@ then
 	Install_Rainloop
 	Install_Postgrey
 	ItsCert
-	Cleanning
+	Cleaning
 elif [ "$choix" = "Mode dev" ]
 then
 	Install_Apache2
@@ -2734,5 +2752,5 @@ then
 	Security_app
 	ItsCert
 	Dev_utils
-	Cleanning
+	Cleaning
 fi
