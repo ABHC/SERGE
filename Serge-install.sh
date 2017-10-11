@@ -751,9 +751,9 @@ Install_mail_server()
 
 	systemctl restart apache2
 	systemctl restart postfix
-	systemctl restart dovecot
-	systemctl restart opendkim
 	systemctl restart opendmarc
+	systemctl restart opendkim
+	systemctl restart dovecot
 	systemctl restart postgrey
 }
 
@@ -1451,7 +1451,6 @@ Install_Serge()
 	mkdir /var/www/mediawiki/logs
 
 	rm -r mediawiki-*
-	rm mediawiki-*
 
 	chown www-data:www-data -R /var/www/mediawiki
 
