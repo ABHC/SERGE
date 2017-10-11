@@ -1281,7 +1281,7 @@ Install_Serge()
 	echo "AllowOverride all" >> /etc/apache2/sites-available/Serge.conf
 	echo "Order allow,deny" >> /etc/apache2/sites-available/Serge.conf
 	echo "allow from all" >> /etc/apache2/sites-available/Serge.conf
-	echo "</Directory>" >> /etc/apache2/sites-available/Serge.con
+	echo "</Directory>" >> /etc/apache2/sites-available/Serge.conf
 	echo "ErrorLog /var/www/Serge/web/logs/error.log" >> /etc/apache2/sites-available/Serge.conf
 	echo "CustomLog /var/www/Serge/web/logs/access.log combined" >> /etc/apache2/sites-available/Serge.conf
 	echo "</VirtualHost>" >> /etc/apache2/sites-available/Serge.conf
@@ -1383,7 +1383,6 @@ Install_Serge()
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/science_sources_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/stripe_table_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/text_content_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/time_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/users_table_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/watch_pack_queries_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/watch_pack_serge.sql
@@ -1435,7 +1434,7 @@ Install_Serge()
 	publishableKey=$(cat $FICHTMP)
 
 	# Add Stripe Keys in database
-	mysql -u root -p${adminPass} -e "INSERT INTO stripe_table_serge (account_name, secret_key, publishable_key) VALUES ('$accountName','$secretKey','$publishableKey')"
+	mysql -h localhost -p${internalPass} -u Serge Serge -e "INSERT INTO stripe_table_serge (account_name, secret_key, publishable_key) VALUES ('$accountName','$secretKey','$publishableKey')"
 
 	# Cleaning
 	secretKey=""
@@ -1445,14 +1444,14 @@ Install_Serge()
 	apt-get -y install php-apcu
 	apt-get -y install php7.0-intl
 
-	wget https://releases.wikimedia.org/mediawiki/1.28/mediawiki-1.28.0.tar.gz
+	wget https://releases.wikimedia.org/mediawiki/1.29/mediawiki-1.29.1.tar.gz
 	tar -xvzf mediawiki-*.tar.gz
 	mkdir /var/www/mediawiki
-	mv mediawiki-*/* /var/www/mediawiki/:/tmp
+	mv mediawiki-*/* /var/www/mediawiki/
 	mkdir /var/www/mediawiki/logs
 
-	rm -r mediawiki-1.28.0
-	rm mediawiki-1.28.0.tar.gz
+	rm -r mediawiki-*
+	rm mediawiki-*
 
 	chown www-data:www-data -R /var/www/mediawiki
 
