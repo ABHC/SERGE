@@ -703,7 +703,7 @@ Install_mail_server()
 
 	# DNS
 	opendkimPubKey=$(sed -n '/-----BEGIN PUBLIC KEY-----/,/-----END PUBLIC KEY-----/{//d;p}' /etc/opendkim/opendkim.pub.key)
-	opendkimPubKey=$($opendkimPubKey//' '/'')
+	opendkimPubKey=$(echo $opendkimPubKey | tr -d ' ')
 	dialog --backtitle "Installation of Serge by Cairn Devices" --title "DNS configuration" \
 	--ok-label "Next" --msgbox "
 	Consider to update your DNS like this :
@@ -1220,10 +1220,10 @@ Install_Serge()
 	git fetch --all --tags --prune
 	latestStable=$(git tag | grep "\-stable" | sort -V -r | cut -d$'\n' -f1)
 	git checkout $latestStable
-	mkdir /var/www/Serge/
-	rsync -a SERGE /var/www/Serge/
-	chmod -R 777 /var/www/Serge
 	cd ~ || { echo "FATAL ERROR : cd command fail to go to ~"; exit 1; }
+	mkdir /var/www/Serge/
+	rsync -a SERGE/ /var/www/Serge/ || { echo 'FATAL ERROR in rsync action for SERGE/'; exit 1; }
+	chmod -R 777 /var/www/Serge
 	rm -r SERGE
 
 	# Creation of Serge user
@@ -1435,7 +1435,7 @@ Install_Serge()
 	publishableKey=$(cat $FICHTMP)
 
 	# Add Stripe Keys in database
-	mysql -u root -p${adminPass} -e 'INSERT INTO `stripe_table_serge`(`account_name`, `secret_key`, `publishable_key`) VALUES ('$accountName','$secretKey','$publishableKey')'
+	mysql -u root -p${adminPass} -e "INSERT INTO stripe_table_serge (account_name, secret_key, publishable_key) VALUES ('$accountName','$secretKey','$publishableKey')"
 
 	# Cleaning
 	secretKey=""
@@ -1667,7 +1667,7 @@ echo "" >> /var/www/mediawiki/LocalSettings.php
 	cd stableRepository || { echo "FATAL ERROR : cd command fail to go to ~/stableRepository"; exit 1; }
 	git clone https://github.com/ABHC/SERGE.git
 
-	# Create update stable command
+	# Create update stable command TODO Add new table in database
 	echo "#!/bin/bash" > /usr/bin/SergeUpdate
 	echo "git fetch --all --tags --prune" >> /usr/bin/SergeUpdate
 	echo "latestStable=\$(git tag | grep "\-stable" | sort -V -r | cut -d$'\n' -f1)" >> /usr/bin/SergeUpdate
