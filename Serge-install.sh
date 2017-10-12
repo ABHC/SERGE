@@ -89,7 +89,7 @@ Install_phpmyadmin()
 	phpenmod mcrypt
 	phpenmod mbstring
 	systemctl restart apache2
-	echo -e "Installation de PHPmyadmin.......\033[32mDone\033[00m"
+	echo -e "Installation de phpmyadmin.......\033[32mDone\033[00m"
 	sleep 4
 }
 
@@ -125,11 +125,11 @@ Install_mail_server()
 	mysql -u root -p${adminPass} -e "GRANT ALL PRIVILEGES ON postfix.* TO 'postfix'@'localhost';"
 
 	# Install Postfixadmin
-	wget https://downloads.sourceforge.net/project/postfixadmin/postfixadmin/postfixadmin-3.1/postfixadmin-3.1.tar.gz
-	tar -xzf postfixadmin-3.1.tar.gz
-	mv postfixadmin-3.1 /var/www/postfixadmin
+	wget https://downloads.sourceforge.net/project/postfixadmin/postfixadmin/postfixadmin-3.0/postfixadmin-3.0.tar.gz
+	tar -xzf postfixadmin-3.0.tar.gz
+	mv postfixadmin-3.0 /var/www/postfixadmin
 	mkdir /var/www/postfixadmin/logs
-	rm postfixadmin-3.1.tar.gz
+	rm postfixadmin-3.0.tar.gz
 	chown -R www-data:www-data /var/www/postfixadmin
 
 	# Install Postfixadmin-cli
@@ -1217,7 +1217,7 @@ Install_Serge()
 	# Dependancy
 	apt-get -y install python-pip
 	pip install pip --upgrade pip
-	apt install libmysqlclient-dev
+	apt-get -y install libmysqlclient-dev
 	pip install mysqlclient
 	pip install feedparser
 	pip install jellyfish
@@ -1719,10 +1719,10 @@ Security_app()
 		sleep 4
 
 		# Redirect http to https
-		sed -i "s/<\/Directory>/<\/Directory>\nRedirect permanent \/ https:\/\/$domainName\//g" /etc/apache2/sites-available/Serge.conf
-		sed -i "s/<\/Directory>/<\/Directory>\nRedirect permanent \/ https:\/\/postfixadmin.$domainName\//g" /etc/apache2/sites-available/postfixadmin.conf
-		sed -i "s/<\/Directory>/<\/Directory>\nRedirect permanent \/ https:\/\/rainloop.$domainName\//g" /etc/apache2/sites-available/rainloop.conf
-		sed -i "s/<\/Directory>/<\/Directory>\nRedirect permanent \/ https:\/\/piwik.$domainName\//g" /etc/apache2/sites-available/piwik.conf
+		sed -i "s/<\/VirtualHost>/Redirect permanent \/ https:\/\/$domainName\/\n<\/VirtualHost>/g" /etc/apache2/sites-available/Serge.conf
+		sed -i "s/<\/VirtualHost>/Redirect permanent \/ https:\/\/postfixadmin.$domainName\/\n<\/VirtualHost>/g" /etc/apache2/sites-available/postfixadmin.conf
+		sed -i "s/<\/VirtualHost>/Redirect permanent \/ https:\/\/rainloop.$domainName\/\n<\/VirtualHost>/g" /etc/apache2/sites-available/rainloop.conf
+		sed -i "s/<\/VirtualHost>/Redirect permanent \/ https:\/\/piwik.$domainName\/\n<\/VirtualHost>/g" /etc/apache2/sites-available/piwik.conf
 
 		# Add crontab to in order to renew the certificate
 		crontab -l > /tmp/crontab.tmp
@@ -1734,12 +1734,12 @@ Security_app()
 		if [ "$esmweb" = "installed" ]
 		then
 			letsencrypt --apache  --email $email -d esmweb.$domainName
-			sed -i "s/<\/Directory>/<\/Directory>\nRedirect permanent \/ https:\/\/esmweb.$domainName\//g" /etc/apache2/sites-available/esmweb.conf
+			sed -i "s/<\/VirtualHost>/Redirect permanent \/ https:\/\/esmweb.$domainName\/\n<\/VirtualHost>/g" /etc/apache2/sites-available/esmweb.conf
 		elif [ "$serge" = "installed" ]
 		then
 			letsencrypt --apache  --email $email -d serge.$domainName -d mediawiki.$domainName
-			sed -i "s/<\/Directory>/<\/Directory>\nRedirect permanent \/ https:\/\/serge.$domainName\//g" /etc/apache2/sites-available/Serge.conf
-			sed -i "s/<\/Directory>/<\/Directory>\nRedirect permanent \/ https:\/\/mediawiki.$domainName\//g" /etc/apache2/sites-available/mediawiki.conf
+			sed -i "s/<\/VirtualHost>/Redirect permanent \/ https:\/\/serge.$domainName\/\n<\/VirtualHost>/g" /etc/apache2/sites-available/Serge.conf
+			sed -i "s/<\/VirtualHost>/Redirect permanent \/ https:\/\/mediawiki.$domainName\/\n<\/VirtualHost>/g" /etc/apache2/sites-available/mediawiki.conf
 		fi
 
 		systemctl restart apache2
@@ -2635,10 +2635,14 @@ Install_Piwik()
 
 Cleaning()
 {
+	adissite 000-default
+	adissite default-ssl
 	rm /etc/apache2/sites-available/000-default.conf
 	rm /etc/apache2/sites-available/default-ssl.conf
 	systemctl restart apache2
 
+	apt-get -y update
+	apt-get -y upgrade
 	apt-get -y autoremove
 	passnohash="0"
 	internalPass="0"

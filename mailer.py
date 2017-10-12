@@ -67,8 +67,8 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 	call_background.close()
 
 	######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
-	var_FR = ["votre veille du", "liens dans", "ACTUALITÉS", "PUBLICATIONS SCIENTIFIQUES", "BREVETS", "Voir sur le web", "Se désinscrire", "Retrouvez SERGE sur", "Propulsé par"]
-	var_EN = ["your news monitoring of", "links in", "NEWS", "SCIENTIFIC PUBLICATIONS", "PATENTS", "View Online", "Unsuscribe", "Find SERGE on", "Powered by"]
+	var_FR = ["votre veille du", "liens dans", "ACTUALITÉS", "PUBLICATIONS SCIENTIFIQUES", "BREVETS", "Voir sur le web", "Se&nbsp;désinscrire", "Retrouvez SERGE sur", "Propulsé par"]
+	var_EN = ["your news monitoring of", "links in", "NEWS", "SCIENTIFIC PUBLICATIONS", "PATENTS", "View Online", "Unsubscribe", "Find SERGE on", "Powered by"]
 
 	style = """<style type="text/css">
 	/* CLIENT-SPECIFIC STYLES */
@@ -176,7 +176,7 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 		newsletter = newsletterBySource(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list, style, background_filename)
 
 	######### CALL TO highwayToMail FUNCTION
-	handshake.highwayToMail(register, newsletter, priority, pydate)
+	handshake.highwayToMail(register, newsletter, priority, database, pydate)
 
 
 def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate, style, background_filename):

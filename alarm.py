@@ -61,8 +61,8 @@ def buildAlert(user, user_id_comma, register, alert_news_list, pydate):
 	call_background.close()
 
 	######### VARIABLES FOR ALERT FORMATTING BY LANGUAGE
-	var_FR = ["le", "alertes", "ACTUALITÉS", "PUBLICATIONS SCIENTIFIQUES", "BREVETS", "Voir sur le web", "Se désinscrire", "Retrouvez SERGE sur", "Propulsé par"]
-	var_EN = ["of", "alerts", "NEWS", "SCIENTIFIC PUBLICATIONS", "PATENTS", "View Online", "Unsuscribe", "Find SERGE on", "Powered by"]
+	var_FR = ["le", "alertes", "ACTUALITÉS", "PUBLICATIONS SCIENTIFIQUES", "BREVETS", "Voir sur le web", "Se&nbsp;désinscrire", "Retrouvez SERGE sur", "Propulsé par"]
+	var_EN = ["of", "alerts", "NEWS", "SCIENTIFIC PUBLICATIONS", "PATENTS", "View Online", "Unsubscribe", "Find SERGE on", "Powered by"]
 
 	style = """<style type="text/css">
 	/* CLIENT-SPECIFIC STYLES */
