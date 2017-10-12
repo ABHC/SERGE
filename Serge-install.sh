@@ -125,11 +125,11 @@ Install_mail_server()
 	mysql -u root -p${adminPass} -e "GRANT ALL PRIVILEGES ON postfix.* TO 'postfix'@'localhost';"
 
 	# Install Postfixadmin
-	wget https://downloads.sourceforge.net/project/postfixadmin/postfixadmin/postfixadmin-3.0/postfixadmin-3.0.tar.gz
-	tar -xzf postfixadmin-3.0.tar.gz
-	mv postfixadmin-3.0 /var/www/postfixadmin
+	wget https://downloads.sourceforge.net/project/postfixadmin/postfixadmin/postfixadmin-3.1/postfixadmin-3.1.tar.gz
+	tar -xzf postfixadmin-3.1.tar.gz
+	mv postfixadmin-3.1 /var/www/postfixadmin
 	mkdir /var/www/postfixadmin/logs
-	rm postfixadmin-3.0.tar.gz
+	rm postfixadmin-3.1.tar.gz
 	chown -R www-data:www-data /var/www/postfixadmin
 
 	# Install Postfixadmin-cli
@@ -1214,6 +1214,16 @@ Install_Postgrey()
 
 Install_Serge()
 {
+	# Dependancy
+	apt-get -y install python-pip
+	pip install pip --upgrade pip
+	apt install libmysqlclient-dev
+	pip install mysqlclient
+	pip install feedparser
+	pip install jellyfish
+	pip install tweepy
+	pip install requests
+
 	# Download Serge
 	git clone https://github.com/ABHC/SERGE.git
 	cd SERGE || { echo "FATAL ERROR : cd command fail to go to ~/SERGE"; exit 1; }
@@ -1223,6 +1233,9 @@ Install_Serge()
 	cd ~ || { echo "FATAL ERROR : cd command fail to go to ~"; exit 1; }
 	mkdir /var/www/Serge/
 	rsync -a SERGE/ /var/www/Serge/ || { echo 'FATAL ERROR in rsync action for SERGE/'; exit 1; }
+	mkdir /var/www/Serge/logs
+	touch /var/www/Serge/logs/serge_error_log.txt
+	touch /var/www/Serge/logs/serge_info_log.txt
 	chmod -R 777 /var/www/Serge
 	rm -r SERGE
 
@@ -1242,13 +1255,13 @@ Install_Serge()
 	# Configuration apache
 	echo "<VirtualHost *:80>" > /etc/apache2/sites-available/Serge.conf
 	echo "ServerAdmin postmaster@$domainName" >> /etc/apache2/sites-available/Serge.conf
-	echo "ServerName  $domainName/serge" >> /etc/apache2/sites-available/Serge.conf
-	echo "ServerAlias  serge.$domainName" >> /etc/apache2/sites-available/Serge.conf
+	echo "ServerName  $domainName" >> /etc/apache2/sites-available/Serge.conf
+	echo "ServerAlias  $domainName" >> /etc/apache2/sites-available/Serge.conf
 	echo "DocumentRoot /var/www/Serge/web/" >> /etc/apache2/sites-available/Serge.conf
 	echo "# Pass the default character set" >> /etc/apache2/sites-available/Serge.conf
 	echo "AddDefaultCharset utf-8" >> /etc/apache2/sites-available/Serge.conf
 	echo "# Containment of Serge webUI" >> /etc/apache2/sites-available/Serge.conf
-	echo "php_admin_value open_basedir /var/www/Serge/web:/usr/share/php/" >> /etc/apache2/sites-available/Serge.conf
+	echo "php_admin_value open_basedir /var/www/Serge/web:/usr/share/php/:/usr/share/phpmyadmin/:/etc/phpmyadmin/:/var/lib/phpmyadmin/:/usr/share/javascript/:/usr/share/doc/phpmyadmin/" >> /etc/apache2/sites-available/Serge.conf
 	echo "# Prohibit access to files starting with a dot" >> /etc/apache2/sites-available/Serge.conf
 	echo "<FilesMatch ^\\.>" >> /etc/apache2/sites-available/Serge.conf
 	echo "    Order allow,deny" >> /etc/apache2/sites-available/Serge.conf
@@ -1746,7 +1759,6 @@ Security_app()
 
 		# Configuration of rkhunter
 		rkhunter --propupd
-		sed -i "s/#ALLOW_SSH_ROOT_USER=no/ALLOW_SSH_ROOT_USER=yes/g" /etc/rkhunter.conf
 
 		# Configuration of lynis
 		apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C80E383C3DE9F082E01391A0366C67DE91CA5D5F
@@ -2623,6 +2635,10 @@ Install_Piwik()
 
 Cleaning()
 {
+	rm /etc/apache2/sites-available/000-default.conf
+	rm /etc/apache2/sites-available/default-ssl.conf
+	systemctl restart apache2
+
 	apt-get -y autoremove
 	passnohash="0"
 	internalPass="0"
