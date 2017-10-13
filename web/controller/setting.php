@@ -386,10 +386,10 @@ if ($emailIsCheck && !empty($data['sourceKeyword']) && !empty($data['newKeyword'
 	preg_match_all("/,?[^,]*,?/", $data['newKeyword'], $newKeyword_array);
 	array_pop($newKeyword_array[0]);
 
-	foreach ($newKeyword_array[0] as $keyword)
+	foreach ($newKeyword_array[0] as $newKeyword)
 	{
-		$keyword = ucfirst($keyword);
-		$keyword = preg_replace("/^ | *, *| $/", '', $keyword);
+		$newKeyword = ucfirst($newKeyword);
+		$newKeyword = preg_replace("/^ | *, *| $/", '', $newKeyword);
 		# Special keyword :all
 		if (preg_match("/^:all$/i", $newKeyword) && $sourceId != '00')
 		{

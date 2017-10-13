@@ -1817,11 +1817,12 @@ Security_app()
 
 		git clone https://github.com/SpiderLabs/owasp-modsecurity-crs.git /usr/share/modsecurity-crs
 
-		mv crs-setup.conf.example crs-setup.conf
+		mv /usr/share/modsecurity-crs/crs-setup.conf.example /usr/share/modsecurity-crs/crs-setup.conf
+		mv /etc/modsecurity/modsecurity.conf-recommended /etc/modsecurity/modsecurity.conf
 
 		sed -i "s/SecRuleEngine DetectionOnly/SecRuleEngine On/g" /etc/modsecurity/modsecurity.conf
 
-		sed -i "s/IncludeOptional \"\/usr\/share\/modsecurity-crs\/*.conf\"\n        IncludeOptional \"\/usr\/share\/modsecurity-crs\/rules\/*.conf\"/g"  /etc/apache2/mods-available/security2.conf
+		sed -i 's/<\/IfModule>/        IncludeOptional "\/usr\/share\/modsecurity-crs\/*.conf"\n        IncludeOptional "\/usr\/share\/modsecurity-crs\/rules\/*.conf"\n<\/IfModule>/g'  /etc/apache2/mods-available/security2.conf
 
 		systemctl restart apache2
 	}
@@ -2617,7 +2618,7 @@ Install_Piwik()
 	curl -L -d "" "http$Sssl://piwik.$domainName/index.php?action=finished&module=Installation&site_idSite=1&site_name=$domainName"  >> /dev/null
 
 	sed -i "s/installation_in_progress = 1//g" /var/www/piwik/config/config.ini.php
-	sed -i "6 s/piwikDomainName/piwik.$domainName/g" /var/www/Serge/js/piwik/piwik.js
+	sed -i "6 s/piwikDomainName/piwik.$domainName/g" /var/www/Serge/web/js/piwik/piwik.js
 
 	chown www-data:www-data /var/www/piwik/ -Rf
 	chmod 750 piwik/ -Rf
