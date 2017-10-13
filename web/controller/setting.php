@@ -384,7 +384,6 @@ if ($emailIsCheck && !empty($data['sourceKeyword']) && !empty($data['newKeyword'
 
 	$_SESSION['lastSourceUse'] = $sourceId;
 	preg_match_all("/,?[^,]*,?/", $data['newKeyword'], $newKeyword_array);
-	array_pop($newKeyword_array[0]);
 
 	foreach ($newKeyword_array[0] as $newKeyword)
 	{
