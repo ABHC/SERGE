@@ -1683,10 +1683,13 @@ echo "" >> /var/www/mediawiki/LocalSettings.php
 
 	# Create update stable command TODO Add new table in database
 	echo "#!/bin/bash" > /usr/bin/SergeUpdate
+	echo 'cd ~/stableRepository/SERGE/ || { echo "FATAL ERROR : cd command fail to go to ~/stableRepository/SERGE/"; exit 1; }' >> /usr/bin/SergeUpdate
 	echo "git fetch --all --tags --prune" >> /usr/bin/SergeUpdate
-	echo "latestStable=\$(git tag | grep "\-stable" | sort -V -r | cut -d$'\n' -f1)" >> /usr/bin/SergeUpdate
+	echo "git pull" >> /usr/bin/SergeUpdate
+	echo "latestStable=\$(git tag | grep \"\-stable\" | sort -V -r | cut -d\$'\n' -f1)" >> /usr/bin/SergeUpdate
 	echo "git checkout \$latestStable" >> /usr/bin/SergeUpdate
-	echo "rsync -a --exclude='logs' /home/$mainUser/Depots/SERGE/web/ /var/www/Serge/web/ || { echo 'FATAL ERROR in rsync action for /home/$mainUser/Depots/SERGE/web/'; exit 1; }" >>  /usr/bin/SergeUpdate
+	echo "rsync -a --exclude='logs' ~/stableRepository/SERGE/ /var/www/Serge/ || { echo 'FATAL ERROR in rsync action for ~/stableRepository/SERGE/'; exit 1; }" >>  /usr/bin/SergeUpdate
+	echo "chown -R Serge:Serge /var/www/Serge/ || { echo 'FATAL ERROR in chown action for /var/www/Serge/'; exit 1; }" >>  /usr/bin/SergeUpdate
 	echo "chown -R www-data:www-data /var/www/Serge/web/ || { echo 'FATAL ERROR in chown action for /var/www/Serge/web/'; exit 1; }" >>  /usr/bin/SergeUpdate
 	echo 'echo "Update to stable version success !"' >> /usr/bin/SergeUpdate
 
