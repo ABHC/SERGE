@@ -754,7 +754,6 @@ Install_mail_server()
 	systemctl restart opendmarc
 	systemctl restart opendkim
 	systemctl restart dovecot
-	systemctl restart postgrey
 }
 
 Install_Rainloop()
@@ -1814,28 +1813,15 @@ Security_app()
 
 		systemctl restart apache2
 
-		ln -s /usr/share/modsecurity-crs/modsecurity_crs_10_setup.conf /usr/share/modsecurity-crs/activated_rules/modsecurity_crs_10_setup.conf
+		rm -rf /usr/share/modsecurity-crs
 
-		cd /usr/share/modsecurity-crs/base_rules/ || { echo "FATAL ERROR : cd command fail to go to /usr/share/modsecurity-crs/base_rules/"; exit 1; }
+		git clone https://github.com/SpiderLabs/owasp-modsecurity-crs.git /usr/share/modsecurity-crs
 
-		for f in *
-		do
-			ln -s /usr/share/modsecurity-crs/base_rules/$f /usr/share/modsecurity-crs/activated_rules/$f
-		done
-
-		cd ~  || { echo "FATAL ERROR : cd command fail to go to ~"; exit 1; }
-
-		# rm /usr/share/modsecurity-crs/activated_rules/modsecurity_crs_21_protocol_anomalies.conf
-
-		# rm /usr/share/modsecurity-crs/activated_rules/modsecurity_crs_35_bad_robots.conf
-
-		# rm /usr/share/modsecurity-crs/activated_rules/modsecurity_crs_40_generic_attacks.conf
-
-		cp /etc/modsecurity/modsecurity.conf-recommended /etc/modsecurity/modsecurity.conf
+		mv crs-setup.conf.example crs-setup.conf
 
 		sed -i "s/SecRuleEngine DetectionOnly/SecRuleEngine On/g" /etc/modsecurity/modsecurity.conf
 
-		sed -i "s/IncludeOptional \/etc\/modsecurity\/\*\.conf/IncludeOptional \/etc\/modsecurity\/*.conf\n        IncludeOptional \/usr\/share\/modsecurity-crs\/activated_rules\/*.conf/g"  /etc/apache2/mods-available/security2.conf
+		sed -i "s/IncludeOptional \"\/usr\/share\/modsecurity-crs\/*.conf\"\n        IncludeOptional \"\/usr\/share\/modsecurity-crs\/rules\/*.conf\"/g"  /etc/apache2/mods-available/security2.conf
 
 		systemctl restart apache2
 	}
@@ -2463,7 +2449,7 @@ ItsCert()
 
 		# Add crontab rule in order to renew the certificate
 		crontab -l > /tmp/crontab.tmp
-		echo "0 0 1 1 * openssl x509 -req -days 365 -in mailserver.csr -signkey mailserver.key -out mailserver.crt" >> /tmp/crontab.tmp
+		echo "0 0 1 */2 * openssl x509 -req -days 365 -in mailserver.csr -signkey mailserver.key -out mailserver.crt" >> /tmp/crontab.tmp
 		crontab /tmp/crontab.tmp
 		rm /tmp/crontab.tmp
 
@@ -2631,7 +2617,7 @@ Install_Piwik()
 	curl -L -d "" "http$Sssl://piwik.$domainName/index.php?action=finished&module=Installation&site_idSite=1&site_name=$domainName"  >> /dev/null
 
 	sed -i "s/installation_in_progress = 1//g" /var/www/piwik/config/config.ini.php
-	sed -i "6 s/IP.IP.IP.IP/piwik.$domainName/g" /var/www/Serge/js/piwik/piwik.js
+	sed -i "6 s/piwikDomainName/piwik.$domainName/g" /var/www/Serge/js/piwik/piwik.js
 
 	chown www-data:www-data /var/www/piwik/ -Rf
 	chmod 750 piwik/ -Rf
