@@ -183,7 +183,7 @@ for row in rows:
 	field = (row[0], row[1], row[2], max_users, now)
 	newscast_args.append(field)
 
-nbProc = int(ceil(0.25 * nbRSS))
+nbProc = int(ceil(0.25 * nbRSS) + 1)
 
 ######### PROCESS CREATION FOR NEWSCAST AND RESEARCH OF LATEST NEWS
 pool = mp.Pool(processes=nbProc)
