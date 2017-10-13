@@ -1222,6 +1222,7 @@ Install_Serge()
 	pip install feedparser
 	pip install jellyfish
 	pip install tweepy
+	pip install bs4
 	pip install requests
 
 	# Download Serge
@@ -1401,6 +1402,9 @@ Install_Serge()
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/watch_pack_serge.sql
 
 	rm -r /var/www/Serge/database_demo/
+
+	# Add miscellaneous details about server
+	mysql -h localhost -p${internalPass} -u Serge Serge -e "UPDATE miscellaneous_serge SET value='$domainName' WHERE name='domain'"
 
 	# Create mailbox for Serge
 	postfixadmin-cli mailbox add serge@$domainName --password $internalPass --password2 $internalPass --name Serge --quota 20
@@ -1825,7 +1829,7 @@ Security_app()
 
 		# rm /usr/share/modsecurity-crs/activated_rules/modsecurity_crs_35_bad_robots.conf
 
-		rm /usr/share/modsecurity-crs/activated_rules/modsecurity_crs_40_generic_attacks.conf
+		# rm /usr/share/modsecurity-crs/activated_rules/modsecurity_crs_40_generic_attacks.conf
 
 		cp /etc/modsecurity/modsecurity.conf-recommended /etc/modsecurity/modsecurity.conf
 
@@ -2307,7 +2311,7 @@ Security_app()
 		systemctl restart apache2
 
 		# Phpmyadmin htpasswd protection
-		sed -i "s/<\/Directory>/<\/Directory>\n<Location \/phpmyadmin>\n AuthUserFile \/var\/www\/Serge\/.htpassword\n AuthGroupFile \/dev\/null\n AuthName \"Restricted access\"\n AuthType Basic\n require valid-user\n<\/Location>\n/g" /etc/apache2/sites-available/Serge.conf
+		sed -i "s/<\/Directory>/<\/Directory>\n<Location \/phpmyadmin>\n SecRuleEngine Off\n AuthUserFile \/var\/www\/Serge\/.htpassword\n AuthGroupFile \/dev\/null\n AuthName \"Restricted access\"\n AuthType Basic\n require valid-user\n<\/Location>\n/g" /etc/apache2/sites-available/Serge.conf
 
 		htpasswd -bcB -C 8 /var/www/Serge/.htpassword $email $passnohash
 
@@ -2635,8 +2639,8 @@ Install_Piwik()
 
 Cleaning()
 {
-	adissite 000-default
-	adissite default-ssl
+	a2dissite 000-default
+	a2dissite default-ssl
 	rm /etc/apache2/sites-available/000-default.conf
 	rm /etc/apache2/sites-available/default-ssl.conf
 	systemctl restart apache2
