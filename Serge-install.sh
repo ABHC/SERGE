@@ -2298,7 +2298,7 @@ Security_app()
 		systemctl restart apache2
 
 		# Phpmyadmin htpasswd protection
-		sed -i "s/<\/Directory>/<\/Directory>\n<Location \/phpmyadmin>\n SecRuleEngine Off\n AuthUserFile \/var\/www\/Serge\/.htpassword\n AuthGroupFile \/dev\/null\n AuthName \"Restricted access\"\n AuthType Basic\n require valid-user\n<\/Location>\n/g" /etc/apache2/sites-available/Serge.conf
+		sed -i "s/<\/Directory>/<\/Directory>\n<Location \/phpmyadmin>\n AuthUserFile \/var\/www\/Serge\/.htpassword\n AuthGroupFile \/dev\/null\n AuthName \"Restricted access\"\n AuthType Basic\n require valid-user\n<\/Location>\n/g" /etc/apache2/sites-available/Serge.conf
 
 		htpasswd -bcB -C 8 /var/www/Serge/.htpassword $email $passnohash
 
