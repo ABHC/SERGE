@@ -1234,6 +1234,7 @@ Install_Serge()
 	mkdir /var/www/Serge/
 	rsync -a SERGE/ /var/www/Serge/ || { echo 'FATAL ERROR in rsync action for SERGE/'; exit 1; }
 	mkdir /var/www/Serge/logs
+	touch /var/www/Serge/logs/serge_launch_log.txt
 	touch /var/www/Serge/logs/serge_error_log.txt
 	touch /var/www/Serge/logs/serge_info_log.txt
 	chmod -R 777 /var/www/Serge
@@ -1245,7 +1246,7 @@ Install_Serge()
 
 	# Add crontab for Serge
 	crontab -u Serge -l > /tmp/crontab.tmp
-	echo "0 */2 * * * /usr/bin/python /var/www/Serge/serge.py" >> /tmp/crontab.tmp
+	echo "0 */2 * * * /usr/bin/python /var/www/Serge/serge.py 2> /var/www/Serge/logs/serge_launch_log.txt" >> /tmp/crontab.tmp
 	crontab -u Serge /tmp/crontab.tmp
 	rm /tmp/crontab.tmp
 
@@ -1253,51 +1254,46 @@ Install_Serge()
 	chown -R Serge:Serge /var/www/Serge/
 
 	# Configuration apache
-	echo "<VirtualHost *:80>" > /etc/apache2/sites-available/Serge.conf
-	echo "ServerAdmin postmaster@$domainName" >> /etc/apache2/sites-available/Serge.conf
-	echo "ServerName  $domainName" >> /etc/apache2/sites-available/Serge.conf
-	echo "ServerAlias  $domainName" >> /etc/apache2/sites-available/Serge.conf
-	echo "DocumentRoot /var/www/Serge/web/" >> /etc/apache2/sites-available/Serge.conf
-	echo "# Pass the default character set" >> /etc/apache2/sites-available/Serge.conf
-	echo "AddDefaultCharset utf-8" >> /etc/apache2/sites-available/Serge.conf
-	echo "# Containment of Serge webUI" >> /etc/apache2/sites-available/Serge.conf
-	echo "php_admin_value open_basedir /var/www/Serge/web:/usr/share/php/:/usr/share/phpmyadmin/:/etc/phpmyadmin/:/var/lib/phpmyadmin/:/usr/share/javascript/:/usr/share/doc/phpmyadmin/" >> /etc/apache2/sites-available/Serge.conf
-	echo "# Prohibit access to files starting with a dot" >> /etc/apache2/sites-available/Serge.conf
-	echo "<FilesMatch ^\\.>" >> /etc/apache2/sites-available/Serge.conf
-	echo "    Order allow,deny" >> /etc/apache2/sites-available/Serge.conf
-	echo "    Deny from all" >> /etc/apache2/sites-available/Serge.conf
-	echo "</FilesMatch>" >> /etc/apache2/sites-available/Serge.conf
-	echo "<Directory /var/www/Serge/web/>" >> /etc/apache2/sites-available/Serge.conf
-	echo "Options Indexes FollowSymLinks" >> /etc/apache2/sites-available/Serge.conf
-	echo "AllowOverride all" >> /etc/apache2/sites-available/Serge.conf
-	echo "Order allow,deny" >> /etc/apache2/sites-available/Serge.conf
-	echo "allow from all" >> /etc/apache2/sites-available/Serge.conf
-	echo "</Directory>" >> /etc/apache2/sites-available/Serge.conf
-	echo "<Directory /var/www/Serge/web/*/>" >> /etc/apache2/sites-available/Serge.conf
-	echo "Order deny,allow" >> /etc/apache2/sites-available/Serge.conf
-	echo "Deny from all" >> /etc/apache2/sites-available/Serge.conf
-	echo "</Directory>" >> /etc/apache2/sites-available/Serge.conf
-	echo "<Directory \"/var/www/Serge/web/css/\">" >> /etc/apache2/sites-available/Serge.conf
-	echo "Options Indexes FollowSymLinks" >> /etc/apache2/sites-available/Serge.conf
-	echo "AllowOverride all" >> /etc/apache2/sites-available/Serge.conf
-	echo "Order allow,deny" >> /etc/apache2/sites-available/Serge.conf
-	echo "allow from all" >> /etc/apache2/sites-available/Serge.conf
-	echo "</Directory>" >> /etc/apache2/sites-available/Serge.conf
-	echo "<Directory \"/var/www/Serge/web/images/\">" >> /etc/apache2/sites-available/Serge.conf
-	echo "Options Indexes FollowSymLinks" >> /etc/apache2/sites-available/Serge.conf
-	echo "AllowOverride all" >> /etc/apache2/sites-available/Serge.conf
-	echo "Order allow,deny" >> /etc/apache2/sites-available/Serge.conf
-	echo "allow from all" >> /etc/apache2/sites-available/Serge.conf
-	echo "</Directory>" >> /etc/apache2/sites-available/Serge.conf
-	echo "<Directory \"/var/www/Serge/web/js/\">" >> /etc/apache2/sites-available/Serge.conf
-	echo "Options Indexes FollowSymLinks" >> /etc/apache2/sites-available/Serge.conf
-	echo "AllowOverride all" >> /etc/apache2/sites-available/Serge.conf
-	echo "Order allow,deny" >> /etc/apache2/sites-available/Serge.conf
-	echo "allow from all" >> /etc/apache2/sites-available/Serge.conf
-	echo "</Directory>" >> /etc/apache2/sites-available/Serge.conf
-	echo "ErrorLog /var/www/Serge/web/logs/error.log" >> /etc/apache2/sites-available/Serge.conf
-	echo "CustomLog /var/www/Serge/web/logs/access.log combined" >> /etc/apache2/sites-available/Serge.conf
-	echo "</VirtualHost>" >> /etc/apache2/sites-available/Serge.conf
+	echo "<VirtualHost *:80>
+	ServerAdmin postmaster@$domainName
+	ServerName  $domainName
+	ServerAlias  $domainName
+	DocumentRoot /var/www/Serge/web/
+
+	ErrorDocument 500 http://$domainName/error404.php
+	ErrorDocument 404 http://$domainName/error404.php
+	ErrorDocument 403 http://$domainName/error403.php
+	ErrorDocument 401 http://$domainName/error401.php
+
+	# Pass the default character set
+	AddDefaultCharset utf-8
+	# Containment of Serge webUI
+	php_admin_value open_basedir /var/www/Serge/web:/usr/share/php/:/usr/share/phpmyadmin/:/etc/phpmyadmin/:/var/lib/phpmyadmin/:/usr/share/javascript/:/usr/share/doc/phpmyadmin/
+
+	<FilesMatch ^\.>
+		Order allow,deny
+		Deny from all
+	</FilesMatch>
+
+	<Directory />
+		Order deny,allow
+		Deny from all
+	</Directory>
+
+	<Directory /var/www/Serge/web/>
+		Options -Indexes
+		Options +FollowSymLinks
+		AllowOverride all
+		Order allow,deny
+		allow from all
+		SecRuleEngine Off
+		RedirectMatch 301 ^/.+/$ /error403
+	</Directory>
+
+	ErrorLog /var/www/Serge/web/logs/error.log
+	CustomLog /var/www/Serge/web/logs/access.log combined
+
+	</VirtualHost>" > /etc/apache2/sites-available/Serge.conf
 
 	chown -R www-data:www-data /var/www/Serge/web/
 
