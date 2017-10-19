@@ -78,7 +78,7 @@ Install_Mysql()
 Install_Java()
 {
 	# Openjdk
-	apt-get -y install open-jdk-7-jre
+	apt-get -y install openjdk-8-jre
 }
 
 Install_Elasticsearch()
@@ -119,6 +119,11 @@ WantedBy=multi-user.target' > /etc/systemd/system/mongodb.service
 
 Install_Piwik()
 {
+	# Dependancy
+	apt-get install -y php7.0-mbstring
+	apt-get install -y php7.0-gd
+	apt-get install -y libfreetype6-dev
+
 	#Create database
 	mysql -u root -p${adminPass} -e "CREATE DATABASE piwik;"
 	mysql -u root -p${adminPass} -e "CREATE USER 'piwik'@'localhost' IDENTIFIED BY '$internalPass';"
@@ -213,8 +218,8 @@ Install_Graylog()
 	apt-get install -y pwgen
 	sed -i -e "s/password_secret =.*/password_secret = $(pwgen -s 128 1)/" /etc/graylog/server/server.conf
 	sed -i -e "s/root_password_sha2 =.*/root_password_sha2 = $(echo -n $adminPass | shasum -a 256 | cut -d' ' -f1)/" /etc/graylog/server/server.conf
-	sed -i -e "s/rest_listen_uri = http:\/\/127.0.0.1:9000\/api\//rest_listen_uri = http:\/\/$domainName:9000\/api\//g" /etc/graylog/server/server.conf
-	sed -i -e "s/#web_listen_uri = http:\/\/127.0.0.1:9000\//web_listen_uri = http:\/\/$domainName:9000\//g" /etc/graylog/server/server.conf
+	sed -i -e "s/rest_listen_uri = http:\/\/127.0.0.1:9000\/api\//rest_listen_uri = http:\/\/monitoring.$domainName:9000\/api\//g" /etc/graylog/server/server.conf
+	sed -i -e "s/#web_listen_uri = http:\/\/127.0.0.1:9000\//web_listen_uri = http:\/\/monitoring.$domainName:9000\//g" /etc/graylog/server/server.conf
 
 	systemctl restart graylog-server
 
