@@ -1451,6 +1451,17 @@ Install_Serge()
 	# Cleaning
 	secretKey=""
 
+	piwikMonitoring=""
+	# Ask for adress of piwik monitoring server
+	while [ "$piwikMonitoring" == "" ]
+	do
+		dialog --backtitle "Cairngit installation" --title "Adress of piwik monitoring server"\
+		--inputbox "" 7 60 2> $FICHTMP
+		piwikMonitoring=$(cat $FICHTMP)
+	done
+
+	sed -i "s/piwikDomainName/piwik.$piwikMonitoring/g" /var/www/Serge/web/js/piwik/piwik.js
+
 	# Install Mediawiki
 	# Dependency
 	apt-get -y install php-apcu
@@ -1587,20 +1598,20 @@ Install_Serge()
 	echo "\$wgEnableUploads = true;" >> /var/www/mediawiki/LocalSettings.php
 	echo "#\$wgUseImageMagick = true;" >> /var/www/mediawiki/LocalSettings.php
 	echo '#$wgImageMagickConvertCommand = "/usr/bin/convert";' >> /var/www/mediawiki/LocalSettings.php
-echo "" >> /var/www/mediawiki/LocalSettings.php
+	echo "" >> /var/www/mediawiki/LocalSettings.php
 	echo "# InstantCommons allows wiki to use images from https://commons.wikimedia.org" >> /var/www/mediawiki/LocalSettings.php
 	echo "\$wgUseInstantCommons = false;" >> /var/www/mediawiki/LocalSettings.php
-echo "" >> /var/www/mediawiki/LocalSettings.php
+	echo "" >> /var/www/mediawiki/LocalSettings.php
 	echo "# Periodically send a pingback to https://www.mediawiki.org/ with basic data" >> /var/www/mediawiki/LocalSettings.php
 	echo "# about this MediaWiki instance. The Wikimedia Foundation shares this data" >> /var/www/mediawiki/LocalSettings.php
 	echo "# with MediaWiki developers to help guide future development efforts." >> /var/www/mediawiki/LocalSettings.php
 	echo "\$wgPingback = false;" >> /var/www/mediawiki/LocalSettings.php
-echo "" >> /var/www/mediawiki/LocalSettings.php
+	echo "" >> /var/www/mediawiki/LocalSettings.php
 	echo "## If you use ImageMagick (or any other shell command) on a" >> /var/www/mediawiki/LocalSettings.php
 	echo "## Linux server, this will need to be set to the name of an" >> /var/www/mediawiki/LocalSettings.php
 	echo "## available UTF-8 locale" >> /var/www/mediawiki/LocalSettings.php
 	echo '$wgShellLocale = "en_US.utf8";' >> /var/www/mediawiki/LocalSettings.php
-echo "" >> /var/www/mediawiki/LocalSettings.php
+	echo "" >> /var/www/mediawiki/LocalSettings.php
 	echo "## Set \$wgCacheDirectory to a writable directory on the web server" >> /var/www/mediawiki/LocalSettings.php
 	echo "## to make your wiki go slightly faster. The directory should not" >> /var/www/mediawiki/LocalSettings.php
 	echo "## be publically accessible from the web." >> /var/www/mediawiki/LocalSettings.php
@@ -1625,7 +1636,7 @@ echo "" >> /var/www/mediawiki/LocalSettings.php
 	echo '$wgRightsUrl = "";' >> /var/www/mediawiki/LocalSettings.php
 	echo '$wgRightsText = "";' >> /var/www/mediawiki/LocalSettings.php
 	echo '$wgRightsIcon = "";' >> /var/www/mediawiki/LocalSettings.php
-echo "" >> /var/www/mediawiki/LocalSettings.php
+	echo "" >> /var/www/mediawiki/LocalSettings.php
 	echo "# Path to the GNU diff3 utility. Used for conflict resolution." >> /var/www/mediawiki/LocalSettings.php
 	echo '$wgDiff3 = "/usr/bin/diff3";' >> /var/www/mediawiki/LocalSettings.php
 	echo "" >> /var/www/mediawiki/LocalSettings.php
@@ -1716,7 +1727,7 @@ Security_app()
 	{
 		# Configuration letsencrypt cerbot
 		apt-get -y install python-letsencrypt-apache
-		letsencrypt --apache  --email $email -d $domainName -d rainloop.$domainName  -d postfixadmin.$domainName -d piwik.$domainName
+		letsencrypt --apache  --email $email -d $domainName -d rainloop.$domainName  -d postfixadmin.$domainName
 		echo -e "Installation de let's encrypt.......\033[32mDone\033[00m"
 		sleep 4
 
@@ -1724,7 +1735,6 @@ Security_app()
 		sed -i "s/<\/VirtualHost>/Redirect permanent \/ https:\/\/$domainName\/\n<\/VirtualHost>/g" /etc/apache2/sites-available/Serge.conf
 		sed -i "s/<\/VirtualHost>/Redirect permanent \/ https:\/\/postfixadmin.$domainName\/\n<\/VirtualHost>/g" /etc/apache2/sites-available/postfixadmin.conf
 		sed -i "s/<\/VirtualHost>/Redirect permanent \/ https:\/\/rainloop.$domainName\/\n<\/VirtualHost>/g" /etc/apache2/sites-available/rainloop.conf
-		sed -i "s/<\/VirtualHost>/Redirect permanent \/ https:\/\/piwik.$domainName\/\n<\/VirtualHost>/g" /etc/apache2/sites-available/piwik.conf
 
 		# Add crontab to in order to renew the certificate
 		crontab -l > /tmp/crontab.tmp
@@ -2072,6 +2082,16 @@ Security_app()
 
 	DOSDDOSOtherattacks_protection()
 	{
+		# UFW
+		ufw allow Apache Secure
+		ufw allow Dovecot Secure IMAP
+		ufw allow Dovecot Secure POP3
+		ufw allow OpenSSH
+		ufw allow Postfix
+		ufw allow Postfix SMTPS
+		ufw allow Postfix Submission
+		ufw enable
+
 		# Install and configure mod-evasive for apache2
 		apt-get -y install libapache2-mod-evasive
 		mkdir -p /var/lock/mod_evasive
@@ -2383,13 +2403,24 @@ Security_app()
 
 	}
 
+	Monitoring_with_graylog()
+	{
+		# Port to send log from other servers
+		ufw allow 8514/udp
+
+		# Configuration for recieve logs
+		echo "*.* @$domainName:8514;RSYSLOG_SyslogProtocol23Format" > /etc/rsyslog.d/60-graylog.conf
+
+		systemctl restart rsyslog
+	}
+
 	Mail_adress
 
 	dialog --backtitle "Installation of security apps" --title "Choose security apps" \
 	--ok-label "Ok" --cancel-label "Quit" \
 	--checklist "" 17 77 11 \
 	"Rootkits" "Check rootkits with rkhunter, chrootkit, lynis" off \
-	"SNORT" "Installattion of SNORT with web interface" off \
+	"Monitoring" "Rsyslog send logs to an external graylog server" off\
 	"SSH" "Change SSH port, send email when SSH connexion" off \
 	"ModSecurity" "Install apache WAF" off \
 	"Apache" "Hide apache signature" off \
@@ -2406,7 +2437,7 @@ Security_app()
 		do
 			case $i in
 				"Rootkits") Check_rootkits ;;
-				"SNORT") Install_SNORT ;;
+				"Monitoring") Monitoring_with_graylog ;;
 				"SSH")  mail_SSH; Change_SSHport ;;
 				"ModSecurity") Install_modSecurity ;;
 				"Apache") Hide_ApacheVersion ;;
@@ -2542,87 +2573,6 @@ Dev_utils()
 
 }
 
-Install_Piwik()
-{
-	#Create database
-	mysql -u root -p${adminPass} -e "CREATE DATABASE piwik;"
-	mysql -u root -p${adminPass} -e "CREATE USER 'piwik'@'localhost' IDENTIFIED BY '$internalPass';"
-	mysql -u root -p${adminPass} -e "GRANT USAGE ON *.* TO 'piwik'@'localhost';"
-	mysql -u root -p${adminPass} -e "GRANT ALL PRIVILEGES ON piwik.* TO 'piwik'@'localhost';"
-
-	# Installation of Piwik
-	wget https://builds.piwik.org/piwik.zip
-	unzip piwik.zip  -d /var/www/
-	rm  piwik.zip
-	rm /var/www/How\ to\ install\ Piwik.html
-	mkdir /var/www/piwik/logs/
-
-	chown www-data:www-data /var/www/piwik/ -Rf
-	chmod 750 piwik/ -Rf
-
-	# Apache2 configuration for Piwik
-	echo "<VirtualHost *:80>" > /etc/apache2/sites-available/piwik.conf
-	echo "ServerAdmin postmaster@$domainName" >> /etc/apache2/sites-available/piwik.conf
-	echo "ServerName piwik.$domainName" >> /etc/apache2/sites-available/piwik.conf
-	echo "ServerAlias piwik.$domainName" >> /etc/apache2/sites-available/piwik.conf
-	echo "DocumentRoot /var/www/piwik/" >> /etc/apache2/sites-available/piwik.conf
-	echo "# Pass the default character set" >> /etc/apache2/sites-available/piwik.conf
-	echo "AddDefaultCharset utf-8" >> /etc/apache2/sites-available/piwik.conf
-	echo "# Containment of piwik" >> /etc/apache2/sites-available/piwik.conf
-	echo "php_admin_value open_basedir /var/www/piwik/" >> /etc/apache2/sites-available/piwik.conf
-	echo "# Prohibit access to files starting with a dot" >> /etc/apache2/sites-available/piwik.conf
-	echo "<FilesMatch ^\\.>" >> /etc/apache2/sites-available/piwik.conf
-	echo "    Order allow,deny" >> /etc/apache2/sites-available/piwik.conf
-	echo "    Deny from all" >> /etc/apache2/sites-available/piwik.conf
-	echo "</FilesMatch>" >> /etc/apache2/sites-available/piwik.conf
-	echo "<Directory /var/www/piwik/ >" >> /etc/apache2/sites-available/piwik.conf
-	echo "AllowOverride All" >> /etc/apache2/sites-available/piwik.conf
-	echo "</Directory>" >> /etc/apache2/sites-available/piwik.conf
-	echo "ErrorLog /var/www/piwik/logs/error.log" >> /etc/apache2/sites-available/piwik.conf
-	echo "CustomLog /var/www/piwik/logs/access.log combined" >> /etc/apache2/sites-available/piwik.conf
-	echo "</VirtualHost>" >> /etc/apache2/sites-available/piwik.conf
-
-	a2ensite piwik.conf
-	systemctl restart apache2
-
-	# DNS for Piwik
-	dialog --backtitle "Installation of Serge by Cairn Devices" --title "DNS" \
-	--ok-label "Next" --msgbox "
-	In order to access to Piwik page you have to update your DNS configuration :
-	piwik.$domainName.	0	A	ipv4 of your server" 8 70
-
-	# Piwik configuration
-	# SSL
-	if [ "$itscert" = "yes" ]
-	then
-		Sssl="s"
-	else
-		Sssl=""
-	fi
-
-	email=""
-	# Ask for email adresse for Piwik
-	while [ "$email" == "" ]
-	do
-		dialog --backtitle "Cairngit installation" --title "Email for Piwik"\
-		--inputbox "    /!\\ This email will be sent to Piwik servers /!\\" 7 60 2> $FICHTMP
-		email=$(cat $FICHTMP)
-	done
-
-	curl -L -d "" "http$Sssl://piwik.$domainName/index.php?action=systemCheck"  >> /dev/null
-	curl -L -d "type=InnoDB&host=127.0.0.1&username=piwik&password=$internalPass&dbname=piwik&tables_prefix=piwik_&adapter=PDO\MYSQL" "http$Sssl://piwik.$domainName/index.php?action=databaseSetup"  >> /dev/null
-	curl -L -d "login=admin&password=$adminPass&password_bis=$adminPass&email=$email&subscribe_newsletter_piwikorg=1&subscribe_newsletter_professionalservices=1" "http$Sssl://piwik.$domainName/index.php?action=setupSuperUser&module=Installation"  >> /dev/null
-	curl -L -d "siteName=$domainName&url=$domainName&timezone=UTC&ecommerce=0" "http$Sssl://piwik.$domainName/index.php?action=firstWebsiteSetup&module=Installation"  >> /dev/null
-	curl -L -d "" "http$Sssl://piwik.$domainName/index.php?action=trackingCode&module=Installation&site_idSite=1&site_name=$domainName"  >> /dev/null
-	curl -L -d "" "http$Sssl://piwik.$domainName/index.php?action=finished&module=Installation&site_idSite=1&site_name=$domainName"  >> /dev/null
-
-	sed -i "s/installation_in_progress = 1//g" /var/www/piwik/config/config.ini.php
-	sed -i "6 s/piwikDomainName/piwik.$domainName/g" /var/www/Serge/web/js/piwik/piwik.js
-
-	chown www-data:www-data /var/www/piwik/ -Rf
-	chmod 750 piwik/ -Rf
-}
-
 Cleaning()
 {
 	a2dissite 000-default
@@ -2732,7 +2682,6 @@ then
 	Install_Rainloop
 	Install_Postgrey
 	Install_Serge
-	Install_Piwik
 	Security_app
 	ItsCert
 	Cleaning
@@ -2757,7 +2706,6 @@ then
 	Install_Rainloop
 	Install_Postgrey
 	Install_Serge
-	Install_Piwik
 	Security_app
 	ItsCert
 	Dev_utils
