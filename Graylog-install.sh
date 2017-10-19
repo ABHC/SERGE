@@ -100,7 +100,7 @@ Install_MongoDB()
 	apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
 	echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-3.2.list
 
-	update
+	apt-get update
 	apt-get install -y mongodb-org
 
 	echo '[Unit]
@@ -229,6 +229,8 @@ Install_Graylog()
 	# Port to send log from other servers
 	ufw allow 8514/udp
 
+	ufw enable
+
 	systemctl restart rsyslog
 }
 
@@ -237,6 +239,8 @@ Security_app()
 	Mail_adress()
 	{
 		# Install dependency
+		echo "postfix postfix/mailname string $domainName" | debconf-set-selections
+		echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections
 		apt-get -y install mailutils
 
 		email=""
@@ -589,7 +593,6 @@ Security_app()
 		ufw allow Dovecot Secure IMAP
 		ufw allow Dovecot Secure POP3
 		ufw allow OpenSSH
-		ufw enable
 
 		# Install and configure mod-evasive for apache2
 		apt-get -y install libapache2-mod-evasive
