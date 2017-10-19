@@ -191,7 +191,7 @@ Install_Piwik()
 	curl -L -d "" "http$Sssl://piwik.$domainName/index.php?action=trackingCode&module=Installation&site_idSite=1&site_name=$domainName"  >> /dev/null
 	curl -L -d "" "http$Sssl://piwik.$domainName/index.php?action=finished&module=Installation&site_idSite=1&site_name=$domainName"  >> /dev/null
 
-	sed -i "s/installation_in_progress = 1//g" /var/www/piwik/config/global.ini.php
+	sed -i "s/installation_in_progress = 1//g" /var/www/piwik/config/config.ini.php
 
 	chown www-data:www-data /var/www/piwik/ -Rf
 	chmod 750 piwik/ -Rf
