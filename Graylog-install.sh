@@ -412,15 +412,7 @@ Security_app()
 		enabled = true
 		filter = http-w00t
 		logpath = /var/log/apache2/*.log
-		maxretry = 1
-
-		[postfix-sasl]
-		enabled  = true
-		port     = smtp,ssmtp
-		filter   = postfix-sasl
-		logpath  = /var/log/syslog
-		maxretry = 3
-		bantime  = 600" > /etc/fail2ban/jail.local
+		maxretry = 1" > /etc/fail2ban/jail.local
 
 		# Add filter http-get-post-dos
 		echo "[Definition]" > /etc/fail2ban/filter.d/http-get-post-dos.conf
@@ -431,11 +423,6 @@ Security_app()
 		echo "[Definition]" > /etc/fail2ban/filter.d/http-w00t.conf
 		echo 'failregex = ^<HOST> -.*"(GET|POST).*\/.*w00t.*' >> /etc/fail2ban/filter.d/http-w00t.conf
 		echo "ignoreregex =" >> /etc/fail2ban/filter.d/http-w00t.conf
-
-		# Add filter SASL
-		echo "[Definition]" > /etc/fail2ban/filter.d/postfix-sasl.conf
-		echo "failregex = warning: (.*)\[<HOST>\]: SASL LOGIN authentication failed: authentication failure" >> /etc/fail2ban/filter.d/postfix-sasl.conf
-		echo "ignoreregex =" >> /etc/fail2ban/filter.d/postfix-sasl.conf
 
 		# Mail Fail2ban
 		echo '# Fail2Ban configuration file
@@ -584,9 +571,6 @@ Security_app()
 		ufw allow Dovecot Secure IMAP
 		ufw allow Dovecot Secure POP3
 		ufw allow OpenSSH
-		ufw allow Postfix
-		ufw allow Postfix SMTPS
-		ufw allow Postfix Submission
 		ufw enable
 
 		# Install and configure mod-evasive for apache2
@@ -839,6 +823,32 @@ Security_app()
 
 		systemctl restart apache2
 
+		# Piwik htpasswd protection
+		echo "AuthUserFile /var/www/piwik/.htpasswd
+		AuthGroupFile /dev/null
+		AuthName \"Restricted access\"
+		AuthType Basic
+		require valid-user" >> /var/www/piwik/.htaccess
+
+		chmod 644 /var/www/piwik/.htaccess
+		chown www-data:www-data /var/www/piwik/.htaccess
+
+		htpasswd -bcB -C 8 /var/www/piwik/.htpasswd $email $passnohash
+
+		chmod 644 /var/www/piwik/.htpasswd
+		chown www-data:www-data /var/www/piwik/.htpasswd
+
+		# Explain how to access to piwik
+		dialog --backtitle "Installation of monitoring server by Cairn Devices" --title "Htpasswd protection" \
+		--ok-label "Next" --msgbox "
+		In order to access to piwik monitoring page you have to go to this url :
+		https://piwik.$domainName/
+
+		ID : $email
+		Password : Your installation password" 11 70
+
+		systemctl restart apache2
+
 	}
 
 	Mail_adress
@@ -916,9 +926,7 @@ touch /tmp/dialogtmp && FICHTMP=/tmp/dialogtmp
 trap "rm -f $FICHTMP" 0 1 2 3 5 15
 $DIALOG --clear --backtitle "Installation of monitoring server by Cairn Devices" --title "Installation of monitoring server by Cairn Devices" \
 --menu "Bonjour, choisissez votre type d'installation :" 15 80 5 \
-"Dédié" "Installation dédié" \
-"Serveur mail" "Installation du serveur mail" \
-"Mode dev" "Mode développeur" 2> $FICHTMP # TODO Mettre tout le dialog en anglais
+"Dédié" "Installation dédié"2> $FICHTMP # TODO Mettre tout le dialog en anglais
 valret=$?
 choix=$(cat $FICHTMP)
 case $valret in
@@ -982,6 +990,11 @@ done
 if [ "$choix" = "Dédié" ]
 then
 	Install_Apache2
+	Install_Mysql
+	Install_Java
+	Install_Elasticsearch
+	Install_MongoDB
+	Install_Graylog
 	Install_Piwik
 	Security_app
 	Cleaning
