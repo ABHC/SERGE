@@ -4,8 +4,7 @@
 exec 2> >(tee -a error.log)
 
 # Variable declaration
-#itscert="no"
-#sshport="22"
+sshport="22"
 
 ###############################
 ###   Function declaration  ###
@@ -22,6 +21,10 @@ Update_sys()
 Install_dependency()
 {
 	apt-get -y install dialog
+	apt-get -y install git
+	apt-get -y install unzip
+	apt-get -y install apt-transport-https
+	apt-get -y install rsync
 }
 
 Install_Apache2()
@@ -86,7 +89,7 @@ Install_Elasticsearch()
 Install_MongoDB()
 {
 	apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
-	"deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-3.2.list
+	echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-3.2.list
 
 	update
 	apt-get install -y mongodb-org
@@ -926,7 +929,7 @@ touch /tmp/dialogtmp && FICHTMP=/tmp/dialogtmp
 trap "rm -f $FICHTMP" 0 1 2 3 5 15
 $DIALOG --clear --backtitle "Installation of monitoring server by Cairn Devices" --title "Installation of monitoring server by Cairn Devices" \
 --menu "Bonjour, choisissez votre type d'installation :" 15 80 5 \
-"Dédié" "Installation dédié"2> $FICHTMP # TODO Mettre tout le dialog en anglais
+"dedicated" "Dedicated installation" 2> $FICHTMP # TODO Mettre tout le dialog en anglais
 valret=$?
 choix=$(cat $FICHTMP)
 case $valret in
@@ -987,7 +990,7 @@ do
 	domainName=$(cat $FICHTMP)
 done
 
-if [ "$choix" = "Dédié" ]
+if [ "$choix" = "dedicated" ]
 then
 	Install_Apache2
 	Install_Mysql

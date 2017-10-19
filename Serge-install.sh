@@ -2609,7 +2609,7 @@ touch /tmp/dialogtmp && FICHTMP=/tmp/dialogtmp
 trap "rm -f $FICHTMP" 0 1 2 3 5 15
 $DIALOG --clear --backtitle "Installation of Serge by Cairn Devices" --title "Installation of Serge by Cairn Devices" \
 --menu "Bonjour, choisissez votre type d'installation :" 15 80 5 \
-"Dédié" "Installation dédié" \
+"dedicated" "Dedicated installation" \
 "Serveur mail" "Installation du serveur mail" \
 "Mode dev" "Mode développeur" 2> $FICHTMP # TODO Mettre tout le dialog en anglais
 valret=$?
@@ -2672,7 +2672,7 @@ do
 	domainName=$(cat $FICHTMP)
 done
 
-if [ "$choix" = "Dédié" ]
+if [ "$choix" = "dedicated" ]
 then
 	Install_Apache2
 	Install_Mysql
