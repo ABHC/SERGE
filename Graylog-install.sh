@@ -43,6 +43,14 @@ Install_Apache2()
 	sleep 4
 }
 
+Install_PHP()
+{
+	apt-get -y install php libapache2-mod-php php-mcrypt php-mysql php-cli
+	systemctl restart apache2
+	echo -e "Installation de PHP.......\033[32mDone\033[00m"
+	sleep 4
+}
+
 Install_Mysql()
 {
 	echo "mysql-server mysql-server/root_password password $adminPass" | sudo debconf-set-selections
@@ -78,6 +86,7 @@ Install_Elasticsearch()
 	wget https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.3.1/elasticsearch-2.3.1.deb
 	dpkg -i elasticsearch-2.3.1.deb
 	systemctl enable elasticsearch.service
+	rm elasticsearch-2.3.1.deb
 
 	# Configuration
 	sed -i "s/# cluster.name: my-application/cluster.name: graylog/g" /etc/elasticsearch/elasticsearch.yml
@@ -182,7 +191,7 @@ Install_Piwik()
 	curl -L -d "" "http$Sssl://piwik.$domainName/index.php?action=trackingCode&module=Installation&site_idSite=1&site_name=$domainName"  >> /dev/null
 	curl -L -d "" "http$Sssl://piwik.$domainName/index.php?action=finished&module=Installation&site_idSite=1&site_name=$domainName"  >> /dev/null
 
-	sed -i "s/installation_in_progress = 1//g" /var/www/piwik/config/config.ini.php
+	sed -i "s/installation_in_progress = 1//g" /var/www/piwik/config/global.ini.php
 
 	chown www-data:www-data /var/www/piwik/ -Rf
 	chmod 750 piwik/ -Rf
@@ -194,6 +203,7 @@ Install_Graylog()
 
 	wget https://packages.graylog2.org/repo/packages/graylog-2.3-repository_latest.deb
 	dpkg -i graylog-2.3-repository_latest.deb
+	rm graylog-2.3-repository_latest.deb
 
 	apt-get update
 	apt-get -y install graylog-server
@@ -993,6 +1003,7 @@ done
 if [ "$choix" = "dedicated" ]
 then
 	Install_Apache2
+	Install_PHP
 	Install_Mysql
 	Install_Java
 	Install_Elasticsearch
