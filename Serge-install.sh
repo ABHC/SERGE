@@ -28,7 +28,7 @@ Update_sys()
 {
 	apt-get -y update
 	apt-get -y upgrade
-	echo -e "Mise à jour.......\033[32mDone\033[00m"
+	echo -e "Update.......\033[32mDone\033[00m"
 	sleep 4
 }
 
@@ -54,7 +54,7 @@ Install_Apache2()
 	a2enmod headers
 	a2enmod proxy_wstunnel
 	systemctl restart apache2
-	echo -e "Installation d'apache2.......\033[32mDone\033[00m"
+	echo -e "Installation of apache2.......\033[32mDone\033[00m"
 	sleep 4
 }
 
@@ -78,7 +78,7 @@ Install_Mysql()
 
 	systemctl restart mysql
 
-	echo -e "Installation de MySQL.......\033[32mDone\033[00m"
+	echo -e "Installation of MySQL.......\033[32mDone\033[00m"
 	sleep 4
 }
 
@@ -86,7 +86,7 @@ Install_PHP()
 {
 	apt-get -y install php libapache2-mod-php php-mcrypt php-mysql php-cli
 	systemctl restart apache2
-	echo -e "Installation de PHP.......\033[32mDone\033[00m"
+	echo -e "Installation of PHP.......\033[32mDone\033[00m"
 	sleep 4
 }
 
@@ -102,7 +102,7 @@ Install_phpmyadmin()
 	phpenmod mcrypt
 	phpenmod mbstring
 	systemctl restart apache2
-	echo -e "Installation de phpmyadmin.......\033[32mDone\033[00m"
+	echo -e "Installation of phpmyadmin.......\033[32mDone\033[00m"
 	sleep 4
 }
 
@@ -1741,7 +1741,7 @@ Security_app()
 		# Configuration letsencrypt cerbot
 		apt-get -y install python-letsencrypt-apache
 		letsencrypt --apache  --email $email -d $domainName -d rainloop.$domainName  -d postfixadmin.$domainName
-		echo -e "Installation de let's encrypt.......\033[32mDone\033[00m"
+		echo -e "Installation of let's encrypt.......\033[32mDone\033[00m"
 		sleep 4
 
 		# Redirect http to https
@@ -2069,13 +2069,13 @@ Security_app()
 		sshport=""
 		while [ "$sshport" == "" ]
 		do
-			dialog --backtitle "Installation of Serge by Cairn Devices" --title "Choix d'un port pour la connexion SSH" \
+			dialog --backtitle "Installation of Serge by Cairn Devices" --title "Choosing a port for SSH connection" \
 			--inputbox "" 7 60 2> $FICHTMP
 			sshport=$(cat $FICHTMP)
 			test_port=$(netstat -paunt | grep :$sshport\ )
 			if [ "$test_port" != "" ]
 			then
-				echo -e "\033[31m / ! \ Attention ce port semble être utilisé / ! \ \033[0m"
+				echo -e "\033[31m / ! \ Warning this port seems to be used / ! \ \033[0m"
 				echo $test_port
 				sleep 4
 				sshport=""
@@ -2084,7 +2084,7 @@ Security_app()
 		ufw allow $sshport/tcp
 		sed -i "5 s/Port 22/Port $sshport/g" /etc/ssh/sshd_config
 		dialog --backtitle "Installation of Serge by Cairn Devices" --title "Changement port SSH" \
-		--ok-label "Next" --msgbox "Le port SSH à été changé pour éviter les attaques automatiques. Veuillez en prendre note. \nNouveau port : $sshport   \nPour accéder au serveur en ssh : ssh -p$sshport $mainUser@$domainName" 9 66
+		--ok-label "Next" --msgbox "The SSH port has been changed to avoid automatic attacks. Please take note of it. \nNew port : $sshport   \nTo access the server in ssh : ssh -p$sshport $mainUser@$domainName" 9 66
 	}
 
 	Install_unattendedupgrades()
@@ -2494,7 +2494,7 @@ ItsCert()
 		systemctl restart opendmarc
 		systemctl restart postgrey
 
-		echo -e "Auto cert .............\033[32mDone\033[00m"
+		echo -e "Auto cert.............\033[32mDone\033[00m"
 	fi
 }
 
@@ -2611,10 +2611,10 @@ DIALOG=${DIALOG=dialog}
 touch /tmp/dialogtmp && FICHTMP=/tmp/dialogtmp
 trap "rm -f $FICHTMP" 0 1 2 3 5 15
 $DIALOG --clear --backtitle "Installation of Serge by Cairn Devices" --title "Installation of Serge by Cairn Devices" \
---menu "Bonjour, choisissez votre type d'installation :" 15 80 5 \
+--menu "Hello, choose your installation type :" 15 80 5 \
 "dedicated" "Dedicated installation" \
 "Serveur mail" "Installation du serveur mail" \
-"Mode dev" "Mode développeur" 2> $FICHTMP # TODO Mettre tout le dialog en anglais
+"Mode dev" "Developer mode" 2> $FICHTMP
 valret=$?
 choix=$(cat $FICHTMP)
 case $valret in
