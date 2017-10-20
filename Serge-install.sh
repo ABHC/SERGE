@@ -1762,8 +1762,7 @@ Security_app()
 			sed -i "s/<\/VirtualHost>/Redirect permanent \/ https:\/\/esmweb.$domainName\/\n<\/VirtualHost>/g" /etc/apache2/sites-available/esmweb.conf
 		elif [ "$serge" = "installed" ]
 		then
-			letsencrypt --apache  --email $email -d serge.$domainName -d mediawiki.$domainName
-			sed -i "s/<\/VirtualHost>/Redirect permanent \/ https:\/\/serge.$domainName\/\n<\/VirtualHost>/g" /etc/apache2/sites-available/Serge.conf
+			letsencrypt --apache  --email $email -d mediawiki.$domainName
 			sed -i "s/<\/VirtualHost>/Redirect permanent \/ https:\/\/mediawiki.$domainName\/\n<\/VirtualHost>/g" /etc/apache2/sites-available/mediawiki.conf
 		fi
 
