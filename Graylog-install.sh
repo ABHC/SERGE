@@ -258,7 +258,7 @@ Security_app()
 	{
 		# Configuration letsencrypt cerbot
 		apt-get -y install python-letsencrypt-apache
-		letsencrypt --apache  --email $email -d $domainName
+		letsencrypt --apache  --email $email -d esmweb.$domainName -d piwik.$domainName
 		echo -e "Installation de let's encrypt.......\033[32mDone\033[00m"
 		sleep 4
 
