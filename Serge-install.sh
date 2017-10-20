@@ -7,6 +7,19 @@ exec 2> >(tee -a error.log)
 itscert="no"
 sshport="22"
 
+# Firewall
+ufw --force enable
+ufw allow OpenSSH
+ufw allow "Apache Full"
+ufw allow "Dovecot IMAP"
+ufw allow "Dovecot POP3"
+ufw allow "Dovecot Secure IMAP"
+ufw allow "Dovecot Secure POP3"
+ufw allow Postfix
+ufw allow "Postfix SMTPS"
+ufw allow "Postfix Submission"
+ufw allow 5025/tcp
+
 ###############################
 ###   Function declaration  ###
 ###############################
@@ -2069,6 +2082,7 @@ Security_app()
 				sshport=""
 			fi
 		done
+		ufw allow $sshport/tcp
 		sed -i "5 s/Port 22/Port $sshport/g" /etc/ssh/sshd_config
 		dialog --backtitle "Installation of Serge by Cairn Devices" --title "Changement port SSH" \
 		--ok-label "Next" --msgbox "Le port SSH à été changé pour éviter les attaques automatiques. Veuillez en prendre note. \nNouveau port : $sshport   \nPour accéder au serveur en ssh : ssh -p$sshport $mainUser@$domainName" 9 66
@@ -2082,16 +2096,6 @@ Security_app()
 
 	DOSDDOSOtherattacks_protection()
 	{
-		# UFW
-		ufw allow Apache Secure
-		ufw allow Dovecot Secure IMAP
-		ufw allow Dovecot Secure POP3
-		ufw allow OpenSSH
-		ufw allow Postfix
-		ufw allow Postfix SMTPS
-		ufw allow Postfix Submission
-		ufw enable
-
 		# Install and configure mod-evasive for apache2
 		apt-get -y install libapache2-mod-evasive
 		mkdir -p /var/lock/mod_evasive

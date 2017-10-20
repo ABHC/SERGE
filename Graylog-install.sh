@@ -6,6 +6,14 @@ exec 2> >(tee -a error.log)
 # Variable declaration
 sshport="22"
 
+# Firewall
+ufw --force enable
+ufw allow OpenSSH
+ufw allow "Apache Full"
+ufw allow Postfix
+ufw allow "Postfix SMTPS"
+ufw allow "Postfix Submission"
+
 ###############################
 ###   Function declaration  ###
 ###############################
@@ -228,8 +236,6 @@ Install_Graylog()
 
 	# Port to send log from other servers
 	ufw allow 8514/udp
-
-	ufw enable
 
 	systemctl restart rsyslog
 }
@@ -575,6 +581,7 @@ Security_app()
 				sshport=""
 			fi
 		done
+		ufw allow $sshport/tcp
 		sed -i "5 s/Port 22/Port $sshport/g" /etc/ssh/sshd_config
 		dialog --backtitle "Installation of monitoring server by Cairn Devices" --title "Changement port SSH" \
 		--ok-label "Next" --msgbox "Le port SSH à été changé pour éviter les attaques automatiques. Veuillez en prendre note. \nNouveau port : $sshport   \nPour accéder au serveur en ssh : ssh -p$sshport $mainUser@$domainName" 9 66
@@ -588,12 +595,6 @@ Security_app()
 
 	DOSDDOSOtherattacks_protection()
 	{
-		# UFW
-		ufw allow Apache Secure
-		ufw allow Dovecot Secure IMAP
-		ufw allow Dovecot Secure POP3
-		ufw allow OpenSSH
-
 		# Install and configure mod-evasive for apache2
 		apt-get -y install libapache2-mod-evasive
 		mkdir -p /var/lock/mod_evasive
