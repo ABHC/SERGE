@@ -1825,7 +1825,7 @@ Security_app()
 		echo "ip=\`echo \$SSH_CONNECTION | cut -d \" \" -f 1\`
 		hostname=\`hostname\`
 		Date=\$(date)
-		echo \"User \$USER just logged in from \$ip at \$Date\" | mail -s \"SSH Login\" $email &" >>  /etc/ssh/sshrc
+		echo \"User \$USER just logged in from \$ip at \$Date\" | mail -s \"SSH Login\" $email -a "From: admin@$domainName" &" >>  /etc/ssh/sshrc
 	}
 
 	Install_modSecurity()
@@ -2409,11 +2409,20 @@ Security_app()
 
 	Monitoring_with_graylog()
 	{
+		logMonitoring=""
+		# Ask for adress of log monitoring server
+		while [ "$logMonitoring" == "" ]
+		do
+			dialog --backtitle "Cairngit installation" --title "Adress of log monitoring server"\
+			--inputbox "" 7 60 2> $FICHTMP
+			logMonitoring=$(cat $FICHTMP)
+		done
+
 		# Port to send log from other servers
 		ufw allow 8514/udp
 
 		# Configuration for recieve logs
-		echo "*.* @$domainName:8514;RSYSLOG_SyslogProtocol23Format" > /etc/rsyslog.d/60-graylog.conf
+		echo "*.* @monitoring.$logMonitoring:8514;RSYSLOG_SyslogProtocol23Format" > /etc/rsyslog.d/60-graylog.conf
 
 		systemctl restart rsyslog
 	}

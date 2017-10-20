@@ -120,6 +120,8 @@ ExecStart=/usr/bin/mongod --quiet --config /etc/mongod.conf
 WantedBy=multi-user.target' > /etc/systemd/system/mongodb.service
 
 	systemctl start mongodb
+	systemctl enable mongodb
+	systemctl restart mongodb
 }
 
 Install_Piwik()
@@ -235,6 +237,28 @@ Install_Graylog()
 	ufw allow 8514/udp
 
 	systemctl restart rsyslog
+
+	echo "<VirtualHost *:80>" > /etc/apache2/sites-available/graylog.conf
+	echo "ServerAdmin postmaster@$domainName" >> /etc/apache2/sites-available/graylog.conf
+	echo "ServerName  monitoring.$domainName" >> /etc/apache2/sites-available/graylog.conf
+	echo "ServerAlias  monitoring.$domainName" >> /etc/apache2/sites-available/graylog.conf
+	echo "LoadModule proxy_module modules/mod_proxy.so" >> /etc/apache2/sites-available/graylog.conf
+	echo "LoadModule proxy_http_module modules/mod_proxy_http.so" >> /etc/apache2/sites-available/graylog.conf
+	echo "ProxyRequests Off" >> /etc/apache2/sites-available/graylog.conf
+	echo "<Proxy *>" >> /etc/apache2/sites-available/graylog.conf
+	echo "	Order deny,allow" >> /etc/apache2/sites-available/graylog.conf
+	echo "	Allow from all" >> /etc/apache2/sites-available/graylog.conf
+	echo "</Proxy>" >> /etc/apache2/sites-available/graylog.conf
+	echo "<Location />" >> /etc/apache2/sites-available/graylog.conf
+	echo "	RequestHeader set X-Graylog-Server-URL \"http://monitoring.$domainName/api/\"" >> /etc/apache2/sites-available/graylog.conf
+	echo "	ProxyPass http://127.0.0.1:9000/" >> /etc/apache2/sites-available/graylog.conf
+	echo "	ProxyPassReverse http://127.0.0.1:9000/" >> /etc/apache2/sites-available/graylog.conf
+	echo "</Location>" >> /etc/apache2/sites-available/graylog.conf
+	echo "</VirtualHost>" >> /etc/apache2/sites-available/graylog.conf
+
+	a2ensite graylog.conf
+
+	systemctl restart apache2
 }
 
 Security_app()
@@ -264,12 +288,15 @@ Security_app()
 	{
 		# Configuration letsencrypt cerbot
 		apt-get -y install python-letsencrypt-apache
-		letsencrypt --apache  --email $email -d esmweb.$domainName -d piwik.$domainName
+		letsencrypt --apache --email $email -d piwik.$domainName -d monitoring.$domainName
 		echo -e "Installation of let's encrypt.......\033[32mDone\033[00m"
 		sleep 4
 
 		# Redirect http to https
-		#sed -i "s/<\/VirtualHost>/Redirect permanent \/ https:\/\/$domainName\/\n<\/VirtualHost>/g" /etc/apache2/sites-available/base.conf
+		sed -i "s/ProxyRequests Off/ProxyRequests Off\nRedirect permanent \/ https:\/\/monitoring.$domainName\//g" /etc/apache2/sites-available/graylog.conf
+		sed -i -e "s/rest_listen_uri = http:\/\/monitoring.$domainName:9000\/api\//rest_listen_uri = https:\/\/monitoring.$domainName:9000\/api\//g" /etc/graylog/server/server.conf
+		sed -i -e "s/web_listen_uri = http:\/\/monitoring.$domainName:9000\//web_listen_uri = https:\/\/monitoring.$domainName:9000\//g" /etc/graylog/server/server.conf
+
 		sed -i "s/<\/VirtualHost>/Redirect permanent \/ https:\/\/piwik.$domainName\/\n<\/VirtualHost>/g" /etc/apache2/sites-available/piwik.conf
 
 		# Add crontab to in order to renew the certificate
