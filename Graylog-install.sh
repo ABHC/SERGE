@@ -9,10 +9,6 @@ sshport="22"
 # Firewall
 ufw --force enable
 ufw allow OpenSSH
-ufw allow "Apache Full"
-ufw allow Postfix
-ufw allow "Postfix SMTPS"
-ufw allow "Postfix Submission"
 
 ###############################
 ###   Function declaration  ###
@@ -47,6 +43,7 @@ Install_Apache2()
 	a2enmod headers
 	a2enmod proxy_wstunnel
 	systemctl restart apache2
+	ufw allow "Apache Full"
 	echo -e "Installation of apache2.......\033[32mDone\033[00m"
 	sleep 4
 }
@@ -248,6 +245,9 @@ Security_app()
 		echo "postfix postfix/mailname string $domainName" | debconf-set-selections
 		echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections
 		apt-get -y install mailutils
+		ufw allow Postfix
+		ufw allow "Postfix SMTPS"
+		ufw allow "Postfix Submission"
 
 		email=""
 		# Ask for email adress for security report

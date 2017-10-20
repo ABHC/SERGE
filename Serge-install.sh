@@ -10,15 +10,6 @@ sshport="22"
 # Firewall
 ufw --force enable
 ufw allow OpenSSH
-ufw allow "Apache Full"
-ufw allow "Dovecot IMAP"
-ufw allow "Dovecot POP3"
-ufw allow "Dovecot Secure IMAP"
-ufw allow "Dovecot Secure POP3"
-ufw allow Postfix
-ufw allow "Postfix SMTPS"
-ufw allow "Postfix Submission"
-ufw allow 5025/tcp
 
 ###############################
 ###   Function declaration  ###
@@ -54,6 +45,7 @@ Install_Apache2()
 	a2enmod headers
 	a2enmod proxy_wstunnel
 	systemctl restart apache2
+	ufw allow "Apache Full"
 	echo -e "Installation of apache2.......\033[32mDone\033[00m"
 	sleep 4
 }
@@ -759,14 +751,23 @@ Install_mail_server()
 	echo "#SOCKET=\"inet:12345@192.0.2.1\" # listen on 192.0.2.1 on port 12345" >> /etc/default/opendmarc
 	echo "SOCKET=\"inet:8892:localhost\"" >> /etc/default/opendmarc
 
-	# Create domain
-	postfixadmin-cli domain add $domainName --aliases 0 --mailboxes 0
-
 	systemctl restart apache2
 	systemctl restart postfix
 	systemctl restart opendmarc
 	systemctl restart opendkim
 	systemctl restart dovecot
+
+	ufw allow "Dovecot IMAP"
+	ufw allow "Dovecot POP3"
+	ufw allow "Dovecot Secure IMAP"
+	ufw allow "Dovecot Secure POP3"
+	ufw allow Postfix
+	ufw allow "Postfix SMTPS"
+	ufw allow "Postfix Submission"
+	ufw allow 5025/tcp
+
+	# Create domain
+	postfixadmin-cli domain add $domainName --aliases 0 --mailboxes 0
 }
 
 Install_Rainloop()
