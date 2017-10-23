@@ -150,7 +150,7 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 					// Read new user information in order to connect it
 					$checkCol = array(array('users', '=', $pseudo, 'AND'),
 														array('password', '=', $password, ''));
-					$result   = read('users_table_serge', 'id, users', $checkCol, '', $bdd);
+					$result   = read('users_table_serge', 'id, users, language', $checkCol, '', $bdd);
 					$result   = $result[0];
 
 					# Cleaning
@@ -159,8 +159,12 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 
 					# Connection
 					session_start();
-					$_SESSION['pseudo'] = $result['users'];
-					$_SESSION['id']     = $result['id'];
+					$_SESSION['id']            = $result['id'];
+					$_SESSION['pseudo']        = $result['users'];
+					$_SESSION['lang']          = $result['language'];
+					$_SESSION['ip']            = $_SERVER['REMOTE_ADDR'];
+					$_SESSION['user-agent']    = $_SERVER['HTTP_USER_AGENT'];
+					$_SESSION['lastSourceUse'] = '';
 
 					header('Location: setting');
 					die();
