@@ -2320,12 +2320,12 @@ Security_app()
 		systemctl restart apache2
 
 		# Phpmyadmin htpasswd protection
-		sed -i "s/<\/VirtualHost>/<Location \/phpmyadmin>\n	AuthUserFile \/var\/www\/Serge\/.htpassword\n	AuthGroupFile \/dev\/null\n	AuthName \"Restricted access\"\n	AuthType Basic\n	require valid-user\n<\/Location>\n<\/VirtualHost>/g" /etc/apache2/sites-available/Serge.conf
+		sed -i "s/<\/VirtualHost>/<Location \/phpmyadmin>\n	AuthUserFile \/var\/www\/Serge\/web\/.htpassword\n	AuthGroupFile \/dev\/null\n	AuthName \"Restricted access\"\n	AuthType Basic\n	require valid-user\n<\/Location>\n<\/VirtualHost>/g" /etc/apache2/sites-available/Serge.conf
 
-		htpasswd -bcB -C 8 /var/www/Serge/.htpassword $email $passnohash
+		htpasswd -bcB -C 8 /var/www/Serge/web/.htpassword $email $passnohash
 
-		chmod 644 /var/www/Serge/.htpassword
-		chown www-data:www-data /var/www/Serge/.htpassword
+		chmod 644 /var/www/Serge/web/.htpassword
+		chown www-data:www-data /var/www/Serge/web/.htpassword
 
 		# Explain how to access to phpmyadmin
 		dialog --backtitle "Installation of Serge by Cairn Devices" --title "Htpasswd protection" \
