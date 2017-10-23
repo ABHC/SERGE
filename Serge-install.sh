@@ -1297,6 +1297,13 @@ php_admin_value open_basedir /var/www/Serge/web:/usr/share/php/:/usr/share/phpmy
 	RedirectMatch 301 ^/.+/$ /error403
 </Directory>
 
+<Directory /usr/share/phpmyadmin>
+		Options Indexes FollowSymLinks MultiViews
+		DirectoryIndex index.php
+		AllowOverride all
+		Require all granted
+</Directory>
+
 ErrorLog /var/www/Serge/web/logs/error.log
 CustomLog /var/www/Serge/web/logs/access.log combined
 
