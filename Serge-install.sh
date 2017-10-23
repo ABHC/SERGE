@@ -1825,7 +1825,7 @@ Security_app()
 		echo "ip=\`echo \$SSH_CONNECTION | cut -d \" \" -f 1\`
 		hostname=\`hostname\`
 		Date=\$(date)
-		echo \"User \$USER just logged in from \$ip at \$Date\" | mail -s \"SSH Login\" $email -a "From: admin@$domainName" &" >>  /etc/ssh/sshrc
+		echo \"User \$USER just logged in from \$ip at \$Date\" | mail -s \"SSH Login\" $email -a \"From: admin@$domainName\" &" >>  /etc/ssh/sshrc
 	}
 
 	Install_modSecurity()
