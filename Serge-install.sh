@@ -1269,45 +1269,44 @@ Install_Serge()
 
 	# Configuration apache
 	echo "<VirtualHost *:80>
-	ServerAdmin postmaster@$domainName
-	ServerName  $domainName
-	ServerAlias  $domainName
-	DocumentRoot /var/www/Serge/web/
+ServerAdmin postmaster@$domainName
+ServerName  $domainName
+ServerAlias  $domainName
+DocumentRoot /var/www/Serge/web/
 
-	ErrorDocument 500 http://$domainName/error404.php
-	ErrorDocument 404 http://$domainName/error404.php
-	ErrorDocument 403 http://$domainName/error403.php
-	ErrorDocument 401 http://$domainName/error401.php
+ErrorDocument 500 http://$domainName/error404.php
+ErrorDocument 404 http://$domainName/error404.php
+ErrorDocument 403 http://$domainName/error403.php
+ErrorDocument 401 http://$domainName/error401.php
 
-	# Pass the default character set
-	AddDefaultCharset utf-8
-	# Containment of Serge webUI
-	php_admin_value open_basedir /var/www/Serge/web:/usr/share/php/:/usr/share/phpmyadmin/:/etc/phpmyadmin/:/var/lib/phpmyadmin/:/usr/share/javascript/:/usr/share/doc/phpmyadmin/
+# Pass the default character set
+AddDefaultCharset utf-8
+# Containment of Serge webUI
+php_admin_value open_basedir /var/www/Serge/web:/usr/share/php/:/usr/share/phpmyadmin/:/etc/phpmyadmin/:/var/lib/phpmyadmin/:/usr/share/javascript/:/usr/share/doc/phpmyadmin/
 
-	<FilesMatch ^\.>
-		Order allow,deny
-		Deny from all
-	</FilesMatch>
+<FilesMatch ^\.>
+	Order allow,deny
+	Deny from all
+</FilesMatch>
 
-	<Directory />
-		Order deny,allow
-		Deny from all
-	</Directory>
+<Directory />
+	Order deny,allow
+	Deny from all
+</Directory>
 
-	<Directory /var/www/Serge/web/>
-		Options -Indexes
-		Options +FollowSymLinks
-		AllowOverride all
-		Order allow,deny
-		allow from all
-		SecRuleEngine Off
-		RedirectMatch 301 ^/.+/$ /error403
-	</Directory>
+<Directory /var/www/Serge/web/>
+	Options -Indexes
+	Options +FollowSymLinks
+	AllowOverride all
+	Order allow,deny
+	allow from all
+	RedirectMatch 301 ^/.+/$ /error403
+</Directory>
 
-	ErrorLog /var/www/Serge/web/logs/error.log
-	CustomLog /var/www/Serge/web/logs/access.log combined
+ErrorLog /var/www/Serge/web/logs/error.log
+CustomLog /var/www/Serge/web/logs/access.log combined
 
-	</VirtualHost>" > /etc/apache2/sites-available/Serge.conf
+</VirtualHost>" > /etc/apache2/sites-available/Serge.conf
 
 	chown -R www-data:www-data /var/www/Serge/web/
 
@@ -2321,7 +2320,7 @@ Security_app()
 		systemctl restart apache2
 
 		# Phpmyadmin htpasswd protection
-		sed -i "s/<\/Directory>/<\/Directory>\n<Location \/phpmyadmin>\n AuthUserFile \/var\/www\/Serge\/.htpassword\n AuthGroupFile \/dev\/null\n AuthName \"Restricted access\"\n AuthType Basic\n require valid-user\n<\/Location>\n/g" /etc/apache2/sites-available/Serge.conf
+		sed -i "s/<\/VirtualHost>/<Location \/phpmyadmin>\n	AuthUserFile \/var\/www\/Serge\/.htpassword\n	AuthGroupFile \/dev\/null\n	AuthName \"Restricted access\"\n	AuthType Basic\n	require valid-user\n<\/Location>\n<\/VirtualHost>/g" /etc/apache2/sites-available/Serge.conf
 
 		htpasswd -bcB -C 8 /var/www/Serge/.htpassword $email $passnohash
 
