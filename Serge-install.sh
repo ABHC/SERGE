@@ -167,14 +167,12 @@ Install_mail_server()
 	echo "php_admin_value open_basedir /var/www/postfixadmin/" >> /etc/apache2/sites-available/postfixadmin.conf
 	echo "# Prohibit access to files starting with a dot" >> /etc/apache2/sites-available/postfixadmin.conf
 	echo "<FilesMatch ^\\.>" >> /etc/apache2/sites-available/postfixadmin.conf
-	echo "    Order allow,deny" >> /etc/apache2/sites-available/postfixadmin.conf
-	echo "    Deny from all" >> /etc/apache2/sites-available/postfixadmin.conf
+	echo "    Require all denied" >> /etc/apache2/sites-available/postfixadmin.conf
 	echo "</FilesMatch>" >> /etc/apache2/sites-available/postfixadmin.conf
 	echo "<Directory /var/www/postfixadmin/>" >> /etc/apache2/sites-available/postfixadmin.conf
 	echo "Options Indexes FollowSymLinks" >> /etc/apache2/sites-available/postfixadmin.conf
 	echo "AllowOverride all" >> /etc/apache2/sites-available/postfixadmin.conf
-	echo "Order allow,deny" >> /etc/apache2/sites-available/postfixadmin.conf
-	echo "allow from all" >> /etc/apache2/sites-available/postfixadmin.conf
+	echo "Require all granted" >> /etc/apache2/sites-available/postfixadmin.conf
 	echo "</Directory>" >> /etc/apache2/sites-available/postfixadmin.conf
 	echo "ErrorLog /var/www/postfixadmin/logs/error.log" >> /etc/apache2/sites-available/postfixadmin.conf
 	echo "CustomLog /var/www/postfixadmin/logs/access.log combined" >> /etc/apache2/sites-available/postfixadmin.conf
@@ -1153,8 +1151,7 @@ Install_Rainloop()
 	echo "php_admin_value open_basedir /var/www/rainloop/" >> /etc/apache2/sites-available/rainloop.conf
 	echo "# Prohibit access to files starting with a dot" >> /etc/apache2/sites-available/rainloop.conf
 	echo "<FilesMatch ^\\.>" >> /etc/apache2/sites-available/rainloop.conf
-	echo "    Order allow,deny" >> /etc/apache2/sites-available/rainloop.conf
-	echo "    Deny from all" >> /etc/apache2/sites-available/rainloop.conf
+	echo "    Require all denied" >> /etc/apache2/sites-available/rainloop.conf
 	echo "</FilesMatch>" >> /etc/apache2/sites-available/rainloop.conf
 	echo "<Directory /var/www/rainloop/ >" >> /etc/apache2/sites-available/rainloop.conf
 	echo "AllowOverride All" >> /etc/apache2/sites-available/rainloop.conf
@@ -1285,21 +1282,18 @@ AddDefaultCharset utf-8
 php_admin_value open_basedir /var/www/Serge/web:/usr/share/php/:/usr/share/phpmyadmin/:/etc/phpmyadmin/:/var/lib/phpmyadmin/:/usr/share/javascript/:/usr/share/doc/phpmyadmin/
 
 <FilesMatch ^\.>
-	Order allow,deny
-	Deny from all
+	Require all denied
 </FilesMatch>
 
 <Directory />
-	Order deny,allow
-	Deny from all
+	Require all denied
 </Directory>
 
 <Directory /var/www/Serge/web/>
 	Options -Indexes
 	Options +FollowSymLinks
 	AllowOverride all
-	Order allow,deny
-	allow from all
+	Require all granted
 	RedirectMatch 301 ^/.+/$ /error403
 </Directory>
 
@@ -1507,8 +1501,7 @@ CustomLog /var/www/Serge/web/logs/access.log combined
 	echo "php_admin_value open_basedir /var/www/mediawiki:/tmp:/usr/bin/diff3:/usr/bin/git" >> /etc/apache2/sites-available/mediawiki.conf
 	echo "# Prohibit access to files starting with a dot" >> /etc/apache2/sites-available/mediawiki.conf
 	echo "<FilesMatch ^\\.>" >> /etc/apache2/sites-available/mediawiki.conf
-	echo "    Order allow,deny" >> /etc/apache2/sites-available/mediawiki.conf
-	echo "    Deny from all" >> /etc/apache2/sites-available/mediawiki.conf
+	echo "    Require all denied" >> /etc/apache2/sites-available/mediawiki.conf
 	echo "</FilesMatch>" >> /etc/apache2/sites-available/mediawiki.conf
 	echo "<Directory /var/www/mediawiki/images/ >" >> /etc/apache2/sites-available/mediawiki.conf
 	echo "AllowOverride None" >> /etc/apache2/sites-available/mediawiki.conf
@@ -1518,8 +1511,7 @@ CustomLog /var/www/Serge/web/logs/access.log combined
 
 	echo "<Directory /var/www/mediawiki/ >" >> /etc/apache2/sites-available/mediawiki.conf
 	echo "AllowOverride All" >> /etc/apache2/sites-available/mediawiki.conf
-	echo "Order allow,deny" >> /etc/apache2/sites-available/mediawiki.conf
-	echo "allow from all" >> /etc/apache2/sites-available/mediawiki.conf
+	echo "Require all granted" >> /etc/apache2/sites-available/mediawiki.conf
 	echo "</Directory>" >> /etc/apache2/sites-available/mediawiki.conf
 	echo "ErrorLog /var/www/mediawiki/logs/error.log" >> /etc/apache2/sites-available/mediawiki.conf
 	echo "CustomLog /var/www/mediawiki/logs/access.log combined" >> /etc/apache2/sites-available/mediawiki.conf
@@ -2155,8 +2147,7 @@ Security_app()
 		echo "php_admin_value open_basedir /var/www/esmweb/" >> /etc/apache2/sites-available/esmweb.conf
 		echo "# Prohibit access to files starting with a dot" >> /etc/apache2/sites-available/esmweb.conf
 		echo "<FilesMatch ^\\.>" >> /etc/apache2/sites-available/esmweb.conf
-		echo "    Order allow,deny" >> /etc/apache2/sites-available/esmweb.conf
-		echo "    Deny from all" >> /etc/apache2/sites-available/esmweb.conf
+		echo "    Require all denied" >> /etc/apache2/sites-available/esmweb.conf
 		echo "</FilesMatch>" >> /etc/apache2/sites-available/esmweb.conf
 		echo "<Directory /var/www/esmweb/ >" >> /etc/apache2/sites-available/esmweb.conf
 		echo "AllowOverride All" >> /etc/apache2/sites-available/esmweb.conf
@@ -2320,7 +2311,7 @@ Security_app()
 		systemctl restart apache2
 
 		# Phpmyadmin htpasswd protection
-		sed -i "s/<\/VirtualHost>/<Location \/phpmyadmin>\n	AuthUserFile \/var\/www\/Serge\/web\/.htpassword\n	AuthGroupFile \/dev\/null\n	AuthName \"Restricted access\"\n	AuthType Basic\n	require valid-user\n<\/Location>\n<\/VirtualHost>/g" /etc/apache2/sites-available/Serge.conf
+		sed -i "s/<\/VirtualHost>/<Location \/phpmyadmin>\n\tAuthUserFile \/var\/www\/Serge\/web\/.htpassword\n\tAuthGroupFile \/dev\/null\n\tAuthName \"Restricted access\"\n\tAuthType Basic\n\trequire valid-user\n<\/Location>\n<\/VirtualHost>/g" /etc/apache2/sites-available/Serge.conf
 
 		htpasswd -bcB -C 8 /var/www/Serge/web/.htpassword $email $passnohash
 
@@ -2338,7 +2329,7 @@ Security_app()
 
 		# Rainloop ?admin htpasswd protection
 		sed -i "s/php\_admin\_value open\_basedir \/var\/www\/rainloop\//php\_admin\_value open\_basedir \/var\/www\/rainloop\/\nRewriteEngine On\nRewriteCond %{QUERY\_STRING} ^.*admin.*$\nRewriteRule (.*) - [E=AUTH\_NEEDED:true]/g" /etc/apache2/sites-available/rainloop.conf
-		sed -i "s/AllowOverride All/  AllowOverride All\n  AuthUserFile \/var\/www\/rainloop\/.htpasswd\n  AuthGroupFile \/dev\/null\n  AuthName \"Restricted access\"\n  AuthType Basic\n  require valid-user\n  Order allow,deny\n  Allow from all\n  Deny from env=AUTH_NEEDED\n  Satisfy any/g" /etc/apache2/sites-available/rainloop.conf
+		sed -i "s/AllowOverride All/  AllowOverride All\n  AuthUserFile \/var\/www\/rainloop\/.htpasswd\n  AuthGroupFile \/dev\/null\n  AuthName \"Restricted access\"\n  AuthType Basic\n  require valid-user\n  Require all granted\n  Deny from env=AUTH_NEEDED\n  Satisfy any/g" /etc/apache2/sites-available/rainloop.conf
 
 		htpasswd -bcB -C 8 /var/www/rainloop/.htpasswd $email $passnohash
 

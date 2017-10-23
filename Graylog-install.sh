@@ -159,8 +159,7 @@ Install_Piwik()
 	echo "php_admin_value open_basedir /var/www/piwik/" >> /etc/apache2/sites-available/piwik.conf
 	echo "# Prohibit access to files starting with a dot" >> /etc/apache2/sites-available/piwik.conf
 	echo "<FilesMatch ^\\.>" >> /etc/apache2/sites-available/piwik.conf
-	echo "    Order allow,deny" >> /etc/apache2/sites-available/piwik.conf
-	echo "    Deny from all" >> /etc/apache2/sites-available/piwik.conf
+	echo "    Require all denied" >> /etc/apache2/sites-available/piwik.conf
 	echo "</FilesMatch>" >> /etc/apache2/sites-available/piwik.conf
 	echo "<Directory /var/www/piwik/ >" >> /etc/apache2/sites-available/piwik.conf
 	echo "AllowOverride All" >> /etc/apache2/sites-available/piwik.conf
@@ -246,8 +245,7 @@ Install_Graylog()
 	echo "LoadModule proxy_http_module modules/mod_proxy_http.so" >> /etc/apache2/sites-available/graylog.conf
 	echo "ProxyRequests Off" >> /etc/apache2/sites-available/graylog.conf
 	echo "<Proxy *>" >> /etc/apache2/sites-available/graylog.conf
-	echo "	Order deny,allow" >> /etc/apache2/sites-available/graylog.conf
-	echo "	Allow from all" >> /etc/apache2/sites-available/graylog.conf
+	echo "	Require all granted" >> /etc/apache2/sites-available/graylog.conf
 	echo "</Proxy>" >> /etc/apache2/sites-available/graylog.conf
 	echo "<Location />" >> /etc/apache2/sites-available/graylog.conf
 	echo "	RequestHeader set X-Graylog-Server-URL \"http://monitoring.$domainName/api/\"" >> /etc/apache2/sites-available/graylog.conf
@@ -682,8 +680,7 @@ Security_app()
 		echo "php_admin_value open_basedir /var/www/esmweb/" >> /etc/apache2/sites-available/esmweb.conf
 		echo "# Prohibit access to files starting with a dot" >> /etc/apache2/sites-available/esmweb.conf
 		echo "<FilesMatch ^\\.>" >> /etc/apache2/sites-available/esmweb.conf
-		echo "    Order allow,deny" >> /etc/apache2/sites-available/esmweb.conf
-		echo "    Deny from all" >> /etc/apache2/sites-available/esmweb.conf
+		echo "    Require all denied" >> /etc/apache2/sites-available/esmweb.conf
 		echo "</FilesMatch>" >> /etc/apache2/sites-available/esmweb.conf
 		echo "<Directory /var/www/esmweb/ >" >> /etc/apache2/sites-available/esmweb.conf
 		echo "AllowOverride All" >> /etc/apache2/sites-available/esmweb.conf
