@@ -114,7 +114,7 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 
 					$checker = hash('sha256', $cryptoSalt . preg_replace("/...$/", "", $_SERVER['REQUEST_TIME']));
 
-					$verifyLink = 'https://' . $_SERVER['HTTP_HOST'] . '/index?emailCheck=' . $token . '&checker='. $checker;
+					$verifyLink = 'http://' . $_SERVER['HTTP_HOST'] . '/index?emailCheck=' . $token . '&checker='. $checker;
 
 					// Send email verification
 					$to      = $data['email'];
