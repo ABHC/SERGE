@@ -130,7 +130,7 @@ elseif (!empty($data['action']) && $data['action'] === "forgotPassphraseProcessi
 		# Send mail to user for reset password
 		$checker = hash('sha256', $cryptoSalt . preg_replace("/...$/", "", $_SERVER['REQUEST_TIME']));
 
-		$verifyLink = 'https://' . $_SERVER['HTTP_HOST'] . '/connection?action=resetPassphrase&token=' . $token . '&checker='. $checker;
+		$verifyLink = 'http://' . $_SERVER['HTTP_HOST'] . '/connection?action=resetPassphrase&token=' . $token . '&checker='. $checker;
 
 		# Send email verification
 		$to      = $data['email'];

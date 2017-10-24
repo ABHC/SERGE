@@ -5,6 +5,7 @@ if (empty($_SESSION['pseudo']) || $_SESSION['ip'] !== $_SERVER['REMOTE_ADDR'] ||
 	$redirect = preg_replace("/[^a-zA-Z0-9?=&]/", '', $_SERVER['REQUEST_URI']);
 	session_destroy();
 	session_regenerate_id();
+	session_start();
 	$_SESSION['redirectFrom'] = $redirect;
 	header('Location: connection');
 	die();
