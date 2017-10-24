@@ -144,7 +144,7 @@ input#email
 h3
 {
 	font-size: 20px;
-	margin-top: 35px;
+	margin-top: 5px;
 	margin-bottom: 20px;
 }
 
