@@ -310,12 +310,6 @@
 				<input title="Add new source" class="submit" type="submit" value="" />
 				<select name="sourceType" id="sourceType">
 					<option value="inputSource"><?php get_t('select2_window2_setting', $bdd); ?></option>
-					<!--<option value="sourceGeneralEN">General news source pack [English]</option>
-					<option value="sourceTechnologyEN">Technology source pack [English]</option>
-					<option value="sourceSpatialEN">Spatial source pack [English]</option>
-					<option value="sourceGeneralFR">General news source pack [French]</option>
-					<option value="sourceTechnologyFR">Technology source pack [French]</option>
-					<option value="sourceSpacialFR">Spatial source pack [French]</option>-->
 				</select>
 				<span class="arrDownBorder">▾</span>
 				<input type="url" name="newSource" id="source" placeholder="Source" />
