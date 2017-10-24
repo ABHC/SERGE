@@ -1248,7 +1248,8 @@ Install_Serge()
 	touch /var/www/Serge/logs/serge_launch_log.txt
 	touch /var/www/Serge/logs/serge_error_log.txt
 	touch /var/www/Serge/logs/serge_info_log.txt
-	chmod -R 777 /var/www/Serge
+	chmod -R 500 /var/www/Serge
+	chmod -R 600 /var/www/Serge/logs
 	rm -r SERGE
 
 	# Creation of Serge user
@@ -1314,9 +1315,9 @@ CustomLog /var/www/Serge/web/logs/access.log combined
 	# Ajout de l'acces sécurisé
 	echo "Serge" > /var/www/Serge/web/.htpasswd
 	echo $internalPass >> /var/www/Serge/web/.htpasswd
-	chmod 644 /var/www/Serge/web/.htpasswd
+	chmod 400 /var/www/Serge/web/.htpasswd
 	chown www-data:www-data /var/www/Serge/web/.htpasswd
-	chmod 644 /var/www/Serge/web/.htaccess
+	chmod 400 /var/www/Serge/web/.htaccess
 	chown www-data:www-data /var/www/Serge/web/.htaccess
 	echo '
 	Options +FollowSymlinks
@@ -2303,7 +2304,7 @@ Security_app()
 		echo "Admin" >>  /var/www/esmweb/.htpassword
 		echo $esmpasshash >>  /var/www/esmweb/.htpassword
 
-		chmod 644 /var/www/esmweb/.htpassword
+		chmod 400 /var/www/esmweb/.htpassword
 		chown www-data:www-data /var/www/esmweb/.htpassword
 
 		esmweb="installed"
@@ -2322,7 +2323,7 @@ Security_app()
 
 		htpasswd -bcB -C 8 /var/www/Serge/web/.htpassword $email $passnohash
 
-		chmod 644 /var/www/Serge/web/.htpassword
+		chmod 400 /var/www/Serge/web/.htpassword
 		chown www-data:www-data /var/www/Serge/web/.htpassword
 
 		# Explain how to access to phpmyadmin
@@ -2340,7 +2341,7 @@ Security_app()
 
 		htpasswd -bcB -C 8 /var/www/rainloop/.htpasswd $email $passnohash
 
-		chmod 644 /var/www/rainloop/.htpasswd
+		chmod 400 /var/www/rainloop/.htpasswd
 		chown www-data:www-data /var/www/rainloop/.htpasswd
 
 		# Explain how to access to rainloop administration panel
@@ -2359,12 +2360,12 @@ Security_app()
 		AuthType Basic
 		require valid-user" >> /var/www/postfixadmin/.htaccess
 
-		chmod 644 /var/www/postfixadmin/.htaccess
+		chmod 400 /var/www/postfixadmin/.htaccess
 		chown www-data:www-data /var/www/postfixadmin/.htaccess
 
 		htpasswd -bcB -C 8 /var/www/postfixadmin/.htpasswd $email $passnohash
 
-		chmod 644 /var/www/postfixadmin/.htpasswd
+		chmod 400 /var/www/postfixadmin/.htpasswd
 		chown www-data:www-data /var/www/postfixadmin/.htpasswd
 
 		# Explain how to access to postfixadmin
@@ -2383,12 +2384,12 @@ Security_app()
 		AuthType Basic
 		require valid-user" >> /var/www/esmweb/.htaccess
 
-		chmod 644 /var/www/esmweb/.htaccess
+		chmod 400 /var/www/esmweb/.htaccess
 		chown www-data:www-data /var/www/esmweb/.htaccess
 
 		htpasswd -bcB -C 8 /var/www/esmweb/.htpasswd $email $passnohash
 
-		chmod 644 /var/www/esmweb/.htpasswd
+		chmod 400 /var/www/esmweb/.htpasswd
 		chown www-data:www-data /var/www/esmweb/.htpasswd
 
 		# Explain how to access to esmweb
