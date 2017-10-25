@@ -48,7 +48,7 @@ foreach ($result as $line)
 		}
 
 		# Link studies
-		$linkKeywords = preg_replace("/([^A-za-z0-9]|https)/", " ", $lines['link']);
+		$linkKeywords = preg_replace("/([^A-za-z0-9]|https)/", " ", $line['link']);
 		preg_match_all("/\w{5,}/", $linkKeywords, $linkKeywords_array);
 		$linkKeywords_array = array_unique($linkKeywords_array[0]);
 		$linkKeywords = implode(" ", $linkKeywords_array);
