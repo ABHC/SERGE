@@ -6,10 +6,9 @@
 	<h1>Watch result</h1>
 	<form class="formSearch" method="get" action="result">
 		<input type="text" name="search" id="search" placeholder="Search Serge" value="<?php echo $search; ?>"/>
-		<input type="hidden" name="orderBy" value="<?php echo preg_replace("/.*=/", "", $orderBy); ?>"/>
-		<input type="hidden" name="optionalCond" value="<?php echo $optionalCond; ?>"/>
+		<input type="hidden" name="orderBy" value="<?php echo preg_replace("/.*=/", "", $data['orderBy']); ?>"/>
+		<input type="hidden" name="optionalCond" value="<?php echo $data['optionalCond']; ?>"/>
 		<input type="hidden" name="type" value="<?php echo $type; ?>"/>
-
 	</form>
 	<div class="selectResultsType">
 		<a <?php echo $newsActive; ?> href="result">
@@ -32,17 +31,17 @@
 						<th><input title="Delete selected links" name="deleteLink" class="submit" type="submit" value="delete" /></th>
 						<?php
 						echo '
-						<th><a href="?orderBy=title' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '&type=' . $type . '">'; get_t('title1_table_results', $bdd);
+						<th><a href="?orderBy=title' . $colOrder['DESC'] . $searchSort . $data['optionalCond'] . $actualPageLink . '&type=' . $type . '">'; get_t('title1_table_results', $bdd);
 						echo ' ' . $colOrder['title'] . '</a></th>
 						<th>' . $displayColumn . '</th>
-						<th><a href="?orderBy=source' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '&type=' . $type . '">';
+						<th><a href="?orderBy=source' . $colOrder['DESC'] . $searchSort . $data['optionalCond'] . $actualPageLink . '&type=' . $type . '">';
 						get_t('title3_table_results', $bdd);
 						echo ' ' . $colOrder['source'] . '</a></th>
-						<th><a href="?orderBy=date' . $colOrder['DESC'] . $searchSort . $optionalCond . $actualPageLink . '&type=' . $type . '">';
+						<th><a href="?orderBy=date' . $colOrder['DESC'] . $searchSort . $data['optionalCond'] . $actualPageLink . '&type=' . $type . '">';
 						get_t('title4_table_results', $bdd);
 						echo ' ' . $colOrder['date'] . '</a></th>
-						<th><a href="?optionalCond=send' . $colOrder['OCDESC'] . $searchSort . $orderBy . '&type=' . $type . '">' . $colOrder['send'] . '</a></th>
-						<th><a href="?optionalCond=read' . $colOrder['OCDESC'] . $searchSort . $orderBy . '&type=' . $type . '">' . $colOrder['read'] . '</a></th>
+						<th><a href="?optionalCond=send' . $colOrder['OCDESC'] . $searchSort . $data['orderBy'] . '&type=' . $type . '">' . $colOrder['send'] . '</a></th>
+						<th><a href="?optionalCond=read' . $colOrder['OCDESC'] . $searchSort . $data['orderBy'] . '&type=' . $type . '">' . $colOrder['read'] . '</a></th>
 						<th><a href="wiki">' . var_get_t('title7_table_results', $bdd) .  '</a></th>';
 						?>
 					</tr>
@@ -324,7 +323,7 @@
 			if ($cpt == $page)
 			{
 				echo '
-				<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '&type=' . $type . '" class="pageNumber current">
+				<a href="result?page=' . $cpt . $searchSort . $data['optionalCond'] . $data['orderBy'] . '&type=' . $type . '" class="pageNumber current">
 				' . $cpt . '
 				</a>';
 				$dotBetweenPageNumber = FALSE;
@@ -332,7 +331,7 @@
 			elseif (($cpt - 1) == $page || ($cpt + 1) == $page)
 			{
 				echo '
-				<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '&type=' . $type . '" class="pageNumber">
+				<a href="result?page=' . $cpt . $searchSort . $data['optionalCond'] . $data['orderBy'] . '&type=' . $type . '" class="pageNumber">
 				' . $cpt . '
 				</a>';
 				$dotBetweenPageNumber = FALSE;
@@ -340,7 +339,7 @@
 			elseif ($cpt <= 2 || $cpt == $nbPage || ($cpt + 1) == $nbPage)
 			{
 				echo '
-				<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '&type=' . $type . '" class="pageNumber">
+				<a href="result?page=' . $cpt . $searchSort . $data['optionalCond'] . $data['orderBy'] . '&type=' . $type . '" class="pageNumber">
 				' . $cpt . '
 				</a>';
 			}
