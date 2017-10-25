@@ -512,6 +512,7 @@
 						$checked['openParenthesis' . $cpt] = '';
 					}
 
+					$data['scienceQuery' . $cpt] = $data['scienceQuery' . $cpt] ?? '';
 					echo '
 					<input type="checkbox" id="openParenthesis' . $cpt . '" name="openParenthesis' . $cpt . '" value="active" ' . $checked['openParenthesis' . $cpt] . '/>
 					<label class="queryParenthesis" for="openParenthesis' . $cpt . '">(</label>
@@ -524,7 +525,7 @@
 						<option value="all" ' . $selected['all'] . '>All</option>
 					</select>
 					<span class="arrDownBorder">▾</span>
-					<input type="text" class="query" name="scienceQuery' . $cpt . '" id="scienceQuery0' . $cpt . '" placeholder="Keyword" value="' . $data['scienceQuery' . $cpt] ?? '' . '"/>';
+					<input type="text" class="query" name="scienceQuery' . $cpt . '" id="scienceQuery0' . $cpt . '" placeholder="Keyword" value="' . $data['scienceQuery' . $cpt] . '"/>';
 
 
 					if (!empty($data['closeParenthesis' . $cpt]) && $data['closeParenthesis' . $cpt] === 'active')
@@ -758,6 +759,7 @@
 						$selected[$data['patentType' . $cpt]] = 'selected';
 					}
 
+					$data['patentQuery' . $cpt] = $data['patentQuery' . $cpt] ?? '';
 					echo '
 				<select title="Type" class="queryType" name="patentType' . $cpt . '" id="patentType' . $cpt . '">
 					<option value="ALLNAMES" ' . $selected['ALLNAMES'] . '>All Names</option>
@@ -821,7 +823,7 @@
 					<option value="WO" ' . $selected['WO'] . '>WIPO Publication Number</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" class="query" name="patentQuery' . $cpt . '" id="patentQuery' . $cpt . '" placeholder="Keyword" value="' . $data['patentQuery' . $cpt] ?? '' . '" />';
+				<input type="text" class="query" name="patentQuery' . $cpt . '" id="patentQuery' . $cpt . '" placeholder="Keyword" value="' . $data['patentQuery' . $cpt] . '" />';
 
 				$cpt++;
 
