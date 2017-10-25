@@ -142,6 +142,11 @@
 					{
 						echo '<option value="' . $watchPackUsed['id'] . '">' . $watchPackUsed['name'] . '</option>'.PHP_EOL;
 					}
+
+					if (empty($watchPackUsedList))
+					{
+					    echo '<option value="0"></option>'.PHP_EOL;
+					}
 					?>
 					</select>
 					<input title="Remove selected watchPack" class="removeWP" type="submit" name="removeWP" value="removeWP" />
