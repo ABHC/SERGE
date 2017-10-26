@@ -1,7 +1,7 @@
 <?php
 
 #Reading of id and password
-$secureAccess = fopen('/var/www/Serge/web/.htpasswd', 'r+');
+$secureAccess = fopen('/var/www/Serge/web/.htpasswd', 'r');
 
 $identification = fgets($secureAccess);
 $password = fgets($secureAccess);

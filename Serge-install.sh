@@ -1248,8 +1248,11 @@ Install_Serge()
 	touch /var/www/Serge/logs/serge_launch_log.txt
 	touch /var/www/Serge/logs/serge_error_log.txt
 	touch /var/www/Serge/logs/serge_info_log.txt
-	chmod -R 500 /var/www/Serge
-	chmod -R 600 /var/www/Serge/logs
+	rm /var/www/Serge/Graylog-install.sh
+	rm /var/www/Serge/Serge-install.sh
+	rm /var/www/Serge/README.txt
+	rm -r /var/www/Serge/extensions_tables/
+	rm /var/www/Serge/.git
 	rm -r SERGE
 
 	# Creation of Serge user
@@ -1299,10 +1302,10 @@ php_admin_value open_basedir /var/www/Serge/web:/usr/share/php/:/usr/share/phpmy
 </Directory>
 
 <Directory /usr/share/phpmyadmin>
-		Options Indexes FollowSymLinks MultiViews
-		DirectoryIndex index.php
-		AllowOverride all
-		Require all granted
+	Options Indexes FollowSymLinks MultiViews
+	DirectoryIndex index.php
+	AllowOverride all
+	Require all granted
 </Directory>
 
 ErrorLog /var/www/Serge/web/logs/error.log
@@ -1315,9 +1318,7 @@ CustomLog /var/www/Serge/web/logs/access.log combined
 	# Ajout de l'acces sécurisé
 	echo "Serge" > /var/www/Serge/web/.htpasswd
 	echo $internalPass >> /var/www/Serge/web/.htpasswd
-	chmod 400 /var/www/Serge/web/.htpasswd
 	chown www-data:www-data /var/www/Serge/web/.htpasswd
-	chmod 400 /var/www/Serge/web/.htaccess
 	chown www-data:www-data /var/www/Serge/web/.htaccess
 	echo '
 	Options +FollowSymlinks
@@ -1437,12 +1438,23 @@ CustomLog /var/www/Serge/web/logs/access.log combined
 	# Install Trweet
 	# TODO Demander si l'user veux installer Twreet
 	mkdir /var/www/Serge/permission/SergeChirp
-	# TODO recup depuis l'user les info sur access_token_secret.txt  access_token.txt  consumer_key.txt  consumer_secret.txt
 	echo $accessTokenSecret > /var/www/Serge/permission/SergeChirp/access_token_secret.txt
 	echo $accessToken > /var/www/Serge/permission/SergeChirp/access_token.txt
 	echo $consumerKey > /var/www/Serge/permission/SergeChirp/consumer_key.txt
 	echo $consumerSecret > /var/www/Serge/permission/SergeChirp/consumer_secret.txt
 	chown -R Serge:Serge /var/www/Serge/permission/
+
+	chmod -R 440 /var/www/Serge/
+	chmod -R 660 /var/www/Serge/web
+	find /var/www/Serge -type d -exec chmod 550 {} \;
+	find /var/www/Serge/web -type d -exec chmod 770 {} \;
+	chmod  555 /var/www/Serge
+	chmod -R 660 /var/www/Serge/logs
+	chmod -R 660 /var/www/Serge/web/logs
+	chmod 440 /var/www/Serge/web/.htaccess
+	chmod 440 /var/www/Serge/web/.htpasswd
+	chmod 440 /var/www/Serge/web/.htpassword
+	chmod 440 /var/www/Serge/web/.mailaddr
 
 	# Install Stripe
 	apt-get -y install composer
