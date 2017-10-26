@@ -7,12 +7,20 @@ include('model/insert.php');
 include('controller/generateNonce.php');
 
 // Define variables
-$actualLetter   = '';
-$style          = '';
-$orderByKeyword = '';
-$orderBySource  = '';
-$orderByType    = '';
-
+$actualLetter         = '';
+$style                = '';
+$orderByKeyword       = '';
+$orderBySource        = '';
+$orderByType          = '';
+$searchSort           = '';
+$OPTIONALCOND         = '';
+$actualPageLink       = '';
+$selectedLanguageCode = '';
+$colOrder['name']     = '';
+$colOrder['author']   = '';
+$colOrder['category'] = '';
+$colOrder['date']     = '';
+$page                 = 0;
 
 # Data processing
 $unsafeData = array();
@@ -23,6 +31,8 @@ $unsafeData = array_merge($unsafeData, array(array('type', 'type', 'GET', 'Az'))
 $unsafeData = array_merge($unsafeData, array(array('orderBy', 'orderBy', 'GET', 'str')));
 $unsafeData = array_merge($unsafeData, array(array('languageGET', 'language', 'GET', 'Az')));
 $unsafeData = array_merge($unsafeData, array(array('packId', 'packId', 'GET', '09')));
+$unsafeData = array_merge($unsafeData, array(array('page', 'page', 'GET', '09')));
+$unsafeData = array_merge($unsafeData, array(array('optionalCond', 'optionalCond', 'GET', 'Az')));
 
 $unsafeData = array_merge($unsafeData, array(array('addPack', 'addPack', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('AddStar', 'AddStar', 'POST', '09')));
@@ -131,6 +141,7 @@ $settingTab = 'active';
 # Type
 $type             = 'add';
 $addActive        = 'class="active"';
+$createActive     = '';
 $tableName        = 'result_science_serge';
 $tableNameQuery   = 'queries_science_serge';
 $tableNameSource  = 'science_sources_serge';
@@ -174,6 +185,15 @@ if (!$emailIsCheck)
 
 if ($type === 'add')
 {
+	# Page number
+	if (!empty($data['page']))
+	{
+		$actualPageLink = '&page=' . $data['page'];
+		$limit          = 15;
+		$page           = $data['page'] - 1;
+		$base           = $limit * $page;
+	}
+
 	$checkCol = array();
 	$languageBDD = read('language_serge', 'code, name', $checkCol, '', $bdd);
 

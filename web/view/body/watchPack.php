@@ -790,7 +790,7 @@
 		<form class="formSearch" method="get" action="watchPack">
 			<input type="text" name="search" id="search" placeholder="Search Serge" value="<?php echo $search; ?>"/>
 			<input type="hidden" name="orderBy" value="<?php echo  preg_replace("/.*=/", "", $orderBy); ?>"/>
-			<input type="hidden" name="optionalCond" value="<?php echo $optionalCond; ?>"/>
+			<input type="hidden" name="optionalCond" value="<?php echo $data['optionalCond']; ?>"/>
 		</form>
 
 
@@ -859,7 +859,7 @@
 				if ($cpt === $page)
 				{
 					echo '
-					<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '&type=' . $type . '" class="pageNumber current">
+					<a href="result?page=' . $cpt . $searchSort . $data['optionalCond'] . $orderBy . '&type=' . $type . '" class="pageNumber current">
 					' . $cpt . '
 					</a>';
 					$dotBetweenPageNumber = FALSE;
@@ -867,7 +867,7 @@
 				elseif (($cpt - 1) === $page || ($cpt + 1) === $page)
 				{
 					echo '
-					<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '&type=' . $type . '" class="pageNumber">
+					<a href="result?page=' . $cpt . $searchSort . $data['optionalCond'] . $orderBy . '&type=' . $type . '" class="pageNumber">
 					' . $cpt . '
 					</a>';
 					$dotBetweenPageNumber = FALSE;
@@ -875,7 +875,7 @@
 				elseif ($cpt <= 2 || $cpt === $nbPage || ($cpt + 1) === $nbPage)
 				{
 					echo '
-					<a href="result?page=' . $cpt . $searchSort . $optionalCond . $orderBy . '&type=' . $type . '" class="pageNumber">
+					<a href="result?page=' . $cpt . $searchSort . $data['optionalCond'] . $orderBy . '&type=' . $type . '" class="pageNumber">
 					' . $cpt . '
 					</a>';
 				}
