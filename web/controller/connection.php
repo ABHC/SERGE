@@ -39,7 +39,7 @@ $nonce     = getNonce($nonceTime);
 
 if (!empty($data['pseudo']) && !empty($data['password']))
 {
-	$checkCol  = array(array('users', '=', $data['pseudo']));
+	$checkCol  = array(array('users', '=', $data['pseudo'], ''));
 	$userExist = read('users_table_serge', 'salt', $checkCol, '',$bdd);
 
 	if (!empty($userExist))
@@ -120,7 +120,7 @@ elseif (!empty($data['action']) && $data['action'] === "forgotPassphraseProcessi
 	$_SESSION['captcha'] = '';
 
 	# Check if user exist
-	$checkCol   = array(array('email', ' =', $data['email']));
+	$checkCol   = array(array('email', '=', $data['email'], ''));
 	$userExist  = read('users_table_serge', 'salt, token', $checkCol, '',$bdd);
 	$cryptoSalt = $userExist[0]['salt'];
 	$token      = $userExist[0]['token'];
@@ -159,7 +159,7 @@ elseif (!empty($data['action']) && $data['action'] === "resetPassphrase"
 		&& !empty($data['token']) && !empty($data['checker']))
 {
 	# Check if checker is good
-	$checkCol  = array(array('token', '=', $data['token']));
+	$checkCol  = array(array('token', '=', $data['token'], ''));
 	$userExist = read('users_table_serge', 'salt', $checkCol, '',$bdd);
 	$cryptoSalt = $userExist[0]['salt'];
 
@@ -196,7 +196,7 @@ elseif (!empty($data['action']) && $data['action'] === "resetPassphraseProcessin
 		&& !empty($data['token']) && !empty($data['checker']))
 {
 	# Check if checker is good
-	$checkCol   = array(array('token', ' =', $data['token']));
+	$checkCol   = array(array('token', ' =', $data['token'], ''));
 	$userExist  = read('users_table_serge', 'salt, email', $checkCol, '',$bdd);
 	$cryptoSalt = $userExist[0]['salt'];
 	$email      = $userExist[0]['email'];
