@@ -421,7 +421,7 @@ else
 		if ($userLang === $languageLine['code'])
 		{
 			$selectLanguage = $selectLanguage . PHP_EOL . '<option value="' . $languageLine['code'] . '" selected>' . $languageLine['code'] . ' &nbsp;&nbsp;' . $languageLine['name'] . '</option>';
-			$selectedLanguageCode = $code;
+			$selectedLanguageCode = $languageLine['code'];
 		}
 		else
 		{
