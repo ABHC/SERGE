@@ -17,6 +17,7 @@ $language = $language[0] . $language[1];
 	<?php
 	include('favicon.php');
 	?>
+	<script src="js/piwik/piwik.js" type="text/javascript"></script>
 </head>
 
 <body>

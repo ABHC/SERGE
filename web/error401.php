@@ -13,6 +13,7 @@ include('model/connection_sql.php');
 	<?php
 	include('favicon.php');
 	?>
+	<script src="js/piwik/piwik.js" type="text/javascript"></script>
 </head>
 
 <body>
