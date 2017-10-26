@@ -147,6 +147,7 @@ if (!empty($data['type']) && $data['type'] === 'create')
 {
 	$type             = 'create';
 	$createActive     = 'class="active"';
+	$addActive        = '';
 	$tableName        = 'result_science_serge';
 	$tableNameQuery   = 'queries_science_serge';
 	$tableNameSource  = 'science_sources_serge';
@@ -157,6 +158,7 @@ if (!empty($data['type']) && $data['type'] === 'create')
 	$specialColumn    = ',query_id, id_source ';
 	$displayColumn    = 'Query';
 	$_SESSION['type'] = 'create';
+	unset($limit);
 }
 
 # Read if user mail is check
