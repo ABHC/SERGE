@@ -2,13 +2,14 @@
 include('model/get_text.php');
 include('model/read.php');
 include('model/insert.php');
-include('view/nav/nav.php');
 include('controller/generateNonce.php');
 
 # Initialization of variables
 $resultTab    = '';
 $wikiTab      = '';
 $settingTab   = '';
+
+include('view/nav/nav.php');
 
 # Data processing
 $unsafeData = array();
@@ -21,7 +22,7 @@ include('controller/dataProcessing.php');
 $nonceTime = $_SERVER['REQUEST_TIME'];
 $nonce     = getNonce($nonceTime);
 
-$deleveryTime = 1508260000 ;
+$deleveryTime = 1515260000 ;
 $timeLeft     = $deleveryTime - $_SERVER['REQUEST_TIME'];
 $day          = floor($timeLeft / (24*3600));
 $hour         = floor(($timeLeft - ($day*24*3600)) / (3600));
