@@ -1,6 +1,7 @@
 <?php
 
 include('model/get_text.php');
+include('model/get_text_var.php');
 include('model/read.php');
 include('model/update.php');
 include('model/insert.php');

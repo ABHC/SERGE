@@ -1320,66 +1320,6 @@ CustomLog /var/www/Serge/web/logs/access.log combined
 	echo $internalPass >> /var/www/Serge/web/.htpasswd
 	chown www-data:www-data /var/www/Serge/web/.htpasswd
 	chown www-data:www-data /var/www/Serge/web/.htaccess
-	echo '
-	Options +FollowSymlinks
-	ErrorDocument 404 /error404.php
-	ErrorDocument 403 /error403.php
-	ErrorDocument 401 /error401.php
-
-	RewriteEngine on
-
-	RewriteCond %{REQUEST_FILENAME}\.php -f
-	RewriteCond %{ENV:REDIRECT_STATUS} ^$
-	RewriteRule ^(.+)$ $1.php [L]
-	RewriteRule ^rss/(.+)$  rss.php?token=$1 [L]
-
-
-	php_value upload_max_filesize 200M
-	php_value post_max_size 200M
-
-	php_value max_execution_time 2000
-	php_value max_input_time 2000
-
-	## Expire headers
-	<IfModule mod_expires.c>
-		ExpiresActive On
-		ExpiresDefault "access plus 7200 seconds"
-		ExpiresByType image/jpg                         "access plus 1 week"
-		ExpiresByType image/jpeg                        "access plus 1 week"
-		ExpiresByType image/png                         "access plus 1 week"
-		ExpiresByType image/gif                         "access plus 1 week"
-		ExpiresByType image/svg+xml                     "access plus 1 week"
-		AddType image/x-icon .ico
-		ExpiresByType image/ico                         "access plus 1 week"
-		ExpiresByType image/icon                        "access plus 1 week"
-		ExpiresByType image/x-icon                      "access plus 1 week"
-		ExpiresByType text/css                          "access plus 1 week"
-		ExpiresByType text/javascript           "access plus 1 week"
-		ExpiresByType text/html                         "access plus 7200 seconds"
-		ExpiresByType application/xhtml+xml     "access plus 7200 seconds"
-		ExpiresByType application/javascript    "access plus 1 week"
-		ExpiresByType application/x-javascript  "access plus 1 week"
-	</IfModule>
-
-	<IfModule mod_headers.c>
-
-	<FilesMatch "\\.(ico|jpe?g|png|gif)$">
-	Header set Cache-Control "max-age=2592000, public"
-	</FilesMatch>
-
-	<FilesMatch "\\.(css)$">
-	Header set Cache-Control "max-age=604800, public"
-	</FilesMatch>
-
-	<FilesMatch "\\.(js)$">
-	Header set Cache-Control "max-age=216000, private"
-	</FilesMatch>
-
-	<FilesMatch "\\.(x?html?|php|a?)$">
-	Header set Cache-Control "max-age=600, private, must-revalidate"
-	</FilesMatch>
-
-	</IfModule>' >> /var/www/Serge/web/.htaccess
 
 	a2ensite Serge
 	systemctl restart apache2
@@ -2331,7 +2271,7 @@ Security_app()
 		systemctl restart apache2
 
 		# Phpmyadmin htpasswd protection
-		sed -i "s/<\/VirtualHost>/<Location \/phpmyadmin>\n\tAuthUserFile \/var\/www\/Serge\/web\/.htpassword\n\tAuthGroupFile \/dev\/null\n\tAuthName \"Restricted access\"\n\tAuthType Basic\n\trequire valid-user\n<\/Location>\n<\/VirtualHost>/g" /etc/apache2/sites-available/Serge.conf
+		sed -i "s/<\/VirtualHost>/<Location \/phpmyadmin>\n\tAuthUserFile \/var\/www\/Serge\/web\/.htpassword\n\tAuthGroupFile \/dev\/null\n\tAuthName \"Restricted access\"\n\tAuthType Basic\n\tRequire valid-user\n<\/Location>\n<\/VirtualHost>/g" /etc/apache2/sites-available/Serge.conf
 
 		htpasswd -bcB -C 8 /var/www/Serge/web/.htpassword $email $passnohash
 
@@ -2349,7 +2289,7 @@ Security_app()
 
 		# Rainloop ?admin htpasswd protection
 		sed -i "s/php\_admin\_value open\_basedir \/var\/www\/rainloop\//php\_admin\_value open\_basedir \/var\/www\/rainloop\/\nRewriteEngine On\nRewriteCond %{QUERY\_STRING} ^.*admin.*$\nRewriteRule (.*) - [E=AUTH\_NEEDED:true]/g" /etc/apache2/sites-available/rainloop.conf
-		sed -i "s/AllowOverride All/  AllowOverride All\n  AuthUserFile \/var\/www\/rainloop\/.htpasswd\n  AuthGroupFile \/dev\/null\n  AuthName \"Restricted access\"\n  AuthType Basic\n  require valid-user\n  Require all granted\n  Deny from env=AUTH_NEEDED\n  Satisfy any/g" /etc/apache2/sites-available/rainloop.conf
+		sed -i "s/AllowOverride All/  AllowOverride All\n  AuthUserFile \/var\/www\/rainloop\/.htpasswd\n  AuthGroupFile \/dev\/null\n  AuthName \"Restricted access\"\n  AuthType Basic\n  Require valid-user\n  Require all granted\n  Deny from env=AUTH_NEEDED\n  Satisfy any/g" /etc/apache2/sites-available/rainloop.conf
 
 		htpasswd -bcB -C 8 /var/www/rainloop/.htpasswd $email $passnohash
 
@@ -2370,7 +2310,7 @@ Security_app()
 		AuthGroupFile /dev/null
 		AuthName \"Restricted access\"
 		AuthType Basic
-		require valid-user" >> /var/www/postfixadmin/.htaccess
+		Require valid-user" >> /var/www/postfixadmin/.htaccess
 
 		chmod 400 /var/www/postfixadmin/.htaccess
 		chown www-data:www-data /var/www/postfixadmin/.htaccess
@@ -2394,7 +2334,7 @@ Security_app()
 		AuthGroupFile /dev/null
 		AuthName \"Restricted access\"
 		AuthType Basic
-		require valid-user" >> /var/www/esmweb/.htaccess
+		Require valid-user" >> /var/www/esmweb/.htaccess
 
 		chmod 400 /var/www/esmweb/.htaccess
 		chown www-data:www-data /var/www/esmweb/.htaccess
