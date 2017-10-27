@@ -138,7 +138,7 @@ elseif (!empty($data['action']) && $data['action'] === "forgotPassphraseProcessi
 		$body    = "By clicking on this link you will reset your passphrase :  $verifyLink";
 
 		# Read mail address
-		$mailAddr  = fopen('/var/www/Serge/web/.mailaddr', 'r+');
+		$mailAddr  = fopen('/var/www/Serge/web/.mailaddr', 'r');
 		$emailAddr = fgets($mailAddr);
 		fclose($mailAddr);
 
@@ -241,7 +241,7 @@ elseif (!empty($data['action']) && $data['action'] === "resetPassphraseProcessin
 				$body    = 'Your pasphrase has been succesfully change !';
 
 				# Read mail address
-				$mailAddr  = fopen('/var/www/Serge/web/.mailaddr', 'r+');
+				$mailAddr  = fopen('/var/www/Serge/web/.mailaddr', 'r');
 				$emailAddr = fgets($mailAddr);
 				fclose($mailAddr);
 

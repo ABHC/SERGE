@@ -123,7 +123,7 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 					$body    = "Please verify your email by clicking on the link below :  $verifyLink";
 
 					# Read mail address
-					$mailAddr  = fopen('/var/www/Serge/web/.mailaddr', 'r+');
+					$mailAddr  = fopen('/var/www/Serge/web/.mailaddr', 'r');
 					$emailAddr = fgets($mailAddr);
 					fclose($mailAddr);
 

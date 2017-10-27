@@ -1369,7 +1369,7 @@ CustomLog /var/www/Serge/web/logs/access.log combined
 	echo "smtp.$domainName" > /var/www/Serge/permission/mailserver.txt
 	chown -R Serge:Serge /var/www/Serge/permission/
 
-	echo serge@$domainName > /var/www/Serge/web/.mailaddr
+	echo "serge@$domainName" > /var/www/Serge/web/.mailaddr
 	chown www-data:www-data /var/www/Serge/web/.mailaddr
 
 	# Give access to database
