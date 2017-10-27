@@ -70,9 +70,12 @@
 					else
 					{
 						?>
-						<a href="purchase" class="UpgradeToPremiumButton">Upgrade your account to premium</a>
-						Your payment history :<br>
+						<a href="purchase" class="extendPremiumButton">Upgrade your account to premium</a>
 						<?php
+						if (!empty($paymentList))
+						{
+							echo 'Your payment history :<br>';
+						}
 					}
 					?>
 					<div class="boxScroll">
@@ -145,7 +148,11 @@
 
 					if (empty($watchPackUsedList))
 					{
-					    echo '<option value="0"></option>'.PHP_EOL;
+						echo '<option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>'.PHP_EOL;
+						echo '<option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>'.PHP_EOL;
+						echo '<option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>'.PHP_EOL;
+						echo '<option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>'.PHP_EOL;
+						echo '<option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>'.PHP_EOL;
 					}
 					?>
 					</select>
