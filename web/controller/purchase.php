@@ -35,6 +35,12 @@ $checkCol    = array(array('id', '=', $_SESSION['id'], ''));
 $userDetails = read('users_table_serge', 'premium_expiration_date', $checkCol, '', $bdd);
 $userDetails = $userDetails[0];
 
+// Read month price
+$checkCol   = array(array('type', '=', 'month', 'AND'),
+										array('currency', '=', 'EUR', ''));
+$result     = read('price_table_serge', 'price', $checkCol, '',$bdd);
+$monthPrice = $result[0]['price'];
+
 if ($userDetails['premium_expiration_date'] < $_SERVER['REQUEST_TIME'])
 {
 	$userDetails['premium_expiration_date'] = $_SERVER['REQUEST_TIME'] - 1;
@@ -42,12 +48,6 @@ if ($userDetails['premium_expiration_date'] < $_SERVER['REQUEST_TIME'])
 
 if (!empty($data['submitPurchase']) && !empty($data['readCGS']) && !empty($data['months']))
 {
-	// Read month price
-	$checkCol   = array(array('type', '=', 'month', 'AND'),
-											array('currency', '=', 'EUR', ''));
-	$result     = read('price_table_serge', 'price', $checkCol, '',$bdd);
-	$monthPrice = $result[0]['price'];
-
 	// Check if $data['month'] is min 1 and max 30 and int
 	if ($data['months'] < 1 || $data['months'] > 30)
 	{
@@ -55,7 +55,7 @@ if (!empty($data['submitPurchase']) && !empty($data['readCGS']) && !empty($data[
 	}
 
 	$price           = $monthPrice * $data['months'];
-	$premiumDuration = $data['months'] * 30 *24 * 3600;
+	$premiumDuration = $data['months'] * 30 * 24 * 3600;
 
 	if (!empty($data['premiumCode']))
 	{
@@ -75,7 +75,7 @@ if (!empty($data['submitPurchase']) && !empty($data['readCGS']) && !empty($data[
 			$checkCol  = array(array('id', '=', $premiumCodeId, ''));
 			$execution = update('premium_code_table_serge', $updateCol, $checkCol, '', $bdd);
 
-			$price = $price - (($premiumCodeDuration/3600*24*30) * $monthPrice);
+			$price = $price - (($premiumCodeDuration/(3600*24*30)) * $monthPrice);
 
 			if ($price < 0)
 			{
@@ -91,7 +91,7 @@ if (!empty($data['submitPurchase']) && !empty($data['readCGS']) && !empty($data[
 		require_once('vendor/autoload.php');
 
 		// Read stripe keys
-		$checkCol = array(array('account_name', '=', 'Cairn Devices Serge TEST', ''));
+		$checkCol = array();
 		$result   = read('stripe_table_serge', 'secret_key, publishable_key', $checkCol, '',$bdd);
 		$result   = $result[0];
 
