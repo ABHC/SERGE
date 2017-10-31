@@ -7,7 +7,8 @@ function insert(string $tableName, array $insertCol, string $optional, string $r
 										array('ColumnName', 'ColValue');
 	*/
 
-	$INSERTvar      = '';
+	$INSERTvar   = '';
+	$VALUESvar   = '';
 	$arrayValues = array();
 	$comma       = '';
 
@@ -29,6 +30,7 @@ function insert(string $tableName, array $insertCol, string $optional, string $r
 		$req = $bdd->prepare("INSERT INTO $tableName ($INSERTvar) VALUES ($VALUESvar) $optional");
 		$req->execute($arrayValues);
 		$req->closeCursor();
+		$execution = TRUE;
 
 		if (!empty($redirectPage))
 		{

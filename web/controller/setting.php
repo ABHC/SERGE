@@ -605,7 +605,7 @@ foreach ($selected_days[0] as $value)
 	$day[$value] = 'selected';
 }
 
-$day2 = $day;
+$day2 = $day ?? '';
 
 if (isset($day[1]) && isset($day[2]) && isset($day[3]) && isset($day[4]) && isset($day[5]) && isset($day[6]) && isset($day[7]))
 {
@@ -660,12 +660,12 @@ $firstEntry = FALSE;
 $cpt = 1;
 while ($cpt <= 7)
 {
-	if ($day[$cpt] === 'selected' && $day2[$cpt] === 'selected' && !$firstEntry)
+	if (!empty($day) && $day[$cpt] === 'selected' && $day2[$cpt] === 'selected' && !$firstEntry)
 	{
 		$day2[$cpt] = '';
 		$firstEntry = TRUE;
 	}
-	elseif ($day[$cpt] === 'selected' && $day2[$cpt] === 'selected' && $firstEntry)
+	elseif (!empty($day) && $day[$cpt] === 'selected' && $day2[$cpt] === 'selected' && $firstEntry)
 	{
 		$day[$cpt] = '';
 		$cpt       = 8;

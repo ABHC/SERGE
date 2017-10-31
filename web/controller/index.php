@@ -76,6 +76,7 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 						// Génération du token
 						$bytes       = random_bytes(4);
 						$cryptoToken = bin2hex($bytes);
+						$token       = '';
 						$cpt         = 0;
 
 						while($cpt < 8)
@@ -159,7 +160,7 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 					unset($data['password']);
 
 					# Connection
-					session_start();
+					session_regenerate_id();
 					$_SESSION['id']            = $result['id'];
 					$_SESSION['pseudo']        = $result['users'];
 					$_SESSION['lang']          = $result['language'];
