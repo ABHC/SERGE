@@ -105,7 +105,7 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 					$password   = hash('sha256', $cryptoSalt . $data['password']);
 
 					// Language
-					$language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+					$language = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
 					$language = strtoupper($language[0] . $language[1]);
 					$language = preg_replace("/[^A-Z]/", '', $language);
 					if (empty($language))

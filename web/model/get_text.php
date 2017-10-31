@@ -1,7 +1,7 @@
 <?php
 function get_t(string $name, $bdd)
 {
-	$language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+	$language = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
 	$language = strtoupper($language[0] . $language[1]);
 	$language = preg_replace("/[^A-Z]/", "", $language);
 

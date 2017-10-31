@@ -1,7 +1,7 @@
 <?php
 function var_get_t(string $name, $bdd)
 {
-	$language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+	$language = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
 	$language = strtoupper($language[0] . $language[1]);
 
 	if ($language != 'FR' && $language != 'EN')
