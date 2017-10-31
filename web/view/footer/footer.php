@@ -15,7 +15,7 @@
 				<div class="subLinks">
 					<a href="workinprogress"><?php get_t('link1_center_footer', $bdd); ?></a>
 					<a href="legal"><?php get_t('link2_center_footer', $bdd); ?></a>
-					<a href="privacy"><?php get_t('link3_center_footer', $bdd); ?></a>
+					<a href="legal#privacy"><?php get_t('link3_center_footer', $bdd); ?></a>
 				</div>
 				<div class="subLinks">
 					<a href="index#signup"><?php get_t('link4_center_footer', $bdd); ?></a>
