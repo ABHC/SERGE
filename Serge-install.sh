@@ -1252,7 +1252,7 @@ Install_Serge()
 	rm /var/www/Serge/Serge-install.sh
 	rm /var/www/Serge/README.txt
 	rm -r /var/www/Serge/extensions_tables/
-	rm /var/www/Serge/.git
+	rm -r /var/www/Serge/.git/
 	rm -r SERGE
 
 	# Creation of Serge user
