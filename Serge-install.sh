@@ -1392,6 +1392,7 @@ CustomLog /var/www/Serge/web/logs/access.log combined
 	chmod -R 660 /var/www/Serge/logs
 	chmod -R 660 /var/www/Serge/web/logs
 	chmod 550 /var/www/Serge/logs
+	chmod 550 /var/www/Serge/web/logs
 	chmod 440 /var/www/Serge/web/.htaccess
 	chmod 440 /var/www/Serge/web/.htpasswd
 	chmod 440 /var/www/Serge/web/.htpassword
