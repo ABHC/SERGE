@@ -1672,6 +1672,20 @@ CustomLog /var/www/Serge/web/logs/access.log combined
 
 	chmod +x /usr/bin/SergeUpdate
 
+	# Create database backup every day
+	mkdir /srv/backupSerge/
+	crontab -l > /tmp/crontab.tmp
+	echo "0 0 * * *  /srv/SergeBackup.sh" >> /tmp/crontab.tmp
+	crontab /tmp/crontab.tmp
+	rm /tmp/crontab.tmp
+	echo "#!/bin/bash" > /srv/SergeBackup.sh
+	echo "password=$(cat /var/www/Serge/permission/password.txt)" >> /srv/SergeBackup.sh
+	echo "/usr/bin/mysqldump -u Serge -p\$password Serge > /srv/backupSerge/Sergedata_\$( date +\"%Y_%m_%d\" ).sql" >> /srv/SergeBackup.sh
+	echo "password=''"  >> /srv/SergeBackup.sh
+	chown -R Serge:Serge /srv/backupSerge/
+	chown Serge:Serge /srv/SergeBackup.sh
+	chmod 550 /srv/SergeBackup.sh
+
 	serge="installed"
 }
 
