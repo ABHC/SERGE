@@ -1415,6 +1415,8 @@ CustomLog /var/www/Serge/web/logs/access.log combined
 	# Add Stripe Keys in database
 	mysql -h localhost -p${internalPass} -u Serge Serge -e "INSERT INTO stripe_table_serge (account_name, secret_key, publishable_key) VALUES ('$accountName','$secretKey','$publishableKey')"
 
+	cp -r vendor/ /var/www/Serge/web/
+
 	# Cleaning
 	secretKey=""
 
