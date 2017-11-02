@@ -1313,6 +1313,31 @@ CustomLog /var/www/Serge/web/logs/access.log combined
 
 </VirtualHost>" > /etc/apache2/sites-available/Serge.conf
 
+	# Install Stripe
+	apt-get -y install composer
+	composer require stripe/stripe-php
+
+	dialog --backtitle "Serge installation" --title "Stripe keys"\
+	--inputbox "Stripe account name" 7 60 2> $FICHTMP
+	accountName=$(cat $FICHTMP)
+
+	dialog --backtitle "Serge installation" --title "Stripe keys"\
+	--inputbox "Stripe secret key" 7 60 2> $FICHTMP
+	secretKey=$(cat $FICHTMP)
+
+	dialog --backtitle "Serge installation" --title "Stripe keys"\
+	--inputbox "Stripe publishable key" 7 60 2> $FICHTMP
+	publishableKey=$(cat $FICHTMP)
+
+	# Add Stripe Keys in database
+	mysql -h localhost -p${internalPass} -u Serge Serge -e "INSERT INTO stripe_table_serge (account_name, secret_key, publishable_key) VALUES ('$accountName','$secretKey','$publishableKey')"
+
+	cp -r vendor/ /var/www/Serge/web/
+	rm -r vendor/
+
+	# Cleaning
+	secretKey=""
+
 	chown -R www-data:www-data /var/www/Serge/web/
 
 	# Ajout de l'acces sécurisé
@@ -1396,31 +1421,7 @@ CustomLog /var/www/Serge/web/logs/access.log combined
 	chmod 440 /var/www/Serge/web/.htaccess
 	chmod 440 /var/www/Serge/web/.htpasswd
 	chmod 440 /var/www/Serge/web/.htpassword
-	chmod 440 /var/www/Serge/web/.mailaddr
-
-	# Install Stripe
-	apt-get -y install composer
-	composer require stripe/stripe-php
-
-	dialog --backtitle "Serge installation" --title "Stripe keys"\
-	--inputbox "Stripe account name" 7 60 2> $FICHTMP
-	accountName=$(cat $FICHTMP)
-
-	dialog --backtitle "Serge installation" --title "Stripe keys"\
-	--inputbox "Stripe secret key" 7 60 2> $FICHTMP
-	secretKey=$(cat $FICHTMP)
-
-	dialog --backtitle "Serge installation" --title "Stripe keys"\
-	--inputbox "Stripe publishable key" 7 60 2> $FICHTMP
-	publishableKey=$(cat $FICHTMP)
-
-	# Add Stripe Keys in database
-	mysql -h localhost -p${internalPass} -u Serge Serge -e "INSERT INTO stripe_table_serge (account_name, secret_key, publishable_key) VALUES ('$accountName','$secretKey','$publishableKey')"
-
-	cp -r vendor/ /var/www/Serge/web/
-
-	# Cleaning
-	secretKey=""
+	chmod 440 /var/www/Serge/web/.mailadd
 
 	piwikMonitoring=""
 	# Ask for adress of piwik monitoring server
