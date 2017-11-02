@@ -1330,7 +1330,7 @@ CustomLog /var/www/Serge/web/logs/access.log combined
 	publishableKey=$(cat $FICHTMP)
 
 	# Add Stripe Keys in database
-	mysql -h localhost -p${internalPass} -u Serge Serge -e "INSERT INTO stripe_table_serge (account_name, secret_key, publishable_key) VALUES ('$accountName','$secretKey','$publishableKey')"
+	mysql -h localhost -p${internalPass} -u Serge Serge -e "INSERT INTO stripe_table_serge (account_name, secret_key, publishable_key) VALUES ('$accountName','$secretKey','$publishableKey');"
 
 	cp -r vendor/ /var/www/Serge/web/
 	rm -r vendor/
@@ -1344,7 +1344,6 @@ CustomLog /var/www/Serge/web/logs/access.log combined
 	echo "Serge" > /var/www/Serge/web/.htpasswd
 	echo $internalPass >> /var/www/Serge/web/.htpasswd
 	chown www-data:www-data /var/www/Serge/web/.htpasswd
-	chown www-data:www-data /var/www/Serge/web/.htaccess
 
 	a2ensite Serge
 	systemctl restart apache2
