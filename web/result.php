@@ -2,8 +2,7 @@
 set_time_limit(25);
 session_start();
 include('model/connection_sql.php');
-$language = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
-$language = $language[0] . $language[1];
+include('languages.php');
 ?>
 
 <!DOCTYPE html>

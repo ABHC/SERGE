@@ -60,6 +60,7 @@ if (!empty($data['pseudo']) && !empty($data['password']))
 		$redirect = $_SESSION['redirectFrom'];
 
 		session_regenerate_id();
+		session_destroy();
 		session_start();
 
 		$_SESSION['id']            = $result[0]['id'];
