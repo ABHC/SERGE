@@ -2378,6 +2378,9 @@ Security_app()
 
 	Monitoring_with_graylog()
 	{
+		# Dependancy
+		apt-get -y install rsyslog-gnutls
+
 		logMonitoring=""
 		# Ask for adress of log monitoring server
 		while [ "$logMonitoring" == "" ]
@@ -2388,10 +2391,27 @@ Security_app()
 		done
 
 		# Port to send log from other servers
-		ufw allow 8514/udp
+		ufw allow 514/tcp
 
 		# Configuration for recieve logs
-		echo "*.* @monitoring.$logMonitoring:8514;RSYSLOG_SyslogProtocol23Format" > /etc/rsyslog.d/60-graylog.conf
+		echo
+				"\$ModLoad imuxsock # local messages
+\$ModLoad imtcp # TCP listener
+
+# make gtls driver the default
+\$DefaultNetstreamDriver gtls
+
+# certificate files
+\$DefaultNetstreamDriverCAFile /etc/letsencrypt/live/$domainName/fullchain.pem
+\$DefaultNetstreamDriverCertFile /etc/letsencrypt/live/$domainName/cert.pem
+\$DefaultNetstreamDriverKeyFile /etc/letsencrypt/live/$domainName/privkey.pem
+
+\$InputTCPServerStreamDriverAuthMode x509/name
+\$InputTCPServerStreamDriverPermittedPeer *.$logMonitoring
+\$InputTCPServerStreamDriverMode 1 # run driver in TLS-only mode
+\$InputTCPServerRun 10514 # start up listener at port 10514
+
+*.* @@monitoring.$logMonitoring:514;RSYSLOG_SyslogProtocol23Format" > /etc/rsyslog.d/60-graylog.conf
 
 		systemctl restart rsyslog
 	}
@@ -2466,6 +2486,9 @@ ItsCert()
 		crontab /tmp/crontab.tmp
 		rm /tmp/crontab.tmp
 
+		echo "*.* @@monitoring.$logMonitoring:514;RSYSLOG_SyslogProtocol23Format" > /etc/rsyslog.d/60-graylog.conf
+
+		systemctl restart rsyslog
 		systemctl restart apache2
 		systemctl restart postfix
 		systemctl restart dovecot

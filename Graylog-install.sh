@@ -240,7 +240,7 @@ Install_Graylog()
 	ufw allow 9000/tcp
 
 	# Port to send log from other servers
-	ufw allow 8514/udp
+	ufw allow 514/tcp
 
 	systemctl restart rsyslog
 
