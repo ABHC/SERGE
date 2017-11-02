@@ -1,12 +1,6 @@
 <?php
 function insert(string $tableName, array $insertCol, string $optional, string $redirectPage, $bdd)
 {
-	# USAGE
-	/*
-	$insertCol = array(array('ColumnName', 'ColValue'),
-										array('ColumnName', 'ColValue');
-	*/
-
 	$INSERTvar   = '';
 	$VALUESvar   = '';
 	$arrayValues = array();
@@ -41,7 +35,7 @@ function insert(string $tableName, array $insertCol, string $optional, string $r
 	catch (Exception $e)
 	{
 		$execution = FALSE;
-		// Error in log $internalErrorMessage = $e->getMessage();
+		// Error in log
 		error_log($e->getMessage(), 0);
 	}
 

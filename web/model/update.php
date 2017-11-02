@@ -1,15 +1,6 @@
 <?php
 function update(string $tableName, array $updateCol, array $checkCol, string $optional, $bdd)
 {
-	# USAGE
-	/*
-	$updateCol = array(array('ColumnName', 'ColNewValue'),
-										array('ColumnName', 'ColNewValue');
-	$checkCol = array(array('ColumnName', '=', 'ColValue', 'OR'),
-										array('ColumnName', 'l', 'ColValue', 'AND'),
-										array('ColumnName', '=', 'ColValue', ''));
-	*/
-
 	$SETvar      = '';
 	$WHEREvar    = '';
 	$arrayValues = array();
@@ -57,7 +48,7 @@ function update(string $tableName, array $updateCol, array $checkCol, string $op
 	catch (Exception $e)
 	{
 		$execution = FALSE;
-		// Error in log $internalErrorMessage = $e->getMessage();
+		// Error in log
 		error_log($e->getMessage(), 0);
 	}
 

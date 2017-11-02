@@ -1,13 +1,6 @@
 <?php
 function read(string $tableName, string $selectedCol, array $checkCol, string $optional, $bdd)
 {
-	# USAGE
-	/*
-	$checkCol = array(array('ColumnName', '=', 'ColValue', 'OR'),
-										array('ColumnName', 'l', 'ColValue', 'AND'),
-										array('ColumnName', '=', 'ColValue', ''));
-	*/
-
 	$check       = FALSE;
 	$arrayValues = array();
 	$cpt         = 0;
@@ -97,7 +90,7 @@ function read(string $tableName, string $selectedCol, array $checkCol, string $o
 	}
 	catch (Exception $e)
 	{
-		// Error in log $internalErrorMessage = $e->getMessage();
+		// Error in log
 		error_log($e->getMessage(), 0);
 	}
 
