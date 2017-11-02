@@ -137,12 +137,9 @@
 					{
 						$foldSourceName = 'radio-s' . $rssFirstLetter[0];
 						$amICheckFoldSource = '';
-						if (isset($_SESSION[$foldSourceName]))
+						if (isset($_SESSION[$foldSourceName]) && $_SESSION[$foldSourceName] == $rssFirstLetter[0])
 						{
-							if ($_SESSION[$foldSourceName] == $rssFirstLetter[0])
-							{
-								$amICheckFoldSource = 'checked';
-							}
+							$amICheckFoldSource = 'checked';
 						}
 
 						$actualLetter = $rssFirstLetter[0];
@@ -161,14 +158,10 @@
 
 					$foldKeywordName = 'radio-ks' . $packSourcesList['id'];
 					$amICheckFoldKeyword = '';
-					if (isset($_SESSION[$foldKeywordName]))
+					if (isset($_SESSION[$foldKeywordName]) && $_SESSION[$foldKeywordName] == $packSourcesList['id'])
 					{
-						if ($_SESSION[$foldKeywordName] == $packSourcesList['id'])
-						{
-							$amICheckFoldKeyword = 'checked';
-						}
+						$amICheckFoldKeyword = 'checked';
 					}
-
 
 
 					$checkCol = array(array("query", "=", "[!source!]", "AND"),
