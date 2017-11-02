@@ -219,45 +219,41 @@ elseif (!empty($data['action']) && $data['action'] === "resetPassphraseProcessin
 		# Cleaning
 		$_SESSION['captcha'] = '';
 
-		# Check if passphrase is valid
-		if($data['reset_password'] === $data['reset_repassword'])
+		# Check if passphrase is valid and check size of passphrase
+		if($data['reset_password'] === $data['reset_repassword'] && isset($data['reset_password']{8}))
 		{
-			# Check size of passphrase
-			if(isset($data['reset_password']{8}))
-			{
-				// Salt generation
-				$bytes      = random_bytes(5);
-				$cryptoSalt = bin2hex($bytes);
-				$password   = hash('sha256', $cryptoSalt . $data['reset_password']);
+			// Salt generation
+			$bytes      = random_bytes(5);
+			$cryptoSalt = bin2hex($bytes);
+			$password   = hash('sha256', $cryptoSalt . $data['reset_password']);
 
-				# Update password
-				$updateCol = array(array('password', $password),
-													array('salt', $cryptoSalt));
-				$checkCol  = array(array('token', '=', $data['token'], ''));
-				$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
+			# Update password
+			$updateCol = array(array('password', $password),
+			array('salt', $cryptoSalt));
+			$checkCol  = array(array('token', '=', $data['token'], ''));
+			$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
 
-				# Send email verification
-				$to      = $email;
-				$subject = 'Serge : Passphrase change';
-				$body    = 'Your pasphrase has been succesfully change !';
+			# Send email verification
+			$to      = $email;
+			$subject = 'Serge : Passphrase change';
+			$body    = 'Your pasphrase has been succesfully change !';
 
-				# Read mail address
-				$mailAddr  = fopen('/var/www/Serge/web/.mailaddr', 'r');
-				$emailAddr = fgets($mailAddr);
-				fclose($mailAddr);
+			# Read mail address
+			$mailAddr  = fopen('/var/www/Serge/web/.mailaddr', 'r');
+			$emailAddr = fgets($mailAddr);
+			fclose($mailAddr);
 
-				# Cleaning value
-				$emailAddr = preg_replace("/(\r\n|\n|\r)/", "", $emailAddr);
+			# Cleaning value
+			$emailAddr = preg_replace("/(\r\n|\n|\r)/", "", $emailAddr);
 
-				$headers = "From: $emailAddr" . "\r\n" .
-				"Reply-To: $emailAddr" . "\r\n" .
-				'X-Mailer: PHP/' . phpversion();
+			$headers = "From: $emailAddr" . "\r\n" .
+			"Reply-To: $emailAddr" . "\r\n" .
+			'X-Mailer: PHP/' . phpversion();
 
-				mail($to, $subject, $body, $headers);
+			mail($to, $subject, $body, $headers);
 
-				header("Location: connection");
-				die();
-			}
+			header("Location: connection");
+			die();
 		}
 		$args = 'action=resetPassphrase&error=badPassphrase&token=' . $data['token'] . '&checker=' . $data['checker'];
 		header("Location: connection?$args");
