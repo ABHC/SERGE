@@ -85,7 +85,7 @@
 
 			<form method="post" action="connection">
 				<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
-				<p class="title_form_connection"><?php get_t('input1_signin_connection', $bdd); ?></p> <p><input class="connection_field" type="text" name="conn_pseudo" id="Pseudo" value="<?php echo $data['pseudo'];?>" /></p>
+				<p class="title_form_connection"><?php get_t('input1_signin_connection', $bdd); ?></p> <p><input class="connection_field" type="text" name="conn_pseudo" id="Pseudo" value="<?php echo $data['pseudo'] ?? '';?>" /></p>
 				<p class="title_form_connection"><?php get_t('input2_signin_connection', $bdd); ?></p> <p><input class="connection_field" type="password" name="conn_password" id="conn_password" /></p>
 				<?php echo $errorMessage; ?>
 				<a class="text_connection" href="?action=forgotPassphrase"><?php get_t('forgotPass_link_connection', $bdd); ?></a><br>
