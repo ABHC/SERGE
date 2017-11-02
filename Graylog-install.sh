@@ -195,12 +195,19 @@ Install_Piwik()
 		email=$(cat $FICHTMP)
 	done
 
+	while [ "$domainWatch" == "" ]
+	do
+		dialog --backtitle "Cairngit installation" --title "Domain to watch for Piwik"\
+		--inputbox "" 7 60 2> $FICHTMP
+		domainWatch=$(cat $FICHTMP)
+	done
+
 	curl -L -d "" "http$Sssl://piwik.$domainName/index.php?action=systemCheck"  >> /dev/null
 	curl -L -d "type=InnoDB&host=127.0.0.1&username=piwik&password=$internalPass&dbname=piwik&tables_prefix=piwik_&adapter=PDO\MYSQL" "http$Sssl://piwik.$domainName/index.php?action=databaseSetup"  >> /dev/null
 	curl -L -d "login=admin&password=$adminPass&password_bis=$adminPass&email=$email&subscribe_newsletter_piwikorg=1&subscribe_newsletter_professionalservices=1" "http$Sssl://piwik.$domainName/index.php?action=setupSuperUser&module=Installation"  >> /dev/null
-	curl -L -d "siteName=$domainName&url=$domainName&timezone=UTC&ecommerce=0" "http$Sssl://piwik.$domainName/index.php?action=firstWebsiteSetup&module=Installation"  >> /dev/null
-	curl -L -d "" "http$Sssl://piwik.$domainName/index.php?action=trackingCode&module=Installation&site_idSite=1&site_name=$domainName"  >> /dev/null
-	curl -L -d "" "http$Sssl://piwik.$domainName/index.php?action=finished&module=Installation&site_idSite=1&site_name=$domainName"  >> /dev/null
+	curl -L -d "siteName=$domainWatch&url=$domainWatch&timezone=UTC&ecommerce=0" "http$Sssl://piwik.$domainName/index.php?action=firstWebsiteSetup&module=Installation"  >> /dev/null
+	curl -L -d "" "http$Sssl://piwik.$domainName/index.php?action=trackingCode&module=Installation&site_idSite=1&site_name=$domainWatch"  >> /dev/null
+	curl -L -d "" "http$Sssl://piwik.$domainName/index.php?action=finished&module=Installation&site_idSite=1&site_name=$domainWatch"  >> /dev/null
 
 	sed -i "s/installation_in_progress = 1//g" /var/www/piwik/config/config.ini.php
 
