@@ -1313,6 +1313,39 @@ CustomLog /var/www/Serge/web/logs/access.log combined
 
 </VirtualHost>" > /etc/apache2/sites-available/Serge.conf
 
+	# Ajout des bases de données
+	mysql -u root -p${adminPass} -e "CREATE DATABASE Serge;"
+	mysql -u root -p${adminPass} -e "CREATE USER 'Serge'@'localhost' IDENTIFIED BY '$internalPass';"
+	mysql -u root -p${adminPass} -e "GRANT ALL PRIVILEGES ON Serge.* TO Serge@localhost;"
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/admin_table_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/background_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/captcha_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/keyword_news_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/language_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/miscellaneous_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/newsletter_table_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/patents_sources_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/premium_code_table_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/price_table_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/purchase_table_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/queries_science_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/queries_wipo_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/result_news_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/result_patents_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/result_science_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/rss_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/science_sources_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/stripe_table_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/text_content_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/users_table_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/watch_pack_queries_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/watch_pack_serge.sql
+
+	rm -r /var/www/Serge/database_demo/
+
+	# Add miscellaneous details about server
+	mysql -h localhost -p${internalPass} -u Serge Serge -e "UPDATE miscellaneous_serge SET value='$domainName' WHERE name='domain'"
+
 	# Install Stripe
 	apt-get -y install composer
 	composer require stripe/stripe-php
@@ -1347,39 +1380,6 @@ CustomLog /var/www/Serge/web/logs/access.log combined
 
 	a2ensite Serge
 	systemctl restart apache2
-
-	# Ajout des bases de données
-	mysql -u root -p${adminPass} -e "CREATE DATABASE Serge;"
-	mysql -u root -p${adminPass} -e "CREATE USER 'Serge'@'localhost' IDENTIFIED BY '$internalPass';"
-	mysql -u root -p${adminPass} -e "GRANT ALL PRIVILEGES ON Serge.* TO Serge@localhost;"
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/admin_table_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/background_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/captcha_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/keyword_news_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/language_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/miscellaneous_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/newsletter_table_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/patents_sources_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/premium_code_table_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/price_table_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/purchase_table_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/queries_science_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/queries_wipo_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/result_news_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/result_patents_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/result_science_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/rss_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/science_sources_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/stripe_table_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/text_content_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/users_table_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/watch_pack_queries_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/watch_pack_serge.sql
-
-	rm -r /var/www/Serge/database_demo/
-
-	# Add miscellaneous details about server
-	mysql -h localhost -p${internalPass} -u Serge Serge -e "UPDATE miscellaneous_serge SET value='$domainName' WHERE name='domain'"
 
 	# Create mailbox for Serge
 	postfixadmin-cli mailbox add serge@$domainName --password $internalPass --password2 $internalPass --name Serge --quota 20
