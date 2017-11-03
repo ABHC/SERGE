@@ -331,7 +331,7 @@ if ($emailIsCheck && !empty($data['sourceType']) && !empty($data['newSource']) &
 		// Check if source is already in bdd
 		$checkCol   = array(array('link', ' =', $data['newSource'], ''));
 		$result     = read('rss_serge', 'owners, active', $checkCol, '', $bdd);
-		$sourceInDB = $result[0];
+		$sourceInDB = $result[0] ?? '';
 
 		if (empty($sourceInDB))
 		{
