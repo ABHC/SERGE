@@ -2393,8 +2393,7 @@ Security_app()
 		ufw allow 514/tcp
 
 		# Configuration for recieve logs
-		echo
-				"\$ModLoad imuxsock # local messages
+		echo "\$ModLoad imuxsock # local messages
 \$ModLoad imtcp # TCP listener
 
 # make gtls driver the default
