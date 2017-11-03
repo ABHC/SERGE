@@ -16,7 +16,7 @@ function addNewPatentQuery(string $queryPatent, $bdd)
 		$insertCol = array(array("query", $queryPatent),
 											array("owners", ',' . $_SESSION['id'] . ','),
 											array("active", 1));
-		$execution = insert('queries_wipo_serge', $insertCol, '', 'setting', $bdd);
+		$execution = insert('queries_wipo_serge', $insertCol, '', '', $bdd);
 	}
 	else
 	{
