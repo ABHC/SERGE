@@ -63,20 +63,19 @@
 					 ?>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" name="watchPackName" placeholder="<?php get_t('input2_window0_watchpack', $bdd); ?>" value="<?php echo  $packDetails['name']; ?>"/>
+				<input type="text" name="watchPackName" placeholder="<?php get_t('input2_window0_watchpack', $bdd); ?>" value="<?php echo  $packDetails['name'] ?? ''; ?>"/>
 			</div>
 			<div>
 				<?php echo $selectLanguage; ?>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" name="watchPackCategory" placeholder="<?php get_t('input3_window0_watchpack', $bdd); ?>" value="<?php echo $packDetails['category']; ?>" list="watchPackCategory"/>
+				<input type="text" name="watchPackCategory" placeholder="<?php get_t('input3_window0_watchpack', $bdd); ?>" value="<?php echo $packDetails['category'] ?? ''; ?>" list="watchPackCategory"/>
 				<datalist id="watchPackCategory">
 					<?php
 					# List here watch Pack category
-
-
 					$checkCol = array();
 					$categoryWatchPacks = read('watch_pack_serge', 'id, category', $checkCol, 'GROUP BY category', $bdd);
 
+					$categoryWatchPack['category'] = $categoryWatchPack['category'] ?? '';
 					foreach ($categoryWatchPacks as $categoryWatchPack)
 					{
 							echo '<option value="' . $categoryWatchPack['category'] . '"></option>';
@@ -86,7 +85,7 @@
 			</div>
 			<?php echo $ERRORMESSAGENEWPACKNAME ?? ''; ?>
 			<h2><?php get_t('titleInput4_window0_watchpack', $bdd); ?></h2>
-			<textarea name="watchPackDescription" minlength="50" maxlength="300" placeholder="<?php get_t('input4_window0_watchpack', $bdd); ?>"><?php echo $packDetails['description']; ?></textarea>
+			<textarea name="watchPackDescription" minlength="50" maxlength="300" placeholder="<?php get_t('input4_window0_watchpack', $bdd); ?>"><?php echo $packDetails['description'] ?? ''; ?></textarea>
 		</div>
 
 		<div class="keywordManagement">
