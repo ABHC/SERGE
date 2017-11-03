@@ -13,7 +13,7 @@ function var_get_t(string $name, $bdd)
 		$language = $_SESSION['lang'];
 	}
 
-	if (empty($language) || $language != 'FR' || $language != 'EN')
+	if (empty($language) && $language != 'FR' && $language != 'EN')
 	{
 		$language = 'EN';
 	}
