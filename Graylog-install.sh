@@ -848,7 +848,7 @@ Security_app()
 		# Apache2 mod
 		a2enmod authz_groupfile
 
-		systemctl restart apache
+		systemctl restart apache2
 
 		# Esmweb htpasswd protection
 		echo "AuthUserFile /var/www/esmweb/.htpasswd
