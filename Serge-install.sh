@@ -67,6 +67,7 @@ Install_Mysql()
 	echo "skip-character-set-client-handshake" >> /etc/mysql/mysql.conf.d/mysqld.cnf
 	echo "collation-server=utf8_unicode_ci" >> /etc/mysql/mysql.conf.d/mysqld.cnf
 	echo "character-set-server=utf8" >> /etc/mysql/mysql.conf.d/mysqld.cnf
+	echo "sql_mode = STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION" >> /etc/mysql/mysql.conf.d/mysqld.cnf
 
 	systemctl restart mysql
 
