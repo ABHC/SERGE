@@ -1811,6 +1811,8 @@ Security_app()
 		mv /usr/share/modsecurity-crs/crs-setup.conf.example /usr/share/modsecurity-crs/crs-setup.conf
 		mv /etc/modsecurity/modsecurity.conf-recommended /etc/modsecurity/modsecurity.conf
 
+		mv /usr/share/modsecurity-crs/rules/REQUEST-931-APPLICATION-ATTACK-RFI.conf /usr/share/modsecurity-crs/rules/REQUEST-931-APPLICATION-ATTACK-RFI.conf.disable
+
 		sed -i "s/SecRuleEngine DetectionOnly/SecRuleEngine On/g" /etc/modsecurity/modsecurity.conf
 
 		sed -i 's/<\/IfModule>/        IncludeOptional "\/usr\/share\/modsecurity-crs\/*.conf"\n        IncludeOptional "\/usr\/share\/modsecurity-crs\/rules\/*.conf"\n<\/IfModule>/g'  /etc/apache2/mods-available/security2.conf
