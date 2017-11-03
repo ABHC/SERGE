@@ -345,7 +345,7 @@
 			}
 			else
 			{
-				if ($dotBetweenPageNumber == FALSE)
+				if (!$dotBetweenPageNumber)
 				{
 					echo '...';
 					$dotBetweenPageNumber = TRUE;
