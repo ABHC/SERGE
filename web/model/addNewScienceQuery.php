@@ -6,9 +6,9 @@ function addNewScienceQuery(string $queryScience_Arxiv, string $queryScience_Doa
 	// Check if science query is already in bdd
 	$checkCol = array(array('query_Arxiv', '=', mb_strtolower($queryScience_Arxiv), ''));
 	$result = read('queries_science_serge', 'id, owners, active', $checkCol, '', $bdd);
-	$result = $result[0];
+	$result = $result[0] ?? '';
 
-	if (!$result)
+	if (empty($result))
 	{
 		$active = 1;
 

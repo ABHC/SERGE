@@ -379,14 +379,13 @@ else
 		$checkCol = array(array('author', '=', $_SESSION['pseudo'], 'AND'),
 											array('id', '=', $data['packId'], ''));
 		$result = read('watch_pack_serge', 'name, description, category, language', $checkCol, '', $bdd);
-		$packDetails = $result[0];
+		$packDetails = $result[0] ?? '';
 
 		if (empty($packDetails))
 		{
 			header('Location: watchPack?type=create');
 			die();
 		}
-
 
 		$checkCol = array(array('pack_id', '=', $data['packId'], 'AND'),
 											array('query', '=', '[!source!]', ''));
@@ -652,7 +651,7 @@ else
 												array('source', 'l', '%,!' . $sourceIdAction . ',%', 'AND'),
 												array('pack_id', '=', $data['packId'], ''));
 			$result = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
-			$result = $result[0];
+			$result = $result[0] ?? '';
 
 			# Delete an existing keyword
 			if (!empty($result) && $action === 'delKeyword')
@@ -905,7 +904,7 @@ else
 											array('pack_id', '=', $data['packId'], 'AND'),
 											array('source', '=', 'Science', ''));
 		$result = read('watch_pack_queries_serge', 'id', $checkCol, '', $bdd);
-		$result = $result[0];
+		$result = $result[0] ?? '';
 
 		if (!empty($result))
 		{
@@ -922,11 +921,10 @@ else
 											array('pack_id', '=', $data['packId'], 'AND'),
 											array('source', '=', '!Science', ''));
 		$result = read('watch_pack_queries_serge', 'id', $checkCol, '', $bdd);
-		$result = $result[0];
+		$result = $result[0] ?? '';
 
 		if (!empty($result))
 		{
-
 			$updateCol = array(array('source', 'Science'));
 			$checkCol = array(array('id', '=', $data['activateQueryScience'], ''));
 			$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
@@ -1004,11 +1002,10 @@ else
 											array('pack_id', '=', $data['packId'], 'AND'),
 											array('source', '=', '!Patent', ''));
 		$result = read('queries_science_serge', 'id', $checkCol, '', $bdd);
-		$result = $result[0];
+		$result = $result[0] ?? '';
 
 		if (!empty($result))
 		{
-
 			$updateCol = array(array('source', 'Delete'));
 			$checkCol = array(array('id', '=', $data['delQueryPatent'], ''));
 			$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
@@ -1138,9 +1135,14 @@ else
 		$checkCol = array(array('author', '=', $_SESSION['pseudo'], 'AND'),
 											array('id', '=', $data['watchPackList'], ''));
 		$result   = read('watch_pack_serge', 'id', $checkCol, '', $bdd);
-		$result = $result[0];
+		$result   = $result[0] ?? '';
 
-		header('Location: watchPack?type=create&packId=' . $data['watchPackList']);
+		if (!empty($result['id']))
+		{
+			header('Location: watchPack?type=create&packId=' . $result['id']);
+			die();
+		}
+		header('Location: watchPack?type=create');
 		die();
 	}
 
@@ -1151,7 +1153,7 @@ else
 		$checkCol = array(array('author', '=', $_SESSION['pseudo'], 'AND'),
 											array('id', '=', $data['packId'], ''));
 		$result   = read('watch_pack_serge', 'name, description, category, language', $checkCol, '', $bdd);
-		$packDetails = $result[0];
+		$packDetails = $result[0] ?? '';
 
 		if (empty($packDetails))
 		{

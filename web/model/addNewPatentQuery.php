@@ -7,9 +7,9 @@ function addNewPatentQuery(string $queryPatent, $bdd)
 	// Check if science query is already in bdd
 	$checkCol = array(array("query", "=", mb_strtolower($queryPatent), ""));
 	$result = read('queries_wipo_serge', 'id, owners, active', $checkCol, '', $bdd);
-	$result = $result[0];
+	$result = $result[0] ?? '';
 
-	if (!$result)
+	if (empty($result))
 	{
 		$active = 1;
 		// Adding new query

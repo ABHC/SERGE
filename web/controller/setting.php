@@ -306,7 +306,7 @@ if ($emailIsCheck && !empty($data['buttonDeleteHistory']) && $data['buttonDelete
 	{
 			$checkCol = array(array('id', '=', $idResultToDel['id'], ''));
 			$result   = read('result_news_serge', 'owners', $checkCol, '', $bdd);
-			$result   = $result[0];
+			$result   = $result[0] ?? '';
 
 			if (!empty($result))
 			{
@@ -349,7 +349,7 @@ if ($emailIsCheck && !empty($data['sourceType']) && !empty($data['newSource']) &
 				$checkCol = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'AND'),
 													array('link', '=', $data['newSource'], ''));
 				$result   = read('rss_serge', 'owners, active', $checkCol, '', $bdd);
-				$resultActualOwner = $result[0];
+				$resultActualOwner = $result[0] ?? '';
 
 				if (empty($resultActualOwner))
 				{
@@ -808,13 +808,13 @@ if ($emailIsCheck && !empty($data['scienceQuerySubmit']) && $data['scienceQueryS
 		{
 			$openParenthesis  = '';
 			$closeParenthesis = '';
-			if ($data['openParenthesis' . $cpt] === 'active')
+			if (!empty($data['openParenthesis' . $cpt]) && $data['openParenthesis' . $cpt] === 'active')
 			{
 				$openParenthesis = '%28';
 				$open ++;
 			}
 
-			if ($data['closeParenthesis' . $cpt] === 'active')
+			if (!empty($data['closeParenthesis' . $cpt]) && $data['closeParenthesis' . $cpt] === 'active')
 			{
 				$closeParenthesis = '%29';
 				$close ++;
@@ -866,7 +866,7 @@ if ($emailIsCheck && !empty($data['delQueryScience']))
 										array('id', '=', $data['delQueryScience'], 'AND'),
 										array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
 	$result = read('queries_science_serge', 'owners, active', $checkCol, '', $bdd);
-	$result = $result[0];
+	$result = $result[0] ?? '';
 
 	if (!empty($result))
 	{
@@ -884,7 +884,7 @@ if ($emailIsCheck && !empty($data['disableQueryScience']))
 	$checkCol = array(array('id', '=',$data['disableQueryScience'], 'AND'),
 										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
 	$result   = read('queries_science_serge', 'owners, active', $checkCol, '', $bdd);
-	$result   = $result[0];
+	$result   = $result[0] ?? '';
 
 
 	if (!empty($result))
@@ -904,7 +904,7 @@ if ($emailIsCheck && !empty($data['activateQueryScience']))
 	$checkCol = array(array('id', '=', $data['activateQueryScience'], 'AND'),
 										array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
 	$result = read('queries_science_serge', 'owners, active', $checkCol, '', $bdd);
-	$result = $result[0];
+	$result = $result[0] ?? '';
 
 
 	if (!empty($result))
@@ -1032,7 +1032,7 @@ if ($emailIsCheck && !empty($data['delQueryPatent']))
 										array('id', '=', $data['delQueryPatent'], 'AND'),
 										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
 	$result = read('queries_wipo_serge', 'owners, active', $checkCol, '', $bdd);
-	$result = $result[0];
+	$result = $result[0] ?? '';
 
 	if (!empty($result))
 	{
@@ -1050,7 +1050,7 @@ if ($emailIsCheck && !empty($data['disableQueryPatent']))
 	$checkCol = array(array('id', '=', $data['disableQueryPatent'], 'AND'),
 										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
 	$result   = read('queries_wipo_serge', 'owners, active', $checkCol, '', $bdd);
-	$result   = $result[0];
+	$result   = $result[0] ?? '';
 
 	if (!empty($result))
 	{
@@ -1068,7 +1068,7 @@ if ($emailIsCheck && !empty($data['activateQueryPatent']))
 	$checkCol = array(array('id', '=', $data['activateQueryPatent'], 'AND'),
 										array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
 	$result   = read('queries_wipo_serge', 'owners, active', $checkCol, '', $bdd);
-	$result   = $result[0];
+	$result   = $result[0] ?? '';
 
 	if (!empty($result))
 	{

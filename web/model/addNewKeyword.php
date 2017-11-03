@@ -6,7 +6,7 @@ function addNewKeyword(string $sourceId, string $newKeyword, string $ERROR_MESSA
 	// Check if keyword is already in bdd
 	$checkCol = array(array("keyword", "=", mb_strtolower($newKeyword), ""));
 	$result   = read('keyword_news_serge', 'id, applicable_owners_sources, active', $checkCol, '', $bdd);
-	$result   = $result[0];
+	$result   = $result[0] ?? '';
 
 	if (empty($result))
 	{
