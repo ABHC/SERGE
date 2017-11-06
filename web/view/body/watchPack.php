@@ -804,11 +804,11 @@
 					</thead>
 				</table>
 			</form>
-			<div class="table-content">
-				<table>
-					<tbody>
-						<form method="post" action="watchPack">
-							<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
+			<form method="post" action="watchPack">
+				<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
+					<div class="table-content">
+						<table>
+							<tbody>
 							<?php
 							foreach ($watchPacks as $watchPack)
 							{
@@ -833,10 +833,10 @@
 								</tr>';
 							}
 							?>
-						</form>
-					</tbody>
-				</table>
-			</div>
+						</tbody>
+					</table>
+				</div>
+			</form>
 		</div>
 		<div class="pages">
 			<?php

@@ -1936,6 +1936,7 @@ else
 		margin-top: 0px;
 		border: 1px solid rgba(255,255,255,0.1);
 		margin-bottom: 40px;
+		margin-left: calc(10% - 1px);
 	}
 
 	th
