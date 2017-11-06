@@ -64,7 +64,7 @@ $unsafeData = array_merge($unsafeData, array(array('disableQueryScience', 'disab
 $unsafeData = array_merge($unsafeData, array(array('activateQueryScience', 'activateQueryScience', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('delEditingPatentQuery', 'delEditingPatentQuery', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('extendPatent', 'extendPatent', 'POST', 'str')));
-$unsafeData = array_merge($unsafeData, array(array('patentQuerySubmit', 'scienceQuerySubmit', 'POST', 'Az')));
+$unsafeData = array_merge($unsafeData, array(array('patentQuerySubmit', 'patentQuerySubmit', 'POST', 'Az')));
 $unsafeData = array_merge($unsafeData, array(array('delQueryPatent', 'delQueryScience', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('disableQueryPatent', 'disableQueryScience', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('activateQueryPatent', 'activateQueryScience', 'POST', '09')));
@@ -401,12 +401,11 @@ else
 			}
 		}
 
-		$checkCol = array(array('id', 'IN', $packSource, ''));
-		$listAllSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
-
+		$checkCol       = array(array('id', 'IN', $packSource, ''));
+		$listAllSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd) ?? '';
 
 		$checkCol = array(array('pack_id', '=', $data['packId'], 'AND'),
-		array('query', '<>', '[!source!]', ''));
+											array('query', '<>', '[!source!]', ''));
 		$packSources = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
 
 		$packSourceUsed = array('0');
