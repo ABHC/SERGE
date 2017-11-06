@@ -139,7 +139,7 @@
 				<div>
 					<h3><?php get_t('subtitle5_window1_setting', $bdd); ?></h3>
 					<p class="align">
-					<select size="<?php echo count($watchPackUsedList); ?>" class="selectBackground" name="watchPackName" multiple>
+					<select size="<?php echo count($watchPackUsedList)+1; ?>" class="selectBackground" name="watchPackName" multiple>
 					<?php
 					foreach ($watchPackUsedList as $watchPackUsed)
 					{
