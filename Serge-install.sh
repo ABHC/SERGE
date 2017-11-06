@@ -1420,8 +1420,7 @@ CustomLog /var/www/Serge/web/logs/access.log combined
 	chmod 550 /var/www/Serge/web/logs
 	chmod 440 /var/www/Serge/web/.htaccess
 	chmod 440 /var/www/Serge/web/.htpasswd
-	chmod 440 /var/www/Serge/web/.htpassword
-	chmod 440 /var/www/Serge/web/.mailadd
+	chmod 440 /var/www/Serge/web/.mailaddr
 
 	piwikMonitoring=""
 	# Ask for adress of piwik monitoring server
