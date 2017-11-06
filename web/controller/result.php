@@ -26,12 +26,12 @@ include('controller/dataProcessing.php');
 
 # Nonce
 $nonceTime = $_SERVER['REQUEST_TIME'];
-$nonce = getNonce($nonceTime);
+$nonce     = getNonce($nonceTime);
 
 # Initialization of variables
-$resultTab             = 'active';
-$wikiTab               = '';
-$settingTab            = '';
+$resultTab          = 'active';
+$wikiTab            = '';
+$settingTab         = '';
 $colOrder['read']   = var_get_t('title6Read_table_results', $bdd);
 $colOrder['send']   = var_get_t('title5Send_table_results', $bdd);
 $colOrder['DESC']   = '';
@@ -50,19 +50,19 @@ $limit              = 15;
 $base               = 0;
 $page               = 0;
 $actualPageLink     = '';
-$type           = 'news';
-$newsActive     = 'class="active"';
-$patentsActive  = '';
-$sciencesActive = '';
-$tableName      = 'result_news_serge';
-$tableNameQuery = 'keyword_news_serge';
-$tableNameSource = 'rss_serge';
-$ownersColumn   = 'applicable_owners_sources';
-$userId         = '|' . $_SESSION['id'] . ':';
-$keywordQueryId = 'keyword_id';
-$queryColumn    = 'keyword';
-$specialColumn  = ', id_source, keyword_id ';
-$displayColumn  = var_get_t('title2News_table_results', $bdd);
+$type               = 'news';
+$newsActive         = 'class="active"';
+$patentsActive      = '';
+$sciencesActive     = '';
+$tableName          = 'result_news_serge';
+$tableNameQuery     = 'keyword_news_serge';
+$tableNameSource    = 'rss_serge';
+$ownersColumn       = 'applicable_owners_sources';
+$userId             = '|' . $_SESSION['id'] . ':';
+$keywordQueryId     = 'keyword_id';
+$queryColumn        = 'keyword';
+$specialColumn      = ', id_source, keyword_id ';
+$displayColumn      = var_get_t('title2News_table_results', $bdd);
 
 # Select results type
 if (!empty($data['resultType']))
@@ -110,13 +110,13 @@ if (!empty($data['deleteLink']))
 
 		if (preg_match("/^delete[0-9]+$/", $key))
 		{
-			$checkCol = array(array('id', '=', preg_replace("/^delete/", '', $key), ''));
+			$checkCol     = array(array('id', ' =', preg_replace("/^delete/", '', $key), ''));
 			$ownersResult = read('result_news_serge', 'owners', $checkCol, '', $bdd);
 
 			if (!empty($ownersResult))
 			{
 				$updateCol = array(array('owners', preg_replace("/,$pureID,/", ',', $ownersResult[0]['owners'])));
-				$checkCol = array(array('id', '=', preg_replace("/^delete/", '', $key), ''));
+				$checkCol  = array(array('id', '=', preg_replace("/^delete/", '', $key), ''));
 				$execution = update('result_news_serge', $updateCol, $checkCol, '', $bdd);
 			}
 		}
@@ -124,8 +124,9 @@ if (!empty($data['deleteLink']))
 }
 
 # Record when a link is click
-$checkCol = array(array('users', '=', $_SESSION['pseudo'], ''));
+$checkCol   = array(array('users', ' =', $_SESSION['pseudo'], ''));
 $recordRead = read('users_table_serge', 'record_read, token', $checkCol, '', $bdd);
+
 if ($recordRead[0]['record_read'] == 1)
 {
 	$recordLink = 'redirect?type=' . $type .'&token=' . $recordRead[0]['token'] . '&id=';
@@ -133,7 +134,6 @@ if ($recordRead[0]['record_read'] == 1)
 
 $checkCol = array(array($ownersColumn, 'l', '%' . $userId . '%', ''));
 $readOwnerKeyword = read($tableNameQuery, 'id', $checkCol, '', $bdd);
-
 
 # Page number
 if (!empty($data['page']))
@@ -163,7 +163,7 @@ if (!empty($data['orderBy']))
 	if ($data['orderBy'] === 'title')
 	{
 		$colOrder['title'] = '▾';
-		$colOrder['DESC'] = 'DESC';
+		$colOrder['DESC']  = 'DESC';
 
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY title';
@@ -171,7 +171,7 @@ if (!empty($data['orderBy']))
 	elseif ($data['orderBy'] === 'titleDESC')
 	{
 		$colOrder['title'] = '▴';
-		$colOrder['DESC'] = '';
+		$colOrder['DESC']  = '';
 
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY title DESC';
@@ -179,7 +179,7 @@ if (!empty($data['orderBy']))
 	elseif ($data['orderBy'] === 'source')
 	{
 		$colOrder['source'] = '▾';
-		$colOrder['DESC'] = 'DESC';
+		$colOrder['DESC']   = 'DESC';
 
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY id_source';
@@ -187,7 +187,7 @@ if (!empty($data['orderBy']))
 	elseif ($data['orderBy'] === 'sourceDESC')
 	{
 		$colOrder['source'] = '▴';
-		$colOrder['DESC'] = '';
+		$colOrder['DESC']   = '';
 
 		# WARNING sensitive variable [SQLI]
 		$ORDERBY = 'ORDER BY id_source DESC';
@@ -215,7 +215,7 @@ if (!empty($data['optionalCond']))
 {
 	if ($data['optionalCond'] === 'read')
 	{
-		$colOrder['read'] = var_get_t('title6Read_table_results', $bdd);
+		$colOrder['read']   = var_get_t('title6Read_table_results', $bdd);
 		$colOrder['OCDESC'] = 'DESC';
 
 		# WARNING sensitive variable [SQLI]
@@ -223,7 +223,7 @@ if (!empty($data['optionalCond']))
 	}
 	elseif ($data['optionalCond'] === 'readDESC')
 	{
-		$colOrder['read'] = var_get_t('title6Unread_table_results', $bdd);
+		$colOrder['read']   = var_get_t('title6Unread_table_results', $bdd);
 		$colOrder['OCDESC'] = '';
 
 		# WARNING sensitive variable [SQLI]
@@ -231,7 +231,7 @@ if (!empty($data['optionalCond']))
 	}
 	elseif ($data['optionalCond'] === 'send')
 	{
-		$colOrder['send'] = var_get_t('title5Send_table_results', $bdd);
+		$colOrder['send']   = var_get_t('title5Send_table_results', $bdd);
 		$colOrder['OCDESC'] = 'DESC';
 
 		# WARNING sensitive variable [SQLI]
@@ -239,7 +239,7 @@ if (!empty($data['optionalCond']))
 	}
 	elseif ($data['optionalCond'] === 'sendDESC')
 	{
-		$colOrder['send'] = var_get_t('title5NotSend_table_results', $bdd);
+		$colOrder['send']   = var_get_t('title5NotSend_table_results', $bdd);
 		$colOrder['OCDESC'] = '';
 
 		# WARNING sensitive variable [SQLI]
