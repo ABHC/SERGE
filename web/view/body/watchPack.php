@@ -34,7 +34,6 @@
 			echo '0';
 		}
 		?>"/>
-		<input type="hidden" name="scrollPos" id="scrollPos" value="0"/>
 		<input type="hidden" name="delEditingScienceQuery" value="<?php echo $delEditingScienceQuery ?? ''; ?>"/>
 		<input type="hidden" name="delEditingPatentQuery" value="<?php echo $delEditingPatentQuery ?? ''; ?>"/>
 
