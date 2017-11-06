@@ -21,6 +21,8 @@ $colOrder['author']   = '';
 $colOrder['category'] = '';
 $colOrder['date']     = '';
 $page                 = 0;
+$readPackSources      = array();
+$listAllSources       = array();
 
 # Data processing
 $unsafeData = array();
