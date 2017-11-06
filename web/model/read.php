@@ -94,6 +94,11 @@ function read(string $tableName, string $selectedCol, array $checkCol, string $o
 		error_log($e->getMessage(), 0);
 	}
 
+	if (empty($result))
+	{
+		$result = array();
+	}
+
 	if (empty($result) && $check)
 	{
 		$result = FALSE;

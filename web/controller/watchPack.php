@@ -376,9 +376,9 @@ else
 {
 	if (!empty($data['packId']))
 	{
-		$checkCol = array(array('author', '=', $_SESSION['pseudo'], 'AND'),
-											array('id', '=', $data['packId'], ''));
-		$result = read('watch_pack_serge', 'name, description, category, language', $checkCol, '', $bdd);
+		$checkCol    = array(array('author', '=', $_SESSION['pseudo'], 'AND'),
+												array('id', '=', $data['packId'], ''));
+		$result      = read('watch_pack_serge', 'name, description, category, language', $checkCol, '', $bdd);
 		$packDetails = $result[0] ?? '';
 
 		if (empty($packDetails))
@@ -402,9 +402,9 @@ else
 		}
 
 		$checkCol       = array(array('id', 'IN', $packSource, ''));
-		$listAllSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd) ?? '';
+		$listAllSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 
-		$checkCol = array(array('pack_id', '=', $data['packId'], 'AND'),
+		$checkCol    = array(array('pack_id', ' =', $data['packId'], 'AND'),
 											array('query', '<>', '[!source!]', ''));
 		$packSources = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
 
@@ -418,7 +418,7 @@ else
 			}
 		}
 		$checkCol = array(array('id', 'IN', $packSourceUsed, ''));
-		$readPackSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd) ?? '';
+		$readPackSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 	}
 	else
 	{
@@ -641,7 +641,6 @@ else
 		if (isset($sourceIdAction) && isset($keywordIdAction) && isset($action))
 		{
 			# Check if keyword exist
-
 			$checkCol = array(array('id', '=', $keywordIdAction, 'AND'),
 												array('pack_id', '=', $data['packId'], 'AND'),
 												array('source', 'l', '%,' . $sourceIdAction . ',%', 'OR'),
@@ -1101,7 +1100,7 @@ else
 			// Creation of list of available sources
 			$checkCol = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
 												array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
-			$listAllSources = read('rss_serge', 'id', $checkCol, 'ORDER BY id', $bdd) ?? '';
+			$listAllSources = read('rss_serge', 'id', $checkCol, 'ORDER BY id', $bdd);
 
 			$sources = ',';
 			foreach ($listAllSources as $allSources)
@@ -1148,9 +1147,9 @@ else
 	if (!empty($data['packId']))
 	{
 
-		$checkCol = array(array('author', '=', $_SESSION['pseudo'], 'AND'),
-											array('id', '=', $data['packId'], ''));
-		$result   = read('watch_pack_serge', 'name, description, category, language', $checkCol, '', $bdd);
+		$checkCol    = array(array('author', '=', $_SESSION['pseudo'], 'AND'),
+												array('id', '=', $data['packId'], ''));
+		$result      = read('watch_pack_serge', 'name, description, category, language', $checkCol, '', $bdd);
 		$packDetails = $result[0] ?? '';
 
 		if (empty($packDetails))
@@ -1173,25 +1172,25 @@ else
 				}
 			}
 
-			$checkCol = array(array('id', 'IN', $packSource, ''));
-			$listAllSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd) ?? '';
+			$checkCol       = array(array('id', 'IN', $packSource, ''));
+			$listAllSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 
-				$checkCol = array(array('pack_id', '=', $data['packId'], 'AND'),
-													array('query', '<>', '[!source!]', ''));
-				$reqReadPackSourcestmp = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
+			$checkCol              = array(array('pack_id', ' =', $data['packId'], 'AND'),
+			array('query', '<>', '[!source!]', ''));
+			$reqReadPackSourcestmp = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
 
-				$packSourceUsed = array('0');
-				foreach ($reqReadPackSourcestmp as $readPackSources)
+			$packSourceUsed = array('0');
+			foreach ($reqReadPackSourcestmp as $readPackSources)
+			{
+				if (preg_match("/^[,!0-9,]+$/", $readPackSources['source']))
 				{
-					if (preg_match("/^[,!0-9,]+$/", $readPackSources['source']))
-					{
-						$readPackSources['source'] = preg_replace("/!/", '', $readPackSources['source']);
-						$packSourceUsed = array_merge(preg_split('/,/', $readPackSources['source'], -1, PREG_SPLIT_NO_EMPTY), $packSourceUsed);
-					}
+					$readPackSources['source'] = preg_replace("/!/", '', $readPackSources['source']);
+					$packSourceUsed = array_merge(preg_split('/,/', $readPackSources['source'], -1, PREG_SPLIT_NO_EMPTY), $packSourceUsed);
 				}
+			}
 
 			$checkCol = array(array('id', 'IN', $packSourceUsed, ''));
-			$readPackSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd) ?? '';
+			$readPackSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 	}
 }
 include('view/nav/nav.php');
