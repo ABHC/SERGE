@@ -1,6 +1,7 @@
 <?php
 function get_t(string $name, $bdd)
 {
+	$language = 'EN';
 	if (!empty($_SERVER['HTTP_ACCEPT_LANGUAGE']))
 	{
 		$language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
@@ -13,7 +14,7 @@ function get_t(string $name, $bdd)
 		$language = $_SESSION['lang'];
 	}
 
-	if (empty($language) && $language != 'FR' && $language != 'EN')
+	if ($language != 'FR' && $language != 'EN')
 	{
 		$language = 'EN';
 	}

@@ -1,4 +1,5 @@
 <?php
+$language = 'EN';
 if (!empty($_SERVER['HTTP_ACCEPT_LANGUAGE']))
 {
 	$language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
@@ -11,7 +12,7 @@ if (!empty($_SESSION['lang']))
 	$language = $_SESSION['lang'];
 }
 
-if (empty($language) && $language != 'FR' && $language != 'EN')
+if ($language != 'FR' && $language != 'EN')
 {
 	$language = 'EN';
 }
