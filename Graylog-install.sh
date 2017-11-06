@@ -159,11 +159,14 @@ Install_Piwik()
 	echo "php_admin_value open_basedir /var/www/piwik/" >> /etc/apache2/sites-available/piwik.conf
 	echo "# Prohibit access to files starting with a dot" >> /etc/apache2/sites-available/piwik.conf
 	echo "<FilesMatch ^\\.>" >> /etc/apache2/sites-available/piwik.conf
-	echo "    Require all denied" >> /etc/apache2/sites-available/piwik.conf
+	echo "	Require all denied" >> /etc/apache2/sites-available/piwik.conf
 	echo "</FilesMatch>" >> /etc/apache2/sites-available/piwik.conf
 	echo "<Directory /var/www/piwik/ >" >> /etc/apache2/sites-available/piwik.conf
-	echo "AllowOverride All" >> /etc/apache2/sites-available/piwik.conf
+	echo "	AllowOverride All" >> /etc/apache2/sites-available/piwik.conf
 	echo "</Directory>" >> /etc/apache2/sites-available/piwik.conf
+	echo "<Location /piwik.php>" >> /etc/apache2/sites-available/piwik.conf
+	echo "	Require all granted" >> /etc/apache2/sites-available/piwik.conf
+	echo "</Location>" >> /etc/apache2/sites-available/piwik.conf
 	echo "ErrorLog /var/www/piwik/logs/error.log" >> /etc/apache2/sites-available/piwik.conf
 	echo "CustomLog /var/www/piwik/logs/access.log combined" >> /etc/apache2/sites-available/piwik.conf
 	echo "</VirtualHost>" >> /etc/apache2/sites-available/piwik.conf
