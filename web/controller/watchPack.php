@@ -1063,7 +1063,6 @@ else
 	}
 	elseif ($emailIsCheck && !empty($data['addNewPack']) && isset($data['watchPackList']) && $data['watchPackList'] === 0 && !empty($data['watchPackName']) && !empty($data['watchPackDescription']))
 	{
-		echo "<br>chien";
 		$newWatchPackName = $data['watchPackName'];
 		$language = strtoupper($data['language']);
 		if ($data['watchPackCategory'] === 'NewCategory')
@@ -1076,7 +1075,7 @@ else
 		}
 
 		// Check if the name already exist
-		$checkCol  = array(array('name', ' =', $newWatchPackName, ''));
+		$checkCol  = array(array('name', '=', $newWatchPackName, ''));
 		$nameExist = read('watch_pack_serge', '', $checkCol, '', $bdd);
 
 		// Add new pack in database
