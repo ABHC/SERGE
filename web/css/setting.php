@@ -1145,7 +1145,7 @@ input:checked + .slider:before
 
 .deleteButton
 {
-	width: 70px;
+	width: 80px;
 	height: 31px;
 	border-radius: 0 3px 3px 0;
 	border: 1px solid rgba(255,255,255, 0.15);
