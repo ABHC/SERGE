@@ -377,7 +377,7 @@ if ($emailIsCheck && !empty($data['sourceType']) && !empty($data['newSource']) &
 }
 
 # Adding new keyword
-if ($emailIsCheck && !empty($data['sourceKeyword']) && !empty($data['newKeyword']))
+if ($emailIsCheck && isset($data['sourceKeyword']) && !empty($data['newKeyword']))
 {
 	include('model/addNewKeyword.php');
 	$sourceId = $data['sourceKeyword'];
@@ -390,12 +390,12 @@ if ($emailIsCheck && !empty($data['sourceKeyword']) && !empty($data['newKeyword'
 		$newKeyword = ucfirst($newKeyword);
 		$newKeyword = preg_replace("/^ | *, *| $/", '', $newKeyword);
 		# Special keyword :all
-		if (preg_match("/^:all$/i", $newKeyword) && $sourceId != '00')
+		if (preg_match("/^:all$/i", $newKeyword) && $sourceId != '0')
 		{
 			$newKeyword    = ':all@' . $sourceId;
 			$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd);
 		}
-		elseif (preg_match("/^:all$/i", $newKeyword) && $sourceId === '00')
+		elseif (preg_match("/^:all$/i", $newKeyword) && $sourceId == '0')
 		{
 			$updateBDD = FALSE;
 			foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
@@ -405,13 +405,13 @@ if ($emailIsCheck && !empty($data['sourceKeyword']) && !empty($data['newKeyword'
 				$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd);
 			}
 		}
-		elseif (preg_match("/^alert:.+/i", $newKeyword) && $sourceId != '00')
+		elseif (preg_match("/^alert:.+/i", $newKeyword) && $sourceId != '0')
 		{
 			$newKeyword    = preg_replace("/alert:/i", '', $newKeyword);
 			$newKeyword    = '[!ALERT!]' . $newKeyword;
 			$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd);
 		}
-		elseif (preg_match("/^alert:.+/i", $newKeyword) && $sourceId === '00')
+		elseif (preg_match("/^alert:.+/i", $newKeyword) && $sourceId === '0')
 		{
 			$updateBDD  = FALSE;
 			$newKeyword = preg_replace("/alert:/i", '', $newKeyword);

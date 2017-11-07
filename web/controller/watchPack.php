@@ -484,31 +484,26 @@ else
 			{
 				foreach ($newKeywordArray as $newKeyword)
 				{
-
-
 					$checkCol = array(array('query', '=', mb_strtolower($newKeyword), 'AND'),
 														array('pack_id', '=', $data['packId'], 'AND'),
 														array('source', '<>', 'Science', 'AND'),
 														array('source', '<>', 'Patent', ''));
 					$result = read('watch_pack_queries_serge', 'id, source', $checkCol, '', $bdd);
-					$resultKeyword = $result[0];
+					$resultKeyword = $result[0] ?? '';
 
 					if (empty($resultKeyword))
 					{
-
-
 						$insertCol = array(array('pack_id', $data['packId']),
 															array('query',  strtolower($newKeyword)),
 															array('source', ',' . $sourcesList['id'] . ','));
 						$execution = insert('watch_pack_queries_serge', $insertCol, '', '', $bdd);
 					}
 					else
-					{ # TODO Vérif qu'on ajoute pas deux fois les sources
-
-
-							$updateCol = array(array('source', $resultKeyword['source'] . $sourcesList['id'] . ','));
-							$checkCol = array(array('id', '=', $resultKeyword['id'], ''));
-							$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
+					{
+						# TODO Vérif qu'on ajoute pas deux fois les sources
+						$updateCol = array(array('source', $resultKeyword['source'] . $sourcesList['id'] . ','));
+						$checkCol = array(array('id', '=', $resultKeyword['id'], ''));
+						$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
 					}
 				}
 			}
@@ -555,24 +550,21 @@ else
 	}
 	elseif ($emailIsCheck && !empty($data['addNewSource']) && !empty($data['newSource']))
 	{
-		$checkCol = array(array('link', '=', $data['newSource'], ''));
-		$result = read('rss_serge', 'id', $checkCol, '', $bdd);
-		$resultSource = $result[0];
-
+		$checkCol     = array(array('link', '=', $data['newSource'], ''));
+		$result       = read('rss_serge', 'id', $checkCol, '', $bdd);
+		$resultSource = $result[0] ?? '';
 
 		$checkCol = array(array('query', '=', '[!source!]', 'AND'),
 											array('pack_id', '=', $data['packId'], ''));
-		$result = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
-		$sources = $result[0];
+		$result   = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
+		$sources  = $result[0];
 
 		$newSourceId = ',' . $resultSource['id'] . ',';
 
 		if (!empty($resultSource) && !preg_match("/$newSourceId/", $sources['source']))
 		{
-
-
 			$updateCol = array(array('source', $sources['source'] . $resultSource['id'] . ','));
-			$checkCol = array(array('pack_id', '=', $data['packId'], 'AND'),
+			$checkCol  = array(array('pack_id', '=', $data['packId'], 'AND'),
 												array('query', '=', '[!source!]', ''));
 			$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
 		}

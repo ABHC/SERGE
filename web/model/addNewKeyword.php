@@ -11,7 +11,7 @@ function addNewKeyword(string $sourceId, string $newKeyword, string $ERROR_MESSA
 	if (empty($result))
 	{
 		$active = 0;
-		if ($sourceId === '00')
+		if ($sourceId == '0')
 		{
 			$applicableOwners = '|' . $_SESSION['id'] . ':,';
 			foreach ($ownerSources as $ownerSourcesList)
@@ -46,7 +46,7 @@ function addNewKeyword(string $sourceId, string $newKeyword, string $ERROR_MESSA
 		{
 			preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*,\|/", $applicableOwners, $userApplicable_owners_sources);
 
-			if (preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*," . $sourceId . ",[,0-9,]*\|/", $applicableOwners) && $sourceId != '00')
+			if (preg_match("/\|" . $_SESSION['id'] . ":[,0-9,]*," . $sourceId . ",[,0-9,]*\|/", $applicableOwners) && $sourceId != '0')
 			{
 				$updateBDD     = FALSE;
 				$ERROR_MESSAGE = 'The keyword: "' . $newKeyword . '" for this source was already in the database<br>' . $ERROR_MESSAGE;
@@ -54,7 +54,7 @@ function addNewKeyword(string $sourceId, string $newKeyword, string $ERROR_MESSA
 			else
 			{
 				// Add source in the end of source list for current user
-				if ($sourceId === '00')
+				if ($sourceId == '0')
 				{
 					$newSourceForAdding = ',';
 					foreach ($ownerSources as $ownerSourcesList)
@@ -79,7 +79,7 @@ function addNewKeyword(string $sourceId, string $newKeyword, string $ERROR_MESSA
 		else
 		{
 			// Add user and source in applicable_owners_sources
-			if ($sourceId === '00')
+			if ($sourceId == '0')
 			{
 				$newOwner = '|' . $_SESSION['id'] . ':,';
 				foreach ($ownerSources as $ownerSourcesList)
