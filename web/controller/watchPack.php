@@ -196,7 +196,7 @@ if ($type === 'add')
 		$base           = $limit * $page;
 	}
 
-	$checkCol = array();
+	$checkCol    = array();
 	$languageBDD = read('language_serge', 'code, name', $checkCol, '', $bdd);
 
 	$colOrder['language'] = '<select name="language" onchange="this.form.submit();">';
@@ -1062,7 +1062,7 @@ else
 			$delEditingPatentQuery = $data['delEditingPatentQuery'];
 		}
 	}
-	elseif ($emailIsCheck && !empty($data['addNewPack']) && $data['watchPackList'] === 0 && !empty($data['watchPackName']) && !empty($data['watchPackDescription']))
+	elseif ($emailIsCheck && !empty($data['addNewPack']) && !empty($data['watchPackList']) && $data['watchPackList'] === 0 && !empty($data['watchPackName']) && !empty($data['watchPackDescription']))
 	{
 		$newWatchPackName = $data['watchPackName'];
 		$language = strtoupper($data['language']);
@@ -1121,7 +1121,7 @@ else
 			$ERRORMESSAGENEWPACKNAME = 'A watch pack with this name already exist, please change the name';
 		}
 	}
-	elseif ($emailIsCheck && !empty($data['addNewPack']) && $data['watchPackList'] === 0 && (empty($data['watchPackName']) || empty($data['watchPackDescription'])))
+	elseif ($emailIsCheck && !empty($data['addNewPack']) && !empty($data['watchPackList']) && $data['watchPackList'] === 0 && (empty($data['watchPackName']) || empty($data['watchPackDescription'])))
 	{
 		$ERRORMESSAGEEMPTYNAMEORDESC = 'You have to enter a name and a description for your watch pack';
 	}
