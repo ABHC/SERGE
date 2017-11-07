@@ -67,9 +67,9 @@ $unsafeData = array_merge($unsafeData, array(array('activateQueryScience', 'acti
 $unsafeData = array_merge($unsafeData, array(array('delEditingPatentQuery', 'delEditingPatentQuery', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('extendPatent', 'extendPatent', 'POST', 'str')));
 $unsafeData = array_merge($unsafeData, array(array('patentQuerySubmit', 'patentQuerySubmit', 'POST', 'Az')));
-$unsafeData = array_merge($unsafeData, array(array('delQueryPatent', 'delQueryScience', 'POST', '09')));
-$unsafeData = array_merge($unsafeData, array(array('disableQueryPatent', 'disableQueryScience', 'POST', '09')));
-$unsafeData = array_merge($unsafeData, array(array('activateQueryPatent', 'activateQueryScience', 'POST', '09')));
+$unsafeData = array_merge($unsafeData, array(array('delQueryPatent', 'delQueryPatent', 'POST', '09')));
+$unsafeData = array_merge($unsafeData, array(array('disableQueryPatent', 'disableQueryPatent', 'POST', '09')));
+$unsafeData = array_merge($unsafeData, array(array('activateQueryPatent', 'activateQueryPatent', 'POST', '09')));
 
 foreach($_POST as $key => $val)
 {
