@@ -42,7 +42,7 @@
 			<div>
 				<input title="Add" class="submit" type="submit" name="addNewPack" value="add" />
 				<select name="watchPackList" onchange="this.form.submit();">
-					<option value="NewPack"><?php get_t('select1_window0_watchpack', $bdd); ?>&nbsp;&nbsp;</option>
+					<option value="0"><?php get_t('select1_window0_watchpack', $bdd); ?>&nbsp;&nbsp;</option>
 					<?php
 					# List here watch Pack own by current user
 					$checkCol = array(array('author', '=', $_SESSION['pseudo'], ''));

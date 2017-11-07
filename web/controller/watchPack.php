@@ -93,7 +93,7 @@ include('controller/dataProcessing.php');
 
 # Nonce
 $nonceTime = $_SERVER['REQUEST_TIME'];
-$nonce = getNonce($nonceTime);
+$nonce     = getNonce($nonceTime);
 
 
 if (empty($_SESSION['cptScienceQuery']))
@@ -454,8 +454,6 @@ else
 	if ($emailIsCheck && !empty($data['packId']) && !empty($data['addNewPack']) && !empty($data['watchPackName']) && !empty($data['watchPackDescription']))
 	{
 		// Check if watch pack is own by the user
-
-
 		$checkCol  = array(array('author', '=', $_SESSION['pseudo'], 'AND'),
 											array('id', '=', $data['packId'], ''));
 		$packIsOwn = read('watch_pack_serge', '', $checkCol, '', $bdd);
@@ -1064,7 +1062,7 @@ else
 			$delEditingPatentQuery = $data['delEditingPatentQuery'];
 		}
 	}
-	elseif ($emailIsCheck && !empty($data['addNewPack']) && $data['watchPackList'] === 'NewPack' && !empty($data['watchPackName']) && !empty($data['watchPackDescription']))
+	elseif ($emailIsCheck && !empty($data['addNewPack']) && $data['watchPackList'] === 0 && !empty($data['watchPackName']) && !empty($data['watchPackDescription']))
 	{
 		$newWatchPackName = $data['watchPackName'];
 		$language = strtoupper($data['language']);
@@ -1078,7 +1076,6 @@ else
 		}
 
 		// Check if the name already exist
-
 		$checkCol = array(array('name', '=', $newWatchPackName, ''));
 		$nameExist  = read('watch_pack_serge', '', $checkCol, '', $bdd);
 
@@ -1124,7 +1121,7 @@ else
 			$ERRORMESSAGENEWPACKNAME = 'A watch pack with this name already exist, please change the name';
 		}
 	}
-	elseif ($emailIsCheck && !empty($data['addNewPack']) && $data['watchPackList'] === 'NewPack' && (empty($data['watchPackName']) || empty($data['watchPackDescription'])))
+	elseif ($emailIsCheck && !empty($data['addNewPack']) && $data['watchPackList'] === 0 && (empty($data['watchPackName']) || empty($data['watchPackDescription'])))
 	{
 		$ERRORMESSAGEEMPTYNAMEORDESC = 'You have to enter a name and a description for your watch pack';
 	}
