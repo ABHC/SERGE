@@ -108,7 +108,7 @@
 						echo '<option value="source' . $sourcesList['id'] . '" ' . $amISelected . '>' . $sourcesList['name'] . '</option>' . PHP_EOL;
 					}
 					?>
-					<option value="source00"><?php get_t('select1_window2_setting', $bdd); ?></option>
+					<option value="0"><?php get_t('select1_window2_setting', $bdd); ?></option>
 				</select>
 				<span class="arrDownBorder">▾</span>
 				<input type="text" class="keywordInput" name="newKeyword" id="keyword" placeholder="Keyword,next keyword, ..." />

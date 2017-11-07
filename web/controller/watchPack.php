@@ -473,11 +473,11 @@ else
 			$execution = update('watch_pack_serge', $updateCol, $checkCol, '', $bdd);
 		}
 	}
-	elseif ($emailIsCheck && !empty($data['addNewKeyword']) && !empty($data['sourceKeyword']) && !empty($data['newKeyword']))
+	elseif ($emailIsCheck && !empty($data['addNewKeyword']) && !isset($data['sourceKeyword']) && !empty($data['newKeyword']))
 	{
 		$newKeywordArray = preg_split('/,/', $data['newKeyword'], -1, PREG_SPLIT_NO_EMPTY);
 
-		if ($data['sourceKeyword'] === '00')
+		if ($data['sourceKeyword'] == '0')
 		{
 			# Add keyword on all sources
 			foreach ($listAllSources as $sourcesList)
