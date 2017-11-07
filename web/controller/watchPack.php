@@ -88,7 +88,6 @@ foreach($_POST as $key => $val)
 			$unsafeData = array_merge($unsafeData, array(array($name[0], $name[0], 'POST', 'str')));
 		}
 }
-
 include('controller/dataProcessing.php');
 
 # Nonce
@@ -1062,8 +1061,9 @@ else
 			$delEditingPatentQuery = $data['delEditingPatentQuery'];
 		}
 	}
-	elseif ($emailIsCheck && !empty($data['addNewPack']) && !empty($data['watchPackList']) && $data['watchPackList'] === 0 && !empty($data['watchPackName']) && !empty($data['watchPackDescription']))
+	elseif ($emailIsCheck && !empty($data['addNewPack']) && isset($data['watchPackList']) && $data['watchPackList'] === 0 && !empty($data['watchPackName']) && !empty($data['watchPackDescription']))
 	{
+		echo "<br>chien";
 		$newWatchPackName = $data['watchPackName'];
 		$language = strtoupper($data['language']);
 		if ($data['watchPackCategory'] === 'NewCategory')
@@ -1076,8 +1076,8 @@ else
 		}
 
 		// Check if the name already exist
-		$checkCol = array(array('name', '=', $newWatchPackName, ''));
-		$nameExist  = read('watch_pack_serge', '', $checkCol, '', $bdd);
+		$checkCol  = array(array('name', ' =', $newWatchPackName, ''));
+		$nameExist = read('watch_pack_serge', '', $checkCol, '', $bdd);
 
 		// Add new pack in database
 		if (!$nameExist)
@@ -1121,7 +1121,7 @@ else
 			$ERRORMESSAGENEWPACKNAME = 'A watch pack with this name already exist, please change the name';
 		}
 	}
-	elseif ($emailIsCheck && !empty($data['addNewPack']) && !empty($data['watchPackList']) && $data['watchPackList'] === 0 && (empty($data['watchPackName']) || empty($data['watchPackDescription'])))
+	elseif ($emailIsCheck && !empty($data['addNewPack']) && isset($data['watchPackList']) && $data['watchPackList'] === 0 && (empty($data['watchPackName']) || empty($data['watchPackDescription'])))
 	{
 		$ERRORMESSAGEEMPTYNAMEORDESC = 'You have to enter a name and a description for your watch pack';
 	}
