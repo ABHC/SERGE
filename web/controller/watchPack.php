@@ -1084,6 +1084,7 @@ else
 			$insertCol = array(array('name', strtolower($newWatchPackName)),
 												array('description', $data['watchPackDescription']),
 												array('author', $_SESSION['pseudo']),
+												array('users', ','),
 												array('category', $category),
 												array('language', $language),
 												array('update_date', $_SERVER['REQUEST_TIME']),
@@ -1093,7 +1094,7 @@ else
 
 			$checkCol = array(array('name', '=', mb_strtolower($newWatchPackName), ''));
 			$result   = read('watch_pack_serge', 'id', $checkCol, '', $bdd);
-			$result = $result[0];
+			$result   = $result[0];
 
 			// Creation of list of available sources
 			$checkCol = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
