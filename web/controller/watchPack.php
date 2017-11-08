@@ -582,7 +582,7 @@ else
 				// Adding new source
 				preg_match('@^(?:http.*://[www.]*)?([^/]+)@i', $data['newSource'], $matches);
 				$insertCol = array(array('link', $data['newSource']),
-													array('owners', ',' . $_SESSION['id'] . ','),
+													array('owners', ','),
 													array('name', ucfirst($matches[1] . '[!NEW!]')),
 													array('active', 1));
 				$execution = insert('rss_serge', $insertCol, '', '', $bdd);
