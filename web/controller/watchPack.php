@@ -550,9 +550,9 @@ else
 	}
 	elseif ($emailIsCheck && !empty($data['addNewSource']) && !empty($data['newSource']))
 	{
-		$checkCol     = array(array('link', '=', $data['newSource'], ''));
-		$result       = read('rss_serge', 'id', $checkCol, '', $bdd);
-		$resultSource = $result[0] ?? '';
+		$checkCol           = array(array('link', '=', $data['newSource'], ''));
+		$result             = read('rss_serge', 'id', $checkCol, '', $bdd);
+		$resultSource['id'] = $result[0] ?? '';
 
 		$checkCol = array(array('query', '=', '[!source!]', 'AND'),
 											array('pack_id', '=', $data['packId'], ''));
@@ -561,7 +561,7 @@ else
 
 		$newSourceId = ',' . $resultSource['id'] . ',';
 
-		if (!empty($resultSource) && !preg_match("/$newSourceId/", $sources['source']))
+		if (!empty($resultSource['id']) && !preg_match("/$newSourceId/", $sources['source']))
 		{
 			$updateCol = array(array('source', $sources['source'] . $resultSource['id'] . ','));
 			$checkCol  = array(array('pack_id', '=', $data['packId'], 'AND'),
