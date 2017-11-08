@@ -392,7 +392,7 @@ else
 											array('query', '=', '[!source!]', ''));
 		$resultPackSources = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
 
-		$packSource = array();
+		$packSource = array('0');
 		foreach ($resultPackSources as $resultSources)
 		{
 			if (preg_match("/^[,!0-9,]+$/", $resultSources['source']))
@@ -1153,7 +1153,7 @@ else
 												array('query', '=', '[!source!]', ''));
 			$reqReadPackSourcestmp = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
 
-			$packSource = array();
+			$packSource = array('0');
 			foreach ($reqReadPackSourcestmp as $readPackSources)
 			{
 				if (preg_match("/^[,!0-9,]+$/", $readPackSources['source']))
