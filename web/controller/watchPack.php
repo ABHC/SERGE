@@ -1031,7 +1031,7 @@ else
 		{
 
 				$updateCol = array(array('source', 'Patent'));
-				$checkCol = array(array('id', '=', $data['activateQueryPatent'], ''));
+				$checkCol  = array(array('id', '=', $data['activateQueryPatent'], ''));
 				$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
 		}
 	}
