@@ -15,7 +15,7 @@
 	if ($type === 'create')
 	{
 		$packIdURL = '';
-		if (!empty($data['packId']) && $data['watchPackList'] !== 0)
+		if (!empty($data['packId']))
 		{
 			$packIdURL = '&packId=' . $data['packId'];
 		}

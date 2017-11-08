@@ -449,8 +449,13 @@ else
 
 	$selectLanguage = $selectLanguage . PHP_EOL . '</select>';
 
+	if ($emailIsCheck && $data['watchPackList'] === 0 && empty($data['addNewPack']))
+	{
+		header('Location: watchPack?type=create');
+		die();
+	}
 	// Edit a pack
-	if ($emailIsCheck && !empty($data['packId']) && !empty($data['addNewPack']) && !empty($data['watchPackName']) && !empty($data['watchPackDescription']))
+	elseif ($emailIsCheck && !empty($data['packId']) && !empty($data['addNewPack']) && !empty($data['watchPackName']) && !empty($data['watchPackDescription']))
 	{
 		// Check if watch pack is own by the user
 		$checkCol  = array(array('author', '=', $_SESSION['pseudo'], 'AND'),
