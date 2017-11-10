@@ -1664,7 +1664,7 @@ CustomLog /var/www/Serge/web/logs/access.log combined
 	echo "git pull" >> /usr/bin/SergeUpdate
 	echo "latestStable=\$(git tag | grep \"\-stable\" | sort -V -r | cut -d\$'\n' -f1)" >> /usr/bin/SergeUpdate
 	echo "git checkout \$latestStable" >> /usr/bin/SergeUpdate
-	echo "rsync -a --exclude='logs' --exclude='.git' --exclude='database_demo' --exclude='Graylog-install.sh' --exclude='README.txt' --exclude='Serge-install.sh' --exclude='extensions_tables' ~/stableRepository/SERGE/ /var/www/Serge/ || { echo 'FATAL ERROR in rsync action for ~/stableRepository/SERGE/'; exit 1; }" >>  /usr/bin/SergeUpdate
+	echo "rsync -a --exclude='logs' --exclude='.git' --exclude='database_demo' --exclude='Graylog-install.sh' --exclude='README.txt' --exclude='Serge-install.sh' --exclude='extensions_tables' --exclude='web/js/piwik/piwik.js' ~/stableRepository/SERGE/ /var/www/Serge/ || { echo 'FATAL ERROR in rsync action for ~/stableRepository/SERGE/'; exit 1; }" >>  /usr/bin/SergeUpdate
 	echo "chown -R Serge:Serge /var/www/Serge/ || { echo 'FATAL ERROR in chown action for /var/www/Serge/'; exit 1; }" >>  /usr/bin/SergeUpdate
 	echo "chown -R www-data:www-data /var/www/Serge/web/ || { echo 'FATAL ERROR in chown action for /var/www/Serge/web/'; exit 1; }" >>  /usr/bin/SergeUpdate
 	echo 'echo "Update to stable version success !"' >> /usr/bin/SergeUpdate
