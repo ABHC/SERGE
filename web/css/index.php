@@ -15,7 +15,7 @@ include('nav.php');
 .body
 {
 	position: relative;
-	margin-top: 30vh;
+	margin-top: 35vh;
 }
 
 .backgroundImage
@@ -267,7 +267,7 @@ a.buttonTry
 	height: 140px;
 	overflow: hidden;
 	font-size: 15px;
-	color: rgb(200, 200, 200);
+	color: rgb(220, 220, 220);
 }
 
 .functionalityText div
