@@ -109,7 +109,7 @@ if ($_SESSION['type'] === 'create')
 
 	.shortSelect
 	{
-		width: 54px;
+		width: 58px;
 		padding-right: 20px;
 		text-transform: uppercase;
 	}
