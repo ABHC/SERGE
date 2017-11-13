@@ -438,12 +438,12 @@ else
 	{
 		if ($userLang === $languageLine['code'])
 		{
-			$selectLanguage = $selectLanguage . PHP_EOL . '<option value="' . $languageLine['code'] . '" selected>' . $languageLine['code'] . ' &nbsp;&nbsp;' . $languageLine['name'] . '</option>';
+			$selectLanguage = $selectLanguage . PHP_EOL . '<option value="' . $languageLine['code'] . '" selected>' . $languageLine['code'] . ' &nbsp;&nbsp;&nbsp;' . $languageLine['name'] . '</option>';
 			$selectedLanguageCode = $languageLine['code'];
 		}
 		else
 		{
-			$selectLanguage = $selectLanguage . PHP_EOL . '<option value="' . $languageLine['code'] . '">' . $languageLine['code'] . ' &nbsp;&nbsp;' . $languageLine['name'] . '</option>';
+			$selectLanguage = $selectLanguage . PHP_EOL . '<option value="' . $languageLine['code'] . '">' . $languageLine['code'] . ' &nbsp;&nbsp;&nbsp;' . $languageLine['name'] . '</option>';
 		}
 	}
 

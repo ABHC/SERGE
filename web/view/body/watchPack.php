@@ -67,7 +67,7 @@
 			<div>
 				<?php echo $selectLanguage; ?>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" name="watchPackCategory" placeholder="<?php get_t('input3_window0_watchpack', $bdd); ?>" value="<?php echo $packDetails['category'] ?? ''; ?>" list="watchPackCategory"/>
+				<input type="text" name="watchPackCategory" placeholder="<?php get_t('input3_window0_watchpack', $bdd); ?>" value="<?php echo ucfirst($packDetails['category'] ?? ''); ?>" autocomplete="off" list="watchPackCategory"/>
 				<datalist id="watchPackCategory">
 					<?php
 					# List here watch Pack category
@@ -77,7 +77,7 @@
 					$categoryWatchPack['category'] = $categoryWatchPack['category'] ?? '';
 					foreach ($categoryWatchPacks as $categoryWatchPack)
 					{
-							echo '<option value="' . $categoryWatchPack['category'] . '"></option>';
+							echo '<option value="' . ucfirst($categoryWatchPack['category']) . '"></option>';
 					}
 					 ?>
 				</datalist>
