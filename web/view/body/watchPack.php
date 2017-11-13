@@ -52,17 +52,17 @@
 					{
 						if ($ownerWatchPack['id'] == $data['packId'])
 						{
-							echo '<option value="' . $ownerWatchPack['id'] . '" selected>Edit: ' . $ownerWatchPack['name'] . '&nbsp;&nbsp;</option>';
+							echo '<option value="' . $ownerWatchPack['id'] . '" selected>Edit: ' . ucfirst($ownerWatchPack['name']) . '&nbsp;&nbsp;</option>';
 						}
 						else
 						{
-							echo '<option value="' . $ownerWatchPack['id'] . '">Edit: ' . $ownerWatchPack['name'] . '&nbsp;&nbsp;</option>';
+							echo '<option value="' . $ownerWatchPack['id'] . '">Edit: ' . ucfirst($ownerWatchPack['name']) . '&nbsp;&nbsp;</option>';
 						}
 					}
 					 ?>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" name="watchPackName" placeholder="<?php get_t('input2_window0_watchpack', $bdd); ?>" value="<?php echo  ucfirst($packDetails['name']) ?? ''; ?>"/>
+				<input type="text" name="watchPackName" placeholder="<?php get_t('input2_window0_watchpack', $bdd); ?>" value="<?php echo  ucfirst($packDetails['name'] ?? ''); ?>"/>
 			</div>
 			<div>
 				<?php echo $selectLanguage; ?>
