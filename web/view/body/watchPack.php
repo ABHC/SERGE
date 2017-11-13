@@ -62,7 +62,7 @@
 					 ?>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" name="watchPackName" placeholder="<?php get_t('input2_window0_watchpack', $bdd); ?>" value="<?php echo  $packDetails['name'] ?? ''; ?>"/>
+				<input type="text" name="watchPackName" placeholder="<?php get_t('input2_window0_watchpack', $bdd); ?>" value="<?php echo  ucfirst($packDetails['name']) ?? ''; ?>"/>
 			</div>
 			<div>
 				<?php echo $selectLanguage; ?>
@@ -824,7 +824,7 @@
 								echo '
 								<tr>
 									<td><input title="Add watch pack" name="addPack" class="icoAddPack" type="submit" value="' . $watchPack['id'] . '" /></td>
-									<td title="' . $watchPack['description'] . '">' . $watchPack['name'] . '</td>
+									<td title="' . $watchPack['description'] . '">' . ucfirst($watchPack['name']) . '</td>
 									<td>' . $watchPack['author'] . '</td>
 									<td>' . $watchPack['category'] . '</td>
 									<td>' . date("H:i d/m/o", $watchPack['update_date']) . '</td>

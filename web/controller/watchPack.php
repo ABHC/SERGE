@@ -449,7 +449,7 @@ else
 
 	$selectLanguage = $selectLanguage . PHP_EOL . '</select>';
 
-	if ($emailIsCheck && $data['watchPackList'] === 0 && empty($data['addNewPack']))
+	if ($emailIsCheck && !empty($data['watchPackList']) && $data['watchPackList'] === 0 && empty($data['addNewPack']))
 	{
 		header('Location: watchPack?type=create');
 		die();
@@ -462,13 +462,13 @@ else
 											array('id', '=', $data['packId'], ''));
 		$packIsOwn = read('watch_pack_serge', '', $checkCol, '', $bdd);
 
-		$checkCol  = array(array('name', '=', $data['watchPackName'], 'AND'),
+		$checkCol  = array(array('name', '=', strtolower($data['watchPackName']), 'AND'),
 											array('id', '<>', $data['packId'], ''));
 		$nameExist = read('watch_pack_serge', '', $checkCol, '', $bdd);
 
 		if ($packIsOwn && !$nameExist)
 		{
-			$updateCol = array(array('name', $data['watchPackName']),
+			$updateCol = array(array('name', strtolower($data['watchPackName'])),
 												array('description', $data['watchPackDescription']),
 												array('category', $data['watchPackCategory']),
 												array('language', $data['language']),
@@ -1072,7 +1072,7 @@ else
 		}
 
 		// Check if the name already exist
-		$checkCol  = array(array('name', '=', $newWatchPackName, ''));
+		$checkCol  = array(array('name', '=', strtolower($newWatchPackName), ''));
 		$nameExist = read('watch_pack_serge', '', $checkCol, '', $bdd);
 
 		// Add new pack in database
