@@ -1,11 +1,12 @@
 <?php
 
 # Define variable
-$resultTab     = '';
-$wikiTab       = '';
-$settingTab    = '';
-$premiumCodeId = 0;
-$needToPay     = FALSE;
+$resultTab           = '';
+$wikiTab             = '';
+$settingTab          = '';
+$premiumCodeId       = 0;
+$needToPay           = FALSE;
+$priceMessageSuccess = '';
 
 include('controller/accessLimitedToSignInPeople.php');
 include('model/get_text.php');
@@ -75,7 +76,7 @@ if (!empty($data['submitPurchase']) && !empty($data['readCGS']) && !empty($data[
 			$checkCol  = array(array('id', '=', $premiumCodeId, ''));
 			$execution = update('premium_code_table_serge', $updateCol, $checkCol, '', $bdd);
 
-			$price = $price - (($premiumCodeDuration/(3600*24*30)) * $monthPrice);
+			$price = $price - (($premiumCodeDuration/(3600 * 24 * 30)) * $monthPrice);
 
 			if ($price < 0)
 			{
@@ -144,7 +145,7 @@ elseif (!empty($data['stripeAccess']) && $data['stripeAccess'] === 'true')
 	// Read stripe keys
 	$checkCol = array(array('account_name', '=', 'STRIPEACCOUNTNAME', ''));
 	$result   = read('stripe_table_serge', 'secret_key, publishable_key', $checkCol, '',$bdd);
-	$result = $result[0];
+	$result   = $result[0];
 
 	$stripe = array(
 		'secret_key'      => $result['secret_key'],
@@ -193,7 +194,7 @@ elseif (!empty($data['stripeAccess']) && $data['stripeAccess'] === 'true')
 	$price = $_SESSION['price'] / 100;
 	unset($_SESSION['price']);
 	unset($_SESSION['premiumDuration']);
-	echo "<h1>Successfully charged $price € !</h1>";
+	$priceMessageSuccess = "<h1>Successfully charged $price € !</h1>";
 }
 
 include('view/nav/nav.php');

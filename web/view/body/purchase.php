@@ -1,5 +1,6 @@
 <div class="background"></div>
 <div class="body">
+	<?php echo $priceMessageSuccess; ?>
 	<h2>Become premium</h2>
 	<h3>Access to all Serge's features</h3>
 	<div class="functionality">

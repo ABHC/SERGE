@@ -68,6 +68,7 @@ if (!empty($data['pseudo']) && !empty($data['password']))
 
 		$_SESSION['id']            = $result[0]['id'];
 		$_SESSION['pseudo']        = $result[0]['users'];
+		$_SESSION['email']         = $result[0]['email'];
 		$_SESSION['lang']          = $result[0]['language'];
 		$_SESSION['ip']            = $_SERVER['REMOTE_ADDR'];
 		$_SESSION['user-agent']    = $_SERVER['HTTP_USER_AGENT'];
