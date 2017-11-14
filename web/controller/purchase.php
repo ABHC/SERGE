@@ -143,7 +143,7 @@ elseif (!empty($data['stripeAccess']) && $data['stripeAccess'] === 'true')
 	require_once('vendor/autoload.php');
 
 	// Read stripe keys
-	$checkCol = array(array('account_name', '=', 'STRIPEACCOUNTNAME', ''));
+	$checkCol = array();
 	$result   = read('stripe_table_serge', 'secret_key, publishable_key', $checkCol, '',$bdd);
 	$result   = $result[0];
 
