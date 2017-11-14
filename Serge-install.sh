@@ -2023,7 +2023,7 @@ mailflag = /var/run/fail2ban/mail.flag' > /etc/fail2ban/action.d/sendmail-cron.c
 
 		# Add cron rule for automatic email
 		crontab -l > /tmp/crontab.tmp
-		echo "@daily touch /var/run/fail2ban/mail.flag" >> /tmp/crontab.tmp
+		echo "0 8 * * * touch /var/run/fail2ban/mail.flag" >> /tmp/crontab.tmp
 		crontab /tmp/crontab.tmp
 		rm /tmp/crontab.tmp
 
