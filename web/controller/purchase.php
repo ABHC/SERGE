@@ -54,7 +54,7 @@ if (!empty($data['submitPurchase']) && !empty($data['readCGS']) && !empty($data[
 		$data['months'] = 1;
 	}
 
-	$price           = $monthPrice * $data['months'];
+	$price           = $monthPrice * $data['months'] * 100;
 	$premiumDuration = $data['months'] * 30 * 24 * 3600;
 
 	if (!empty($data['premiumCode']))
