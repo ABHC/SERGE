@@ -1,0 +1,3 @@
+Contact: security@cairn-devices.eu
+Encryption: https://raw.githubusercontent.com/Gspohu/security/master/pgp-key.txt
+Acknowledgements: 
