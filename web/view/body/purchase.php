@@ -69,7 +69,7 @@
 		<div class="price" id="price"><?php echo $monthPrice; ?> €</div>
 		<form method="post" action="purchase#purchase">
 			<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
-			<p class="title_form_purchase"><?php get_t('input1_purchase_purchase', $bdd); ?></p> <p><input class="number alpha" type="number" name="months" min="1" max="30" value="1" onchange="updatePrice(this.value);"/><?php get_t('input1_text_purchase', $bdd); ?></p>
+			<p class="title_form_purchase"><?php get_t('input1_purchase_purchase', $bdd); ?></p> <p><input class="number alpha" type="number" name="months" min="1" max="30" value="1" onchange="updatePrice(this.value,<?php echo $monthPrice; ?>);"/><?php get_t('input1_text_purchase', $bdd); ?></p>
 			<p class="title_form_purchase"><?php get_t('input2_purchase_purchase', $bdd); ?></p> <p><input class="purchase_field" type="text" name="premiumCode" id="code" /></p>
 			<?php echo $ERRORMESSAGE ?? ''; ?>
 			<p><input type="checkbox" name="readCGS" id="CGS" value="true" required/><label class="checkbox" for="CGS"></label><a href="legal" ><?php get_t('input3_purchase_purchase', $bdd); ?></a></p>

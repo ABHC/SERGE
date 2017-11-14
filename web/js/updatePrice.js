@@ -1,4 +1,4 @@
-function updatePrice(duration)
+function updatePrice(duration, monthPrice)
 {
 	function escapeHTML(unsafe)
 	{
@@ -10,7 +10,7 @@ function updatePrice(duration)
 					.replace(/'/g, "&#039;");
 	}
 
-	var price = duration * 30;
+	var price = duration * monthPrice;
 
 	document.getElementById("price").innerHTML = escapeHTML(`${price}€`);
 }
