@@ -142,13 +142,13 @@ elseif (!empty($data['stripeAccess']) && $data['stripeAccess'] === 'true')
 	require_once('vendor/autoload.php');
 
 	// Read stripe keys
-	$checkCol = array(array('account_name', '=', 'Cairn Devices Serge TEST', '')); // TODO Add in installation script
+	$checkCol = array(array('account_name', '=', 'STRIPEACCOUNTNAME', ''));
 	$result   = read('stripe_table_serge', 'secret_key, publishable_key', $checkCol, '',$bdd);
 	$result = $result[0];
 
 	$stripe = array(
-		'secret_key'      => $result['secret_key'],// TODO Add in installation script
-		'publishable_key' => $result['publishable_key']// TODO Add in installation script
+		'secret_key'      => $result['secret_key'],
+		'publishable_key' => $result['publishable_key']
 	);
 
 	\Stripe\Stripe::setApiKey($stripe['secret_key']);
