@@ -593,13 +593,13 @@ else
 				$execution = insert('rss_serge', $insertCol, '', '', $bdd);
 
 
-				$checkCol = array(array('link', '=', $data['newSource'], ''));
-				$result = read('rss_serge', 'id', $checkCol, '', $bdd);
-				$resultSource = $result[0];
+				$checkCol     = array(array('link', '=', $data['newSource'], ''));
+				$result       = read('rss_serge', 'id', $checkCol, '', $bdd);
+				$resultSource = $result[0]['id'];
 
 
 				$updateCol = array(array('source', $sources . $resultSource . ','));
-				$checkCol = array(array('pack_id', '=', $data['packId'], 'AND'),
+				$checkCol  = array(array('pack_id', '=', $data['packId'], 'AND'),
 													array('query', '=', '[!source!]', ''));
 				$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
 			}
