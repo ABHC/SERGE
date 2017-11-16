@@ -562,7 +562,7 @@ else
 		$checkCol = array(array('query', '=', '[!source!]', 'AND'),
 											array('pack_id', '=', $data['packId'], ''));
 		$result   = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
-		$sources  = $result[0];
+		$sources  = $result[0] ?? '';
 
 		$newSourceId = ',' . $resultSource['id'] . ',';
 
