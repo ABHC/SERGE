@@ -562,18 +562,18 @@ else
 		$checkCol = array(array('query', '=', '[!source!]', 'AND'),
 											array('pack_id', '=', $data['packId'], ''));
 		$result   = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
-		$sources  = $result[0] ?? '';
+		$sources  = $result[0]['source'] ?? '';
 
 		$newSourceId = ',' . $resultSource['id'] . ',';
 
-		if (!empty($resultSource['id']) && !preg_match("/$newSourceId/", $sources['source']))
+		if (!empty($resultSource['id']) && !preg_match("/$newSourceId/", $sources))
 		{
-			$updateCol = array(array('source', $sources['source'] . $resultSource['id'] . ','));
+			$updateCol = array(array('source', $sources . $resultSource['id'] . ','));
 			$checkCol  = array(array('pack_id', '=', $data['packId'], 'AND'),
 												array('query', '=', '[!source!]', ''));
 			$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
 		}
-		elseif (!preg_match("/$newSourceId/", $sources['source']))
+		elseif (!preg_match("/$newSourceId/", $sources))
 		{
 			// Check if source is valid
 			$sourceToTest = escapeshellarg($data['newSource']);
@@ -598,7 +598,7 @@ else
 				$resultSource = $result[0];
 
 
-				$updateCol = array(array('source', $sources['source'] . $resultSource['id'] . ','));
+				$updateCol = array(array('source', $sources . $resultSource['id'] . ','));
 				$checkCol = array(array('pack_id', '=', $data['packId'], 'AND'),
 													array('query', '=', '[!source!]', ''));
 				$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
