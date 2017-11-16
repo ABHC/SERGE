@@ -557,18 +557,18 @@ else
 	{
 		$checkCol     = array(array('link', '=', $data['newSource'], ''));
 		$result       = read('rss_serge', 'id', $checkCol, '', $bdd);
-		$resultSource = $result[0] ?? '';
+		$resultSource = $result[0]['id'] ?? '';
 
 		$checkCol = array(array('query', '=', '[!source!]', 'AND'),
 											array('pack_id', '=', $data['packId'], ''));
 		$result   = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
 		$sources  = $result[0]['source'] ?? '';
 
-		$newSourceId = ',' . $resultSource['id'] . ',';
+		$newSourceId = ',' . $resultSource . ',';
 
-		if (!empty($resultSource['id']) && !preg_match("/$newSourceId/", $sources))
+		if (!empty($resultSource) && !preg_match("/$newSourceId/", $sources))
 		{
-			$updateCol = array(array('source', $sources . $resultSource['id'] . ','));
+			$updateCol = array(array('source', $sources . $resultSource . ','));
 			$checkCol  = array(array('pack_id', '=', $data['packId'], 'AND'),
 												array('query', '=', '[!source!]', ''));
 			$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
@@ -598,7 +598,7 @@ else
 				$resultSource = $result[0];
 
 
-				$updateCol = array(array('source', $sources . $resultSource['id'] . ','));
+				$updateCol = array(array('source', $sources . $resultSource . ','));
 				$checkCol = array(array('pack_id', '=', $data['packId'], 'AND'),
 													array('query', '=', '[!source!]', ''));
 				$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
