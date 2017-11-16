@@ -555,9 +555,9 @@ else
 	}
 	elseif ($emailIsCheck && !empty($data['addNewSource']) && !empty($data['newSource']))
 	{
-		$checkCol           = array(array('link', '=', $data['newSource'], ''));
-		$result             = read('rss_serge', 'id', $checkCol, '', $bdd);
-		$resultSource['id'] = $result[0] ?? '';
+		$checkCol     = array(array('link', '=', $data['newSource'], ''));
+		$result       = read('rss_serge', 'id', $checkCol, '', $bdd);
+		$resultSource = $result[0] ?? '';
 
 		$checkCol = array(array('query', '=', '[!source!]', 'AND'),
 											array('pack_id', '=', $data['packId'], ''));
