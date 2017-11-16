@@ -1814,6 +1814,7 @@ Security_app()
 		mv /usr/share/modsecurity-crs/rules/REQUEST-931-APPLICATION-ATTACK-RFI.conf /usr/share/modsecurity-crs/rules/REQUEST-931-APPLICATION-ATTACK-RFI.conf.disable
 
 		sed -i "s/SecRuleEngine DetectionOnly/SecRuleEngine On/g" /etc/modsecurity/modsecurity.conf
+		echo "SecDisableBackendCompression On" >> /etc/modsecurity/modsecurity.conf
 
 		sed -i 's/<\/IfModule>/        IncludeOptional "\/usr\/share\/modsecurity-crs\/*.conf"\n        IncludeOptional "\/usr\/share\/modsecurity-crs\/rules\/*.conf"\n<\/IfModule>/g'  /etc/apache2/mods-available/security2.conf
 
