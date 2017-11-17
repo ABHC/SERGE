@@ -530,7 +530,7 @@ else
 														array('source', '<>', 'Science', 'AND'),
 														array('source', '<>', 'Patent', ''));
 					$result = read('watch_pack_queries_serge', 'id, source', $checkCol, '', $bdd);
-					$resultKeyword = $result[0];
+					$resultKeyword = $result[0] ?? '';
 
 					$newKeywordSource = ',' . $data['sourceKeyword'] . ',';
 
