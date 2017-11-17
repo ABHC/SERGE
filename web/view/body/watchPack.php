@@ -202,8 +202,6 @@
 						'</label>';
 
 					# Keyword loop
-
-
 					$checkCol = array(array("pack_id", "=", $data['packId'], "AND"),
 														array("source", "nl", "[!%", "AND"),
 														array("query", "nl", "[!%", ""));

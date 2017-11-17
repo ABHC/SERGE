@@ -45,7 +45,7 @@ if (!empty($packExist))
 		$checkCol   = array(array('query', '=', $patentQuery['query'], 'AND'),
 												array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
 												array('query', '=', $patentQuery['query'], 'AND'),
-												array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''),);
+												array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
 		$queryExist = read('queries_wipo_serge', 'id, owners', $checkCol, '', $bdd);
 
 		if (!empty($queryExist))
@@ -63,7 +63,7 @@ if (!empty($packExist))
 	$checkCol = array(array('pack_id', '=', $data['removePack'], 'AND'),
 										array('source', '<>' , 'Science', 'AND'),
 										array('source', '<>' , 'Patent', 'AND'),
-										array('source', '<>' , '[!source!]', ''),);
+										array('source', '<>' , '[!source!]', ''));
 	$result   = read('watch_pack_queries_serge', 'query, source', $checkCol, '', $bdd);
 
 	foreach ($result as $couple)
@@ -96,7 +96,7 @@ if (!empty($packExist))
 	$checkCol        = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'AND'),
 													array('id', 'IN', $listOfSource_array, 'OR'),
 													array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', 'AND'),
-													array('id', 'IN', $listOfSource_array, ''),);
+													array('id', 'IN', $listOfSource_array, ''));
 	$sourceWatchPack = read('rss_serge', 'id, owners, active', $checkCol, '', $bdd);
 
 

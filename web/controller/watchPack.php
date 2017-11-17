@@ -877,7 +877,7 @@ else
 											array('source', '=', 'Science', 'OR'),
 											array('id', '=', $data['delQueryScience'], 'AND'),
 											array('pack_id', '=', $data['packId'], 'AND'),
-											array('source', '=', '!Science', ''),);
+											array('source', '=', '!Science', ''));
 		$queryExist = read('watch_pack_queries_serge', '', $checkCol, '', $bdd);
 
 		if ($queryExist)

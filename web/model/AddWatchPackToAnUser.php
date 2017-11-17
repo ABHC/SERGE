@@ -1,7 +1,8 @@
 <?php
 // Check if pack exist
-$checkCol  = array(array("id", " =", $data['addPack'], ""));
+$checkCol  = array(array("id", "=", $data['addPack'], ""));
 $packExist = read('watch_pack_serge', 'users', $checkCol, '', $bdd);
+$packExist = $packExist[0] ?? '';
 
 if (!empty($packExist))
 {
@@ -18,13 +19,25 @@ if (!empty($packExist))
 	$listOfSource_array = explode(",", $result[0]['source']);
 
 	$checkCol = array(array("owners", "l", '%,' . $_SESSION['id'] . ',%', "OR"),
-										array("owners", "l", '%,!' . $_SESSION['id'] . ',%', ""),);
+										array("owners", "l", '%,!' . $_SESSION['id'] . ',%', ""));
 	$ownerSources = read('rss_serge', 'id', $checkCol, '', $bdd);
+
+	if (!empty($ownerSources))
+	{
+		$ownerSources_array=',';
+
+		foreach ($ownerSources as $own)
+		{
+			$ownerSources_array = $ownerSources_array . $own['id'] . ',';
+		}
+
+		$ownerSources_array = explode(",", $ownerSources_array);
+	}
 
 	foreach ($listOfSource_array as $source)
 	{
 		// Add source to actual user if the source is not already own
-		if (!in_array($source, $ownerSources['id']))
+		if (empty($ownerSources) || !in_array($source, $ownerSources_array))
 		{
 			$checkCol     = array(array("id", " =", $source, ""));
 			$sourceOwners = read('rss_serge', 'owners', $checkCol, '', $bdd);
@@ -98,7 +111,7 @@ if (!empty($packExist))
 	$checkCol = array(array("pack_id", "=", $data['addPack'], "AND"),
 										array("source", "=" , "Patent", "OR"),
 										array("pack_id", "=", $data['addPack'], "AND"),
-										array("source", "=" , "!Patent", ""),);
+										array("source", "=" , "!Patent", ""));
 	$result   = read('watch_pack_queries_serge', 'query', $checkCol, '', $bdd);
 
 	foreach ($result as $patentQuery)
@@ -138,7 +151,7 @@ if (!empty($packExist))
 	$checkCol = array(array("pack_id", "=", $data['addPack'], "AND"),
 										array("source", "<>" , "Science", "AND"),
 										array("source", "<>" , "Patent", "AND"),
-										array("source", "<>" , "[!source!]", ""),);
+										array("source", "<>" , "[!source!]", ""));
 	$result = read('watch_pack_queries_serge', 'query, source', $checkCol, '', $bdd);
 
 	foreach ($result as $couple)
