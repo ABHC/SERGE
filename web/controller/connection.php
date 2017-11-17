@@ -137,19 +137,7 @@ elseif (!empty($data['action']) && $data['action'] === "forgotPassphraseProcessi
 		$subject = 'Serge : Passphrase forgot';
 		$body    = "By clicking on this link you will reset your passphrase :  $verifyLink";
 
-		# Read mail address
-		$mailAddr  = fopen('/var/www/Serge/web/.mailaddr', 'r');
-		$emailAddr = fgets($mailAddr);
-		fclose($mailAddr);
-
-		# Cleaning value
-		$emailAddr = preg_replace("/(\r\n|\n|\r)/", "", $emailAddr);
-
-		$headers = "From: $emailAddr" . "\r\n" .
-		"Reply-To: $emailAddr" . "\r\n" .
-		'X-Mailer: PHP/' . phpversion();
-
-		mail($to, $subject, $body, $headers);
+		include('controller/sendmail.php');
 
 		# Say to user to check emails
 		$checkYourEmails = TRUE;
@@ -237,19 +225,7 @@ elseif (!empty($data['action']) && $data['action'] === "resetPassphraseProcessin
 			$subject = 'Serge : Passphrase change';
 			$body    = 'Your pasphrase has been succesfully change !';
 
-			# Read mail address
-			$mailAddr  = fopen('/var/www/Serge/web/.mailaddr', 'r');
-			$emailAddr = fgets($mailAddr);
-			fclose($mailAddr);
-
-			# Cleaning value
-			$emailAddr = preg_replace("/(\r\n|\n|\r)/", "", $emailAddr);
-
-			$headers = "From: $emailAddr" . "\r\n" .
-			"Reply-To: $emailAddr" . "\r\n" .
-			'X-Mailer: PHP/' . phpversion();
-
-			mail($to, $subject, $body, $headers);
+			include('controller/sendmail.php');
 
 			header("Location: connection");
 			die();

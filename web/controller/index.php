@@ -123,20 +123,7 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 					$subject = 'Serge : Email verification';
 					$body    = "Please verify your email by clicking on the link below :  $verifyLink";
 
-					# Read mail address
-					$mailAddr  = fopen('/var/www/Serge/web/.mailaddr', 'r');
-					$emailAddr = fgets($mailAddr);
-					fclose($mailAddr);
-
-					#Cleaning value
-					$emailAddr = preg_replace("/(\r\n|\n|\r)/", "", $emailAddr);
-
-					$headers = "From: $emailAddr" . "\r\n" .
-					"Reply-To: $emailAddr" . "\r\n" .
-					'X-Mailer: PHP/' . phpversion();
-
-					mail($to, $subject, $body, $headers);
-
+					include('controller/sendmail.php');
 
 					// Insert new user in database
 					$insertCol = array(array('users', $pseudo),
