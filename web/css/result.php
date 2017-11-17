@@ -7,9 +7,6 @@ session_start();
 
 include('../model/connection_sql.php');
 
-//include('../model/design.php');
-//include('../model/backgroundDesign.php');
-
 include('../model/read.php');
 
 $checkCol = array(array("id", "=", $_SESSION['id'], ""));

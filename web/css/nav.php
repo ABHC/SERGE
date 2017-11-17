@@ -1,10 +1,3 @@
-<?php
-//include('../model/connexion_sql.php');
-
-//include('../model/design.php');
-
-?>
-
 .nav
 {
 	display: flex;
