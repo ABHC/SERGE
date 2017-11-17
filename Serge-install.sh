@@ -1421,6 +1421,7 @@ CustomLog /var/www/Serge/web/logs/access.log combined
 	chmod 440 /var/www/Serge/web/.htaccess
 	chmod 440 /var/www/Serge/web/.htpasswd
 	chmod 440 /var/www/Serge/web/.mailaddr
+	chown www-data:www-data /var/www/Serge/checkfeed.py
 
 	piwikMonitoring=""
 	# Ask for adress of piwik monitoring server
