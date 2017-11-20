@@ -184,7 +184,7 @@ elseif (!empty($data['action']) && $data['action'] === 'resetPassphraseProcessin
 		&& !empty($data['token']) && !empty($data['checker']))
 {
 	# Check if checker is good
-	$checkCol   = array(array('token', ' =', $data['token'], ''));
+	$checkCol   = array(array('token', '=', $data['token'], ''));
 	$userExist  = read('users_table_serge', 'salt, email', $checkCol, '',$bdd);
 	$cryptoSalt = $userExist[0]['salt'];
 	$email      = $userExist[0]['email'];

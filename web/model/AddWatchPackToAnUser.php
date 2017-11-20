@@ -24,7 +24,7 @@ if (!empty($packExist))
 
 	if (!empty($ownerSources))
 	{
-		$ownerSources_array=',';
+		$ownerSources_array = ',';
 
 		foreach ($ownerSources as $own)
 		{

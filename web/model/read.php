@@ -5,46 +5,23 @@ function read(string $tableName, string $selectedCol, array $checkCol, string $o
 	$arrayValues = array();
 	$cpt         = 0;
 	$WHEREvar    = 1;
+	$op_array = array(
+										"=" => " = ",
+										"l" => " LIKE ",
+										"nl" => " NOT LIKE ",
+										">=" => " >= ",
+										">" => " > ",
+										"<" => " < ",
+										"IN" => " IN ",
+										"<>" => " <> ",
+										"REGEXP" => " REGEXP ");
 
 	if (!empty($checkCol))
 	{
 		$WHEREvar = '';
 		foreach ($checkCol as $line)
 		{
-			$op = ' = ';
-			if ($line[1] === 'l')
-			{
-				$op = ' LIKE ';
-			}
-			elseif ($line[1] === 'nl')
-			{
-				$op = ' NOT LIKE ';
-			}
-			elseif ($line[1] === '>=')
-			{
-				$op = ' >= ';
-			}
-			elseif ($line[1] === '>')
-			{
-				$op = ' > ';
-			}
-			elseif ($line[1] === '<')
-			{
-				$op = ' < ';
-			}
-			elseif ($line[1] === 'IN')
-			{
-				$op = ' IN ';
-			}
-			elseif ($line[1] === '<>')
-			{
-				$op = ' <> ';
-			}
-			elseif ($line[1] === 'REGEXP')
-			{
-				$op = ' REGEXP ';
-			}
-
+			$op        = $op_array[$line[1]];
 			$nameCol   = $line[0];
 			$value     = $line[2];
 			$connector = ' ' . $line[3] . ' ';

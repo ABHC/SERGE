@@ -174,7 +174,7 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 
 if (!empty($data['emailCheckToken']) && !empty($data['checker']))
 {
-	$checkCol   = array(array('token', ' =', $data['emailCheckToken'], ''));
+	$checkCol   = array(array('token', '=', $data['emailCheckToken'], ''));
 	$result     = read('users_table_serge', 'id, salt', $checkCol, '',$bdd);
 	$userId     = $result[0]['id'];
 	$cryptoSalt = $result[0]['salt'];

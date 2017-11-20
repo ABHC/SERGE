@@ -405,7 +405,7 @@ else
 		$checkCol       = array(array('id', 'IN', $packSource, ''));
 		$listAllSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 
-		$checkCol    = array(array('pack_id', ' =', $data['packId'], 'AND'),
+		$checkCol    = array(array('pack_id', '=', $data['packId'], 'AND'),
 											array('query', '<>', '[!source!]', ''));
 		$packSources = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
 
@@ -1171,7 +1171,7 @@ else
 			$checkCol       = array(array('id', 'IN', $packSource, ''));
 			$listAllSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 
-			$checkCol              = array(array('pack_id', ' =', $data['packId'], 'AND'),
+			$checkCol              = array(array('pack_id', '=', $data['packId'], 'AND'),
 			array('query', '<>', '[!source!]', ''));
 			$reqReadPackSourcestmp = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
 

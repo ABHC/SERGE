@@ -45,7 +45,7 @@
 					<option value="0"><?php get_t('select1_window0_watchpack', $bdd); ?>&nbsp;&nbsp;</option>
 					<?php
 					# List here watch Pack own by current user
-					$checkCol        = array(array('author', ' =', $_SESSION['pseudo'], ''));
+					$checkCol        = array(array('author', '=', $_SESSION['pseudo'], ''));
 					$ownerWatchPacks = read('watch_pack_serge', 'id, name', $checkCol, '', $bdd);
 
 					foreach ($ownerWatchPacks as $ownerWatchPack)

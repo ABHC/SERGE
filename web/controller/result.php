@@ -110,7 +110,7 @@ if (!empty($data['deleteLink']))
 
 		if (preg_match("/^delete[0-9]+$/", $key))
 		{
-			$checkCol     = array(array('id', ' =', preg_replace("/^delete/", '', $key), ''));
+			$checkCol     = array(array('id', '=', preg_replace("/^delete/", '', $key), ''));
 			$ownersResult = read('result_news_serge', 'owners', $checkCol, '', $bdd);
 
 			if (!empty($ownersResult))
@@ -124,7 +124,7 @@ if (!empty($data['deleteLink']))
 }
 
 # Record when a link is click
-$checkCol   = array(array('users', ' =', $_SESSION['pseudo'], ''));
+$checkCol   = array(array('users', '=', $_SESSION['pseudo'], ''));
 $recordRead = read('users_table_serge', 'record_read, token', $checkCol, '', $bdd);
 
 if ($recordRead[0]['record_read'] == 1)
