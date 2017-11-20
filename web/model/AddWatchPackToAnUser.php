@@ -151,7 +151,7 @@ if (!empty($packExist))
 	$checkCol = array(array("pack_id", "=", $data['addPack'], "AND"),
 										array("source", "<>" , "Science", "AND"),
 										array("source", "<>" , "Patent", "AND"),
-										array("source", "<>" , "[!source!]", ""));
+										array("query", "<>" , "[!source!]", ""));
 	$result = read('watch_pack_queries_serge', 'query, source', $checkCol, '', $bdd);
 
 	foreach ($result as $couple)
