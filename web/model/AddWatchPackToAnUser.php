@@ -39,11 +39,11 @@ if (!empty($packExist))
 		// Add source to actual user if the source is not already own
 		if (empty($ownerSources) || !in_array($source, $ownerSources_array))
 		{
-			$checkCol     = array(array("id", " =", $source, ""));
+			$checkCol     = array(array("id", "=", $source, ""));
 			$sourceOwners = read('rss_serge', 'owners', $checkCol, '', $bdd);
 
 			$updateCol = array(array("owners", $sourceOwners[0]['owners'] . $_SESSION['id'] . ','));
-			$checkCol  = array(array("id", " =", $source, ""));
+			$checkCol  = array(array("id", "=", $source, ""));
 			$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
 		}
 	}
