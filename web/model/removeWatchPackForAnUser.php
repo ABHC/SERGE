@@ -89,7 +89,7 @@ if (!empty($packExist))
 	// Remove unsed sources
 	// Read list of sources used by the watch pack
 	$checkCol           = array(array('pack_id', '=', $data['removePack'], 'AND'),
-															array('query', '    =' , '[!source!]', ''));
+															array('query', '=' , '[!source!]', ''));
 	$result             = read('watch_pack_queries_serge', 'source', $checkCol, '', $bdd);
 	$listOfSource_array = explode(',', $result[0]['source']);
 
