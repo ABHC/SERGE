@@ -9,11 +9,11 @@ include('../model/connection_sql.php');
 
 include('../model/read.php');
 
-$checkCol = array(array("id", "=", $_SESSION['id'], ""));
-$backgroundName = read("users_table_serge", 'background_result', $checkCol, '',$bdd);
+$checkCol = array(array('id', '=', $_SESSION['id'], ''));
+$backgroundName = read('users_table_serge', 'background_result', $checkCol, '',$bdd);
 
-$checkCol = array(array("name", "=", $backgroundName[0]['background_result'], ""));
-$background = read("background_serge", 'filename', $checkCol, '',$bdd);
+$checkCol = array(array('name', '=', $backgroundName[0]['background_result'], ''));
+$background = read('background_serge', 'filename', $checkCol, '',$bdd);
 
 include('style.php');
 

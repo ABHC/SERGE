@@ -82,7 +82,7 @@ if (!empty($data['pseudo']) && !empty($data['password']))
 }
 
 # Step 0 for reset passphrase ask for email and captacha
-if (!empty($data['action']) && $data['action'] === "forgotPassphrase")
+if (!empty($data['action']) && $data['action'] === 'forgotPassphrase')
 {
 	$forgotPassphraseStep0 = TRUE;
 
@@ -105,7 +105,7 @@ if (!empty($data['action']) && $data['action'] === "forgotPassphrase")
 	$_SESSION['captcha'] = hash('sha256', $captcha_val);
 }
 # Step 1 for reset passphrase check captcha and email
-elseif (!empty($data['action']) && $data['action'] === "forgotPassphraseProcessing")
+elseif (!empty($data['action']) && $data['action'] === 'forgotPassphraseProcessing')
 {
 	if ($_SESSION['captcha'] !== hash('sha256', $data['captcha']))
 	{
@@ -143,7 +143,7 @@ elseif (!empty($data['action']) && $data['action'] === "forgotPassphraseProcessi
 		$checkYourEmails = TRUE;
 	}
 }
-elseif (!empty($data['action']) && $data['action'] === "resetPassphrase"
+elseif (!empty($data['action']) && $data['action'] === 'resetPassphrase'
 		&& !empty($data['token']) && !empty($data['checker']))
 {
 	# Check if checker is good
@@ -180,7 +180,7 @@ elseif (!empty($data['action']) && $data['action'] === "resetPassphrase"
 		$unvalidLink = TRUE;
 	}
 }
-elseif (!empty($data['action']) && $data['action'] === "resetPassphraseProcessing"
+elseif (!empty($data['action']) && $data['action'] === 'resetPassphraseProcessing'
 		&& !empty($data['token']) && !empty($data['checker']))
 {
 	# Check if checker is good
