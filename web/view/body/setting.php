@@ -139,11 +139,11 @@
 				<div>
 					<h3><?php get_t('subtitle5_window1_setting', $bdd); ?></h3>
 					<p class="align">
-					<select size="<?php echo count($watchPackUsedList)+1; ?>" class="selectBackground" name="watchPackName" multiple>
+					<select size="<?php echo count($watchPackUsedList)+1; ?>" class="selectBackground" name="removePack">
 					<?php
 					foreach ($watchPackUsedList as $watchPackUsed)
 					{
-						echo '<option value="' . $watchPackUsed['id'] . '">' . $watchPackUsed['name'] . '</option>'.PHP_EOL;
+						echo '<option value="' . $watchPackUsed['id'] . '">' . ucfirst($watchPackUsed['name']) . '</option>'.PHP_EOL;
 					}
 
 					if (empty($watchPackUsedList))

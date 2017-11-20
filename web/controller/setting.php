@@ -61,6 +61,8 @@ $unsafeData = array_merge($unsafeData, array(array('patentQuerySubmit', 'patentQ
 $unsafeData = array_merge($unsafeData, array(array('delQueryPatent', 'delQueryPatent', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('disableQueryPatent', 'disableQueryPatent', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('activateQueryPatent', 'activateQueryPatent', 'POST', '09')));
+$unsafeData = array_merge($unsafeData, array(array('removePack', 'removePack', 'POST', '09')));
+$unsafeData = array_merge($unsafeData, array(array('removeWP', 'removeWP', 'POST', 'Az')));
 
 foreach($_POST as $key => $val)
 {
@@ -193,6 +195,12 @@ $reqReadOwnerSourcesKeywordtmp = read('keyword_news_serge', 'id, keyword, applic
 $checkCol     = array(array('users', '=', $_SESSION['pseudo'], ''));
 $userSettings = read('users_table_serge', 'id, email, password, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, record_read, history_lifetime, background_result, record_read, premium_expiration_date', $checkCol, '', $bdd);
 $userSettings = $userSettings[0];
+
+# Remove watchPack
+if ($emailIsCheck && !empty($data['removeWP']) && $data['removeWP'] === 'removeWP' && !empty($data['removePack']))
+{
+	include('model/removeWatchPackForAnUser.php');
+}
 
 if ($emailIsCheck && !empty($data['settings']) && $data['settings'] === 'ChangeSettings')
 {
