@@ -196,7 +196,7 @@ if (!empty($packExist))
 			{
 				// Add query
 				$insertCol = array(array("keyword", $couple['query']),
-													array("applicable_owners_sources", '|2:' . $couple['source'] . '|'),
+													array("applicable_owners_sources", '|' . $_SESSION['id'] . ':' . $couple['source'] . '|'),
 													array("active", 1));
 				$execution = insert('keyword_news_serge', $insertCol, '', '', $bdd);
 			}
