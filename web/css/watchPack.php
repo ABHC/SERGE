@@ -1870,7 +1870,7 @@ else
 	select
 	{
 		position: relative;
-		width: 21px;
+		width: 25px;
 		height: 26px;
 		font-size: 12px;
 		border: none;
