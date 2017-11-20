@@ -1303,6 +1303,7 @@ php_admin_value open_basedir /var/www/Serge/web:/usr/share/php/:/usr/share/phpmy
 </Directory>
 
 <Directory /usr/share/phpmyadmin>
+	SecRuleEngine Off
 	Options Indexes FollowSymLinks MultiViews
 	DirectoryIndex index.php
 	AllowOverride all
