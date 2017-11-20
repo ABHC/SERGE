@@ -14,18 +14,16 @@ $req->execute();
 
 foreach ($result as $line)
 {
-	$titleIndexLOWER = '';
-	$titleIndexSOUNDEX = '';
-	$titleIndexDELACCENT = '';
-	$titleIndexPERMUTE = '';
-
 	$word = $line['name'] . ' ' . $line['description'] . ' ' . $line['author'] . ' ' . $line['category'] . ' ' . $line['language'];
 
-	$titleIndexLOWER = $titleIndexLOWER . ' ' . mb_strtolower($word);
-	$titleIndexDELACCENT = $titleIndexDELACCENT . ' ' . mb_strtolower(del_accent($word));
-	$titleIndexSOUNDEX = $titleIndexSOUNDEX . ' ' . soundex($word);
+	$soundexWord = '';
+	$soundexWord_array = explode(' ', $word);
+	foreach ($soundexWord_array as $wordSplit)
+	{
+		$soundexWord = $soundexWord . ' ' . soundex($wordSplit);
+	}
 
-	$searchIndex = $titleIndexLOWER . ' ' . $titleIndexDELACCENT . ' ' . $titleIndexSOUNDEX;
+	$searchIndex = mb_strtolower($word) . ' ' . mb_strtolower(del_accent($word)) . ' ' . soundex($soundexWord);
 
 	// Update search index
 	$req = $bdd->prepare("UPDATE $tableName SET search_index = :search WHERE id = :id");
