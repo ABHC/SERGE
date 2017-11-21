@@ -119,11 +119,8 @@ if (!empty($packExist))
 	}
 
 	// Remove user from watchPack
-	$checkCol  = array(array('id', '=', $data['removePack'], ''));
-	$watchPack = read('watch_pack_serge', 'users', $checkCol, '', $bdd);
-
 	$userId    = $_SESSION['id'];
-	$updateCol = array(array('users', preg_replace("/,!*$userId,/", ',', $watchPack['users'])));
+	$updateCol = array(array('users', preg_replace("/,!*$userId,/", ',', $packExist[0]['users'])));
 	$checkCol  = array(array('id', '=', $data['removePack'], ''));
 	$execution = update('watch_pack_serge', $updateCol, $checkCol, '', $bdd);
 
