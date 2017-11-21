@@ -803,13 +803,13 @@ else
 			{
 				$openParenthesis = '';
 				$closeParenthesis = '';
-				if ($data['openParenthesis' . $cpt] === 'active')
+				if (!empty($data['openParenthesis' . $cpt]) && $data['openParenthesis' . $cpt] === 'active')
 				{
 					$openParenthesis = '%28';
 					$open ++;
 				}
 
-				if ($data['closeParenthesis' . $cpt] === 'active')
+				if (!empty($data['closeParenthesis' . $cpt]) && $data['closeParenthesis' . $cpt] === 'active')
 				{
 					$closeParenthesis = '%29';
 					$close ++;
