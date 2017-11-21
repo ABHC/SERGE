@@ -274,7 +274,7 @@
 			<h2><?php get_t('window3_title_setting', $bdd); ?></h2>
 			<div class="newQueryContainer">
 				<div class="lineQuery">
-				<input title="Add new science query" class="submit" type="submit" name="scienceQuerySubmit" value="" />
+				<input title="Add new science query" class="submit" type="submit" name="scienceQuerySubmit" value="scienceQuerySubmit" />
 				<?php
 				$cpt = 0;
 				$logicalConnector = '';
