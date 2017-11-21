@@ -68,13 +68,14 @@ if (!empty($packExist))
 		if (!$queryExist)
 		{
 			$checkCol   = array(array('query_arxiv', '=', $scienceQuery['query'], ''));
-			$queryExist = read('queries_science_serge', 'id, owners', $checkCol, '', $bdd);
+			$queryExist = read('queries_science_serge', 'id, owners, active', $checkCol, '', $bdd);
+			$queryExist = $queryExist[0] ?? '';
 
 			if (!empty($queryExist))
 			{
 				// Update query with the new owner
 				$updateCol = array(array('owners', $queryExist['owners'] . $_SESSION['id'] . ','),
-													array('active', $result['active'] + 1));
+													array('active', $queryExist['active'] + 1));
 				$checkCol  = array(array('id', '=', $queryExist['id'], ''));
 				$execution = update('queries_science_serge', $updateCol, $checkCol, '', $bdd);
 			}
@@ -127,13 +128,14 @@ if (!empty($packExist))
 		if (!$queryExist)
 		{
 			$checkCol   = array(array('query', '=', $patentQuery['query'], ''));
-			$queryExist = read('queries_wipo_serge', 'id, owners', $checkCol, '', $bdd);
+			$queryExist = read('queries_wipo_serge', 'id, owners, active', $checkCol, '', $bdd);
+			$queryExist = $queryExist[0] ?? '';
 
 			if (!empty($queryExist))
 			{
 				// Update query with new owner
 				$updateCol = array(array('owners', $queryExist['owners'] . $_SESSION['id'] . ','),
-													array('active', $result['active'] + 1));
+													array('active', $queryExist['active'] + 1));
 				$checkCol  = array(array('id', '=', $queryExist['id'], ''));
 				$execution = update('queries_wipo_serge', $updateCol, $checkCol, '', $bdd);
 			}
@@ -173,7 +175,7 @@ if (!empty($packExist))
 				// Check if user already own keyword
 				$checkCol       = array(array('keyword', '=', strtolower($couple['query']), 'AND'),
 																array('applicable_owners_sources', 'l', '%|' . $_SESSION['id'] . ':%', ''));
-				$userOwnKeyword = read('keyword_news_serge', 'id, applicable_owners_sources', $checkCol, '', $bdd);
+				$userOwnKeyword = read('keyword_news_serge', 'id, applicable_owners_sources, active', $checkCol, '', $bdd);
 				$userOwnKeyword = $userOwnKeyword[0] ?? '';
 
 				if (empty($userOwnKeyword))
