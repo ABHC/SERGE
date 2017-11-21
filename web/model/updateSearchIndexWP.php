@@ -23,7 +23,7 @@ foreach ($result as $line)
 		$soundexWord = $soundexWord . ' ' . soundex($wordSplit);
 	}
 
-	$searchIndex = mb_strtolower($word) . ' ' . mb_strtolower(del_accent($word)) . ' ' . soundex($soundexWord);
+	$searchIndex = mb_strtolower($word) . ' ' . mb_strtolower(del_accent($word)) . ' ' . $soundexWord;
 
 	// Update search index
 	$req = $bdd->prepare("UPDATE $tableName SET search_index = :search WHERE id = :id");

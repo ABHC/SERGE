@@ -41,8 +41,9 @@ if (!empty($packExist))
 		{
 			$checkCol     = array(array('id', '=', $source, ''));
 			$sourceOwners = read('rss_serge', 'owners', $checkCol, '', $bdd);
+			$sourceOwners = $sourceOwners[0]['owners'] ?? '';
 
-			$updateCol = array(array('owners', $sourceOwners[0]['owners'] . $_SESSION['id'] . ','));
+			$updateCol = array(array('owners', $sourceOwners . $_SESSION['id'] . ','));
 			$checkCol  = array(array('id', '=', $source, ''));
 			$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
 		}
