@@ -20,6 +20,7 @@ if (!empty($packExist))
 												array('query_arxiv', '=', $scienceQuery['query'], 'AND'),
 												array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
 		$queryExist = read('queries_science_serge', 'id, owners', $checkCol, '', $bdd);
+		$queryExist = $queryExist[0] ?? '';
 
 		if (!empty($queryExist))
 		{
@@ -47,6 +48,7 @@ if (!empty($packExist))
 												array('query', '=', $patentQuery['query'], 'AND'),
 												array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
 		$queryExist = read('queries_wipo_serge', 'id, owners', $checkCol, '', $bdd);
+		$queryExist = $queryExist[0] ?? '';
 
 		if (!empty($queryExist))
 		{
