@@ -72,7 +72,8 @@ if (!empty($packExist))
 		$sourceId   = preg_replace("/,([^$])/", ",!*$1", $couple['source']);
 		$checkCol   = array(array('keyword', '=', strtolower($couple['query']), 'AND'),
 												array('applicable_owners_sources', 'REGEXP', '\\|' . $_SESSION['id'] . ':[,0-9+,^\\|]*' . $sourceId, ''));
-		$queryExist = read('keyword_news_serge', 'id, applicable_owners_sources', $checkCol, '', $bdd);
+		$queryExist = read('keyword_news_serge', 'id, applicable_owners_sources, active', $checkCol, '', $bdd);
+		$queryExist = $queryExist[0] ?? '';
 
 		if (!empty($queryExist))
 		{
@@ -80,7 +81,7 @@ if (!empty($packExist))
 			$userId    = $_SESSION['id'];
 			$sourceId  = preg_replace("/,([^$])/", ",!*$1", $couple['source']);
 			$updateCol = array(array('applicable_owners_sources', preg_replace("/(\|$userId:[,0-9+,^\|]*)$sourceId/", '$1,', $queryExist['applicable_owners_sources'])),
-												array('active', $userOwnKeyword['active'] - 1));
+												array('active', $queryExist['active'] - 1));
 			$checkCol  = array(array('id', '=', $queryExist['id'], ''));
 			$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
 		}
@@ -121,6 +122,7 @@ if (!empty($packExist))
 	$checkCol  = array(array('id', '=', $data['removePack'], ''));
 	$watchPack = read('watch_pack_serge', 'users', $checkCol, '', $bdd);
 
+	$userId    = $_SESSION['id'];
 	$updateCol = array(array('users', preg_replace("/,!*$userId,/", ',', $watchPack['users'])));
 	$checkCol  = array(array('id', '=', $data['removePack'], ''));
 	$execution = update('watch_pack_serge', $updateCol, $checkCol, '', $bdd);
