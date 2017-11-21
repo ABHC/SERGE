@@ -472,7 +472,7 @@
 			<h2><?php get_t('window4_title_setting', $bdd); ?></h2>
 			<div class="newQueryContainer">
 				<div class="lineQuery">
-				<input title="Add new patents query" class="submit" type="submit" name="patentQuerySubmit" value="" />
+				<input title="Add new patents query" class="submit" type="submit" name="patentQuerySubmit" value="patentQuerySubmit" />
 				<?php
 				$cpt = 0;
 				$logicalConnector = '';
