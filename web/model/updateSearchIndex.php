@@ -18,7 +18,7 @@ foreach ($result as $line)
 	if(!empty($tableNameQuery))
 	{
 		# Add keyword in Index
-		$keywordQueryIds = explode(",", $line[$keywordQueryId]);
+		$keywordQueryIds = explode(',', $line[$keywordQueryId]);
 		$keywordQueryIndex= '';
 
 		foreach ($keywordQueryIds as $id)
@@ -29,43 +29,43 @@ foreach ($result as $line)
 				$result = $req->fetch();
 				$req->closeCursor();
 
-			if ($type == 'sciences')
+			if ($type === 'sciences')
 			{
 				$step1 = preg_replace("/(%28|%29|%22|AND\+|OR\+|NOTAND\+[^+]+(\+|$))/", "", $result[$queryColumn]);
 				$step2 = preg_replace("/[^:\+]+:/", "", $step1);
 				$result[$queryColumn] = preg_replace("/\+/", " ", $step2);
 			}
-			elseif ($type == 'patents')
+			elseif ($type === 'patents')
 			{
 				$step1 = urldecode($result[$queryColumn]);
 				$step2 = preg_replace("/(AND|OR)/", "", $step1);
 				$result[$queryColumn] = preg_replace("/[^:\ ]+:/", "", $step2);
 			}
 
-			$keywordQueryIndex= $keywordQueryIndex. ' ' . $result[$queryColumn];
+			$keywordQueryIndex = $keywordQueryIndex. ' ' . $result[$queryColumn];
 		}
 
 		# Link studies
 		$linkKeywords = preg_replace("/([^A-za-z0-9]|https)/", " ", $line['link']);
 		preg_match_all("/\w{5,}/", $linkKeywords, $linkKeywords_array);
 		$linkKeywords_array = array_unique($linkKeywords_array[0]);
-		$linkKeywords = implode(" ", $linkKeywords_array);
+		$linkKeywords = implode(' ', $linkKeywords_array);
 		$title = $linkKeywords . ' ';
 	}
 
 	$title = $title . $line['title'] . ' ' . $keywordQueryIndex;
 
-	$wordArray = explode(" ", $title);
-	$titleIndexLOWER = '';
-	$titleIndexSOUNDEX = '';
+	$wordArray           = explode(' ', $title);
+	$titleIndexLOWER     = '';
+	$titleIndexSOUNDEX   = '';
 	$titleIndexDELACCENT = '';
-	$titleIndexPERMUTE = '';
+	$titleIndexPERMUTE   = '';
 
 	foreach($wordArray as $word)
 	{
-			$titleIndexLOWER = $titleIndexLOWER . ' ' . mb_strtolower($word);
-			$titleIndexDELACCENT = $titleIndexDELACCENT . ' ' . mb_strtolower(del_accent($word));
-			$titleIndexSOUNDEX = $titleIndexSOUNDEX . ' ' . soundex($word);
+		$titleIndexLOWER     = $titleIndexLOWER . ' ' . mb_strtolower($word);
+		$titleIndexDELACCENT = $titleIndexDELACCENT . ' ' . mb_strtolower(del_accent($word));
+		$titleIndexSOUNDEX   = $titleIndexSOUNDEX . ' ' . soundex($word);
 	}
 
 	$searchIndex = $titleIndexLOWER . ' ' . $titleIndexDELACCENT . ' ' . $titleIndexSOUNDEX;
