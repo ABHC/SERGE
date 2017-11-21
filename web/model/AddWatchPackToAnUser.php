@@ -174,6 +174,7 @@ if (!empty($packExist))
 				$checkCol       = array(array('keyword', '=', strtolower($couple['query']), 'AND'),
 																array('applicable_owners_sources', 'l', '%|' . $_SESSION['id'] . ':%', ''));
 				$userOwnKeyword = read('keyword_news_serge', 'id, applicable_owners_sources', $checkCol, '', $bdd);
+				$userOwnKeyword = $userOwnKeyword[0] ?? '';
 
 				if (empty($userOwnKeyword))
 				{
