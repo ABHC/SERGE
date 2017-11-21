@@ -2033,8 +2033,11 @@ mailflag = /var/run/fail2ban/mail.flag' > /etc/fail2ban/action.d/sendmail-cron.c
 		echo "
 [DEFAULT]
 destemail = $email" >> /etc/fail2ban/jail.local
-		echo 'action_mwlc = %(banaction)s[name=%(__name__)s, port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
-%(mta)s-cron[name=%(__name__)s, dest="%(destemail)s", logpath=%(logpath)s, chain="%(chain)s", sendername="%(sendername)s"] action = %(action_mwlc)s' >> /etc/fail2ban/jail.local
+
+		echo 'action_mwlc = %(banaction)s[name=%(__name__)s, port="%(port)s",
+      protocol="%(protocol)s", chain="%(chain)s"]%(mta)s-cron[name=%(__name__)s,
+      dest="%(destemail)s", logpath=%(logpath)s, chain="%(chain)s", sendername="%(sendername)s"]
+action = %(action_mwlc)s' >> /etc/fail2ban/jail.local
 
 		systemctl restart fail2ban
 	}
