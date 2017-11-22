@@ -212,7 +212,7 @@
 						<span class="arrDown">▾</span>
 						<?php get_t('input6.1_window1_setting', $bdd); ?>
 						<select class="selectCommResult" name="secondDay">
-							<option value="">that's all</option>
+							<option value=""><?php get_t('select11_window1_setting', $bdd); ?></option>
 							<option value="1," <?php echo $day2[1] ?? ''; ?>>
 								<?php get_t('select4_window1_setting', $bdd); ?>
 							</option>
