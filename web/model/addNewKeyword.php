@@ -30,7 +30,7 @@ function addNewKeyword(string $sourceId, string $newKeyword, string $ERROR_MESSA
 		// Adding new keyword
 		$insertCol = array(array('keyword', strtolower($newKeyword)),
 											array('applicable_owners_sources', '|' . $_SESSION['id'] . ':,' . $sourceId . ',|'),
-											array('active', $active + 1));
+											array('active', $active));
 		$execution = insert('keyword_news_serge', $insertCol, '', '', $bdd);
 	}
 	else
