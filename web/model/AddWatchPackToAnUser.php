@@ -86,7 +86,7 @@ if (!empty($packExist))
 				$doajEq['au']     = 'bibjson.author.name';
 				$doajEq['abs']    = 'bibjson.abstract';
 				$doajEq['cat']    = 'bibjson.subject.term';
-				$doajEq['all']    = '';
+				$doajEq['all:']    = '';
 				$doajEq['OR']     = 'OR';
 				$doajEq['AND']    = 'AND';
 				$doajEq['NOTAND'] = 'NOT';
