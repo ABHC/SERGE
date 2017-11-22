@@ -182,7 +182,7 @@ if (!empty($packExist))
 				{
 					// Update with new source
 					$updateCol = array(array('applicable_owners_sources', $queryExist['applicable_owners_sources'] . $_SESSION['id'] . ':' . $couple['source'] . '|'),
-														array('active', $userOwnKeyword['active'] + 1));
+														array('active', $userOwnKeyword['active'] + substr_count($couple['source'], ',') - 1));
 					$checkCol  = array(array('id', '=', $queryExist['id'], ''));
 					$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
 				}
@@ -190,8 +190,9 @@ if (!empty($packExist))
 				{
 					// Update with new owner
 					$userId    = $_SESSION['id'];
-					$updateCol = array(array('applicable_owners_sources', preg_replace("/(\|$userId:[,0-9+,]+),(.*)/", '$1' . $couple['source'] . '$2', $userOwnKeyword['applicable_owners_sources'])),
-														array('active', $userOwnKeyword['active'] + 1));
+					$allSources = preg_replace("/(\|$userId:[,0-9+,]+),(.*)/", '$1' . $couple['source'] . '$2', $userOwnKeyword['applicable_owners_sources']);
+					$updateCol = array(array('applicable_owners_sources', $allSources),
+														array('active', substr_count($allSources, ',') - 1));
 					$checkCol  = array(array('id', '=', $userOwnKeyword['id'], ''));
 					$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
 				}
@@ -201,7 +202,7 @@ if (!empty($packExist))
 				// Add query
 				$insertCol = array(array('keyword', $couple['query']),
 													array('applicable_owners_sources', '|' . $_SESSION['id'] . ':' . $couple['source'] . '|'),
-													array('active', 1));
+													array('active', substr_count($couple['source'], ',') - 1));
 				$execution = insert('keyword_news_serge', $insertCol, '', '', $bdd);
 			}
 		}
