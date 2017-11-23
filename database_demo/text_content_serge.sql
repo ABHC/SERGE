@@ -163,4 +163,7 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('title2_premium_setting', 'Your email need to be verify', 'Votre email doit être vérifé', NULL, NULL, NULL),
 ('button0_premium_setting', 'Extend your premium account duration', 'Étendre votre abonnement premium', NULL, NULL, NULL),
 ('button1_premium_setting', 'Upgrade your account to premium', 'Passez votre compte en premium', NULL, NULL, NULL),
+('title0_title_purchase', 'Become premium', 'Devenez premium', NULL, NULL, NULL),
+('title1_title_purchase', 'Access to all Serge\'s features', 'Accédez à toutes les fonctionnalités de Serge', NULL, NULL, NULL),
+('title2_title_purchase', 'Successfully charged ', 'Facturation effectuée avec succès pour ', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);

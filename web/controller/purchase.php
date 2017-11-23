@@ -194,7 +194,7 @@ elseif (!empty($data['stripeAccess']) && $data['stripeAccess'] === 'true')
 	$price = $_SESSION['price'] / 100;
 	unset($_SESSION['price']);
 	unset($_SESSION['premiumDuration']);
-	$priceMessageSuccess = "<h1>Successfully charged $price € !</h1>";
+	$priceMessageSuccess = '<h1>' . var_get_t('title2_title_purchase', $bdd) . $price . '€ !</h1>';
 }
 
 include('view/nav/nav.php');

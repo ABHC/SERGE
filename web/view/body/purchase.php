@@ -1,8 +1,8 @@
 <div class="background"></div>
 <div class="body">
 	<?php echo $priceMessageSuccess; ?>
-	<h2>Become premium</h2>
-	<h3>Access to all Serge's features</h3>
+	<h2><?php get_t('title0_title_purchase', $bdd); ?></h2>
+	<h3><?php get_t('title1_title_purchase', $bdd); ?></h3>
 	<div class="functionality">
 		<div class="premiumFunctionalityLine">
 			<div>
