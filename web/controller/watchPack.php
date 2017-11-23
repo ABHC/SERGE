@@ -480,7 +480,8 @@ else
 	}
 	elseif ($emailIsCheck && !empty($data['addNewKeyword']) && isset($data['sourceKeyword']) && !empty($data['newKeyword']))
 	{
-		$newKeywordArray = preg_split('/,/', $data['newKeyword'], -1, PREG_SPLIT_NO_EMPTY);
+		$data['newKeyword'] = preg_replace("/,\s+/", ",", $data['newKeyword']);
+		$newKeywordArray    = preg_split('/,/', $data['newKeyword'], -1, PREG_SPLIT_NO_EMPTY);
 
 		if ($data['sourceKeyword'] == '0')
 		{
@@ -499,7 +500,7 @@ else
 					if (empty($resultKeyword))
 					{
 						$insertCol = array(array('pack_id', $data['packId']),
-															array('query',  strtolower($newKeyword)),
+															array('query', strtolower($newKeyword)),
 															array('source', ',' . $sourcesList['id'] . ','));
 						$execution = insert('watch_pack_queries_serge', $insertCol, '', '', $bdd);
 					}
@@ -517,7 +518,6 @@ else
 		{
 			foreach ($newKeywordArray as $newKeyword)
 			{
-
 				$checkCol = array(array('id', '=', $data['sourceKeyword'], ''));
 				$result = read('rss_serge', 'id', $checkCol, '', $bdd);
 				$resultSource = $result[0];

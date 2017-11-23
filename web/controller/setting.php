@@ -391,12 +391,13 @@ if ($emailIsCheck && isset($data['sourceKeyword']) && !empty($data['newKeyword']
 	$sourceId = $data['sourceKeyword'];
 
 	$_SESSION['lastSourceUse'] = $sourceId;
-	preg_match_all("/,?[^,]*,?/", $data['newKeyword'], $newKeyword_array);
 
-	foreach ($newKeyword_array[0] as $newKeyword)
+	$data['newKeyword'] = preg_replace("/,\s+/", ",", $data['newKeyword']);
+	$newKeyword_array   = preg_split('/,/', $data['newKeyword'], -1, PREG_SPLIT_NO_EMPTY);
+
+	foreach ($newKeyword_array as $newKeyword)
 	{
-		$newKeyword = ucfirst($newKeyword);
-		$newKeyword = preg_replace("/^ | *, *| $/", '', $newKeyword);
+		$newKeyword = mb_strtolower($newKeyword);
 		# Special keyword :all
 		if (preg_match("/^:all$/i", $newKeyword) && $sourceId != '0')
 		{

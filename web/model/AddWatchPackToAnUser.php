@@ -189,7 +189,7 @@ if (!empty($packExist))
 				else
 				{
 					// Update with new owner
-					$userId    = $_SESSION['id'];
+					$userId     = $_SESSION['id'];
 					$allSources = preg_replace("/(\|$userId:[,0-9+,]+),(.*)/", '$1' . $couple['source'] . '$2', $userOwnKeyword['applicable_owners_sources']);
 					$updateCol = array(array('applicable_owners_sources', $allSources),
 														array('active', substr_count($allSources, ',') - 1));
