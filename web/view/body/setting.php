@@ -60,21 +60,20 @@
 					<?php
 					if ($userIsPremium)
 					{
-						?>
-						Premium expiration date : <?php echo date("d/m/o", $userSettings['premium_expiration_date']); ?><br>
+						get_t('title0_premium_setting', $bdd); echo ' :' . date("d/m/o", $userSettings['premium_expiration_date']); ?><br>
 
-						<a href="purchase" class="extendPremiumButton">Extend your premium account duration</a>
-						Your payment history :<br>
+						<a href="purchase" class="extendPremiumButton"><?php get_t('button0_premium_setting', $bdd); ?></a>
+						<?php get_t('title1_premium_setting', $bdd); ?> :<br>
 						<?php
 					}
 					else
 					{
 						?>
-						<a href="purchase" class="extendPremiumButton">Upgrade your account to premium</a>
+						<a href="purchase" class="extendPremiumButton"><?php get_t('button1_premium_setting', $bdd); ?></a>
 						<?php
 						if (!empty($paymentList))
 						{
-							echo 'Your payment history :<br>';
+							get_t('title1_premium_setting', $bdd); echo ' :<br>';
 						}
 					}
 					?>
@@ -93,7 +92,7 @@
 					if (!$emailIsCheck)
 					{
 						?>
-						<div class="redAlert"><div class="redAlertPicto"></div>Your email need to be verify</div>
+						<div class="redAlert"><div class="redAlertPicto"></div><?php get_t('title2_premium_setting', $bdd); ?></div>
 						 <?php
 					}
 					?>

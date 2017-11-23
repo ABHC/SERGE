@@ -158,5 +158,9 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('title1_forgotPass_connection', 'Reset passphrase', 'Changer la phrase de passe', NULL, NULL, NULL),
 ('checkMail_forgotPass_connection', 'Your request has been successfully sent, please check your emails to reset your password', 'Votre demande a été envoyée avec succès, veuillez vérifier vos emails, afin de réinitialiser votre mot de passe', NULL, NULL, NULL),
 ('invalidRequest_forgotPass_connection', 'Your request is invalid or too old', 'Votre demande est invalide ou trop ancienne', NULL, NULL, NULL),
-('', '', '', NULL, NULL, NULL),
+('title0_premium_setting', 'Premium expiration date', 'Date d\'expiration de l\'abonnement premium', NULL, NULL, NULL),
+('title1_premium_setting', 'Your payment history', 'Votre historique de paiement', NULL, NULL, NULL),
+('title2_premium_setting', 'Your email need to be verify', 'Votre email doit être vérifé', NULL, NULL, NULL),
+('button0_premium_setting', 'Extend your premium account duration', 'Étendre votre abonnement premium', NULL, NULL, NULL),
+('button1_premium_setting', 'Upgrade your account to premium', 'Passez votre compte en premium', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);
