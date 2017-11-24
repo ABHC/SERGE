@@ -150,7 +150,7 @@ if (!empty($packExist))
 		}
 	}
 
-	// Get all entries that isn't contain science patnt or [!source!]
+	// Get all entries that isn't contain science patent or [!source!]
 	$checkCol = array(array('pack_id', '=', $data['addPack'], 'AND'),
 										array('source', '<>' , 'Science', 'AND'),
 										array('source', '<>' , 'Patent', 'AND'),
@@ -190,7 +190,15 @@ if (!empty($packExist))
 				{
 					// Update with new owner
 					$userId     = $_SESSION['id'];
-					$allSources = preg_replace("/(\|$userId:[,0-9+,]+),(.*)/", '$1' . $couple['source'] . '$2', $userOwnKeyword['applicable_owners_sources']);
+					preg_match("/\|1:([^\|:]+)/", $userOwnKeyword['applicable_owners_sources'], $keywordSources);
+					$coupleSource_array   = explode(',', $couple['source']);
+					$keywordSources_array = explode(',', $keywordSources[1]);
+
+					$allSources = array_merge($keywordSources_array, $coupleSource_array);
+					$allSources = array_unique($allSources);
+					$allSources = implode(',', $allSources) . ',';
+
+					$allSources = preg_replace("/(\|$userId:)[,0-9+,]*,*,(.*)/", '$1' . $allSources . '$2', $userOwnKeyword['applicable_owners_sources']);
 					$updateCol = array(array('applicable_owners_sources', $allSources),
 														array('active', substr_count($allSources, ',') - 1));
 					$checkCol  = array(array('id', '=', $userOwnKeyword['id'], ''));
