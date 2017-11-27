@@ -1928,105 +1928,106 @@ bantime  = 600" > /etc/fail2ban/jail.local
 		echo "ignoreregex =" >> /etc/fail2ban/filter.d/postfix-sasl.conf
 
 		# Mail Fail2ban
-		echo '# Fail2Ban configuration file
-#
-# Author: Yannic Arnoux
-#         Based on sendmail-buffered written by Cyril Jaquier
-#
-#
+		echo '    # Fail2Ban configuration file
+    #
+    # Author: Yannic Arnoux
+    #         Based on sendmail-buffered written by Cyril Jaquier
+    #
+    #
 
-[INCLUDES]
+    [INCLUDES]
 
-before = sendmail-common.conf
+    before = sendmail-common.conf
 
-[Definition]
+    [Definition]
 
-# Option:  actionstart
-# Notes.:  command executed once at the start of Fail2Ban.
-# Values:  CMD
-#
-actionstart = printf %%b "Subject: [Fail2Ban] <name>: started on `uname -n`
-From: <sendername> <<sender>>
-To: <dest>\n
-Hi,\n
-The jail <name> has been started successfully.\n
-Regards,\n
-Fail2Ban" | /usr/sbin/sendmail -f <sender> <dest>
+    # Option:  actionstart
+    # Notes.:  command executed once at the start of Fail2Ban.
+    # Values:  CMD
+    #
+    actionstart = printf %%b "Subject: [Fail2Ban] <name>: started on `uname -n`
+                  From: <sendername> <<sender>>
+                  To: <dest>\n
+                  Hi,\n
+                  The jail <name> has been started successfully.\n
+                  Regards,\n
+                  Fail2Ban" | /usr/sbin/sendmail -f <sender> <dest>
 
-# Option:  actionstop
-# Notes.:  command executed once at the end of Fail2Ban
-# Values:  CMD
-#
-actionstop = if [ -f <tmpfile> ]; then
-printf %%b "Subject: [Fail2Ban] Report from `uname -n`
-From: <sendername> <<sender>>
-To: <dest>\n
-Hi,\n
-These hosts have been banned by Fail2Ban.\n
-`cat <tmpfile>`
-\n,Regards,\n
-Fail2Ban" | /usr/sbin/sendmail -f <sender> <dest>
-rm <tmpfile>
-fi
-printf %%b "Subject: [Fail2Ban] <name>: stopped  on `uname -n`
-From: Fail2Ban <<sender>>
-To: <dest>\n
-Hi,\n
-The jail <name> has been stopped.\n
-Regards,\n
-Fail2Ban" | /usr/sbin/sendmail -f <sender> <dest>
+    # Option:  actionstop
+    # Notes.:  command executed once at the end of Fail2Ban
+    # Values:  CMD
+    #
+    actionstop = if [ -f <tmpfile> ]; then
+                     printf %%b "Subject: [Fail2Ban] Report from `uname -n`
+                     From: <sendername> <<sender>>
+                     To: <dest>\n
+                     Hi,\n
+                     These hosts have been banned by Fail2Ban.\n
+                     `cat <tmpfile>`
+                     \n,Regards,\n
+                     Fail2Ban" | /usr/sbin/sendmail -f <sender> <dest>
+                     rm <tmpfile>
+                 fi
+                 printf %%b "Subject: [Fail2Ban] <name>: stopped  on `uname -n`
+                 From: Fail2Ban <<sender>>
+                 To: <dest>\n
+                 Hi,\n
+                 The jail <name> has been stopped.\n
+                 Regards,\n
+                 Fail2Ban" | /usr/sbin/sendmail -f <sender> <dest>
 
-# Option:  actioncheck
-# Notes.:  command executed once before each actionban command
-# Values:  CMD
-#
-actioncheck =
+    # Option:  actioncheck
+    # Notes.:  command executed once before each actionban command
+    # Values:  CMD
+    #
+    actioncheck =
 
-# Option:  actionban
-# Notes.:  command executed when banning an IP. Take care that the
-#          command is executed with Fail2Ban user rights.
-# Tags:    See jail.conf(5) man page
-# Values:  CMD
-#
-actionban = printf %%b "`date`: <name> ban <ip> after <failures> failure(s)\n" >> <tmpfile>
-if [ -f <mailflag> ]; then
-printf %%b "Subject: [Fail2Ban] Report from `uname -n`
-From: <sendername> <<sender>>
-To: <dest>\n
-Hi,\n
-These hosts have been banned by Fail2Ban.\n
-`cat <tmpfile>`
-\n,Regards,\n
-Fail2Ban" | /usr/sbin/sendmail -f <sender> <dest>
-rm <tmpfile>
-rm <mailflag>
-fi
+    # Option:  actionban
+    # Notes.:  command executed when banning an IP. Take care that the
+    #          command is executed with Fail2Ban user rights.
+    # Tags:    See jail.conf(5) man page
+    # Values:  CMD
+    #
+    actionban = printf %%b "`date`: <name> ban <ip> after <failures> failure(s)\n" >> <tmpfile>
+                if [ -f <mailflag> ]; then
+                    printf %%b "Subject: [Fail2Ban] Report from `uname -n`
+                    From: <sendername> <<sender>>
+                    To: <dest>\n
+                    Hi,\n
+                    These hosts have been banned by Fail2Ban.\n
+                    `cat <tmpfile>`
+                    \n,Regards,\n
+                    Fail2Ban" | /usr/sbin/sendmail -f <sender> <dest>
+                    rm <tmpfile>
+                    rm <mailflag>
+                fi
 
-# Option:  actionunban
-# Notes.:  command executed when unbanning an IP. Take care that the
-#          command is executed with Fail2Ban user rights.
-# Tags:    See jail.conf(5) man page
-# Values:  CMD
-#
-actionunban =
+    # Option:  actionunban
+    # Notes.:  command executed when unbanning an IP. Take care that the
+    #          command is executed with Fail2Ban user rights.
+    # Tags:    See jail.conf(5) man page
+    # Values:  CMD
+    #
+    actionunban =
 
-[Init]
+    [Init]
 
-# Default name of the chain
-#
-name = default
+    # Default name of the chain
+    #
+    name = default
 
-# Default temporary file
-#
-tmpfile = /var/run/fail2ban/tmp-mail.txt
+    # Default temporary file
+    #
+    tmpfile = /var/run/fail2ban/tmp-mail.txt
 
-# Default flag file
-#
-mailflag = /var/run/fail2ban/mail.flag' > /etc/fail2ban/action.d/sendmail-cron.conf
+    # Default flag file
+    #
+    mailflag = /var/run/fail2ban/mail.flag' > /etc/fail2ban/action.d/sendmail-cron.conf
 
 		# Add cron rule for automatic email
 		crontab -l > /tmp/crontab.tmp
 		echo "0 8 * * * touch /var/run/fail2ban/mail.flag" >> /tmp/crontab.tmp
+		echo "1 8 * * * chmod 666 /var/run/fail2ban/mail.flag" >> /tmp/crontab.tmp
 		crontab /tmp/crontab.tmp
 		rm /tmp/crontab.tmp
 
@@ -2034,9 +2035,8 @@ mailflag = /var/run/fail2ban/mail.flag' > /etc/fail2ban/action.d/sendmail-cron.c
 [DEFAULT]
 destemail = $email" >> /etc/fail2ban/jail.local
 
-		echo 'action_mwlc = %(banaction)s[name=%(__name__)s, port="%(port)s",
-      protocol="%(protocol)s", chain="%(chain)s"]%(mta)s-cron[name=%(__name__)s,
-      dest="%(destemail)s", logpath=%(logpath)s, chain="%(chain)s", sendername="%(sendername)s"]
+		echo 'action_mwlc = %(banaction)s[name=%(__name__)s, bantime="%(bantime)s", port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+             %(mta)s-cron[name=%(__name__)s, dest="%(destemail)s", logpath=%(logpath)s, chain="%(chain)s", sendername="fail2ban"]
 action = %(action_mwlc)s' >> /etc/fail2ban/jail.local
 
 		systemctl restart fail2ban
@@ -2601,6 +2601,7 @@ Cleaning()
 	echo -e "Cleaning .............\033[32mDone\033[00m"
 
 	passwd -l root
+	sed -i "s/PermitRootLogin yes/PermitRootLogin no/g" /etc/ssh/sshd_config
 
 	echo "We will now reboot your server"
 	sleep 5
