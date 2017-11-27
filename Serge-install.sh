@@ -25,6 +25,7 @@ Update_sys()
 
 Install_dependency()
 {
+	apt-get -y install debsums
 	apt-get -y install dialog
 	apt-get -y install git
 	apt-get -y install unzip
@@ -276,7 +277,7 @@ Install_mail_server()
 	echo "" >> /etc/postfix/main.cf
 	echo "virtual_transport = lmtp:unix:private/dovecot-lmtp" >> /etc/postfix/main.cf
 	echo "" >> /etc/postfix/main.cf
-	echo "smtpd_banner = \$myhostname ESMTP \$mail_name (Debian/GNU)" >> /etc/postfix/main.cf
+	echo "smtpd_banner = \$myhostname ESMTP" >> /etc/postfix/main.cf
 	echo "biff = no" >> /etc/postfix/main.cf
 	echo "append_dot_mydomain = no" >> /etc/postfix/main.cf
 	echo "readme_directory = no" >> /etc/postfix/main.cf
@@ -2105,6 +2106,13 @@ action = %(action_mwlc)s' >> /etc/fail2ban/jail.local
 
 		# Stop IP spoofing
 		nospoof on >> /etc/host.conf
+
+		# No expose PHP
+		sed -i "s/expose_php = On/expose_php = Off/g" /etc/php/7.0/cli/php.ini
+
+		# Hardenning SSH
+		sed -i "s/X11Forwarding yes/X11Forwarding no/g" /etc/ssh/sshd_config
+		sed -i "s/LogLevel INFO/LogLevel VERBOSE/g" /etc/ssh/sshd_config
 
 	}
 
