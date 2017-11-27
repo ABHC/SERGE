@@ -40,10 +40,12 @@ if (!empty($packExist))
 		if (empty($ownerSources) || !in_array($source, $ownerSources_array))
 		{
 			$checkCol     = array(array('id', '=', $source, ''));
-			$sourceOwners = read('rss_serge', 'owners', $checkCol, '', $bdd);
+			$sourceOwners = read('rss_serge', 'owners, active', $checkCol, '', $bdd);
 			$sourceOwners = $sourceOwners[0]['owners'] ?? '';
+			$sourceActive = $sourceOwners[0]['active'] ?? '';
 
-			$updateCol = array(array('owners', $sourceOwners . $_SESSION['id'] . ','));
+			$updateCol = array(array('owners', $sourceOwners . $_SESSION['id'] . ','),
+												array('active', $sourceActive + 1));
 			$checkCol  = array(array('id', '=', $source, ''));
 			$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
 		}
@@ -189,7 +191,7 @@ if (!empty($packExist))
 				else
 				{
 					// Update with new owner
-					$userId     = $_SESSION['id'];
+					$userId = $_SESSION['id'];
 					preg_match("/\|1:([^\|:]+)/", $userOwnKeyword['applicable_owners_sources'], $keywordSources);
 					$coupleSource_array   = explode(',', $couple['source']);
 					$keywordSources_array = explode(',', $keywordSources[1]);
