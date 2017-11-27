@@ -2113,7 +2113,6 @@ action = %(action_mwlc)s' >> /etc/fail2ban/jail.local
 		# Hardenning SSH
 		sed -i "s/X11Forwarding yes/X11Forwarding no/g" /etc/ssh/sshd_config
 		sed -i "s/LogLevel INFO/LogLevel VERBOSE/g" /etc/ssh/sshd_config
-
 	}
 
 	ESMWEB_monitoring()
