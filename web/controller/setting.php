@@ -380,7 +380,7 @@ if ($emailIsCheck && !empty($data['sourceType']) && !empty($data['newSource']) &
 	}
 	else
 	{
-		$ERROR_MESSAGE = 'Your link ' . 'return ' . $linkValidation[0] . ',' . $linkValidation[1] . ', please correct your link';
+		$ERROR_MESSAGE = 'Your link ' . 'return ' . $linkValidation[0] . ', ' . $linkValidation[1] . ' please correct your link';
 	}
 }
 

@@ -109,7 +109,7 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('select8_window1_setting', 'friday', 'les vendredis', NULL, NULL, NULL),
 ('select9_window1_setting', 'saturday', 'les samedis', NULL, NULL, NULL),
 ('select10_window1_setting', 'sunday', 'les dimanches', NULL, NULL, NULL),
-('select11_window1_setting', 'that\'s all', 'c\'est tout', NULL, NULL, NULL),
+('select10.1_window1_setting', 'that\'s all', 'c\'est tout', NULL, NULL, NULL),
 ('subtitle3_window1_setting', 'Sorting for links in email', 'Triage des liens dans l\'email', NULL, NULL, NULL),
 ('input7_window1_setting', 'by keyword', 'par mot clef', NULL, NULL, NULL),
 ('input8_window1_setting', 'by source', 'par source', NULL, NULL, NULL),
