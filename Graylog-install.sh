@@ -901,33 +901,6 @@ action = %(action_mwlc)s' >> /etc/fail2ban/jail.local
 		Password : Your installation password" 11 70
 
 		systemctl restart apache2
-
-		# Piwik htpasswd protection
-		echo "AuthUserFile /var/www/piwik/.htpasswd
-		AuthGroupFile /dev/null
-		AuthName \"Restricted access\"
-		AuthType Basic
-		require valid-user" >> /var/www/piwik/.htaccess
-
-		chmod 644 /var/www/piwik/.htaccess
-		chown www-data:www-data /var/www/piwik/.htaccess
-
-		htpasswd -bcB -C 8 /var/www/piwik/.htpasswd $email $passnohash
-
-		chmod 644 /var/www/piwik/.htpasswd
-		chown www-data:www-data /var/www/piwik/.htpasswd
-
-		# Explain how to access to piwik
-		dialog --backtitle "Installation of monitoring server by Cairn Devices" --title "Htpasswd protection" \
-		--ok-label "Next" --msgbox "
-		In order to access to piwik monitoring page you have to go to this url :
-		https://piwik.$domainName/
-
-		ID : $email
-		Password : Your installation password" 11 70
-
-		systemctl restart apache2
-
 	}
 
 	Mail_adress
