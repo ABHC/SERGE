@@ -189,7 +189,7 @@ def ofSourceAndName(now):
 					update = ("UPDATE rss_serge SET name = %s WHERE id = %s")
 
 					########### UPDATE CALL
-					if source_title != "" or source_title is not None:
+					if source_title != "" and source_title is not None:
 						update_rss = database.cursor()
 						try:
 							update_rss.execute(update, (source_title, num))
