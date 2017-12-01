@@ -738,7 +738,7 @@
 				preg_match_all("/[A-Z_]+\%3A/", $query, $queryFields);
 				foreach ($queryFields[0] as $fields)
 				{
-					preg_match("/$fields\ *[^\+]+\+/", $query, $fieldInput);
+					preg_match("/$fields\ *[^AO]+\+/", $query, $fieldInput);
 					$fieldInputPURE = preg_replace("/\+/", "\+", $fieldInput[0]);
 					$query = preg_replace("/$fieldInputPURE/", "", $query);
 					$fieldInput = preg_replace("/(.+\%3A|`)/", "", $fieldInput[0]);
