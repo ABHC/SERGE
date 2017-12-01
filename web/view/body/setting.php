@@ -168,7 +168,7 @@
 						<input type="radio" id="condFreq" name="cond" value="freq" <?php echo $condFreq; ?>>
 						<label class="radio" for="condFreq"></label>
 						<?php get_t('input3_window1_setting', $bdd); ?>
-						<input class="number alpha" type="number" name="freq" min="2" max="500" step="2" placeholder="24" value="<?php echo $userSettings['frequency']; ?>"/><?php get_t('input4_window1_setting', $bdd); ?>
+						<input class="number alpha" type="number" name="freq" min="2" max="500" step="2" placeholder="24" value="<?php echo $userSettings['frequency'] ?? '2'; ?>"/><?php get_t('input4_window1_setting', $bdd); ?>
 					</p>
 					<p>
 						<input type="radio" id="condDate" name="cond" value="deadline" <?php echo $condDate; ?>>
