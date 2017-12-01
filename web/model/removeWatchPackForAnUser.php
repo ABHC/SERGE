@@ -19,7 +19,7 @@ if (!empty($packExist))
 												array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
 												array('query_arxiv', '=', $scienceQuery['query'], 'AND'),
 												array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
-		$queryExist = read('queries_science_serge', 'id, owners', $checkCol, '', $bdd);
+		$queryExist = read('queries_science_serge', 'id, owners, active', $checkCol, '', $bdd);
 		$queryExist = $queryExist[0] ?? '';
 
 		if (!empty($queryExist))
@@ -27,7 +27,7 @@ if (!empty($packExist))
 			// Update query with the new owner
 			$userId    = $_SESSION['id'];
 			$updateCol = array(array('owners', preg_replace("/,!*$userId,/", ',', $queryExist['owners'])),
-												array('active', $result['active'] - 1));
+												array('active', $queryExist['active'] - 1));
 			$checkCol  = array(array('id', '=', $queryExist['id'], ''));
 			$execution = update('queries_science_serge', $updateCol, $checkCol, '', $bdd);
 		}

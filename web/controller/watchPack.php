@@ -698,10 +698,7 @@ else
 			# Check if source exist for this owner
 			$checkCol = array(array('query', '=', '[!source!]', 'AND'),
 												array('pack_id', '=', $data['packId'], 'AND'),
-												array('source', 'l', '%,' . $sourceIdAction . ',%', 'OR'),
-												array('id', '=', $keywordIdAction, 'AND'),
-												array('source', 'l', '%,!' . $sourceIdAction . ',%', 'AND'),
-												array('pack_id', '=', $data['packId'], ''));
+												array('source', 'l', '%,' . $sourceIdAction . ',%', 'OR'));
 			$sourceExist = read('watch_pack_queries_serge', '', $checkCol, '', $bdd);
 
 			# Delete an existing sources
