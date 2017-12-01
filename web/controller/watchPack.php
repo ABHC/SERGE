@@ -987,14 +987,13 @@ else
 	elseif ($emailIsCheck && !empty($data['delQueryPatent']))
 	{
 		// Read owner patent query
-
 		$checkCol = array(array('id', '=', $data['delQueryPatent'], 'AND'),
 											array('pack_id', '=', $data['packId'], 'AND'),
 											array('source', '=', 'Patent', 'OR'),
 											array('id', '=', $data['delQueryPatent'], 'AND'),
 											array('pack_id', '=', $data['packId'], 'AND'),
 											array('source', '=', '!Patent', ''));
-		$result = read('queries_science_serge', 'id', $checkCol, '', $bdd);
+		$result = read('watch_pack_queries_serge', 'id', $checkCol, '', $bdd);
 		$result = $result[0] ?? '';
 
 		if (!empty($result))
