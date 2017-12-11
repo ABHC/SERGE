@@ -1287,6 +1287,11 @@ AddDefaultCharset utf-8
 # Containment of Serge webUI
 php_admin_value open_basedir /var/www/Serge/web:/usr/share/php/:/usr/share/phpmyadmin/:/etc/phpmyadmin/:/var/lib/phpmyadmin/:/usr/share/javascript/:/usr/share/doc/phpmyadmin/
 
+php_flag session.cookie_httponly on
+php_flag session.cookie_secure on
+
+SSLUseStapling on
+
 <FilesMatch ^\.>
 	Require all denied
 </FilesMatch>
@@ -1314,7 +1319,8 @@ php_admin_value open_basedir /var/www/Serge/web:/usr/share/php/:/usr/share/phpmy
 ErrorLog /var/www/Serge/web/logs/error.log
 CustomLog /var/www/Serge/web/logs/access.log combined
 
-</VirtualHost>" > /etc/apache2/sites-available/Serge.conf
+</VirtualHost>
+SSLStaplingCache shmcb:/tmp/stapling_cache(128000)" > /etc/apache2/sites-available/Serge.conf
 
 	# Ajout des bases de données
 	mysql -u root -p${adminPass} -e "CREATE DATABASE Serge;"
@@ -1816,6 +1822,8 @@ Security_app()
 
 		mv /usr/share/modsecurity-crs/rules/REQUEST-931-APPLICATION-ATTACK-RFI.conf /usr/share/modsecurity-crs/rules/REQUEST-931-APPLICATION-ATTACK-RFI.conf.disable
 
+		mv /usr/share/modsecurity-crs/rules/REQUEST-942-APPLICATION-ATTACK-SQLI.conf /usr/share/modsecurity-crs/rules/REQUEST-942-APPLICATION-ATTACK-SQLI.conf.disable
+
 		sed -i "s/SecRuleEngine DetectionOnly/SecRuleEngine On/g" /etc/modsecurity/modsecurity.conf
 		echo "SecDisableBackendCompression On" >> /etc/modsecurity/modsecurity.conf
 
@@ -2113,6 +2121,11 @@ action = %(action_mwlc)s' >> /etc/fail2ban/jail.local
 		# Hardenning SSH
 		sed -i "s/X11Forwarding yes/X11Forwarding no/g" /etc/ssh/sshd_config
 		sed -i "s/LogLevel INFO/LogLevel VERBOSE/g" /etc/ssh/sshd_config
+
+		# Add security headers
+		echo "Header set X-Frame-Options SAMEORIGIN
+Header set X-XSS-Protection 1;mode=block
+Header set X-Content-Type-Options nosniff" >> /etc/apache2/apache2.conf
 	}
 
 	ESMWEB_monitoring()
@@ -2405,7 +2418,7 @@ action = %(action_mwlc)s' >> /etc/fail2ban/jail.local
 		done
 
 		# Port to send log from other servers
-		ufw allow 514/tcp
+		ufw allow 10514/tcp
 
 		# Configuration for recieve logs
 		echo "\$ModLoad imuxsock # local messages
@@ -2424,7 +2437,7 @@ action = %(action_mwlc)s' >> /etc/fail2ban/jail.local
 \$InputTCPServerStreamDriverMode 1 # run driver in TLS-only mode
 \$InputTCPServerRun 10514 # start up listener at port 10514
 
-*.* @@monitoring.$logMonitoring:514;RSYSLOG_SyslogProtocol23Format" > /etc/rsyslog.d/60-graylog.conf
+*.* @@monitoring.$logMonitoring:10514;RSYSLOG_SyslogProtocol23Format" > /etc/rsyslog.d/60-graylog.conf
 
 		systemctl restart rsyslog
 	}
@@ -2499,7 +2512,7 @@ ItsCert()
 		crontab /tmp/crontab.tmp
 		rm /tmp/crontab.tmp
 
-		echo "*.* @@monitoring.$logMonitoring:514;RSYSLOG_SyslogProtocol23Format" > /etc/rsyslog.d/60-graylog.conf
+		echo "*.* @@monitoring.$logMonitoring:10514;RSYSLOG_SyslogProtocol23Format" > /etc/rsyslog.d/60-graylog.conf
 
 		systemctl restart rsyslog
 		systemctl restart apache2

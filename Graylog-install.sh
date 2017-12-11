@@ -244,7 +244,7 @@ Install_Graylog()
 	ufw allow 9000/tcp
 
 	# Port to send log from other servers
-	ufw allow 514/tcp
+	ufw allow 10514/tcp
 
 	systemctl restart rsyslog
 
@@ -686,6 +686,11 @@ action = %(action_mwlc)s' >> /etc/fail2ban/jail.local
 		# Hardenning SSH
 		sed -i "s/X11Forwarding yes/X11Forwarding no/g" /etc/ssh/sshd_config
 		sed -i "s/LogLevel INFO/LogLevel VERBOSE/g" /etc/ssh/sshd_config
+
+		# Add security headers
+		echo "Header set X-Frame-Options SAMEORIGIN
+Header set X-XSS-Protection 1;mode=block
+Header set X-Content-Type-Options nosniff" >> /etc/apache2/apache2.conf
 	}
 
 	ESMWEB_monitoring()
