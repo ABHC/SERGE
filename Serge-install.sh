@@ -2424,18 +2424,12 @@ Header set X-Content-Type-Options nosniff" >> /etc/apache2/apache2.conf
 		echo "\$ModLoad imuxsock # local messages
 \$ModLoad imtcp # TCP listener
 
-# make gtls driver the default
-\$DefaultNetstreamDriver gtls
-
-# certificate files
-\$DefaultNetstreamDriverCAFile /etc/letsencrypt/live/$domainName/fullchain.pem
-\$DefaultNetstreamDriverCertFile /etc/letsencrypt/live/$domainName/cert.pem
-\$DefaultNetstreamDriverKeyFile /etc/letsencrypt/live/$domainName/privkey.pem
-
-\$InputTCPServerStreamDriverAuthMode x509/name
-\$InputTCPServerStreamDriverPermittedPeer *.$logMonitoring
-\$InputTCPServerStreamDriverMode 1 # run driver in TLS-only mode
-\$InputTCPServerRun 10514 # start up listener at port 10514
+\$WorkDirectory /var/spool/rsyslog # where to place spool files
+\$ActionQueueFileName fwdRule1 # unique name prefix for spool files
+\$ActionQueueMaxDiskSpace 1g # 1gb space limit (use as much as possible)
+\$ActionQueueSaveOnShutdown on # save messages to disk on shutdown
+\$ActionQueueType LinkedList # run asynchronously
+\$ActionResumeRetryCount -1 # infinite retries if host is down
 
 *.* @@monitoring.$logMonitoring:10514;RSYSLOG_SyslogProtocol23Format" > /etc/rsyslog.d/60-graylog.conf
 
