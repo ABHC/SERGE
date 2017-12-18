@@ -431,7 +431,7 @@ else
 	$checkCol    = array();
 	$languageBDD = read('language_serge', 'code, name', $checkCol, '', $bdd);
 
-	$userLang       = strtolower($packDetails['language']);
+	$userLang       = mb_strtolower($packDetails['language']);
 	$selectLanguage = '<select class="shortSelect" name="language">' . PHP_EOL;
 
 	foreach ($languageBDD as $languageLine)
@@ -462,13 +462,13 @@ else
 											array('id', '=', $data['packId'], ''));
 		$packIsOwn = read('watch_pack_serge', '', $checkCol, '', $bdd);
 
-		$checkCol  = array(array('name', '=', strtolower($data['watchPackName']), 'AND'),
+		$checkCol  = array(array('name', '=', mb_strtolower($data['watchPackName']), 'AND'),
 											array('id', '<>', $data['packId'], ''));
 		$nameExist = read('watch_pack_serge', '', $checkCol, '', $bdd);
 
 		if ($packIsOwn && !$nameExist)
 		{
-			$updateCol = array(array('name', strtolower($data['watchPackName'])),
+			$updateCol = array(array('name', mb_strtolower($data['watchPackName'])),
 												array('description', $data['watchPackDescription']),
 												array('category', $data['watchPackCategory']),
 												array('language', $data['language']),
@@ -500,7 +500,7 @@ else
 					if (empty($resultKeyword))
 					{
 						$insertCol = array(array('pack_id', $data['packId']),
-															array('query', strtolower($newKeyword)),
+															array('query', mb_strtolower($newKeyword)),
 															array('source', ',' . $sourcesList['id'] . ','));
 						$execution = insert('watch_pack_queries_serge', $insertCol, '', '', $bdd);
 					}
@@ -524,7 +524,6 @@ else
 
 				if (!empty($resultSource))
 				{
-
 					$checkCol = array(array('query', '=', mb_strtolower($newKeyword), 'AND'),
 														array('pack_id', '=', $data['packId'], 'AND'),
 														array('source', '<>', 'Science', 'AND'),
@@ -536,15 +535,13 @@ else
 
 					if (empty($resultKeyword))
 					{
-
 						$insertCol = array(array('pack_id', $data['packId']),
-															array('query', strtolower($newKeyword)),
+															array('query', mb_strtolower($newKeyword)),
 															array('source', ',' . $data['sourceKeyword'] . ','));
 						$execution = insert('watch_pack_queries_serge', $insertCol, '', '', $bdd);
 					}
 					elseif (!preg_match("/$newKeywordSource/", $resultKeyword['source']))
 					{
-
 						$updateCol = array(array('source', $resultKeyword['source'] . $data['sourceKeyword'] . ','));
 						$checkCol = array(array('id', '=', $resultKeyword['id'], ''));
 						$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
@@ -1068,13 +1065,13 @@ else
 		}
 
 		// Check if the name already exist
-		$checkCol  = array(array('name', '=', strtolower($newWatchPackName), ''));
+		$checkCol  = array(array('name', '=', mb_strtolower($newWatchPackName), ''));
 		$nameExist = read('watch_pack_serge', '', $checkCol, '', $bdd);
 
 		// Add new pack in database
 		if (!$nameExist)
 		{
-			$insertCol = array(array('name', strtolower($newWatchPackName)),
+			$insertCol = array(array('name', mb_strtolower($newWatchPackName)),
 												array('description', $data['watchPackDescription']),
 												array('author', $_SESSION['pseudo']),
 												array('users', ','),
