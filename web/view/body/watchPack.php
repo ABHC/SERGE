@@ -228,7 +228,7 @@
 							'<div class="tag Tdisable">'.
 								'<input type="submit" title="Delete" name="delKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
 								'<input type="submit" title="Activate" name="activateKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
-								'<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">'.
+								'<a href="">'.
 									 ucfirst($ownerKeywordList['query']).
 								'</a>'.
 							'</div>';
@@ -240,7 +240,7 @@
 							'<div class="tag Tactive">'.
 								'<input type="submit" title="Delete" name="delKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
 								'<input type="submit" title="Disable" name="disableKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
-								'<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">'.
+								'<a href="">'.
 									 ucfirst($ownerKeywordList['query']).
 								'</a>'.
 							'</div>';
