@@ -20,7 +20,7 @@
 			$packIdURL = '&packId=' . $data['packId'];
 		}
 	?>
-	<h1><?php get_t('title_window0_watchpack', $bdd); ?></h1>
+	<h1><?php get_t('title1_window0_watchpack', $bdd); ?></h1>
 	<form method="post" action="watchPack?type=create<?php echo $packIdURL; ?>">
 		<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
 		<input type="hidden" name="scrollPos" id="scrollPos" value="
@@ -774,7 +774,7 @@
 	else
 	{
 	?>
-		<h1>Community watch packs</h1>
+		<h1><?php get_t('title0_window0_watchpack', $bdd); ?></h1>
 		<form class="formSearch" method="get" action="watchPack">
 			<input type="text" name="search" id="search" placeholder="Search Serge" value="<?php echo $search; ?>"/>
 			<input type="hidden" name="orderBy" value="<?php echo  preg_replace("/.*=/", "", $orderBy); ?>"/>
