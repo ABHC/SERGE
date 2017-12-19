@@ -161,7 +161,6 @@
 						$amICheckFoldKeyword = 'checked';
 					}
 
-
 					$checkCol = array(array("query", "=", "[!source!]", "AND"),
 														array("source", "=", "%,!" . $packSourcesList['id'] . ",%", "AND"),
 														array("pack_id", "=", $data['packId'], ""));
@@ -808,7 +807,8 @@
 						<table>
 							<tbody>
 							<?php
-							foreach ($watchPacks as $watchPack)
+							$watchPacks = new ArrayIterator($watchPacks);
+							foreach (new LimitIterator($watchPacks, $base, $limit) as $watchPack)
 							{
 								# Color stars
 								$starTitle = 'Add a star';
@@ -848,7 +848,7 @@
 				if ($cpt === $page)
 				{
 					echo '
-					<a href="result?page=' . $cpt . $searchSort . $data['optionalCond'] . $orderBy . '&type=' . $type . '" class="pageNumber current">
+					<a href="watchPack?page=' . $cpt . $searchSort . $data['optionalCond'] . $orderBy . '&type=' . $type . '" class="pageNumber current">
 					' . $cpt . '
 					</a>';
 					$dotBetweenPageNumber = FALSE;
@@ -856,7 +856,7 @@
 				elseif (($cpt - 1) === $page || ($cpt + 1) === $page)
 				{
 					echo '
-					<a href="result?page=' . $cpt . $searchSort . $data['optionalCond'] . $orderBy . '&type=' . $type . '" class="pageNumber">
+					<a href="watchPack?page=' . $cpt . $searchSort . $data['optionalCond'] . $orderBy . '&type=' . $type . '" class="pageNumber">
 					' . $cpt . '
 					</a>';
 					$dotBetweenPageNumber = FALSE;
@@ -864,7 +864,7 @@
 				elseif ($cpt <= 2 || $cpt === $nbPage || ($cpt + 1) === $nbPage)
 				{
 					echo '
-					<a href="result?page=' . $cpt . $searchSort . $data['optionalCond'] . $orderBy . '&type=' . $type . '" class="pageNumber">
+					<a href="watchPack?page=' . $cpt . $searchSort . $data['optionalCond'] . $orderBy . '&type=' . $type . '" class="pageNumber">
 					' . $cpt . '
 					</a>';
 				}
