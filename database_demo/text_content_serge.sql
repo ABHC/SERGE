@@ -168,6 +168,6 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('title0_title_purchase', 'Become premium', 'Devenez premium', NULL, NULL, NULL),
 ('title1_title_purchase', 'Access to all Serge\'s features', 'Accédez à toutes les fonctionnalités de Serge', NULL, NULL, NULL),
 ('title2_title_purchase', 'Successfully charged ', 'Facturation effectuée avec succès pour ', NULL, NULL, NULL),
-('Unfold keyword list', 'Unfold keyword list', 'Déplier la liste des mots clefs', NULL, NULL, NULL),
-('Fold keyword list', 'Fold keyword list', 'Replier la liste des mots clefs', NULL, NULL, NULL),
+('Unfold keyword list', 'Unfold the keyword list', 'Dépliler les mots clefs', NULL, NULL, NULL),
+('Fold keyword list', 'Fold the keyword list', 'Replier les mots clefs', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);

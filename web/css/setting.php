@@ -526,7 +526,7 @@ h2
 	flex-wrap: wrap;
 	margin-left: 4%;
 	margin-bottom: 10px;
-	width: 200px;
+	width: 250px;
 	height: 30px;
 	overflow: hidden;
 }
