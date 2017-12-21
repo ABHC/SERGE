@@ -5,7 +5,7 @@
 <div class="body">
 	<h1><?php get_t('title_window0_result', $bdd); ?></h1>
 	<form class="formSearch" method="get" action="result">
-		<input type="text" name="search" id="search" placeholder="Search Serge" value="<?php echo $search; ?>"/>
+		<input type="text" name="search" id="search" placeholder="<?php get_t('Search', $bdd); ?>" value="<?php echo $search; ?>"/>
 		<input type="hidden" name="orderBy" value="<?php echo preg_replace("/.*=/", "", $data['orderBy']); ?>"/>
 		<input type="hidden" name="optionalCond" value="<?php echo $data['optionalCond']; ?>"/>
 		<input type="hidden" name="type" value="<?php echo $type; ?>"/>

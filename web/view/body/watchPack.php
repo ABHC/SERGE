@@ -776,7 +776,7 @@
 	?>
 		<h1><?php get_t('title0_window0_watchpack', $bdd); ?></h1>
 		<form class="formSearch" method="get" action="watchPack">
-			<input type="text" name="search" id="search" placeholder="Search Serge" value="<?php echo $search; ?>"/>
+			<input type="text" name="search" id="search" placeholder="<?php get_t('Search', $bdd); ?>" value="<?php echo $search; ?>"/>
 			<input type="hidden" name="orderBy" value="<?php echo  preg_replace("/.*=/", "", $orderBy); ?>"/>
 			<input type="hidden" name="optionalCond" value="<?php echo $data['optionalCond']; ?>"/>
 		</form>
