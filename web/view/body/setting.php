@@ -400,10 +400,10 @@
 					'<input type="checkbox" name="radio-ks' . $ownerSourcesList['id'] . '" id="unfold-ks' . $ownerSourcesList['id'] . '" value="' . $ownerSourcesList['id'] . '" ' . $amICheckFoldKeyword . '/>'.
 					'<div class="keywordList" id="keywordList' . $ownerSourcesList['id'] . '">'.
 						'<label for="unfold-ks' . $ownerSourcesList['id'] . '" id="unfold' . $ownerSourcesList['id'] . '"  class="unfoldTag">'.
-							'Unfold keyword list ▾'.
+							var_get_t('Unfold keyword list', $bdd) . ' ▾'.
 						'</label>'.
 						'<label for="unfold-ks' . $ownerSourcesList['id'] . '" id="fold' . $ownerSourcesList['id'] . '" class="foldTag">'.
-							'Fold keyword list ▴'.
+							var_get_t('Fold keyword list', $bdd) . ' ▴'.
 						'</label>';
 
 					# Keyword loop

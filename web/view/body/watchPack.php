@@ -194,10 +194,10 @@
 					'<input type="checkbox" name="radio-ks' . $packSourcesList['id'] . '" id="unfold-ks' . $packSourcesList['id'] . '" value="' . $packSourcesList['id'] . '" ' . $amICheckFoldKeyword . '/>'.
 					'<div class="keywordList" id="keywordList' . $packSourcesList['id'] . '">'.
 						'<label for="unfold-ks' . $packSourcesList['id'] . '" id="unfold' . $packSourcesList['id'] . '"  class="unfoldTag">'.
-							'Unfold keyword list ▾'.
+							var_get_t('Unfold keyword list', $bdd) . ' ▾'.
 						'</label>'.
 						'<label for="unfold-ks' . $packSourcesList['id'] . '" id="fold' . $packSourcesList['id'] . '" class="foldTag">'.
-							'Fold keyword list ▴'.
+							var_get_t('Fold keyword list', $bdd) . ' ▴'.
 						'</label>';
 
 					# Keyword loop
