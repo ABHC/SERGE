@@ -787,15 +787,15 @@
 				<table>
 					<thead>
 						<tr>
-							<th>Add</th>
+							<th><?php get_t('Add', $bdd); ?></th>
 							<?php
 							echo '
-							<th><a href="?orderBy=name' . $colOrder['DESC'] . $searchSort . $actualPageLink . '&language=' . $selectedLanguageCode . '&type=' . $type . '">Name ' . $colOrder['name'] . '</a></th>
-							<th><a href="?orderBy=author' . $colOrder['DESC'] . $searchSort . $actualPageLink . '&language=' . $selectedLanguageCode . '&type=' . $type . '">Author ' . $colOrder['author'] . '</a></th>
-							<th><a href="?orderBy=category' . $colOrder['DESC'] . $searchSort . $actualPageLink . '&language=' . $selectedLanguageCode . '&type=' . $type . '">Category ' . $colOrder['category'] . '</a></th>
-							<th><a href="?orderBy=date' . $colOrder['DESC'] . $searchSort . $actualPageLink . '&language=' . $selectedLanguageCode . '&type=' . $type . '">Date ' . $colOrder['date'] . '</a></th>
+							<th><a href="?orderBy=name' . $colOrder['DESC'] . $searchSort . $actualPageLink . '&language=' . $selectedLanguageCode . '&type=' . $type . '">' . var_get_t('Name', $bdd) . ' ' . $colOrder['name'] . '</a></th>
+							<th><a href="?orderBy=author' . $colOrder['DESC'] . $searchSort . $actualPageLink . '&language=' . $selectedLanguageCode . '&type=' . $type . '">' . var_get_t('Author', $bdd) . ' ' . $colOrder['author'] . '</a></th>
+							<th><a href="?orderBy=category' . $colOrder['DESC'] . $searchSort . $actualPageLink . '&language=' . $selectedLanguageCode . '&type=' . $type . '">' . var_get_t('Category', $bdd) . ' ' . $colOrder['category'] . '</a></th>
+							<th><a href="?orderBy=date' . $colOrder['DESC'] . $searchSort . $actualPageLink . '&language=' . $selectedLanguageCode . '&type=' . $type . '">' . var_get_t('Date', $bdd) . ' ' . $colOrder['date'] . '</a></th>
 							<th>' . $colOrder['language'] . '</th>
-							<th><a href="?orderBy=rate' . $colOrder['DESC'] . $searchSort . '&language=' . $selectedLanguageCode . '&type=' . $type . '">Rate' . $colOrder['rate'] . '</a></th>';
+							<th><a href="?orderBy=rate' . $colOrder['DESC'] . $searchSort . '&language=' . $selectedLanguageCode . '&type=' . $type . '">' . var_get_t('Rate', $bdd) . ' ' . $colOrder['rate'] . '</a></th>';
 							?>
 						</tr>
 					</thead>
