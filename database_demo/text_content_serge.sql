@@ -171,7 +171,7 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('Unfold keyword list', 'Unfold the keyword list', 'Déplier les mots clefs', NULL, NULL, NULL),
 ('Fold keyword list', 'Fold the keyword list', 'Replier les mots clefs', NULL, NULL, NULL),
 ('Search', 'Search', 'Rechercher', NULL, NULL, NULL),
-('Add', 'Add', 'Ajouter', NULL, NULL, NULL),
+('Add', 'Add', '+', NULL, NULL, NULL),
 ('Name', 'Name', 'Nom', NULL, NULL, NULL),
 ('Author', 'Author', 'Auteur', NULL, NULL, NULL),
 ('Category', 'Category', 'Categorie', NULL, NULL, NULL),
