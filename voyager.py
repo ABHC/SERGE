@@ -330,7 +330,7 @@ def science(now):
 	queries_and_owners_science_list = []
 
 	for row in rows:
-		field = (row[0].strip(), row[1].strip(), row[2].strip(), row[3].strip(), row[4].strip())
+		field = (row[0], row[1].strip(), row[2].strip(), row[3].strip(), row[4].strip())
 		queries_and_owners_science_list.append(field)
 
 	for package_science_queries in queries_and_owners_science_list:
