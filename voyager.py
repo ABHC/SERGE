@@ -85,17 +85,17 @@ def newscast(newscast_args):
 		########### LINK CONNEXION
 		req_results = sergenet.aLinkToThePast(link, 'rss')
 		rss = req_results[0]
-		rss_error = req_results[1]
+		feed_error = req_results[1]
 
 	elif greenlight is False and etag is None:
 		insertSQL.backToTheFuture(etag, link)
-		rss_error = None
+		feed_error = None
 
 	elif greenlight is False:
-		rss_error = None
+		feed_error = None
 
 	########### LINK CONNEXION
-	if rss_error is False and greenlight is True:
+	if feed_error is False and greenlight is True:
 		missing_flux = False
 
 		########### RSS PARSING
@@ -321,204 +321,196 @@ def science(now):
 	######### SCIENCE RESEARCH
 	logger_info.info("\n\n######### Last Scientific papers on Arxiv.org (science function) : \n\n")
 
-	######### CALL TO TABLE keywords_science_serge
+	######### CALL TO TABLE queries_science_serge
 	call_science = database.cursor()
-	call_science.execute("SELECT query_arxiv, query_doaj, owners FROM queries_science_serge WHERE active >= 1")
+	call_science.execute("SELECT id, query_arxiv, query_doaj, query_hal, owners FROM queries_science_serge WHERE active >= 1")
 	rows = call_science.fetchall()
 	call_science.close()
 
 	queries_and_owners_science_list = []
 
 	for row in rows:
-		field = (row[0].strip(), row[1].strip(), row[2].strip())
+		field = (row[0].strip(), row[1].strip(), row[2].strip(), row[3].strip(), row[4].strip())
 		queries_and_owners_science_list.append(field)
 
-	for trio_queries_owners in queries_and_owners_science_list:
+	for package_science_queries in queries_and_owners_science_list:
 
-		query_arxiv = trio_queries_owners[0].strip()
-		query_doaj = trio_queries_owners[1].strip()
-		owners = trio_queries_owners[2]
+		query_id = package_science_queries[0]
+		query_arxiv = package_science_queries[1].strip()
+		query_doaj = package_science_queries[2].strip()
+		query_hal = package_science_queries[3].strip()
+		owners = package_science_queries[4].strip()
 
-		######### RESEARCH SCIENCE ON Arxiv
-		link = ('http://export.arxiv.org/api/query?search_query='+query_arxiv.encode("utf8")+'&sortBy=lastUpdatedDate&start=0&max_results=20')
-		logger_info.info(query_arxiv.encode("utf8")+"\n")
+		arxiv_pack = ('http://export.arxiv.org/api/query?search_query='+query_arxiv.encode("utf8")+'&sortBy=lastUpdatedDate&start=0&max_results=20', query_id, 1)
+		doaj_pack = ('https://doaj.org/api/v1/search/articles/'+query_doaj.encode("utf8")+'?pageSize=20&sort=last_updated%3Adesc')
+		logger_info.info(query_doaj.encode("utf8")+"\n", query_id, 2)
+		hal_pack = ('http://api.archives-ouvertes.fr/search/?q='+query_arxiv.encode("utf8")+'&wt=rss&rows=20', query_id, 3)
 
-		req_results = sergenet.aLinkToThePast(link, 'rss')
-		rss_arxiv = req_results[0]
-		rss_error = req_results[1]
+		feedparser_search = [arxiv_pack, hal_pack]
+		json_search = [doaj_link]
 
-		if rss_error is False:
-			try:
-				xmldoc = feedparser.parse(rss_arxiv)
-			except Exception, except_type:
-				xmldoc = None
-				logger_error.error("PARSING ERROR IN :"+link+"\n")
-				logger_error.error(repr(except_type))
+		######### RESEARCH SCIENCE ON Arxiv AND HAL
+		for science_api_pack in feedparser_search:
+			link = science_api_pack[0].strip()
+			query_id = science_api_pack[1]
+			id_rss = science_api_pack[2]
 
-			if xmldoc is not None:
-				range_article = 0
-				rangemax_article = len(xmldoc.entries)
-				logger_info.info("numbers of papers :"+unicode(rangemax_article)+"\n \n")
+			req_results = sergenet.aLinkToThePast(link, 'rss')
+			feed_content = req_results[0]
+			feed_error = req_results[1]
 
-				if rangemax_article == 0:
-					logger_info.info("VOID QUERY :"+link+"\n\n")
+			if feed_error is False:
+				try:
+					parsed_content = feedparser.parse(feed_content)
+				except Exception, except_type:
+					parsed_content = None
+					logger_error.error("PARSING ERROR IN :"+link+"\n")
+					logger_error.error(repr(except_type))
 
-				else:
-					######### QUERY ID RETRIEVAL
-					query = ("SELECT id FROM queries_science_serge WHERE query_arxiv = %s")
+				if parsed_content is not None:
+					range_article = 0
+					rangemax_article = len(parsed_content.entries)
+					logger_info.info("numbers of papers :"+unicode(rangemax_article)+"\n \n")
 
-					call_science = database.cursor()
-					call_science.execute(query, (query_arxiv, ))
-					rows = call_science.fetchone()
-					call_science.close()
+					if rangemax_article == 0:
+						logger_info.info("VOID QUERY :"+link+"\n\n")
 
-					query_id = rows[0]
+					else:
+						while range_article < rangemax_article:
 
-					while range_article < rangemax_article:
-
-						try:
-							post_title = xmldoc.entries[range_article].title
-							if post_title == "":
+							try:
+								post_title = parsed_content.entries[range_article].title
+								if post_title == "":
+									post_title = "NO TITLE"
+							except AttributeError:
+								logger_error.warning("BEACON ERROR : missing <title> in "+link)
+								logger_error.warning(traceback.format_exc())
 								post_title = "NO TITLE"
-						except AttributeError:
-							logger_error.warning("BEACON ERROR : missing <title> in "+link)
-							logger_error.warning(traceback.format_exc())
-							post_title = "NO TITLE"
 
-						try:
-							post_link = xmldoc.entries[range_article].link
-						except AttributeError:
-							logger_error.warning("BEACON ERROR : missing <link> in "+link)
-							logger_error.warning(traceback.format_exc())
-							post_link = ""
+							try:
+								post_link = parsed_content.entries[range_article].link
+							except AttributeError:
+								logger_error.warning("BEACON ERROR : missing <link> in "+link)
+								logger_error.warning(traceback.format_exc())
+								post_link = ""
 
-						try:
-							post_date = xmldoc.entries[range_article].published_parsed
-							post_date = time.mktime(post_date)
-						except AttributeError:
-							logger_error.warning("BEACON ERROR : missing <date> in "+link)
-							logger_error.warning(traceback.format_exc())
-							post_date = now
+							try:
+								post_date = parsed.entries[range_article].published_parsed
+								post_date = time.mktime(post_date)
+							except AttributeError:
+								logger_error.warning("BEACON ERROR : missing <date> in "+link)
+								logger_error.warning(traceback.format_exc())
+								post_date = now
 
-						keyword_id_comma = str(query_id)+","
-						keyword_id_comma2 = ","+str(query_id)+","
-						id_rss = 1
+							keyword_id_comma = str(query_id)+","
+							keyword_id_comma2 = ","+str(query_id)+","
 
-						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s AND title = %s")
-						query_link_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
-						query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s AND `date` BETWEEN %s AND (%s+43200)")
+							########### QUERY FOR DATABASE CHECKING
+							query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s AND title = %s")
+							query_link_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
+							query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s AND `date` BETWEEN %s AND (%s+43200)")
 
-						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_science_serge(title, link, date, id_source, query_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
+							########### QUERY FOR DATABASE INSERTION
+							query_insertion = ("INSERT INTO result_science_serge(title, link, date, id_source, query_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
 
-						########### QUERY FOR DATABASE UPDATE
-						query_update = ("UPDATE result_science_serge SET query_id = %s, owners = %s WHERE link = %s")
-						query_update_title = ("UPDATE result_science_serge SET title = %s, query_id = %s, owners = %s WHERE link = %s")
-						query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s, query_id = %s, owners = %s WHERE link = %s")
+							########### QUERY FOR DATABASE UPDATE
+							query_update = ("UPDATE result_science_serge SET query_id = %s, owners = %s WHERE link = %s")
+							query_update_title = ("UPDATE result_science_serge SET title = %s, query_id = %s, owners = %s WHERE link = %s")
+							query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s, query_id = %s, owners = %s WHERE link = %s")
 
-						########### ITEM BUILDING
-						post_title = escaping(post_title)
-						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
-						item_update = [post_link]
+							########### ITEM BUILDING
+							post_title = escaping(post_title)
+							item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
+							item_update = [post_link]
 
-						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
+							########### CALL insertOrUpdate FUNCTION
+							insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
-						range_article = range_article+1
+							range_article = range_article+1
 
-		else:
-			logger_info.warning("Error : the feed is unavailable")
+			else:
+				logger_info.warning("Error : the feed is unavailable")
 
 		######### RESEARCH SCIENCE ON DIRECTORY OF OPEN ACESS JOURNALS
-		link_doaj = ('https://doaj.org/api/v1/search/articles/'+query_doaj.encode("utf8")+'?pageSize=20&sort=last_updated%3Adesc')
-		logger_info.info(query_doaj.encode("utf8")+"\n")
+		for science_api_pack in json_search:
+			link = science_api_pack[0].strip()
+			query_id = science_api_pack[1]
+			id_rss = science_api_pack[2]
 
-		req_results = sergenet.aLinkToThePast(link_doaj, 'rss')
-		web_doaj = req_results[0]
-		rss_error = req_results[1]
+			req_results = sergenet.aLinkToThePast(link_doaj, 'rss')
+			json_content = req_results[0]
+			feed_error = req_results[1]
 
-		if rss_error is False:
-			try:
-				data_doaj = json.loads(web_doaj)
-			except Exception, except_type:
-				data_doaj = None
-				logger_error.error("PARSING ERROR IN :"+link_doaj+"\n")
-				logger_error.error(repr(except_type))
+			if feed_error is False:
+				try:
+					json_data = json.loads(json_content)
+				except Exception, except_type:
+					json_data = None
+					logger_error.error("PARSING ERROR IN :"+link_doaj+"\n")
+					logger_error.error(repr(except_type))
 
-			if data_doaj is not None:
-				range_article = 0
-				rangemax_article = len(data_doaj["results"])
-				logger_info.info("numbers of papers :"+unicode(rangemax_article)+"\n \n")
+				if json_data is not None:
+					range_article = 0
+					rangemax_article = len(json_data["results"])
+					logger_info.info("numbers of papers :"+unicode(rangemax_article)+"\n \n")
 
-				if rangemax_article == 0:
-					logger_info.info("VOID QUERY :"+link_doaj+"\n\n")
+					if rangemax_article == 0:
+						logger_info.info("VOID QUERY :"+link_doaj+"\n\n")
 
-				else:
-					######### QUERY ID RETRIEVAL
-					query = ("SELECT id FROM queries_science_serge WHERE query_doaj = %s")
+					else:
+						while range_article < rangemax_article:
+							try:
+								post_title = json_data["results"][range_article]["bibjson"]["title"]
+								if post_title == "":
+									post_title = "NO TITLE"
+							except Exception as json_error:
+								logger_error.warning("Error in json retrival of post_title : "+str(json_error))
+								post_title = "NO TITLE"
 
-					call_science = database.cursor()
-					call_science.execute(query, (query_doaj, ))
-					rows = call_science.fetchone()
-					call_science.close()
+							try:
+								post_link = json_data["results"][range_article]["bibjson"]["link"][0]["url"]
+							except Exception as json_error:
+								logger_error.warning("Error in json retrival of post_link : "+str(json_error))
+								post_link = ""
 
-					query_id = rows[0]
+							try:
+								post_date = json_data["results"][range_article]["last_updated"]
+								post_date = post_date.replace("T", " ").replace("Z", " ").strip()
+								human_date = datetime.datetime.strptime(post_date, "%Y-%m-%d %H:%M:%S")
+								post_date = human_date.timetuple()
+								post_date = time.mktime(post_date)
+							except Exception as json_error:
+								logger_error.warning("Error in json retrival of post_date : "+str(json_error))
+								post_date = now
 
-				while range_article < rangemax_article:
-					try:
-						post_title = data_doaj["results"][range_article]["bibjson"]["title"]
-						if post_title == "":
-							post_title = "NO TITLE"
-					except Exception as json_error:
-						logger_error.warning("Error in json retrival of post_title : "+str(json_error))
-						post_title = "NO TITLE"
+							keyword_id_comma = str(query_id)+","
+							keyword_id_comma2 = ","+str(query_id)+","
 
-					try:
-						post_link = data_doaj["results"][range_article]["bibjson"]["link"][0]["url"]
-					except Exception as json_error:
-						logger_error.warning("Error in json retrival of post_link : "+str(json_error))
-						post_link = ""
+							########### QUERY FOR DATABASE CHECKING
+							query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s AND title = %s")
+							query_link_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
+							query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s AND `date` BETWEEN %s AND (%s+43200)")
 
-					try:
-						post_date = data_doaj["results"][range_article]["last_updated"]
-						post_date = post_date.replace("T", " ").replace("Z", " ").strip()
-						human_date = datetime.datetime.strptime(post_date, "%Y-%m-%d %H:%M:%S")
-						post_date = human_date.timetuple()
-						post_date = time.mktime(post_date)
-					except Exception as json_error:
-						logger_error.warning("Error in json retrival of post_date : "+str(json_error))
-						post_date = now
+							########### QUERY FOR DATABASE INSERTION
+							query_insertion = ("INSERT INTO result_science_serge(title, link, date, id_source, query_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
 
-					keyword_id_comma = str(query_id)+","
-					keyword_id_comma2 = ","+str(query_id)+","
-					id_rss = 2
+							########### QUERY FOR DATABASE UPDATE
+							query_update = ("UPDATE result_science_serge SET query_id = %s, owners = %s WHERE link = %s")
+							query_update_title = ("UPDATE result_science_serge SET title = %s, query_id = %s, owners = %s WHERE link = %s")
+							query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s, query_id = %s, owners = %s WHERE link = %s")
 
-					########### QUERY FOR DATABASE CHECKING
-					query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s AND title = %s")
-					query_link_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
-					query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s AND `date` BETWEEN %s AND (%s+43200)")
+							########### ITEM BUILDING
+							post_title = escaping(post_title)
+							item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
+							item_update = [post_link]
 
-					########### QUERY FOR DATABASE INSERTION
-					query_insertion = ("INSERT INTO result_science_serge(title, link, date, id_source, query_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
+							########### CALL  FUNCTION
+							insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
-					########### QUERY FOR DATABASE UPDATE
-					query_update = ("UPDATE result_science_serge SET query_id = %s, owners = %s WHERE link = %s")
-					query_update_title = ("UPDATE result_science_serge SET title = %s, query_id = %s, owners = %s WHERE link = %s")
-					query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s, query_id = %s, owners = %s WHERE link = %s")
+							range_article = range_article+1
 
-					########### ITEM BUILDING
-					post_title = escaping(post_title)
-					item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
-					item_update = [post_link]
-
-					########### CALL  FUNCTION
-					insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
-
-					range_article = range_article+1 #On incrémente le pointeur range_article qui nous sert aussi de compteur
-
-		else:
-			logger_info.warning("Error : the json API is unavailable")
+			else:
+				logger_info.warning("Error : the json API is unavailable")
 
 
 def patents(now):
@@ -566,9 +558,9 @@ def patents(now):
 
 		req_results = sergenet.aLinkToThePast(link, 'rss')
 		rss_wipo = req_results[0]
-		rss_error = req_results[1]
+		feed_error = req_results[1]
 
-		if rss_error is False:
+		if feed_error is False:
 			xmldoc = feedparser.parse(rss_wipo)
 			range_article = 0
 			rangemax_article = len(xmldoc.entries)
