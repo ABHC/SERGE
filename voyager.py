@@ -450,7 +450,7 @@ def science(now):
 					logger_error.error("PARSING ERROR IN :"+link+"\n")
 					logger_error.error(repr(except_type))
 
-				if json_data is not None:
+				if json_data["results"] is not None:
 					range_article = 0
 					rangemax_article = len(json_data["results"])
 					logger_info.info("numbers of papers :"+unicode(rangemax_article)+"\n \n")
