@@ -347,7 +347,7 @@ def science(now):
 		hal_pack = ('http://api.archives-ouvertes.fr/search/?q='+query_arxiv.encode("utf8")+'&wt=rss&rows=20', query_id, 3)
 
 		feedparser_search = [arxiv_pack, hal_pack]
-		json_search = [doaj_link]
+		json_search = [doaj_pack]
 
 		######### RESEARCH SCIENCE ON Arxiv AND HAL
 		for science_api_pack in feedparser_search:
