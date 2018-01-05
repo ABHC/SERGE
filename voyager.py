@@ -395,7 +395,7 @@ def science(now):
 								post_link = ""
 
 							try:
-								post_date = parsed.entries[range_article].published_parsed
+								post_date = parsed_content.entries[range_article].published_parsed
 								post_date = time.mktime(post_date)
 							except AttributeError:
 								logger_error.warning("BEACON ERROR : missing <date> in "+link)
