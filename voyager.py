@@ -339,12 +339,14 @@ def science(now):
 		query_arxiv = package_science_queries[1].strip()
 		query_doaj = package_science_queries[2].strip()
 		query_hal = package_science_queries[3].strip()
+		#query_bielefeld = package_science_queries[3].strip()
 		owners = package_science_queries[4].strip()
 
 		arxiv_pack = ('http://export.arxiv.org/api/query?search_query='+query_arxiv.encode("utf8")+'&sortBy=lastUpdatedDate&start=0&max_results=20', query_id, 1)
 		doaj_pack = ('https://doaj.org/api/v1/search/articles/'+query_doaj.encode("utf8")+'?pageSize=20&sort=last_updated%3Adesc')
 		logger_info.info(query_doaj.encode("utf8")+"\n", query_id, 2)
 		hal_pack = ('http://api.archives-ouvertes.fr/search/?q='+query_arxiv.encode("utf8")+'&wt=rss&rows=20', query_id, 3)
+		#bielefeld_pack = ('https://www.base-search.net/Search/Results?join='+query_bielefeld.encode("utf8")+'sort=dchdate_sort%20desc&view=rss&l=en&oaboost=1&refid=dcrssen', query_id, 4)
 
 		feedparser_search = [arxiv_pack, hal_pack]
 		json_search = [doaj_pack]
@@ -437,7 +439,7 @@ def science(now):
 			query_id = science_api_pack[1]
 			id_rss = science_api_pack[2]
 
-			req_results = sergenet.aLinkToThePast(link_doaj, 'rss')
+			req_results = sergenet.aLinkToThePast(link, 'rss')
 			json_content = req_results[0]
 			feed_error = req_results[1]
 
@@ -446,7 +448,7 @@ def science(now):
 					json_data = json.loads(json_content)
 				except Exception, except_type:
 					json_data = None
-					logger_error.error("PARSING ERROR IN :"+link_doaj+"\n")
+					logger_error.error("PARSING ERROR IN :"+link+"\n")
 					logger_error.error(repr(except_type))
 
 				if json_data is not None:
@@ -455,7 +457,7 @@ def science(now):
 					logger_info.info("numbers of papers :"+unicode(rangemax_article)+"\n \n")
 
 					if rangemax_article == 0:
-						logger_info.info("VOID QUERY :"+link_doaj+"\n\n")
+						logger_info.info("VOID QUERY :"+link+"\n\n")
 
 					else:
 						while range_article < rangemax_article:
