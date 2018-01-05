@@ -107,7 +107,7 @@ def checkMate():
 	premium_code_table_serge_numbers = 6
 	price_table_serge_numbers = 4
 	purchase_table_serge_numbers = 8
-	queries_science_serge_numbers = 5
+	queries_science_serge_numbers = 6
 	queries_wipo_serge_numbers = 5
 	result_news_serge_numbers = 10
 	result_patents_serge_numbers = 14
@@ -156,7 +156,7 @@ def checkMate():
 	premium_code_table_serge_columns = ["id", "code", "creation_date", "users", "duration_premium", "expiration_date"]
 	price_table_serge_columns = ["id", "price", "currency", "type"]
 	purchase_table_serge_columns = ["id", "user_id", "purchase_date", "duration_premium", "invoice_number", "price", "premium_code_id", "bank_details"]
-	queries_science_serge_columns = ["id", "query_arxiv", "query_doaj", "owners", "active"]
+	queries_science_serge_columns = ["id", "query_arxiv", "query_doaj", "query_hal", "owners", "active"]
 	queries_wipo_serge_columns = ["id", "query", "legal_research", "owners", "active"]
 	result_news_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "id_source", "keyword_id", "owners"]
 	result_patents_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "id_source", "id_query_wipo", "owners", "legal_abstract", "legal_status", "lens_link", "legal_check_date"]
