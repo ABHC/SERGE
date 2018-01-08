@@ -344,7 +344,7 @@ def science(now):
 
 		arxiv_pack = ('http://export.arxiv.org/api/query?search_query='+query_arxiv.encode("utf8")+'&sortBy=lastUpdatedDate&start=0&max_results=20', query_id, query_arxiv, 1)
 		doaj_pack = ('https://doaj.org/api/v1/search/articles/'+query_doaj.encode("utf8")+'?pageSize=20&sort=last_updated%3Adesc', query_id, query_doaj, 2)
-		hal_pack = ('http://api.archives-ouvertes.fr/search/?q='+query_arxiv.encode("utf8")+'&wt=rss&rows=20', query_id, query_hal, 3)
+		hal_pack = ('http://api.archives-ouvertes.fr/search/?q='+query_hal.encode("utf8")+'&wt=rss&rows=20', query_id, query_hal, 3)
 		#bielefeld_pack = ('https://www.base-search.net/Search/Results?join='+query_bielefeld.encode("utf8")+'sort=dchdate_sort%20desc&view=rss&l=en&oaboost=1&refid=dcrssen', query_id, query_bielefeld, 4)
 
 		feedparser_search = [arxiv_pack, hal_pack]
