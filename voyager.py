@@ -345,7 +345,7 @@ def science(now):
 		arxiv_pack = ('http://export.arxiv.org/api/query?search_query='+query_arxiv.encode("utf8")+'&sortBy=lastUpdatedDate&start=0&max_results=20', query_id, query_arxiv, 1)
 		doaj_pack = ('https://doaj.org/api/v1/search/articles/'+query_doaj.encode("utf8")+'?pageSize=20&sort=last_updated%3Adesc', query_id, query_doaj, 2)
 		hal_pack = ('http://api.archives-ouvertes.fr/search/?q='+query_hal.encode("utf8")+'&wt=rss&rows=20', query_id, query_hal, 3)
-		plos_pack = #('http://journals.plos.org/plosone/search/feed/atom?resultsPerPage=30&q=&page=1'+query_plos.encode("utf8")+'&sortOrder=DATE_NEWEST_FIRST&page=1', query_id, query_plos, 4)
+		#plos_pack = ('http://journals.plos.org/plosone/search/feed/atom?resultsPerPage=30&q=&page=1'+query_plos.encode("utf8")+'&sortOrder=DATE_NEWEST_FIRST&page=1', query_id, query_plos, 4)
 
 		feedparser_search = [arxiv_pack, hal_pack]
 		json_search = [doaj_pack]
