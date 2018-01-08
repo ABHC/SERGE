@@ -342,15 +342,15 @@ def science(now):
 		#query_bielefeld = package_science_queries[3].strip()
 		owners = package_science_queries[4].strip()
 
-		arxiv_pack = ('http://export.arxiv.org/api/query?search_query='+query_arxiv.encode("utf8")+'&sortBy=lastUpdatedDate&start=0&max_results=20', query_id, query_api, 1)
-		doaj_pack = ('https://doaj.org/api/v1/search/articles/'+query_doaj.encode("utf8")+'?pageSize=20&sort=last_updated%3Adesc', query_id, query_api, 2)
-		hal_pack = ('http://api.archives-ouvertes.fr/search/?q='+query_arxiv.encode("utf8")+'&wt=rss&rows=20', query_id, query_api, 3)
-		#bielefeld_pack = ('https://www.base-search.net/Search/Results?join='+query_bielefeld.encode("utf8")+'sort=dchdate_sort%20desc&view=rss&l=en&oaboost=1&refid=dcrssen', query_id, query_api, 4)
+		arxiv_pack = ('http://export.arxiv.org/api/query?search_query='+query_arxiv.encode("utf8")+'&sortBy=lastUpdatedDate&start=0&max_results=20', query_id, query_arxiv, 1)
+		doaj_pack = ('https://doaj.org/api/v1/search/articles/'+query_doaj.encode("utf8")+'?pageSize=20&sort=last_updated%3Adesc', query_id, query_doaj, 2)
+		hal_pack = ('http://api.archives-ouvertes.fr/search/?q='+query_arxiv.encode("utf8")+'&wt=rss&rows=20', query_id, query_hal, 3)
+		#bielefeld_pack = ('https://www.base-search.net/Search/Results?join='+query_bielefeld.encode("utf8")+'sort=dchdate_sort%20desc&view=rss&l=en&oaboost=1&refid=dcrssen', query_id, query_bielefeld, 4)
 
 		feedparser_search = [arxiv_pack, hal_pack]
 		json_search = [doaj_pack]
 
-		######### RESEARCH SCIENCE ON Arxiv AND HAL
+		######### RESEARCH SCIENCE ON RSS FEEDS WITH FEEDPARSER MODULE
 		for science_api_pack in feedparser_search:
 			link = science_api_pack[0].strip()
 			query_id = science_api_pack[1]
@@ -435,7 +435,7 @@ def science(now):
 			else:
 				logger_info.warning("Error : the feed is unavailable")
 
-		######### RESEARCH SCIENCE ON DIRECTORY OF OPEN ACESS JOURNALS
+		######### RESEARCH SCIENCE ON JSON FEEDS WITH JSON MODULE
 		for science_api_pack in json_search:
 			link = science_api_pack[0].strip()
 			query_id = science_api_pack[1]
