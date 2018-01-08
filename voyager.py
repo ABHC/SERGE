@@ -357,7 +357,7 @@ def science(now):
 			query_api = science_api_pack[2]
 			id_rss = science_api_pack[3]
 
-			if query_api is not None:
+			if query_api:
 				logger_info.info(query_api.encode("utf8")+"\n")
 
 				req_results = sergenet.aLinkToThePast(link, 'rss')
@@ -443,7 +443,7 @@ def science(now):
 			query_api = science_api_pack[2]
 			id_rss = science_api_pack[3]
 
-			if query_api is not None:
+			if query_api:
 				logger_info.info(query_api.encode("utf8")+"\n")
 
 				req_results = sergenet.aLinkToThePast(link, 'rss')
