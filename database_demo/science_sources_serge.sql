@@ -14,4 +14,5 @@ INSERT INTO `science_sources_serge` (`id`, `link`, `name`) VALUES
 (1, 'http://arxiv.org/', 'ArXiv.org'),
 (2, 'https://doaj.org/', 'Directory of Open Access Journals (DOAJ)'),
 (3, 'http://api.archives-ouvertes.fr', 'HAL - Archives Ouvertes'),
-(4, 'https://api.elsevier.com', 'Science Direct (Elsevier)');
+(4, 'http://journals.plos.org', 'PLOS'),
+(5, 'https://api.elsevier.com', 'Science Direct (Elsevier)');
