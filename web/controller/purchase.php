@@ -55,7 +55,7 @@ if (!empty($data['submitPurchase']) && !empty($data['readCGS']) && !empty($data[
 		$data['months'] = 1;
 	}
 
-	$price           = $monthPrice * $data['months'] * 100;
+	$price           = $monthPrice * $data['months'];
 	$premiumDuration = $data['months'] * 30 * 24 * 3600;
 
 	if (!empty($data['premiumCode']))
@@ -110,7 +110,7 @@ if (!empty($data['submitPurchase']) && !empty($data['readCGS']) && !empty($data[
 	elseif ($price === 0)
 	{
 		// Set user to premium
-		$updateCol = array(array('premium_expiration_date', $userDetails['premium_expiration_date'] + $premiumDuration));
+		$updateCol = array(array('premium_expiration_date', $_SERVER['REQUEST_TIME'] + $premiumDuration));
 		$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
 		$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
 
