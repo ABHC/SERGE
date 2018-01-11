@@ -28,4 +28,7 @@ CREATE TABLE `equivalence_science_serge` (
 SET NAMES utf8mb4;
 
 INSERT INTO `equivalence_science_serge` (`id`, `apikey`, `type`, `basename`, `completename`, `prelink`, `postlink`, `AND`, `OR`, `NOT`, `(`, `)`, `quote`, `title`, `author`, `abstract`, `publisher`, `category`, `all`, `active`) VALUES
-(1, NULL, 'RSS', 'plos', 'PLOS', 'http://journals.plos.org/plosone/search/feed/atom?resultsPerPage=30&q=', '&sortOrder=DATE_NEWEST_FIRST&page=1', '+AND+', '+OR+', '+NOT+', '%28', '%29', NULL, 'title%3', 'author%3A', 'abstract%3A', 'everything%3A', 'subject%3A', 'everything%3A', 1);
+(1, NULL, 'RSS', 'arxiv', 'ArXiv.org', 'http://export.arxiv.org/api/query?search_query=', '&sortBy=lastUpdatedDate&start=0&max_results=20', '+AND+', '+OR+', '+ANDNOT+', '%28', '%29', '%22', 'ti:', 'au:', 'abs:', 'jr:', 'cat:', 'all:', 1),
+(2, NULL, 'JSON', 'doaj', 'Directory of Open Access Journals (DOAJ)', 'https://doaj.org/api/v1/search/articles/', '?pageSize=20&sort=last_updated%3Adesc', ' AND ', ' OR ', ' AND NOT ', '%28', '%29', '%22', 'bibjson.title', 'bibjson.author.name', 'bibjson.abstract', 'bibjson.publisher', 'bibjson.subject.term', 'bibjson.abstract', 1),
+(3, NULL, 'RSS', 'hal', 'HAL - Archives Ouvertes', 'http://api.archives-ouvertes.fr/search/?q=', '&wt=rss&rows=20', '+AND+', '+OR+', '+NOT+', '(', ')', NULL, 'title_autocomplete:', 'authFullName_t:', 'abstract_t:', 'journalTitle_t:', 'text:', 'text:', 1),
+(4, NULL, 'RSS', 'plos', 'PLOS', 'http://journals.plos.org/plosone/search/feed/atom?resultsPerPage=30&q=', '&sortOrder=DATE_NEWEST_FIRST&page=1', '+AND+', '+OR+', '+NOT+', '%28', '%29', NULL, 'title%3A', 'author%3A', 'abstract%3A', 'everything%3A', 'subject%3A', 'everything%3A', 1);
