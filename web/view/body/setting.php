@@ -489,12 +489,21 @@
 						echo '<div class="ghostSpace"></div>';
 					}
 
-					$selected['ti'] = '';
-					$selected['au'] = '';
-					$selected['abs'] = '';
-					$selected['jr'] = '';
-					$selected['cat'] = '';
-					$selected['all'] = '';
+					include_once('model/readColumns.php');
+
+					$nextColumnName = FALSE;
+					foreach ($columnsNames as $columnsName)
+					{
+						if ($nextColumnName && $columnsName['Field'] != 'active')
+						{
+							$selected[$columnsName['Field']] = '';
+						}
+
+						if ($columnsName['Field'] === 'quote')
+						{
+							$nextColumnName = TRUE;
+						}
+					}
 
 					if (!empty($data['scienceType' . $cpt]))
 					{
@@ -514,13 +523,14 @@
 					echo '
 					<input type="checkbox" id="openParenthesis' . $cpt . '" name="openParenthesis' . $cpt . '" value="active" ' . $checked['openParenthesis' . $cpt] . '/>
 					<label class="queryParenthesis" for="openParenthesis' . $cpt . '">(</label>
-					<select title="Type" class="queryType" name="scienceType' . $cpt . '" id="scienceType0' . $cpt . '">
-						<option value="ti" ' . $selected['ti'] . '>Title</option>
-						<option value="au" ' . $selected['au'] . '>Author</option>
-						<option value="abs" ' . $selected['abs'] . '>Abstract</option>
-						<option value="jr" ' . $selected['jr'] . '>Reference</option>
-						<option value="cat" ' . $selected['cat'] . '>Category</option>
-						<option value="all" ' . $selected['all'] . '>All</option>
+					<select title="Type" class="queryType" name="scienceType' . $cpt . '" id="scienceType0' . $cpt . '">';
+
+					foreach ($selected as $searchField => $selectedSearchField)
+					{
+						echo '<option value="' . $searchField . '" ' . $selectedSearchField . '>' . ucfirst($searchField) . '</option>';
+					}
+
+					echo '
 					</select>
 					<span class="arrDownBorder">▾</span>
 					<input type="text" class="query" name="scienceQuery' . $cpt . '" id="scienceQuery0' . $cpt . '" placeholder="Keyword" value="' . $data['scienceQuery' . $cpt] . '"/>';
