@@ -110,7 +110,7 @@ if (!empty($data['submitPurchase']) && !empty($data['readCGS']) && !empty($data[
 	elseif ($price === 0)
 	{
 		// Set user to premium
-		$updateCol = array(array('premium_expiration_date', $_SERVER['REQUEST_TIME'] + $premiumDuration));
+		$updateCol = array(array('premium_expiration_date', $userDetails['premium_expiration_date'] + $premiumDuration));
 		$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
 		$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
 
@@ -163,7 +163,7 @@ elseif (!empty($data['stripeAccess']) && $data['stripeAccess'] === 'true')
 
 	$charge = \Stripe\Charge::create(array(
 			'customer' => $customer->id,
-			'amount'   => $_SESSION['price'],
+			'amount'   => $_SESSION['price'] * 100,
 			'currency' => $_SESSION['currency']
 	));
 
@@ -191,7 +191,7 @@ elseif (!empty($data['stripeAccess']) && $data['stripeAccess'] === 'true')
 										array('bank_details', 'none'));
 	$execution = insert('purchase_table_serge', $insertCol, '', '', $bdd);
 
-	$price = $_SESSION['price'] / 100;
+	$price = $_SESSION['price'];
 	unset($_SESSION['price']);
 	unset($_SESSION['premiumDuration']);
 	$priceMessageSuccess = '<h1>' . var_get_t('title2_title_purchase', $bdd) . $price . '€ !</h1>';
