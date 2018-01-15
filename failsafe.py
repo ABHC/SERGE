@@ -121,7 +121,7 @@ def checkMate():
 	watch_pack_queries_serge_numbers = 4
 	watch_pack_serge_numbers = 10
 	captcha_serge_numbers = 1
-	equivalence_science_serge_numbers = 20
+	equivalence_science_serge_numbers = 21
 
 	for name in expected_tables_list:
 		checking.execute(check_numbers_columns, (database_name, name))
@@ -170,7 +170,7 @@ def checkMate():
 	watch_pack_queries_serge_columns = ["id", "pack_id", "query", "source"]
 	watch_pack_serge_columns = ["id", "search_index", "name", "description", "author", "users", "category", "language", "update_date", "rating"]
 	captcha_serge_columns = ["name"]
-	equivalence_science_serge_columns = ["id", "apikey", "type", "basename", "completename", "prelink", "postlink", "AND", "OR", "NOT", "(", ")", "quote", "title", "author", "abstract", "publisher", "category", "all", "active"]
+	equivalence_science_serge_columns = ["id", "apikey", "type", "basename", "name", "link", "prelink", "postlink", "AND", "OR", "NOT", "(", ")", "quote", "title", "author", "abstract", "publisher", "category", "all", "active"]
 
 	for name in expected_tables_list:
 
