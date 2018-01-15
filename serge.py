@@ -6,7 +6,7 @@ SERGE exlores XML and JSON files from RSS feeds and some specificals API in orde
 
 SERGE's sources :
 - News : RSS feed defined by users
-- Scientific Publications : Arxiv research API (RSS) and DOAJ research API (JSON)
+- Scientific Publications : APIs of some scientific papers publishers
 - Patents : WIPO research API (RSS)"""
 
 ######### IMPORT CLASSICAL MODULES

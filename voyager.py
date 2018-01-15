@@ -296,18 +296,15 @@ def newscast(newscast_args):
 
 
 def science(now):
-	"""Function for last patents published by arxiv.org and the Directory of Open Access Journals.
+	"""Function for last patents published by science APIs
 
 		Process :
-		- Queries for Arxiv and Doaj retrieval
-		- Research on Arxiv first and then DOAJ
-		- URL re-building with Arxiv query
-		- Research of last published papers related to the query at Arxiv
+		- Retrieval of SERGE normalized queries
+		- Research on RSS APIs first and then on JSON APIs
+		- URL re-building
+		- Research of last published papers related to the query
 		- If serge find a paper this one is added to the database
-		- If the paper is already saved in the database serge continue to search other papers
-		- URL re-building with DOAJ query
-		- Research of last published papers related to the query at DOAJ
-		- Same routine for content saving"""
+		- If the paper is already saved in the database SERGE continue to search other papers"""
 
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
@@ -319,7 +316,7 @@ def science(now):
 	need_jelly = False
 
 	######### SCIENCE RESEARCH
-	logger_info.info("\n\n######### Last Scientific papers on Arxiv.org (science function) : \n\n")
+	logger_info.info("\n\n######### Last Scientific papers research : \n\n")
 
 	######### CALL TO TABLE queries_science_serge
 	call_science = database.cursor()
