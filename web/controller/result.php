@@ -75,7 +75,7 @@ if (!empty($data['resultType']))
 		$newsActive      = '';
 		$tableName       = 'result_science_serge';
 		$tableNameQuery  = 'queries_science_serge';
-		$tableNameSource = 'science_sources_serge';
+		$tableNameSource = 'equivalence_science_serge';
 		$ownersColumn    = 'owners';
 		$userId          = ',' . $_SESSION['id'] . ',';
 		$keywordQueryId  = 'query_id';
