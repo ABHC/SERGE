@@ -1,10 +1,10 @@
 <?php
-function addNewScienceQuery(string $queryScience_Arxiv, string $queryScience_Doaj, $bdd)
+function addNewScienceQuery(string $queryScience_Serge, $bdd)
 {
 	$userId = ',' . $_SESSION['id'] . ',';
 	$ERROR_SCIENCEQUERY = '';
 	// Check if science query is already in bdd
-	$checkCol = array(array('query_Arxiv', '=', mb_strtolower($queryScience_Arxiv), ''));
+	$checkCol = array(array('query_serge', '=', mb_strtolower($queryScience_Serge), ''));
 	$result = read('queries_science_serge', 'id, owners, active', $checkCol, '', $bdd);
 	$result = $result[0] ?? '';
 
@@ -13,8 +13,7 @@ function addNewScienceQuery(string $queryScience_Arxiv, string $queryScience_Doa
 		$active = 1;
 
 		// Adding new query
-			$insertCol = array(array('query_Arxiv', $queryScience_Arxiv),
-												array('query_Doaj', $queryScience_Doaj),
+			$insertCol = array(array('query_serge', $queryScience_Serge),
 												array('owners', ',' . $_SESSION['id'] . ','),
 												array('active', 1));
 			$execution = insert('queries_science_serge', $insertCol, '', 'setting', $bdd);
