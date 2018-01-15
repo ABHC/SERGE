@@ -419,13 +419,13 @@ def science(now):
 
 								########### ITEM BUILDING
 								post_title = escaping(post_title)
-								item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
+								item = (post_title, post_link, post_date, api_id, keyword_id_comma2, owners)
 								item_update = [post_link]
 
 								########### CALL insertOrUpdate FUNCTION
 								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
-								range_article = range_article+1
+								range_article = range_article + 1
 
 				else:
 					logger_info.warning("Error : the feed is unavailable")
@@ -506,13 +506,13 @@ def science(now):
 
 								########### ITEM BUILDING
 								post_title = escaping(post_title)
-								item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
+								item = (post_title, post_link, post_date, api_id, keyword_id_comma2, owners)
 								item_update = [post_link]
 
 								########### CALL  FUNCTION
 								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
-								range_article = range_article+1
+								range_article = range_article + 1
 
 				else:
 					logger_info.warning("Error : the json API is unavailable")
