@@ -121,7 +121,7 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 
 	elif mail_design[0] == "masterword":
 		query_newswords = "SELECT keyword, id FROM keyword_news_serge WHERE applicable_owners_sources LIKE %s AND active > 0"
-		query_sciencewords = "SELECT query_arxiv, id FROM queries_science_serge WHERE owners LIKE %s AND active > 0"
+		query_sciencewords = "SELECT query_serge, id FROM queries_science_serge WHERE owners LIKE %s AND active > 0"
 		query_wipo_query = "SELECT query, id FROM queries_wipo_serge WHERE owners LIKE %s AND active > 0"
 
 		call_words = database.cursor()
