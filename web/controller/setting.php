@@ -827,7 +827,8 @@ if ($emailIsCheck && !empty($data['scienceQuerySubmit']) && $data['scienceQueryS
 			$closeParenthesis = '';
 			if (!empty($data['openParenthesis' . $cpt]) && $data['openParenthesis' . $cpt] === 'active')
 			{
-				$openParenthesis =  $separator . '(';
+				$openParenthesis = $separator . '(';
+				$separator = '|';
 				$open ++;
 			}
 
@@ -837,7 +838,7 @@ if ($emailIsCheck && !empty($data['scienceQuerySubmit']) && $data['scienceQueryS
 				$close ++;
 			}
 
-			$queryScience_Serge = $queryScience_Serge . $openParenthesis . '|' . $data['scienceType' . $cpt] . '|';
+			$queryScience_Serge = $queryScience_Serge . $openParenthesis . $separator . $data['scienceType' . $cpt] . '|';
 
 			$scienceQuery       = $data['scienceQuery' . $cpt];
 			$scienceQuery       = urlencode($scienceQuery);

@@ -819,7 +819,8 @@ else
 				$closeParenthesis = '';
 				if (!empty($data['openParenthesis' . $cpt]) && $data['openParenthesis' . $cpt] === 'active')
 				{
-					$openParenthesis = '(';
+					$openParenthesis = $separator . '(';
+					$separator = '|';
 					$open ++;
 				}
 
@@ -829,7 +830,7 @@ else
 					$close ++;
 				}
 
-				$queryScience = $queryScience . $openParenthesis . '|' . $data['scienceType' . $cpt] . '|';
+				$queryScience = $queryScience . $openParenthesis . $separator . $data['scienceType' . $cpt] . '|';
 
 				$scienceQuery = $data['scienceQuery' . $cpt];
 				$scienceQuery = urlencode($scienceQuery);
@@ -846,6 +847,7 @@ else
 
 			$cpt ++;
 			$nbscienceType = 'scienceType' . $cpt;
+			$separator = '|';
 		}
 
 		if ($open != $close)
