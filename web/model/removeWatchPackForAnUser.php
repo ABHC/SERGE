@@ -15,9 +15,9 @@ if (!empty($packExist))
 	foreach ($result as $scienceQuery)
 	{
 		// Add query to actual user if query is not already own
-		$checkCol   = array(array('query_arxiv', '=', $scienceQuery['query'], 'AND'),
+		$checkCol   = array(array('query_serge', '=', $scienceQuery['query'], 'AND'),
 												array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
-												array('query_arxiv', '=', $scienceQuery['query'], 'AND'),
+												array('query_serge', '=', $scienceQuery['query'], 'AND'),
 												array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
 		$queryExist = read('queries_science_serge', 'id, owners, active', $checkCol, '', $bdd);
 		$queryExist = $queryExist[0] ?? '';

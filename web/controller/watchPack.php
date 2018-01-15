@@ -152,7 +152,7 @@ $tableNameSource  = 'science_sources_serge';
 $ownersColumn     = 'owners';
 $userId           = ',' . $_SESSION['id'] . ',';
 $keywordQueryId   = 'query_id';
-$queryColumn      = 'query_arxiv';
+$queryColumn      = 'query_serge';
 $specialColumn    = ',query_id, id_source ';
 $displayColumn    = 'Query';
 $_SESSION['type'] = 'add';
@@ -169,7 +169,7 @@ if (!empty($data['type']) && $data['type'] === 'create')
 	$ownersColumn     = 'owners';
 	$userId           = ',' . $_SESSION['id'] . ',';
 	$keywordQueryId   = 'query_id';
-	$queryColumn      = 'query_arxiv';
+	$queryColumn      = 'query_serge';
 	$specialColumn    = ',query_id, id_source ';
 	$displayColumn    = 'Query';
 	$_SESSION['type'] = 'create';
