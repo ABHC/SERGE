@@ -344,7 +344,7 @@ def science(now):
 
 		######### RESEARCH SCIENCE ON RSS FEEDS WITH FEEDPARSER MODULE
 		for science_api_pack in request_dictionnary.values():
-			if science_api_pack[4] = "RSS":
+			if science_api_pack[4] == "RSS":
 
 				query_id = science_api_pack[0]
 				link = science_api_pack[1]
@@ -432,7 +432,7 @@ def science(now):
 
 		######### RESEARCH SCIENCE ON JSON FEEDS WITH JSON MODULE
 		for science_api_pack in request_dictionnary.values():
-			if science_api_pack[4] = "JSON":
+			if science_api_pack[4] == "JSON":
 
 				query_id = science_api_pack[0]
 				link = science_api_pack[1]
