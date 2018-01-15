@@ -143,10 +143,10 @@ def decodeLegal(legal_comparator):
 			legal_index = 0
 			keys_find = 0
 
-			while legal_index <= (legal_keys_num-1):
+			while legal_index <= (legal_keys_num - 1):
 				if legal_keys[legal_index] in legal_comparator:
-					keys_find = keys_find+1
-				legal_index = legal_index+1
+					keys_find = keys_find + 1
+				legal_index = legal_index + 1
 
 			if keys_find == legal_keys_num:
 				legal_abstract = "INACTIVE"
@@ -160,12 +160,12 @@ def decodeLegal(legal_comparator):
 			legal_index = 1
 			keys_find = 0
 
-			while legal_index <= (legal_keys_num-1):
+			while legal_index <= (legal_keys_num - 1):
 				if legal_keys[0] in legal_comparator and legal_keys[legal_index] not in legal_comparator:
-					keys_find = keys_find+1
-				legal_index = legal_index+1
+					keys_find = keys_find + 1
+				legal_index = legal_index + 1
 
-			if keys_find == (legal_keys_num-1):
+			if keys_find == (legal_keys_num - 1):
 				legal_abstract = "INACTIVE"
 			else:
 				legal_abstract = "ACTIVE OR UNCERTAIN"
@@ -191,7 +191,7 @@ def decodeLegal(legal_comparator):
 
 
 def requestBuilder(database, query_serge, query_id, owners):
-	"""Function for build from from a standardised serge request all the correspondant queries for all science API used"""
+	"""Function to build queries corresponding to science APIs from a standardised Serge query"""
 
 	query_serge = query_serge.split("|")
 	request_dictionnary = dict()
@@ -217,9 +217,9 @@ def requestBuilder(database, query_serge, query_id, owners):
 
 			for row in rows:
 				if row[1] is not None:
-					request_dictionnary[row[0]] = request_dictionnary[row[0]]+row[1]+component+row[1]
+					request_dictionnary[row[0]] = request_dictionnary[row[0]] + row[1] + component + row[1]
 				else:
-					request_dictionnary[row[0]] = request_dictionnary[row[0]]+component
+					request_dictionnary[row[0]] = request_dictionnary[row[0]] + component
 
 		else:
 			query_call_equivalence = ("SELECT basename, "+"`"+component+"`"+" FROM equivalence_science_serge WHERE active >= 1")
@@ -230,7 +230,7 @@ def requestBuilder(database, query_serge, query_id, owners):
 			call_equivalence.close()
 
 			for row in rows:
-				request_dictionnary[row[0]] = request_dictionnary[row[0]]+row[1]
+				request_dictionnary[row[0]] = request_dictionnary[row[0]] + row[1]
 
 	######### API PACK (QUERY ID, COMPLETE URL, QUERY, ID, TYPE, OWNERS) BUILDING IN DICTIONNARY
 	call_equivalence = database.cursor()
@@ -239,6 +239,6 @@ def requestBuilder(database, query_serge, query_id, owners):
 	call_equivalence.close()
 
 	for row in rows:
-			request_dictionnary[row[0]] = (query_id, row[1]+request_dictionnary[row[0]]+row[2], request_dictionnary[row[0]], row[3], row[4], owners)
+			request_dictionnary[row[0]] = (query_id, row[1] + request_dictionnary[row[0]] + row[2], request_dictionnary[row[0]], row[3], row[4], owners)
 
 	return request_dictionnary

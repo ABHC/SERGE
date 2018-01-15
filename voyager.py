@@ -340,7 +340,7 @@ def science(now):
 		owners = serge_science_query[2].strip()
 
 		######### BUILDING REQUEST FOR SCIENCE API
-		request_dictionnary = requestBuilder(database, query_serge, query_id, owners)
+		request_dictionnary = decoder.requestBuilder(database, query_serge, query_id, owners)
 
 		######### RESEARCH SCIENCE ON RSS FEEDS WITH FEEDPARSER MODULE
 		for science_api_pack in request_dictionnary.values():
