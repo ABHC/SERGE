@@ -96,28 +96,19 @@ def decodeQuery(ch):
 
 	######### SCIENCE
 
-	######### ARXIV ENCODING
+	######### SERGE CATEGORIES
+	non_human_query = non_human_query.replace("|title|", "Title like ")
+	non_human_query = non_human_query.replace("|author|", "Author like ")
+	non_human_query = non_human_query.replace("|abstract|", "Abstract like ")
+	non_human_query = non_human_query.replace("|publisher|", "Journals reference : ")
+	non_human_query = non_human_query.replace("|category|", "Subject category : ")
+	non_human_query = non_human_query.replace("|all|", "Search in all datas : ")
+
+	######### SERGE OPERATORS AND SPECIAL CHARACTERS
 	non_human_query = non_human_query.replace("%28", "(").replace("%29", ")")
-
-	######### ARXIV CATEGORIES
-	non_human_query = non_human_query.replace("ti:", "Title like ")
-	non_human_query = non_human_query.replace("au:", "Author like ")
-	non_human_query = non_human_query.replace("abs:", "Abstract like ")
-	non_human_query = non_human_query.replace("jr:", "Journals reference : ")
-	non_human_query = non_human_query.replace("cat:", "Subject category : ")
-	non_human_query = non_human_query.replace("id:", "ID of publication : ")
-	non_human_query = non_human_query.replace("all:", "Search in all datas : ")
-
-	######### DOAJ ENCODING
-	non_human_query = non_human_query.replace("results.", "")
-	non_human_query = non_human_query.replace("bibjson.", "")
-
-	######### DOAJ CATEGORIES
-	non_human_query = non_human_query.replace("title:", "Title like ")
-	non_human_query = non_human_query.replace("author.name:", "Author like")
-	non_human_query = non_human_query.replace("abstract:", "Abstract like ")
-	non_human_query = non_human_query.replace("journal.title:", "Journal name : ")
-	non_human_query = non_human_query.replace("subject.term:", "subject category : ")
+	non_human_query = non_human_query.replace("|", "")
+	non_human_query = non_human_query.replace("#", "")
+	non_human_query = non_human_query.replace("NOT", "AND NOT")
 
 	######### EXIT
 	human_query = non_human_query
