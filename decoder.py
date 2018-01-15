@@ -203,7 +203,7 @@ def requestBuilder(database, query_serge, query_id, owners):
 	call_equivalence.close()
 
 	for row in rows:
-		request_dictionnary[row[0]]=u""
+		request_dictionnary[row[0]] = u""
 
 	######### REQUEST BUILDING
 	for component in query_serge:
@@ -222,7 +222,7 @@ def requestBuilder(database, query_serge, query_id, owners):
 					request_dictionnary[row[0]] = request_dictionnary[row[0]] + component
 
 		else:
-			query_call_equivalence = ("SELECT basename, "+"`"+component+"`"+" FROM equivalence_science_serge WHERE active >= 1")
+			query_call_equivalence = ("SELECT basename, `"+component+"` FROM equivalence_science_serge WHERE active >= 1")
 
 			call_equivalence = database.cursor()
 			call_equivalence.execute(query_call_equivalence)

@@ -805,6 +805,7 @@ if ($emailIsCheck && !empty($data['scienceQuerySubmit']) && $data['scienceQueryS
 	$close                       = 0;
 	$nbscienceType               = 'scienceType0';
 	$queryScience_Serge          = '';
+	$separator                   = '';
 	$_SESSION['cptScienceQuery'] = 3;
 
 	while(!empty($data[$nbscienceType]) && !empty($data['scienceQuery' . $cpt]))
@@ -812,12 +813,12 @@ if ($emailIsCheck && !empty($data['scienceQuerySubmit']) && $data['scienceQueryS
 		if (!empty($data['andOrNot' . $cpt])
 				&& preg_match("/(^AND$|^OR$|^NOT$)/", $data['andOrNot' . $cpt]))
 		{
-			$queryScience_Serge = $queryScience_Serge . $data['andOrNot' . $cpt] . '|';
+			$queryScience_Serge = $queryScience_Serge . '|' . $data['andOrNot' . $cpt];
 		}
 		elseif (!empty($data['andOrNot' . $cpt])
 						&& !preg_match("/(^AND$|^OR$|^NOT$)/", $data['andOrNot' . $cpt]))
 		{
-			$queryScience_Serge = $queryScience_Serge . 'OR|';
+			$queryScience_Serge = $queryScience_Serge . '|OR';
 		}
 
 		if (isset($selected[$data['scienceType' . $cpt]]))
@@ -826,22 +827,22 @@ if ($emailIsCheck && !empty($data['scienceQuerySubmit']) && $data['scienceQueryS
 			$closeParenthesis = '';
 			if (!empty($data['openParenthesis' . $cpt]) && $data['openParenthesis' . $cpt] === 'active')
 			{
-				$openParenthesis = '(|';
+				$openParenthesis =  $separator . '(';
 				$open ++;
 			}
 
 			if (!empty($data['closeParenthesis' . $cpt]) && $data['closeParenthesis' . $cpt] === 'active')
 			{
-				$closeParenthesis = ')|';
+				$closeParenthesis = '|)';
 				$close ++;
 			}
 
-			$queryScience_Serge = $queryScience_Serge . $openParenthesis . $data['scienceType' . $cpt] . '|';
+			$queryScience_Serge = $queryScience_Serge . $openParenthesis . '|' . $data['scienceType' . $cpt] . '|';
 
 			$scienceQuery       = $data['scienceQuery' . $cpt];
 			$scienceQuery       = urlencode($scienceQuery);
 			$scienceQuery       = preg_replace("/( |:|`|%22|%28|%29)/", '+', $scienceQuery);
-			$queryScience_Serge = $queryScience_Serge . '#' . $scienceQuery . '|' . $closeParenthesis;
+			$queryScience_Serge = $queryScience_Serge . '#' . $scienceQuery . $closeParenthesis;
 		}
 
 		# Cleaning
@@ -853,6 +854,7 @@ if ($emailIsCheck && !empty($data['scienceQuerySubmit']) && $data['scienceQueryS
 
 		$cpt ++;
 		$nbscienceType = 'scienceType' . $cpt;
+		$separator = '|';
 	}
 
 	if ($open != $close)

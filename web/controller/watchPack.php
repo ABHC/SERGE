@@ -805,12 +805,12 @@ else
 			if (!empty($data['andOrNot' . $cpt])
 					&& preg_match("/(^AND$|^OR$|^NOT$)/", $data['andOrNot' . $cpt]))
 			{
-				$queryScience = $queryScience . $data['andOrNot' . $cpt] . '|';
+				$queryScience = $queryScience . '|' . $data['andOrNot' . $cpt];
 			}
 			elseif (!empty($data['andOrNot' . $cpt])
 							&& !preg_match("/(^AND$|^OR$|^NOT$)/", $data['andOrNot' . $cpt]))
 			{
-				$queryScience = $queryScience . 'OR|';
+				$queryScience = $queryScience . '|OR';
 			}
 
 			if (isset($selected[$data['scienceType' . $cpt]]))
@@ -819,22 +819,22 @@ else
 				$closeParenthesis = '';
 				if (!empty($data['openParenthesis' . $cpt]) && $data['openParenthesis' . $cpt] === 'active')
 				{
-					$openParenthesis = '(|';
+					$openParenthesis = '(';
 					$open ++;
 				}
 
 				if (!empty($data['closeParenthesis' . $cpt]) && $data['closeParenthesis' . $cpt] === 'active')
 				{
-					$closeParenthesis = ')|';
+					$closeParenthesis = '|)';
 					$close ++;
 				}
 
-				$queryScience = $queryScience . $openParenthesis . $data['scienceType' . $cpt] . '|';
+				$queryScience = $queryScience . $openParenthesis . '|' . $data['scienceType' . $cpt] . '|';
 
 				$scienceQuery = $data['scienceQuery' . $cpt];
 				$scienceQuery = urlencode($scienceQuery);
 				$scienceQuery = preg_replace("/( |:|`|%22|%28|%29)/", '+', $scienceQuery);
-				$queryScience = $queryScience . '#' . $scienceQuery . '|' . $closeParenthesis;
+				$queryScience = $queryScience . '#' . $scienceQuery . $closeParenthesis;
 			}
 
 			# Cleaning
