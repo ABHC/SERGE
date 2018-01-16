@@ -83,7 +83,7 @@ def newscast(newscast_args):
 		insertSQL.backToTheFuture(etag, link)
 
 		########### LINK CONNEXION
-		req_results = sergenet.aLinkToThePast(link, 'rss')
+		req_results = sergenet.aLinkToThePast(link, 'fullcontent')
 		rss = req_results[0]
 		feed_error = req_results[1]
 
@@ -351,7 +351,7 @@ def science(now):
 
 				logger_info.info(query_api.encode("utf8")+"\n")
 
-				req_results = sergenet.aLinkToThePast(link, 'rss')
+				req_results = sergenet.aLinkToThePast(link, 'fullcontent')
 				feed_content = req_results[0]
 				feed_error = req_results[1]
 
@@ -439,7 +439,7 @@ def science(now):
 
 				logger_info.info(query_api.encode("utf8")+"\n")
 
-				req_results = sergenet.aLinkToThePast(link, 'rss')
+				req_results = sergenet.aLinkToThePast(link, 'fullcontent')
 				json_content = req_results[0]
 				feed_error = req_results[1]
 
@@ -558,7 +558,7 @@ def patents(now):
 		logger_info.info(query_wipo+"\n")
 		link = ('https://patentscope.wipo.int/search/rss.jsf?query='+query_wipo+'&office=&rss=true&sortOption=Pub+Date+Desc')
 
-		req_results = sergenet.aLinkToThePast(link, 'rss')
+		req_results = sergenet.aLinkToThePast(link, 'fullcontent')
 		rss_wipo = req_results[0]
 		feed_error = req_results[1]
 
