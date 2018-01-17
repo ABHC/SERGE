@@ -848,7 +848,7 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 	rows = call_equivalence.fetchall()
 	call_equivalence.close()
 
-	science_sources_list = []
+	science_origin_list = []
 
 	for row in rows:
 		science_origin_list.append(row)
