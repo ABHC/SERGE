@@ -841,20 +841,20 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 	index = 0
 
 	######### SCIENCE SECTION IN EMAIL
+	if pending_science > 0:
 
 	######### CREATE A LIST OF ALL SOURCES
-	call_equivalence = database.cursor()
-	call_equivalence.execute("SELECT name, id FROM equivalence_science_serge WHERE active >= 1")
-	rows = call_equivalence.fetchall()
-	call_equivalence.close()
+		call_equivalence = database.cursor()
+		call_equivalence.execute("SELECT name, id FROM equivalence_science_serge WHERE active >= 1")
+		rows = call_equivalence.fetchall()
+		call_equivalence.close()
 
-	science_origin_list = []
+		science_origin_list = []
 
-	for row in rows:
-		science_origin_list.append(row)
+		for row in rows:
+			science_origin_list.append(row)
 
-	######### SORT BY ORIGIN
-	if pending_science > 0:
+		######### SORT BY ORIGIN
 		for science_source_attribute in sorted(science_origin_list, key=lambda science_origin_list: science_origin_list[0]):
 			origin_name = science_source_attribute[0]
 			origin_id = science_source_attribute[1]
@@ -878,7 +878,7 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 			elements = len(process_result_list)
 
 			if elements > 0:
-				######### WRITE ORIGIN FOR NEWS
+				######### WRITE ORIGIN FOR SCIENCE
 				newsletter = newsletter + ("""<tr>
 				<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
 				<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
@@ -910,7 +910,7 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 					<td>
 					<br>
 					</td>
-					</tr>""".format(science_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace')))
+					</tr>""".format(couple_results[0], couple_results[1]))
 
 				newsletter = newsletter + ("""</table>
 				</td>
