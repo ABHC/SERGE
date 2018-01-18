@@ -16,17 +16,19 @@ from handshake import databaseConnection
 def twitterConnection():
 	"""Connexion to Twitter API"""
 
-	consumer_key = open("permission/SergeChirp/consumer_key.txt", "r")
-	consumer_key = consumer_key.read().strip()
+	########### CONNECTION TO SERGE DATABASE
+	database = handshake.databaseConnection()
 
-	consumer_secret = open("permission/SergeChirp/consumer_secret.txt", "r")
-	consumer_secret = consumer_secret.read().strip()
+	######### TWITTER TOKENS
+	call_tokens = database.cursor()
+	call_tokens.execute("SELECT consumer_key, consumer_secret, access_token, access_token_secret FROM trweet_tokens")
+	tokens = call_tokens.fetchone()
+	call_tokens.close()
 
-	access_token = open("permission/SergeChirp/access_token.txt", "r")
-	access_token = access_token.read().strip()
-
-	access_token_secret = open("permission/SergeChirp/access_token_secret.txt", "r")
-	access_token_secret = access_token_secret.read().strip()
+	consumer_key = tokens[0]
+	consumer_secret = tokens[1]
+	access_token = tokens[2]
+	access_token_secret = tokens[3]
 
 	auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 	auth.set_access_token(access_token, access_token_secret)
