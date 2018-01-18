@@ -645,10 +645,8 @@ def sergeTelecom(user, register, alert_news_list):
 		message = "{0}, {1} {2}\n{3}".format(user[0:10], alert_lenght, translation, results_string)
 
 	######### OVH TOKENS
-	query_tokens = "SELECT endpoint, application_key, application_secret, consumer_key FROM sms_tokens"
-
 	call_tokens = database.cursor()
-	call_tokens.execute(query_sms_sending, (register))
+	call_tokens.execute("SELECT endpoint, application_key, application_secret, consumer_key FROM sms_tokens")
 	tokens = call_tokens.fetchone()
 	call_tokens.close()
 
