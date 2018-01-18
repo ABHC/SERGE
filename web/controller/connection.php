@@ -4,7 +4,6 @@
 $resultTab             = '';
 $wikiTab               = '';
 $settingTab            = '';
-$ERRORMESSAGE          = '';
 $errorMessage          = '';
 $checkYourEmails       = FALSE;
 $unvalidLink           = FALSE;
