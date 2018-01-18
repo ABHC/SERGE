@@ -3,6 +3,7 @@
 """SERGE alert functions (building and formatting an alert)"""
 
 import MySQLdb
+from math import ceil
 
 ######### IMPORT SERGE SPECIALS MODULES
 import handshake
@@ -682,3 +683,32 @@ def sergeTelecom(user, register, alert_news_list):
 		validityPeriod = 2880,
 		sender = sender[0]
 	)
+
+	######### COUNT SMS CREDIT USED
+	message_length = float(len(message_length))
+	credit_used = ceil(message_length/160)
+	credit_used = int(credit_used)
+
+	######### SMS CREDITS OF THE USER
+	query_user_credits = "SELECT sms_credits FROM users_table_serge WHERE id = %s"
+
+	call_users = database.cursor()
+	call_users.execute(query_user_credits, (register))
+	user_private = call_users.fetchone()
+	call_users.close()
+
+	user_credits = user_credits[0]
+	user_credits = user_credits - credit_used
+
+	update_credits = ("UPDATE users_table_serge SET sms_credits = %s WHERE id = %s")
+
+	########### USER CREDITS UPDATE
+	update_database = database.cursor()
+	try:
+		update_database.execute(update_credits, (user_credits, register))
+		database.commit()
+	except Exception, except_type:
+		database.rollback()
+		logger_error.error("ROLLBACK AT USER CREDITS IN sergeTelecom")
+		logger_error.error(repr(except_type))
+		update_database.close()
