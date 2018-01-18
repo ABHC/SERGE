@@ -89,6 +89,19 @@ def redAlert(user, register, user_id_comma, not_send_news_list, not_send_science
 		######### CALL TO buildAlert FUNCTION
 		alarm.buildAlert(user, user_id_comma, register, alert_news_list, pydate)
 
+		######### CALL TO sergeTelecom FUNCTION if enabled
+		query_sms_authorization = "SELECT sms_authorization FROM users_table_serge WHERE id = %s"
+
+		call_users = database.cursor()
+		call_users.execute(query_sms_authorization, (register))
+		sms_authorization = call_users.fetchone()
+		call_users.close()
+
+		sms_authorization = sms_authorization[0]
+
+		if sms_authorization == True:
+			alarm.sergeTelecom(user, register, alert_news_list)
+
 		######### CALL TO stairwayToUpdate FUNCTION
 		insertSQL.stairwayToUpdate(register, alert_news_list, not_send_science_list, not_send_patents_list, now, predecessor)
 

@@ -39,7 +39,7 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('functionality5_text_index', 'On Serge, you can customize everything, depending on your needs and the time you can devote to your news watch. At any time you can change your options', 'Sur Serge, vous pouvez tout personnaliser, en fonction de vos besoins et du temps que vous pouvez consacrer à votre veille. À tout moment vous pouvez changer vos options', NULL, NULL, NULL),
 ('functionality6_text_index', 'You can navigate through your history, to find articles that you have already received, thanks to a very efficient search engine and convenient criterias of sorting', 'Vous pouvez naviguer dans votre historique, pour retrouver les articles que vous avez déjà reçu, grâce à un moteur de recherche très efficace et des critères de tri pratique', NULL, NULL, NULL),
 ('functionality7_text_index', 'Receive the results of your news watch from your favorite RSS reader', 'Recevez les résultats de votre veille depuis votre liseuse de flux RSS préférée', NULL, NULL, NULL),
-('functionality8_text_index', 'Make your news and branding watch on Twitter. Serge will search for all tweets that match your criteria and you will be able to see how your brand is perceived', 'Faite votre veille d\'actualité et d\'image de marque sur Twitter. Serge cherchera tous les tweets qui correspondent à vos critères et vous pourrez ainsi voir comment votre marque est perçue', NULL, NULL, NULL),
+('functionality8_text_index', 'Make your news and branding watch on Twitter. Serge will search for all tweets that match your criteria and yalertesou will be able to see how your brand is perceived', 'Faite votre veille d\'actualité et d\'image de marque sur Twitter. Serge cherchera tous les tweets qui correspondent à vos critères et vous pourrez ainsi voir comment votre marque est perçue', NULL, NULL, NULL),
 ('functionality9_text_index', 'A wiki will be set up, to classify, annotate and share the news, with your colleagues or in a totally public way', 'Un wiki sera mis en place, afin de classer, annoter et partager les actualités, avec vos collègues ou de manière totalement public', NULL, NULL, NULL),
 ('functionality10_text_index', 'A feature of Serge allows you to receive news as soon as it is found, in the future you will be alerted of a precise news directly by SMS', 'Une fonctionnalité de Serge vous permet de recevoir les actualitées dès qu\'elles sont trouvées, à l\'avenir, vous pourrez être alerté au sujet d\'une actualité précise, directement par SMS', NULL, NULL, NULL),
 ('functionality11_text_index', 'In order to improve your search criteria, statistics about your news watch will be available on the option page', 'Afin d\'améliorer vos critères de recherche des statistiques seront bientôt disponible sur la page Option', NULL, NULL, NULL),
@@ -177,5 +177,6 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('Category', 'Category', 'Categorie', NULL, NULL, NULL),
 ('Date', 'Date', 'Date', NULL, NULL, NULL),
 ('Rate', 'Rate', 'Note', NULL, NULL, NULL),
-('', '', '', NULL, NULL, NULL),
+('alert found', 'alert found', 'alerte trouvée :', NULL, NULL, NULL),
+('alerts found', 'alerts found', 'alertes trouvées :', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);

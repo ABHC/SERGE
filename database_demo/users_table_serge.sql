@@ -5,6 +5,7 @@ CREATE TABLE `users_table_serge` (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
 	`users` text COLLATE utf8mb4_bin NOT NULL,
 	`email` text COLLATE utf8mb4_bin NOT NULL,
+	`phonenumber` text COLLATE utf8mb4_bin NOT NULL,
 	`password` text COLLATE utf8mb4_bin NOT NULL,
 	`salt` text COLLATE utf8mb4_bin NOT NULL,
 	`signup_date` int(11) NOT NULL,
@@ -21,6 +22,7 @@ CREATE TABLE `users_table_serge` (
 	`background_result` varchar(15) COLLATE utf8mb4_bin NOT NULL DEFAULT 'Skyscrapers',
 	`premium_expiration_date` int(11) DEFAULT 0,
 	`email_validation` BOOLEAN NOT NULL DEFAULT 0,
+	`sms_authorization` BOOLEAN NOT NULL DEFAULT 0,
 	`token` varchar(8) COLLATE utf8mb4_bin NOT NULL,
 	PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
