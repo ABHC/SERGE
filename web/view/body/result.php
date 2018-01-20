@@ -91,25 +91,31 @@
 							preg_match("/,[0-9]+,/", $result[$keywordQueryId], $queryId);
 							$queryId = preg_replace("/,/", "", $queryId[0]);
 
-							$queryFieldsName['ti']  = 'Title';
-							$queryFieldsName['au']  = 'Author';
-							$queryFieldsName['abs'] = 'Abstract';
-							$queryFieldsName['cat'] = 'Category';
-							$queryFieldsName['jr']  = 'Reference';
-							$queryFieldsName['all'] = 'All';
+							# Read science search fields
+							include_once('model/readColumns.php');
 
-							$query = $keyword;
-							$query = preg_replace("/%22/", "`", $query);
-							$query = preg_replace("/%28/", "(", $query);
-							$query = preg_replace("/%29/", ")", $query);
-
-							preg_match_all("/[a-z]+:/", $query, $queryFields);
-							foreach ($queryFields[0] as $fields)
+							$nextColumnName = FALSE;
+							foreach ($columnsNames as $columnsName)
 							{
-								preg_match("/^\(/", $query, $openParenthesisDisplay);
+								if ($nextColumnName && $columnsName['Field'] != 'active')
+								{
+									$queryFieldsName[$columnsName['Field']] = $columnsName['Field'];
+								}
+
+								if ($columnsName['Field'] === 'quote')
+								{
+									$nextColumnName = TRUE;
+								}
+							}
+
+							$query = urldecode($keyword);
+
+							preg_match_all("/([^\|]+)\|*/", $query, $queryFields);
+							foreach ($queryFields[1] as $fields)
+							{
+								preg_match("/^\(/", $fields, $openParenthesisDisplay);
 								if (!empty($openParenthesisDisplay[0]))
 								{
-									$query = preg_replace("/^\(/", "", $query);
 									$queryDisplay = $queryDisplay . '
 									<a href="setting?action=editQueryScience&query=' . $queryId . '" >
 										<div class="queryParenthesisView">(</div>
@@ -117,36 +123,38 @@
 									';
 								}
 
-								preg_match("/$fields`[^`]*`/", $query, $fieldInput);
-								$fieldInputPURE = preg_replace("/\+/", "\+", $fieldInput[0]);
-								$query = preg_replace("/$fieldInputPURE/", "", $query);
-								$fieldInput = preg_replace("/(.+:|`)/", "", $fieldInput[0]);
-								$fieldInput = preg_replace("/\+/", " ", $fieldInput);
-								$fields = preg_replace("/(:|`)/", "", $fields);
-								$queryDisplay = $queryDisplay . '
-								<a href="setting?action=editQueryScience&query=' . $queryId . '" >
-									<div class="queryTypeView">' . $queryFieldsName[$fields] . '</div>
-								</a>
-								<a href="setting?action=editQueryScience&query=' . $queryId . '" >
-									<div class="queryKeywordView">' . $fieldInput . '</div>
-								</a>';
-
-								preg_match("/^\)/", $query, $closeParenthesisDisplay);
-								if (!empty($closeParenthesisDisplay[0]))
+								if (!empty($queryFieldsName[$fields]))
 								{
-									$query = preg_replace("/^\)/", "", $query);
 									$queryDisplay = $queryDisplay . '
 									<a href="setting?action=editQueryScience&query=' . $queryId . '" >
-										<div class="queryParenthesisView">)</div>
+									<div class="queryTypeView">' . ucfirst($queryFieldsName[$fields]) . '</div>
+									</a>';
+								}
+
+								preg_match("/#.+/", $fields, $fieldInput);
+								if (!empty($fieldInput[0]))
+								{
+									$fieldInput = preg_replace("/#/", "", $fieldInput[0]);
+									$queryDisplay = $queryDisplay . '
+									<a href="setting?action=editQueryScience&query=' . $queryId . '" >
+									<div class="queryKeywordView">' . $fieldInput . '</div>
+									</a>';
+								}
+
+								preg_match("/^\)/", $fields, $closeParenthesisDisplay);
+								if (!empty($closeParenthesisDisplay[0]))
+								{
+									$queryDisplay = $queryDisplay . '
+									<a href="setting?action=editQueryScience&query=' . $queryId . '" >
+									<div class="queryParenthesisView">)</div>
 									</a>
 									';
 								}
 
-								preg_match("/^\+(AND|OR|NOTAND)\+/", $query, $logicalConnector);
+								preg_match("/^(AND|OR|NOT)$/", $fields, $logicalConnector);
 								if (!empty($logicalConnector[1]))
 								{
-									$query = preg_replace("/^\+(AND|OR|NOTAND)\+/", "", $query);
-									preg_match("/.{1,3}/", $logicalConnector[1], $logicalConnector);
+									preg_match("/.{2,3}/", $logicalConnector[1], $logicalConnector);
 									$queryDisplay = $queryDisplay . '
 									<a href="setting?action=editQueryScience&query=' . $queryId . '" >
 									<div class="query' . ucfirst(strtolower($logicalConnector[0])) . 'View">' . $logicalConnector[0] . '</div>

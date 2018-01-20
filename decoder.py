@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""decoder contains all the functions related to the translation of datas in human language"""
+"""decoder contains all the functions related to the translation of datas in human language. It also contain a function for build from from a standardised serge request all the correspondant queries for all science API used"""
 
 
 def decodeQuery(ch):
@@ -96,28 +96,19 @@ def decodeQuery(ch):
 
 	######### SCIENCE
 
-	######### ARXIV ENCODING
+	######### SERGE CATEGORIES
+	non_human_query = non_human_query.replace("|title|", "Title like ")
+	non_human_query = non_human_query.replace("|author|", "Author like ")
+	non_human_query = non_human_query.replace("|abstract|", "Abstract like ")
+	non_human_query = non_human_query.replace("|publisher|", "Journals reference : ")
+	non_human_query = non_human_query.replace("|category|", "Subject category : ")
+	non_human_query = non_human_query.replace("|all|", "Search in all datas : ")
+
+	######### SERGE OPERATORS AND SPECIAL CHARACTERS
 	non_human_query = non_human_query.replace("%28", "(").replace("%29", ")")
-
-	######### ARXIV CATEGORIES
-	non_human_query = non_human_query.replace("ti:", "Title like ")
-	non_human_query = non_human_query.replace("au:", "Author like ")
-	non_human_query = non_human_query.replace("abs:", "Abstract like ")
-	non_human_query = non_human_query.replace("jr:", "Journals reference : ")
-	non_human_query = non_human_query.replace("cat:", "Subject category : ")
-	non_human_query = non_human_query.replace("id:", "ID of publication : ")
-	non_human_query = non_human_query.replace("all:", "Search in all datas : ")
-
-	######### DOAJ ENCODING
-	non_human_query = non_human_query.replace("results.", "")
-	non_human_query = non_human_query.replace("bibjson.", "")
-
-	######### DOAJ CATEGORIES
-	non_human_query = non_human_query.replace("title:", "Title like ")
-	non_human_query = non_human_query.replace("author.name:", "Author like")
-	non_human_query = non_human_query.replace("abstract:", "Abstract like ")
-	non_human_query = non_human_query.replace("journal.title:", "Journal name : ")
-	non_human_query = non_human_query.replace("subject.term:", "subject category : ")
+	non_human_query = non_human_query.replace("|", "")
+	non_human_query = non_human_query.replace("#", "")
+	non_human_query = non_human_query.replace("NOT", "AND NOT")
 
 	######### EXIT
 	human_query = non_human_query
@@ -143,10 +134,10 @@ def decodeLegal(legal_comparator):
 			legal_index = 0
 			keys_find = 0
 
-			while legal_index <= (legal_keys_num-1):
+			while legal_index <= (legal_keys_num - 1):
 				if legal_keys[legal_index] in legal_comparator:
-					keys_find = keys_find+1
-				legal_index = legal_index+1
+					keys_find = keys_find + 1
+				legal_index = legal_index + 1
 
 			if keys_find == legal_keys_num:
 				legal_abstract = "INACTIVE"
@@ -160,12 +151,12 @@ def decodeLegal(legal_comparator):
 			legal_index = 1
 			keys_find = 0
 
-			while legal_index <= (legal_keys_num-1):
+			while legal_index <= (legal_keys_num - 1):
 				if legal_keys[0] in legal_comparator and legal_keys[legal_index] not in legal_comparator:
-					keys_find = keys_find+1
-				legal_index = legal_index+1
+					keys_find = keys_find + 1
+				legal_index = legal_index + 1
 
-			if keys_find == (legal_keys_num-1):
+			if keys_find == (legal_keys_num - 1):
 				legal_abstract = "INACTIVE"
 			else:
 				legal_abstract = "ACTIVE OR UNCERTAIN"
@@ -188,3 +179,57 @@ def decodeLegal(legal_comparator):
 				legal_abstract = "ACTIVE OR UNCERTAIN"
 
 	return legal_abstract
+
+
+def requestBuilder(database, query_serge, query_id, owners):
+	"""Function to build queries corresponding to science APIs from a standardised Serge query"""
+
+	query_serge = query_serge.split("|")
+	request_dictionnary = dict()
+
+	######### INITIALIZE THE DICTIONNARY KEY
+	call_equivalence = database.cursor()
+	call_equivalence.execute("SELECT basename FROM equivalence_science_serge WHERE active >= 1")
+	rows = call_equivalence.fetchall()
+	call_equivalence.close()
+
+	for row in rows:
+		request_dictionnary[row[0]] = u""
+
+	######### REQUEST BUILDING
+	for component in query_serge:
+		if u"#" in component:
+			component = component.replace("#", "")
+
+			call_equivalence = database.cursor()
+			call_equivalence.execute("SELECT basename, quote FROM equivalence_science_serge WHERE active >= 1")
+			rows = call_equivalence.fetchall()
+			call_equivalence.close()
+
+			for row in rows:
+				if row[1] is not None:
+					request_dictionnary[row[0]] = request_dictionnary[row[0]] + row[1] + component + row[1]
+				else:
+					request_dictionnary[row[0]] = request_dictionnary[row[0]] + component
+
+		else:
+			query_call_equivalence = ("SELECT basename, `"+component+"` FROM equivalence_science_serge WHERE active >= 1")
+
+			call_equivalence = database.cursor()
+			call_equivalence.execute(query_call_equivalence)
+			rows = call_equivalence.fetchall()
+			call_equivalence.close()
+
+			for row in rows:
+				request_dictionnary[row[0]] = request_dictionnary[row[0]] + row[1]
+
+	######### API PACK (QUERY ID, COMPLETE URL, QUERY, ID, TYPE, OWNERS) BUILDING IN DICTIONNARY
+	call_equivalence = database.cursor()
+	call_equivalence.execute("SELECT basename, prelink, postlink, id, type FROM equivalence_science_serge WHERE active >= 1")
+	rows = call_equivalence.fetchall()
+	call_equivalence.close()
+
+	for row in rows:
+			request_dictionnary[row[0]] = (query_id, row[1] + request_dictionnary[row[0]] + row[2], request_dictionnary[row[0]], row[3], row[4], owners)
+
+	return request_dictionnary

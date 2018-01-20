@@ -83,7 +83,7 @@ def newscast(newscast_args):
 		insertSQL.backToTheFuture(etag, link)
 
 		########### LINK CONNEXION
-		req_results = sergenet.aLinkToThePast(link, 'rss')
+		req_results = sergenet.aLinkToThePast(link, 'fullcontent')
 		rss = req_results[0]
 		feed_error = req_results[1]
 
@@ -296,18 +296,15 @@ def newscast(newscast_args):
 
 
 def science(now):
-	"""Function for last patents published by arxiv.org and the Directory of Open Access Journals.
+	"""Function for last patents published by science APIs
 
 		Process :
-		- Queries for Arxiv and Doaj retrieval
-		- Research on Arxiv first and then DOAJ
-		- URL re-building with Arxiv query
-		- Research of last published papers related to the query at Arxiv
+		- Retrieval of SERGE normalized queries
+		- Research on RSS APIs first and then on JSON APIs
+		- URL re-building
+		- Research of last published papers related to the query
 		- If serge find a paper this one is added to the database
-		- If the paper is already saved in the database serge continue to search other papers
-		- URL re-building with DOAJ query
-		- Research of last published papers related to the query at DOAJ
-		- Same routine for content saving"""
+		- If the paper is already saved in the database SERGE continue to search other papers"""
 
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
@@ -319,48 +316,42 @@ def science(now):
 	need_jelly = False
 
 	######### SCIENCE RESEARCH
-	logger_info.info("\n\n######### Last Scientific papers on Arxiv.org (science function) : \n\n")
+	logger_info.info("\n\n######### Last Scientific papers research : \n\n")
 
 	######### CALL TO TABLE queries_science_serge
 	call_science = database.cursor()
-	call_science.execute("SELECT id, query_arxiv, query_doaj, query_hal, owners FROM queries_science_serge WHERE active >= 1")
+	call_science.execute("SELECT id, query_serge, owners FROM queries_science_serge WHERE active >= 1")
 	rows = call_science.fetchall()
 	call_science.close()
 
 	queries_and_owners_science_list = []
 
 	for row in rows:
-		field = (row[0], row[1].strip(), row[2].strip(), row[3].strip(), row[4].strip())
+		field = (row[0], row[1].strip(), row[2].strip())
 		queries_and_owners_science_list.append(field)
 
-	for package_science_queries in queries_and_owners_science_list:
+	for serge_science_query in queries_and_owners_science_list:
 
-		query_id = package_science_queries[0]
-		query_arxiv = package_science_queries[1].strip()
-		query_doaj = package_science_queries[2].strip()
-		query_hal = package_science_queries[3].strip()
-		#query_plos = package_science_queries[3].strip()
-		owners = package_science_queries[4].strip()
+		query_id = serge_science_query[0]
+		query_serge = serge_science_query[1]
+		owners = serge_science_query[2].strip()
 
-		arxiv_pack = ('http://export.arxiv.org/api/query?search_query='+query_arxiv.encode("utf8")+'&sortBy=lastUpdatedDate&start=0&max_results=20', query_id, query_arxiv, 1)
-		doaj_pack = ('https://doaj.org/api/v1/search/articles/'+query_doaj.encode("utf8")+'?pageSize=20&sort=last_updated%3Adesc', query_id, query_doaj, 2)
-		hal_pack = ('http://api.archives-ouvertes.fr/search/?q='+query_hal.encode("utf8")+'&wt=rss&rows=20', query_id, query_hal, 3)
-		#plos_pack = ('http://journals.plos.org/plosone/search/feed/atom?resultsPerPage=30&q=&page=1'+query_plos.encode("utf8")+'&sortOrder=DATE_NEWEST_FIRST&page=1', query_id, query_plos, 4)
-
-		feedparser_search = [arxiv_pack, hal_pack]
-		json_search = [doaj_pack]
+		######### BUILDING REQUEST FOR SCIENCE API
+		request_dictionnary = decoder.requestBuilder(database, query_serge, query_id, owners)
 
 		######### RESEARCH SCIENCE ON RSS FEEDS WITH FEEDPARSER MODULE
-		for science_api_pack in feedparser_search:
-			link = science_api_pack[0].strip()
-			query_id = science_api_pack[1]
-			query_api = science_api_pack[2]
-			id_rss = science_api_pack[3]
+		for science_api_pack in request_dictionnary.values():
+			if science_api_pack[4] == "RSS":
 
-			if query_api:
+				query_id = science_api_pack[0]
+				link = science_api_pack[1]
+				query_api = science_api_pack[2]
+				api_id = science_api_pack[3]
+				owners = science_api_pack[5]
+
 				logger_info.info(query_api.encode("utf8")+"\n")
 
-				req_results = sergenet.aLinkToThePast(link, 'rss')
+				req_results = sergenet.aLinkToThePast(link, 'fullcontent')
 				feed_content = req_results[0]
 				feed_error = req_results[1]
 
@@ -425,28 +416,30 @@ def science(now):
 
 								########### ITEM BUILDING
 								post_title = escaping(post_title)
-								item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
+								item = (post_title, post_link, post_date, api_id, keyword_id_comma2, owners)
 								item_update = [post_link]
 
 								########### CALL insertOrUpdate FUNCTION
 								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
-								range_article = range_article+1
+								range_article = range_article + 1
 
 				else:
 					logger_info.warning("Error : the feed is unavailable")
 
 		######### RESEARCH SCIENCE ON JSON FEEDS WITH JSON MODULE
-		for science_api_pack in json_search:
-			link = science_api_pack[0].strip()
-			query_id = science_api_pack[1]
-			query_api = science_api_pack[2]
-			id_rss = science_api_pack[3]
+		for science_api_pack in request_dictionnary.values():
+			if science_api_pack[4] == "JSON":
 
-			if query_api:
+				query_id = science_api_pack[0]
+				link = science_api_pack[1]
+				query_api = science_api_pack[2]
+				api_id = science_api_pack[3]
+				owners = science_api_pack[5]
+
 				logger_info.info(query_api.encode("utf8")+"\n")
 
-				req_results = sergenet.aLinkToThePast(link, 'rss')
+				req_results = sergenet.aLinkToThePast(link, 'fullcontent')
 				json_content = req_results[0]
 				feed_error = req_results[1]
 
@@ -510,13 +503,13 @@ def science(now):
 
 								########### ITEM BUILDING
 								post_title = escaping(post_title)
-								item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
+								item = (post_title, post_link, post_date, api_id, keyword_id_comma2, owners)
 								item_update = [post_link]
 
 								########### CALL  FUNCTION
 								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
-								range_article = range_article+1
+								range_article = range_article + 1
 
 				else:
 					logger_info.warning("Error : the json API is unavailable")
@@ -565,7 +558,7 @@ def patents(now):
 		logger_info.info(query_wipo+"\n")
 		link = ('https://patentscope.wipo.int/search/rss.jsf?query='+query_wipo+'&office=&rss=true&sortOption=Pub+Date+Desc')
 
-		req_results = sergenet.aLinkToThePast(link, 'rss')
+		req_results = sergenet.aLinkToThePast(link, 'fullcontent')
 		rss_wipo = req_results[0]
 		feed_error = req_results[1]
 

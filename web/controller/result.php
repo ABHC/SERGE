@@ -75,11 +75,11 @@ if (!empty($data['resultType']))
 		$newsActive      = '';
 		$tableName       = 'result_science_serge';
 		$tableNameQuery  = 'queries_science_serge';
-		$tableNameSource = 'science_sources_serge';
+		$tableNameSource = 'equivalence_science_serge';
 		$ownersColumn    = 'owners';
 		$userId          = ',' . $_SESSION['id'] . ',';
 		$keywordQueryId  = 'query_id';
-		$queryColumn     = 'query_arxiv';
+		$queryColumn     = 'query_serge';
 		$specialColumn   = ',query_id, id_source ';
 		$displayColumn   = var_get_t('title2Science_table_results', $bdd);
 	}

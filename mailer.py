@@ -121,7 +121,7 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 
 	elif mail_design[0] == "masterword":
 		query_newswords = "SELECT keyword, id FROM keyword_news_serge WHERE applicable_owners_sources LIKE %s AND active > 0"
-		query_sciencewords = "SELECT query_arxiv, id FROM queries_science_serge WHERE owners LIKE %s AND active > 0"
+		query_sciencewords = "SELECT query_serge, id FROM queries_science_serge WHERE owners LIKE %s AND active > 0"
 		query_wipo_query = "SELECT query, id FROM queries_wipo_serge WHERE owners LIKE %s AND active > 0"
 
 		call_words = database.cursor()
@@ -720,6 +720,9 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list, style, background_filename):
 	"""Formatting function for emails, apply the formatting by sources"""
 
+	########### CONNECTION TO SERGE DATABASE
+	database = handshake.databaseConnection()
+
 	######### PENDING LINKS
 	pending_all = pending_news+pending_science+pending_patents
 
@@ -765,9 +768,9 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 
 	index = 0
 
-	######### ECRITURE NEWS
+	######### SCIENCE SECTION IN EMAIL
 	if pending_news > 0:
-		######### ECRITURE ORIGIN FOR NEWS
+		######### SORT ORIGIN FOR NEWS
 		for couple_source_attribute in sorted(news_origin_list, key=lambda news_origin_field: news_origin_field[0]):
 			origin_name = couple_source_attribute[0]
 			origin_id = couple_source_attribute[1]
@@ -791,6 +794,7 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 			elements = len(process_result_list)
 
 			if elements > 0:
+				######### WRITE ORIGIN FOR NEWS
 				newsletter = newsletter + ("""<tr>
 				<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
 				<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
@@ -806,6 +810,7 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 				</td>
 				</tr>""".format(origin_name.strip().encode('ascii', errors='xmlcharrefreplace')))
 
+				######### NEWS WRITING
 				for couple_results in process_result_list:
 					newsletter = newsletter + ("""<tr>
 					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
@@ -835,144 +840,91 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 
 	index = 0
 
-	######### ECRITURE SCIENCE
+	######### SCIENCE SECTION IN EMAIL
 	if pending_science > 0:
-		new_papers = 0
 
-		######### CHECKING FOR ARXIV PAPERS
-		while index < pending_science:
-			science_attributes = not_send_science_list[index]
+	######### CREATE A LIST OF ALL SOURCES
+		call_equivalence = database.cursor()
+		call_equivalence.execute("SELECT name, id FROM equivalence_science_serge WHERE active >= 1")
+		rows = call_equivalence.fetchall()
+		call_equivalence.close()
 
-			if science_attributes[3] == 0:
-				new_papers = new_papers+1
+		science_origin_list = []
 
-			index = index+1
+		for row in rows:
+			science_origin_list.append(row)
 
-		if new_papers > 0:
-			newsletter = newsletter + ("""<tr>
-			<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
-			<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
-			<tr>
-			<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			<table cellspacing="0" cellpadding="0" border="0" width="100%">
-			<tr>
-			<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
-			<table cellspacing="0" cellpadding="0" border="0" width="100%">
-			<tr>
-			<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">ArXiv.org</h2>
-			</td>
-			</tr>""")
+		######### SORT BY ORIGIN
+		for science_source_attribute in sorted(science_origin_list, key=lambda science_origin_list: science_origin_list[0]):
+			origin_name = science_source_attribute[0]
+			origin_id = science_source_attribute[1]
+			process_result_list = []
+			index = 0
 
-		index = 0
+			while index < pending_science:
+				science_attributes = not_send_science_list[index]
 
-		######### ARXIV'S PAPERS WRITING
-		while index < pending_science and new_papers > 0:
-			science_attributes = not_send_science_list[index]
+				if origin_id == science_attributes[3]:
 
-			if science_attributes[3] == 0:
+					if science_attributes[1].isupper() is True:
+						process_result = (science_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize())
+					else:
+						process_result = (science_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'))
 
-				if science_attributes[1].isupper() is True:
-					science_attributes = (science_attributes[0], science_attributes[1].lower().capitalize(), science_attributes[2], science_attributes[3])
+					process_result_list.append(process_result)
 
+				index = index+1
+
+			elements = len(process_result_list)
+
+			if elements > 0:
+				######### WRITE ORIGIN FOR SCIENCE
 				newsletter = newsletter + ("""<tr>
-				<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
+				<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
+				<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+				<tr>
+				<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+				<table cellspacing="0" cellpadding="0" border="0" width="100%">
+				<tr>
+				<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
+				<table cellspacing="0" cellpadding="0" border="0" width="100%">
+				<tr>
+				<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+				<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
 				</td>
-				<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
-				<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
-				</a>
+				</tr>""".format(origin_name.strip().encode('ascii', errors='xmlcharrefreplace')))
+
+				######### SCIENTIFIC PAPERS WRITING
+				for couple_results in process_result_list:
+					newsletter = newsletter + ("""<tr>
+					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+					&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
+					</td>
+					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+					<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+					<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
+					</a>
+					</td>
+					</tr>
+					<tr>
+					<td>
+					<br>
+					</td>
+					</tr>""".format(couple_results[0], couple_results[1]))
+
+				newsletter = newsletter + ("""</table>
 				</td>
 				</tr>
-				<tr>
-				<td>
-				<br>
-				</td>
-				</tr>""".format(science_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace')))
-
-			index = index+1
-
-			newsletter = newsletter + ("""</table>
-			</td>
-			</tr>
-			</table>
-			</td>
-			</tr>
-			</table>
-			</td>
-			</tr>""")
-
-		index = 0
-		new_papers = 0
-
-		######### CHECKING FOR DOAJ PAPERS
-		while index < pending_science:
-			science_attributes = not_send_science_list[index]
-
-			if science_attributes[3] == 1:
-				new_papers = new_papers+1
-
-			index = index+1
-
-		if new_papers > 0:
-			newsletter = newsletter + ("""<tr>
-			<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
-			<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
-			<tr>
-			<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			<table cellspacing="0" cellpadding="0" border="0" width="100%">
-			<tr>
-			<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
-			<table cellspacing="0" cellpadding="0" border="0" width="100%">
-			<tr>
-			<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">Directory Of Open Access Journals (DOAJ)</h2>
-			</td>
-			</tr>""")
-
-		index = 0
-
-		######### DOAJ'S PAPERS WRITING
-		while index < pending_science and new_papers > 0:
-			science_attributes = not_send_science_list[index]
-
-			if science_attributes[3] == 1:
-
-				if science_attributes[1].isupper() is True:
-					science_attributes = (science_attributes[0], science_attributes[1].lower().capitalize(), science_attributes[2], science_attributes[3])
-
-				newsletter = newsletter + ("""<tr>
-				<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
-				</td>
-				<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
-				<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
-				</a>
+				</table>
 				</td>
 				</tr>
-				<tr>
-				<td>
-				<br>
+				</table>
 				</td>
-				</tr>""".format(science_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace')))
+				</tr>""")
 
-			index = index+1
+		index = 0
 
-			newsletter = newsletter + ("""</table>
-			</td>
-			</tr>
-			</table>
-			</td>
-			</tr>
-			</table>
-			</td>
-			</tr>""")
-
-	index = 0
-
-	######### ECRITURE PATENTS
+	######### PATENTS SECTION IN EMAIL
 	if pending_patents > 0:
 		newsletter = newsletter + ("""<tr>
 		<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">

@@ -61,15 +61,15 @@ if (!empty($packExist))
 	foreach ($result as $scienceQuery)
 	{
 		// Add query to actual user if query is not already own
-		$checkCol = array(array('query_arxiv', '=', $scienceQuery['query'], 'AND'),
+		$checkCol = array(array('query_serge', '=', $scienceQuery['query'], 'AND'),
 											array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
-											array('query_arxiv', '=', $scienceQuery['query'], 'AND'),
+											array('query_serge', '=', $scienceQuery['query'], 'AND'),
 											array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
 		$queryExist = read('queries_science_serge', '', $checkCol, '', $bdd);
 
 		if (!$queryExist)
 		{
-			$checkCol   = array(array('query_arxiv', '=', $scienceQuery['query'], ''));
+			$checkCol   = array(array('query_serge', '=', $scienceQuery['query'], ''));
 			$queryExist = read('queries_science_serge', 'id, owners, active', $checkCol, '', $bdd);
 			$queryExist = $queryExist[0] ?? '';
 
@@ -83,27 +83,8 @@ if (!empty($packExist))
 			}
 			else
 			{
-				// Creation of Doaj query
-				$doajEq['ti']     = 'bibjson.title';
-				$doajEq['au']     = 'bibjson.author.name';
-				$doajEq['abs']    = 'bibjson.abstract';
-				$doajEq['cat']    = 'bibjson.subject.term';
-				$doajEq['all:']    = '';
-				$doajEq['OR']     = 'OR';
-				$doajEq['AND']    = 'AND';
-				$doajEq['NOTAND'] = 'NOT';
-				$doajEq['+']      = ' ';
-
-				$queryDoaj = $scienceQuery['query'];
-
-				foreach($doajEq as $keyArxiv => $eqDoaj)
-				{
-						$queryDoaj = str_replace($keyArxiv, $eqDoaj, $queryDoaj);
-				}
-
 				// Add query
-				$insertCol = array(array('query_arxiv', $scienceQuery['query']),
-													array('query_doaj', $queryDoaj),
+				$insertCol = array(array('query_serge', $scienceQuery['query']),
 													array('owners', ',' . $_SESSION['id'] . ','),
 													array('active', 1));
 				$execution = insert('queries_science_serge', $insertCol, '', '', $bdd);

@@ -297,14 +297,28 @@
 						echo '<div class="ghostSpace"></div>';
 					}
 
-					$selected['ti']  = '';
-					$selected['au']  = '';
-					$selected['abs'] = '';
-					$selected['jr']  = '';
-					$selected['cat'] = '';
-					$selected['all'] = '';
-					$data['scienceType' . $cpt]            = $data['scienceType' . $cpt] ?? '';
-					$selected[$data['scienceType' . $cpt]] = 'selected';
+					include_once('model/readColumns.php');
+
+					$nextColumnName = FALSE;
+					foreach ($columnsNames as $columnsName)
+					{
+						if ($nextColumnName && $columnsName['Field'] != 'active')
+						{
+							$selected[$columnsName['Field']] = '';
+						}
+
+						if ($columnsName['Field'] === 'quote')
+						{
+							$nextColumnName = TRUE;
+						}
+					}
+
+					$data['scienceType' . $cpt] = $data['scienceType' . $cpt] ?? '';
+
+					if (!empty($data['scienceType' . $cpt]))
+					{
+						$selected[$data['scienceType' . $cpt]] = 'selected';
+					}
 
 					$data['openParenthesis' . $cpt]    = $data['openParenthesis' . $cpt] ?? '';
 					$checked['openParenthesis' . $cpt] = '';
@@ -317,13 +331,14 @@
 					echo '
 					<input type="checkbox" id="openParenthesis' . $cpt . '" name="openParenthesis' . $cpt . '" value="active" ' .  $checked['openParenthesis' . $cpt] . '/>
 					<label class="queryParenthesis" for="openParenthesis' . $cpt . '">(</label>
-					<select title="Type" class="queryType" name="scienceType' . $cpt . '" id="scienceType0' . $cpt . '">
-						<option value="ti" ' . $selected['ti'] . '>Title</option>
-						<option value="au" ' . $selected['au'] . '>Author</option>
-						<option value="abs" ' . $selected['abs'] . '>Abstract</option>
-						<option value="jr" ' . $selected['jr'] . '>Reference</option>
-						<option value="cat" ' . $selected['cat'] . '>Category</option>
-						<option value="all" ' . $selected['all'] . '>All</option>
+					<select title="Type" class="queryType" name="scienceType' . $cpt . '" id="scienceType0' . $cpt . '">';
+
+					foreach ($selected as $searchField => $selectedSearchField)
+					{
+						echo '<option value="' . $searchField . '" ' . $selectedSearchField . '>' . ucfirst($searchField) . '</option>';
+					}
+
+					echo '
 					</select>
 					<span class="arrDownBorder">▾</span>
 					<input type="text" class="query" name="scienceQuery' . $cpt . '" id="scienceQuery0' . $cpt . '" placeholder="Keyword" value="' .  $data['scienceQuery' . $cpt] . '"/>';
@@ -340,25 +355,25 @@
 
 					$cpt++;
 
-					$checked['OR']     = '';
-					$checked['AND']    = '';
-					$checked['NOTAND'] = '';
-					$data['andOrAndnot' . $cpt]           = $data['andOrAndnot' . $cpt] ?? '';
-					$checked[$data['andOrAndnot' . $cpt]] = 'checked';
+					$checked['OR']  = '';
+					$checked['AND'] = '';
+					$checked['NOT'] = '';
+					$data['andOrNot' . $cpt]           = $data['andOrNot' . $cpt] ?? '';
+					$checked[$data['andOrNot' . $cpt]] = 'checked';
 
-					if (empty($data['andOrAndnot' . $cpt]))
+					if (empty($data['andOrNot' . $cpt]))
 					{
 						$checked['OR'] = 'checked';
 					}
 
 					$logicalConnector = '
 					<div class="btnList">
-						<input type="radio" id="andOrNotand_AND0' . $cpt . '" name="andOrAndnot' . $cpt . '" value="AND" ' . $checked['AND'] . '>
-						<label class="ANDOrNotand" for="andOrNotand_AND0' . $cpt . '"></label>
-						<input type="radio" id="andOrNotand_OR0' . $cpt . '" name="andOrAndnot' . $cpt . '" value="OR" ' . $checked['OR'] . '>
-						<label class="andORNotand" for="andOrNotand_OR0' . $cpt . '"></label>
-						<input type="radio" id="andOrNotand_NOTAND0' . $cpt . '" name="andOrAndnot' . $cpt . '" value="NOTAND" ' . $checked['NOTAND'] . '>
-						<label class="andOrNOTAND" for="andOrNotand_NOTAND0' . $cpt . '"></label>
+						<input type="radio" id="andOrNot_AND0' . $cpt . '" name="andOrNot' . $cpt . '" value="AND" ' . $checked['AND'] . '>
+						<label class="ANDOrNot" for="andOrNot_AND0' . $cpt . '"></label>
+						<input type="radio" id="andOrNot_OR0' . $cpt . '" name="andOrNot' . $cpt . '" value="OR" ' . $checked['OR'] . '>
+						<label class="andORNot" for="andOrNot_OR0' . $cpt . '"></label>
+						<input type="radio" id="andOrNot_NOT0' . $cpt . '" name="andOrNot' . $cpt . '" value="NOT" ' . $checked['NOT'] . '>
+						<label class="andOrNOT" for="andOrNot_NOT0' . $cpt . '"></label>
 					</div>';
 				}
 				?>
@@ -368,8 +383,6 @@
 			<?php echo $ERROR_SCIENCEQUERY ?? ''; ?>
 			<?php
 			// Read watchPack science query
-
-
 			$checkCol = array(array("pack_id", "=", $data['packId'], "AND"),
 												array("source", "=", "Science", "OR"),
 												array("pack_id", "=", $data['packId'], "AND"),
@@ -399,64 +412,60 @@
 
 				$queryId = $query['id'];
 
-				$queryFieldsName['ti']  = 'Title';
-				$queryFieldsName['au']  = 'Author';
-				$queryFieldsName['abs'] = 'Abstract';
-				$queryFieldsName['cat'] = 'Category';
-				$queryFieldsName['jr']  = 'Reference';
-				$queryFieldsName['all'] = 'All';
-
-				$query = $query['query'];
-				$query = preg_replace("/%22/", "`", $query);
-				$query = preg_replace("/%28/", "(", $query);
-				$query = preg_replace("/%29/", ")", $query);
-
-				preg_match_all("/[a-z]+:/", $query, $queryFields);
-				foreach ($queryFields[0] as $fields)
+				foreach ($selected as $searchField => $selectedSearchField)
 				{
-					preg_match("/^\(/", $query, $openParenthesisDisplay);
+					$queryFieldsName[$searchField] = $searchField;
+				}
+
+				$query = urldecode($query['query']);
+
+				preg_match_all("/([^\|]+)\|*/", $query, $queryFields);
+				foreach ($queryFields[1] as $fields)
+				{
+					preg_match("/^\(/", $fields, $openParenthesisDisplay);
 					if (!empty($openParenthesisDisplay[0]))
 					{
-						$query = preg_replace("/^\(/", "", $query);
 						$queryDisplay = $queryDisplay . '
-						<a href="#" >
+						<a href="" >
 							<div class="queryParenthesisView">(</div>
 						</a>
 						';
 					}
 
-					preg_match("/$fields`[^`]*`/", $query, $fieldInput);
-					$fieldInputPURE = preg_replace("/\+/", "\+", $fieldInput[0]);
-					$query = preg_replace("/$fieldInputPURE/", "", $query);
-					$fieldInput = preg_replace("/(.+:|`)/", "", $fieldInput[0]);
-					$fieldInput = preg_replace("/\+/", " ", $fieldInput);
-					$fields = preg_replace("/(:|`)/", "", $fields);
-					$queryDisplay = $queryDisplay . '
-					<a href="#" >
-						<div class="queryTypeView">' . $queryFieldsName[$fields] . '</div>
-					</a>
-					<a href="#" >
-						<div class="queryKeywordView">' . $fieldInput . '</div>
-					</a>';
+					if (!empty($queryFieldsName[$fields]))
+					{
+						$queryDisplay = $queryDisplay . '
+						<a href="" >
+						<div class="queryTypeView">' . ucfirst($queryFieldsName[$fields]) . '</div>
+						</a>';
+					}
 
-					preg_match("/^\)/", $query, $closeParenthesisDisplay);
+					preg_match("/#.+/", $fields, $fieldInput);
+					if (!empty($fieldInput[0]))
+					{
+						$fieldInput = preg_replace("/#/", "", $fieldInput[0]);
+						$queryDisplay = $queryDisplay . '
+						<a href="" >
+						<div class="queryKeywordView">' . $fieldInput . '</div>
+						</a>';
+					}
+
+					preg_match("/^\)/", $fields, $closeParenthesisDisplay);
 					if (!empty($closeParenthesisDisplay[0]))
 					{
-						$query = preg_replace("/^\)/", "", $query);
 						$queryDisplay = $queryDisplay . '
-						<a href="#" >
-							<div class="queryParenthesisView">)</div>
+						<a href="" >
+						<div class="queryParenthesisView">)</div>
 						</a>
 						';
 					}
 
-					preg_match("/^\+(AND|OR|NOTAND)\+/", $query, $logicalConnector);
+					preg_match("/^(AND|OR|NOT)$/", $fields, $logicalConnector);
 					if (!empty($logicalConnector[1]))
 					{
-						$query = preg_replace("/^\+(AND|OR|NOTAND)\+/", "", $query);
-						preg_match("/.{1,3}/", $logicalConnector[1], $logicalConnector);
+						preg_match("/.{2,3}/", $logicalConnector[1], $logicalConnector);
 						$queryDisplay = $queryDisplay . '
-						<a href="#" >
+						<a href="" >
 						<div class="query' . ucfirst(strtolower($logicalConnector[0])) . 'View">' . $logicalConnector[0] . '</div>
 						</a>
 						';

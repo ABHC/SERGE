@@ -82,7 +82,7 @@ def checkMate():
 			sys.exit()
 
 	######### CHECKING TABLES' NAMES
-	expected_tables_list = ["admin_table_serge", "background_serge", "keyword_news_serge", "language_serge", "patents_sources_serge", "premium_code_table_serge", "price_table_serge", "purchase_table_serge", "queries_science_serge", "queries_wipo_serge", "result_news_serge", "result_patents_serge", "result_science_serge", "rss_serge", "science_sources_serge", "stripe_table_serge", "text_content_serge", "miscellaneous_serge", "newsletter_table_serge", "users_table_serge", "watch_pack_queries_serge", "watch_pack_serge", "captcha_serge"]
+	expected_tables_list = ["admin_table_serge", "background_serge", "keyword_news_serge", "language_serge", "patents_sources_serge", "premium_code_table_serge", "price_table_serge", "purchase_table_serge", "queries_science_serge", "queries_wipo_serge", "result_news_serge", "result_patents_serge", "result_science_serge", "rss_serge", "stripe_table_serge", "text_content_serge", "miscellaneous_serge", "newsletter_table_serge", "users_table_serge", "watch_pack_queries_serge", "watch_pack_serge", "captcha_serge", "equivalence_science_serge"]
 
 	checking.execute(check_tables_name)
 	name_tables = checking.fetchall()
@@ -107,13 +107,12 @@ def checkMate():
 	premium_code_table_serge_numbers = 6
 	price_table_serge_numbers = 4
 	purchase_table_serge_numbers = 8
-	queries_science_serge_numbers = 6
+	queries_science_serge_numbers = 4
 	queries_wipo_serge_numbers = 5
 	result_news_serge_numbers = 10
 	result_patents_serge_numbers = 14
 	result_science_serge_numbers = 10
 	rss_serge_numbers = 7
-	science_sources_serge_numbers = 3
 	stripe_table_serge_numbers = 4
 	text_content_serge_numbers = 6
 	miscellaneous_serge_numbers = 2
@@ -122,6 +121,7 @@ def checkMate():
 	watch_pack_queries_serge_numbers = 4
 	watch_pack_serge_numbers = 10
 	captcha_serge_numbers = 1
+	equivalence_science_serge_numbers = 21
 
 	for name in expected_tables_list:
 		checking.execute(check_numbers_columns, (database_name, name))
@@ -156,13 +156,12 @@ def checkMate():
 	premium_code_table_serge_columns = ["id", "code", "creation_date", "users", "duration_premium", "expiration_date"]
 	price_table_serge_columns = ["id", "price", "currency", "type"]
 	purchase_table_serge_columns = ["id", "user_id", "purchase_date", "duration_premium", "invoice_number", "price", "premium_code_id", "bank_details"]
-	queries_science_serge_columns = ["id", "query_arxiv", "query_doaj", "query_hal", "owners", "active"]
+	queries_science_serge_columns = ["id", "query_serge", "owners", "active"]
 	queries_wipo_serge_columns = ["id", "query", "legal_research", "owners", "active"]
 	result_news_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "id_source", "keyword_id", "owners"]
 	result_patents_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "id_source", "id_query_wipo", "owners", "legal_abstract", "legal_status", "lens_link", "legal_check_date"]
 	result_science_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "id_source", "query_id", "owners"]
 	rss_serge_columns = ["id", "link", "name", "favicon", "owners", "etag", "active"]
-	science_sources_serge_columns = ["id", "link", "name"]
 	stripe_table_serge_columns = ["id", "account_name", "secret_key", "publishable_key"]
 	text_content_serge_columns = ["index_name", "EN", "FR", "ES", "DE", "CN"]
 	miscellaneous_serge_columns = ["name", "value"]
@@ -171,6 +170,7 @@ def checkMate():
 	watch_pack_queries_serge_columns = ["id", "pack_id", "query", "source"]
 	watch_pack_serge_columns = ["id", "search_index", "name", "description", "author", "users", "category", "language", "update_date", "rating"]
 	captcha_serge_columns = ["name"]
+	equivalence_science_serge_columns = ["id", "apikey", "type", "basename", "name", "link", "prelink", "postlink", "AND", "OR", "NOT", "(", ")", "quote", "title", "author", "abstract", "publisher", "category", "all", "active"]
 
 	for name in expected_tables_list:
 

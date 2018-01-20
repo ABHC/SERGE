@@ -70,7 +70,7 @@ foreach($_POST as $key => $val)
 		$key = htmlspecialchars($key);
 		if (preg_match("/radio-s./", $key, $name) ||
 		preg_match("/radio-ks[0-9]+/", $key, $name) ||
-		preg_match("/andOrAndnot[0-9]+/", $key, $name) ||
+		preg_match("/andOrNot[0-9]+/", $key, $name) ||
 		preg_match("/openParenthesis[0-9]+/", $key, $name) ||
 		preg_match("/closeParenthesis[0-9]+/", $key, $name) ||
 		preg_match("/scienceType[0-9]+/", $key, $name) ||
@@ -143,6 +143,23 @@ if (!empty($data['sourceType']))
 		{
 			$_SESSION[$key] = $val;
 		}
+	}
+}
+
+# Read science search fields
+include_once('model/readColumns.php');
+
+$nextColumnName = FALSE;
+foreach ($columnsNames as $columnsName)
+{
+	if ($nextColumnName && $columnsName['Field'] != 'active')
+	{
+		$selected[$columnsName['Field']] = '';
+	}
+
+	if ($columnsName['Field'] === 'quote')
+	{
+		$nextColumnName = TRUE;
 	}
 }
 
@@ -712,50 +729,50 @@ if ($emailIsCheck && !empty($data['action']) && !empty($data['query']) && $data[
 {
 	$checkCol = array(array('id', '=', $data['query'], 'AND'),
 										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
-	$queriesEdit = read('queries_science_serge', 'query_arxiv', $checkCol, '', $bdd);
+	$queriesEdit = read('queries_science_serge', 'query_serge', $checkCol, '', $bdd);
 	$queriesEdit = $queriesEdit[0];
 
-		$query = urldecode($queriesEdit['query_arxiv']);
-		$query = preg_replace("/\"/", '', $query);
-		$query = preg_replace("/(\(|\)|[^: ]+:| AND | NOTAND | OR )/", "|$1", $query);
-		$query = preg_replace("/:/", "|", $query);
-		$queryArray = explode('|', $query);
+	$query = urldecode($queriesEdit['query_serge']);
+	$query = preg_replace("/\"/", '', $query);
+	$query = preg_replace("/(\(|\)|[^: ]+:| AND | NOT | OR )/", "|$1", $query);
+	$query = preg_replace("/:/", "|", $query);
+	$queryArray = explode('|', $query);
 
-		$cpt       = 0;
-		$typeQuery = '';
-		foreach ($queryArray as $queryPart)
+	$cpt       = 0;
+	$typeQuery = '';
+	foreach ($queryArray as $queryPart)
+	{
+		$cptQuery = ceil($cpt/6) - 1;
+		if (preg_match("/(^ AND $|^ NOT $|^ OR $)/",$queryPart, $value))
 		{
-			$cptQuery = ceil($cpt/6) - 1;
-			if (preg_match("/(^ AND $|^ NOTAND $|^ OR $)/",$queryPart, $value))
+			if (($cpt / 6) != intval($cpt / 6))
 			{
-				if (($cpt / 6) != intval($cpt / 6))
-				{
-					$cpt      = (intval($cpt / 6) + 1) * 6;
-					$cptQuery = ceil($cpt/6);
-				}
-				$value = preg_replace("/ /", '', $value[0]);
-				$data['andOrAndnot' . $cptQuery] = $value;
+				$cpt      = (intval($cpt / 6) + 1) * 6;
+				$cptQuery = ceil($cpt/6);
 			}
-			elseif (preg_match("/^\($/",$queryPart))
-			{
-				$data['openParenthesis' . $cptQuery] = 'active';
-			}
-			elseif (preg_match("/^\)$/",$queryPart))
-			{
-				$data['closeParenthesis' . $cptQuery] = 'active';
-			}
-			elseif (!empty($queryPart) && $typeQuery != 'displayed')
-			{
-				$data['scienceType' . $cptQuery] = $queryPart;
-				$typeQuery = 'displayed';
-			}
-			elseif (!empty($queryPart))
-			{
-				$data['scienceQuery' . $cptQuery] = $queryPart;
-				$typeQuery = '';
-			}
-			$cpt++;
+			$value = preg_replace("/ /", '', $value[0]);
+			$data['andOrNot' . $cptQuery] = $value;
 		}
+		elseif (preg_match("/^\($/",$queryPart))
+		{
+			$data['openParenthesis' . $cptQuery] = 'active';
+		}
+		elseif (preg_match("/^\)$/",$queryPart))
+		{
+			$data['closeParenthesis' . $cptQuery] = 'active';
+		}
+		elseif (!empty($queryPart) && $typeQuery != 'displayed')
+		{
+			$data['scienceType' . $cptQuery] = $queryPart;
+			$typeQuery = 'displayed';
+		}
+		elseif (!empty($queryPart))
+		{
+			$data['scienceQuery' . $cptQuery] = $queryPart;
+			$typeQuery = '';
+		}
+		$cpt++;
+	}
 
 		$_SESSION['cptScienceQuery'] = ceil(($cptQuery+1)/3) * 3;
 }
@@ -787,66 +804,50 @@ if ($emailIsCheck && !empty($data['scienceQuerySubmit']) && $data['scienceQueryS
 	$open                        = 0;
 	$close                       = 0;
 	$nbscienceType               = 'scienceType0';
-	$queryFieldsDoaj['ti']       = 'bibjson.title';
-	$queryFieldsDoaj['au']       = 'bibjson.author.name';
-	$queryFieldsDoaj['abs']      = 'bibjson.abstract';
-	$queryFieldsDoaj['cat']      = 'bibjson.subject.term';
-	$queryFieldsDoaj['all']      = '';
-	$queryBoundDoaj['OR']        = 'OR';
-	$queryBoundDoaj['AND']       = 'AND';
-	$queryBoundDoaj['NOTAND']    = 'NOT';
-	$queryScience_Arxiv          = '';
-	$queryScience_Doaj           = '';
+	$queryScience_Serge          = '';
+	$separator                   = '';
 	$_SESSION['cptScienceQuery'] = 3;
 
 	while(!empty($data[$nbscienceType]) && !empty($data['scienceQuery' . $cpt]))
 	{
-		if (!empty($data['andOrAndnot' . $cpt])
-				&& preg_match("/(^AND$|^OR$|^NOTAND$)/", $data['andOrAndnot' . $cpt]))
+		if (!empty($data['andOrNot' . $cpt])
+				&& preg_match("/(^AND$|^OR$|^NOT$)/", $data['andOrNot' . $cpt]))
 		{
-			$queryScience_Arxiv = $queryScience_Arxiv . '+' . $data['andOrAndnot' . $cpt] . '+';
-			$queryScience_Doaj  = $queryScience_Doaj . ' ' . $queryBoundDoaj[$data['andOrAndnot' . $cpt]] . ' ';
+			$queryScience_Serge = $queryScience_Serge . '|' . $data['andOrNot' . $cpt];
 		}
-		elseif (!empty($data['andOrAndnot' . $cpt])
-						&& !preg_match("/(^AND$|^OR$|^NOTAND$)/", $data['andOrAndnot' . $cpt]))
+		elseif (!empty($data['andOrNot' . $cpt])
+						&& !preg_match("/(^AND$|^OR$|^NOT$)/", $data['andOrNot' . $cpt]))
 		{
-			$queryScience_Arxiv = $queryScience_Arxiv . '+OR+';
-			$queryScience_Doaj  = $queryScience_Doaj . ' OR ';
+			$queryScience_Serge = $queryScience_Serge . '|OR';
 		}
 
-		if (preg_match("/(^ti$|^au$|^abs$|^jr$|^cat$|^all$)/", $data['scienceType' . $cpt]))
+		if (isset($selected[$data['scienceType' . $cpt]]))
 		{
 			$openParenthesis  = '';
 			$closeParenthesis = '';
 			if (!empty($data['openParenthesis' . $cpt]) && $data['openParenthesis' . $cpt] === 'active')
 			{
-				$openParenthesis = '%28';
+				$openParenthesis = $separator . '(';
+				$separator = '|';
 				$open ++;
 			}
 
 			if (!empty($data['closeParenthesis' . $cpt]) && $data['closeParenthesis' . $cpt] === 'active')
 			{
-				$closeParenthesis = '%29';
+				$closeParenthesis = '|)';
 				$close ++;
 			}
 
-			$queryScience_Arxiv = $queryScience_Arxiv . $openParenthesis . $data['scienceType' . $cpt] . ':';
-			$queryScience_Doaj  = $queryScience_Doaj . $openParenthesis;
-
-			if (!empty($queryFieldsDoaj[$data['scienceType' . $cpt]]))
-			{
-				$queryScience_Doaj = $queryScience_Doaj . $queryFieldsDoaj[$data['scienceType' . $cpt]] . ':';
-			}
+			$queryScience_Serge = $queryScience_Serge . $openParenthesis . $separator . $data['scienceType' . $cpt] . '|';
 
 			$scienceQuery       = $data['scienceQuery' . $cpt];
 			$scienceQuery       = urlencode($scienceQuery);
 			$scienceQuery       = preg_replace("/( |:|`|%22|%28|%29)/", '+', $scienceQuery);
-			$queryScience_Arxiv = $queryScience_Arxiv . '%22' . $scienceQuery . '%22' . $closeParenthesis;
-			$queryScience_Doaj  = $queryScience_Doaj . '%22' . $scienceQuery . '%22' . $closeParenthesis;
+			$queryScience_Serge = $queryScience_Serge . '#' . $scienceQuery . $closeParenthesis;
 		}
 
 		# Cleaning
-		$data['andOrAndnot' . $cpt]      = '';
+		$data['andOrNot' . $cpt]         = '';
 		$data['openParenthesis' . $cpt]  = '';
 		$data['scienceType' . $cpt]      = '';
 		$data['scienceQuery' . $cpt]     = '';
@@ -854,6 +855,7 @@ if ($emailIsCheck && !empty($data['scienceQuerySubmit']) && $data['scienceQueryS
 
 		$cpt ++;
 		$nbscienceType = 'scienceType' . $cpt;
+		$separator = '|';
 	}
 
 	if ($open != $close)
@@ -861,9 +863,10 @@ if ($emailIsCheck && !empty($data['scienceQuerySubmit']) && $data['scienceQueryS
 		$ERROR_SCIENCEQUERY = 'Invalid query : parenthesis does not match';
 	}
 
-	if (empty($ERROR_SCIENCEQUERY) && !empty($queryScience_Arxiv) && !empty($queryScience_Doaj))
+	if (empty($ERROR_SCIENCEQUERY) && !empty($queryScience_Serge))
 	{
-		$ERROR_SCIENCEQUERY = addNewScienceQuery($queryScience_Arxiv, $queryScience_Doaj, $bdd);
+		$queryScience_Serge = preg_replace("/\|$/", "", $queryScience_Serge);
+		$ERROR_SCIENCEQUERY = addNewScienceQuery($queryScience_Serge, $bdd);
 	}
 }
 

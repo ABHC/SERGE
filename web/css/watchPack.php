@@ -1243,22 +1243,22 @@ if ($_SESSION['type'] === 'create')
 		transition: all 0.3s;
 	}
 
-	.ANDOrNotand,
-	.andORNotand,
-	.andOrNOTAND
+	.ANDOrNot,
+	.andORNot,
+	.andOrNOT
 	{
 		margin-right: 2px;
 		margin-left: 2px;
 	}
 
-	[type="radio"]:not(:checked) + .ANDOrNotand,
-	[type="radio"]:not(:checked) + .andORNotand,
-	[type="radio"]:not(:checked) + .andOrNOTAND
+	[type="radio"]:not(:checked) + .ANDOrNot,
+	[type="radio"]:not(:checked) + .andORNot,
+	[type="radio"]:not(:checked) + .andOrNOT
 	{
 		order: -1;
 	}
 
-	[type="radio"]:not(:checked) + .ANDOrNotand:before
+	[type="radio"]:not(:checked) + .ANDOrNot:before
 	{
 		content: '';
 		position: absolute;
@@ -1272,7 +1272,7 @@ if ($_SESSION['type'] === 'create')
 		transition: all .6s;
 	}
 
-	[type="radio"]:not(:checked) + .andORNotand:before
+	[type="radio"]:not(:checked) + .andORNot:before
 	{
 		content: '';
 		position: absolute;
@@ -1286,7 +1286,7 @@ if ($_SESSION['type'] === 'create')
 		transition: all .6s;
 	}
 
-	[type="radio"]:not(:checked) + .andOrNOTAND:before
+	[type="radio"]:not(:checked) + .andOrNOT:before
 	{
 		content: '';
 		position: absolute;
@@ -1300,7 +1300,7 @@ if ($_SESSION['type'] === 'create')
 		transition: all .6s;
 	}
 
-	[type="radio"]:checked + .ANDOrNotand:before
+	[type="radio"]:checked + .ANDOrNot:before
 	{
 		content: '';
 		position: absolute;
@@ -1314,7 +1314,7 @@ if ($_SESSION['type'] === 'create')
 		transition: all .3s;
 	}
 
-	[type="radio"]:checked + .andORNotand:before
+	[type="radio"]:checked + .andORNot:before
 	{
 		content: '';
 		position: absolute;
@@ -1328,7 +1328,7 @@ if ($_SESSION['type'] === 'create')
 		transition: all .3s;
 	}
 
-	[type="radio"]:checked + .andOrNOTAND:before
+	[type="radio"]:checked + .andOrNOT:before
 	{
 		content: '';
 		position: absolute;
@@ -1342,7 +1342,7 @@ if ($_SESSION['type'] === 'create')
 		transition: all .3s;
 	}
 
-	[type="radio"]:not(:checked) + .ANDOrNotand:after
+	[type="radio"]:not(:checked) + .ANDOrNot:after
 	{
 		content: 'AND';
 		position: absolute;
@@ -1353,7 +1353,7 @@ if ($_SESSION['type'] === 'create')
 		text-align: center;
 	}
 
-	[type="radio"]:not(:checked) + .andORNotand:after
+	[type="radio"]:not(:checked) + .andORNot:after
 	{
 		content: 'OR';
 		position: absolute;
@@ -1364,7 +1364,7 @@ if ($_SESSION['type'] === 'create')
 		text-align: center;
 	}
 
-	[type="radio"]:not(:checked) + .andOrNOTAND:after
+	[type="radio"]:not(:checked) + .andOrNOT:after
 	{
 		content: 'NOT';
 		position: absolute;
@@ -1375,7 +1375,7 @@ if ($_SESSION['type'] === 'create')
 		text-align: center;
 	}
 
-	[type="radio"]:checked + .ANDOrNotand:after
+	[type="radio"]:checked + .ANDOrNot:after
 	{
 		content: 'AND';
 		position: absolute;
@@ -1386,7 +1386,7 @@ if ($_SESSION['type'] === 'create')
 		text-align: center;
 	}
 
-	[type="radio"]:checked + .andORNotand:after
+	[type="radio"]:checked + .andORNot:after
 	{
 		content: 'OR';
 		position: absolute;
@@ -1397,7 +1397,7 @@ if ($_SESSION['type'] === 'create')
 		text-align: center;
 	}
 
-	[type="radio"]:checked + .andOrNOTAND:after
+	[type="radio"]:checked + .andOrNOT:after
 	{
 		content: 'NOT';
 		position: absolute;
@@ -1408,21 +1408,21 @@ if ($_SESSION['type'] === 'create')
 		text-align: center;
 	}
 
-	[type="radio"]:checked + .ANDOrNotand
+	[type="radio"]:checked + .ANDOrNot
 	{
 		margin-left: 20px;
 		margin-right: 20px;
 		order: 3;
 	}
 
-	[type="radio"]:checked + .andORNotand
+	[type="radio"]:checked + .andORNot
 	{
 		margin-left: 20px;
 		margin-right: 20px;
 		order: 3;
 	}
 
-	[type="radio"]:checked + .andOrNOTAND
+	[type="radio"]:checked + .andOrNOT
 	{
 		margin-left: 20px;
 		margin-right: 20px;

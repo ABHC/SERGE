@@ -14,7 +14,7 @@ def aLinkToThePast(link, content_type):
 	logger_info = logging.getLogger("info_log")
 
 	try:
-		if content_type == 'rss':
+		if content_type == 'fullcontent':
 			req = requests.get(link, headers={'User-Agent': "Serge Browser"}, timeout=15)
 			req.encoding = "utf8"
 			content_link = req.text

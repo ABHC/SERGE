@@ -4,7 +4,6 @@
 $resultTab             = '';
 $wikiTab               = '';
 $settingTab            = '';
-$ERRORMESSAGE          = '';
 $errorMessage          = '';
 $checkYourEmails       = FALSE;
 $unvalidLink           = FALSE;
@@ -78,7 +77,7 @@ if (!empty($data['pseudo']) && !empty($data['password']))
 		die();
 	}
 
-	$ERRORMESSAGE = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px />' . var_get_t('badIdOrPass_error_connection', $bdd);
+	$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px />' . var_get_t('badIdOrPass_error_connection', $bdd);
 }
 
 # Step 0 for reset passphrase ask for email and captacha

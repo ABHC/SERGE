@@ -66,7 +66,7 @@ def ofSourceAndName(now):
 			favicon_link = "https://www.google.com/s2/favicons?domain="+link
 
 			########### RSS FEED RECOVERY
-			req_results = sergenet.aLinkToThePast(link, 'rss')
+			req_results = sergenet.aLinkToThePast(link, 'fullcontent')
 			rss = req_results[0]
 			rss_error = req_results[1]
 
@@ -166,7 +166,7 @@ def ofSourceAndName(now):
 			if rss_name is None or refresh_string in rss_name:
 
 				########### RSS FEED RECOVERY
-				req_results = sergenet.aLinkToThePast(link, 'rss')
+				req_results = sergenet.aLinkToThePast(link, 'fullcontent')
 				rss = req_results[0]
 				rss_error = req_results[1]
 
