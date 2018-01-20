@@ -17,7 +17,7 @@ def twitterConnection():
 	"""Connexion to Twitter API"""
 
 	########### CONNECTION TO SERGE DATABASE
-	database = handshake.databaseConnection()
+	database = databaseConnection()
 
 	######### TWITTER TOKENS
 	call_tokens = database.cursor()
