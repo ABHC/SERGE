@@ -19,7 +19,7 @@ INSERT INTO `text_content_serge` (`index_name`, `EN`, `FR`, `ES`, `DE`, `CN`) VA
 	By researching current news, patents and scientific publications, Serge allows you to stay informed efficiently and gives you time to do something else', 'L\'amélioration des performances grâce à la veille peut souvent prendre du temps.
 En faisant des recherches dans l\'actualité, les brevets et les publications scientifiques, Serge vous permet de rester informé efficacement et vous donne le temps de faire autre chose', NULL, NULL, NULL),
 ('try1_button_index', 'Try for free', 'Essayer gratuitement', NULL, NULL, NULL),
-('try2_button_index', 'Let me try !', 'Laissez moi essayer !', NULL, NULL, NULL),
+('try2_button_index', 'Let me try&nbsp;!', 'Laissez moi essayer&nbsp;!', NULL, NULL, NULL),
 ('comingSoon_button_index', 'Coming soon', 'Fonctionnalités à venir', NULL, NULL, NULL),
 ('functionality1_title_index', 'Follow RSS feeds', 'Suivre les flux RSS', NULL, NULL, NULL),
 ('functionality2_title_index', 'Patents', 'Brevets', 'Patentes', NULL, NULL),
