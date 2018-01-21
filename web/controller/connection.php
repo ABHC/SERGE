@@ -42,6 +42,8 @@ if (!empty($data['pseudo']) && !empty($data['password']))
 										array('email', '=', $data['pseudo'], ''));
 	$userExist = read('users_table_serge', 'salt, users', $checkCol, '',$bdd);
 
+	$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px />&nbsp;' . var_get_t('Bad id', $bdd) . '<br>';
+
 	if (!empty($userExist))
 	{
 		$password = hash('sha256', $userExist[0]['salt'] . $data['password']);
@@ -49,6 +51,8 @@ if (!empty($data['pseudo']) && !empty($data['password']))
 		$checkCol = array(array('users', '=', $userExist[0]['users'], 'AND'),
 											array('password', '=', $password, ''));
 		$result   = read('users_table_serge', 'id, users, email, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, background_result', $checkCol, '',$bdd);
+
+		$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px />&nbsp;' . var_get_t('Bad passphrase', $bdd) . '<br>';
 	}
 
 	# Cleaning
@@ -63,9 +67,10 @@ if (!empty($data['pseudo']) && !empty($data['password']))
 		}
 		$redirect = $_SESSION['redirectFrom'];
 
+		$errorMessage = '';
+
 		session_destroy();
 		session_start();
-
 		$_SESSION['id']            = $result[0]['id'];
 		$_SESSION['pseudo']        = $result[0]['users'];
 		$_SESSION['email']         = $result[0]['email'];
@@ -78,7 +83,7 @@ if (!empty($data['pseudo']) && !empty($data['password']))
 		die();
 	}
 
-	$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px />' . var_get_t('badIdOrPass_error_connection', $bdd);
+
 }
 
 # Step 0 for reset passphrase ask for email and captacha
