@@ -53,6 +53,7 @@
 						if ($ownerWatchPack['id'] == $data['packId'])
 						{
 							echo '<option value="' . $ownerWatchPack['id'] . '" selected>Edit: ' . ucfirst($ownerWatchPack['name']) . '&nbsp;&nbsp;</option>';
+							$packSelected = TRUE;
 						}
 						else
 						{
@@ -87,6 +88,10 @@
 			<textarea name="watchPackDescription" minlength="50" maxlength="300" placeholder="<?php get_t('input4_window0_watchpack', $bdd); ?>"><?php echo $packDetails['description'] ?? ''; ?></textarea>
 		</div>
 
+		<?php
+		if ($packSelected)
+		{
+		?>
 		<div class="keywordManagement">
 			<h2><?php get_t('window2_title_setting', $bdd); ?></h2>
 			<div class="newsInput">
@@ -777,6 +782,9 @@
 			}
 			?>
 		</div>
+		<?php
+		}
+		?>
 	</form>
 	<?php
 	}
