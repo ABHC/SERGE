@@ -177,5 +177,6 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('Category', 'Category', 'Categorie', NULL, NULL, NULL),
 ('Date', 'Date', 'Date', NULL, NULL, NULL),
 ('Rate', 'Rate', 'Note', NULL, NULL, NULL),
-('', '', '', NULL, NULL, NULL),
+('Create watchpack', 'Create watchpack', 'Créer le pack de veille', NULL, NULL, NULL),
+('Save watchpack', 'Save watchpack', 'Sauvegarder le pack de veille', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);

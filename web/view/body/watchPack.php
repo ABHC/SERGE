@@ -40,7 +40,6 @@
 		<div class="dataPackManagement">
 			<h2><?php get_t('input1_window0_watchpack', $bdd); ?></h2>
 			<div>
-				<input title="Add" class="submit" type="submit" name="addNewPack" value="add" />
 				<select name="watchPackList" onchange="this.form.submit();">
 					<option value="0"><?php get_t('select1_window0_watchpack', $bdd); ?>&nbsp;&nbsp;</option>
 					<?php
@@ -86,6 +85,20 @@
 			<?php echo $ERRORMESSAGENEWPACKNAME ?? ''; ?>
 			<h2><?php get_t('titleInput4_window0_watchpack', $bdd); ?></h2>
 			<textarea name="watchPackDescription" minlength="50" maxlength="300" placeholder="<?php get_t('input4_window0_watchpack', $bdd); ?>"><?php echo $packDetails['description'] ?? ''; ?></textarea>
+			<?php
+			if ($packSelected)
+			{
+				?>
+				<input title="" class="submitNewPack" type="submit" name="addNewPack" value="<?php get_t('Save watchpack', $bdd); ?>" />
+				<?php
+			}
+			else
+			{
+				?>
+				<input title="" class="submitNewPack" type="submit" name="addNewPack" value="<?php get_t('Create watchpack', $bdd); ?>" />
+				<?php
+			}
+			?>
 		</div>
 
 		<?php

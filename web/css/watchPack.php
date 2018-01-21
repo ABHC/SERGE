@@ -15,7 +15,7 @@ if ($_SESSION['type'] === 'create')
 	{
 		display: flex;
 		flex-direction: column;
-		justify-content: space-between;
+		justify-content: start;
 		align-items: center;
 		min-height: 100vh;
 		color: #fff;
@@ -267,6 +267,29 @@ if ($_SESSION['type'] === 'create')
 	.submit:hover
 	{
 		background-color: rgba(0,99,149, 0.55);
+	}
+
+	.submitNewPack
+	{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 350px;
+		height: 27px;
+		color: rgb(230,230,230);
+		text-decoration: none;
+		text-align: center;
+		background-color: rgba(84,26,102, 0.55);
+		border-radius: 3px;
+		border: 1px solid rgba(255,255,255, 0.15);
+		margin-top: 10px;
+		cursor: pointer;
+	}
+
+	.submitNewPack:hover
+	{
+		background-color: rgba(91, 37, 108, 0.75);
+		color: rgb(255,255,255);
 	}
 
 	.newsInput
