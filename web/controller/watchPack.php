@@ -594,35 +594,62 @@ else
 		{
 			// Check if source is valid
 			$sourceToTest = escapeshellarg($data['newSource']);
-			$cmd          = '/usr/bin/python /var/www/Serge/checkfeed.py ' . $sourceToTest;
+			$cmd          = 'timeout 25  /usr/bin/python /var/www/Serge/checkfeed.py ' . $sourceToTest;
 
 			# Check if the link is valid
 			exec($cmd, $linkValidation, $errorInCheckfeed);
 
-			if ($linkValidation[0] === 'valid link' && $errorInCheckfeed === 0)
+			if ($errorInCheckfeed === 0)
 			{
-				// Adding new source
-				preg_match('@^(?:http.*://[www.]*)?([^/]+)@i', $data['newSource'], $matches);
-				$insertCol = array(array('link', $data['newSource']),
-													array('owners', ','),
-													array('name', ucfirst($matches[1] . '[!NEW!]')),
-													array('active', 1));
-				$execution = insert('rss_serge', $insertCol, '', '', $bdd);
+				$type = 'link';
+				$cpt  = 0;
+				foreach($linkValidation as $validation)
+				{
+					if ($type === 'link' && $validation !== 'unvalid link')
+					{
+						$source_array[$cpt]['link'] = $validation;
+						$type = 'title';
+					}
+					elseif ($type === 'title')
+					{
+						$source_array[$cpt]['title'] = $validation;
+						$type = 'link';
+						$cpt++;
+					}
+					elseif ($type === 'error')
+					{
+						$ERROR_MESSAGE = $validation . ' ' . $ERROR_MESSAGE;
+						$type = 'link';
+					}
+					else
+					{
+						$ERROR_MESSAGE = $validation . ' ' . $ERROR_MESSAGE;
+						$type = 'error';
+					}
+				}
 
+				foreach($source_array as $sourceData)
+				{
+					// Adding new source
+					$insertCol = array(array('link', $sourceData['link']),
+														array('owners', ','),
+														array('name', $sourceData['title']),
+														array('active', 1));
+					$execution = insert('rss_serge', $insertCol, '', '', $bdd);
 
-				$checkCol     = array(array('link', '=', $data['newSource'], ''));
-				$result       = read('rss_serge', 'id', $checkCol, '', $bdd);
-				$resultSource = $result[0]['id'];
+					$checkCol     = array(array('link', '=', $sourceData['link'], ''));
+					$result       = read('rss_serge', 'id', $checkCol, '', $bdd);
+					$resultSource = $result[0]['id'];
 
-
-				$updateCol = array(array('source', $sources . $resultSource . ','));
-				$checkCol  = array(array('pack_id', '=', $data['packId'], 'AND'),
-													array('query', '=', '[!source!]', ''));
-				$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
+					$updateCol = array(array('source', $sources . $resultSource . ','));
+					$checkCol  = array(array('pack_id', '=', $data['packId'], 'AND'),
+														array('query', '=', '[!source!]', ''));
+					$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
+				}
 			}
 			else
 			{
-				$ERROR_MESSAGE = 'Your link ' . 'return ' . $linkValidation[0] . ',' . $linkValidation[1] . ', please correct your link';
+				$ERROR_MESSAGE = 'Serge can\'t analyse your link';
 			}
 		}
 	}
