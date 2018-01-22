@@ -347,33 +347,60 @@ if ($emailIsCheck && !empty($data['buttonDeleteHistory']) && $data['buttonDelete
 if ($emailIsCheck && !empty($data['sourceType']) && !empty($data['newSource']) && $data['sourceType'] === 'inputSource')
 {
 	$sourceToTest = escapeshellarg($data['newSource']);
-	$cmd          = '/usr/bin/python /var/www/Serge/checkfeed.py ' . $sourceToTest;
+	$cmd          = 'timeout 25  /usr/bin/python /var/www/Serge/checkfeed.py ' . $sourceToTest;
 
 	# Check if the link is valid
 	exec($cmd, $linkValidation, $errorInCheckfeed);
 
-	if ($linkValidation[0] === 'valid link' && $errorInCheckfeed === 0)
+	if ($errorInCheckfeed === 0)
 	{
-		// Check if source is already in bdd
-		$checkCol   = array(array('link', '=', $data['newSource'], ''));
-		$result     = read('rss_serge', 'owners, active', $checkCol, '', $bdd);
-		$sourceInDB = $result[0] ?? '';
-
-		if (empty($sourceInDB))
+		$type = 'link';
+		$cpt  = 0;
+		foreach($linkValidation as $validation)
 		{
-			// Adding new source
-			preg_match('@^(?:http.*://[www.]*)?([^/]+)@i', $data['newSource'], $matches);
-
-			$insertCol = array(array('link', $data['newSource']),
-												array('owners', ',' . $_SESSION['id'] . ','),
-												array('name', ucfirst($matches[1] . '[!NEW!]')),
-												array('active', 1));
-			$execution = insert('rss_serge', $insertCol, '', 'setting', $bdd);
+			if ($type === 'link' && $validation !== 'unvalid link')
+			{
+				$source_array[$cpt]['link'] = $validation;
+				$type = 'title';
+			}
+			elseif ($type === 'title')
+			{
+				$source_array[$cpt]['title'] = $validation;
+				$type = 'link';
+				$cpt++;
+			}
+			elseif ($type === 'error')
+			{
+				$ERROR_MESSAGE = $validation . ' ' . $ERROR_MESSAGE;
+				$type = 'link';
+			}
+			else
+			{
+				$ERROR_MESSAGE = $validation . ' ' . $ERROR_MESSAGE;
+				$type = 'error';
+			}
 		}
-		else
+
+		foreach($source_array as $sourceData)
 		{
+			// Check if source is already in bdd
+			$checkCol   = array(array('link', '=', $sourceData['link'], ''));
+			$result     = read('rss_serge', 'owners, active', $checkCol, '', $bdd);
+			$sourceInDB = $result[0] ?? '';
+
+			if (empty($sourceInDB))
+			{
+				// Adding new source
+				$insertCol = array(array('link', $sourceData['link']),
+				array('owners', ',' . $_SESSION['id'] . ','),
+				array('name', $sourceData['title']),
+				array('active', 1));
+				$execution = insert('rss_serge', $insertCol, '', '', $bdd);
+			}
+			else
+			{
 				$checkCol = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'AND'),
-													array('link', '=', $data['newSource'], ''));
+				array('link', '=', $sourceData['link'], ''));
 				$result   = read('rss_serge', 'owners, active', $checkCol, '', $bdd);
 				$resultActualOwner = $result[0] ?? '';
 
@@ -381,24 +408,20 @@ if ($emailIsCheck && !empty($data['sourceType']) && !empty($data['newSource']) &
 				{
 					// Update owners of existing source with the new onwer
 					$updateCol = array(array('owners', $sourceInDB['owners'] . $_SESSION['id'] . ','),
-														array('active', $sourceInDB['active'] + 1));
-					$checkCol  = array(array('link', '=', $data['newSource'], ''));
+					array('active', $sourceInDB['active'] + 1));
+					$checkCol  = array(array('link', '=', $sourceData['link'], ''));
 					$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
 				}
 				else
 				{
-					$_SESSION['ERROR_MESSAGE'] = 'This source is already in the database';
+					$ERROR_MESSAGE = 'This source is already in the database';
 				}
-		}
-
-		if (isset($linkValidation[1]))
-		{
-			$_SESSION['ERROR_MESSAGE'] = $linkValidation[1];
+			}
 		}
 	}
 	else
 	{
-		$ERROR_MESSAGE = 'Your link ' . 'return ' . $linkValidation[0] . ', ' . $linkValidation[1] . ' please correct your link';
+		$ERROR_MESSAGE = 'Serge can\'t analyse your link';
 	}
 }
 

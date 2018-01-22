@@ -323,7 +323,7 @@
 				<span class="arrDownBorder">▾</span>
 				<input type="url" name="newSource" id="source" placeholder="Source" />
 			</div>
-			<?php echo $ERROR_MESSAGE; ?>
+			<?php echo $ERROR_MESSAGE . '<br>'; ?>
 
 			<div class="inlineButton">
 				<a class="buttonCreatesourcePack" href="watchPack?type=create"><?php get_t('Button1_window2_setting', $bdd); ?></a>

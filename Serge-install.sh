@@ -1236,6 +1236,7 @@ Install_Serge()
 	pip install tweepy
 	pip install bs4
 	pip install requests
+	pip install validators
 
 	# Download Serge
 	git clone https://github.com/ABHC/SERGE.git

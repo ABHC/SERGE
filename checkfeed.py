@@ -6,6 +6,37 @@
 import sys
 import requests
 import feedparser
+import validators
+from BeautifulSoup import BeautifulSoup
+
+FEED_LINKS_ATTRIBUTES = (
+	(('type', 'application/rss+xml'),),
+	(('type', 'application/atom+xml'),),
+	(('type', 'application/rss'),),
+	(('type', 'application/atom'),),
+	(('type', 'application/rdf+xml'),),
+	(('type', 'application/rdf'),),
+	(('type', 'text/rss+xml'),),
+	(('type', 'text/atom+xml'),),
+	(('type', 'text/rss'),),
+	(('type', 'text/atom'),),
+	(('type', 'text/rdf+xml'),),
+	(('type', 'text/rdf'),),
+	(('rel', 'alternate'), ('type', 'text/xml')),
+	(('rel', 'alternate'), ('type', 'application/xml')),
+)
+
+
+def extract_feed_links(html, feed_links_attributes=FEED_LINKS_ATTRIBUTES):
+	soup = BeautifulSoup(html)
+	head = soup.find('head')
+	links = []
+	for attrs in feed_links_attributes:
+		if head:
+			for link in head.findAll('link', dict(attrs)):
+				href = dict(link.attrs).get('href', '')
+				if href:
+					yield unicode(href)
 
 
 def allCheckLong(link):
@@ -93,9 +124,26 @@ def feedMeUp(link):
 
 		if missing_flux is True:
 			flux_error = "missing_flux, "
-			complete_error = flux_error+title_error+entries_error
-			print('unvalid link')
-			print(complete_error)
+			complete_errorBuffer = flux_error+title_error+entries_error
+			errorBuffer = "unvalid link"
+			base_link = link
+			lastCharacter = len(base_link) - 1
+			base_link = base_link[0:lastCharacter]+base_link[lastCharacter].strip("/")
+			page = requests.get(base_link)
+			page = page.content
+			links = extract_feed_links(page)
+			for link in links:
+				errorBuffer = None
+				complete_errorBuffer = None
+				if validators.url(link):
+					feedMeUp(link)
+				else:
+					link = link[0].strip("/")+link[1:]
+					link = base_link+"/"+link
+					feedMeUp(link)
+			if errorBuffer is not None:
+				print(errorBuffer)
+				print(complete_errorBuffer)
 			sys.exit()
 
 		rangemax_article = len(xmldoc.entries)
@@ -142,11 +190,13 @@ def feedMeUp(link):
 
 		if unvalid_count > 0:
 			complete_attribute = "Missing beacon(s) : "+attribute_title+attribute_description+attribute_link+attribute_date
-			print('valid link')
+			print(link)
+			print(xmldoc.feed.title.encode('ascii', errors='xmlcharrefreplace'))
 			print('WARNING : Some beacons are missing, your research may be less efficient \n'+complete_attribute)
 
 		if unvalid_count == 0:
-			print('valid link')
+			print(link)
+			print(xmldoc.feed.title.encode('ascii', errors='xmlcharrefreplace'))
 
 	elif rss_error is True:
 		print('unvalid link')
