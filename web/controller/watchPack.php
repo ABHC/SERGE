@@ -601,30 +601,30 @@ else
 
 			if ($errorInCheckfeed === 0)
 			{
-				$type = 'link';
+				$outputType = 'link';
 				$cpt  = 0;
 				foreach($linkValidation as $validation)
 				{
-					if ($type === 'link' && $validation !== 'unvalid link')
+					if ($outputType === 'link' && $validation !== 'unvalid link')
 					{
 						$source_array[$cpt]['link'] = $validation;
-						$type = 'title';
+						$outputType = 'title';
 					}
-					elseif ($type === 'title')
+					elseif ($outputType === 'title')
 					{
 						$source_array[$cpt]['title'] = $validation;
-						$type = 'link';
+						$outputType = 'link';
 						$cpt++;
 					}
-					elseif ($type === 'error')
+					elseif ($outputType === 'error')
 					{
 						$ERROR_MESSAGE = $validation . ' ' . $ERROR_MESSAGE;
-						$type = 'link';
+						$outputType = 'link';
 					}
 					else
 					{
 						$ERROR_MESSAGE = $validation . ' ' . $ERROR_MESSAGE;
-						$type = 'error';
+						$outputType = 'error';
 					}
 				}
 
