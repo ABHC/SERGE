@@ -1237,6 +1237,7 @@ Install_Serge()
 	pip install bs4
 	pip install requests
 	pip install validators
+	pip install lxml
 
 	# Download Serge
 	git clone https://github.com/ABHC/SERGE.git

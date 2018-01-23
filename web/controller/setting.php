@@ -347,7 +347,7 @@ if ($emailIsCheck && !empty($data['buttonDeleteHistory']) && $data['buttonDelete
 if ($emailIsCheck && !empty($data['sourceType']) && !empty($data['newSource']) && $data['sourceType'] === 'inputSource')
 {
 	$sourceToTest = escapeshellarg($data['newSource']);
-	$cmd          = 'timeout 25  /usr/bin/python /var/www/Serge/checkfeed.py ' . $sourceToTest . ' 2> /var/www/Serge/web/logs/error.log';
+	$cmd          = 'timeout 20  /usr/bin/python /var/www/Serge/checkfeed.py ' . $sourceToTest . ' 2> /var/www/Serge/web/logs/error.log';
 
 	# Check if the link is valid
 	exec($cmd, $linkValidation, $errorInCheckfeed);
@@ -390,6 +390,11 @@ if ($emailIsCheck && !empty($data['sourceType']) && !empty($data['newSource']) &
 
 			if (empty($sourceInDB))
 			{
+				if (empty($sourceData['title']))
+				{
+					$sourceData['title'] = ucfirst($matches[1] . '[!NEW!]');
+				}
+
 				// Adding new source
 				$insertCol = array(array('link', $sourceData['link']),
 				array('owners', ',' . $_SESSION['id'] . ','),

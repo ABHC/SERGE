@@ -594,7 +594,7 @@ else
 		{
 			// Check if source is valid
 			$sourceToTest = escapeshellarg($data['newSource']);
-			$cmd          = 'timeout 25  /usr/bin/python /var/www/Serge/checkfeed.py ' . $sourceToTest . ' 2> /var/www/Serge/web/logs/error.log';
+			$cmd          = 'timeout 20  /usr/bin/python /var/www/Serge/checkfeed.py ' . $sourceToTest . ' 2> /var/www/Serge/web/logs/error.log';
 
 			# Check if the link is valid
 			exec($cmd, $linkValidation, $errorInCheckfeed);
@@ -630,6 +630,11 @@ else
 
 				foreach($source_array as $sourceData)
 				{
+					if (empty($sourceData['title']))
+					{
+						$sourceData['title'] = ucfirst($matches[1] . '[!NEW!]');
+					}
+
 					// Adding new source
 					$insertCol = array(array('link', $sourceData['link']),
 														array('owners', ','),

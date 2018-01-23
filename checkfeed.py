@@ -4,10 +4,12 @@
 
 ######### IMPORT CLASSICAL MODULES
 import sys
+import re
 import requests
+from urlparse import urlparse
 import feedparser
 import validators
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 
 FEED_LINKS_ATTRIBUTES = (
 	(('type', 'application/rss+xml'),),
@@ -24,26 +26,25 @@ FEED_LINKS_ATTRIBUTES = (
 	(('type', 'text/rdf'),),
 	(('rel', 'alternate'), ('type', 'text/xml')),
 	(('rel', 'alternate'), ('type', 'application/xml')),
+	(('href', re.compile("(rss|feed|xml)", re.IGNORECASE)),),
 )
 
 
-def extract_feed_links(html, feed_links_attributes=FEED_LINKS_ATTRIBUTES):
-	soup = BeautifulSoup(html)
-	head = soup.find('head')
+def extractFeedLinks(html, feed_links_attributes=FEED_LINKS_ATTRIBUTES):
+	soup = BeautifulSoup(html, "lxml")
 	links = []
 	for attrs in feed_links_attributes:
-		if head:
-			for link in head.findAll('link', dict(attrs)):
-				href = dict(link.attrs).get('href', '')
-				if href:
-					yield unicode(href)
+		for link in list(set(soup.find_all(['link', 'a'], dict(attrs)))):
+			href = dict(link.attrs).get('href', '')
+			if href:
+				yield unicode(href)
 
 
 def allCheckLong(link):
 	"""Function for standardized requests to feed and internet pages."""
 
 	try:
-		req = requests.get(link, headers={'User-Agent': "Serge Browser"}, timeout=15)
+		req = requests.get(link, headers={'User-Agent': "Serge Browser"}, timeout=5)
 		req.encoding = "utf8"
 		rss = req.text
 		rss_error = False
@@ -86,8 +87,10 @@ def allCheckLong(link):
 	return req_results
 
 
-def feedMeUp(link):
+def feedMeUp(link, recursive):
 	"""Function for checking RSS feeds"""
+
+	global number_links
 
 	########### LINK CONNEXION
 	req_results = allCheckLong(link)
@@ -124,77 +127,27 @@ def feedMeUp(link):
 
 		if missing_flux is True:
 			flux_error = "missing_flux, "
-			complete_errorBuffer = flux_error+title_error+entries_error
-			errorBuffer = "unvalid link"
-			base_link = link
-			lastCharacter = len(base_link) - 1
-			base_link = base_link[0:lastCharacter]+base_link[lastCharacter].strip("/")
-			page = requests.get(base_link)
-			page = page.content
-			links = extract_feed_links(page)
-			for link in links:
-				errorBuffer = None
-				complete_errorBuffer = None
-				if validators.url(link):
-					feedMeUp(link)
-				else:
-					link = link[0].strip("/")+link[1:]
-					link = base_link+"/"+link
-					feedMeUp(link)
-			if errorBuffer is not None:
-				print(errorBuffer)
-				print(complete_errorBuffer)
-			sys.exit()
-
-		rangemax_article = len(xmldoc.entries)
-		range_article = 0 #on initialise la variable range_article qui va servir pour pointer les articles
-		unvalid_count = 0
-
-		while range_article < rangemax_article:
-
-			########### MANDATORY UNIVERSAL FEED PARSER VARIABLES
-			attribute_title = ""
-			attribute_description = ""
-			attribute_link = ""
-			attribute_date = ""
-
-			try:
-				xmldoc.entries[range_article].title
-			except AttributeError:
-				attribute_title = "title "
-				unvalid_count = unvalid_count+1
-				break
-
-			try:
-				xmldoc.entries[range_article].description
-			except AttributeError:
-				attribute_description = "description "
-				unvalid_count = unvalid_count+1
-				break
-
-			try:
-				xmldoc.entries[range_article].link
-			except AttributeError:
-				attribute_link = "link "
-				unvalid_count = unvalid_count+1
-				break
-
-			try:
-				xmldoc.entries[range_article].published_parsed
-			except AttributeError:
-				attribute_date = "date "
-				unvalid_count = unvalid_count+1
-				break
-
-			range_article = range_article+1
-
-		if unvalid_count > 0:
-			complete_attribute = "Missing beacon(s) : "+attribute_title+attribute_description+attribute_link+attribute_date
-			print(link)
-			print(xmldoc.feed.title.encode('ascii', errors='xmlcharrefreplace'))
-			print('WARNING : Some beacons are missing, your research may be less efficient \n'+complete_attribute)
-
-		if unvalid_count == 0:
+			if recursive is False:
+				base_link = link
+				page = requests.get(base_link)
+				page = page.content
+				links = extractFeedLinks(page)
+				for link in links:
+					errorBuffer = None
+					complete_errorBuffer = None
+					if validators.url(link):
+						feedMeUp(link, True)
+					else:
+						link = link[0].strip("/")+link[1:]
+						parsed = urlparse(base_link)
+						protocol = parsed.scheme
+						base = parsed.netloc
+						link = protocol+"://"+base+"/"+link
+						feedMeUp(link, True)
+			complete_error = flux_error+title_error+entries_error
+			return unicode(complete_error)
+		else:
+			number_links += 1
 			print(link)
 			print(xmldoc.feed.title.encode('ascii', errors='xmlcharrefreplace'))
 
@@ -217,4 +170,9 @@ if split_link[0] != "http" and split_link[0] != "https":
 	print('URL required : protocol is missing')
 	sys.exit()
 
-feedMeUp(link)
+number_links = 0
+error = feedMeUp(link, False)
+
+if number_links == 0:
+	print('unvalid link')
+	print(error)
