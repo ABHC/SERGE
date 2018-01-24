@@ -126,15 +126,10 @@ def feedMeUp(link, recursive):
 			missing_flux = True
 
 		if missing_flux is True:
-			flux_error = "missing_flux, "
 			if recursive is False:
 				base_link = link
-				page = requests.get(base_link)
-				page = page.content
-				links = extractFeedLinks(page)
+				links = extractFeedLinks(req_results[1])
 				for link in links:
-					errorBuffer = None
-					complete_errorBuffer = None
 					if validators.url(link):
 						feedMeUp(link, True)
 					else:
@@ -144,7 +139,7 @@ def feedMeUp(link, recursive):
 						base = parsed.netloc
 						link = protocol+"://"+base+"/"+link
 						feedMeUp(link, True)
-			complete_error = flux_error+title_error+entries_error
+			complete_error = "missing_flux, "+title_error+entries_error
 			return unicode(complete_error)
 		else:
 			number_links += 1
