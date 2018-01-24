@@ -248,14 +248,14 @@ def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_p
 			news_attributes = not_send_news_list[index]
 
 			if news_attributes[1].isupper() is True:
-				news_attributes = (news_attributes[0], news_attributes[1].lower().capitalize())
+				news_attributes[1] = news_attributes[1].lower().capitalize()
 
 			newsletter = newsletter + ("""<tr>
 			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
 			&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
 			</td>
 			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+			<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
 			<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
 			</a>
 			</td>
@@ -264,7 +264,7 @@ def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_p
 			<td>
 			<br>
 			</td>
-			</tr>""".format(news_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace')))
+			</tr>""".format(news_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[6]))
 			index = index+1
 
 		newsletter = newsletter + ("""</table>
@@ -300,14 +300,14 @@ def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_p
 			science_attributes = not_send_science_list[index]
 
 			if science_attributes[1].isupper() is True:
-				science_attributes = (science_attributes[0], science_attributes[1].lower().capitalize())
+				science_attributes[1] = science_attributes[1].lower().capitalize()
 
 			newsletter = newsletter + ("""<tr>
 			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
 			&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
 			</td>
 			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+			<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
 			<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
 			</a>
 			</td>
@@ -316,7 +316,7 @@ def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_p
 			<td>
 			<br>
 			</td>
-			</tr>""".format(science_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace')))
+			</tr>""".format(science_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[7]))
 			index = index+1
 
 		newsletter = newsletter + ("""</table>
@@ -352,14 +352,14 @@ def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_p
 			patents_attributes = not_send_patents_list[index]
 
 			if patents_attributes[1].isupper() is True:
-				patents_attributes = (patents_attributes[0], patents_attributes[1].lower().capitalize())
+				patents_attributes[1] = patents_attributes[1].lower().capitalize()
 
 			newsletter = newsletter + ("""<tr>
 			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
 			&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
 			</td>
 			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+			<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
 			<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
 			</a>
 			</td>
@@ -368,7 +368,7 @@ def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_p
 			<td>
 			<br>
 			</td>
-			</tr>""".format(patents_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace')))
+			</tr>""".format(patents_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[7]))
 			index = index+1
 
 		newsletter = newsletter + ("""</table>
@@ -484,9 +484,9 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 				if word_attribute in news_attributes[3] and news_attributes[0] not in already_in_the_list:
 
 					if news_attributes[1].isupper() is True:
-						process_result = (news_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize())
+						process_result = (news_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), news_attributes[6])
 					else:
-						process_result = (news_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'))
+						process_result = (news_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[6])
 
 					process_result_list.append(process_result)
 					already_in_the_list.append(news_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'))
@@ -511,13 +511,13 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 				</td>
 				</tr>""".format(word.capitalize()))
 
-				for couple_results in process_result_list:
+				for results_attributes in process_result_list:
 					newsletter = newsletter + ("""<tr>
 					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
 					&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
 					</td>
 					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-					<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+					<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
 					<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
 					</a>
 					</td>
@@ -526,7 +526,7 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 					<td>
 					<br>
 					</td>
-					</tr>""".format(couple_results[0], couple_results[1]))
+					</tr>""".format(results_attributes[0], results_attributes[1], results_attributes[2]))
 
 				newsletter = newsletter + ("""</table>
 				</td>
@@ -555,9 +555,9 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 				if word_attribute in science_attributes[2] and science_attributes[0] not in process_result_list:
 
 					if science_attributes[1].isupper() is True:
-						process_result = (science_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize())
+						process_result = (science_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), science_attributes[7])
 					else:
-						process_result = (science_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'))
+						process_result = (science_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[7])
 
 					process_result_list.append(process_result)
 
@@ -581,13 +581,13 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 				</td>
 				</tr>""".format(word))
 
-				for couple_results in process_result_list:
+				for results_attributes in process_result_list:
 					newsletter = newsletter + ("""<tr>
 					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
 					&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
 					</td>
 					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-					<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+					<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
 					<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
 					</a>
 					</td>
@@ -596,7 +596,7 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 					<td>
 					<br>
 					</td>
-					</tr>""".format(couple_results[0], couple_results[1]))
+					</tr>""".format(results_attributes[0], results_attributes[1], results_attributes[2]))
 
 				newsletter = newsletter + ("""</table>
 				</td>
@@ -626,9 +626,9 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 				if query_attribute in patents_attributes[2] and patents_attributes[0] not in process_result_list:
 
 					if patents_attributes[1].isupper() is True:
-						process_result = (patents_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize())
+						process_result = (patents_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), patents_attributes[7])
 					else:
-						process_result = (patents_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'))
+						process_result = (patents_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[7])
 
 					process_result_list.append(process_result)
 
@@ -652,13 +652,13 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 				</td>
 				</tr>""".format(plain_query))
 
-				for couple_results in process_result_list:
+				for results_attributes in process_result_list:
 					newsletter = newsletter + ("""<tr>
 					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
 					&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
 					</td>
 					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-					<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+					<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
 					<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
 					</a>
 					</td>
@@ -667,7 +667,7 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 					<td>
 					<br>
 					</td>
-					</tr>""".format(couple_results[0], couple_results[1]))
+					</tr>""".format(results_attributes[0], results_attributes[1], results_attributes[2]))
 
 				newsletter = newsletter + ("""</table>
 				</td>
@@ -783,9 +783,9 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 				if origin_id == news_attributes[2]:
 
 					if news_attributes[1].isupper() is True:
-						process_result = (news_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize())
+						process_result = (news_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), news_attributes[6])
 					else:
-						process_result = (news_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'))
+						process_result = (news_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[6])
 
 					process_result_list.append(process_result)
 
@@ -811,13 +811,13 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 				</tr>""".format(origin_name.strip().encode('ascii', errors='xmlcharrefreplace')))
 
 				######### NEWS WRITING
-				for couple_results in process_result_list:
+				for results_attributes in process_result_list:
 					newsletter = newsletter + ("""<tr>
 					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
 					&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
 					</td>
 					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-					<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+					<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
 					<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
 					</a>
 					</td>
@@ -826,7 +826,7 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 					<td>
 					<br>
 					</td>
-					</tr>""".format(couple_results[0], couple_results[1]))
+					</tr>""".format(results_attributes[0], results_attributes[1], results_attributes[2]))
 
 				newsletter = newsletter + ("""</table>
 				</td>
@@ -867,9 +867,9 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 				if origin_id == science_attributes[3]:
 
 					if science_attributes[1].isupper() is True:
-						process_result = (science_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize())
+						process_result = (science_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), science_attributes[7])
 					else:
-						process_result = (science_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'))
+						process_result = (science_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[7])
 
 					process_result_list.append(process_result)
 
@@ -895,13 +895,13 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 				</tr>""".format(origin_name.strip().encode('ascii', errors='xmlcharrefreplace')))
 
 				######### SCIENTIFIC PAPERS WRITING
-				for couple_results in process_result_list:
+				for results_attributes in process_result_list:
 					newsletter = newsletter + ("""<tr>
 					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
 					&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
 					</td>
 					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-					<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+					<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
 					<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
 					</a>
 					</td>
@@ -910,7 +910,7 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 					<td>
 					<br>
 					</td>
-					</tr>""".format(couple_results[0], couple_results[1]))
+					</tr>""".format(results_attributes[0], results_attributes[1], results_attributes[2]))
 
 				newsletter = newsletter + ("""</table>
 				</td>
@@ -945,14 +945,14 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 			patents_attributes = not_send_patents_list[index]
 
 			if patents_attributes[1].isupper() is True:
-				patents_attributes = (patents_attributes[0], science_attributes[1].lower().capitalize())
+				patents_attributes[1] = patents_attributes[1].lower().capitalize()
 
 			newsletter = newsletter + ("""<tr>
 			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
 			&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
 			</td>
 			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+			<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
 			<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
 			</a>
 			</td>
@@ -961,7 +961,7 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 			<td>
 			<br>
 			</td>
-			</tr>""".format(patents_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace')))
+			</tr>""".format(patents_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[7]))
 			index = index+1
 
 		newsletter = newsletter + ("""</table>

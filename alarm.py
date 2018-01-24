@@ -227,14 +227,14 @@ def alertMailByType(user, translate_text, alert_news_list, pending_alerts, style
 			alerts_attributes = alert_news_list[index]
 
 			if alerts_attributes[1].isupper() is True:
-				alerts_attributes = (alerts_attributes[0], alerts_attributes[1].lower().capitalize())
+				alerts_attributes[1] = alerts_attributes[1].lower().capitalize()
 
 			alertmail = alertmail + ("""<tr>
 			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
 			&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
 			</td>
 			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+			<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
 			<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
 			</a>
 			</td>
@@ -243,7 +243,7 @@ def alertMailByType(user, translate_text, alert_news_list, pending_alerts, style
 			<td>
 			<br>
 			</td>
-			</tr>""".format(alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace')))
+			</tr>""".format(alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[6]))
 			index = index+1
 
 		alertmail = alertmail + ("""</table>
@@ -357,9 +357,9 @@ def alertMailByKeyword(user, translate_text, alert_news_list, pending_alerts, al
 			if word_attribute in alerts_attributes[3] and alerts_attributes[0] not in already_in_the_list:
 
 				if alerts_attributes[1].isupper() is True:
-					process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize())
+					process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), alerts_attributes[6])
 				else:
-					process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'))
+					process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[6])
 
 				process_result_list.append(process_result)
 				already_in_the_list.append(alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'))
@@ -384,13 +384,13 @@ def alertMailByKeyword(user, translate_text, alert_news_list, pending_alerts, al
 			</td>
 			</tr>""".format(word.capitalize()))
 
-			for couple_results in process_result_list:
+			for results_attributes in process_result_list:
 				alertmail = alertmail + ("""<tr>
 				<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
 				&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
 				</td>
 				<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+				<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
 				<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
 				</a>
 				</td>
@@ -399,7 +399,7 @@ def alertMailByKeyword(user, translate_text, alert_news_list, pending_alerts, al
 				<td>
 				<br>
 				</td>
-				</tr>""".format(couple_results[0], couple_results[1]))
+				</tr>""".format(results_attributes[0], results_attributes[1], results_attributes[2]))
 
 			alertmail = alertmail + ("""</table>
 			</td>
@@ -504,9 +504,9 @@ def alertMailBySource(user, translate_text, alert_news_list, pending_alerts, ale
 			alerts_attributes = alert_news_list[index]
 
 			if alerts_attributes[1].isupper() is True and origin_id == alerts_attributes[2]:
-				process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize())
+				process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), alerts_attributes[6])
 			elif origin_id == alerts_attributes[2]:
-				process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'))
+				process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[6])
 
 			process_result_list.append(process_result)
 
@@ -530,13 +530,13 @@ def alertMailBySource(user, translate_text, alert_news_list, pending_alerts, ale
 			</td>
 			</tr>""".format(origin_name.strip().encode('ascii', errors='xmlcharrefreplace')))
 
-			for couple_results in process_result_list:
+			for results_attributes in process_result_list:
 				alertmail = alertmail + ("""<tr>
 				<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
 				&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
 				</td>
 				<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				<a href="https://cairngit.eu/serge/addLinkInWiki?link={0}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+				<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
 				<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
 				</a>
 				</td>
@@ -545,7 +545,7 @@ def alertMailBySource(user, translate_text, alert_news_list, pending_alerts, ale
 				<td>
 				<br>
 				</td>
-				</tr>""".format(couple_results[0], couple_results[1]))
+				</tr>""".format(results_attributes[0], results_attributes[1], results_attributes[2]))
 
 			alertmail = alertmail + ("""</table>
 			</td>
