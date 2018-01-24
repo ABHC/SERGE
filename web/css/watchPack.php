@@ -229,6 +229,7 @@ if ($_SESSION['type'] === 'create')
 		margin-left: 10px;
 		margin-right: 10px;
 		font-size: 14px;
+		cursor: pointer;
 	}
 
 	select#sourceKeyword option,
