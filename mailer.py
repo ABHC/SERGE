@@ -843,7 +843,7 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 	######### SCIENCE SECTION IN EMAIL
 	if pending_science > 0:
 
-	######### CREATE A LIST OF ALL SOURCES
+		######### CREATE A LIST OF ALL SOURCES
 		call_equivalence = database.cursor()
 		call_equivalence.execute("SELECT name, id FROM equivalence_science_serge WHERE active >= 1")
 		rows = call_equivalence.fetchall()

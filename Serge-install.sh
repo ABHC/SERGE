@@ -1532,7 +1532,7 @@ SSLStaplingCache shmcb:/tmp/stapling_cache(128000)" > /etc/apache2/sites-availab
 	echo '$wgScriptPath = "";' >> /var/www/mediawiki/LocalSettings.php
 	echo "" >> /var/www/mediawiki/LocalSettings.php
 	echo "## The protocol and server name to use in fully-qualified URLs" >> /var/www/mediawiki/LocalSettings.php
-	echo '$wgServer = "http://mediawiki.cairngit.eu";' >> /var/www/mediawiki/LocalSettings.php
+	echo "\$wgServer = \"http://mediawiki.$domainName\";" >> /var/www/mediawiki/LocalSettings.php
 	echo "" >> /var/www/mediawiki/LocalSettings.php
 	echo "## The URL path to static resources (images, scripts, etc.)" >> /var/www/mediawiki/LocalSettings.php
 	echo "\$wgResourceBasePath = \$wgScriptPath;" >> /var/www/mediawiki/LocalSettings.php
