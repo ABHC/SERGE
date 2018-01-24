@@ -81,7 +81,7 @@ if (!empty($data['resultType']))
 		$keywordQueryId  = 'query_id';
 		$queryColumn     = 'query_serge';
 		$specialColumn   = ',query_id, id_source ';
-		$displayColumn   = var_get_t('title2Science_table_results', $bdd);
+		$displayColumn   = var_get_t('Query', $bdd);
 	}
 	elseif ($data['resultType'] === 'patents')
 	{
@@ -97,7 +97,7 @@ if (!empty($data['resultType']))
 		$keywordQueryId  = 'id_query_wipo';
 		$queryColumn     = 'query';
 		$specialColumn   = ', id_query_wipo, id_source ';
-		$displayColumn   = var_get_t('title2Patents_table_results', $bdd);
+		$displayColumn   = var_get_t('Query', $bdd);
 	}
 }
 
