@@ -113,7 +113,6 @@ def triage(register, user_id_comma):
 		row.append(add_wiki_link)
 		not_send_patents_list.append(row)
 
-
 	######### LINKS MODIFICATION FOR RECORDS
 	if record_read is True:
 		recorder_call = "reading"
@@ -121,19 +120,19 @@ def triage(register, user_id_comma):
 		for news in not_send_news_list:
 			linkId = news[5]
 			typeName = "news"
-			change_status_link = recorder(register, typeName, linkId, database)
+			change_status_link = recorder(register, typeName, linkId, recorder_call, database)
 			news[0] = change_status_link
 
 		for science in not_send_science_list:
 			linkId = str(science[5])
 			typeName = "sciences"
-			change_status_link = recorder(register, typeName, linkId, database)
+			change_status_link = recorder(register, typeName, linkId, recorder_call, database)
 			science[0] = change_status_link
 
 		for patent in not_send_patents_list:
 			linkId = str(patent[4])
 			typeName = "patents"
-			change_status_link = recorder(register, typeName, linkId, database)
+			change_status_link = recorder(register, typeName, linkId, recorder_call, database)
 			patent[0] = change_status_link
 
 	return (not_send_news_list, not_send_science_list, not_send_patents_list)
