@@ -180,5 +180,5 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('Rate', 'Rate', 'Note', NULL, NULL, NULL),
 ('Create watchpack', 'Create watchpack', 'Créer le pack de veille', NULL, NULL, NULL),
 ('Save watchpack', 'Save watchpack', 'Sauvegarder le pack de veille', NULL, NULL, NULL),
-('Sorry, the wiki has not yet been released', 'Sorry, the wiki has not yet been released', 'Désolé, le wiki n\' a pas encore été publié', NULL, NULL, NULL),
+('Sorry, the wiki has not yet been released', 'Sorry, the wiki has not yet been released', 'Désolé, le wiki n\'a pas encore été publié', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);
