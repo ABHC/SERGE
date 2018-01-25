@@ -30,7 +30,7 @@ def recorder(register, typeName, linkId, recorder_call, database):
 	if recorder_call == "reading":
 		recording_link = "http://" + domain + "/redirect?type=" + typeName + "&token=" + token + "&id=" + linkId
 
-	elif recorder_call == "wiki"
+	elif recorder_call == "wiki":
 		recording_link = "http://" + domain + "/addLinkInWiki?type=" + typeName + "&token=" + token + "&id=" + linkId
 
 	return (recording_link)
