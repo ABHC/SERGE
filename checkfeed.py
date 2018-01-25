@@ -11,6 +11,9 @@ import feedparser
 import validators
 from bs4 import BeautifulSoup
 
+######### IMPORT SERGE SPECIALS MODULES
+from handshake import databaseConnection
+
 FEED_LINKS_ATTRIBUTES = (
 	(('type', 'application/rss+xml'),),
 	(('type', 'application/atom+xml'),),
@@ -87,7 +90,202 @@ def allCheckLong(link):
 	return req_results
 
 
-def feedMeUp(link, recursive):
+def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
+
+	########### CONNECTION TO SERGE DATABASE
+	database = databaseConnection()
+
+	user_id_comma = user_id + ","
+	user_id_double_comma = "," + user_id + ","
+
+	if typeName == "settings":
+
+		######### CALL TO TABLE rss_serge
+		query_rss = "SELECT owners FROM rss_serge WHERE link LIKE %s"
+
+		call_rss = database.cursor()
+		call_rss.execute(query_rss, (link,))
+		owners = call_rss.fetchone()
+		call_rss.close()
+
+		if owners is not None:
+			owners = owners[0]
+
+		if owners is None:
+			active = 1
+			rss_item = (link, title, user_id_double_comma, active)
+			query_insertion = ("INSERT INTO rss_serge (link, name, owners, active) VALUES (%s, %s, %s, %s)")
+
+			insert_data = database.cursor()
+			try:
+				insert_data.execute(query_insertion, rss_item)
+				database.commit()
+			except Exception, except_type:
+				database.rollback()
+				print "ROLLBACK 1"
+				print Exception
+				print except_type
+				insert_error = "ROLLBACK AT INSERTION IN backgroundLinksAddition FUNCTION"
+				update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
+				try:
+					update.execute(update_users, (insert_error, user_id))
+					database.commit()
+				except Exception, except_type:
+					database.rollback()
+					print "ROLLBACK 2"
+
+			insert_data.close()
+
+		else:
+			if user_id_double_comma not in owners:
+				owners = owners + user_id_comma
+				update_rss = ("UPDATE rss_serge SET owners = %s WHERE link = %s")
+
+				update = database.cursor()
+				try:
+					update.execute(update_rss, (owners, link))
+					database.commit()
+				except Exception, except_type:
+					database.rollback()
+					print "ROLLBACK 3"
+					insert_error = "ROLLBACK IN UPDATE IN backgroundLinksAddition"
+					update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
+					try:
+						update.execute(update_users, (insert_error, user_id))
+						database.commit()
+					except Exception, except_type:
+						database.rollback()
+						print "ROLLBACK 4"
+				update.close()
+
+			elif user_id_double_comma not in owners:
+				insert_error = "ERROR : Source already owned"
+				update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
+
+				update = database.cursor()
+				try:
+					update.execute(update_users, (insert_error, user_id))
+					database.commit()
+				except Exception, except_type:
+					database.rollback()
+					print "ROLLBACK 5"
+				update.close()
+
+	elif typeName == "watchpacks":
+		######### CALL TO TABLE rss_serge
+		query_rss = "SELECT id FROM rss_serge WHERE link LIKE %s"
+
+		call_rss = database.cursor()
+		call_rss.execute(query_rss, (link,))
+		id_rss = call_rss.fetchone()
+		call_rss.close()
+
+		if id_rss is not None:
+			id_rss = id_rss[0]
+
+		if id_rss is None:
+			owners = ","
+			rss_item = (link, title, owners)
+			query_insertion = ("INSERT INTO rss_serge (link, name, owners) VALUES (%s, %s, %s)")
+
+			######### INSERT A NEW SOURCE IN rss_serge
+			insert_data = database.cursor()
+			try:
+				insert_data.execute(query_insertion, rss_item)
+				database.commit()
+			except Exception, except_type:
+				database.rollback()
+				print "ROLLBACK 6"
+				insert_error = "ROLLBACK AT INSERTION IN backgroundLinksAddition FUNCTION"
+				update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
+				try:
+					update.execute(update_users, (insert_error, user_id))
+					database.commit()
+				except Exception, except_type:
+					database.rollback()
+					print "ROLLBACK 7"
+			insert_data.close()
+
+			######### CALL TO TABLE rss_serge
+			query_rss = "SELECT id FROM rss_serge WHERE link LIKE %s"
+
+			call_rss = database.cursor()
+			call_rss.execute(query_rss, (link,))
+			id_rss = call_rss.fetchone()
+			call_rss.close()
+
+			id_rss = id_rss[0]
+			id_rss_double_comma = "," + id_rss + ","
+
+			######### UPDATE watch_pack_queries_serge
+			update_watchpacks = ("UPDATE watch_pack_queries_serge SET source = %s WHERE pack_id = %s")
+
+			update = database.cursor()
+			try:
+				update.execute(update_watchpacks, (id_rss_double_comma, link))
+				database.commit()
+			except Exception, except_type:
+				database.rollback()
+				print "ROLLBACK 8"
+				insert_error = "ROLLBACK IN UPDATE IN backgroundLinksAddition"
+				update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
+				try:
+					update.execute(update_users, (insert_error, user_id))
+					database.commit()
+				except Exception, except_type:
+					database.rollback()
+					print "ROLLBACK 9"
+			update.close()
+
+		else:
+			id_rss_comma = id_rss + ","
+			id_rss_double_comma = "," + id_rss + ","
+
+			######### CALL TO TABLE watch_pack_queries_serge
+			query_watchpacks = "SELECT source FROM watch_pack_queries_serge WHERE pack_id LIKE %s"
+
+			call_rss = database.cursor()
+			call_rss.execute(query_rss, (link,))
+			saved_source = call_rss.fetchone()
+			call_rss.close()
+
+			saved_source = saved_source[0]
+
+			if id_rss_double_comma not in saved_source:
+				saved_source = saved_source + id_rss_comma
+				update_watchpacks = ("UPDATE watch_pack_queries_serge SET source = %s WHERE pack_id = %s")
+
+				update = database.cursor()
+				try:
+					update.execute(update_watchpacks, (saved_source, pack_id))
+					database.commit()
+				except Exception, except_type:
+					database.rollback()
+					print "ROLLBACK 10"
+					insert_error = "ROLLBACK IN UPDATE IN backgroundLinksAddition"
+					update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
+					try:
+						update.execute(update_users, (insert_error, user_id))
+						database.commit()
+					except Exception, except_type:
+						database.rollback()
+						print "ROLLBACK 11"
+				update.close()
+
+			elif id_rss_double_comma in saved_source:
+				insert_error = "ERROR : Source already owned"
+				update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
+
+				update = database.cursor()
+				try:
+					update.execute(update_users, (insert_error, user_id))
+					database.commit()
+				except Exception, except_type:
+					database.rollback()
+					print "ROLLBACK 12"
+				update.close()
+
+def feedMeUp(link, user_id, typeName, pack_id, recursive):
 	"""Function for checking RSS feeds"""
 
 	global number_links
@@ -131,20 +329,21 @@ def feedMeUp(link, recursive):
 				links = extractFeedLinks(req_results[1])
 				for link in links:
 					if validators.url(link):
-						feedMeUp(link, True)
+						feedMeUp(link, user_id, typeName, pack_id, True)
 					else:
 						link = link[0].strip("/")+link[1:]
 						parsed = urlparse(base_link)
 						protocol = parsed.scheme
 						base = parsed.netloc
 						link = protocol+"://"+base+"/"+link
-						feedMeUp(link, True)
+						feedMeUp(link, user_id, typeName, pack_id, True)
 			complete_error = "missing_flux, "+title_error+entries_error
 			return unicode(complete_error)
+
 		else:
 			number_links += 1
-			print(link)
-			print(xmldoc.feed.title.encode('ascii', errors='xmlcharrefreplace'))
+			title = (xmldoc.feed.title.encode('ascii', errors='xmlcharrefreplace'))
+			backgroundLinksAddition(link, user_id, typeName, pack_id, title)
 
 	elif rss_error is True:
 		print('unvalid link')
@@ -154,6 +353,14 @@ def feedMeUp(link, recursive):
 ########### MAIN
 try:
 	link = sys.argv[1]
+	user_id = sys.argv[2]
+	typeName = sys.argv[3]
+
+	if typeName == "watchpacks":
+		pack_id = sys.argv[4]
+	else:
+		pack_id = None
+
 except IndexError:
 	print('URL required')
 	sys.exit()
@@ -166,7 +373,7 @@ if split_link[0] != "http" and split_link[0] != "https":
 	sys.exit()
 
 number_links = 0
-error = feedMeUp(link, False)
+error = feedMeUp(link, user_id, typeName, pack_id, False)
 
 if number_links == 0:
 	print('unvalid link')
