@@ -31,6 +31,32 @@ footer
 	border-top: 1px solid rgba(255,255,255,0.1);
 }
 
+.bugFooter
+{
+	position: absolute;
+	bottom: 70px;
+	left: 10px;
+	float: left;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+a.bugFooterLogo
+{
+	width: 90px;
+	height: 105px;
+	background: url('../images/bug.png') center no-repeat;
+	background-size: contain;
+}
+
+.bugFooter a
+{
+	text-decoration: none;
+	color: rgb(230,230,230);
+}
+
 .links
 {
 	display: flex;
@@ -79,7 +105,7 @@ footer
 .subLinks a
 {
 	text-decoration: none;
-	color: rgb(255, 255, 255);
+	color: rgb(230,230,230);
 	margin: 5px;
 }
 
@@ -119,7 +145,7 @@ footer
 	text-decoration: none;
 	font-size: 1.3vw;
 	text-align: center;
-	color: rgb(255,255,255);
+	color: rgb(230,230,230);
 }
 
 @media all and (min-width: 1200px)
@@ -142,7 +168,7 @@ footer
 		text-decoration: none;
 		font-size: 16px;
 		text-align: center;
-		color: rgb(255,255,255);
+		color: rgb(230,230,230);
 	}
 }
 

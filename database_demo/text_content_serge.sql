@@ -181,4 +181,13 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('Create watchpack', 'Create watchpack', 'Créer le pack de veille', NULL, NULL, NULL),
 ('Save watchpack', 'Save watchpack', 'Sauvegarder le pack de veille', NULL, NULL, NULL),
 ('Sorry, the wiki has not yet been released', 'Sorry, the wiki has not yet been released', 'Désolé, le wiki n\'a pas encore été publié', NULL, NULL, NULL),
+('Bug report', 'Bug report', 'Rapport de bug', NULL, NULL, NULL),
+('I prefer open an issue on GitHub', 'I prefer open an issue on GitHub', 'Je préfère ouvrir un rapport de bug sur GitHub', NULL, NULL, NULL),
+('Description of the problem', 'Description of the problem', 'Description du problème', NULL, NULL, NULL),
+('Indicate the severity of the bug', 'Indicate the severity of the bug, what is the problem ? How to reproduce the problem ? What is the expected behaviour ? Be specific, remain factual, indicate all information (browser, OS, link) and finally, check the bug report', 'Indiquer la sévérité du bug, quel est le problème ? Comment reproduire le problème ? Quel est le comportement attendu ? Soyez précis, restez factuel, indiquez toutes les informations (navigateur, OS, lien) et vérifiez le rapport de bug', NULL, NULL, NULL),
+('Submit bug report', 'Submit bug report', 'Envoyer le rapport de bogue', NULL, NULL, NULL),
+('Bad email', 'Bad email', 'Mauvais email', NULL, NULL, NULL),
+('Bad description', 'Bad description', 'Mauvais description', NULL, NULL, NULL),
+('Your bug report has been sent successfull !', 'Your bug report has been sent successfully&nbsp;!', 'Votre rapport de bogue a été envoyé avec succès&nbsp;!', NULL, NULL, NULL),
+('Bug ? Report here !', 'Bug ? Report here !', 'Bug ? Signalez le ici !', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);

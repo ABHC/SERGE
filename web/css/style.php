@@ -21,3 +21,8 @@ body
 {
 	visibility: hidden;
 }
+
+.center
+{
+	text-align: center;
+}

@@ -10,6 +10,7 @@ INSERT INTO `miscellaneous_serge` (`name`, `value`) VALUES
 ('timelog', UNIX_TIMESTAMP()),
 ('feedtitles_refresh', UNIX_TIMESTAMP()),
 ('domain', ''),
-('extension', '');
+('extension', ''),
+('support_email', 'support@your-domain.tld');
 
 SET NAMES utf8mb4;

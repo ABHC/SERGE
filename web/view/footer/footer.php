@@ -4,6 +4,11 @@
 			<a href="github"><?php get_t('copyright_title_footer', $bdd); ?></a>
 		</div>
 
+		<div class="bugFooter">
+			<a class="bugFooterLogo" href="bug"></a>
+			<a href="bug"><?php get_t('Bug ? Report here !', $bdd); ?></a>
+		</div>
+
 		<div class="links">
 			<div class="roundLinks">
 				<a href=""><img alt="CairnGit" src="images/CairnGit_logo_norm.png" title="CairnGit"/></a>
