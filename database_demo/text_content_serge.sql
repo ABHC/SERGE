@@ -79,7 +79,7 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('title1_table_results', 'Title', 'Titre', NULL, NULL, NULL),
 ('title2News_table_results', 'Keyword', 'Mot clef', NULL, NULL, NULL),
 ('title2Science_table_results', 'Query', 'Requête', NULL, NULL, NULL),
-('title2Patent_table_results', 'Query', 'Requête', NULL, NULL, NULL),
+('Query', 'Query', 'Requête', NULL, NULL, NULL),
 ('title3_table_results', 'Source', 'Source', NULL, NULL, NULL),
 ('title4_table_results', 'Date', 'Date', NULL, NULL, NULL),
 ('title5Send_table_results', 'Send', 'Envoyé', NULL, NULL, NULL),
@@ -180,4 +180,5 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('Rate', 'Rate', 'Note', NULL, NULL, NULL),
 ('Create watchpack', 'Create watchpack', 'Créer le pack de veille', NULL, NULL, NULL),
 ('Save watchpack', 'Save watchpack', 'Sauvegarder le pack de veille', NULL, NULL, NULL),
+('Sorry, the wiki has not yet been released', 'Sorry, the wiki has not yet been released', 'Désolé, le wiki n\' a pas encore été publié', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);
