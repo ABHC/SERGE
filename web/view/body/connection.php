@@ -12,7 +12,7 @@
 
 				<p class="title_form_connection"><?php get_t('input4_signup_index', $bdd); ?></p> <p><input class="connection_field" type="email" name="forg_email" id="Email" value="" /></p>
 
-				<div class="title_form_inscription" ><?php get_t('input5_signup_index', $bdd); ?>
+				<p class="title_form_connection" ><?php get_t('input5_signup_index', $bdd); ?></p>
 					<div class="align">
 						<input class="captcha_field" type="text" autocomplete="off" name="captcha" id="captcha" placeholder="" />
 						<div class="captcha" >
@@ -22,7 +22,6 @@
 							<div class="captcha4"></div>
 						</div>
 					</div>
-				</div>
 
 				<?php echo $errorMessage; ?>
 				<a class="text_connection" href="index#signup"><?php get_t('noAccount_link_connection', $bdd); ?></a>
