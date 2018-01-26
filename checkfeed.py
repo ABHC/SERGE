@@ -163,7 +163,7 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 						print "ROLLBACK 4"
 				update.close()
 
-			elif user_id_double_comma not in owners:
+			elif user_id_double_comma in owners:
 				insert_error = "ERROR : Source already owned"
 				update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
 
