@@ -211,4 +211,14 @@ a.bugFooterLogo
 	{
 		height: 50px;
 	}
+
+	.bugFooter
+	{
+		width: 200px;
+	}
+
+	a.bugFooterLogo
+	{
+		width: 80px;
+	}
 }

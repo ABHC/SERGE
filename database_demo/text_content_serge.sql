@@ -189,5 +189,5 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('Bad email', 'Bad email', 'Mauvais email', NULL, NULL, NULL),
 ('Bad description', 'Bad description', 'Mauvais description', NULL, NULL, NULL),
 ('Your bug report has been sent successfull !', 'Your bug report has been sent successfully&nbsp;!', 'Votre rapport de bogue a été envoyé avec succès&nbsp;!', NULL, NULL, NULL),
-('Bug ? Report here !', 'Bug ? Report here !', 'Bug ? Signalez le ici !', NULL, NULL, NULL),
+('Bug ? Report here !', 'Bug ? Report here&nbsp;!', 'Bug ? Signalez le ici&nbsp;!', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);
