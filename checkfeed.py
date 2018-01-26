@@ -296,6 +296,9 @@ def feedMeUp(link, user_id, typeName, pack_id, recursive):
 
 	global number_links
 
+	########### CONNECTION TO SERGE DATABASE
+	database = databaseConnection()
+
 	########### LINK CONNEXION
 	req_results = allCheckLong(link)
 	rss_error = req_results[0]
@@ -309,8 +312,16 @@ def feedMeUp(link, user_id, typeName, pack_id, recursive):
 		try:
 			xmldoc = feedparser.parse(rss)
 		except Exception:
-			print('unvalid link')
-			print('parsing error in : '+link)
+			insert_error = ("unvalid link, parsing error in : "+link)
+			update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
+
+			update = database.cursor()
+			try:
+				update.execute(update_users, (insert_error, user_id))
+				database.commit()
+			except Exception, except_type:
+				database.rollback()
+			update.close()
 			sys.exit()
 
 		########### RSS ANALYZE
@@ -352,11 +363,22 @@ def feedMeUp(link, user_id, typeName, pack_id, recursive):
 			backgroundLinksAddition(link, user_id, typeName, pack_id, title)
 
 	elif rss_error is True:
-		print('unvalid link')
-		print(req_results[2])
+		insert_error = ("unvalid link : "+req_results[2])
+		update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
 
+		update = database.cursor()
+		try:
+			update.execute(update_users, (insert_error, user_id))
+			database.commit()
+		except Exception, except_type:
+			database.rollback()
+		update.close()
 
 ########### MAIN
+
+########### CONNECTION TO SERGE DATABASE
+database = databaseConnection()
+
 try:
 	link = sys.argv[1]
 	user_id = sys.argv[2]
@@ -368,19 +390,44 @@ try:
 		pack_id = None
 
 except IndexError:
-	print('URL required')
+	insert_error = "URL required"
+	update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
+
+	update = database.cursor()
+	try:
+		update.execute(update_users, (insert_error, user_id))
+		database.commit()
+	except Exception, except_type:
+		database.rollback()
+	update.close()
 	sys.exit()
 
 split_link = link.split(":")
 
 if split_link[0] != "http" and split_link[0] != "https":
-	print('unvalid link')
-	print('URL required : protocol is missing')
+	insert_error = "unvalid link, URL required : protocol is missing"
+	update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
+
+	update = database.cursor()
+	try:
+		update.execute(update_users, (insert_error, user_id))
+		database.commit()
+	except Exception, except_type:
+		database.rollback()
+	update.close()
 	sys.exit()
 
 number_links = 0
 error = feedMeUp(link, user_id, typeName, pack_id, False)
 
 if number_links == 0:
-	print('unvalid link')
-	print(error)
+	insert_error = ("unvalid link : "+error)
+	update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
+
+	update = database.cursor()
+	try:
+		update.execute(update_users, (insert_error, user_id))
+		database.commit()
+	except Exception, except_type:
+		database.rollback()
+	update.close()
