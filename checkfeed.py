@@ -101,15 +101,18 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 	if typeName == "settings":
 
 		######### CALL TO TABLE rss_serge
-		query_rss = "SELECT owners FROM rss_serge WHERE link LIKE %s"
+		query_rss = "SELECT owners, active FROM rss_serge WHERE link LIKE %s"
 
 		call_rss = database.cursor()
 		call_rss.execute(query_rss, (link,))
-		owners = call_rss.fetchone()
+		rss_attributes = call_rss.fetchone()
 		call_rss.close()
 
-		if owners is not None:
-			owners = owners[0]
+		if rss_attributes is not None:
+			owners = rss_attributes[0]
+			active = rss_attributes[1]
+		else:
+			owners = None
 
 		if owners is None:
 			active = 1
@@ -139,11 +142,13 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 		else:
 			if user_id_double_comma not in owners:
 				owners = owners + user_id_comma
-				update_rss = ("UPDATE rss_serge SET owners = %s WHERE link = %s")
+				active = active + 1
+				rss_item = (owners, active)
+				update_rss = ("UPDATE rss_serge SET owners = %s, active = %s WHERE link = %s")
 
 				update = database.cursor()
 				try:
-					update.execute(update_rss, (owners, link))
+					update.execute(update_rss, (owners, rss_item))
 					database.commit()
 				except Exception, except_type:
 					database.rollback()
@@ -184,9 +189,10 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 			id_rss = id_rss[0]
 
 		if id_rss is None:
+			active = 0
 			owners = ","
-			rss_item = (link, title, owners)
-			query_insertion = ("INSERT INTO rss_serge (link, name, owners) VALUES (%s, %s, %s)")
+			rss_item = (link, title, owners, active)
+			query_insertion = ("INSERT INTO rss_serge (link, name, owners, active) VALUES (%s, %s, %s, %s)")
 
 			######### INSERT A NEW SOURCE IN rss_serge
 			insert_data = database.cursor()
@@ -284,6 +290,7 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 					database.rollback()
 					print "ROLLBACK 12"
 				update.close()
+
 
 def feedMeUp(link, user_id, typeName, pack_id, recursive):
 	"""Function for checking RSS feeds"""
