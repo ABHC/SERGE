@@ -143,12 +143,11 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 			if user_id_double_comma not in owners:
 				owners = owners + user_id_comma
 				active = active + 1
-				rss_item = (owners, active)
 				update_rss = ("UPDATE rss_serge SET owners = %s, active = %s WHERE link = %s")
 
 				update = database.cursor()
 				try:
-					update.execute(update_rss, (owners, rss_item))
+					update.execute(update_rss, (owners, active, link))
 					database.commit()
 				except Exception, except_type:
 					database.rollback()
