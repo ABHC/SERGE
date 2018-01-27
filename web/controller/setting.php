@@ -39,7 +39,7 @@ $unsafeData = array_merge($unsafeData, array(array('orderBy', 'orderBy', 'POST',
 $unsafeData = array_merge($unsafeData, array(array('recordRead', 'recordRead', 'POST', 'Az')));
 $unsafeData = array_merge($unsafeData, array(array('historyLifetime', 'historyLifetime', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('buttonDeleteHistory', 'buttonDeleteHistory', 'POST', 'Az')));
-$unsafeData = array_merge($unsafeData, array(array('deleteHistoryValue', 'deleteHistoryValue', 'POST', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('deleteHistoryValue', 'deleteHistoryValue', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('deleteHistoryUnit', 'deleteHistoryUnit', 'POST', 'str')));
 $unsafeData = array_merge($unsafeData, array(array('newSource', 'newSource', 'POST', 'url')));
 $unsafeData = array_merge($unsafeData, array(array('sourceKeyword', 'sourceKeyword', 'POST', '09')));
@@ -294,7 +294,7 @@ if ($emailIsCheck && !empty($data['settings']) && $data['settings'] === 'ChangeS
 }
 
 # Delete history button
-if ($emailIsCheck && !empty($data['buttonDeleteHistory']) && $data['buttonDeleteHistory'] === 'deleteHistory')
+if ($emailIsCheck && !empty($data['buttonDeleteHistory']) && !empty($data['deleteHistoryValue']) && !empty($data['deleteHistoryUnit']))
 {
 	$deleteHistoryValue = $data['deleteHistoryValue'];
 	$deleteHistoryUnit  = $data['deleteHistoryUnit'];
@@ -324,22 +324,40 @@ if ($emailIsCheck && !empty($data['buttonDeleteHistory']) && $data['buttonDelete
 	$deleteTime = $now - $deleteTimeIntervale;
 	$owner      = '%,' . $_SESSION['id'] . ',%';
 
+	# News results
 	$checkCol          = array(array('owners', 'l', $owner, 'AND'),
 														array('date', '>=', $deleteTime, ''));
-	$readIdResutlToDel = read('result_news_serge', 'id', $checkCol, '', $bdd);
+	$readResutlToDel = read('result_news_serge', 'id, owners', $checkCol, '', $bdd);
 
-	foreach ($readIdResutlToDel as $idResultToDel)
+	foreach ($readResutlToDel as $resultToDel)
 	{
-			$checkCol = array(array('id', '=', $idResultToDel['id'], ''));
-			$result   = read('result_news_serge', 'owners', $checkCol, '', $bdd);
-			$result   = $result[0] ?? '';
+		$updateCol = array(array('owners', preg_replace("/,$userId,/", ',', $resultToDel['owners'])));
+		$checkCol  = array(array('id', '=', $resultToDel['id'], ''));
+		$execution = update('result_news_serge', $updateCol, $checkCol, '', $bdd);
+	}
 
-			if (!empty($result))
-			{
-				$updateCol = array(array('owners', preg_replace("/,$userId,/", ',', $ownersResult['owners'])));
-				$checkCol  = array(array('id', '=', $idResultToDel['id'], ''));
-				$execution = update('result_news_serge', $updateCol, $checkCol, '', $bdd);
-			}
+	# Sciences results
+	$checkCol          = array(array('owners', 'l', $owner, 'AND'),
+														array('date', '>=', $deleteTime, ''));
+	$readResutlToDel = read('result_science_serge', 'id, owners', $checkCol, '', $bdd);
+
+	foreach ($readResutlToDel as $resultToDel)
+	{
+		$updateCol = array(array('owners', preg_replace("/,$userId,/", ',', $resultToDel['owners'])));
+		$checkCol  = array(array('id', '=', $resultToDel['id'], ''));
+		$execution = update('result_science_serge', $updateCol, $checkCol, '', $bdd);
+	}
+
+	# Patents results
+	$checkCol          = array(array('owners', 'l', $owner, 'AND'),
+														array('date', '>=', $deleteTime, ''));
+	$readResutlToDel = read('result_patents_serge', 'id, owners', $checkCol, '', $bdd);
+
+	foreach ($readResutlToDel as $resultToDel)
+	{
+		$updateCol = array(array('owners', preg_replace("/,$userId,/", ',', $resultToDel['owners'])));
+		$checkCol  = array(array('id', '=', $resultToDel['id'], ''));
+		$execution = update('result_patents_serge', $updateCol, $checkCol, '', $bdd);
 	}
 }
 
