@@ -39,7 +39,7 @@ $userDetails = $userDetails[0];
 // Read month price
 $checkCol   = array(array('type', '=', 'month', 'AND'),
 										array('currency', '=', 'EUR', ''));
-$result     = read('price_table_serge', 'price', $checkCol, '',$bdd);
+$result     = read('price_table_serge', 'price', $checkCol, '', $bdd);
 $monthPrice = $result[0]['price'];
 
 if ($userDetails['premium_expiration_date'] < $_SERVER['REQUEST_TIME'])
@@ -64,7 +64,7 @@ if (!empty($data['submitPurchase']) && !empty($data['readCGS']) && !empty($data[
 		$checkCol = array(array('code', '=', $data['premiumCode'], 'AND'),
 											array('users', 'nl', '%,' . $_SESSION['id'] . ',%', 'AND'),
 											array('expiration_date', '>', $_SERVER['REQUEST_TIME'], ''));
-		$result   = read('premium_code_table_serge', 'id, duration_premium, users', $checkCol, '',$bdd);
+		$result   = read('premium_code_table_serge', 'id, duration_premium, users', $checkCol, '', $bdd);
 
 		$premiumCodeId       = $result[0]['id'];
 		$premiumCodeDuration = $result[0]['duration_premium'];
@@ -93,7 +93,7 @@ if (!empty($data['submitPurchase']) && !empty($data['readCGS']) && !empty($data[
 
 		// Read stripe keys
 		$checkCol = array();
-		$result   = read('stripe_table_serge', 'secret_key, publishable_key', $checkCol, '',$bdd);
+		$result   = read('stripe_table_serge', 'secret_key, publishable_key', $checkCol, '', $bdd);
 		$result   = $result[0];
 
 		$stripe = array(
@@ -115,7 +115,7 @@ if (!empty($data['submitPurchase']) && !empty($data['readCGS']) && !empty($data[
 		$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
 
 		$checkCol = array();
-		$result   = read('purchase_table_serge', 'id', $checkCol, 'ORDER BY id DESC LIMIT 1',$bdd);
+		$result   = read('purchase_table_serge', 'id', $checkCol, 'ORDER BY id DESC LIMIT 1', $bdd);
 
 		if (empty($result))
 		{
@@ -144,7 +144,7 @@ elseif (!empty($data['stripeAccess']) && $data['stripeAccess'] === 'true')
 
 	// Read stripe keys
 	$checkCol = array();
-	$result   = read('stripe_table_serge', 'secret_key, publishable_key', $checkCol, '',$bdd);
+	$result   = read('stripe_table_serge', 'secret_key, publishable_key', $checkCol, '', $bdd);
 	$result   = $result[0];
 
 	$stripe = array(
@@ -173,7 +173,7 @@ elseif (!empty($data['stripeAccess']) && $data['stripeAccess'] === 'true')
 	$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
 
 	$checkCol = array();
-	$result   = read('purchase_table_serge', 'id', $checkCol, 'ORDER BY id DESC LIMIT 1',$bdd);
+	$result   = read('purchase_table_serge', 'id', $checkCol, 'ORDER BY id DESC LIMIT 1', $bdd);
 
 	if (empty($result))
 	{

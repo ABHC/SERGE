@@ -32,7 +32,7 @@ $second       = ($timeLeft - ($day*24*3600) - ($hour*3600) - ($minute*60));
 if (!empty($data['newsletter']) && !empty($data['email']))
 {
 	$checkCol     = array(array('email', '=', $data['email'], ''));
-	$result_email = read('newsletter_table_serge', '', $checkCol, '',$bdd);
+	$result_email = read('newsletter_table_serge', '', $checkCol, '', $bdd);
 
 	if (empty($result))
 	{

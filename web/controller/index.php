@@ -52,10 +52,10 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 			{
 				# Check
 				$checkCol      = array(array('users', '=', $pseudo, ''));
-				$pseudoExist = read('users_table_serge', '', $checkCol, '',$bdd);
+				$pseudoExist = read('users_table_serge', '', $checkCol, '', $bdd);
 
 				$checkCol     = array(array('email', '=', $data['email'], ''));
-				$emailExist = read('users_table_serge', '', $checkCol, '',$bdd);
+				$emailExist = read('users_table_serge', '', $checkCol, '', $bdd);
 				if(filter_var($data['email'], FILTER_VALIDATE_EMAIL) === FALSE)
 				{
 					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Invalid email <br>';
@@ -97,7 +97,7 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 						}
 
 						$checkCol   = array(array('token', '=', $token, ''));
-						$tokenExist = read('users_table_serge', '', $checkCol, '',$bdd);
+						$tokenExist = read('users_table_serge', '', $checkCol, '', $bdd);
 					}
 
 					// Salt generation
@@ -176,7 +176,7 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 if (!empty($data['emailCheckToken']) && !empty($data['checker']))
 {
 	$checkCol   = array(array('token', '=', $data['emailCheckToken'], ''));
-	$result     = read('users_table_serge', 'id, salt', $checkCol, '',$bdd);
+	$result     = read('users_table_serge', 'id, salt', $checkCol, '', $bdd);
 	$userId     = $result[0]['id'];
 	$cryptoSalt = $result[0]['salt'];
 

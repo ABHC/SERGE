@@ -35,7 +35,7 @@ if (!empty($data['email']) && !empty($data['bugDescription']) && $_SESSION['capt
 {
 	# Send email verification
 	$checkCol        = array(array('name', '=', 'support_email', ''));
-	$bugRepportEmail = read('miscellaneous_serge', 'value', $checkCol, '',$bdd);
+	$bugRepportEmail = read('miscellaneous_serge', 'value', $checkCol, '', $bdd);
 
 	$to      = $bugRepportEmail[0]['value'];
 	$subject = 'Serge : Bug report';

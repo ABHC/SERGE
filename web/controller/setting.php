@@ -227,7 +227,7 @@ if ($emailIsCheck)
 	if (!empty($data['email']))
 	{
 		$checkCol     = array(array('email', '=', $data['email'], ''));
-		$emailExist = read('users_table_serge', '', $checkCol, '',$bdd);
+		$emailExist = read('users_table_serge', '', $checkCol, '', $bdd);
 
 		if (!$emailExist)
 		{

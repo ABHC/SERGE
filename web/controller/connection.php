@@ -40,7 +40,7 @@ if (!empty($data['pseudo']) && !empty($data['password']))
 {
 	$checkCol  = array(array('users', '=', $data['pseudo'], 'OR'),
 										array('email', '=', $data['pseudo'], ''));
-	$userExist = read('users_table_serge', 'salt, users', $checkCol, '',$bdd);
+	$userExist = read('users_table_serge', 'salt, users', $checkCol, '', $bdd);
 
 	$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px />&nbsp;' . var_get_t('Bad id', $bdd) . '<br>';
 
@@ -50,7 +50,7 @@ if (!empty($data['pseudo']) && !empty($data['password']))
 
 		$checkCol = array(array('users', '=', $userExist[0]['users'], 'AND'),
 											array('password', '=', $password, ''));
-		$result   = read('users_table_serge', 'id, users, email, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, background_result', $checkCol, '',$bdd);
+		$result   = read('users_table_serge', 'id, users, email, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, background_result', $checkCol, '', $bdd);
 
 		$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px />&nbsp;' . var_get_t('Bad passphrase', $bdd) . '<br>';
 	}
@@ -126,7 +126,7 @@ elseif (!empty($data['action']) && $data['action'] === 'forgotPassphraseProcessi
 
 	# Check if user exist
 	$checkCol   = array(array('email', '=', $data['email'], ''));
-	$userExist  = read('users_table_serge', 'salt, token', $checkCol, '',$bdd);
+	$userExist  = read('users_table_serge', 'salt, token', $checkCol, '', $bdd);
 	$cryptoSalt = $userExist[0]['salt'];
 	$token      = $userExist[0]['token'];
 
@@ -153,7 +153,7 @@ elseif (!empty($data['action']) && $data['action'] === 'resetPassphrase'
 {
 	# Check if checker is good
 	$checkCol  = array(array('token', '=', $data['token'], ''));
-	$userExist = read('users_table_serge', 'salt', $checkCol, '',$bdd);
+	$userExist = read('users_table_serge', 'salt', $checkCol, '', $bdd);
 	$cryptoSalt = $userExist[0]['salt'];
 
 	$checker = hash('sha256', $cryptoSalt . preg_replace("/...$/", "", $_SERVER['REQUEST_TIME']));
@@ -190,7 +190,7 @@ elseif (!empty($data['action']) && $data['action'] === 'resetPassphraseProcessin
 {
 	# Check if checker is good
 	$checkCol   = array(array('token', '=', $data['token'], ''));
-	$userExist  = read('users_table_serge', 'salt, email', $checkCol, '',$bdd);
+	$userExist  = read('users_table_serge', 'salt, email', $checkCol, '', $bdd);
 	$cryptoSalt = $userExist[0]['salt'];
 	$email      = $userExist[0]['email'];
 
