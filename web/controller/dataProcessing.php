@@ -3,6 +3,7 @@
 $nonce = preg_replace("/[^a-z0-9]/", '', $_POST['nonce'] ?? '');
 if (!empty($nonce) && isset($_SESSION['nonce :' . $nonce]) && $_SESSION['nonce :' . $nonce] === 0)
 {
+	$formPostSubmit = TRUE;
 	foreach ($unsafeData as $varDetails)
 	{
 		if (empty($varDetails[3]) && $varDetails[2] === 'POST')

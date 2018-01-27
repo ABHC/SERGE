@@ -52,19 +52,19 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 			{
 				# Check
 				$checkCol      = array(array('users', '=', $pseudo, ''));
-				$result_pseudo = read('users_table_serge', '', $checkCol, '',$bdd);
+				$pseudoExist = read('users_table_serge', '', $checkCol, '',$bdd);
 
 				$checkCol     = array(array('email', '=', $data['email'], ''));
-				$result_email = read('users_table_serge', '', $checkCol, '',$bdd);
+				$emailExist = read('users_table_serge', '', $checkCol, '',$bdd);
 				if(filter_var($data['email'], FILTER_VALIDATE_EMAIL) === FALSE)
 				{
 					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Invalid email <br>';
 				}
-				elseif($result_pseudo)
+				elseif($pseudoExist)
 				{
 					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Existing pseudo <br>';
 				}
-				elseif($result_email)
+				elseif($emailExist)
 				{
 					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Existing email <br>';
 				}

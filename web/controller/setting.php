@@ -18,6 +18,7 @@ $delEditingScienceQuery = '';
 $delEditingPatentQuery  = '';
 $userId                 = $_SESSION['id'];
 $classNoPremium         = '';
+$formPostSubmit         = FALSE;
 
 # Data processing
 $unsafeData = array();
@@ -220,15 +221,21 @@ if ($emailIsCheck && !empty($data['removeWP']) && $data['removeWP'] === 'removeW
 	include('model/removeWatchPackForAnUser.php');
 }
 
-if ($emailIsCheck && !empty($data['settings']) && $data['settings'] === 'ChangeSettings')
+if ($emailIsCheck)
 {
 	# Change email
 	if (!empty($data['email']))
 	{
-		$newEmail  = $data['email'];
-		$updateCol = array(array('email', $newEmail));
-		$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
-		$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
+		$checkCol     = array(array('email', '=', $data['email'], ''));
+		$emailExist = read('users_table_serge', '', $checkCol, '',$bdd);
+
+		if (!$emailExist)
+		{
+			$newEmail  = $data['email'];
+			$updateCol = array(array('email', $newEmail));
+			$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
+			$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
+		}
 	}
 
 	# Change result backgroundList
@@ -260,16 +267,13 @@ if ($emailIsCheck && !empty($data['settings']) && $data['settings'] === 'ChangeS
 	}
 
 	# Change sorting for link in email
-	$orderBy = 'masterword';
-	if (!empty($data['orderBy']) && ($data['orderBy'] === 'origin' || $data['orderBy'] === 'type'))
+	if (!empty($data['orderBy']) && ($data['orderBy'] === 'origin' || $data['orderBy'] === 'type' || $data['orderBy'] === 'masterword'))
 	{
-		$orderBy = $data['orderBy'];
+		// Update background result
+		$updateCol = array(array('mail_design', $data['orderBy']));
+		$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
+		$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
 	}
-
-	// Update background result
-	$updateCol = array(array('mail_design', $orderBy));
-	$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
-	$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
 
 	# Change privacy settings
 	$recordRead = 0;
@@ -278,10 +282,13 @@ if ($emailIsCheck && !empty($data['settings']) && $data['settings'] === 'ChangeS
 		$recordRead = 1;
 	}
 
-	// Change record read
-	$updateCol = array(array('record_read', $recordRead));
-	$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
-	$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
+	if ($formPostSubmit)
+	{
+		// Change record read
+		$updateCol = array(array('record_read', $recordRead));
+		$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
+		$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
+	}
 
 	// TODO implement in serge AND in the UI
 	if (!empty($data['historyLifetime']))
@@ -746,30 +753,6 @@ while ($cpt <= 7)
 	$cpt++;
 }
 
-# Sorting links in email
-if ($userSettings['mail_design'] === 'masterword')
-{
-	$orderByKeyword = 'checked';
-}
-elseif ($userSettings['mail_design'] === 'origin')
-{
-	$orderBySource = 'checked';
-}
-elseif ($userSettings['mail_design'] === 'type')
-{
-	$orderByType = 'checked';
-}
-
-# Privacy
-if ($userSettings['record_read'] == 0)
-{
-	$recordRead = '';
-}
-elseif ($userSettings['record_read'] == 1)
-{
-	$recordRead = 'checked';
-}
-
 # Edit science query
 if ($emailIsCheck && !empty($data['action']) && !empty($data['query']) && $data['action'] === 'editQueryScience')
 {
@@ -1177,6 +1160,30 @@ $reqReadOwnerSourcesKeywordtmp = read('keyword_news_serge', 'id, keyword, applic
 $checkCol     = array(array('users', '=', $_SESSION['pseudo'], ''));
 $userSettings = read('users_table_serge', 'id, email, password, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, record_read, history_lifetime, background_result, record_read, premium_expiration_date', $checkCol, '', $bdd);
 $userSettings = $userSettings[0];
+
+# Sorting links in email
+if ($userSettings['mail_design'] === 'masterword')
+{
+	$orderByKeyword = 'checked';
+}
+elseif ($userSettings['mail_design'] === 'origin')
+{
+	$orderBySource = 'checked';
+}
+elseif ($userSettings['mail_design'] === 'type')
+{
+	$orderByType = 'checked';
+}
+
+# Privacy
+if ($userSettings['record_read'] == 0)
+{
+	$recordRead = '';
+}
+elseif ($userSettings['record_read'] == 1)
+{
+	$recordRead = 'checked';
+}
 
 include('view/nav/nav.php');
 
