@@ -270,8 +270,6 @@
 						$source   = read($tableNameSource, 'link, name', $checkCol, '', $bdd);
 						$source   = $source[0];
 
-						preg_match("/^https?:\/\/[^\/]*\//", $source['link'], $sourceLink);
-
 						$date = $result['date']; #TODO Créer Option timezone et Adapter à la time zone de l'utilisateur
 
 						$userIdComma = ',' . $_SESSION['id'] . ',';
@@ -303,7 +301,7 @@
 							<td><input type="checkbox" name="delete' . $result['id'] . '" id="delete0' . $result['id'] . '" /><label class="checkbox" for="delete0' . $result['id'] . '"></label></td>
 							<td><a href="' . $result['link'] . '" target="_blank">' . $result['title'] . '</a></td>
 							<td>' . $keyword . '</td>
-							<td><a href="' .  $sourceLink[0] . '">' . $source['name'] . '</a></td>
+							<td><a href="' .  $source['link'] . '">' . $source['name'] . '</a></td>
 							<td>' . date("H:i d/m/o", $date) . '</td>
 							<td>' . $amISend . '</td>
 							<td>' . $amIRead . '</td>
