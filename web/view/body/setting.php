@@ -282,7 +282,6 @@
 			<!--<a href="#helpNews" class="helpModalWindow"></a>
 			<div id="helpNews">Help</div>-->
 			<div class="newsInput">
-				<input title="Add new keyword" class="submit" type="submit" value="" />
 				<select name="sourceKeyword" id="sourceKeyword">
 					<?php
 					foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
@@ -309,14 +308,15 @@
 				</select>
 				<span class="arrDownBorder">▾</span>
 				<input type="text" class="keywordInput" name="newKeyword" id="keyword" placeholder="Keyword,next keyword, ..." />
+				<input title="Add new keyword" class="submit" type="submit" value="" />
 			</div>
 			<div class="newsInput">
-				<input title="Add new source" class="submit" type="submit" value="" />
 				<select name="sourceType" id="sourceType">
 					<option value="inputSource"><?php get_t('select2_window2_setting', $bdd); ?></option>
 				</select>
 				<span class="arrDownBorder">▾</span>
 				<input type="url" name="newSource" id="source" placeholder="Source" />
+				<input title="Add new source" class="submit" type="submit" value="" />
 			</div>
 			<?php echo $ERROR_MESSAGE . '<br>'; ?>
 
@@ -460,7 +460,6 @@
 			<h2><?php get_t('window3_title_setting', $bdd); ?></h2>
 			<div class="newQueryContainer">
 				<div class="lineQuery">
-				<input title="Add new science query" class="submit" type="submit" name="scienceQuerySubmit" value="add" />
 				<?php
 				$cpt = 0;
 				$logicalConnector = '';
@@ -552,6 +551,7 @@
 				}
 				?>
 				<input title="Extend" class="extend" type="submit" id="extendScience" name="extendScience" value=">>" />
+				<input title="Add new science query" class="submit" type="submit" name="scienceQuerySubmit" value="add" />
 			</div>
 			</div>
 			<?php echo $ERROR_SCIENCEQUERY ?? ''; ?>
@@ -653,7 +653,6 @@
 			<h2><?php get_t('window4_title_setting', $bdd); ?></h2>
 			<div class="newQueryContainer">
 				<div class="lineQuery">
-				<input title="Add new patents query" class="submit" type="submit" name="patentQuerySubmit" value="add" />
 				<?php
 				$cpt = 0;
 				$logicalConnector = '';
@@ -821,6 +820,7 @@
 				}
 				?>
 				<input title="Extend" class="extend" type="submit" id="extend" name="extendPatent" value=">>" />
+				<input title="Add new patents query" class="submit" type="submit" name="patentQuerySubmit" value="add" />
 			</div>
 			</div>
 			<?php echo $ERROR_PATENTQUERY ?? ''; ?>

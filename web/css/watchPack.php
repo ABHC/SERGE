@@ -226,7 +226,6 @@ if ($_SESSION['type'] === 'create')
 		flex-shrink: 1;
 		background-color: rgba(255,89,0,0.4);
 		height: 27px;
-		margin-left: 10px;
 		margin-right: 10px;
 		font-size: 14px;
 		cursor: pointer;
@@ -262,7 +261,7 @@ if ($_SESSION['type'] === 'create')
 		background-size: contain;
 		background-color: rgba(43, 140, 34, 0.55);
 		cursor: pointer;
-		margin-right: 5px;
+		margin-left: 5px;
 	}
 
 	.submit:hover
@@ -296,7 +295,7 @@ if ($_SESSION['type'] === 'create')
 	.newsInput
 	{
 		display: flex;
-		justify-content: flex-start;
+		justify-content: center;
 		align-items: center;
 		margin-bottom: 15px;
 		width: 100%;
@@ -1458,11 +1457,12 @@ if ($_SESSION['type'] === 'create')
 		width: 30px;
 		height: 30px;
 		border-radius: 50%;
+		font-size: 0;
 		border: 1px solid rgba(255,255,255, 0.15);
+		background: url('../images/extend.png') center no-repeat;
+		background-size: contain;
 		background-color: rgba(43, 140, 34, 0.55);
 		color: #fff;
-		font-size: 15px;
-		font-weight: 700;
 		cursor: pointer;
 		margin-left: 7px;
 	}
@@ -1470,11 +1470,6 @@ if ($_SESSION['type'] === 'create')
 	.extend:hover
 	{
 		background-color: rgba(43, 140, 34, 0.75);
-	}
-
-	.scientificPublicationManagement > .newQueryContainer > .lineQuery > .extend
-	{
-		margin-right: 28px;
 	}
 
 	.queryContainer
