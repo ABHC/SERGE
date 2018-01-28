@@ -108,16 +108,6 @@ if (empty($_SESSION['cptPatentQuery']))
 	$_SESSION['cptPatentQuery'] = 3;
 }
 
-# Scroll position
-if (!empty($data['scrollPos']))
-{
-	$_SESSION['scrollPos'] = $data['scrollPos'];
-}
-elseif (!empty($_SESSION['scrollPos']))
-{
-	$_SESSION['scrollPos'] = 0;
-}
-
 # Save folding state
 if (!empty($data['sourceType']))
 {

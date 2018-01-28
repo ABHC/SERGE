@@ -4,15 +4,10 @@
 </div>
 <form method="post" action="setting">
 	<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
-	<input type="hidden" name="scrollPos" id="scrollPos" value="
-	<?php
+	<input type="hidden" name="scrollPos" id="scrollPos" value="<?php
 	if (!empty($data['scrollPos']))
 	{
 		echo $data['scrollPos'];
-	}
-	else
-	{
-		echo '0';
 	}
 	?>"/>
 	<input type="hidden" name="delEditingScienceQuery" value="<?php echo $delEditingScienceQuery; ?>"/>
@@ -29,7 +24,7 @@
 					</div>
 					<h3 ><?php get_t('subtitle1_window1_setting', $bdd); ?></h3>
 					<p class="selectBackgroundBlock">
-						<?php get_t('selectTitle_window1_setting', $bdd); ?>&nbsp;<select size="<?php echo count($backgroundList); ?>" id="selectBackgroundPreview" class="selectBackground" name="backgroundResult" onchange="this.form.submit();">
+						<?php get_t('selectTitle_window1_setting', $bdd); ?>&nbsp;<select size="<?php echo count($backgroundList); ?>" id="selectBackgroundPreview" class="selectBackground" name="backgroundResult" onchange="autoSubmit(this.form);">
 						<?php
 						foreach ($backgroundList as $backgroundName)
 						{
@@ -102,7 +97,7 @@
 					<div class="align">
 						<div class="switch">
 							<label for="recordRead">
-								<input type="checkbox" id="recordRead" name="recordRead" onchange="this.form.submit();" value="active" <?php echo $recordRead; ?>>
+								<input type="checkbox" id="recordRead" name="recordRead" onchange="autoSubmit(this.form);" value="active" <?php echo $recordRead; ?>>
 								<div class="slider"></div>
 							</label>
 						</div>
@@ -159,19 +154,19 @@
 				<div <?php echo $classNoPremium; ?>>
 					<h3><?php get_t('subtitle2_window1_setting', $bdd); ?></h3>
 					<p>
-						<input type="radio" id="condNbLink" name="cond" onchange="this.form.submit();" value="link_limit" <?php echo $condNbLink; ?>>
+						<input type="radio" id="condNbLink" name="cond" onchange="autoSubmit(this.form);" value="link_limit" <?php echo $condNbLink; ?>>
 						<label class="radio" for="condNbLink"></label>
 						<?php get_t('input2_window1_setting', $bdd); ?>
 						<input class="number alpha" type="number" name="numberLinks" min="5" placeholder="50" value="<?php echo $userSettings['link_limit']; ?>"/>
 					</p>
 					<p>
-						<input type="radio" id="condFreq" name="cond" onchange="this.form.submit();" value="freq" <?php echo $condFreq; ?>>
+						<input type="radio" id="condFreq" name="cond" onchange="autoSubmit(this.form);" value="freq" <?php echo $condFreq; ?>>
 						<label class="radio" for="condFreq"></label>
 						<?php get_t('input3_window1_setting', $bdd); ?>
 						<input class="number alpha" type="number" name="freq" min="2" max="500" step="2" placeholder="24" value="<?php echo $userSettings['frequency'] ?? '2'; ?>"/><?php get_t('input4_window1_setting', $bdd); ?>
 					</p>
 					<p>
-						<input type="radio" id="condDate" name="cond" onchange="this.form.submit();" value="deadline" <?php echo $condDate; ?>>
+						<input type="radio" id="condDate" name="cond" onchange="autoSubmit(this.form);" value="deadline" <?php echo $condDate; ?>>
 						<label class="radio" for="condDate"></label>
 						<?php get_t('input5_window1_setting', $bdd); ?>
 						<input class="number alpha" type="number" name="hours" min="0" max="23" step="2" placeholder="19" value="<?php echo $userSettings['selected_hour']; ?>"/>h
@@ -240,17 +235,17 @@
 				<div <?php echo $classNoPremium; ?>>
 					<h3><?php get_t('subtitle3_window1_setting', $bdd); ?></h3>
 					<p>
-						<input type="radio" id="orderByKeyword" name="orderBy" onchange="this.form.submit();" value="masterword" <?php echo $orderByKeyword; ?>>
+						<input type="radio" id="orderByKeyword" name="orderBy" onchange="autoSubmit(this.form);" value="masterword" <?php echo $orderByKeyword; ?>>
 						<label class="radio" for="orderByKeyword"></label>
 						<?php get_t('input7_window1_setting', $bdd); ?>
 					</p>
 					<p>
-						<input type="radio" id="orderBySource" name="orderBy" onchange="this.form.submit();" value="origin" <?php echo $orderBySource; ?>>
+						<input type="radio" id="orderBySource" name="orderBy" onchange="autoSubmit(this.form);" value="origin" <?php echo $orderBySource; ?>>
 						<label class="radio" for="orderBySource"></label>
 						<?php get_t('input8_window1_setting', $bdd); ?>
 					</p>
 					<p>
-						<input type="radio" id="orderByAlpha" name="orderBy" onchange="this.form.submit();" value="type" <?php echo $orderByType; ?>>
+						<input type="radio" id="orderByAlpha" name="orderBy" onchange="autoSubmit(this.form);" value="type" <?php echo $orderByType; ?>>
 						<label class="radio" for="orderByAlpha"></label>
 						<?php get_t('input9_window1_setting', $bdd); ?>
 					</p>

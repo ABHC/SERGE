@@ -14,6 +14,19 @@ $(document).ready(
 	{
 		var $window = $(window);
 		var scrollPosition = document.getElementById("scrollPos").value;
-		$window.scrollTop(scrollPosition);
+		if (scrollPosition != 0 || scrollPosition == null)
+		{
+			$window.scrollTop(scrollPosition);
+		}
 	}
 );
+
+function autoSubmit(formTo)
+{
+	var $window = $(window);
+	// Scroll position
+	var scrollPosition = $window.scrollTop();
+	document.getElementById("scrollPos").value = scrollPosition;
+	formTo.submit();
+	return true;
+}

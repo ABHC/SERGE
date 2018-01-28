@@ -23,15 +23,10 @@
 	<h1><?php get_t('title1_window0_watchpack', $bdd); ?></h1>
 	<form method="post" action="watchPack?type=create<?php echo $packIdURL; ?>">
 		<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
-		<input type="hidden" name="scrollPos" id="scrollPos" value="
-		<?php
+		<input type="hidden" name="scrollPos" id="scrollPos" value="<?php
 		if (!empty($data['scrollPos']))
 		{
 			echo $data['scrollPos'];
-		}
-		else
-		{
-			echo '0';
 		}
 		?>"/>
 		<input type="hidden" name="delEditingScienceQuery" value="<?php echo $delEditingScienceQuery ?? ''; ?>"/>
@@ -40,7 +35,7 @@
 		<div class="dataPackManagement">
 			<h2><?php get_t('input1_window0_watchpack', $bdd); ?></h2>
 			<div>
-				<select name="watchPackList" onchange="this.form.submit();">
+				<select name="watchPackList" onchange="autoSubmit(this.form);">
 					<option value="0"><?php get_t('select1_window0_watchpack', $bdd); ?>&nbsp;&nbsp;</option>
 					<?php
 					# List here watch Pack own by current user
