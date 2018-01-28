@@ -11,6 +11,6 @@
 
 	<form method="post" action="workinprogress">
 		<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
-		<input type="email" name="email" id="email" placeholder="Enter your email adress" value=""/> <input title="Stay tuned" class="submit" type="submit" name="newsletter" value="submit" />
+		<input type="email" name="email" id="email" placeholder="Enter your email adress" value=""/> <input title="<?php get_t('Stay tuned', $bdd); ?>" class="submit" type="submit" name="newsletter" value="submit" />
 	</form>
 </div>

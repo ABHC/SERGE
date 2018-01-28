@@ -28,7 +28,7 @@
 			<table>
 				<thead>
 					<tr>
-						<th><input title="Delete selected links" name="deleteLink" class="submit" type="submit" value="delete" /></th>
+						<th><input title="<?php get_t('Delete selected links', $bdd); ?>" name="deleteLink" class="submit" type="submit" value="delete" /></th>
 						<?php
 						echo '
 						<th><a href="?orderBy=title' . $colOrder['DESC'] . $searchSort . $data['optionalCond'] . $actualPageLink . '&type=' . $type . '">'; get_t('title1_table_results', $bdd);
@@ -306,8 +306,8 @@
 							<td>' . $amISend . '</td>
 							<td>' . $amIRead . '</td>
 							<td>
-								<a href="link?link" class="wikiLogo">
-									<img alt="Add in wiki" title="Add in wiki" src="../images/iconWikiLight.png"/>
+								<a href="addLinkInWiki?link" class="wikiLogo">
+									<img alt="'. var_get_t('Add in wiki', $bdd) . '" title="'. var_get_t('Add in wiki', $bdd) . '" src="../images/iconWikiLight.png"/>
 								</a>
 							</td>
 						</tr>';

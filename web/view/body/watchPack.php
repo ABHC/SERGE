@@ -84,13 +84,13 @@
 			if ($packSelected)
 			{
 				?>
-				<input title="" class="submitNewPack" type="submit" name="addNewPack" value="<?php get_t('Save watchpack', $bdd); ?>" />
+				<input class="submitNewPack" type="submit" name="addNewPack" value="<?php get_t('Save watchpack', $bdd); ?>" />
 				<?php
 			}
 			else
 			{
 				?>
-				<input title="" class="submitNewPack" type="submit" name="addNewPack" value="<?php get_t('Create watchpack', $bdd); ?>" />
+				<input class="submitNewPack" type="submit" name="addNewPack" value="<?php get_t('Create watchpack', $bdd); ?>" />
 				<?php
 			}
 			?>
@@ -124,7 +124,7 @@
 				</select>
 				<span class="arrDownBorder">▾</span>
 				<input type="text" class="keywordInput" name="newKeyword" id="keyword" placeholder="Keyword,next keyword, ..." />
-				<input title="Add new keyword" class="submit" type="submit" value="add" name="addNewKeyword"/>
+				<input title="<?php get_t('Add new keyword', $bdd); ?>" class="submit" type="submit" value="add" name="addNewKeyword"/>
 			</div>
 			<div class="newsInput">
 				<select name="sourceType" id="sourceType">
@@ -132,7 +132,7 @@
 				</select>
 				<span class="arrDownBorder">▾</span>
 				<input type="url" name="newSource" id="source" placeholder="Source" />
-				<input title="Add" name="addNewSource" class="submit" type="submit" value="add" />
+				<input title="<?php get_t('Add new source', $bdd); ?>" name="addNewSource" class="submit" type="submit" value="add" />
 			</div>
 			<?php echo $ERROR_MESSAGE ?? ''; ?>
 
@@ -184,8 +184,8 @@
 					{
 						echo
 						'<div class="tagSource Tactive" id="ks' . $packSourcesList['id'] . '">'.
-							'<input type="submit" title="Delete" name="delSource" value="source' . $packSourcesList['id'] . '&"/>'.
-							'<input type="submit" title="Disable" name="disableSource" value="source' . $packSourcesList['id'] . '&"/>'.
+							'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delSource" value="source' . $packSourcesList['id'] . '&"/>'.
+							'<input type="submit" title="' . var_get_t('Disable', $bdd) . '" name="disableSource" value="source' . $packSourcesList['id'] . '&"/>'.
 							'<a href="' . $packSourcesList['link'] . '" target="_blank">'.
 								 ucfirst($packSourcesList['name']).
 							'</a>'.
@@ -195,8 +195,8 @@
 					{
 						echo
 						'<div class="tagSource Tdisable" id="ks' . $packSourcesList['id'] . '">'.
-							'<input type="submit" title="Delete" name="delSource" value="source' . $packSourcesList['id'] . '&"/>'.
-							'<input type="submit" title="Activate" name="activateSource" value="source' . $packSourcesList['id'] . '&"/>'.
+							'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delSource" value="source' . $packSourcesList['id'] . '&"/>'.
+							'<input type="submit" title="' . var_get_t('Activate', $bdd) . '" name="activateSource" value="source' . $packSourcesList['id'] . '&"/>'.
 							'<a href="' . $packSourcesList['link'] . '" target="_blank">'.
 								 ucfirst($packSourcesList['name']).
 							'</a>'.
@@ -238,8 +238,8 @@
 						{
 							echo
 							'<div class="tag Tdisable">'.
-								'<input type="submit" title="Delete" name="delKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
-								'<input type="submit" title="Activate" name="activateKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
+								'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
+								'<input type="submit" title="' . var_get_t('Activate', $bdd) . '" name="activateKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
 								'<a href="">'.
 									 ucfirst($ownerKeywordList['query']).
 								'</a>'.
@@ -250,8 +250,8 @@
 						{
 							echo
 							'<div class="tag Tactive">'.
-								'<input type="submit" title="Delete" name="delKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
-								'<input type="submit" title="Disable" name="disableKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
+								'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
+								'<input type="submit" title="' . var_get_t('Disable', $bdd) . '" name="disableKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
 								'<a href="">'.
 									 ucfirst($ownerKeywordList['query']).
 								'</a>'.
@@ -343,7 +343,7 @@
 					echo '
 					<input type="checkbox" id="openParenthesis' . $cpt . '" name="openParenthesis' . $cpt . '" value="active" ' .  $checked['openParenthesis' . $cpt] . '/>
 					<label class="queryParenthesis" for="openParenthesis' . $cpt . '">(</label>
-					<select title="Type" class="queryType" name="scienceType' . $cpt . '" id="scienceType0' . $cpt . '">';
+					<select title="' . var_get_t('Type', $bdd) . '" class="queryType" name="scienceType' . $cpt . '" id="scienceType0' . $cpt . '">';
 
 					foreach ($selected as $searchField => $selectedSearchField)
 					{
@@ -389,8 +389,8 @@
 					</div>';
 				}
 				?>
-				<input title="Extend" class="extend" type="submit" id="extendScience" name="extendScience" value=">>" />
-				<input title="Add new science query" class="submit" type="submit" name="scienceQuerySubmit" value="scienceQuerySubmit" />
+				<input title="<?php get_t('Extend', $bdd); ?>" class="extend" type="submit" id="extendScience" name="extendScience" value=">>" />
+				<input title="<?php get_t('Add new science query', $bdd); ?>" class="submit" type="submit" name="scienceQuerySubmit" value="scienceQuerySubmit" />
 			</div>
 			</div>
 			<?php echo $ERROR_SCIENCEQUERY ?? ''; ?>
@@ -406,20 +406,20 @@
 			{
 				$queryDisplay = '';
 				$Qdisable = '';
-				$titleDisableActivate = 'Disable';
+				$titleDisableActivate = var_get_t('Disable', $bdd);
 				$nameClassDisableActivate = 'disable';
 
 				$pattern = '!Science';
 				if (preg_match("/$pattern/", $query['source']))
 				{
 					$Qdisable = 'Qdisable';
-					$titleDisableActivate = 'Activate';
+					$titleDisableActivate = var_get_t('Activate', $bdd);
 					$nameClassDisableActivate = 'activate';
 				}
 
 				echo '
 				<div class="queryContainer ' . $Qdisable . '">
-					<input type="submit" title="Delete" class="deleteQuery" name="delQueryScience" value="query' . $query['id'] . '"/>
+					<input type="submit" title="' . var_get_t('Delete', $bdd) . '" class="deleteQuery" name="delQueryScience" value="query' . $query['id'] . '"/>
 					<input type="submit" title="' . $titleDisableActivate . '" class="' . $nameClassDisableActivate . 'Query" name="' . $nameClassDisableActivate . 'QueryScience" value="query' . $query['id'] . '"/>
 				';
 
@@ -580,7 +580,7 @@
 
 					$data['patentQuery' . $cpt] = $data['patentQuery' . $cpt] ?? '';
 					echo '
-				<select title="Type" class="queryType" name="patentType' . $cpt . '" id="patentType' . $cpt . '">
+				<select title="' . var_get_t('Type', $bdd) . '" class="queryType" name="patentType' . $cpt . '" id="patentType' . $cpt . '">
 					<option value="ALLNAMES" ' . $selected['ALLNAMES'] . '>All Names</option>
 					<option value="ALLNUM" ' . $selected['ALLNUM'] . '>All Numbers and IDs</option>
 					<option value="AAD" ' . $selected['AAD'] . '>Applicant Address</option>
@@ -658,8 +658,8 @@
 				<label class="andOr" for="patentAndOr' . $cpt . '"></label>';
 				}
 				?>
-				<input title="Extend" class="extend" type="submit" id="extend" name="extendPatent" value=">>" />
-				<input title="Add new patents query" class="submit" type="submit" name="patentQuerySubmit" value="patentQuerySubmit" />
+				<input title="<?php get_t('Extend', $bdd); ?>" class="extend" type="submit" id="extend" name="extendPatent" value=">>" />
+				<input title="<?php get_t('Add new patents query', $bdd); ?>" class="submit" type="submit" name="patentQuerySubmit" value="patentQuerySubmit" />
 			</div>
 			</div>
 			<?php echo $ERROR_PATENTQUERY ?? ''; ?>
@@ -675,20 +675,20 @@
 			{
 				$queryDisplay = '';
 				$Qdisable = '';
-				$titleDisableActivate = 'Disable';
+				$titleDisableActivate = var_get_t('Disable', $bdd);
 				$nameClassDisableActivate = 'disable';
 
 				$pattern = '!Patent';
 				if (preg_match("/$pattern/", $query['source']))
 				{
 					$Qdisable = 'Qdisable';
-					$titleDisableActivate = 'Activate';
+					$titleDisableActivate = var_get_t('Activate', $bdd);
 					$nameClassDisableActivate = 'activate';
 				}
 
 				echo '
 				<div class="queryContainer ' . $Qdisable . '">
-					<input type="submit" title="Delete" class="deleteQuery" name="delQueryPatent" value="query' . $query['id'] . '"/>
+					<input type="submit" title="' . var_get_t('Delete', $bdd) . '" class="deleteQuery" name="delQueryPatent" value="query' . $query['id'] . '"/>
 					<input type="submit" title="' . $titleDisableActivate . '" class="' . $nameClassDisableActivate . 'Query" name="' . $nameClassDisableActivate . 'QueryPatent" value="query' . $query['id'] . '"/>
 				';
 
@@ -846,7 +846,7 @@
 								}
 								echo '
 								<tr>
-									<td><input title="Add watch pack" name="addPack" class="icoAddPack" type="submit" value="' . $watchPack['id'] . '" /></td>
+									<td><input title="' . var_get_t('Add watch pack', $bdd) . '" name="addPack" class="icoAddPack" type="submit" value="' . $watchPack['id'] . '" /></td>
 									<td title="' . $watchPack['description'] . '">' . ucfirst($watchPack['name']) . '</td>
 									<td>' . $watchPack['author'] . '</td>
 									<td>' . $watchPack['category'] . '</td>

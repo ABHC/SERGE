@@ -22,7 +22,7 @@
 						<h3><?php get_t('input1_window1_setting', $bdd); ?></h3>
 						<div class="align">
 							<input type="email" name="email" id="email" value="<?php echo $userSettings['email']; ?>"/>
-							<input title="Change email" class="submit" type="submit" value="" />
+							<input title="<?php get_t('Update email', $bdd); ?>" class="submit" type="submit" value="" />
 						</div>
 					</div>
 					<h3 ><?php get_t('subtitle1_window1_setting', $bdd); ?></h3>
@@ -109,7 +109,7 @@
 					<div>
 						<div class="deleteContainer">
 							<div class="deleteLogo"></div>
-							<input title="Delete" class="deleteButton" type="submit" name="buttonDeleteHistory" value="<?php get_t('input11_window1_setting', $bdd); ?>" />
+							<input title="<?php get_t('Delete', $bdd); ?>" class="deleteButton" type="submit" name="buttonDeleteHistory" value="<?php get_t('input11_window1_setting', $bdd); ?>" />
 							<?php get_t('input11.1_window1_setting', $bdd); ?>
 							<input class="number alpha" name="deleteHistoryValue" type="number" min="1" value="1"/>
 							<select class="selectCommResult Unit" name="deleteHistoryUnit">
@@ -151,7 +151,7 @@
 					}
 					?>
 					</select>
-					<input title="Remove selected watchPack" class="removeWP" type="submit" name="removeWP" value="removeWP" />
+					<input title="<?php get_t('Remove selected watchPack', $bdd); ?>" class="removeWP" type="submit" name="removeWP" value="removeWP" />
 				</p>
 				</div>
 				<div <?php echo $classNoPremium; ?>>
@@ -261,17 +261,17 @@
 						<?php get_t('subsubtitle1_window1_setting', $bdd); ?>
 					<div class="align">
 						<textarea class="falseInput" id="toCopy" ><?php echo $rssLink; ?></textarea>
-						<button class="copyButton" id="copy" title="Copy RSS link" type="button" onclick="copyToClipboard('');"></button>
+						<button class="copyButton" id="copy" title="<?php get_t('Copy RSS feed', $bdd); ?>" type="button" onclick="copyToClipboard('');"></button>
 					</div><br>
 					<?php get_t('subsubtitle2_window1_setting', $bdd); ?>
 					<div class="align">
 						<textarea class="falseInput" id="toCopyS" ><?php echo $rssLink; ?>s</textarea>
-						<button class="copyButton" id="copyS" title="Copy RSS link" type="button" onclick="copyToClipboard('S');"></button>
+						<button class="copyButton" id="copyS" title="<?php get_t('Copy RSS feed', $bdd); ?>" type="button" onclick="copyToClipboard('S');"></button>
 					</div><br>
 					<?php get_t('subsubtitle3_window1_setting', $bdd); ?>
 					<div class="align">
 						<textarea class="falseInput" id="toCopyP" ><?php echo $rssLink; ?>p</textarea>
-						<button class="copyButton" id="copyP" title="Copy RSS link" type="button" onclick="copyToClipboard('P');"></button>
+						<button class="copyButton" id="copyP" title="<?php get_t('Copy RSS feed', $bdd); ?>" type="button" onclick="copyToClipboard('P');"></button>
 					</div>
 				</div>
 			</div>
@@ -307,8 +307,8 @@
 					<option value="0"><?php get_t('select1_window2_setting', $bdd); ?></option>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" class="keywordInput" name="newKeyword" id="keyword" placeholder="Keyword,next keyword, ..." />
-				<input title="Add new keyword" class="submit" type="submit" value="" />
+				<input type="text" class="keywordInput" name="newKeyword" id="keyword" placeholder="<?php get_t('Keyword, next keyword, ...', $bdd); ?>" />
+				<input title="<?php get_t('Add new keyword', $bdd); ?>" class="submit" type="submit" value="" />
 			</div>
 			<div class="newsInput">
 				<select name="sourceType" id="sourceType">
@@ -316,7 +316,7 @@
 				</select>
 				<span class="arrDownBorder">▾</span>
 				<input type="url" name="newSource" id="source" placeholder="Source" />
-				<input title="Add new source" class="submit" type="submit" value="" />
+				<input title="<?php get_t('Add new source', $bdd); ?>" class="submit" type="submit" value="" />
 			</div>
 			<?php echo $ERROR_MESSAGE . '<br>'; ?>
 
@@ -372,8 +372,8 @@
 					{
 						echo
 						'<div class="tagSource Tactive" id="ks' . $ownerSourcesList['id'] . '">'.
-							'<input type="submit" title="Delete" name="delSource" value="source' . $ownerSourcesList['id'] . '&"/>'.
-							'<input type="submit" title="Disable" name="disableSource" value="source' . $ownerSourcesList['id']. '&"/>'.
+							'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delSource" value="source' . $ownerSourcesList['id'] . '&"/>'.
+							'<input type="submit" title="' . var_get_t('Disable', $bdd) . '" name="disableSource" value="source' . $ownerSourcesList['id']. '&"/>'.
 							'<a href="' . $ownerSourcesList['link']. '" target="_blank">'.
 								ucfirst($ownerSourcesList['name']).
 							'</a>'.
@@ -383,8 +383,8 @@
 					{
 						echo
 						'<div class="tagSource Tdisable" id="ks' . $ownerSourcesList['id'] . '">'.
-							'<input type="submit" title="Delete" name="delSource" value="source' . $ownerSourcesList['id'] . '&"/>'.
-							'<input type="submit" title="Activate" name="activateSource" value="source' . $ownerSourcesList['id']. '&"/>'.
+							'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delSource" value="source' . $ownerSourcesList['id'] . '&"/>'.
+							'<input type="submit" title="' . var_get_t('Activate', $bdd) . '" name="activateSource" value="source' . $ownerSourcesList['id']. '&"/>'.
 							'<a href="' . $ownerSourcesList['link']. '" target="_blank">'.
 								ucfirst($ownerSourcesList['name']).
 							'</a>'.
@@ -412,8 +412,8 @@
 						{
 							echo
 							'<div class="tag Tactive">'.
-								'<input type="submit" title="Delete" name="delKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
-								'<input type="submit" title="Disable" name="disableKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
+								'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
+								'<input type="submit" title="' . var_get_t('Disable', $bdd) . '" name="disableKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
 								'<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">'.
 									ucfirst($ownerKeywordList['keyword']).
 								'</a>'.
@@ -424,8 +424,8 @@
 						{
 							echo
 							'<div class="tag Tdisable">'.
-								'<input type="submit" title="Delete" name="delKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
-								'<input type="submit" title="Activate" name="activateKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
+								'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
+								'<input type="submit" title="' . var_get_t('Activate', $bdd) . '" name="activateKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
 								'<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">'.
 									ucfirst($ownerKeywordList['keyword']).
 								'</a>'.
@@ -501,7 +501,7 @@
 					echo '
 					<input type="checkbox" id="openParenthesis' . $cpt . '" name="openParenthesis' . $cpt . '" value="active" ' . $checked['openParenthesis' . $cpt] . '/>
 					<label class="queryParenthesis" for="openParenthesis' . $cpt . '">(</label>
-					<select title="Type" class="queryType" name="scienceType' . $cpt . '" id="scienceType0' . $cpt . '">';
+					<select title="' . var_get_t('Type', $bdd) . '" class="queryType" name="scienceType' . $cpt . '" id="scienceType0' . $cpt . '">';
 
 					foreach ($selected as $searchField => $selectedSearchField)
 					{
@@ -550,8 +550,8 @@
 					</div>';
 				}
 				?>
-				<input title="Extend" class="extend" type="submit" id="extendScience" name="extendScience" value=">>" />
-				<input title="Add new science query" class="submit" type="submit" name="scienceQuerySubmit" value="add" />
+				<input title="<?php get_t('Extend', $bdd); ?>" class="extend" type="submit" id="extendScience" name="extendScience" value=">>" />
+				<input title="<?php get_t('Add new science query', $bdd); ?>" class="submit" type="submit" name="scienceQuerySubmit" value="add" />
 			</div>
 			</div>
 			<?php echo $ERROR_SCIENCEQUERY ?? ''; ?>
@@ -566,20 +566,20 @@
 			{
 				$queryDisplay = '';
 				$Qdisable = '';
-				$titleDisableActivate = 'Disable';
+				$titleDisableActivate = var_get_t('Disable', $bdd);
 				$nameClassDisableActivate = 'disable';
 
 				$pattern = ',!' . $_SESSION['id'] . ',';
 				if (preg_match("/$pattern/", $query['owners']))
 				{
 					$Qdisable = 'Qdisable';
-					$titleDisableActivate = 'Activate';
+					$titleDisableActivate = var_get_t('Activate', $bdd);
 					$nameClassDisableActivate = 'activate';
 				}
 
 				echo '
 				<div class="queryContainer ' . $Qdisable . '">
-					<input type="submit" title="Delete" class="deleteQuery" name="delQueryScience" value="query' . $query['id'] . '"/>
+					<input type="submit" title="' . var_get_t('Delete', $bdd) . '" class="deleteQuery" name="delQueryScience" value="query' . $query['id'] . '"/>
 					<input type="submit" title="' . $titleDisableActivate . '" class="' . $nameClassDisableActivate . 'Query" name="' . $nameClassDisableActivate . 'QueryScience" value="query' . $query['id'] . '"/>
 				';
 
@@ -742,7 +742,7 @@
 
 					$data['patentQuery' . $cpt] = $data['patentQuery' . $cpt] ?? '';
 					echo '
-				<select title="Type" class="queryType" name="patentType' . $cpt . '" id="patentType' . $cpt . '">
+				<select title="' . var_get_t('Type', $bdd) . '" class="queryType" name="patentType' . $cpt . '" id="patentType' . $cpt . '">
 					<option value="ALLNAMES" ' . $selected['ALLNAMES'] . '>All Names</option>
 					<option value="ALLNUM" ' . $selected['ALLNUM'] . '>All Numbers and IDs</option>
 					<option value="AAD" ' . $selected['AAD'] . '>Applicant Address</option>
@@ -819,8 +819,8 @@
 				<label class="andOr" for="patentAndOr' . $cpt . '"></label>';
 				}
 				?>
-				<input title="Extend" class="extend" type="submit" id="extend" name="extendPatent" value=">>" />
-				<input title="Add new patents query" class="submit" type="submit" name="patentQuerySubmit" value="add" />
+				<input title="<?php get_t('Extend', $bdd); ?>" class="extend" type="submit" id="extend" name="extendPatent" value=">>" />
+				<input title="<?php get_t('Add new patents query', $bdd); ?>" class="submit" type="submit" name="patentQuerySubmit" value="add" />
 			</div>
 			</div>
 			<?php echo $ERROR_PATENTQUERY ?? ''; ?>
@@ -835,20 +835,20 @@
 			{
 				$queryDisplay = '';
 				$Qdisable = '';
-				$titleDisableActivate = 'Disable';
+				$titleDisableActivate = var_get_t('Disable', $bdd);
 				$nameClassDisableActivate = 'disable';
 
 				$pattern = ',!' . $_SESSION['id'] . ',';
 				if (preg_match("/$pattern/", $query['owners']))
 				{
 					$Qdisable = 'Qdisable';
-					$titleDisableActivate = 'Activate';
+					$titleDisableActivate = var_get_t('Activate', $bdd);
 					$nameClassDisableActivate = 'activate';
 				}
 
 				echo '
 				<div class="queryContainer ' . $Qdisable . '">
-					<input type="submit" title="Delete" class="deleteQuery" name="delQueryPatent" value="query' . $query['id'] . '"/>
+					<input type="submit" title="' . var_get_t('Delete', $bdd) . '" class="deleteQuery" name="delQueryPatent" value="query' . $query['id'] . '"/>
 					<input type="submit" title="' . $titleDisableActivate . '" class="' . $nameClassDisableActivate . 'Query" name="' . $nameClassDisableActivate . 'QueryPatent" value="query' . $query['id'] . '"/>
 				';
 
