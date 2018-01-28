@@ -173,6 +173,7 @@ h3
 	background-color: rgb(6, 85, 124);
 	cursor: pointer;
 	margin-right: 5px;
+	margin-left: 5px;
 }
 
 .submit:hover

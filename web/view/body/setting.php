@@ -20,7 +20,10 @@
 				<div>
 					<div>
 						<h3><?php get_t('input1_window1_setting', $bdd); ?></h3>
-						<input type="email" name="email" id="email" value="<?php echo $userSettings['email']; ?>"/>
+						<div class="align">
+							<input type="email" name="email" id="email" value="<?php echo $userSettings['email']; ?>"/>
+							<input title="Change email" class="submit" type="submit" value="" />
+						</div>
 					</div>
 					<h3 ><?php get_t('subtitle1_window1_setting', $bdd); ?></h3>
 					<p class="selectBackgroundBlock">
