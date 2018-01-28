@@ -168,9 +168,9 @@ h3
 	border-radius: 50%;
 	font-size: 0;
 	border: 1px solid rgba(255,255,255, 0.15);
-	background: url('../images/+.png') center no-repeat;
+	background: url('../images/tick.png') center no-repeat;
 	background-size: contain;
-	background-color: rgb(6, 85, 124);
+	background-color: rgba(43, 140, 34, 0.55);
 	cursor: pointer;
 	margin-right: 5px;
 	margin-left: 5px;
@@ -178,7 +178,7 @@ h3
 
 .submit:hover
 {
-	background-color: rgba(0,99,149, 0.55);
+	background-color: rgba(43, 140, 34, 0.75);
 }
 
 .copyButton
@@ -1106,7 +1106,7 @@ h2
 
 input:checked + .slider
 {
-	background-color: rgba(0,170,0,0.4);
+	background-color: rgba(43, 140, 34, 0.55);;
 }
 
 input:focus + .slider
@@ -1321,7 +1321,7 @@ input:checked + .slider:before
 	height: 25px;
 	width: 25px;
 	border: 1px solid rgba(255,255,255, 0.15);
-	background-color: rgba(0,170,0,0.4);
+	background-color: rgba(43, 140, 34, 0.55);
 	border-radius: 50%;
 	transition: all .3s;
 }
@@ -1615,7 +1615,7 @@ input:checked + .slider:before
 	height: 30px;
 	border-radius: 50%;
 	border: 1px solid rgba(255,255,255, 0.15);
-	background-color: rgba(0,170,0,0.5);
+	background-color: rgba(43, 140, 34, 0.55);
 	color: #fff;
 	font-size: 15px;
 	font-weight: 700;
@@ -1625,7 +1625,7 @@ input:checked + .slider:before
 
 .extend:hover
 {
-	background-color: rgba(6, 140, 6, 0.5);
+	background-color: rgba(43, 140, 34, 0.75);
 }
 
 .scientificPublicationManagement > .newQueryContainer > .lineQuery > .extend

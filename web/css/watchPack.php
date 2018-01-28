@@ -258,16 +258,16 @@ if ($_SESSION['type'] === 'create')
 		border-radius: 50%;
 		font-size: 0;
 		border: 1px solid rgba(255,255,255, 0.15);
-		background: url('../images/+.png') center no-repeat;
+		background: url('../images/tick.png') center no-repeat;
 		background-size: contain;
-		background-color: rgb(6, 85, 124);
+		background-color: rgba(43, 140, 34, 0.55);
 		cursor: pointer;
 		margin-right: 5px;
 	}
 
 	.submit:hover
 	{
-		background-color: rgba(0,99,149, 0.55);
+		background-color: rgba(43, 140, 34, 0.75);
 	}
 
 	.submitNewPack
@@ -1459,7 +1459,7 @@ if ($_SESSION['type'] === 'create')
 		height: 30px;
 		border-radius: 50%;
 		border: 1px solid rgba(255,255,255, 0.15);
-		background-color: rgba(0,170,0,0.5);
+		background-color: rgba(43, 140, 34, 0.55);
 		color: #fff;
 		font-size: 15px;
 		font-weight: 700;
@@ -1469,7 +1469,7 @@ if ($_SESSION['type'] === 'create')
 
 	.extend:hover
 	{
-		background-color: rgba(6, 140, 6, 0.5);
+		background-color: rgba(43, 140, 34, 0.75);
 	}
 
 	.scientificPublicationManagement > .newQueryContainer > .lineQuery > .extend
