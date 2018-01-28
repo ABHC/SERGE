@@ -14,7 +14,7 @@ $(document).ready(
 	{
 		var $window = $(window);
 		var scrollPosition = document.getElementById("scrollPos").value;
-		if (scrollPosition != 0 || scrollPosition == null)
+		if (scrollPosition !== 0 || scrollPosition == null)
 		{
 			$window.scrollTop(scrollPosition);
 		}
