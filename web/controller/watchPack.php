@@ -26,6 +26,7 @@ $base                 = 0;
 $page                 = 0;
 $readPackSources      = array();
 $listAllSources       = array();
+$packSelected         = FALSE;
 
 # Data processing
 $unsafeData = array();
