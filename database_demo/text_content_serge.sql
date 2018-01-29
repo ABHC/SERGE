@@ -207,5 +207,11 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('Add new science query', 'Add new science query', 'Ajouter une nouvelle requête scientifique', NULL, NULL, NULL),
 ('Add new patents query', 'Add new patents query', 'Ajouter une nouvelle requête de brevets', NULL, NULL, NULL),
 ('Add watch pack', 'Add watch pack', 'Ajouter un pack de veille', NULL, NULL, NULL),
+('title', 'Title', 'Titre', NULL, NULL, NULL),
+('author', 'Author', 'Auteur', NULL, NULL, NULL),
+('abstract', 'Abstract', 'Résumé', NULL, NULL, NULL),
+('publisher', 'Publisher', 'Éditeur', NULL, NULL, NULL),
+('category', 'Category', 'Catégorie', NULL, NULL, NULL),
+('all', 'All', 'Tout', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);

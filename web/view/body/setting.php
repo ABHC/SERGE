@@ -505,7 +505,7 @@
 
 					foreach ($selected as $searchField => $selectedSearchField)
 					{
-						echo '<option value="' . $searchField . '" ' . $selectedSearchField . '>' . ucfirst($searchField) . '</option>';
+						echo '<option value="' . $searchField . '" ' . $selectedSearchField . '>' . var_get_t($searchField, $bdd) . '</option>';
 					}
 
 					echo '
