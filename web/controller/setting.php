@@ -324,11 +324,13 @@ if ($emailIsCheck && !empty($data['buttonDeleteHistory']) && !empty($data['delet
 	# News results
 	$checkCol          = array(array('owners', 'l', $owner, 'AND'),
 														array('date', '>=', $deleteTime, ''));
-	$readResutlToDel = read('result_news_serge', 'id, owners', $checkCol, '', $bdd);
+	$readResutlToDel = read('result_news_serge', 'id, owners, send_status, read_status', $checkCol, '', $bdd);
 
 	foreach ($readResutlToDel as $resultToDel)
 	{
-		$updateCol = array(array('owners', preg_replace("/,$userId,/", ',', $resultToDel['owners'])));
+		$updateCol = array(array('owners', preg_replace("/,$userId,/", ',', $resultToDel['owners'])),
+											array('send_status', preg_replace("/,$userId,/", ',', $resultToDel['send_status'])),
+											array('read_status', preg_replace("/,$userId,/", ',', $resultToDel['read_status'])));
 		$checkCol  = array(array('id', '=', $resultToDel['id'], ''));
 		$execution = update('result_news_serge', $updateCol, $checkCol, '', $bdd);
 	}
@@ -340,7 +342,9 @@ if ($emailIsCheck && !empty($data['buttonDeleteHistory']) && !empty($data['delet
 
 	foreach ($readResutlToDel as $resultToDel)
 	{
-		$updateCol = array(array('owners', preg_replace("/,$userId,/", ',', $resultToDel['owners'])));
+		$updateCol = array(array('owners', preg_replace("/,$userId,/", ',', $resultToDel['owners'])),
+											array('send_status', preg_replace("/,$userId,/", ',', $resultToDel['send_status'])),
+											array('read_status', preg_replace("/,$userId,/", ',', $resultToDel['read_status'])));
 		$checkCol  = array(array('id', '=', $resultToDel['id'], ''));
 		$execution = update('result_science_serge', $updateCol, $checkCol, '', $bdd);
 	}
@@ -352,7 +356,9 @@ if ($emailIsCheck && !empty($data['buttonDeleteHistory']) && !empty($data['delet
 
 	foreach ($readResutlToDel as $resultToDel)
 	{
-		$updateCol = array(array('owners', preg_replace("/,$userId,/", ',', $resultToDel['owners'])));
+		$updateCol = array(array('owners', preg_replace("/,$userId,/", ',', $resultToDel['owners'])),
+											array('send_status', preg_replace("/,$userId,/", ',', $resultToDel['send_status'])),
+											array('read_status', preg_replace("/,$userId,/", ',', $resultToDel['read_status'])));
 		$checkCol  = array(array('id', '=', $resultToDel['id'], ''));
 		$execution = update('result_patents_serge', $updateCol, $checkCol, '', $bdd);
 	}
