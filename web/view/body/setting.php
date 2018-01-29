@@ -282,6 +282,15 @@
 			<!--<a href="#helpNews" class="helpModalWindow"></a>
 			<div id="helpNews">Help</div>-->
 			<div class="newsInput">
+				<select name="sourceType" id="sourceType">
+					<option value="inputSource"><?php get_t('select2_window2_setting', $bdd); ?></option>
+				</select>
+				<span class="arrDownBorder">▾</span>
+				<input type="url" name="newSource" id="source" placeholder="Source" />
+				<input title="<?php get_t('Add new source', $bdd); ?>" class="submit" type="submit" value="" />
+			</div>
+			<?php #echo $ERROR_MESSAGE . '<br>'; ?>
+			<div class="newsInput">
 				<select name="sourceKeyword" id="sourceKeyword">
 					<?php
 					foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
@@ -310,15 +319,6 @@
 				<input type="text" class="keywordInput" name="newKeyword" id="keyword" placeholder="<?php get_t('Keyword, next keyword, ...', $bdd); ?>" />
 				<input title="<?php get_t('Add new keyword', $bdd); ?>" class="submit" type="submit" value="" />
 			</div>
-			<div class="newsInput">
-				<select name="sourceType" id="sourceType">
-					<option value="inputSource"><?php get_t('select2_window2_setting', $bdd); ?></option>
-				</select>
-				<span class="arrDownBorder">▾</span>
-				<input type="url" name="newSource" id="source" placeholder="Source" />
-				<input title="<?php get_t('Add new source', $bdd); ?>" class="submit" type="submit" value="" />
-			</div>
-			<?php echo $ERROR_MESSAGE . '<br>'; ?>
 
 			<div class="inlineButton">
 				<a class="buttonCreatesourcePack" href="watchPack?type=create"><?php get_t('Button1_window2_setting', $bdd); ?></a>
