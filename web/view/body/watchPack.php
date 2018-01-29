@@ -103,6 +103,15 @@
 		<div class="keywordManagement">
 			<h2><?php get_t('window2_title_setting', $bdd); ?></h2>
 			<div class="newsInput">
+				<select name="sourceType" id="sourceType">
+					<option value="inputSource"><?php get_t('select2_window2_setting', $bdd); ?></option>
+				</select>
+				<span class="arrDownBorder">▾</span>
+				<input type="url" name="newSource" id="source" placeholder="Source" />
+				<input title="<?php get_t('Add new source', $bdd); ?>" name="addNewSource" class="submit" type="submit" value="add" />
+			</div>
+			<?php #echo $ERROR_MESSAGE ?? ''; ?>
+			<div class="newsInput">
 				<select name="sourceKeyword" id="sourceKeyword">
 				<?php
 					foreach ($listAllSources as $sourcesList)
@@ -126,15 +135,6 @@
 				<input type="text" class="keywordInput" name="newKeyword" id="keyword" placeholder="<?php get_t('Keyword, next keyword, ...', $bdd); ?>" />
 				<input title="<?php get_t('Add new keyword', $bdd); ?>" class="submit" type="submit" value="add" name="addNewKeyword"/>
 			</div>
-			<div class="newsInput">
-				<select name="sourceType" id="sourceType">
-					<option value="inputSource"><?php get_t('select2_window2_setting', $bdd); ?></option>
-				</select>
-				<span class="arrDownBorder">▾</span>
-				<input type="url" name="newSource" id="source" placeholder="Source" />
-				<input title="<?php get_t('Add new source', $bdd); ?>" name="addNewSource" class="submit" type="submit" value="add" />
-			</div>
-			<?php echo $ERROR_MESSAGE ?? ''; ?>
 
 			<div>
 				<?php
