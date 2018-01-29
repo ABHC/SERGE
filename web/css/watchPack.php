@@ -200,7 +200,7 @@ if ($_SESSION['type'] === 'create')
 		-webkit-appearance: none;
 		-o-appearance: none;
 		appearance: none;
-		background-color: rgba(0,0,0,0);
+		background-color: rgba(20,20,20,0.45);
 		outline: none;
 		z-index: 2;
 	}
@@ -224,17 +224,11 @@ if ($_SESSION['type'] === 'create')
 	{
 		flex-grow: 1;
 		flex-shrink: 1;
-		background-color: rgba(255,89,0,0.4);
 		height: 27px;
+		background-color: rgba(20,20,20,0.45);
 		margin-right: 10px;
 		font-size: 14px;
 		cursor: pointer;
-	}
-
-	select#sourceKeyword option,
-	select#sourceType option
-	{
-		background-color: rgba(131, 49, 5, 0.8);
 	}
 
 	input#email
@@ -447,7 +441,7 @@ if ($_SESSION['type'] === 'create')
 		margin-bottom: 3px;
 		margin-left: 3px;
 		margin-right: 3px;
-		background-color: rgba(0,120,176,0.4);
+		background-color: rgba(20,20,20,0.45);
 		color: #fff;
 		cursor: pointer;
 	}
@@ -468,7 +462,7 @@ if ($_SESSION['type'] === 'create')
 		margin-bottom: 3px;
 		margin-left: 3px;
 		margin-right: 2%;
-		background-color: rgba(0,120,176,0.4);
+		background-color: rgba(20,20,20,0.45);
 		color: #fff;
 		cursor: pointer;
 	}
@@ -485,7 +479,7 @@ if ($_SESSION['type'] === 'create')
 	.sourceList > input:not(:checked) ~ .keywordList > .unfoldTag:active,
 	.keywordManagement > input:not(:checked) ~ .sourceList > .unfoldTag:active
 	{
-		background-color: rgba(0, 85, 127, 0.4);
+		background-color: rgba(30 ,30 ,30 ,0.4);
 	}
 
 	.sourceList > input:checked + .keywordList > .unfoldTag,
@@ -508,7 +502,7 @@ if ($_SESSION['type'] === 'create')
 		margin-bottom: 3px;
 		margin-left: 3px;
 		margin-right: 3px;
-		background-color: rgba(0,120,176,0.4);
+		background-color: rgba(20,20,20,0.45);
 		color: #fff;
 		cursor: pointer;
 	}
@@ -520,7 +514,7 @@ if ($_SESSION['type'] === 'create')
 	.sourceList > input:checked ~ .keywordList > .foldTag:active,
 	.keywordManagement > input:checked ~ .sourceList > .foldTag:active
 	{
-		background-color: rgba(0, 85, 127, 0.4);
+		background-color: rgba(30 ,30 ,30 ,0.4);
 	}
 
 	.sourceList > input:not(:checked) + .keywordList > .foldTag,
@@ -549,7 +543,7 @@ if ($_SESSION['type'] === 'create')
 
 	.tag.Tactive
 	{
-		background-color: rgba(0,170,0,0.4);
+		background-color: rgba(255,255,255,0.2);
 	}
 
 	.Tdisable
@@ -559,7 +553,7 @@ if ($_SESSION['type'] === 'create')
 
 	.tag:hover
 	{
-		background-color: rgba(0, 100, 0, 0.4);
+		background-color: rgba(255,255,255,0.3);
 	}
 
 	.tag.Tdisable:hover
@@ -703,7 +697,7 @@ if ($_SESSION['type'] === 'create')
 
 	.tagSource.Tactive
 	{
-		background-color: rgba(255,89,0,0.4);
+		background-color: rgba(235, 115, 43, 0.55);
 	}
 
 	.tagSource.Tdisable
@@ -723,7 +717,7 @@ if ($_SESSION['type'] === 'create')
 
 	.tagSource.Tactive:hover
 	{
-		background-color: rgba(175, 61, 0, 0.4);
+		background-color: rgba(235, 115, 43, 0.7);
 	}
 
 	.tagSource.Tactive:hover a
@@ -1634,7 +1628,7 @@ if ($_SESSION['type'] === 'create')
 		justify-content: center;
 		align-items: center;
 		width: fit-content;
-		background-color: rgba(60,60,60,0.4);
+		background-color: rgba(20,20,20,0.45);
 		border-radius: 3px;
 		border: 1px solid rgba(255,255,255,0.2);
 		padding: 4px;
