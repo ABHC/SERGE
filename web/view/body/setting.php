@@ -160,21 +160,21 @@
 						<input type="radio" id="condNbLink" name="cond" onchange="autoSubmit(this.form);" value="link_limit" <?php echo $condNbLink; ?>>
 						<label class="radio" for="condNbLink"></label>
 						<?php get_t('input2_window1_setting', $bdd); ?>
-						<input class="number alpha" type="number" name="numberLinks" min="5" placeholder="50" value="<?php echo $userSettings['link_limit']; ?>"/>
+						<input class="number alpha" type="number" name="numberLinks" onchange="autoSubmit(this.form);" min="5" placeholder="50" value="<?php echo $userSettings['link_limit']; ?>"/>
 					</p>
 					<p>
 						<input type="radio" id="condFreq" name="cond" onchange="autoSubmit(this.form);" value="freq" <?php echo $condFreq; ?>>
 						<label class="radio" for="condFreq"></label>
 						<?php get_t('input3_window1_setting', $bdd); ?>
-						<input class="number alpha" type="number" name="freq" min="2" max="500" step="2" placeholder="24" value="<?php echo $userSettings['frequency'] ?? '2'; ?>"/><?php get_t('input4_window1_setting', $bdd); ?>
+						<input class="number alpha" type="number" name="freq" onchange="autoSubmit(this.form);" min="2" max="500" step="2" placeholder="24" value="<?php echo $userSettings['frequency'] ?? '2'; ?>"/><?php get_t('input4_window1_setting', $bdd); ?>
 					</p>
 					<p>
 						<input type="radio" id="condDate" name="cond" onchange="autoSubmit(this.form);" value="deadline" <?php echo $condDate; ?>>
 						<label class="radio" for="condDate"></label>
 						<?php get_t('input5_window1_setting', $bdd); ?>
-						<input class="number alpha" type="number" name="hours" min="0" max="23" step="2" placeholder="19" value="<?php echo $userSettings['selected_hour']; ?>"/>h
+						<input class="number alpha" type="number" name="hours" onchange="autoSubmit(this.form);" min="0" max="23" step="2" placeholder="19" value="<?php echo $userSettings['selected_hour']; ?>"/>h
 						<?php get_t('input6_window1_setting', $bdd); ?>
-						<select class="selectCommResult" name="days">
+						<select class="selectCommResult" name="days" onchange="autoSubmit(this.form);">
 							<option value=",1,2,3,4,5," <?php echo $day[0] ?? ''; ?>>
 								<?php get_t('select1_window1_setting', $bdd); ?>
 							</option>
@@ -208,7 +208,7 @@
 						</select>
 						<span class="arrDown">▾</span>
 						<?php get_t('input6.1_window1_setting', $bdd); ?>
-						<select class="selectCommResult" name="secondDay">
+						<select class="selectCommResult" name="secondDay" onchange="autoSubmit(this.form);">
 							<option value=""><?php get_t('select10.1_window1_setting', $bdd); ?></option>
 							<option value="1," <?php echo $day2[1] ?? ''; ?>>
 								<?php get_t('select4_window1_setting', $bdd); ?>
