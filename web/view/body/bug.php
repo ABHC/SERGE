@@ -20,7 +20,7 @@
 			<p class="title_form_bug"><?php get_t('input4_signup_index', $bdd); ?></p> <p><input class="bug_field" type="email" name="forg_email" id="Email" value="<?php echo $email ?? ''; ?>" /></p>
 
 			<p class="title_form_bug"><?php get_t('Description of the problem', $bdd); ?></p>
-			<textarea name="bugDescription" minlength="50" maxlength="300" placeholder="<?php get_t('Indicate the severity of the bug', $bdd); ?>"><?php echo $data['bugDescription'] ?? ''; ?></textarea>
+			<textarea name="bugDescription" minlength="50" placeholder="<?php get_t('Indicate the severity of the bug', $bdd); ?>"><?php echo $data['bugDescription'] ?? ''; ?></textarea>
 
 			<p class="title_form_bug" ><?php get_t('input5_signup_index', $bdd); ?></p>
 				<div class="align">
