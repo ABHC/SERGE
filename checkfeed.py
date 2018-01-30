@@ -67,7 +67,7 @@ def allCheckLong(link):
 	except requests.exceptions.MissingSchema:
 		rss = None
 		rss_error = True
-		error_message("ERROR : Url required")
+		error_message = ("ERROR : Url required")
 	except requests.exceptions.TooManyRedirects:
 		rss = None
 		rss_error = True
@@ -75,11 +75,11 @@ def allCheckLong(link):
 	except requests.exceptions.ConnectTimeout:
 		rss = None
 		rss_error = True
-		error_message("ERROR : Timeout")
+		error_message = ("ERROR : Timeout")
 	except requests.exceptions.ReadTimeout:
 		rss = None
 		rss_error = True
-		error_message("ERROR : Timeout")
+		error_message = ("ERROR : Timeout")
 	except requests.exceptions.InvalidURL:
 		rss = None
 		rss_error = True
@@ -115,6 +115,7 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 			owners = None
 
 		if owners is None:
+			print "LA 1"
 			active = 1
 			rss_item = (link, title, user_id_double_comma, active)
 			query_insertion = ("INSERT INTO rss_serge (link, name, owners, active) VALUES (%s, %s, %s, %s)")
@@ -141,6 +142,7 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 
 		else:
 			if user_id_double_comma not in owners:
+				print "LA 2"
 				owners = owners + user_id_comma
 				active = active + 1
 				update_rss = ("UPDATE rss_serge SET owners = %s, active = %s WHERE link = %s")
@@ -163,6 +165,7 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 				update.close()
 
 			elif user_id_double_comma in owners:
+				print "LA 3"
 				insert_error = "ERROR : Source already owned"
 				update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
 
@@ -186,6 +189,7 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 
 		if id_rss is not None:
 			id_rss = id_rss[0]
+			#rajouter ici les modif d'id pour enlever le else de fin.
 
 		if id_rss is None:
 			active = 0
@@ -201,14 +205,17 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 			except Exception, except_type:
 				database.rollback()
 				print "ROLLBACK 6"
+				print except_type
 				insert_error = "ROLLBACK AT INSERTION IN backgroundLinksAddition FUNCTION"
 				update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
 				try:
-					update.execute(update_users, (insert_error, user_id))
+					insert_data.execute(update_users, (insert_error, user_id))
 					database.commit()
 				except Exception, except_type:
 					database.rollback()
 					print "ROLLBACK 7"
+					print except_type
+					sys.exit()
 			insert_data.close()
 
 			######### CALL TO TABLE rss_serge
@@ -220,45 +227,63 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 			call_rss.close()
 
 			id_rss = id_rss[0]
-			id_rss_double_comma = "," + id_rss + ","
+			id_rss_comma = str(id_rss) + ","
+			id_rss_double_comma = "," + str(id_rss) + ","
+
+			######### CALL TO TABLE watch_pack_queries_serge
+			query_watchpacks = "SELECT source FROM watch_pack_queries_serge WHERE pack_id = %s AND query = '[!source!]'"
+
+			call_watchpacks = database.cursor()
+			call_watchpacks.execute(query_watchpacks, (pack_id,))
+			saved_source = call_watchpacks.fetchone()
+			call_watchpacks.close()
+
+			saved_source = saved_source[0]
 
 			######### UPDATE watch_pack_queries_serge
-			update_watchpacks = ("UPDATE watch_pack_queries_serge SET source = %s WHERE pack_id = %s")
+			if id_rss_double_comma not in saved_source:
+				print saved_source
+				saved_source = saved_source + id_rss_comma
+				print saved_source
+				update_watchpacks = ("UPDATE watch_pack_queries_serge SET source = %s WHERE pack_id = %s AND query = '[!source!]'")
 
-			update = database.cursor()
-			try:
-				update.execute(update_watchpacks, (id_rss_double_comma, link))
-				database.commit()
-			except Exception, except_type:
-				database.rollback()
-				print "ROLLBACK 8"
-				insert_error = "ROLLBACK IN UPDATE IN backgroundLinksAddition"
-				update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
+				update = database.cursor()
 				try:
-					update.execute(update_users, (insert_error, user_id))
+					update.execute(update_watchpacks, (saved_source, pack_id))
 					database.commit()
 				except Exception, except_type:
 					database.rollback()
-					print "ROLLBACK 9"
-			update.close()
+					print "ROLLBACK 8"
+					insert_error = "ROLLBACK IN UPDATE IN backgroundLinksAddition"
+					update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
+					try:
+						update.execute(update_users, (insert_error, user_id))
+						database.commit()
+					except Exception, except_type:
+						database.rollback()
+						print "ROLLBACK 9"
+				update.close()
 
+		#On supprime à partir d'ici. Les parties de codes similaires ont été testées. 
 		else:
-			id_rss_comma = id_rss + ","
-			id_rss_double_comma = "," + id_rss + ","
+			id_rss_comma = str(id_rss) + ","
+			id_rss_double_comma = "," + str(id_rss) + ","
 
 			######### CALL TO TABLE watch_pack_queries_serge
-			query_watchpacks = "SELECT source FROM watch_pack_queries_serge WHERE pack_id LIKE %s"
+			query_watchpacks = "SELECT source FROM watch_pack_queries_serge WHERE pack_id = %s AND query = '[!source!]'"
 
-			call_rss = database.cursor()
-			call_rss.execute(query_rss, (link,))
-			saved_source = call_rss.fetchone()
-			call_rss.close()
+			call_watchpacks = database.cursor()
+			call_watchpacks.execute(query_watchpacks, (pack_id,))
+			saved_source = call_watchpacks.fetchone()
+			call_watchpacks.close()
 
 			saved_source = saved_source[0]
 
 			if id_rss_double_comma not in saved_source:
+				print saved_source
 				saved_source = saved_source + id_rss_comma
-				update_watchpacks = ("UPDATE watch_pack_queries_serge SET source = %s WHERE pack_id = %s")
+				print saved_source
+				update_watchpacks = ("UPDATE watch_pack_queries_serge SET source = %s WHERE pack_id = %s AND query = '[!source!]'")
 
 				update = database.cursor()
 				try:
@@ -417,6 +442,7 @@ if split_link[0] != "http" and split_link[0] != "https":
 	update.close()
 	sys.exit()
 
+print "coucou 3"
 number_links = 0
 error = feedMeUp(link, user_id, typeName, pack_id, False)
 
