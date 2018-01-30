@@ -30,7 +30,7 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('functionality7_title_index', 'RSS feed', 'Flux RSS', NULL, NULL, NULL),
 ('functionality8_title_index', 'Track twitter', 'Suivie de twitter', NULL, NULL, NULL),
 ('functionality9_title_index', 'Wiki', 'Wiki', NULL, NULL, NULL),
-('functionality10_title_index', 'Alert by SMS', 'Alert par SMS', NULL, NULL, NULL),
+('functionality10_title_index', 'Alert by SMS', 'Alerte par SMS', NULL, NULL, NULL),
 ('functionality11_title_index', 'Statistics', 'Statistique', NULL, NULL, NULL),
 ('functionality1_text_index', 'Follow the RSS feeds of your favorite newspapers. Only receive news that interests you, using keywords or combinations of keywords', 'Suivez les flux RSS, de vos journaux préférés. Ne recevez que les actualités qui vous intéresse, en utilisant des mots clefs ou des combinaisons de mots clefs', NULL, NULL, NULL),
 ('functionality2_text_index', 'Always stay informed about new patents. Sort the types of patents that interest you in very specific ways', 'Restez toujours informé des nouveaux brevets déposés. Triez les types de brevets qui vous intéressent de manières très précise', NULL, NULL, NULL),
@@ -213,5 +213,6 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('publisher', 'Publisher', 'Éditeur', NULL, NULL, NULL),
 ('category', 'Category', 'Catégorie', NULL, NULL, NULL),
 ('all', 'All', 'Tout', NULL, NULL, NULL),
+('Edit query', 'Edit query', 'Éditer la requête', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);

@@ -1730,6 +1730,7 @@ input:checked + .slider:before
 	margin-top: -5px;
 	margin-left: -7px;
 	margin-right: 2px;
+	cursor: pointer;
 }
 
 .queryOrView
@@ -1745,6 +1746,7 @@ input:checked + .slider:before
 	color: #fff;
 	font-size: 13px;
 	margin-right: 10px;
+	cursor: pointer;
 }
 
 .queryAndView
@@ -1760,6 +1762,7 @@ input:checked + .slider:before
 	color: #fff;
 	font-size: 13px;
 	margin-right: 10px;
+	cursor: pointer;
 }
 
 .queryNotView
@@ -1775,6 +1778,7 @@ input:checked + .slider:before
 	color: #fff;
 	font-size: 13px;
 	margin-right: 10px;
+	cursor: pointer;
 }
 
 .queryTypeView
@@ -1791,6 +1795,7 @@ input:checked + .slider:before
 	font-size: 13px;
 	margin: 5px 0 5px 0;
 	margin-right: 10px;
+	cursor: pointer;
 }
 
 .queryKeywordView
@@ -1806,6 +1811,7 @@ input:checked + .slider:before
 	text-align: center;
 	font-size: 13px;
 	margin: 5px 10px 5px 0;
+	cursor: pointer;
 }
 
 /* Charts */

@@ -26,3 +26,8 @@ body
 {
 	text-align: center;
 }
+
+.noDisplay
+{
+	display: none;
+}

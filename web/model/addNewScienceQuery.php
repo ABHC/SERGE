@@ -16,7 +16,7 @@ function addNewScienceQuery(string $queryScience_Serge, $bdd)
 			$insertCol = array(array('query_serge', $queryScience_Serge),
 												array('owners', ',' . $_SESSION['id'] . ','),
 												array('active', 1));
-			$execution = insert('queries_science_serge', $insertCol, '', 'setting', $bdd);
+			$execution = insert('queries_science_serge', $insertCol, '', '', $bdd);
 	}
 	else
 	{

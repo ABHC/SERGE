@@ -26,6 +26,8 @@ $unsafeData = array_merge($unsafeData, array(array('action', 'action', 'GET', 'A
 $unsafeData = array_merge($unsafeData, array(array('query', 'query', 'GET', '09')));
 
 $unsafeData = array_merge($unsafeData, array(array('scrollPos', 'scrollPos', 'POST', '09')));
+$unsafeData = array_merge($unsafeData, array(array('editQueryScience', 'editQueryScience', 'POST', '09')));
+$unsafeData = array_merge($unsafeData, array(array('editQueryPatent', 'editQueryPatent', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('sourceType', 'sourceType', 'POST', 'Az')));
 $unsafeData = array_merge($unsafeData, array(array('settings', 'settings', 'POST', 'Az')));
 $unsafeData = array_merge($unsafeData, array(array('email', 'email', 'POST', 'email')));
@@ -750,75 +752,77 @@ while ($cpt <= 7)
 }
 
 # Edit science query
-if ($emailIsCheck && !empty($data['action']) && !empty($data['query']) && $data['action'] === 'editQueryScience')
+if ($emailIsCheck && !empty($data['editQueryScience']))
 {
-	$checkCol = array(array('id', '=', $data['query'], 'AND'),
+	$checkCol = array(array('id', '=', $data['editQueryScience'], 'AND'),
 										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
-	$queriesEdit = read('queries_science_serge', 'query_serge', $checkCol, '', $bdd);
-	$queriesEdit = $queriesEdit[0];
+	$queryEdit = read('queries_science_serge', 'id, query_serge', $checkCol, '', $bdd);
+	$queryEdit = $queryEdit[0] ?? '';
 
-	$query = urldecode($queriesEdit['query_serge']);
-	$query = preg_replace("/\"/", '', $query);
-	$query = preg_replace("/(\(|\)|[^: ]+:| AND | NOT | OR )/", "|$1", $query);
-	$query = preg_replace("/:/", "|", $query);
-	$queryArray = explode('|', $query);
-
-	$cpt       = 0;
-	$typeQuery = '';
-	foreach ($queryArray as $queryPart)
+	if (!empty($queryEdit))
 	{
-		$cptQuery = ceil($cpt/6) - 1;
-		if (preg_match("/(^ AND $|^ NOT $|^ OR $)/",$queryPart, $value))
-		{
-			if (($cpt / 6) != intval($cpt / 6))
-			{
-				$cpt      = (intval($cpt / 6) + 1) * 6;
-				$cptQuery = ceil($cpt/6);
-			}
-			$value = preg_replace("/ /", '', $value[0]);
-			$data['andOrNot' . $cptQuery] = $value;
-		}
-		elseif (preg_match("/^\($/",$queryPart))
-		{
-			$data['openParenthesis' . $cptQuery] = 'active';
-		}
-		elseif (preg_match("/^\)$/",$queryPart))
-		{
-			$data['closeParenthesis' . $cptQuery] = 'active';
-		}
-		elseif (!empty($queryPart) && $typeQuery != 'displayed')
-		{
-			$data['scienceType' . $cptQuery] = $queryPart;
-			$typeQuery = 'displayed';
-		}
-		elseif (!empty($queryPart))
-		{
-			$data['scienceQuery' . $cptQuery] = $queryPart;
-			$typeQuery = '';
-		}
-		$cpt++;
-	}
+		$delEditingScienceQuery = $queryEdit['id'];
 
-		$_SESSION['cptScienceQuery'] = ceil(($cptQuery+1)/3) * 3;
+		$query = urldecode($queryEdit['query_serge']);
+		$queryArray = explode('|', $query);
+
+		$cpt       = 1;
+		$typeQuery = '';
+		foreach ($queryArray as $queryPart)
+		{
+			$cptQuery = ceil($cpt/6) - 1;
+			if (preg_match("/(^AND$|^NOT$|^OR$)/",$queryPart, $value))
+			{
+				if (($cpt / 6) != intval($cpt / 6))
+				{
+					$cpt      = (intval($cpt / 6) + 1) * 6;
+					$cptQuery = ceil($cpt/6);
+				}
+				$value = preg_replace("/ /", '', $value[0]);
+				$data['andOrNot' . $cptQuery] = $value;
+			}
+			elseif (preg_match("/^\($/",$queryPart))
+			{
+				$data['openParenthesis' . $cptQuery] = 'active';
+			}
+			elseif (preg_match("/^\)$/",$queryPart))
+			{
+				$data['closeParenthesis' . $cptQuery] = 'active';
+			}
+			elseif (!empty($queryPart) && $typeQuery != 'displayed')
+			{
+				$data['scienceType' . $cptQuery] = $queryPart;
+				$typeQuery = 'displayed';
+			}
+			elseif (!empty($queryPart))
+			{
+				$data['scienceQuery' . $cptQuery] = preg_replace("/#/", "", $queryPart);
+				$typeQuery = '';
+			}
+			$cpt++;
+		}
+
+			$_SESSION['cptScienceQuery'] = ceil(($cptQuery+1)/3) * 3;
+	}
 }
 
 
 # Delete editing query
 if ($emailIsCheck && !empty($data['delEditingScienceQuery']) && empty($data['extendScience']))
 {
-	$checkCol = array(array('id', '=', $data['delEditingScienceQuery'], ''),
+	$checkCol = array(array('id', '=', $data['delEditingScienceQuery'], 'AND'),
 										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
-	$queriesEditOwners = read('queries_science_serge', 'owners, active', $checkCol, '', $bdd);
-	$queriesEditOwners = $queriesEditOwners[0];
+	$queryEditToDel = read('queries_science_serge', 'id, owners, active', $checkCol, '', $bdd);
+	$queryEditToDel = $queryEditToDel[0] ?? '';
 
-		if (!empty($queriesEditOwners))
-		{
-			$userId    = $_SESSION['id'];
-			$updateCol = array(array('owners', preg_replace("/,!*$userId,/", ',', $queriesEditOwners['owners'])),
-													array('active', $queriesEditOwners['active'] - 1));
-			$checkCol  = array(array('id', '=', $data['delEditingScienceQuery'], ''));
-			$execution = update('queries_science_serge', $updateCol, $checkCol, '', $bdd);
-		}
+	if (!empty($queryEditToDel))
+	{
+		$userId    = $_SESSION['id'];
+		$updateCol = array(array('owners', preg_replace("/,!*$userId,/", ',', $queryEditToDel['owners'])),
+											array('active', $queryEditToDel['active'] - 1));
+		$checkCol  = array(array('id', '=', $queryEditToDel['id'], ''));
+		$execution = update('queries_science_serge', $updateCol, $checkCol, '', $bdd);
+	}
 }
 
 # Add new science query
@@ -956,23 +960,27 @@ if ($emailIsCheck && !empty($data['activateQueryScience']))
 }
 
 # Edit patent query
-if ($emailIsCheck && !empty($data['action']) && !empty($data['query']) && $data['action'] === 'editQueryPatent')
+if ($emailIsCheck && !empty($data['editQueryPatent']))
 {
-	$checkCol    = array(array('id', '=', $data['query'], 'AND'),
+	$checkCol    = array(array('id', '=', $data['editQueryPatent'], 'AND'),
 											array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
-	$queriesEdit = read('queries_wipo_serge', 'query', $checkCol, '', $bdd);
-	$queriesEdit = $queriesEdit[0];
+	$queryEdit = read('queries_wipo_serge', 'id, query', $checkCol, '', $bdd);
+	$queryEdit = $queryEdit[0] ?? '';
 
-	$query      = urldecode($queriesEdit['query']);
-	$query      = preg_replace("/\"/", '', $query);
-	$query      = preg_replace("/(\(|\)|[^: ]+:| AND | OR )/", "|$1", $query);
-	$query      = preg_replace("/:/', '|", $query);
-	$queryArray = explode('|', $query);
+	if (!empty($queryEdit))
+	{
+		$delEditingPatentQuery = $queryEdit['id'];
+
+		$query      = urldecode($queryEdit['query']);
+		$query      = preg_replace("/\"/", '', $query);
+		$query      = preg_replace("/(\(|\)|[^: ]+:| AND | OR )/", "|$1", $query);
+		$query      = preg_replace("/:/", '|', $query);
+		$queryArray = explode('|', $query);
 
 		$cpt       = 0;
 		$typeQuery = '';
 		foreach ($queryArray as $queryPart)
-		{
+		{echo ' : ' . $queryPart . '<br>';
 			$cptQuery = ceil($cpt/6) - 1;
 			if (preg_match("/(^ AND $|^ OR $)/",$queryPart, $value))
 			{
@@ -998,25 +1006,26 @@ if ($emailIsCheck && !empty($data['action']) && !empty($data['query']) && $data[
 		}
 
 		$_SESSION['cptPatentQuery'] = ceil(($cptQuery+1)/3) * 3;
+	}
 }
 
 
 # Delete editing query
 if ($emailIsCheck && !empty($data['delEditingPatentQuery']) && empty($data['extendPatent']))
 {
-		$checkCol = array(array('id', '=', $data['delEditingPatentQuery'], 'AND'),
-											array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
-		$queriesEditOwners = read('queries_wipo_serge', 'owners, active', $checkCol, '', $bdd);
-		$queriesEditOwners = $queriesEditOwners[0];
+	$checkCol = array(array('id', '=', $data['delEditingPatentQuery'], 'AND'),
+										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
+	$queryEditToDel = read('queries_wipo_serge', 'id, owners, active', $checkCol, '', $bdd);
+	$queryEditToDel = $queryEditToDel[0] ?? '';
 
-		if (!empty($queriesEditOwners))
-		{
-			$userId    = $_SESSION['id'];
-			$updateCol = array(array('owners', preg_replace("/,!*$userId,/", ',', $queriesEditOwners['owners'])),
-												array('active', $result['active'] - 1));
-			$checkCol  = array(array('id', '=', $data['delEditingPatentQuery'], ''));
-			$execution = update('queries_wipo_serge', $updateCol, $checkCol, '', $bdd);
-		}
+	if (!empty($queryEditToDel))
+	{
+		$userId    = $_SESSION['id'];
+		$updateCol = array(array('owners', preg_replace("/,!*$userId,/", ',', $queryEditToDel['owners'])),
+											array('active', $queryEditToDel['active'] - 1));
+		$checkCol  = array(array('id', '=', $queryEditToDel['id'], ''));
+		$execution = update('queries_wipo_serge', $updateCol, $checkCol, '', $bdd);
+	}
 }
 
 # Add new patents query

@@ -394,7 +394,7 @@
 					echo
 					'<input type="checkbox" name="radio-ks' . $ownerSourcesList['id'] . '" id="unfold-ks' . $ownerSourcesList['id'] . '" value="' . $ownerSourcesList['id'] . '" ' . $amICheckFoldKeyword . '/>'.
 					'<div class="keywordList" id="keywordList' . $ownerSourcesList['id'] . '">'.
-						'<label for="unfold-ks' . $ownerSourcesList['id'] . '" id="unfold' . $ownerSourcesList['id'] . '"  class="unfoldTag">'.
+						'<label for="unfold-ks' . $ownerSourcesList['id'] . '" id="unfold' . $ownerSourcesList['id'] . '" class="unfoldTag">'.
 							var_get_t('Unfold keyword list', $bdd) . ' ▾'.
 						'</label>'.
 						'<label for="unfold-ks' . $ownerSourcesList['id'] . '" id="fold' . $ownerSourcesList['id'] . '" class="foldTag">'.
@@ -505,7 +505,8 @@
 
 					foreach ($selected as $searchField => $selectedSearchField)
 					{
-						echo '<option value="' . $searchField . '" ' . $selectedSearchField . '>' . var_get_t($searchField, $bdd) . '</option>';
+						echo '<option value="' . $searchField . '" ' . $selectedSearchField . '>' . var_get_t($searchField, $bdd) . '</option>' . PHP_EOL;
+						$selected[$searchField] = '';
 					}
 
 					echo '
@@ -599,18 +600,14 @@
 					if (!empty($openParenthesisDisplay[0]))
 					{
 						$queryDisplay = $queryDisplay . '
-						<a href="setting?action=editQueryScience&query=' . $queryId . '" >
-							<div class="queryParenthesisView">(</div>
-						</a>
-						';
+						<input type="submit" class="noDisplay" id="editQueryScience' . $queryId . '" name="editQueryScience" value="' . $queryId . '"/><label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="queryParenthesisView">(</label>';
 					}
 
 					if (!empty($queryFieldsName[$fields]))
 					{
 						$queryDisplay = $queryDisplay . '
-						<a href="setting?action=editQueryScience&query=' . $queryId . '" >
-						<div class="queryTypeView">' . ucfirst($queryFieldsName[$fields]) . '</div>
-						</a>';
+						<input type="submit" class="noDisplay" id="editQueryScience' . $queryId . '" name="editQueryScience" value="' . $queryId . '"/><label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="queryTypeView">' . ucfirst($queryFieldsName[$fields]) . '
+						</label>';
 					}
 
 					preg_match("/#.+/", $fields, $fieldInput);
@@ -618,19 +615,16 @@
 					{
 						$fieldInput = preg_replace("/#/", "", $fieldInput[0]);
 						$queryDisplay = $queryDisplay . '
-						<a href="setting?action=editQueryScience&query=' . $queryId . '" >
-						<div class="queryKeywordView">' . $fieldInput . '</div>
-						</a>';
+						<input type="submit" class="noDisplay" id="editQueryScience' . $queryId . '" name="editQueryScience" value="' . $queryId . '"/><label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="queryKeywordView">' . $fieldInput . '
+						</label>';
 					}
 
 					preg_match("/^\)/", $fields, $closeParenthesisDisplay);
 					if (!empty($closeParenthesisDisplay[0]))
 					{
 						$queryDisplay = $queryDisplay . '
-						<a href="setting?action=editQueryScience&query=' . $queryId . '" >
-						<div class="queryParenthesisView">)</div>
-						</a>
-						';
+						<input type="submit" class="noDisplay" id="editQueryScience' . $queryId . '" name="editQueryScience" value="' . $queryId . '"/><label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="queryParenthesisView">)
+						</label>';
 					}
 
 					preg_match("/^(AND|OR|NOT)$/", $fields, $logicalConnector);
@@ -638,13 +632,10 @@
 					{
 						preg_match("/.{2,3}/", $logicalConnector[1], $logicalConnector);
 						$queryDisplay = $queryDisplay . '
-						<a href="setting?action=editQueryScience&query=' . $queryId . '" >
-						<div class="query' . ucfirst(strtolower($logicalConnector[0])) . 'View">' . $logicalConnector[0] . '</div>
-						</a>
-						';
+						<input type="submit" class="noDisplay" id="editQueryScience' . $queryId . '" name="editQueryScience" value="' . $queryId . '"/><label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="query' . ucfirst(strtolower($logicalConnector[0])) . 'View">' . $logicalConnector[0] . '
+						</label>';
 					}
 				}
-
 				echo $queryDisplay . '</div>';
 			}
 			?>
@@ -926,12 +917,11 @@
 					$fieldInput = preg_replace("/\+/", " ", $fieldInput);
 					$fields = preg_replace("/(\%3A|`)/", "", $fields);
 					$queryDisplay = $queryDisplay . '
-					<a href="setting?action=editQueryPatent&query=' . $queryId . '" >
-						<div class="queryTypeView">' . $queryFieldsName[$fields] . '</div>
-					</a>
-					<a href="setting?action=editQueryPatent&query=' . $queryId . '" >
-						<div class="queryKeywordView">' . $fieldInput . '</div>
-					</a>';
+					<input type="submit" class="noDisplay" id="editQueryPatent' . $queryId . '" name="editQueryPatent" value="' . $queryId . '"/>
+					<label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryPatent' . $queryId . '" class="queryTypeView">' . $queryFieldsName[$fields] . '
+					</label>
+					<label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryPatent' . $queryId . '" class="queryKeywordView">' . $fieldInput . '
+					</label>';
 
 					preg_match("/^(AND|OR)\+/", $query, $logicalConnector);
 					if (!empty($logicalConnector[1]))
@@ -939,9 +929,8 @@
 						$query = preg_replace("/^(AND|OR)\+/", "", $query);
 						preg_match("/.{1,3}/", $logicalConnector[1], $logicalConnector);
 						$queryDisplay = $queryDisplay . '
-						<a href="setting?action=editQueryPatent&query=' . $queryId . '" >
-						<div class="query' . ucfirst(strtolower($logicalConnector[0])) . 'View">' . $logicalConnector[0] . '</div>
-						</a>
+						<label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryPatent' . $queryId . '" class="query' . ucfirst(strtolower($logicalConnector[0])) . 'View">' . $logicalConnector[0] . '
+						</label>
 						';
 					}
 				}
