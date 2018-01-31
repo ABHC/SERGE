@@ -417,6 +417,7 @@
 								'<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">'.
 									ucfirst($ownerKeywordList['keyword']).
 								'</a>' . PHP_EOL.
+								'<span class="hiddenFont">,</span>' . PHP_EOL.
 							'</div>' . PHP_EOL;
 							$cptKeyword++;
 						}
@@ -429,6 +430,7 @@
 								'<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">'.
 									ucfirst($ownerKeywordList['keyword']).
 								'</a>' . PHP_EOL.
+								'<span class="hiddenFont">,</span>' . PHP_EOL.
 							'</div>' . PHP_EOL;
 							$cptKeyword++;
 						}

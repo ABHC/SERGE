@@ -31,3 +31,9 @@ body
 {
 	display: none;
 }
+
+.hiddenFont
+{
+	font-size: 0;
+	color: rgba(0, 0, 0, 0);
+}
