@@ -115,7 +115,6 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 			owners = None
 
 		if owners is None:
-			print "LA 1"
 			active = 1
 			rss_item = (link, title, user_id_double_comma, active)
 			query_insertion = ("INSERT INTO rss_serge (link, name, owners, active) VALUES (%s, %s, %s, %s)")
@@ -126,9 +125,6 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 				database.commit()
 			except Exception, except_type:
 				database.rollback()
-				print "ROLLBACK 1"
-				print Exception
-				print except_type
 				insert_error = "ROLLBACK AT INSERTION IN backgroundLinksAddition FUNCTION"
 				update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
 				try:
@@ -136,13 +132,11 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 					database.commit()
 				except Exception, except_type:
 					database.rollback()
-					print "ROLLBACK 2"
 
 			insert_data.close()
 
 		else:
 			if user_id_double_comma not in owners:
-				print "LA 2"
 				owners = owners + user_id_comma
 				active = active + 1
 				update_rss = ("UPDATE rss_serge SET owners = %s, active = %s WHERE link = %s")
@@ -153,7 +147,6 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 					database.commit()
 				except Exception, except_type:
 					database.rollback()
-					print "ROLLBACK 3"
 					insert_error = "ROLLBACK IN UPDATE IN backgroundLinksAddition"
 					update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
 					try:
@@ -161,21 +154,6 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 						database.commit()
 					except Exception, except_type:
 						database.rollback()
-						print "ROLLBACK 4"
-				update.close()
-
-			elif user_id_double_comma in owners:
-				print "LA 3"
-				insert_error = "ERROR : Source already owned"
-				update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
-
-				update = database.cursor()
-				try:
-					update.execute(update_users, (insert_error, user_id))
-					database.commit()
-				except Exception, except_type:
-					database.rollback()
-					print "ROLLBACK 5"
 				update.close()
 
 	elif typeName == "watchpacks":
@@ -200,8 +178,6 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 				database.commit()
 			except Exception, except_type:
 				database.rollback()
-				print "ROLLBACK 6"
-				print except_type
 				insert_error = "ROLLBACK AT INSERTION IN backgroundLinksAddition FUNCTION"
 				update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
 				try:
@@ -209,8 +185,6 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 					database.commit()
 				except Exception, except_type:
 					database.rollback()
-					print "ROLLBACK 7"
-					print except_type
 					sys.exit()
 			insert_data.close()
 
@@ -244,9 +218,7 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 
 		######### UPDATE watch_pack_queries_serge
 		if id_rss_double_comma not in saved_source:
-			print saved_source
 			saved_source = saved_source + id_rss_comma
-			print saved_source
 			update_watchpacks = ("UPDATE watch_pack_queries_serge SET source = %s WHERE pack_id = %s AND query = '[!source!]'")
 
 			update = database.cursor()
@@ -255,7 +227,6 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 				database.commit()
 			except Exception, except_type:
 				database.rollback()
-				print "ROLLBACK 8"
 				insert_error = "ROLLBACK IN UPDATE IN backgroundLinksAddition"
 				update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
 				try:
@@ -263,7 +234,6 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 					database.commit()
 				except Exception, except_type:
 					database.rollback()
-					print "ROLLBACK 9"
 			update.close()
 
 
@@ -393,7 +363,6 @@ if split_link[0] != "http" and split_link[0] != "https":
 	update.close()
 	sys.exit()
 
-print "coucou 3"
 number_links = 0
 error = feedMeUp(link, user_id, typeName, pack_id, False)
 
