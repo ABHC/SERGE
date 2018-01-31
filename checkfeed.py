@@ -179,7 +179,7 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 				update.close()
 
 	elif typeName == "watchpacks":
-		######### CALL TO TABLE rss_serge
+		######### CHECK IF THE FEED ALREADY EXIST
 		query_rss = "SELECT id FROM rss_serge WHERE link LIKE %s"
 
 		call_rss = database.cursor()
@@ -187,17 +187,13 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 		id_rss = call_rss.fetchone()
 		call_rss.close()
 
-		if id_rss is not None:
-			id_rss = id_rss[0]
-			#rajouter ici les modif d'id pour enlever le else de fin.
-
 		if id_rss is None:
 			active = 0
 			owners = ","
 			rss_item = (link, title, owners, active)
 			query_insertion = ("INSERT INTO rss_serge (link, name, owners, active) VALUES (%s, %s, %s, %s)")
 
-			######### INSERT A NEW SOURCE IN rss_serge
+			######### INSERT THE NEW SOURCE IN rss_serge
 			insert_data = database.cursor()
 			try:
 				insert_data.execute(query_insertion, rss_item)
@@ -218,7 +214,7 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 					sys.exit()
 			insert_data.close()
 
-			######### CALL TO TABLE rss_serge
+			######### RECOVERY OF THE NEW SOURCE ID
 			query_rss = "SELECT id FROM rss_serge WHERE link LIKE %s"
 
 			call_rss = database.cursor()
@@ -230,90 +226,45 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 			id_rss_comma = str(id_rss) + ","
 			id_rss_double_comma = "," + str(id_rss) + ","
 
-			######### CALL TO TABLE watch_pack_queries_serge
-			query_watchpacks = "SELECT source FROM watch_pack_queries_serge WHERE pack_id = %s AND query = '[!source!]'"
-
-			call_watchpacks = database.cursor()
-			call_watchpacks.execute(query_watchpacks, (pack_id,))
-			saved_source = call_watchpacks.fetchone()
-			call_watchpacks.close()
-
-			saved_source = saved_source[0]
-
-			######### UPDATE watch_pack_queries_serge
-			if id_rss_double_comma not in saved_source:
-				print saved_source
-				saved_source = saved_source + id_rss_comma
-				print saved_source
-				update_watchpacks = ("UPDATE watch_pack_queries_serge SET source = %s WHERE pack_id = %s AND query = '[!source!]'")
-
-				update = database.cursor()
-				try:
-					update.execute(update_watchpacks, (saved_source, pack_id))
-					database.commit()
-				except Exception, except_type:
-					database.rollback()
-					print "ROLLBACK 8"
-					insert_error = "ROLLBACK IN UPDATE IN backgroundLinksAddition"
-					update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
-					try:
-						update.execute(update_users, (insert_error, user_id))
-						database.commit()
-					except Exception, except_type:
-						database.rollback()
-						print "ROLLBACK 9"
-				update.close()
-
-		#On supprime à partir d'ici. Les parties de codes similaires ont été testées. 
 		else:
+			id_rss = id_rss[0]
 			id_rss_comma = str(id_rss) + ","
 			id_rss_double_comma = "," + str(id_rss) + ","
 
-			######### CALL TO TABLE watch_pack_queries_serge
-			query_watchpacks = "SELECT source FROM watch_pack_queries_serge WHERE pack_id = %s AND query = '[!source!]'"
 
-			call_watchpacks = database.cursor()
-			call_watchpacks.execute(query_watchpacks, (pack_id,))
-			saved_source = call_watchpacks.fetchone()
-			call_watchpacks.close()
+		######### WATCH PACK UPDATING PROCESS
+		query_watchpacks = "SELECT source FROM watch_pack_queries_serge WHERE pack_id = %s AND query = '[!source!]'"
 
-			saved_source = saved_source[0]
+		call_watchpacks = database.cursor()
+		call_watchpacks.execute(query_watchpacks, (pack_id,))
+		saved_source = call_watchpacks.fetchone()
+		call_watchpacks.close()
 
-			if id_rss_double_comma not in saved_source:
-				print saved_source
-				saved_source = saved_source + id_rss_comma
-				print saved_source
-				update_watchpacks = ("UPDATE watch_pack_queries_serge SET source = %s WHERE pack_id = %s AND query = '[!source!]'")
+		saved_source = saved_source[0]
 
-				update = database.cursor()
-				try:
-					update.execute(update_watchpacks, (saved_source, pack_id))
-					database.commit()
-				except Exception, except_type:
-					database.rollback()
-					print "ROLLBACK 10"
-					insert_error = "ROLLBACK IN UPDATE IN backgroundLinksAddition"
-					update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
-					try:
-						update.execute(update_users, (insert_error, user_id))
-						database.commit()
-					except Exception, except_type:
-						database.rollback()
-						print "ROLLBACK 11"
-				update.close()
+		######### UPDATE watch_pack_queries_serge
+		if id_rss_double_comma not in saved_source:
+			print saved_source
+			saved_source = saved_source + id_rss_comma
+			print saved_source
+			update_watchpacks = ("UPDATE watch_pack_queries_serge SET source = %s WHERE pack_id = %s AND query = '[!source!]'")
 
-			elif id_rss_double_comma in saved_source:
-				insert_error = "ERROR : Source already owned"
+			update = database.cursor()
+			try:
+				update.execute(update_watchpacks, (saved_source, pack_id))
+				database.commit()
+			except Exception, except_type:
+				database.rollback()
+				print "ROLLBACK 8"
+				insert_error = "ROLLBACK IN UPDATE IN backgroundLinksAddition"
 				update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
-
-				update = database.cursor()
 				try:
 					update.execute(update_users, (insert_error, user_id))
 					database.commit()
 				except Exception, except_type:
 					database.rollback()
-					print "ROLLBACK 12"
-				update.close()
+					print "ROLLBACK 9"
+			update.close()
 
 
 def feedMeUp(link, user_id, typeName, pack_id, recursive):
