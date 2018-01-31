@@ -916,10 +916,10 @@
 				preg_match_all("/[A-Z_]+\%3A/", $query, $queryFields);
 				foreach ($queryFields[0] as $fields)
 				{
-					preg_match("/$fields\ *[^\+]+\+/", $query, $fieldInput);
-					$fieldInputPURE = preg_replace("/\+/", "\+", $fieldInput[0]);
+					preg_match("/$fields\ *([^(AND|OR)]+)(\+AND\+|\+OR\+|\+$)/", $query, $fieldInput);
+					$fieldInputPURE = preg_replace("/\+/", "\+", $fieldInput[1]);
 					$query = preg_replace("/$fieldInputPURE/", "", $query);
-					$fieldInput = preg_replace("/(.+\%3A|`)/", "", $fieldInput[0]);
+					$fieldInput = preg_replace("/(.+\%3A|`)/", "", $fieldInput[1]);
 					$fieldInput = preg_replace("/\+/", " ", $fieldInput);
 					$fields = preg_replace("/(\%3A|`)/", "", $fields);
 					$queryDisplay = $queryDisplay . '
