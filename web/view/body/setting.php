@@ -609,7 +609,7 @@
 					if (!empty($queryFieldsName[$fields]))
 					{
 						$queryDisplay = $queryDisplay . '
-						<label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="queryTypeView">' . ucfirst($queryFieldsName[$fields]) . '
+						<label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="queryTypeView">' . ucfirst(var_get_t($queryFieldsName[$fields], $bdd)) . '
 						</label>';
 					}
 
