@@ -40,7 +40,7 @@
 								$backgroundSelected = '';
 							}
 
-							echo '<option value="' . $backgroundName['name'] . '" ' . $backgroundSelected . ' id="../images/background/' . $backgroundName['filename'] . '">' . $backgroundName['name'] . '</option>'.PHP_EOL;
+							echo '<option value="' . $backgroundName['name'] . '" ' . $backgroundSelected . ' id="../images/background_preview/' . $backgroundName['filename'] . '">' . $backgroundName['name'] . '</option>' . PHP_EOL;
 						}
 						?>
 							<!--<option value="random">Random</option>-->
@@ -140,7 +140,7 @@
 					<?php
 					foreach ($watchPackUsedList as $watchPackUsed)
 					{
-						echo '<option value="' . $watchPackUsed['id'] . '">' . ucfirst($watchPackUsed['name']) . '</option>'.PHP_EOL;
+						echo '<option value="' . $watchPackUsed['id'] . '">' . ucfirst($watchPackUsed['name']) . '</option>' . PHP_EOL;
 					}
 
 					if (empty($watchPackUsedList))
@@ -351,14 +351,14 @@
 
 						echo '
 						</div>
-						<input type="checkbox" name="radio-s' . $rssFirstLetter[0] . '" id="unfold-s' . $rssFirstLetter[0] . '" value="' . $rssFirstLetter[0] . '" ' . $amICheckFoldSource . '/>'.
-						'<div class="sourceList" >'.
-							'<label for="unfold-s' . $rssFirstLetter[0] . '" class="unfoldTag">'.
+						<input type="checkbox" name="radio-s' . $rssFirstLetter[0] . '" id="unfold-s' . $rssFirstLetter[0] . '" value="' . $rssFirstLetter[0] . '" ' . $amICheckFoldSource . '/>' . PHP_EOL.
+						'<div class="sourceList" >' . PHP_EOL.
+							'<label for="unfold-s' . $rssFirstLetter[0] . '" class="unfoldTag">' . PHP_EOL.
 								$rssFirstLetter[0] . ' ▾'.
-							'</label>'.
-							'<label for="unfold-s' . $rssFirstLetter[0] . '" class="foldTag">'.
+							'</label>' . PHP_EOL.
+							'<label for="unfold-s' . $rssFirstLetter[0] . '" class="foldTag">' . PHP_EOL.
 								$rssFirstLetter[0] . ' ▴'.
-							'</label>';
+							'</label>' . PHP_EOL;
 					}
 
 					$foldKeywordName = 'radio-ks' . $ownerSourcesList['id'];
@@ -371,35 +371,35 @@
 					if (preg_match("/," . $_SESSION['id'] . ",/", $ownerSourcesList['owners']))
 					{
 						echo
-						'<div class="tagSource Tactive" id="ks' . $ownerSourcesList['id'] . '">'.
-							'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delSource" value="source' . $ownerSourcesList['id'] . '&"/>'.
-							'<input type="submit" title="' . var_get_t('Disable', $bdd) . '" name="disableSource" value="source' . $ownerSourcesList['id']. '&"/>'.
+						'<div class="tagSource Tactive" id="ks' . $ownerSourcesList['id'] . '">' . PHP_EOL.
+							'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delSource" value="source' . $ownerSourcesList['id'] . '&"/>' . PHP_EOL.
+							'<input type="submit" title="' . var_get_t('Disable', $bdd) . '" name="disableSource" value="source' . $ownerSourcesList['id']. '&"/>' . PHP_EOL.
 							'<a href="' . $ownerSourcesList['link']. '" target="_blank">'.
 								ucfirst($ownerSourcesList['name']).
-							'</a>'.
-						'</div>';
+							'</a>' . PHP_EOL.
+						'</div>' . PHP_EOL;
 					}
 					elseif (preg_match("/,!" . $_SESSION['id'] . ",/", $ownerSourcesList['owners']))
 					{
 						echo
-						'<div class="tagSource Tdisable" id="ks' . $ownerSourcesList['id'] . '">'.
-							'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delSource" value="source' . $ownerSourcesList['id'] . '&"/>'.
-							'<input type="submit" title="' . var_get_t('Activate', $bdd) . '" name="activateSource" value="source' . $ownerSourcesList['id']. '&"/>'.
+						'<div class="tagSource Tdisable" id="ks' . $ownerSourcesList['id'] . '">' . PHP_EOL.
+							'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delSource" value="source' . $ownerSourcesList['id'] . '&"/>' . PHP_EOL.
+							'<input type="submit" title="' . var_get_t('Activate', $bdd) . '" name="activateSource" value="source' . $ownerSourcesList['id']. '&"/>' . PHP_EOL.
 							'<a href="' . $ownerSourcesList['link']. '" target="_blank">'.
 								ucfirst($ownerSourcesList['name']).
-							'</a>'.
-						'</div>';
+							'</a>' . PHP_EOL.
+						'</div>' . PHP_EOL;
 					}
 
 					echo
-					'<input type="checkbox" name="radio-ks' . $ownerSourcesList['id'] . '" id="unfold-ks' . $ownerSourcesList['id'] . '" value="' . $ownerSourcesList['id'] . '" ' . $amICheckFoldKeyword . '/>'.
-					'<div class="keywordList" id="keywordList' . $ownerSourcesList['id'] . '">'.
+					'<input type="checkbox" name="radio-ks' . $ownerSourcesList['id'] . '" id="unfold-ks' . $ownerSourcesList['id'] . '" value="' . $ownerSourcesList['id'] . '" ' . $amICheckFoldKeyword . '/>' . PHP_EOL.
+					'<div class="keywordList" id="keywordList' . $ownerSourcesList['id'] . '">' . PHP_EOL.
 						'<label for="unfold-ks' . $ownerSourcesList['id'] . '" id="unfold' . $ownerSourcesList['id'] . '" class="unfoldTag">'.
 							var_get_t('Unfold keyword list', $bdd) . ' ▾'.
-						'</label>'.
+						'</label>' . PHP_EOL.
 						'<label for="unfold-ks' . $ownerSourcesList['id'] . '" id="fold' . $ownerSourcesList['id'] . '" class="foldTag">'.
 							var_get_t('Fold keyword list', $bdd) . ' ▴'.
-						'</label>';
+						'</label>' . PHP_EOL;
 
 					# Keyword loop
 					$cptKeyword = 0;
@@ -411,25 +411,25 @@
 						if (preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*," . $ownerSourcesList['id'] . ",[,!0-9,]*\|/", $applicable_owners_sources))
 						{
 							echo
-							'<div class="tag Tactive">'.
-								'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
-								'<input type="submit" title="' . var_get_t('Disable', $bdd) . '" name="disableKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
+							'<div class="tag Tactive">' . PHP_EOL.
+								'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>' . PHP_EOL.
+								'<input type="submit" title="' . var_get_t('Disable', $bdd) . '" name="disableKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>' . PHP_EOL.
 								'<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">'.
 									ucfirst($ownerKeywordList['keyword']).
-								'</a>'.
-							'</div>';
+								'</a>' . PHP_EOL.
+							'</div>' . PHP_EOL;
 							$cptKeyword++;
 						}
 						elseif (preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*,!" . $ownerSourcesList['id'] . ",[,!0-9,]*\|/", $applicable_owners_sources))
 						{
 							echo
-							'<div class="tag Tdisable">'.
-								'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
-								'<input type="submit" title="' . var_get_t('Activate', $bdd) . '" name="activateKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
+							'<div class="tag Tdisable">' . PHP_EOL.
+								'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>' . PHP_EOL.
+								'<input type="submit" title="' . var_get_t('Activate', $bdd) . '" name="activateKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>' . PHP_EOL.
 								'<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">'.
 									ucfirst($ownerKeywordList['keyword']).
-								'</a>'.
-							'</div>';
+								'</a>' . PHP_EOL.
+							'</div>' . PHP_EOL;
 							$cptKeyword++;
 						}
 					}

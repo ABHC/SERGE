@@ -11,11 +11,11 @@ include('languages.php');
 	<meta charset="utf-8" />
 	<title>Serge : your news monitoring</title>
 	<link href="css/workinprogress" rel="stylesheet" />
-	<script src="js/counter.js" type="text/javascript"></script>
+	<script src="js/counter.js"></script>
 	<?php
 	include('favicon.php');
 	?>
-	<script src="js/piwik/piwik.js" type="text/javascript"></script>
+	<script src="js/piwik/piwik.js"></script>
 </head>
 
 <body>
