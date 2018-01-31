@@ -916,7 +916,7 @@
 				preg_match_all("/[A-Z_]+\%3A/", $query, $queryFields);
 				foreach ($queryFields[0] as $fields)
 				{
-					preg_match("/$fields\ *([^(AND|OR)]+)(\+AND\+|\+OR\+|\+$)/", $query, $fieldInput);
+					preg_match("/$fields\ *([^\+]+\+?[^(AND|OR)]+)(\+AND\+|\+OR\+|\+$)/", $query, $fieldInput);
 					$fieldInputPURE = preg_replace("/\+/", "\+", $fieldInput[1]);
 					$query = preg_replace("/$fieldInputPURE/", "", $query);
 					$fieldInput = preg_replace("/(.+\%3A|`)/", "", $fieldInput[1]);
