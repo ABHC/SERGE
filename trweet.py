@@ -302,7 +302,7 @@ def trweetTorrent(attributes):
 		pseudo = trweet.author.screen_name.encode("utf8")
 		link = "https://twitter.com/"+str(pseudo)+"/status/"+str(tweet_id)+"/"
 
-		if (re.search('[^a-z.]'+re.escape(query), tweet, re.IGNORECASE) or re.search('^'+re.escape(':all'), query, re.IGNORECASE)) and owners is not None:
+		if (re.search('[^a-z]'+re.escape(query)+'.{0,3}(\W|$)', tweet, re.IGNORECASE) or re.search('^'+re.escape(':all'), query, re.IGNORECASE)) and owners is not None:
 
 			########### SEARCH TRWEET QUERIES
 			query_checking = ("SELECT query_id, owners FROM timeline_trweet_serge WHERE link = %s")

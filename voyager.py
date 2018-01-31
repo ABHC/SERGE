@@ -235,7 +235,7 @@ def newscast(newscast_args):
 
 					for splitkey in aggregated_keyword:
 
-						if (re.search('[^a-z.]'+re.escape(splitkey), post_title, re.IGNORECASE) or re.search('[^a-z.]'+re.escape(splitkey), post_description, re.IGNORECASE) or re.search('[^a-z.]'+re.escape(splitkey), tags_string, re.IGNORECASE)) and owners is not None:
+						if (re.search('[^a-z]'+re.escape(splitkey)+'.{0,3}(\W|$)', post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey)+'.{0,3}(\W|$)', post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey)+'.{0,3}(\W|$)', tags_string, re.IGNORECASE)) and owners is not None:
 
 							redundancy = redundancy + 1
 
@@ -267,7 +267,7 @@ def newscast(newscast_args):
 					if "[!ALERT!]" in keyword:
 						keyword = keyword.replace("[!ALERT!]", "")
 
-					if (re.search('[^a-z.]'+re.escape(keyword), post_title, re.IGNORECASE) or re.search('[^a-z.]'+re.escape(keyword), post_description, re.IGNORECASE) or re.search('[^a-z.]'+re.escape(keyword), tags_string, re.IGNORECASE) or re.search('^'+re.escape(':all@'+id_rss)+'$', keyword, re.IGNORECASE)) and owners is not None:
+					if (re.search('[^a-z]'+re.escape(keyword)+'.{0,3}(\W|$)', post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(keyword)+'.{0,3}(\W|$)', post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(keyword)+'.{0,3}(\W|$)', tags_string, re.IGNORECASE) or re.search('^'+re.escape(':all@'+id_rss)+'$', keyword, re.IGNORECASE)) and owners is not None:
 
 						########### QUERY FOR DATABASE CHECKING
 						query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s  AND title = %s")
