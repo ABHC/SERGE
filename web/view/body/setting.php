@@ -586,6 +586,9 @@
 
 				$queryId = $query['id'];
 
+				# Input submit for query edit
+				echo '<input type="submit" class="noDisplay" id="editQueryScience' . $queryId . '" name="editQueryScience" value="' . $queryId . '"/>';
+
 				foreach ($selected as $searchField => $selectedSearchField)
 				{
 					$queryFieldsName[$searchField] = $searchField;
@@ -600,13 +603,13 @@
 					if (!empty($openParenthesisDisplay[0]))
 					{
 						$queryDisplay = $queryDisplay . '
-						<input type="submit" class="noDisplay" id="editQueryScience' . $queryId . '" name="editQueryScience" value="' . $queryId . '"/><label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="queryParenthesisView">(</label>';
+						<label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="queryParenthesisView">(</label>';
 					}
 
 					if (!empty($queryFieldsName[$fields]))
 					{
 						$queryDisplay = $queryDisplay . '
-						<input type="submit" class="noDisplay" id="editQueryScience' . $queryId . '" name="editQueryScience" value="' . $queryId . '"/><label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="queryTypeView">' . ucfirst($queryFieldsName[$fields]) . '
+						<label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="queryTypeView">' . ucfirst($queryFieldsName[$fields]) . '
 						</label>';
 					}
 
@@ -615,7 +618,7 @@
 					{
 						$fieldInput = preg_replace("/#/", "", $fieldInput[0]);
 						$queryDisplay = $queryDisplay . '
-						<input type="submit" class="noDisplay" id="editQueryScience' . $queryId . '" name="editQueryScience" value="' . $queryId . '"/><label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="queryKeywordView">' . $fieldInput . '
+						<label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="queryKeywordView">' . $fieldInput . '
 						</label>';
 					}
 
@@ -623,7 +626,7 @@
 					if (!empty($closeParenthesisDisplay[0]))
 					{
 						$queryDisplay = $queryDisplay . '
-						<input type="submit" class="noDisplay" id="editQueryScience' . $queryId . '" name="editQueryScience" value="' . $queryId . '"/><label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="queryParenthesisView">)
+						<label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="queryParenthesisView">)
 						</label>';
 					}
 
@@ -632,7 +635,7 @@
 					{
 						preg_match("/.{2,3}/", $logicalConnector[1], $logicalConnector);
 						$queryDisplay = $queryDisplay . '
-						<input type="submit" class="noDisplay" id="editQueryScience' . $queryId . '" name="editQueryScience" value="' . $queryId . '"/><label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="query' . ucfirst(strtolower($logicalConnector[0])) . 'View">' . $logicalConnector[0] . '
+						<label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="query' . ucfirst(strtolower($logicalConnector[0])) . 'View">' . $logicalConnector[0] . '
 						</label>';
 					}
 				}
@@ -845,6 +848,9 @@
 
 				$queryId = $query['id'];
 
+				# input submit for query edit
+				echo '<input type="submit" class="noDisplay" id="editQueryPatent' . $queryId . '" name="editQueryPatent" value="' . $queryId . '"/>';
+
 				$queryFieldsName['ALLNAMES'] = 'All Names';
 				$queryFieldsName['ALLNUM'] = 'All Numbers and IDs';
 				$queryFieldsName['AAD'] = 'Applicant Address';
@@ -917,7 +923,6 @@
 					$fieldInput = preg_replace("/\+/", " ", $fieldInput);
 					$fields = preg_replace("/(\%3A|`)/", "", $fields);
 					$queryDisplay = $queryDisplay . '
-					<input type="submit" class="noDisplay" id="editQueryPatent' . $queryId . '" name="editQueryPatent" value="' . $queryId . '"/>
 					<label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryPatent' . $queryId . '" class="queryTypeView">' . $queryFieldsName[$fields] . '
 					</label>
 					<label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryPatent' . $queryId . '" class="queryKeywordView">' . $fieldInput . '

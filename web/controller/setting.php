@@ -22,9 +22,6 @@ $formPostSubmit         = FALSE;
 
 # Data processing
 $unsafeData = array();
-$unsafeData = array_merge($unsafeData, array(array('action', 'action', 'GET', 'Az')));
-$unsafeData = array_merge($unsafeData, array(array('query', 'query', 'GET', '09')));
-
 $unsafeData = array_merge($unsafeData, array(array('scrollPos', 'scrollPos', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('editQueryScience', 'editQueryScience', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('editQueryPatent', 'editQueryPatent', 'POST', '09')));
@@ -808,7 +805,7 @@ if ($emailIsCheck && !empty($data['editQueryScience']))
 
 
 # Delete editing query
-if ($emailIsCheck && !empty($data['delEditingScienceQuery']) && empty($data['extendScience']))
+if ($emailIsCheck && !empty($data['delEditingScienceQuery']) && !empty($data['scienceQuerySubmit']))
 {
 	$checkCol = array(array('id', '=', $data['delEditingScienceQuery'], 'AND'),
 										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
@@ -980,7 +977,7 @@ if ($emailIsCheck && !empty($data['editQueryPatent']))
 		$cpt       = 0;
 		$typeQuery = '';
 		foreach ($queryArray as $queryPart)
-		{echo ' : ' . $queryPart . '<br>';
+		{
 			$cptQuery = ceil($cpt/6) - 1;
 			if (preg_match("/(^ AND $|^ OR $)/",$queryPart, $value))
 			{
@@ -1011,7 +1008,7 @@ if ($emailIsCheck && !empty($data['editQueryPatent']))
 
 
 # Delete editing query
-if ($emailIsCheck && !empty($data['delEditingPatentQuery']) && empty($data['extendPatent']))
+if ($emailIsCheck && !empty($data['delEditingPatentQuery']) && !empty($data['patentQuerySubmit']))
 {
 	$checkCol = array(array('id', '=', $data['delEditingPatentQuery'], 'AND'),
 										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
