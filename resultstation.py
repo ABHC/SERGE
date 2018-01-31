@@ -60,10 +60,10 @@ def triage(register, user_id_comma):
 	recorder_call = "wiki"
 
 	######### RESULTS NEWS : NEWS ATTRIBUTES QUERY (LINK + TITLE + ID SOURCE + KEYWORD ID)
-	query_news = ("SELECT link, title, id_source, keyword_id, id FROM result_news_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
+	query_news = ("SELECT link, title, id_source, keyword_id, id FROM result_news_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
 
 	call_news = database.cursor()
-	call_news.execute(query_news, (user_id_comma, user_id_comma))
+	call_news.execute(query_news, (user_id_comma, user_id_comma, user_id_comma))
 	rows = call_news.fetchall()
 	call_news.close()
 
@@ -76,10 +76,10 @@ def triage(register, user_id_comma):
 		not_send_news_list.append(field)
 
 	######### RESULTS SCIENCE : SCIENCE ATTRIBUTES QUERY (LINK + TITLE + KEYWORD ID)
-	query_science = ("SELECT link, title, query_id, id_source, id FROM result_science_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
+	query_science = ("SELECT link, title, query_id, id_source, id FROM result_science_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
 
 	call_science = database.cursor()
-	call_science.execute(query_science, (user_id_comma, user_id_comma))
+	call_science.execute(query_science, (user_id_comma, user_id_comma, user_id_comma))
 	rows = call_science.fetchall()
 	call_science.close()
 
@@ -95,10 +95,10 @@ def triage(register, user_id_comma):
 		not_send_science_list.append(row)
 
 	######### RESULTS PATENTS : PATENTS ATTRIBUTES QUERY (LINK + TITLE + ID QUERY WIPO)
-	query_patents = ("SELECT link, title, id_query_wipo, id FROM result_patents_serge WHERE (send_status NOT LIKE %s AND owners LIKE %s)")
+	query_patents = ("SELECT link, title, id_query_wipo, id FROM result_patents_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
 
 	call_patents = database.cursor()
-	call_patents.execute(query_patents, (user_id_comma, user_id_comma))
+	call_patents.execute(query_patents, (user_id_comma, user_id_comma, user_id_comma))
 	rows = call_patents.fetchall()
 	call_patents.close()
 
