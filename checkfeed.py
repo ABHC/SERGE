@@ -34,6 +34,8 @@ FEED_LINKS_ATTRIBUTES = (
 
 
 def extractFeedLinks(html, feed_links_attributes=FEED_LINKS_ATTRIBUTES):
+	"""Function for extracting all the RSS feeds present on the page given by the user"""
+
 	soup = BeautifulSoup(html, "lxml")
 	links = []
 	for attrs in feed_links_attributes:
@@ -91,6 +93,7 @@ def allCheckLong(link):
 
 
 def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
+	"""Function for saving user's or watch pack's sources when a 'source' field is fill by a user"""
 
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
