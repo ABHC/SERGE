@@ -367,87 +367,10 @@ if ($emailIsCheck && !empty($data['buttonDeleteHistory']) && !empty($data['delet
 if ($emailIsCheck && !empty($data['sourceType']) && !empty($data['newSource']) && $data['sourceType'] === 'inputSource')
 {
 	$sourceToTest = escapeshellarg($data['newSource']);
-	$cmd          = 'timeout 20  /usr/bin/python /var/www/Serge/checkfeed.py ' . $sourceToTest . ' 2> /var/www/Serge/web/logs/error.log';
+	$cmd          = 'timeout 150  /usr/bin/python /var/www/Serge/checkfeed.py ' . $sourceToTest . ' ' . $userId . ' setting >> /var/www/Serge/web/logs/error.log 2>&1 &';
 
 	# Check if the link is valid
-	exec($cmd, $linkValidation, $errorInCheckfeed);
-
-	if ($errorInCheckfeed === 0)
-	{
-		$outputType = 'link';
-		$cpt  = 0;
-		foreach($linkValidation as $validation)
-		{
-			if ($outputType === 'link' && $validation !== 'unvalid link')
-			{
-				$source_array[$cpt]['link'] = $validation;
-				$outputType = 'title';
-			}
-			elseif ($outputType === 'title')
-			{
-				$source_array[$cpt]['title'] = $validation;
-				$outputType = 'link';
-				$cpt++;
-			}
-			elseif ($outputType === 'error')
-			{
-				$ERROR_MESSAGE = $validation . ' ' . $ERROR_MESSAGE;
-				$outputType = 'link';
-			}
-			else
-			{
-				$ERROR_MESSAGE = $validation . ' ' . $ERROR_MESSAGE;
-				$outputType = 'error';
-			}
-		}
-
-		foreach($source_array as $sourceData)
-		{
-			// Check if source is already in bdd
-			$checkCol   = array(array('link', '=', $sourceData['link'], ''));
-			$result     = read('rss_serge', 'owners, active', $checkCol, '', $bdd);
-			$sourceInDB = $result[0] ?? '';
-
-			if (empty($sourceInDB))
-			{
-				if (empty($sourceData['title']))
-				{
-					$sourceData['title'] = ucfirst($matches[1] . '[!NEW!]');
-				}
-
-				// Adding new source
-				$insertCol = array(array('link', $sourceData['link']),
-				array('owners', ',' . $_SESSION['id'] . ','),
-				array('name', $sourceData['title']),
-				array('active', 1));
-				$execution = insert('rss_serge', $insertCol, '', '', $bdd);
-			}
-			else
-			{
-				$checkCol = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'AND'),
-				array('link', '=', $sourceData['link'], ''));
-				$result   = read('rss_serge', 'owners, active', $checkCol, '', $bdd);
-				$resultActualOwner = $result[0] ?? '';
-
-				if (empty($resultActualOwner))
-				{
-					// Update owners of existing source with the new onwer
-					$updateCol = array(array('owners', $sourceInDB['owners'] . $_SESSION['id'] . ','),
-					array('active', $sourceInDB['active'] + 1));
-					$checkCol  = array(array('link', '=', $sourceData['link'], ''));
-					$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
-				}
-				else
-				{
-					$ERROR_MESSAGE = 'This source is already in the database';
-				}
-			}
-		}
-	}
-	else
-	{
-		$ERROR_MESSAGE = 'Serge can\'t analyse your link';
-	}
+	exec($cmd);
 }
 
 # Adding new keyword
