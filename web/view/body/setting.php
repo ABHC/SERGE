@@ -286,7 +286,7 @@
 					<option value="inputSource"><?php get_t('select2_window2_setting', $bdd); ?></option>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="url" name="newSource" id="source" placeholder="Source" />
+				<input type="url" name="newSource" id="source" placeholder="<?php get_t('Source', $bdd); ?>" />
 				<input title="<?php get_t('Add new source', $bdd); ?>" class="submit" type="submit" value="" />
 			</div>
 			<?php #echo $ERROR_MESSAGE . '<br>'; ?>
@@ -514,7 +514,7 @@
 					echo '
 					</select>
 					<span class="arrDownBorder">▾</span>
-					<input type="text" class="query" name="scienceQuery' . $cpt . '" id="scienceQuery0' . $cpt . '" placeholder="Keyword" value="' . $data['scienceQuery' . $cpt] . '"/>';
+					<input type="text" class="query" name="scienceQuery' . $cpt . '" id="scienceQuery0' . $cpt . '" placeholder="' . var_get_t('Keyword', $bdd) . '" value="' . $data['scienceQuery' . $cpt] . '"/>';
 
 					if (!empty($data['closeParenthesis' . $cpt]) && $data['closeParenthesis' . $cpt] === 'active')
 					{
@@ -800,7 +800,7 @@
 					<option value="WO" ' . $selected['WO'] . '>WIPO Publication Number</option>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" class="query" name="patentQuery' . $cpt . '" id="patentQuery' . $cpt . '" placeholder="Keyword" value="' . $data['patentQuery' . $cpt] . '" />';
+				<input type="text" class="query" name="patentQuery' . $cpt . '" id="patentQuery' . $cpt . '" placeholder="' . var_get_t('Keyword', $bdd) . '" value="' . $data['patentQuery' . $cpt] . '" />';
 
 				$cpt++;
 

@@ -214,5 +214,7 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('category', 'Category', 'Catégorie', NULL, NULL, NULL),
 ('all', 'All', 'Tout', NULL, NULL, NULL),
 ('Edit query', 'Edit query', 'Éditer la requête', NULL, NULL, NULL),
+('Keyword', 'Keyword', 'Mot-clef', NULL, NULL, NULL),
+('Source', 'Source', 'Source', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);
