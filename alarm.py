@@ -2,6 +2,7 @@
 
 """SERGE alert functions (building and formatting an alert)"""
 
+import ovh
 import MySQLdb
 from math import ceil
 
@@ -595,6 +596,7 @@ def alertMailBySource(user, translate_text, alert_news_list, pending_alerts, ale
 
 
 def sergeTelecom(user, register, alert_news_list):
+	"""Format a sms message and then send it to the user's phone via the OVH API"""
 
 	########### CONNECTION TO SERGE DATABASE
 	database = handshake.databaseConnection()
