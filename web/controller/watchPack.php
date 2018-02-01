@@ -594,68 +594,11 @@ else
 		{
 			// Check if source is valid
 			$sourceToTest = escapeshellarg($data['newSource']);
-			$cmd          = 'timeout 20  /usr/bin/python /var/www/Serge/checkfeed.py ' . $sourceToTest . ' 2> /var/www/Serge/web/logs/error.log';
+			$packIdCmd    = escapeshellarg($data['packId']);
+			$cmd          = 'timeout 150  /usr/bin/python /var/www/Serge/checkfeed.py ' . $sourceToTest . ' ' . $userId . ' watchpack ' . $packIdCmd . ' >> /var/www/Serge/web/logs/error.log 2>&1 &';
 
 			# Check if the link is valid
-			exec($cmd, $linkValidation, $errorInCheckfeed);
-
-			if ($errorInCheckfeed === 0)
-			{
-				$outputType = 'link';
-				$cpt  = 0;
-				foreach($linkValidation as $validation)
-				{
-					if ($outputType === 'link' && $validation !== 'unvalid link')
-					{
-						$source_array[$cpt]['link'] = $validation;
-						$outputType = 'title';
-					}
-					elseif ($outputType === 'title')
-					{
-						$source_array[$cpt]['title'] = $validation;
-						$outputType = 'link';
-						$cpt++;
-					}
-					elseif ($outputType === 'error')
-					{
-						$ERROR_MESSAGE = $validation . ' ' . $ERROR_MESSAGE;
-						$outputType = 'link';
-					}
-					else
-					{
-						$ERROR_MESSAGE = $validation . ' ' . $ERROR_MESSAGE;
-						$outputType = 'error';
-					}
-				}
-
-				foreach($source_array as $sourceData)
-				{
-					if (empty($sourceData['title']))
-					{
-						$sourceData['title'] = ucfirst($matches[1] . '[!NEW!]');
-					}
-
-					// Adding new source
-					$insertCol = array(array('link', $sourceData['link']),
-														array('owners', ','),
-														array('name', $sourceData['title']),
-														array('active', 1));
-					$execution = insert('rss_serge', $insertCol, '', '', $bdd);
-
-					$checkCol     = array(array('link', '=', $sourceData['link'], ''));
-					$result       = read('rss_serge', 'id', $checkCol, '', $bdd);
-					$resultSource = $result[0]['id'];
-
-					$updateCol = array(array('source', $sources . $resultSource . ','));
-					$checkCol  = array(array('pack_id', '=', $data['packId'], 'AND'),
-														array('query', '=', '[!source!]', ''));
-					$execution = update('watch_pack_queries_serge', $updateCol, $checkCol, '', $bdd);
-				}
-			}
-			else
-			{
-				$ERROR_MESSAGE = 'Serge can\'t analyse your link';
-			}
+			exec($cmd);
 		}
 	}
 	elseif ($emailIsCheck && (!empty($data['delKeyword']) || !empty($data['disableKeyword']) || !empty($data['activateKeyword'])))
