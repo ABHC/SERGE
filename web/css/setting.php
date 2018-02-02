@@ -1204,7 +1204,7 @@ input:checked + .slider:before
 	transition: all .6s;
 }
 
-[type="radio"]:checked + label:before
+[type="radio"]:checked + label.dot:before
 {
 	content: '';
 	position: absolute;

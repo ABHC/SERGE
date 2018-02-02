@@ -158,19 +158,19 @@
 					<h3><?php get_t('subtitle2_window1_setting', $bdd); ?></h3>
 					<p>
 						<input type="radio" id="condNbLink" name="cond" onchange="autoSubmit(this.form);" value="link_limit" <?php echo $condNbLink; ?>>
-						<label class="radio" for="condNbLink"></label>
+						<label class="radio dot" for="condNbLink"></label>
 						<?php get_t('input2_window1_setting', $bdd); ?>
 						<input class="number alpha" type="number" name="numberLinks" onchange="autoSubmit(this.form);" min="5" placeholder="50" value="<?php echo $userSettings['link_limit']; ?>"/>
 					</p>
 					<p>
 						<input type="radio" id="condFreq" name="cond" onchange="autoSubmit(this.form);" value="freq" <?php echo $condFreq; ?>>
-						<label class="radio" for="condFreq"></label>
+						<label class="radio dot" for="condFreq"></label>
 						<?php get_t('input3_window1_setting', $bdd); ?>
 						<input class="number alpha" type="number" name="freq" onchange="autoSubmit(this.form);" min="2" max="500" step="2" placeholder="24" value="<?php echo $userSettings['frequency'] ?? '2'; ?>"/><?php get_t('input4_window1_setting', $bdd); ?>
 					</p>
 					<p>
 						<input type="radio" id="condDate" name="cond" onchange="autoSubmit(this.form);" value="deadline" <?php echo $condDate; ?>>
-						<label class="radio" for="condDate"></label>
+						<label class="radio dot" for="condDate"></label>
 						<?php get_t('input5_window1_setting', $bdd); ?>
 						<input class="number alpha" type="number" name="hours" onchange="autoSubmit(this.form);" min="0" max="23" step="2" placeholder="19" value="<?php echo $userSettings['selected_hour']; ?>"/>h
 						<?php get_t('input6_window1_setting', $bdd); ?>
@@ -239,17 +239,17 @@
 					<h3><?php get_t('subtitle3_window1_setting', $bdd); ?></h3>
 					<p>
 						<input type="radio" id="orderByKeyword" name="orderBy" onchange="autoSubmit(this.form);" value="masterword" <?php echo $orderByKeyword; ?>>
-						<label class="radio" for="orderByKeyword"></label>
+						<label class="radio dot" for="orderByKeyword"></label>
 						<?php get_t('input7_window1_setting', $bdd); ?>
 					</p>
 					<p>
 						<input type="radio" id="orderBySource" name="orderBy" onchange="autoSubmit(this.form);" value="origin" <?php echo $orderBySource; ?>>
-						<label class="radio" for="orderBySource"></label>
+						<label class="radio dot" for="orderBySource"></label>
 						<?php get_t('input8_window1_setting', $bdd); ?>
 					</p>
 					<p>
 						<input type="radio" id="orderByAlpha" name="orderBy" onchange="autoSubmit(this.form);" value="type" <?php echo $orderByType; ?>>
-						<label class="radio" for="orderByAlpha"></label>
+						<label class="radio dot" for="orderByAlpha"></label>
 						<?php get_t('input9_window1_setting', $bdd); ?>
 					</p>
 				</div>
