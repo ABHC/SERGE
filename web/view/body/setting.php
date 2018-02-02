@@ -920,7 +920,7 @@
 				{
 					preg_match("/$fields\ *([^\+]+\+?[^(AND|OR)]+)(\+AND\+|\+OR\+|\+$)/", $query, $fieldInput);
 					$fieldInputPURE = preg_replace("/\+/", "\+", $fieldInput[1]);
-					$query = preg_replace("/$fieldInputPURE/", "", $query);
+					$query = preg_replace("/$fields$fieldInputPURE/", "", $query);
 					$fieldInput = preg_replace("/(.+\%3A|`)/", "", $fieldInput[1]);
 					$fieldInput = preg_replace("/\+/", " ", $fieldInput);
 					$fields = preg_replace("/(\%3A|`)/", "", $fields);
@@ -930,10 +930,10 @@
 					<label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryPatent' . $queryId . '" class="queryKeywordView">' . $fieldInput . '
 					</label>';
 
-					preg_match("/^(AND|OR)\+/", $query, $logicalConnector);
+					preg_match("/^\+(AND|OR)\+/", $query, $logicalConnector);
 					if (!empty($logicalConnector[1]))
 					{
-						$query = preg_replace("/^(AND|OR)\+/", "", $query);
+						$query = preg_replace("/^\+(AND|OR)\+/", "", $query);
 						preg_match("/.{1,3}/", $logicalConnector[1], $logicalConnector);
 						$queryDisplay = $queryDisplay . '
 						<label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryPatent' . $queryId . '" class="query' . ucfirst(strtolower($logicalConnector[0])) . 'View">' . $logicalConnector[0] . '
