@@ -7,7 +7,7 @@ function del_accent(string $str, $encoding='utf-8')
 				 htmlentities($str, ENT_NOQUOTES, $encoding))));
 }
 
-$req = $bdd->prepare("SELECT id, name, description, author, category, language FROM $tableName WHERE search_index IS NULL");
+$req = $bdd->prepare("SELECT id, name, description, author, category, language, update_date FROM $tableName WHERE search_index IS NULL");
 $req->execute();
 	$result = $req->fetchAll();
 	$req->closeCursor();
@@ -23,7 +23,9 @@ foreach ($result as $line)
 		$soundexWord = $soundexWord . ' ' . soundex($wordSplit);
 	}
 
-	$searchIndex = mb_strtolower($word) . ' ' . mb_strtolower(del_accent($word)) . ' ' . $soundexWord;
+	$dateIndex = date("H:i d/m/o", $line['update_date']);
+
+	$searchIndex = $dateIndex . ' ' . mb_strtolower($word) . ' ' . mb_strtolower(del_accent($word)) . ' ' . $soundexWord;
 
 	// Update search index
 	$req = $bdd->prepare("UPDATE $tableName SET search_index = :search WHERE id = :id");
