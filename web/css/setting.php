@@ -1233,11 +1233,16 @@ input:checked + .slider:before
 {
 	content: '•';
 	position: absolute;
-	top: -6px;
-	left: 7px;
+	top: -5px;
+	left: 0px;
 	font-size: 24px;
 	color: #fff;
 	text-align: center;
+	width: 27px;
+	height: 27px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .centerSubmit
