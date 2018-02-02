@@ -1214,6 +1214,8 @@ input:checked + .slider:before
 	width: 25px;
 	border: 1px solid rgba(255,255,255, 0.15);
 	background-color: rgba(43, 140, 34, 0.55);
+	background: url('../images/dot.png') center no-repeat;
+	background-size: contain;
 	border-radius: 50%;
 	transition: all .3s;
 }
@@ -1227,22 +1229,6 @@ input:checked + .slider:before
 	font-size: 13px;
 	color: #fff;
 	text-align: center;
-}
-
-[type="radio"]:checked + label:after
-{
-	content: '•';
-	position: absolute;
-	top: -5px;
-	left: 0px;
-	font-size: 24px;
-	color: #fff;
-	text-align: center;
-	width: 27px;
-	height: 27px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
 }
 
 .centerSubmit
