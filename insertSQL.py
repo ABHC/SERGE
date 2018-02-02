@@ -374,17 +374,41 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 					for jelly in jellychecking:
 						jelly_title = jelly[0]
 						jelly_link = jelly[1]
-						damerauLevenshtein_title_score = 4
 
 						levenshtein_title_score = jellyfish.levenshtein_distance(post_title, jelly_title)
 						try:
 							damerauLevenshtein_title_score = jellyfish.damerau_levenshtein_distance(post_title, jelly_title)
 						except ValueError:
-							logger_error.error('Falling back on Python implementation of damerau_levenshtein_distance(%r, %r)', post_title, jelly_title)
+							damerauLevenshtein_title_score = 4
 
 						########### IF JELLY CHECKING GIVE RESULTS
 						if levenshtein_title_score <= 3 or damerauLevenshtein_title_score <= 3:
 							duplicate = True
+
+						field_id_keyword = jelly[2]
+						item_owners = jelly[3]
+						already_owners_list = owners.split(",")
+						complete_id = field_id_keyword
+						complete_owners = item_owners
+
+						########### NEW ATTRIBUTES CREATION (COMPLETE ID & COMPLETE OWNERS)
+						if keyword_id_comma2 not in field_id_keyword:
+							complete_id = field_id_keyword+keyword_id_comma
+
+						########### NEW ATTRIBUTES CREATION (COMPLETE ID & COMPLETE OWNERS)
+						if keyword_id_comma2 not in field_id_keyword:
+							complete_id = field_id_keyword+keyword_id_comma
+
+						split_index = 1
+
+						while split_index < (len(already_owners_list)-1):
+							already_owner = ","+already_owners_list[split_index]+","
+							add_owner = already_owners_list[split_index]+","
+
+							if already_owner not in item_owners:
+								complete_owners = complete_owners+add_owner
+
+							split_index = split_index+1
 
 							########### JELLY UPDATE
 							########### MODIFICATED TITLE : ATTRIBUTES UPDATE
