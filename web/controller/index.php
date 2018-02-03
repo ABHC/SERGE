@@ -114,7 +114,7 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 						$language = 'EN';
 					}
 
-					$checker = hash('sha256', $cryptoSalt . preg_replace("/...$/", "", $_SERVER['REQUEST_TIME']));
+					$checker = hash('sha256', $cryptoSalt . preg_replace("/.....$/", "", $_SERVER['REQUEST_TIME']));
 
 					$verifyLink = 'http://' . $_SERVER['HTTP_HOST'] . '/index?emailCheck=' . $token . '&checker='. $checker;
 
@@ -180,7 +180,7 @@ if (!empty($data['emailCheckToken']) && !empty($data['checker']))
 	$userId     = $result[0]['id'];
 	$cryptoSalt = $result[0]['salt'];
 
-	$checker = hash('sha256', $cryptoSalt . preg_replace("/...$/", "", $_SERVER['REQUEST_TIME']));
+	$checker = hash('sha256', $cryptoSalt . preg_replace("/.....$/", "", $_SERVER['REQUEST_TIME']));
 
 	if (!empty($userId) && $checker === $data['checker'])
 	{
@@ -192,7 +192,7 @@ if (!empty($data['emailCheckToken']) && !empty($data['checker']))
 		die();
 	}
 
-	$ErrorMessageCheckMail = '<script>alert("Unvalid email validation link");</script>';
+	$ErrorMessageCheckMail = '<script>alert("Unvalid email validation link : your link is outdated");</script>';
 }
 
 # Generate captcha
