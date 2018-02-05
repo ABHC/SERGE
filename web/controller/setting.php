@@ -237,8 +237,8 @@ if ($emailIsCheck)
 		$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
 	}
 
-	# change sending condition
-	if (!empty($data['cond']))
+	# Change sending condition
+	if (!empty($data['cond']) && ($data['cond'] === 'link_limit' || $data['cond'] === 'freq' || $data['cond'] === 'deadline'))
 	{
 		$secondDay = $data['secondDay'];
 		if (!preg_match("/$secondDay/", $data['days']))
@@ -575,100 +575,6 @@ if ($emailIsCheck && !empty($sourceIdAction) && !empty($action))
 	{
 		$ERROR_MESSAGE = 'Source doesn\'t exist or invalid action';
 	}
-}
-
-# Sending condition
-if ($userSettings['send_condition'] === 'link_limit')
-{
-	$condNbLink = 'checked';
-	$condFreq   = '';
-	$condDate   = '';
-}
-elseif ($userSettings['send_condition'] === 'freq')
-{
-	$condNbLink = '';
-	$condFreq   = 'checked';
-	$condDate   = '';
-}
-elseif ($userSettings['send_condition'] === 'deadline')
-{
-	$condNbLink = '';
-	$condFreq   = '';
-	$condDate   = 'checked';
-}
-
-preg_match_all("/[1-7]/", $userSettings['selected_days'], $selected_days);
-foreach ($selected_days[0] as $value)
-{
-	$day[$value] = 'selected';
-}
-
-$day2 = $day ?? '';
-
-if (isset($day[1]) && isset($day[2]) && isset($day[3]) && isset($day[4]) && isset($day[5]) && isset($day[6]) && isset($day[7]))
-{
-	$day[1]  = '';
-	$day[2]  = '';
-	$day[3]  = '';
-	$day[4]  = '';
-	$day[5]  = '';
-	$day[6]  = '';
-	$day[7]  = '';
-	$day2[1] = '';
-	$day2[2] = '';
-	$day2[3] = '';
-	$day2[4] = '';
-	$day2[5] = '';
-	$day2[6] = '';
-	$day2[7] = '';
-	$day[9]  = 'selected';
-}
-elseif (isset($day[1]) && isset($day[2]) && isset($day[3]) && isset($day[4]) && isset($day[5]))
-{
-	$day[1]  = '';
-	$day[2]  = '';
-	$day[3]  = '';
-	$day[4]  = '';
-	$day[5]  = '';
-	$day[6]  = '';
-	$day[7]  = '';
-	$day2[1] = '';
-	$day2[2] = '';
-	$day2[3] = '';
-	$day2[4] = '';
-	$day2[5] = '';
-	$day[0]  = 'selected';
-}
-elseif(isset($day[1]) && isset($day[3]) && isset($day[5]))
-{
-	$day[1]  = '';
-	$day[2]  = '';
-	$day[3]  = '';
-	$day[4]  = '';
-	$day[5]  = '';
-	$day[6]  = '';
-	$day[7]  = '';
-	$day2[1] = '';
-	$day2[3] = '';
-	$day2[5] = '';
-	$day[8]  = 'selected';
-}
-
-$firstEntry = FALSE;
-$cpt = 1;
-while ($cpt <= 7)
-{
-	if (!empty($day) && $day[$cpt] === 'selected' && $day2[$cpt] === 'selected' && !$firstEntry)
-	{
-		$day2[$cpt] = '';
-		$firstEntry = TRUE;
-	}
-	elseif (!empty($day) && $day[$cpt] === 'selected' && $day2[$cpt] === 'selected' && $firstEntry)
-	{
-		$day[$cpt] = '';
-		$cpt       = 8;
-	}
-	$cpt++;
 }
 
 # Edit science query
@@ -1108,6 +1014,100 @@ if ($userSettings['record_read'] == 0)
 elseif ($userSettings['record_read'] == 1)
 {
 	$recordRead = 'checked';
+}
+
+# Sending condition
+if ($userSettings['send_condition'] === 'link_limit')
+{
+	$condNbLink = 'checked';
+	$condFreq   = '';
+	$condDate   = '';
+}
+elseif ($userSettings['send_condition'] === 'freq')
+{
+	$condNbLink = '';
+	$condFreq   = 'checked';
+	$condDate   = '';
+}
+elseif ($userSettings['send_condition'] === 'deadline')
+{
+	$condNbLink = '';
+	$condFreq   = '';
+	$condDate   = 'checked';
+}
+
+preg_match_all("/[1-7]/", $userSettings['selected_days'], $selected_days);
+foreach ($selected_days[0] as $value)
+{
+	$day[$value] = 'selected';
+}
+
+$day2 = $day ?? '';
+
+if (isset($day[1]) && isset($day[2]) && isset($day[3]) && isset($day[4]) && isset($day[5]) && isset($day[6]) && isset($day[7]))
+{
+	$day[1]  = '';
+	$day[2]  = '';
+	$day[3]  = '';
+	$day[4]  = '';
+	$day[5]  = '';
+	$day[6]  = '';
+	$day[7]  = '';
+	$day2[1] = '';
+	$day2[2] = '';
+	$day2[3] = '';
+	$day2[4] = '';
+	$day2[5] = '';
+	$day2[6] = '';
+	$day2[7] = '';
+	$day[9]  = 'selected';
+}
+elseif (isset($day[1]) && isset($day[2]) && isset($day[3]) && isset($day[4]) && isset($day[5]))
+{
+	$day[1]  = '';
+	$day[2]  = '';
+	$day[3]  = '';
+	$day[4]  = '';
+	$day[5]  = '';
+	$day[6]  = '';
+	$day[7]  = '';
+	$day2[1] = '';
+	$day2[2] = '';
+	$day2[3] = '';
+	$day2[4] = '';
+	$day2[5] = '';
+	$day[0]  = 'selected';
+}
+elseif(isset($day[1]) && isset($day[3]) && isset($day[5]))
+{
+	$day[1]  = '';
+	$day[2]  = '';
+	$day[3]  = '';
+	$day[4]  = '';
+	$day[5]  = '';
+	$day[6]  = '';
+	$day[7]  = '';
+	$day2[1] = '';
+	$day2[3] = '';
+	$day2[5] = '';
+	$day[8]  = 'selected';
+}
+
+$firstEntry = FALSE;
+$cpt = 1;
+while ($cpt <= 7)
+{
+	if (!empty($day) && $day[$cpt] === 'selected' && $day2[$cpt] === 'selected' && !$firstEntry)
+	{
+		$day2[$cpt] = '';
+		$firstEntry = TRUE;
+	}
+	elseif (!empty($day) && $day[$cpt] === 'selected' && $day2[$cpt] === 'selected' && $firstEntry)
+	{
+		$day[$cpt] = '';
+		$cpt       = 8;
+	}
+	$cpt++;
 }
 
 include('view/nav/nav.php');
