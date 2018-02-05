@@ -321,12 +321,26 @@
 		<?php
 		$nbPage = ceil(count($readOwnerResults) / $limit);
 		$page   = $page + 1;
-		$cpt    = 1;
+		$cpt    = 0;
 		$dotBetweenPageNumber = FALSE;
 
-		while ($cpt <= $nbPage)
+		while ($cpt <= ($nbPage + 1))
 		{
-			if ($cpt == $page)
+			if ($cpt == 0 && $page >= 5)
+			{
+				echo '
+				<a href="result?page=' . ($page - 5) . $searchSort . $data['optionalCond'] . $data['orderBy'] . '&type=' . $type . '" class="pageNumber speedPage">
+				&lt; -5&nbsp;
+				</a>';
+			}
+			elseif ($cpt == ($nbPage + 1) && $page <= ($nbPage - 5))
+			{
+				echo '
+				<a href="result?page=' . ($page + 5) . $searchSort . $data['optionalCond'] . $data['orderBy'] . '&type=' . $type . '" class="pageNumber speedPage">
+				&nbsp;+5 &gt;
+				</a>';
+			}
+			elseif ($cpt == $page)
 			{
 				echo '
 				<a href="result?page=' . $cpt . $searchSort . $data['optionalCond'] . $data['orderBy'] . '&type=' . $type . '" class="pageNumber current">
@@ -334,7 +348,7 @@
 				</a>';
 				$dotBetweenPageNumber = FALSE;
 			}
-			elseif (($cpt - 1) == $page || ($cpt + 1) == $page)
+			elseif ((($cpt - 1) == $page || ($cpt + 1) == $page) && $cpt > 0 && $cpt <= $nbPage)
 			{
 				echo '
 				<a href="result?page=' . $cpt . $searchSort . $data['optionalCond'] . $data['orderBy'] . '&type=' . $type . '" class="pageNumber">
@@ -342,7 +356,7 @@
 				</a>';
 				$dotBetweenPageNumber = FALSE;
 			}
-			elseif ($cpt <= 2 || $cpt == $nbPage || ($cpt + 1) == $nbPage)
+			elseif (($cpt <= 2 || $cpt == $nbPage || ($cpt + 1) == $nbPage) && $cpt > 0)
 			{
 				echo '
 				<a href="result?page=' . $cpt . $searchSort . $data['optionalCond'] . $data['orderBy'] . '&type=' . $type . '" class="pageNumber">
@@ -351,7 +365,7 @@
 			}
 			else
 			{
-				if (!$dotBetweenPageNumber)
+				if (!$dotBetweenPageNumber && $cpt > 0 && $cpt < $nbPage)
 				{
 					echo '...';
 					$dotBetweenPageNumber = TRUE;

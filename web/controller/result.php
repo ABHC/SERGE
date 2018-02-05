@@ -135,15 +135,6 @@ if ($recordRead[0]['record_read'] == 1)
 $checkCol = array(array($ownersColumn, 'l', '%' . $userId . '%', ''));
 $readOwnerKeyword = read($tableNameQuery, 'id', $checkCol, '', $bdd);
 
-# Page number
-if (!empty($data['page']))
-{
-	$actualPageLink = '&page=' . $data['page'];
-	$limit          = 15;
-	$page           = $data['page'] - 1;
-	$base           = $limit * $page;
-}
-
 # Order results
 $colOrder['date'] = '▴';
 $colOrder['DESC'] = '';
@@ -256,6 +247,23 @@ $arrayValues = array('user' => '%,' . $_SESSION['id'] . ',%');
 include('controller/searchEngine.php');
 
 include('model/readOwnerResult.php');
+
+# Page number
+if (!empty($data['page']))
+{
+	$numberResults = new ArrayIterator($readOwnerResults);
+	$limit  = 15;
+	$nbPage = ceil(count($numberResults) / $limit);
+
+	if ($data['page'] > $nbPage || $data['page'] < 1)
+	{
+		$data['page'] = 1;
+	}
+
+	$actualPageLink = '&page=' . $data['page'];
+	$page           = $data['page'] - 1;
+	$base           = $limit * $page;
+}
 
 include('view/nav/nav.php');
 
