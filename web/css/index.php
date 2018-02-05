@@ -35,7 +35,7 @@ include('nav.php');
 
 h2
 {
-	font-size: 4.5vw;
+	font-size: 4.2vw;
 	font-weight: lighter;
 	letter-spacing: 1pt;
 	margin-top: 19vh;
@@ -48,7 +48,7 @@ h2
 h3
 {
 	width: 70%;
-	font-size: 1.8vw;
+	font-size: 1.5vw;
 	font-weight: lighter;
 	letter-spacing: 1pt;
 	margin-top: 5px;

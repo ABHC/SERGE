@@ -2071,7 +2071,7 @@ else
 		width: 100px;
 	}
 
-	input[type='submit'].star
+	.star
 	{
 		width: 25px;
 		height: auto;
@@ -2083,13 +2083,13 @@ else
 		text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
 	}
 
-	input[type='submit'].star.colorStar
+	.star.colorStar
 	{
 		color: rgb(15, 15, 15);
 		text-shadow: 0 0 0 rgba(0, 0, 0, 0);
 	}
 
-	input[type='submit'].star:hover
+	.star:hover
 	{
 		color: rgb(15, 15, 15);
 		text-shadow: 0 0 0 rgba(0, 0, 0, 0);

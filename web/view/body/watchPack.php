@@ -852,7 +852,8 @@
 									<td>' . $watchPack['category'] . '</td>
 									<td>' . date("H:i d/m/o", $watchPack['update_date']) . '</td>
 									<td>' . strtoupper($watchPack['language']) . '</td>
-									<td>' . $watchPack['NumberOfStars'] . '<input title="' . $starTitle . '" name="AddStar" class="star ' . $colorStar . '" type="submit" value="&#9733; ' . $watchPack['id'] . '" /></td>
+									<td>' . $watchPack['NumberOfStars'] . '<input type="submit" class="noDisplay" id="AddStar' . $watchPack['id'] . '" name="AddStar" value="' . $watchPack['id'] . '"/><label title="' . $starTitle . '" for="AddStar' . $watchPack['id'] . '" class="star ' . $colorStar . '">&#9733;</label>
+										</td>
 								</tr>';
 							}
 							?>
