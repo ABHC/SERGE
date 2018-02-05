@@ -132,6 +132,16 @@ input#email
 	width: 80%;
 }
 
+h1
+{
+	font-size: 30px;
+	color: #f9f9ff;
+	text-transform: uppercase;
+	font-weight: lighter;
+	text-align: center;
+	margin-bottom: 15px;
+}
+
 h3
 {
 	font-size: 20px;

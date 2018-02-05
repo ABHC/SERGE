@@ -58,7 +58,7 @@ h1
 	font-size: 30px;
 	color: #f9f9ff;
 	text-transform: uppercase;
-	font-weight: normal;
+	font-weight: lighter;
 	text-align: center;
 	margin-bottom: 15px;
 }

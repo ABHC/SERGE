@@ -120,7 +120,7 @@ if ($_SESSION['type'] === 'create')
 		font-size: 30px;
 		color: #f9f9ff;
 		text-transform: uppercase;
-		font-weight: 300;
+		font-weight: lighter;
 		text-align: center;
 		margin-bottom: 15px;
 	}
@@ -1777,7 +1777,7 @@ else
 		font-size: 30px;
 		color: #f9f9ff;
 		text-transform: uppercase;
-		font-weight: 300;
+		font-weight: lighter;
 		text-align: center;
 		margin-bottom: 15px;
 	}
@@ -1954,7 +1954,7 @@ else
 		flex: 1;
 		padding: 15px 0 15px 0;
 		text-align: left;
-		font-weight: 500;
+		font-weight: normal;
 		font-size: 12px;
 		color: #f9f9ff;
 		text-transform: uppercase;
@@ -2020,8 +2020,8 @@ else
 		flex: 1;
 		padding: 15px 0 15px 0;
 		text-align: center;
-		vertical-align:middle;
-		font-weight: 300;
+		vertical-align: middle;
+		font-weight: normal;
 		font-size: 12px;
 		color: #f9f9ff;
 		border-bottom: solid 1px rgba(255,255,255,0.1);

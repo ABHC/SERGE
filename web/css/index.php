@@ -36,7 +36,7 @@ include('nav.php');
 h2
 {
 	font-size: 4.8vw;
-	font-weight: 200;
+	font-weight: lighter;
 	letter-spacing: 1pt;
 	font-family: ubuntu;
 	margin-top: 19vh;
@@ -50,7 +50,7 @@ h3
 {
 	width: 70%;
 	font-size: 1.8vw;
-	font-weight: 200;
+	font-weight: lighter;
 	letter-spacing: 1pt;
 	font-family: ubuntu;
 	margin-top: 5px;

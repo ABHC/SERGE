@@ -204,7 +204,7 @@ h2
 h3
 {
 	font-size: 21px;
-	font-weight: 200;
+	font-weight: lighter;
 	letter-spacing: 1pt;
 	margin-top: 15px;
 	margin-bottom: 0;
