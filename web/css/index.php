@@ -35,10 +35,9 @@ include('nav.php');
 
 h2
 {
-	font-size: 4.8vw;
+	font-size: 4.5vw;
 	font-weight: lighter;
 	letter-spacing: 1pt;
-	font-family: ubuntu;
 	margin-top: 19vh;
 	margin-bottom: 5px;
 	text-align: center;
@@ -52,7 +51,6 @@ h3
 	font-size: 1.8vw;
 	font-weight: lighter;
 	letter-spacing: 1pt;
-	font-family: ubuntu;
 	margin-top: 5px;
 	margin-bottom: 14vh;
 	margin-left: 15%;
@@ -445,6 +443,7 @@ input
 		min-height: 360px;
 		max-height: 860px;
 		padding-top: 10vh;
+		font-family: Verdana, Geneva, sans-serif;
 	}
 
 	h2

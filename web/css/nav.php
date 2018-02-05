@@ -45,7 +45,7 @@
 .navResultSergeLogo
 {
 	width: 70px;
-	height: 50px;
+	height: 53px;
 	margin-right: 10px;
 	margin-left: 10px;
 	background: url(../images/navResultIco.png) no-repeat;
@@ -65,7 +65,7 @@
 .navWikiLogo
 {
 	width: 60px;
-	height: 50px;
+	height: 44px;
 	margin-right: 10px;
 	margin-left: 10px;
 	background: url(../images/navWikiIco.png) no-repeat;
