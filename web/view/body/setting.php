@@ -48,7 +48,7 @@
 						<?php
 						foreach ($backgroundList as $backgroundName)
 						{
-							echo '<img alt="' . $backgroundName['name'] . '" src=../images/background/' . $backgroundName['filename'] . ' style="display: none;" />';
+							echo '<img alt="' . $backgroundName['name'] . '" src=../images/background_preview/' . $backgroundName['filename'] . ' style="display: none;" />';
 						}
 						?>
 					</p>
