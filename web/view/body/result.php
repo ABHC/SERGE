@@ -330,14 +330,14 @@
 			{
 				echo '
 				<a href="result?page=' . ($page - 5) . $searchSort . $data['optionalCond'] . $data['orderBy'] . '&type=' . $type . '" class="pageNumber speedPage">
-				&lt; -5&nbsp;
+				&lt;&lt; 5&nbsp;
 				</a>';
 			}
 			elseif ($cpt == ($nbPage + 1) && $page <= ($nbPage - 5))
 			{
 				echo '
 				<a href="result?page=' . ($page + 5) . $searchSort . $data['optionalCond'] . $data['orderBy'] . '&type=' . $type . '" class="pageNumber speedPage">
-				&nbsp;+5 &gt;
+				&nbsp;5 &gt&gt;
 				</a>';
 			}
 			elseif ($cpt == $page)

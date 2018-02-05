@@ -915,11 +915,11 @@ h2
 {
 	display: block;
 	position: relative;
-	font-size: 12px;
-	left: -20px;
+	font-size: 15px;
+	left: -23px;
 	bottom: 1px;
 	cursor: default;
-	z-index: 1;
+	z-index: 10;
 	margin-right: -10px;
 }
 
