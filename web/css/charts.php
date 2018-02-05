@@ -124,7 +124,7 @@ ul
 	margin: 0;
 	text-align: center;
 	font-size: 15px;
-	color: #fff;
+	color: #f9f9ff;
 }
 
 .axis-x,
@@ -164,7 +164,7 @@ ul
 	width: 95%;
 	height: 95%;
 	position: relative;
-	color: #fff;
+	color: #f9f9ff;
 	font-size: 80%;
 }
 

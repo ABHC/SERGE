@@ -15,7 +15,7 @@ include('nav.php');
 	justify-content: center;
 	align-items: center;
 	min-height: 100vh;
-	color: #fff;
+	color: #f9f9ff;
 }
 
 .background

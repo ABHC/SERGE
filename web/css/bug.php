@@ -15,7 +15,7 @@ include('nav.php');
 	justify-content: space-between;
 	align-items: center;
 	min-height: 100vh;
-	color: #fff;
+	color: #f9f9ff;
 }
 
 .background
@@ -56,7 +56,7 @@ textarea
 	border: 1px solid rgba(255,255,255, 0.15);
 	padding: 4px;
 	background-color: rgba(255, 255, 255, 0.2);
-	color: #fff;
+	color: #f9f9ff;
 }
 
 textarea

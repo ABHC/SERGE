@@ -16,7 +16,7 @@ include('nav.php');
 	justify-content: space-between;
 	align-items: center;
 	min-height: 100vh;
-	color: #fff;
+	color: #f9f9ff;
 }
 
 .background
@@ -60,7 +60,7 @@ input
 	border: 1px solid rgba(255,255,255, 0.15);
 	padding: 4px;
 	background-color: rgba(255, 255, 255, 0.2);
-	color: #fff;
+	color: #f9f9ff;
 }
 
 input[type='text']
@@ -79,7 +79,7 @@ select
 	padding-right: 10px;
 	border-radius: 3px;
 	border: 1px solid rgba(255,255,255, 0.15);
-	color: #fff;
+	color: #f9f9ff;
 	-moz-appearance: none;
 	-webkit-appearance: none;
 	-o-appearance: none;
@@ -120,7 +120,7 @@ select#sourceType
 	position: absolute;
 	display: none;
 	width: 200px;
-	color: #fff;
+	color: #f9f9ff;
 	border: 1px solid rgba(255,255,255, 0.15);
 	border-radius: 3px;
 	overflow: hidden;
@@ -148,7 +148,7 @@ h3
 	border-right: none;
 	padding: 4px;
 	background-color: rgba(255, 255, 255, 0.2);
-	color: #fff;
+	color: #f9f9ff;
 	resize: none;
 	overflow: hidden;
 }
@@ -295,7 +295,7 @@ h3
 .buttonCreatesourcePack:hover
 {
 	background-color: rgba(92,53,102,0.8);
-	color: #fff;
+	color: #f9f9ff;
 }
 
 .buttonVisiteCommunitySourcePack
@@ -317,7 +317,7 @@ h3
 .buttonVisiteCommunitySourcePack:hover
 {
 	background-color: rgba(92,53,102,0.8);
-	color: #fff;
+	color: #f9f9ff;
 }
 
 .extendPremiumButton
@@ -452,7 +452,7 @@ h2
 	margin-left: 3px;
 	margin-right: 3px;
 	background-color: rgba(20,20,20,0.45);
-	color: #fff;
+	color: #f9f9ff;
 	cursor: pointer;
 }
 
@@ -473,7 +473,7 @@ h2
 	margin-left: 3px;
 	margin-right: 2%;
 	background-color: rgba(20,20,20,0.45);
-	color: #fff;
+	color: #f9f9ff;
 	cursor: pointer;
 }
 
@@ -513,7 +513,7 @@ h2
 	margin-left: 3px;
 	margin-right: 3px;
 	background-color: rgba(20,20,20,0.45);
-	color: #fff;
+	color: #f9f9ff;
 	cursor: pointer;
 }
 
@@ -584,7 +584,7 @@ h2
 .tag a
 {
 	text-decoration: none;
-	color: #fff;
+	color: #f9f9ff;
 	margin-right: 5px;
 	margin-left: 2px;
 }
@@ -738,7 +738,7 @@ h2
 .tagSource a
 {
 	text-decoration: none;
-	color: #fff;
+	color: #f9f9ff;
 	margin-right: 5px;
 	margin-left: 2px;
 }
@@ -1151,7 +1151,7 @@ input:checked + .slider:before
 	top: 4px;
 	left: 2px;
 	font-size: 13px;
-	color: #fff;
+	color: #f9f9ff;
 	text-align: center;
 }
 
@@ -1162,7 +1162,7 @@ input:checked + .slider:before
 	top: 4px;
 	left: 6px;
 	font-size: 13px;
-	color: #fff;
+	color: #f9f9ff;
 	text-align: center;
 }
 
@@ -1227,7 +1227,7 @@ input:checked + .slider:before
 	top: 4px;
 	left: 2px;
 	font-size: 13px;
-	color: #fff;
+	color: #f9f9ff;
 	text-align: center;
 }
 
@@ -1445,7 +1445,7 @@ input:checked + .slider:before
 	top: 2px;
 	left: 2px;
 	font-size: 10px;
-	color: #fff;
+	color: #f9f9ff;
 	text-align: center;
 }
 
@@ -1456,7 +1456,7 @@ input:checked + .slider:before
 	top: 2px;
 	left: 5px;
 	font-size: 10px;
-	color: #fff;
+	color: #f9f9ff;
 	text-align: center;
 }
 
@@ -1467,7 +1467,7 @@ input:checked + .slider:before
 	top: 2px;
 	left: 2px;
 	font-size: 10px;
-	color: #fff;
+	color: #f9f9ff;
 	text-align: center;
 }
 
@@ -1502,7 +1502,7 @@ input:checked + .slider:before
 	background: url('../images/extend.png') center no-repeat;
 	background-size: contain;
 	background-color: rgba(43, 140, 34, 0.55);
-	color: #fff;
+	color: #f9f9ff;
 	cursor: pointer;
 	margin-left: 7px;
 }
@@ -1525,7 +1525,7 @@ input:checked + .slider:before
 .queryContainer a
 {
 	text-decoration: none;
-	color: #fff;
+	color: #f9f9ff;
 }
 
 .Qdisable div
@@ -1634,7 +1634,7 @@ input:checked + .slider:before
 	border-radius: 50%;
 	border: 1px solid rgba(255,255,255, 0.15);
 	background-color: rgba(0,149,109, 0.55);
-	color: #fff;
+	color: #f9f9ff;
 	font-size: 13px;
 	margin-right: 10px;
 	cursor: pointer;
@@ -1650,7 +1650,7 @@ input:checked + .slider:before
 	border-radius: 50%;
 	border: 1px solid rgba(255,255,255, 0.15);
 	background-color: rgba(99,49,149, 0.55);
-	color: #fff;
+	color: #f9f9ff;
 	font-size: 13px;
 	margin-right: 10px;
 	cursor: pointer;
@@ -1666,7 +1666,7 @@ input:checked + .slider:before
 	border-radius: 50%;
 	border: 1px solid rgba(255,255,255, 0.15);
 	background-color: rgba(139, 19, 19, 0.55);
-	color: #fff;
+	color: #f9f9ff;
 	font-size: 13px;
 	margin-right: 10px;
 	cursor: pointer;

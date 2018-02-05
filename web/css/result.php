@@ -56,7 +56,7 @@ include('nav.php');
 h1
 {
 	font-size: 30px;
-	color: #fff;
+	color: #f9f9ff;
 	text-transform: uppercase;
 	font-weight: normal;
 	text-align: center;
@@ -126,7 +126,7 @@ input[type='text']::placeholder
 	align-items: flex-end;
 	width: 40px;
 	height: 88px;
-	color: #fff;
+	color: #f9f9ff;
 	text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
 	text-decoration: none;
 	text-transform: uppercase;
@@ -203,7 +203,7 @@ th
 	text-align: left;
 	font-weight: normal;
 	font-size: 12px;
-	color: #fff;
+	color: #f9f9ff;
 	text-transform: uppercase;
 	text-align: center;
 	text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
@@ -212,7 +212,7 @@ th
 th a
 {
 	text-decoration: none;
-	color: #fff;
+	color: #f9f9ff;
 }
 
 th:nth-child(6)
@@ -264,7 +264,7 @@ td
 	vertical-align:middle;
 	font-weight: normal;
 	font-size: 12px;
-	color: #fff;
+	color: #f9f9ff;
 	border-bottom: solid 1px rgba(255,255,255,0.1);
 	text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
 }
@@ -272,7 +272,7 @@ td
 td a
 {
 	text-decoration: none;
-	color: #fff;
+	color: #f9f9ff;
 }
 
 td img
@@ -464,7 +464,7 @@ tr:nth-child(2n)
 	border-radius: 50%;
 	border: 1px solid rgba(255,255,255, 0.15);
 	background-color: rgba(99,49,149, 0.55);
-	color: #fff;
+	color: #f9f9ff;
 	font-size: 9px;
 	margin-right: 3px;
 }
@@ -479,7 +479,7 @@ tr:nth-child(2n)
 	border-radius: 50%;
 	border: 1px solid rgba(255,255,255, 0.15);
 	background-color: rgba(0,149,109, 0.55);
-	color: #fff;
+	color: #f9f9ff;
 	font-size: 9px;
 	margin-right: 3px;
 }
@@ -494,7 +494,7 @@ tr:nth-child(2n)
 	border-radius: 50%;
 	border: 1px solid rgba(255,255,255, 0.15);
 	background-color: rgba(139, 19, 19, 0.55);
-	color: #fff;
+	color: #f9f9ff;
 	font-size: 9px;
 	margin-right: 3px;
 }
@@ -505,7 +505,7 @@ tr:nth-child(2n)
 	flex-direction: row;
 	justify-content: space-around;
 	align-items: center;
-	color: #fff;
+	color: #f9f9ff;
 }
 
 .pageNumber
@@ -517,7 +517,7 @@ tr:nth-child(2n)
 	height: 30px;
 	margin-left: 10px;
 	margin-right: 10px;
-	color: #fff;
+	color: #f9f9ff;
 	background-color: rgba(0, 0, 0, 0.5);
 	border: 1px solid rgba(255,255,255,0.15);
 	text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);

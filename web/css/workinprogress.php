@@ -40,7 +40,7 @@ include('nav.php');
 	justify-content: center;
 	align-items: center;
 	min-height: calc(100vh - 75px);
-	color: #fff;
+	color: #f9f9ff;
 	text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
 	text-transform: uppercase;
 	font-size: 30px;
@@ -76,7 +76,7 @@ input
 	border: 1px solid rgba(255,255,255, 0.15);
 	padding: 4px;
 	background-color: rgba(0,0,0,0.4);
-	color: #fff;
+	color: #f9f9ff;
 }
 
 input::placeholder

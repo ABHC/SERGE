@@ -15,7 +15,7 @@ include('nav.php');
 	justify-content: space-around;
 	align-items: center;
 	min-height: 100vh;
-	color: #fff;
+	color: #f9f9ff;
 }
 
 .background
@@ -54,7 +54,7 @@ input
 	border: 1px solid rgba(255,255,255, 0.15);
 	padding: 4px;
 	background-color: rgba(255, 255, 255, 0.2);
-	color: #fff;
+	color: #f9f9ff;
 }
 
 .price

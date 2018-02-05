@@ -18,7 +18,7 @@ if ($_SESSION['type'] === 'create')
 		justify-content: start;
 		align-items: center;
 		min-height: 100vh;
-		color: #fff;
+		color: #f9f9ff;
 	}
 
 	.background
@@ -83,7 +83,7 @@ if ($_SESSION['type'] === 'create')
 		align-items: flex-end;
 		width: 70px;
 		height: 95px;
-		color: #fff;
+		color: #f9f9ff;
 		text-decoration: none;
 		text-transform: uppercase;
 		font-size: 10px;
@@ -118,7 +118,7 @@ if ($_SESSION['type'] === 'create')
 	h1
 	{
 		font-size: 30px;
-		color: #fff;
+		color: #f9f9ff;
 		text-transform: uppercase;
 		font-weight: 300;
 		text-align: center;
@@ -141,7 +141,7 @@ if ($_SESSION['type'] === 'create')
 		border: 1px solid rgba(255,255,255, 0.15);
 		padding: 4px;
 		background-color: rgba(255, 255, 255, 0.2);
-		color: #fff;
+		color: #f9f9ff;
 		font-family: Verdana, Geneva, sans-serif;
 		font-style: normal;
 		font-variant: normal;
@@ -195,7 +195,7 @@ if ($_SESSION['type'] === 'create')
 		padding-right: 10px;
 		border-radius: 3px;
 		border: 1px solid rgba(255,255,255, 0.15);
-		color: #fff;
+		color: #f9f9ff;
 		-moz-appearance: none;
 		-webkit-appearance: none;
 		-o-appearance: none;
@@ -331,7 +331,7 @@ if ($_SESSION['type'] === 'create')
 	.buttonCreatesourcePack:hover
 	{
 		background-color: rgba(0,170,255, 0.5);
-		color: #fff;
+		color: #f9f9ff;
 	}
 
 	.buttonVisiteCommunitySourcePack
@@ -350,7 +350,7 @@ if ($_SESSION['type'] === 'create')
 	.buttonVisiteCommunitySourcePack:hover
 	{
 		background-color: rgba(0,170,127,0.5);
-		color: #fff;
+		color: #f9f9ff;
 	}
 
 
@@ -442,7 +442,7 @@ if ($_SESSION['type'] === 'create')
 		margin-left: 3px;
 		margin-right: 3px;
 		background-color: rgba(20,20,20,0.45);
-		color: #fff;
+		color: #f9f9ff;
 		cursor: pointer;
 	}
 
@@ -463,7 +463,7 @@ if ($_SESSION['type'] === 'create')
 		margin-left: 3px;
 		margin-right: 2%;
 		background-color: rgba(20,20,20,0.45);
-		color: #fff;
+		color: #f9f9ff;
 		cursor: pointer;
 	}
 
@@ -503,7 +503,7 @@ if ($_SESSION['type'] === 'create')
 		margin-left: 3px;
 		margin-right: 3px;
 		background-color: rgba(20,20,20,0.45);
-		color: #fff;
+		color: #f9f9ff;
 		cursor: pointer;
 	}
 
@@ -574,7 +574,7 @@ if ($_SESSION['type'] === 'create')
 	.tag a
 	{
 		text-decoration: none;
-		color: #fff;
+		color: #f9f9ff;
 		margin-right: 5px;
 		margin-left: 2px;
 	}
@@ -728,7 +728,7 @@ if ($_SESSION['type'] === 'create')
 	.tagSource a
 	{
 		text-decoration: none;
-		color: #fff;
+		color: #f9f9ff;
 		margin-right: 5px;
 		margin-left: 2px;
 	}
@@ -1096,7 +1096,7 @@ if ($_SESSION['type'] === 'create')
 		top: 4px;
 		left: 2px;
 		font-size: 13px;
-		color: #fff;
+		color: #f9f9ff;
 		text-align: center;
 	}
 
@@ -1107,7 +1107,7 @@ if ($_SESSION['type'] === 'create')
 		top: 4px;
 		left: 6px;
 		font-size: 13px;
-		color: #fff;
+		color: #f9f9ff;
 		text-align: center;
 	}
 
@@ -1170,7 +1170,7 @@ if ($_SESSION['type'] === 'create')
 		top: 4px;
 		left: 2px;
 		font-size: 13px;
-		color: #fff;
+		color: #f9f9ff;
 		text-align: center;
 	}
 
@@ -1181,7 +1181,7 @@ if ($_SESSION['type'] === 'create')
 		top: -6px;
 		left: 7px;
 		font-size: 24px;
-		color: #fff;
+		color: #f9f9ff;
 		text-align: center;
 	}
 
@@ -1399,7 +1399,7 @@ if ($_SESSION['type'] === 'create')
 		top: 2px;
 		left: 2px;
 		font-size: 10px;
-		color: #fff;
+		color: #f9f9ff;
 		text-align: center;
 	}
 
@@ -1410,7 +1410,7 @@ if ($_SESSION['type'] === 'create')
 		top: 2px;
 		left: 5px;
 		font-size: 10px;
-		color: #fff;
+		color: #f9f9ff;
 		text-align: center;
 	}
 
@@ -1421,7 +1421,7 @@ if ($_SESSION['type'] === 'create')
 		top: 2px;
 		left: 2px;
 		font-size: 10px;
-		color: #fff;
+		color: #f9f9ff;
 		text-align: center;
 	}
 
@@ -1456,7 +1456,7 @@ if ($_SESSION['type'] === 'create')
 		background: url('../images/extend.png') center no-repeat;
 		background-size: contain;
 		background-color: rgba(43, 140, 34, 0.55);
-		color: #fff;
+		color: #f9f9ff;
 		cursor: pointer;
 		margin-left: 7px;
 	}
@@ -1479,7 +1479,7 @@ if ($_SESSION['type'] === 'create')
 	.queryContainer a
 	{
 		text-decoration: none;
-		color: #fff;
+		color: #f9f9ff;
 	}
 
 	.Qdisable div
@@ -1587,7 +1587,7 @@ if ($_SESSION['type'] === 'create')
 		border-radius: 50%;
 		border: 1px solid rgba(255,255,255, 0.15);
 		background-color: rgba(0,149,109, 0.55);
-		color: #fff;
+		color: #f9f9ff;
 		font-size: 13px;
 		margin-right: 10px;
 	}
@@ -1602,7 +1602,7 @@ if ($_SESSION['type'] === 'create')
 		border-radius: 50%;
 		border: 1px solid rgba(255,255,255, 0.15);
 		background-color: rgba(99,49,149, 0.55);
-		color: #fff;
+		color: #f9f9ff;
 		font-size: 13px;
 		margin-right: 10px;
 	}
@@ -1617,7 +1617,7 @@ if ($_SESSION['type'] === 'create')
 		border-radius: 50%;
 		border: 1px solid rgba(255,255,255, 0.15);
 		background-color: rgba(139, 19, 19, 0.55);
-		color: #fff;
+		color: #f9f9ff;
 		font-size: 13px;
 		margin-right: 10px;
 	}
@@ -1671,7 +1671,7 @@ else
 		justify-content: space-between;
 		align-items: center;
 		min-height: 100vh;
-		color: #fff;
+		color: #f9f9ff;
 	}
 
 	.background
@@ -1752,7 +1752,7 @@ else
 		align-items: flex-end;
 		width: 70px;
 		height: 95px;
-		color: #fff;
+		color: #f9f9ff;
 		text-decoration: none;
 		text-transform: uppercase;
 		font-size: 10px;
@@ -1775,7 +1775,7 @@ else
 	h1
 	{
 		font-size: 30px;
-		color: #fff;
+		color: #f9f9ff;
 		text-transform: uppercase;
 		font-weight: 300;
 		text-align: center;
@@ -1845,7 +1845,7 @@ else
 		align-items: flex-end;
 		width: 40px;
 		height: 88px;
-		color: #fff;
+		color: #f9f9ff;
 		text-decoration: none;
 		text-transform: uppercase;
 		font-size: 10px;
@@ -1888,7 +1888,7 @@ else
 		height: 26px;
 		font-size: 12px;
 		border: none;
-		color: #fff;
+		color: #f9f9ff;
 		text-transform: uppercase;
 		-moz-appearance: none;
 		-webkit-appearance: none;
@@ -1956,7 +1956,7 @@ else
 		text-align: left;
 		font-weight: 500;
 		font-size: 12px;
-		color: #fff;
+		color: #f9f9ff;
 		text-transform: uppercase;
 		text-align: center;
 		text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
@@ -1965,7 +1965,7 @@ else
 	th a
 	{
 		text-decoration: none;
-		color: #fff;
+		color: #f9f9ff;
 	}
 
 	th:nth-child(6)
@@ -2023,7 +2023,7 @@ else
 		vertical-align:middle;
 		font-weight: 300;
 		font-size: 12px;
-		color: #fff;
+		color: #f9f9ff;
 		border-bottom: solid 1px rgba(255,255,255,0.1);
 		text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
 	}
@@ -2031,7 +2031,7 @@ else
 	td a
 	{
 		text-decoration: none;
-		color: #fff;
+		color: #f9f9ff;
 	}
 
 	td img
@@ -2079,7 +2079,7 @@ else
 		background: none;
 		border: none;
 		font-size: 19px;
-		color: #fff;
+		color: #f9f9ff;
 		text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
 	}
 
@@ -2244,7 +2244,7 @@ else
 		border-radius: 50%;
 		border: 1px solid rgba(255,255,255, 0.15);
 		background-color: rgba(99,49,149, 0.55);
-		color: #fff;
+		color: #f9f9ff;
 		font-size: 9px;
 		margin-right: 3px;
 	}
@@ -2259,7 +2259,7 @@ else
 		border-radius: 50%;
 		border: 1px solid rgba(255,255,255, 0.15);
 		background-color: rgba(0,149,109, 0.55);
-		color: #fff;
+		color: #f9f9ff;
 		font-size: 9px;
 		margin-right: 3px;
 	}
@@ -2274,7 +2274,7 @@ else
 		border-radius: 50%;
 		border: 1px solid rgba(255,255,255, 0.15);
 		background-color: rgba(139, 19, 19, 0.55);
-		color: #fff;
+		color: #f9f9ff;
 		font-size: 9px;
 		margin-right: 3px;
 	}
@@ -2297,7 +2297,7 @@ else
 		flex-direction: row;
 		justify-content: space-around;
 		align-items: center;
-		color: #fff;
+		color: #f9f9ff;
 	}
 
 	.pageNumber
@@ -2309,7 +2309,7 @@ else
 		height: 30px;
 		margin-left: 10px;
 		margin-right: 10px;
-		color: #fff;
+		color: #f9f9ff;
 		background-color: rgba(0, 0, 0, 0.5);
 		border: 1px solid rgba(255,255,255,0.15);
 		text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
