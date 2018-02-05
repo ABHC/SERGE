@@ -23,7 +23,7 @@ foreach ($result as $line)
 		$soundexWord = $soundexWord . ' ' . soundex($wordSplit);
 	}
 
-	$dateIndex = date("H:i d/m/o", $line['update_date']);
+	$dateIndex = htmlspecialchars(date("d/m/o", $line['update_date']));
 
 	$searchIndex = $dateIndex . ' ' . mb_strtolower($word) . ' ' . mb_strtolower(del_accent($word)) . ' ' . $soundexWord;
 

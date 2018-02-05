@@ -68,7 +68,9 @@ foreach ($result as $line)
 		$titleIndexSOUNDEX   = $titleIndexSOUNDEX . ' ' . soundex($word);
 	}
 
-	$dateIndex = date("H:i d/m/o", $line['date']);
+	$dateIndex           = htmlspecialchars(date("d/m/o", $line['date']));
+	$titleIndexLOWER     = htmlspecialchars($titleIndexLOWER);
+	$titleIndexDELACCENT = htmlspecialchars($titleIndexDELACCENT);
 
 	$searchIndex = $dateIndex . ' ' . $titleIndexLOWER . ' ' . $titleIndexDELACCENT . ' ' . $titleIndexSOUNDEX;
 
