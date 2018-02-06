@@ -13,6 +13,7 @@ Serge explores RSS flux of the sources in order to search your keywords (and exp
 With Serge you can find and create a "Watch pack". A watch pack is a set of medias with keywords already configured. You can begin by adding a watch pack in order to have an easy configuration of Serge.
 
 Become a Beta tester with full access for free at [vigiserge.eu](https://vigiserge.eu/)
+
 You can check the user's guide [here](https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation) (only in French for now)
 
 ---
@@ -30,4 +31,5 @@ Serge explore les flux RSS des sources afin de rechercher vos mots-cléfs (et ex
 Avec Serge vous pouvez trouver et créer un "pack de veille". Un pack de veille est un ensemble de médias avec des mots-cléfs déjà configurés. Vous pouvez commencer par ajouter un pack de veille afin d'avoir une configuration facile de Serge.
 
 Devenez un Beta testeur avec un accès complet gratuit sur [vigiserge.eu](https://vigiserge.eu/)
+
 Vous pouvez consulter le guide de l'utilisateur [ici](https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation)
