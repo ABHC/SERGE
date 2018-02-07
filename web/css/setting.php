@@ -997,19 +997,19 @@ h2
 {
 	position: absolute;
 	content: "";
-	height: 26px;
-	width: 26px;
-	left: -5px;
-	bottom: -4px;
+	height: 21px;
+	width: 21px;
+	left: -3px;
+	bottom: -1px;
 	background-color: rgb(230,230,230);
 	box-shadow: 0px 0px 3px #302f2f;
-	border-radius: 50%;
+	border-radius: 25%;
 	transition: .6s;
 }
 
 input:checked + .slider
 {
-	background-color: rgba(43, 140, 34, 0.55);;
+	background-color: rgba(43, 140, 34, 0.55);
 }
 
 input:focus + .slider
@@ -1019,7 +1019,7 @@ input:focus + .slider
 
 input:checked + .slider:before
 {
-	transform: translateX(41px);
+	transform: translateX(37px);
 }
 
 .deleteContainer
