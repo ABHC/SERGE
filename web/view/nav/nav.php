@@ -16,7 +16,7 @@
 			</div>
 		</a>
 
-		<a class="navBlock <?php echo $wikiTab; ?>" href="workinprogress">
+		<a class="navBlock <?php echo $wikiTab; ?>" href="addLinkInWiki">
 			<div class="navWikiLogo">
 			</div>
 			<div class="navTitle" >
