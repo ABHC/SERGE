@@ -241,8 +241,8 @@
 								'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
 								'<input type="submit" title="' . var_get_t('Activate', $bdd) . '" name="activateKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
 								'<a href="">'.
-									 ucfirst($ownerKeywordList['query']).
-								'</a>'.
+									 ucfirst($ownerKeywordList['query']) . '<span class="hiddenFont">,</span>'.
+	 							'</a>' . PHP_EOL.
 							'</div>';
 							$cptKeyword++;
 						}
@@ -253,8 +253,8 @@
 								'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
 								'<input type="submit" title="' . var_get_t('Disable', $bdd) . '" name="disableKeyword" value="source'. $packSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>'.
 								'<a href="">'.
-									 ucfirst($ownerKeywordList['query']).
-								'</a>'.
+									 ucfirst($ownerKeywordList['query']) . '<span class="hiddenFont">,</span>'.
+	 							'</a>' . PHP_EOL.
 							'</div>';
 							$cptKeyword++;
 						}

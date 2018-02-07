@@ -415,9 +415,8 @@
 								'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>' . PHP_EOL.
 								'<input type="submit" title="' . var_get_t('Disable', $bdd) . '" name="disableKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>' . PHP_EOL.
 								'<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">'.
-									ucfirst($ownerKeywordList['keyword']).
+								ucfirst($ownerKeywordList['keyword']) . '<span class="hiddenFont">,</span>'.
 								'</a>' . PHP_EOL.
-								'<span class="hiddenFont">,</span>' . PHP_EOL.
 							'</div>' . PHP_EOL;
 							$cptKeyword++;
 						}
@@ -428,9 +427,8 @@
 								'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>' . PHP_EOL.
 								'<input type="submit" title="' . var_get_t('Activate', $bdd) . '" name="activateKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>' . PHP_EOL.
 								'<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">'.
-									ucfirst($ownerKeywordList['keyword']).
+									ucfirst($ownerKeywordList['keyword']) . '<span class="hiddenFont">,</span>'.
 								'</a>' . PHP_EOL.
-								'<span class="hiddenFont">,</span>' . PHP_EOL.
 							'</div>' . PHP_EOL;
 							$cptKeyword++;
 						}
