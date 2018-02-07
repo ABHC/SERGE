@@ -216,5 +216,5 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('Edit query', 'Edit query', 'Éditer la requête', NULL, NULL, NULL),
 ('Keyword', 'Keyword', 'Mot-clef', NULL, NULL, NULL),
 ('Source', 'Source', 'Source', NULL, NULL, NULL),
-('', '', '', NULL, NULL, NULL),
+('GitHub', 'GitHub', 'GitHub', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);

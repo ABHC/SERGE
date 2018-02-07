@@ -1,7 +1,7 @@
 <footer>
 	<div class="footerContainer1">
 		<div class="copyright">
-			<a href="github"><?php get_t('copyright_title_footer', $bdd); ?></a>
+			<a href="https://github.com/ABHC/SERGE"><?php get_t('copyright_title_footer', $bdd); ?></a>
 		</div>
 
 		<div class="bugFooter">
@@ -25,7 +25,7 @@
 				<div class="subLinks">
 					<a href="index#signup"><?php get_t('link4_center_footer', $bdd); ?></a>
 					<a href="connection"><?php get_t('link5_center_footer', $bdd); ?></a>
-					<a href="mailto:support@cairn-devices.eu"><?php get_t('link6_center_footer', $bdd); ?></a>
+					<a href="https://github.com/ABHC/SERGE"><?php get_t('GitHub', $bdd); ?></a>
 				</div>
 				<div class="subLinks">
 					<a href="logout"><?php get_t('link7_center_footer', $bdd); ?></a>
