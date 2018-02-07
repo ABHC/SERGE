@@ -15,6 +15,7 @@
 	<div class="body">
 		<h1><?php get_t('main_title_setting', $bdd); ?></h1>
 		<div class="communicationResults">
+			<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#options-g%C3%A9n%C3%A9rales" target="_blank">?</a>
 			<h2><?php get_t('window1_title_setting', $bdd); ?></h2>
 			<div class="divRow">
 				<div>
@@ -278,9 +279,8 @@
 		</div>
 
 		<div class="keywordManagement">
+			<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#actu" target="_blank">?</a>
 			<h2><?php get_t('window2_title_setting', $bdd); ?></h2>
-			<!--<a href="#helpNews" class="helpModalWindow"></a>
-			<div id="helpNews">Help</div>-->
 			<div class="newsInput">
 				<select name="sourceType" id="sourceType">
 					<option value="inputSource"><?php get_t('select2_window2_setting', $bdd); ?></option>
@@ -457,6 +457,7 @@
 		</div>
 
 		<div class="scientificPublicationManagement">
+			<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#scientifique" target="_blank">?</a>
 			<h2><?php get_t('window3_title_setting', $bdd); ?></h2>
 			<div class="newQueryContainer">
 				<div class="lineQuery">
@@ -644,6 +645,7 @@
 			?>
 		</div>
 		<div class="patentManagement">
+			<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#brevet" target="_blank">?</a>
 			<h2><?php get_t('window4_title_setting', $bdd); ?></h2>
 			<div class="newQueryContainer">
 				<div class="lineQuery">

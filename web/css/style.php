@@ -37,3 +37,15 @@ body
 	font-size: 0;
 	color: rgba(0, 0, 0, 0);
 }
+
+.helpMe
+{
+	position: absolute;
+	float: left;
+	width: 78%;
+	color: rgba(255, 255, 255, 0.4);
+	text-decoration: none;
+	font-size: 25px;
+	font-weight: bold;
+	user-select: none;
+}

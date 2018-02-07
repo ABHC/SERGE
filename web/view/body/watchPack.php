@@ -33,6 +33,7 @@
 		<input type="hidden" name="delEditingPatentQuery" value="<?php echo $delEditingPatentQuery ?? ''; ?>"/>
 
 		<div class="dataPackManagement">
+			<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#cr%C3%A9ation%C3%89dition-dun-pack-de-veille" target="_blank">?</a>
 			<h2><?php get_t('input1_window0_watchpack', $bdd); ?></h2>
 			<div>
 				<select name="watchPackList" onchange="autoSubmit(this.form);">
@@ -101,6 +102,7 @@
 		{
 		?>
 		<div class="keywordManagement">
+			<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#actu" target="_blank">?</a>
 			<h2><?php get_t('window2_title_setting', $bdd); ?></h2>
 			<div class="newsInput">
 				<select name="sourceType" id="sourceType">
@@ -283,6 +285,7 @@
 		</div>
 
 		<div class="scientificPublicationManagement">
+			<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#scientifique" target="_blank">?</a>
 			<h2><?php get_t('window3_title_setting', $bdd); ?></h2>
 			<div class="newQueryContainer">
 				<div class="lineQuery">
@@ -490,6 +493,7 @@
 			?>
 		</div>
 		<div class="patentManagement">
+			<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#brevet" target="_blank">?</a>
 			<h2><?php get_t('window4_title_setting', $bdd); ?></h2>
 			<div class="newQueryContainer">
 				<div class="lineQuery">
@@ -812,7 +816,7 @@
 				<table>
 					<thead>
 						<tr>
-							<th><?php get_t('Add', $bdd); ?></th>
+							<th><a class="helpMeTab" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#ajout-dun-pack-de-veille" target="_blank">?</a></th>
 							<?php
 							echo '
 							<th><a href="?orderBy=name' . $colOrder['DESC'] . $searchSort . $actualPageLink . '&language=' . $selectedLanguageCode . '&type=' . $type . '">' . var_get_t('Name', $bdd) . ' ' . $colOrder['name'] . '</a></th>
