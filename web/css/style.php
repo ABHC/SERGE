@@ -43,7 +43,7 @@ body
 	position: absolute;
 	float: left;
 	width: 78%;
-	color: rgba(255, 255, 255, 0.4);
+	color: rgba(255, 255, 255, 0.3);
 	text-decoration: none;
 	font-size: 25px;
 	font-weight: bold;
