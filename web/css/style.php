@@ -49,3 +49,11 @@ body
 	font-weight: bold;
 	user-select: none;
 }
+
+*::placeholder,
+*::-webkit-input-placeholder,
+*:-ms-input-placeholder,
+*:placeholder-shown,
+{
+	color: rgb(170,170,170);
+}

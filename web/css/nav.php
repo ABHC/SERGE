@@ -38,7 +38,7 @@
 	height: 70px;
 	margin-right: 10px;
 	margin-left: 10px;
-	background: url(../images/SERGE_logo_norm.png) center no-repeat;
+	background: url(../images/SERGE_logo_norm_nav.png) center no-repeat;
 	background-size: cover;
 }
 
