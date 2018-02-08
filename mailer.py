@@ -368,7 +368,7 @@ def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_p
 			<td>
 			<br>
 			</td>
-			</tr>""".format(patents_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[7]))
+			</tr>""".format(patents_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[5]))
 			index = index+1
 
 		newsletter = newsletter + ("""</table>
@@ -961,7 +961,7 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 			<td>
 			<br>
 			</td>
-			</tr>""".format(patents_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[7]))
+			</tr>""".format(patents_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[5]))
 			index = index+1
 
 		newsletter = newsletter + ("""</table>
