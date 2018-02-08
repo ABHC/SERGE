@@ -40,7 +40,6 @@ def newscast(newscast_args):
 	need_jelly = True
 
 	########### LINK & ID_RSS EXTRACTION
-
 	link = newscast_args[0].strip()
 	id_rss = newscast_args[1]
 	old_etag = newscast_args[2]
@@ -117,17 +116,20 @@ def newscast(newscast_args):
 
 			########### OWNERS RETRIEVAL
 			query_keyword_parameters = ("SELECT applicable_owners_sources FROM keyword_news_serge WHERE keyword = %s and active > 0")
+
+			call_news = database.cursor()
+			call_news.execute(query_keyword_parameters, (keyword,))
+			applicable_owners_sources = call_news.fetchone()
+			call_news.close()
+			applicable_owners_sources = applicable_owners_sources[0].split("|")
+
 			query_source_owners = ("SELECT owners FROM rss_serge WHERE link = %s and active > 0")
 
 			call_news = database.cursor()
-			call_news.execute(query_keyword_parameters, (keyword, ))
-			applicable_owners_sources = call_news.fetchone()
-			call_news.execute(query_source_owners, (link, ))
+			call_news.execute(query_source_owners, (link,))
 			source_owners = call_news.fetchone()
 			call_news.close()
-
 			source_owners = source_owners[0]
-			applicable_owners_sources = applicable_owners_sources[0].split("|")
 
 			second_conditions = (couple_owners_sources for couple_owners_sources in applicable_owners_sources if id_rss_comma in couple_owners_sources)
 

@@ -248,7 +248,10 @@ for user in user_list_all:
 		call_users.close()
 
 		frequency = frequency[0]
-		last_mail = last_mail[0]
+		if last_mail is None:
+			last_mail = 0
+		else:
+			last_mail = last_mail[0]
 
 		interval = now-last_mail
 
