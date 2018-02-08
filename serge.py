@@ -248,12 +248,12 @@ for user in user_list_all:
 		call_users.close()
 
 		frequency = frequency[0]
-		if last_mail is None:
+		if last_mail[0] is None:
 			last_mail = 0
 		else:
 			last_mail = last_mail[0]
 
-		interval = now-last_mail
+		interval = now - last_mail
 
 		if interval >= frequency and pending_all > 0:
 			logger_info.info("FREQUENCY REACHED")
@@ -263,7 +263,7 @@ for user in user_list_all:
 			mailer.buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list)
 
 			######### CALL TO stairwayToUpdate FUNCTION
-			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now)
+			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, predecessor)
 
 		elif interval >= frequency and pending_all == 0:
 			logger_info.info("Frequency reached but no pending news")
