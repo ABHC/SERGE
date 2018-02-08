@@ -477,12 +477,6 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 					logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
 					logger_error.error(repr(except_type))
 
-			elif register_comma2 in send_status:
-				pass # BUG
-
-			else:
-				logger_error.warning("WARNING UNKNOWN ERROR") ###
-
 			call_news.close()
 
 	######### SEND_STATUS UPDATE IN result_science_serge
@@ -513,12 +507,6 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 					logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
 					logger_error.error(repr(except_type))
 
-			elif register_comma2 in send_status:
-				pass # BUG
-
-			else:
-				logger_error.warning("WARNING UNKNOWN ERROR")
-
 			call_science.close()
 
 	######### SEND_STATUS UPDATE IN result_patents_serge
@@ -548,12 +536,6 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 					database.rollback()
 					logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
 					logger_error.error(repr(except_type))
-
-			elif register_comma2 in send_status:
-				pass # BUG
-
-			else:
-				logger_info.warning("UNKNOWN ERROR")
 
 			call_patents.close()
 
