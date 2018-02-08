@@ -231,7 +231,7 @@ for user in user_list_all:
 	query = "SELECT send_condition FROM users_table_serge WHERE id = %s"
 
 	call_users = database.cursor()
-	call_users.execute(query, (register))
+	call_users.execute(query, (register,))
 	condition = call_users.fetchone()
 	call_users.close()
 
@@ -241,13 +241,13 @@ for user in user_list_all:
 		query_last_mail = "SELECT last_mail FROM users_table_serge WHERE id = %s"
 
 		call_users = database.cursor()
-		call_users.execute(query_freq, (register))
+		call_users.execute(query_freq, (register,))
 		frequency = call_users.fetchone()
-		call_users.execute(query_last_mail, (register))
+		call_users.execute(query_last_mail, (register,))
 		last_mail = call_users.fetchone()
 		call_users.close()
 
-		frequency = frequency[0]
+		frequency = frequency[0] * 3600
 		if last_mail[0] is None:
 			last_mail = 0
 		else:
@@ -280,7 +280,7 @@ for user in user_list_all:
 		query = "SELECT link_limit FROM users_table_serge WHERE id = %s"
 
 		call_users = database.cursor()
-		call_users.execute(query, (register))
+		call_users.execute(query, (register,))
 		limit = call_users.fetchone()
 		call_users.close()
 
@@ -309,9 +309,9 @@ for user in user_list_all:
 		query_hour = "SELECT selected_hour FROM users_table_serge WHERE id = %s"
 
 		call_users = database.cursor()
-		call_users.execute(query_days, (register))
+		call_users.execute(query_days, (register,))
 		some_days = call_users.fetchone()
-		call_users.execute(query_hour, (register))
+		call_users.execute(query_hour, (register,))
 		some_hour = call_users.fetchone()
 		call_users.close()
 
