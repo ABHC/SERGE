@@ -612,7 +612,6 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 
 	######### ECRITURE PATENTS
 	if pending_patents > 0:
-
 		######### ECRITURE QUERY FOR PATENTS
 		for couple_query_attribute in sorted(patent_master_queries_list, key=lambda query_field: query_field[0]):
 			plain_query = couple_query_attribute[0]
@@ -626,9 +625,9 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 				if query_attribute in patents_attributes[2] and patents_attributes[0] not in process_result_list:
 
 					if patents_attributes[1].isupper() is True:
-						process_result = (patents_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), patents_attributes[7])
+						process_result = (patents_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), patents_attributes[5])
 					else:
-						process_result = (patents_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[7])
+						process_result = (patents_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[5])
 
 					process_result_list.append(process_result)
 
@@ -637,6 +636,7 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 			elements = len(process_result_list)
 
 			if elements > 0:
+				print("ours")
 				newsletter = newsletter + ("""<tr>
 				<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
 				<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">

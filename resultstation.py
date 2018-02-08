@@ -105,11 +105,10 @@ def triage(register, user_id_comma):
 	typeName = "patents"
 
 	for row in rows:
-		linkId = str(row[4])
+		linkId = str(row[3])
 		add_wiki_link = recorder(register, typeName, linkId, recorder_call, database)
 		row = list(row)
-		row.insert(4, row[3])
-		row.insert(3, row[0])
+		row.insert(4, row[0])
 		row.append(add_wiki_link)
 		not_send_patents_list.append(row)
 
@@ -130,7 +129,7 @@ def triage(register, user_id_comma):
 			science[0] = change_status_link
 
 		for patent in not_send_patents_list:
-			linkId = str(patent[4])
+			linkId = str(patent[3])
 			typeName = "patents"
 			change_status_link = recorder(register, typeName, linkId, recorder_call, database)
 			patent[0] = change_status_link
