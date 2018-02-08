@@ -100,10 +100,8 @@
 					<h3><?php get_t('subtitle4_window1_setting', $bdd); ?></h3>
 					<div class="align">
 						<div class="switch">
-							<label for="recordRead">
-								<input type="checkbox" id="recordRead" name="recordRead" onchange="autoSubmit(this.form);" value="active" <?php echo $recordRead; ?>>
-								<div class="slider"></div>
-							</label>
+							<input type="checkbox" id="recordRead" name="recordRead" onchange="autoSubmit(this.form);" value="active" <?php echo $recordRead; ?>>
+							<label for="recordRead" class="slider"></label>
 						</div>
 						<?php get_t('input10_window1_setting', $bdd); ?>
 					</div>
