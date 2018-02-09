@@ -30,7 +30,7 @@ def highwayToMail(register, newsletter, priority, pydate):
 	query_status_checking = "SELECT premium_expiration_date FROM users_table_serge WHERE id = %s"
 
 	call_users = database.cursor()
-	call_users.execute(query_status_checking, (register))
+	call_users.execute(query_status_checking, (register,))
 	expiration_date = call_users.fetchone()
 	call_users.close()
 
@@ -47,7 +47,7 @@ def highwayToMail(register, newsletter, priority, pydate):
 		query_user_infos = "SELECT email, language FROM users_table_serge WHERE id = %s"
 
 		call_users = database.cursor()
-		call_users.execute(query_user_infos, (register))
+		call_users.execute(query_user_infos, (register,))
 		user_infos = call_users.fetchone()
 		call_users.close()
 
