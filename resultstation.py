@@ -26,12 +26,7 @@ def recorder(register, typeName, linkId, recorder_call, database):
 	call_users.close()
 
 	token = token[0]
-
-	if recorder_call == "reading":
-		recording_link = "http://" + domain + "/redirect?type=" + typeName + "&token=" + token + "&id=" + linkId
-
-	elif recorder_call == "wiki":
-		recording_link = "http://" + domain + "/addLinkInWiki?type=" + typeName + "&token=" + token + "&id=" + linkId
+	recording_link = "http://" + domain + "/" +recorder_call+ "?type=" + typeName + "&token=" + token + "&id=" + linkId
 
 	return (recording_link)
 
@@ -57,7 +52,7 @@ def triage(register, user_id_comma):
 	not_send_science_list = []
 	not_send_patents_list = []
 
-	recorder_call = "wiki"
+	recorder_call = "addLinkInWiki"
 
 	######### RESULTS NEWS : NEWS ATTRIBUTES QUERY (LINK + TITLE + ID SOURCE + KEYWORD ID)
 	query_news = ("SELECT link, title, id_source, keyword_id, id FROM result_news_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
@@ -114,7 +109,7 @@ def triage(register, user_id_comma):
 
 	######### LINKS MODIFICATION FOR RECORDS
 	if record_read is True:
-		recorder_call = "reading"
+		recorder_call = "redirect"
 
 		for news in not_send_news_list:
 			linkId = news[5]
