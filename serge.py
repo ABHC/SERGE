@@ -110,7 +110,10 @@ def extensions(database):
 	for extension_entry in extensions_list:
 		extension_entry = extension_entry.split("!")
 		module_name = extension_entry[0]
-		extensions_names.append(module_name)
+		module_state = extension_entry[1]
+
+		if module_state == "activate":
+			extensions_names.append(module_name)
 
 	######### CALL OF EXTENSIONS
 	extProcesses = ()

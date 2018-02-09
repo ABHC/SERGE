@@ -79,63 +79,121 @@ def startingPoint():
 	for row in rows:
 		search_list.append(row)
 
-	######### CALL TO target_trweet_serge
-	call_target = database.cursor()
-	call_target.execute("SELECT id, target_and_query, owners, last_launch FROM target_trweet_serge WHERE active >= 1")
-	rows = call_target.fetchall()
-	call_target.close()
+	if len(search_list) > 0:
 
-	target_list = []
+		######### CALL TO target_trweet_serge
+		call_target = database.cursor()
+		call_target.execute("SELECT id, target_and_query, owners, last_launch FROM target_trweet_serge WHERE active >= 1")
+		rows = call_target.fetchall()
+		call_target.close()
 
-	for row in rows:
-		target_list.append(row)
+		target_list = []
 
-	######### REMAINING CALLS
-	search_list = sorted(search_list, key= lambda search_attributes : search_attributes[5])
-	target_list = sorted(target_list, key= lambda target_attributes : target_attributes[3])
+		for row in rows:
+			target_list.append(row)
 
-	######### REMAINING CALLS
-	phonebox = rate_limit()
+		######### SORT LISTS
+		search_list = sorted(search_list, key= lambda search_attributes : search_attributes[5])
+		target_list = sorted(target_list, key= lambda target_attributes : target_attributes[3])
 
-	remaining_search = phonebox[0]
-	remaining_timeline = phonebox[2]
+		######### REMAINING CALLS
+		phonebox = rate_limit()
 
-	calls_research_count = 0
-	calls_timeline_count = 0
+		remaining_search = phonebox[0]
+		remaining_timeline = phonebox[2]
 
-	######### DEFINING OF THE PATH
-	for attributes in search_list:
-		geo = attributes[3]
+		calls_research_count = 0
+		calls_timeline_count = 0######### CALL TO target_trweet_serge
+		call_target = database.cursor()
+		call_target.execute("SELECT id, target_and_query, owners, last_launch FROM target_trweet_serge WHERE active >= 1")
+		rows = call_target.fetchall()
+		call_target.close()
 
-		if geo == 1:
+		target_list = []
 
-			if calls_research_count <= remaining_search:
-				trweetFishing(attributes)
+		for row in rows:
+			target_list.append(row)
 
-			elif calls_research_count > remaining_search:
-				logger_info.info("RATE LIMIT OF RESEARCH METHOD REACHED\n\n")
+		######### SORT LISTS
+		search_list = sorted(search_list, key= lambda search_attributes : search_attributes[5])
+		target_list = sorted(target_list, key= lambda target_attributes : target_attributes[3])
 
-		elif geo == 0:
+		######### REMAINING CALLS
+		phonebox = rate_limit()
 
-			if calls_research_count <= remaining_search:
-				lakesOfTrweets(attributes)
+		remaining_search = phonebox[0]
+		remaining_timeline = phonebox[2]
 
-			elif calls_research_count > remaining_search:
-				logger_info.info("RATE LIMIT OF RESEARCH METHOD REACHED\n\n")
+		calls_research_count = 0
+		calls_timeline_count = 0
 
-		calls_research_count = calls_research_count + 1
+		######### DEFINING OF THE PATH
+		for attributes in search_list:
+			geo = attributes[3]
 
-	for attributes in target_list:
+			if geo == 1:
 
-		if calls_timeline_count <= remaining_timeline:
-			trweetTorrent(attributes)
+				if calls_research_count <= remaining_search:
+					trweetFishing(attributes)
 
-		elif calls_timeline_count > remaining_timeline:
-			logger_info.info("RATE LIMIT OF TIMELINE METHOD REACHED\n\n")
+				elif calls_research_count > remaining_search:
+					logger_info.info("RATE LIMIT OF RESEARCH METHOD REACHED\n\n")
 
-		calls_timeline_count = calls_timeline_count + 1
+			elif geo == 0:
 
-	logger_info.info("\n\n######### END OF TWITTER EXTENSION EXECUTION \n\n")
+				if calls_research_count <= remaining_search:
+					lakesOfTrweets(attributes)
+
+				elif calls_research_count > remaining_search:
+					logger_info.info("RATE LIMIT OF RESEARCH METHOD REACHED\n\n")
+
+			calls_research_count = calls_research_count + 1
+
+		for attributes in target_list:
+
+			if calls_timeline_count <= remaining_timeline:
+				trweetTorrent(attributes)
+
+			elif calls_timeline_count > remaining_timeline:
+				logger_info.info("RATE LIMIT OF TIMELINE METHOD REACHED\n\n")
+
+			calls_timeline_count = calls_timeline_count + 1
+
+		logger_info.info("\n\n######### END OF TWITTER EXTENSION EXECUTION \n\n")
+
+		######### DEFINING OF THE PATH
+		for attributes in search_list:
+			geo = attributes[3]
+
+			if geo == 1:
+
+				if calls_research_count <= remaining_search:
+					trweetFishing(attributes)
+
+				elif calls_research_count > remaining_search:
+					logger_info.info("RATE LIMIT OF RESEARCH METHOD REACHED\n\n")
+
+			elif geo == 0:
+
+				if calls_research_count <= remaining_search:
+					lakesOfTrweets(attributes)
+
+				elif calls_research_count > remaining_search:
+					logger_info.info("RATE LIMIT OF RESEARCH METHOD REACHED\n\n")
+
+			calls_research_count = calls_research_count + 1
+
+		for attributes in target_list:
+
+			if calls_timeline_count <= remaining_timeline:
+				trweetTorrent(attributes)
+
+			elif calls_timeline_count > remaining_timeline:
+				logger_info.info("RATE LIMIT OF TIMELINE METHOD REACHED\n\n")
+
+			calls_timeline_count = calls_timeline_count + 1
+
+		logger_info.info("\n\n######### END OF TWITTER EXTENSION EXECUTION \n\n")
 
 
 def trweetFishing(attributes):
