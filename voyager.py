@@ -16,6 +16,7 @@ import logging
 import decoder
 import sergenet
 import insertSQL
+import failDetectorPack
 from toolbox import escaping
 from handshake import databaseConnection
 
@@ -256,6 +257,13 @@ def newscast(newscast_args):
 						query_update_title = ("UPDATE result_news_serge SET title = %s, keyword_id = %s, owners = %s WHERE link = %s")
 						query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s, keyword_id = %s, owners = %s WHERE link = %s")
 
+						########### LINK VALIDATION
+						alter_link = failDetectorPack.failUniversalCorrectorKit(post_link, id_rss)
+
+						if alter_link is not None:
+							print alter_link #TEST
+							post_link = alter_link
+
 						########### ITEM BUILDING
 						post_title = escaping(post_title)
 						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
@@ -283,6 +291,13 @@ def newscast(newscast_args):
 						query_update = ("UPDATE result_news_serge SET keyword_id = %s, owners = %s WHERE link = %s")
 						query_update_title = ("UPDATE result_news_serge SET title = %s, keyword_id = %s, owners = %s WHERE link = %s")
 						query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s, keyword_id = %s, owners = %s WHERE link = %s")
+
+						########### LINK VALIDATION
+						alter_link = failDetectorPack.failUniversalCorrectorKit(post_link, id_rss)
+
+						if alter_link is not None:
+							print alter_link #TEST
+							post_link = alter_link
 
 						########### ITEM BUILDING
 						post_title = escaping(post_title)
