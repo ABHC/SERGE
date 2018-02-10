@@ -108,7 +108,7 @@ def extensions(database):
 	extensions_names = []
 
 	for extension_entry in extensions_list:
-		if extension_entry != ''
+		if extension_entry != '':
 			extension_entry = extension_entry.split("!")
 			module_name = extension_entry[0]
 			module_state = extension_entry[1]
