@@ -103,7 +103,9 @@ def startingPoint():
 		remaining_timeline = phonebox[2]
 
 		calls_research_count = 0
-		calls_timeline_count = 0######### CALL TO target_trweet_serge
+		calls_timeline_count = 0
+
+		######### CALL TO target_trweet_serge
 		call_target = database.cursor()
 		call_target.execute("SELECT id, target_and_query, owners, last_launch FROM target_trweet_serge WHERE active >= 1")
 		rows = call_target.fetchall()

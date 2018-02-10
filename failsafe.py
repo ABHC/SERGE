@@ -59,7 +59,7 @@ def checkMate():
 			extension_entry = extension_entry.split("!")
 			if extension_entry != '':
 				try:
-					amount_tables = extension_entry[1]
+					amount_tables = extension_entry[2]
 					amount_tables = int(amount_tables)
 				except IndexError:
 					amount_tables = 0

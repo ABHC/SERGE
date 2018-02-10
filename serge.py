@@ -108,9 +108,10 @@ def extensions(database):
 	extensions_names = []
 
 	for extension_entry in extensions_list:
-		extension_entry = extension_entry.split("!")
-		module_name = extension_entry[0]
-		module_state = extension_entry[1]
+		if extension_entry != ''
+			extension_entry = extension_entry.split("!")
+			module_name = extension_entry[0]
+			module_state = extension_entry[1]
 
 		if module_state == "activate":
 			extensions_names.append(module_name)
