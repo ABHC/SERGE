@@ -3,9 +3,9 @@
 ######### IMPORT CLASSICAL MODULES
 import sys
 from urlparse import urlparse
+from validators import url as vurl
 
 ######### IMPORT FROM SERGE MAIN
-import sergenet
 from handshake import databaseConnection
 
 
@@ -17,9 +17,9 @@ def httpsCase(link):
 	alter_link = alter_link.replace("://", "").replace("//", "")
 	alter_link = "https://"+alter_link
 
-	checklink = allCheckLong(alter_link)
+	checklink = vurl(alter_link)
 
-	if checklink[0] is False:
+	if checklink is False:
 		return (alter_link)
 
 
@@ -31,10 +31,9 @@ def httpCase(link):
 	alter_link = alter_link.replace("://", "").replace("s//", "").replace("//", "")
 	alter_link = "http://"+alter_link
 
-	checklink = allCheckLong(alter_link)
-	print checklink[0]
+	checklink = vurl(alter_link)
 
-	if checklink[0] is False:
+	if checklink is False:
 		return (alter_link)
 
 
@@ -46,11 +45,10 @@ def wwwCase(link):
 	alter_link = alter_link.replace("://", "").replace("//", "")
 	alter_link = "www."+alter_link
 
-	checklink = allCheckLong(alter_link)
+	checklink = vurl(alter_link)
 
-	if checklink[0] is False:
+	if checklink is False:
 		return (alter_link)
-		print alter_link
 
 
 def domainCase(link, id_source):
@@ -74,17 +72,17 @@ def domainCase(link, id_source):
 	link = link.strip("/")
 	alter_link = protocol+"://"+domain+"/"+link
 
-	checklink = allCheckLong(alter_link)
+	checklink = vurl(alter_link)
 
-	if checklink[0] is False:
+	if checklink is False:
 		return (alter_link)
 
 
 def failUniversalCorrectorKit(link, id_source):
 
-	checklink = allCheckLong(link)
+	checklink = vurl(link)
 
-	if checklink[0] is True :
+	if checklink is True :
 
 		all_cases = [httpsCase(link), httpCase(link), wwwCase(link), domainCase(link, id_source)]
 
