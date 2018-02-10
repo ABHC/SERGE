@@ -260,7 +260,7 @@ def newscast(newscast_args):
 						########### LINK VALIDATION
 						alter_link = failDetectorPack.failUniversalCorrectorKit(post_link, id_rss)
 
-						if alter_link is not None:
+						if alter_link != post_link:
 							print alter_link #TEST
 							post_link = alter_link
 
@@ -270,7 +270,8 @@ def newscast(newscast_args):
 						item_update = [post_link]
 
 						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
+						if post_link is not None:
+							insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
 				########### SIMPLE KEYWORDS RESEARCH
 				else:
@@ -295,7 +296,7 @@ def newscast(newscast_args):
 						########### LINK VALIDATION
 						alter_link = failDetectorPack.failUniversalCorrectorKit(post_link, id_rss)
 
-						if alter_link is not None:
+						if alter_link != post_link:
 							print alter_link #TEST
 							post_link = alter_link
 
@@ -305,7 +306,8 @@ def newscast(newscast_args):
 						item_update = [post_link]
 
 						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
+						if post_link is not None:
+							insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
 				range_article = range_article+1
 

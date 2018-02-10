@@ -19,7 +19,7 @@ def httpsCase(link):
 
 	checklink = vurl(alter_link)
 
-	if checklink is False:
+	if checklink is True:
 		return (alter_link)
 
 
@@ -33,7 +33,7 @@ def httpCase(link):
 
 	checklink = vurl(alter_link)
 
-	if checklink is False:
+	if checklink is True:
 		return (alter_link)
 
 
@@ -47,7 +47,7 @@ def wwwCase(link):
 
 	checklink = vurl(alter_link)
 
-	if checklink is False:
+	if checklink is True:
 		return (alter_link)
 
 
@@ -74,7 +74,7 @@ def domainCase(link, id_source):
 
 	checklink = vurl(alter_link)
 
-	if checklink is False:
+	if checklink is True:
 		return (alter_link)
 
 
@@ -82,7 +82,7 @@ def failUniversalCorrectorKit(link, id_source):
 
 	checklink = vurl(link)
 
-	if checklink is True :
+	if checklink is not True:
 
 		all_cases = [httpsCase(link), httpCase(link), wwwCase(link), domainCase(link, id_source)]
 
@@ -92,3 +92,6 @@ def failUniversalCorrectorKit(link, id_source):
 
 			if alter_link is not None:
 				return(alter_link)
+
+	elif checklink is True:
+		return(link)
