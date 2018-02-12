@@ -258,19 +258,15 @@ def newscast(newscast_args):
 						query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s, keyword_id = %s, owners = %s WHERE link = %s")
 
 						########### LINK VALIDATION
-						alter_link = failDetectorPack.failUniversalCorrectorKit(post_link, id_rss)
+						post_link = failDetectorPack.failUniversalCorrectorKit(post_link, id_rss)
 
-						if alter_link != post_link:
-							print alter_link #TEST
-							post_link = alter_link
-
-						########### ITEM BUILDING
-						post_title = escaping(post_title)
-						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
-						item_update = [post_link]
-
-						########### CALL insertOrUpdate FUNCTION
 						if post_link is not None:
+							########### ITEM BUILDING
+							post_title = escaping(post_title)
+							item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
+							item_update = [post_link]
+
+							########### CALL insertOrUpdate FUNCTION
 							insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
 				########### SIMPLE KEYWORDS RESEARCH
@@ -296,20 +292,16 @@ def newscast(newscast_args):
 						########### LINK VALIDATION
 						alter_link = failDetectorPack.failUniversalCorrectorKit(post_link, id_rss)
 
-						if alter_link != post_link:
-							print alter_link #TEST
-							post_link = alter_link
+						if alter_link is not None:
+							########### ITEM BUILDING
+							post_title = escaping(post_title)
+							item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
+							item_update = [post_link]
 
-						########### ITEM BUILDING
-						post_title = escaping(post_title)
-						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
-						item_update = [post_link]
-
-						########### CALL insertOrUpdate FUNCTION
-						if post_link is not None:
+							########### CALL insertOrUpdate FUNCTION
 							insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
 
-				range_article = range_article+1
+				range_article = range_article + 1
 
 			range_article = 0
 
