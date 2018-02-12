@@ -97,14 +97,25 @@ def decodeQuery(ch):
 	######### SCIENCE
 
 	######### SERGE CATEGORIES
-	non_human_query = non_human_query.replace("|title|", "Title like ")
-	non_human_query = non_human_query.replace("|author|", "Author like ")
-	non_human_query = non_human_query.replace("|abstract|", "Abstract like ")
-	non_human_query = non_human_query.replace("|publisher|", "Journals reference : ")
-	non_human_query = non_human_query.replace("|category|", "Subject category : ")
-	non_human_query = non_human_query.replace("|all|", "Search in all datas : ")
+	non_human_query = non_human_query.replace("title|", "Title like ")
+	non_human_query = non_human_query.replace("author|", "Author like ")
+	non_human_query = non_human_query.replace("abstract|", "Abstract like ")
+	non_human_query = non_human_query.replace("publisher|", "Publisher is ")
+	non_human_query = non_human_query.replace("category|", "Category is ")
+	non_human_query = non_human_query.replace("all|", "Search in all datas : ")
+
+	non_human_query = non_human_query.replace("|title|", "title like ")
+	non_human_query = non_human_query.replace("|author|", "author like ")
+	non_human_query = non_human_query.replace("|publisher|", "publisher is ")
+	non_human_query = non_human_query.replace("|abstract|", "abstract like ")
+	non_human_query = non_human_query.replace("|category|", "category is ")
+	non_human_query = non_human_query.replace("|all|", "search in all datas : ")
 
 	######### SERGE OPERATORS AND SPECIAL CHARACTERS
+	non_human_query = non_human_query.replace("|AND|", " AND ")
+	non_human_query = non_human_query.replace("|OR|", " OR ")
+	non_human_query = non_human_query.replace("|NOT|", " AND NOT ")
+
 	non_human_query = non_human_query.replace("%28", "(").replace("%29", ")")
 	non_human_query = non_human_query.replace("|", "")
 	non_human_query = non_human_query.replace("#", "")
