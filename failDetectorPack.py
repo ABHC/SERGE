@@ -9,6 +9,14 @@ from validators import url as vurl
 from handshake import databaseConnection
 
 
+def vurlExt(link):
+	regex = re.compile(u"https?:\/\/.+\..+https?:?\/\/", re.UNICODE | re.IGNORECASE)
+	pattern = re.compile(regex)
+	result = pattern.match(link)
+
+	return not result
+
+
 def httpsCase(link):
 
 	######### HTTPS CASE
