@@ -17,10 +17,7 @@ def vurlExt(link):
 	resultExt = pattern.match(link)
 	resultExt = not resultExt
 
-	if resultV is True and resultExt is True:
-		result = True
-	else:
-		result = False
+	result = resultV and resultExt
 
 	return result
 
