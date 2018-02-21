@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ######### IMPORT CLASSICAL MODULES
+import re
 import sys
 from urlparse import urlparse
 from validators import url as vurl
@@ -10,11 +11,18 @@ from handshake import databaseConnection
 
 
 def vurlExt(link):
+	resultV = vurl(link)
 	regex = re.compile(u"https?:\/\/.+\..+https?:?\/\/", re.UNICODE | re.IGNORECASE)
 	pattern = re.compile(regex)
-	result = pattern.match(link)
+	resultExt = pattern.match(link)
+	resultExt = not resultExt
 
-	return not result
+	if resultV is True and resultExt is True:
+		result = True
+	else:
+		result = False
+
+	return result
 
 
 def httpsCase(link):
@@ -25,7 +33,7 @@ def httpsCase(link):
 	alter_link = alter_link.replace("://", "").replace("//", "")
 	alter_link = "https://"+alter_link
 
-	checklink = vurl(alter_link)
+	checklink = vurlExt(alter_link)
 
 	if checklink is True:
 		return (alter_link)
@@ -39,7 +47,7 @@ def httpCase(link):
 	alter_link = alter_link.replace("://", "").replace("s//", "").replace("//", "")
 	alter_link = "http://"+alter_link
 
-	checklink = vurl(alter_link)
+	checklink = vurlExt(alter_link)
 
 	if checklink is True:
 		return (alter_link)
@@ -53,7 +61,7 @@ def wwwCase(link):
 	alter_link = alter_link.replace("://", "").replace("//", "")
 	alter_link = "www."+alter_link
 
-	checklink = vurl(alter_link)
+	checklink = vurlExt(alter_link)
 
 	if checklink is True:
 		return (alter_link)
@@ -80,7 +88,7 @@ def domainCase(link, id_source):
 	link = link.strip("/")
 	alter_link = protocol+"://"+domain+"/"+link
 
-	checklink = vurl(alter_link)
+	checklink = vurlExt(alter_link)
 
 	if checklink is True:
 		return (alter_link)
@@ -88,9 +96,9 @@ def domainCase(link, id_source):
 
 def failUniversalCorrectorKit(link, id_source):
 
-	checklink = vurl(link)
+	checklink = vurlExt(link)
 
-	if checklink is not True:
+	if checklink is False:
 
 		all_cases = [httpsCase(link), httpCase(link), wwwCase(link), domainCase(link, id_source)]
 
