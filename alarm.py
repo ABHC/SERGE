@@ -243,7 +243,7 @@ def alertMailByType(user, translate_text, alert_news_list, pending_alerts, style
 			<td>
 			<br>
 			</td>
-			</tr>""".format(alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[6]))
+			</tr>""".format(alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[4]))
 			index = index+1
 
 		alertmail = alertmail + ("""</table>
@@ -357,9 +357,9 @@ def alertMailByKeyword(user, translate_text, alert_news_list, pending_alerts, al
 			if word_attribute in alerts_attributes[3] and alerts_attributes[0] not in already_in_the_list:
 
 				if alerts_attributes[1].isupper() is True:
-					process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), alerts_attributes[6])
+					process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), alerts_attributes[4])
 				else:
-					process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[6])
+					process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[4])
 
 				process_result_list.append(process_result)
 				already_in_the_list.append(alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'))
@@ -504,9 +504,9 @@ def alertMailBySource(user, translate_text, alert_news_list, pending_alerts, ale
 			alerts_attributes = alert_news_list[index]
 
 			if alerts_attributes[1].isupper() is True and origin_id == alerts_attributes[2]:
-				process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), alerts_attributes[6])
+				process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), alerts_attributes[4])
 			elif origin_id == alerts_attributes[2]:
-				process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[6])
+				process_result = (alerts_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes[4])
 
 			process_result_list.append(process_result)
 
