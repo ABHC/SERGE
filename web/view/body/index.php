@@ -4,7 +4,7 @@
 <div class="backgroundImage">
 </div>
 <div class="backgroundDetails">
-	<h2><?php get_t('Stay always up to date with Serge', $bdd); ?></h2>
+	<h2><?php get_t('Save time on your watch with our Serge platform', $bdd); ?></h2>
 	<h3><?php get_t('sub_title_index', $bdd); ?></h3>
 	<div class="buttonArea">
 		<div class="line"></div>

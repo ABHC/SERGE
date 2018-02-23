@@ -35,9 +35,11 @@ include('nav.php');
 
 h2
 {
-	font-size: 4.2vw;
+	width: 80%;
+	font-size: 4vw;
 	font-weight: lighter;
 	letter-spacing: 1pt;
+	margin-left: 10%;
 	margin-top: 19vh;
 	margin-bottom: 5px;
 	text-align: center;

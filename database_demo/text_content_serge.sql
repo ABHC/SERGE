@@ -14,7 +14,7 @@ SET NAMES utf8mb4;
 CREATE INDEX index_text ON text_content_serge (index_name(30));
 
 INSERT INTO `text_content_serge` (`index_name`, `EN`, `FR`, `ES`, `DE`, `CN`) VALUES
-('Stay always up to date with Serge', 'Stay always up to date with Serge', 'Restez toujours à jour avec Serge', NULL, NULL, NULL),
+('Save time on your watch with our Serge platform', 'Save time on your watch with our Serge platform', 'Gagnez du temps sur votre veille avec notre plateforme Serge', NULL, NULL, NULL),
 ('sub_title_index', 'Improving performance through news monitoring can often takes time.<br>
 	By researching current news, patents and scientific publications, Serge allows you to stay informed efficiently and gives you time to do something else', 'L\'amélioration des performances grâce à la veille peut souvent prendre du temps.
 En faisant des recherches dans l\'actualité, les brevets et les publications scientifiques, Serge vous permet de rester informé efficacement et vous donne le temps de faire autre chose', NULL, NULL, NULL),
