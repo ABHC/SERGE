@@ -65,7 +65,7 @@ def triage(register, user_id_comma):
 			row[2] = recorder(register, "news", str(row[1]), "redirect", database)
 
 		add_wiki_link = recorder(register, "news", str(row[1]), "addLinkInWiki", database)
-		field = {"id":row[0], "title":row[1], "link":row[2], "id_source":row[3], "keyword_id":str(row[4]), "wiki_link":add_wiki_link}
+		field = {"id": row[0], "title": row[1], "link": row[2], "id_source": row[3], "keyword_id": str(row[4]), "wiki_link": add_wiki_link}
 		not_send_news_list.append(field)
 
 	######### RESULTS SCIENCE : SCIENCE ATTRIBUTES QUERY (LINK + TITLE + KEYWORD ID)
@@ -83,7 +83,7 @@ def triage(register, user_id_comma):
 			row[2] = recorder(register, "sciences", str(row[1]), "redirect", database)
 
 		add_wiki_link = recorder(register, "sciences", str(row[1]), "addLinkInWiki", database)
-		field = {"id":row[0], "title":row[1], "link":row[2], "id_source":row[3], "query_id":str(row[4]), "wiki_link":add_wiki_link}
+		field = {"id": row[0], "title": row[1], "link": row[2], "id_source": row[3], "query_id": str(row[4]), "wiki_link": add_wiki_link}
 		not_send_science_list.append(field)
 
 	######### RESULTS PATENTS : PATENTS ATTRIBUTES QUERY (LINK + TITLE + ID QUERY WIPO)
@@ -101,7 +101,7 @@ def triage(register, user_id_comma):
 			row[2] = recorder(register, "patents", str(row[1]), "redirect", database)
 
 		add_wiki_link = recorder(register, "patents", str(row[1]), "addLinkInWiki", database)
-		field = {"id":row[0], "title":row[1], "link":row[2], "id_source":row[3], "query_id":str(row[4]), "wiki_link":add_wiki_link}
+		field = {"id": row[0], "title": row[1], "link": row[2], "id_source": row[3], "query_id": str(row[4]), "wiki_link": add_wiki_link}
 		not_send_patents_list.append(field)
 
 	return (not_send_news_list, not_send_science_list, not_send_patents_list)

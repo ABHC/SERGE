@@ -68,8 +68,8 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 	call_background.close()
 
 	######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
-	var_FR = {"intro_date":"votre veille du", "intro_links":"liens dans", "type_news":"ACTUALITÉS", "type_science":"PUBLICATIONS SCIENTIFIQUES", "type_patents":"BREVETS", "web_serge":"Voir sur le web", "unsubscribe":"Se&nbsp;désinscrire", "github_serge":"Retrouvez SERGE sur", "license_serge":"Propulsé par"}
-	var_EN = {"intro_date":"your news monitoring of", "intro_links":"links in", "type_news":"NEWS", "type_science":"SCIENTIFIC PUBLICATIONS", "type_patents":"PATENTS", "web_serge":"View Online", "unsubscribe":"Unsubscribe", "github_serge":"Find SERGE on", "license_serge":"Powered by"}
+	var_FR = {"intro_date": "votre veille du", "intro_links": "liens dans", "type_news": "ACTUALITÉS", "type_science": "PUBLICATIONS SCIENTIFIQUES", "type_patents": "BREVETS", "web_serge": "Voir sur le web", "unsubscribe": "Se&nbsp;désinscrire", "github_serge": "Retrouvez SERGE sur", "license_serge": "Propulsé par"}
+	var_EN = {"intro_date": "your news monitoring of", "intro_links": "links in", "type_news": "NEWS", "type_science": "SCIENTIFIC PUBLICATIONS", "type_patents": "PATENTS", "web_serge": "View Online", "unsubscribe": "Unsubscribe", "github_serge": "Find SERGE on", "license_serge": "Powered by"}
 
 	style = """<style type="text/css">
 	/* CLIENT-SPECIFIC STYLES */
@@ -490,9 +490,9 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 				if word_attribute in news_attributes["keyword_id"] and news_attributes["link"] not in already_in_the_list:
 
 					if news_attributes["title"].isupper() is True:
-						process_result = {"link":news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title":news_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link":news_attributes["wiki_link"]}
+						process_result = {"link": news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": news_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link": news_attributes["wiki_link"]}
 					else:
-						process_result = {"link":news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title":news_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link":news_attributes["wiki_link"]}
+						process_result = {"link": news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": news_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link": news_attributes["wiki_link"]}
 
 					process_result_list.append(process_result)
 					already_in_the_list.append(news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'))
@@ -561,9 +561,9 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 				if word_attribute in science_attributes["query_id"] and science_attributes["link"] not in process_result_list:
 
 					if science_attributes["title"].isupper() is True:
-						process_result = {"link":science_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title":science_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link":science_attributes["wiki_link"]}
+						process_result = {"link": science_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": science_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link": science_attributes["wiki_link"]}
 					else:
-						process_result = {"link":science_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title":science_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link":science_attributes["wiki_link"]}
+						process_result = {"link": science_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": science_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link": science_attributes["wiki_link"]}
 
 					process_result_list.append(process_result)
 
@@ -631,9 +631,9 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 				if query_attribute in patents_attributes["query_id"] and patents_attributes["link"] not in process_result_list:
 
 					if patents_attributes["title"].isupper() is True:
-						process_result = {"link":patents_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "link":patents_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link":patents_attributes["wiki_link"]}
+						process_result = {"link": patents_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "link": patents_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link": patents_attributes["wiki_link"]}
 					else:
-						process_result = {"link":patents_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title":patents_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link":patents_attributes["wiki_link"]}
+						process_result = {"link": patents_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": patents_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link": patents_attributes["wiki_link"]}
 
 					process_result_list.append(process_result)
 
@@ -788,9 +788,9 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 				if origin_id == news_attributes["id_source"]:
 
 					if news_attributes["title"].isupper() is True:
-						process_result = {"link":news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title":news_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link":news_attributes["wiki_link"]}
+						process_result = {"link": news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": news_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link": news_attributes["wiki_link"]}
 					else:
-						process_result = {"link":news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title":news_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link"news_attributes["wiki_link"]}
+						process_result = {"link": news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": news_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link"news_attributes["wiki_link"]}
 
 					process_result_list.append(process_result)
 
@@ -860,9 +860,9 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 				if origin_id == science_attributes["id_source"]:
 
 					if science_attributes["title"].isupper() is True:
-						process_result = {"link":science_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title":science_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link":science_attributes["wiki_link"]}
+						process_result = {"link": science_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": science_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link": science_attributes["wiki_link"]}
 					else:
-						process_result = {"link":science_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title":science_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link":science_attributes["wiki_link"]}
+						process_result = {"link": science_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": science_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link": science_attributes["wiki_link"]}
 
 					process_result_list.append(process_result)
 
