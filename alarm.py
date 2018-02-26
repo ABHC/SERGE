@@ -61,8 +61,8 @@ def buildAlert(user, user_id_comma, register, alert_news_list, pydate):
 	call_background.close()
 
 	######### VARIABLES FOR ALERT FORMATTING BY LANGUAGE
-	var_FR = ["le", "alertes", "ACTUALITÉS", "PUBLICATIONS SCIENTIFIQUES", "BREVETS", "Voir sur le web", "Se&nbsp;désinscrire", "Retrouvez SERGE sur", "Propulsé par"]
-	var_EN = ["of", "alerts", "NEWS", "SCIENTIFIC PUBLICATIONS", "PATENTS", "View Online", "Unsubscribe", "Find SERGE on", "Powered by"]
+	var_FR = {"intro_date": "le", "intro_links": "alertes", "type_news": "ACTUALITÉS", "type_science": "PUBLICATIONS SCIENTIFIQUES", "type_patents": "BREVETS", "web_serge": "Voir sur le web", "unsubscribe": "Se&nbsp;désinscrire", "github_serge": "Retrouvez SERGE sur", "license_serge": "Propulsé par"}
+	var_EN = {"intro_date": "of", "intro_links": "alerts", "type_news": "NEWS", "type_science": "SCIENTIFIC PUBLICATIONS", "type_patents": "PATENTS", "web_serge": "View Online", "unsubscribe": "Unsubscribe", "github_serge": "Find SERGE on", "license_serge": "Powered by"}
 
 	style = """<style type="text/css">
 	/* CLIENT-SPECIFIC STYLES */
@@ -202,7 +202,7 @@ def alertMailByType(user, translate_text, alert_news_list, pending_alerts, style
 		<h1 style="font-size: 30px; color: #ffffff;">ALERT</h1>
 	</td>
 	</tr>"
-	""".format(translate_text[0], user.encode('ascii', errors='xmlcharrefreplace'), translate_text[1], pydate, pending_alerts, style, background_filename[0]))
+	""".format(translate_text["intro_date"], user.encode('ascii', errors='xmlcharrefreplace'), translate_text["intro_links"], pydate, pending_alerts, style, background_filename[0]))
 
 	index = 0
 
@@ -221,7 +221,7 @@ def alertMailByType(user, translate_text, alert_news_list, pending_alerts, style
 		<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
 		<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
 		</td>
-		</tr>""".format(translate_text[2]))
+		</tr>""".format(translate_text["type_news"]))
 
 		while index < pending_alerts:
 			alerts_attributes = alert_news_list[index]
@@ -287,7 +287,7 @@ def alertMailByType(user, translate_text, alert_news_list, pending_alerts, style
 	</tr>
 	</table>
 	</body>
-	</html>""".format(translate_text[5], translate_text[6], translate_text[7], translate_text[8]))
+	</html>""".format(translate_text["web_serge"], translate_text["unsubscribe"], translate_text["github_serge"], translate_text["license_serge"]))
 
 	return alertmail
 
@@ -338,7 +338,7 @@ def alertMailByKeyword(user, translate_text, alert_news_list, pending_alerts, al
 	<td bgcolor="#b6082e" align="center" style="background-color: #b6082e; color: #ffffff; margin-bottom: 15px; margin-top: 15px; font-size: 27px;">
 		ALERT
 	</td>
-	</tr>""".format(translate_text[0], user.encode('ascii', errors='xmlcharrefreplace'), translate_text[1], pydate, pending_alerts, style, background_filename[0]))
+	</tr>""".format(translate_text["intro_date"], user.encode('ascii', errors='xmlcharrefreplace'), translate_text["intro_links"], pydate, pending_alerts, style, background_filename[0]))
 
 	index = 0
 	already_in_the_list = []
@@ -442,7 +442,7 @@ def alertMailByKeyword(user, translate_text, alert_news_list, pending_alerts, al
 	</tr>
 	</table>
 	</body>
-	</html>""".format(translate_text[5], translate_text[6], translate_text[7], translate_text[8]))
+	</html>""".format(translate_text["web_serge"], translate_text["unsubscribe"], translate_text["github_serge"], translate_text["license_serge"]))
 
 	return alertmail
 
@@ -488,7 +488,7 @@ def alertMailBySource(user, translate_text, alert_news_list, pending_alerts, ale
 	</tr>
 	</table>
 	</td>
-	</tr>""".format(translate_text[0], user.encode('ascii', errors='xmlcharrefreplace'), translate_text[1], pydate, pending_alerts, style, background_filename[0]))
+	</tr>""".format(translate_text["intro_date"], user.encode('ascii', errors='xmlcharrefreplace'), translate_text["intro_links"], pydate, pending_alerts, style, background_filename[0]))
 
 	index = 0
 
@@ -588,6 +588,6 @@ def alertMailBySource(user, translate_text, alert_news_list, pending_alerts, ale
 	</tr>
 	</table>
 	</body>
-	</html>""".format(translate_text[5], translate_text[6], translate_text[7], translate_text[8]))
+	</html>""".format(translate_text["web_serge"], translate_text["unsubscribe"], translate_text["github_serge"], translate_text["license_serge"]))
 
 	return alertmail
