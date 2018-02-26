@@ -790,7 +790,7 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 					if news_attributes["title"].isupper() is True:
 						process_result = {"link": news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": news_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link": news_attributes["wiki_link"]}
 					else:
-						process_result = {"link": news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": news_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link"news_attributes["wiki_link"]}
+						process_result = {"link": news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": news_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link": news_attributes["wiki_link"]}
 
 					process_result_list.append(process_result)
 
