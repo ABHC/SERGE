@@ -456,12 +456,11 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 
 	for articles_type in type_list:
 		for attributes in articles[cpt]:
-			baselink = attributes[4]
 
-			query = ("SELECT send_status FROM result_"+articles_type+"_serge WHERE link = %s")
+			query = ("SELECT send_status FROM result_"+articles_type+"_serge WHERE id = %s")
 
 			call_news = database.cursor()
-			call_news.execute(query, (baselink,))
+			call_news.execute(query, (attributes["id"],))
 			row = call_news.fetchone()
 
 			send_status = row[0]
@@ -471,10 +470,10 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 			if register_comma2 not in send_status:
 				complete_status = send_status+register_comma
 
-				update = ("UPDATE result_"+articles_type+"_serge SET send_status = %s WHERE link = %s")
+				update = ("UPDATE result_"+articles_type+"_serge SET send_status = %s WHERE id = %s")
 
 				try:
-					call_news.execute(update, (complete_status, baselink))
+					call_news.execute(update, (complete_status, attributes["id"]))
 					database.commit()
 				except Exception, except_type:
 					database.rollback()

@@ -26,7 +26,7 @@ def recorder(register, typeName, linkId, recorder_call, database):
 	call_users.close()
 
 	token = token[0]
-	recording_link = "http://" + domain + "/" +recorder_call+ "?type=" + typeName + "&token=" + token + "&id=" + linkId
+	recording_link = "http://" + domain + "/" + recorder_call + "?type=" + typeName + "&token=" + token + "&id=" + linkId
 
 	return (recording_link)
 
@@ -52,81 +52,56 @@ def triage(register, user_id_comma):
 	not_send_science_list = []
 	not_send_patents_list = []
 
-	recorder_call = "addLinkInWiki"
-
 	######### RESULTS NEWS : NEWS ATTRIBUTES QUERY (LINK + TITLE + ID SOURCE + KEYWORD ID)
-	query_news = ("SELECT link, title, id_source, keyword_id, id FROM result_news_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
+	query_news = ("SELECT id, title, link, id_source, keyword_id FROM result_news_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
 
 	call_news = database.cursor()
 	call_news.execute(query_news, (user_id_comma, user_id_comma, user_id_comma))
-	rows = call_news.fetchall()
+	rows = [list(elem) for elem in list(call_news.fetchall())]
 	call_news.close()
 
-	typeName = "news"
-
 	for row in rows:
-		linkId = str(row[4])
-		add_wiki_link = recorder(register, typeName, linkId, recorder_call, database)
-		field = [row[0], row[1], row[2], str(row[3]), row[0], str(row[4]), add_wiki_link]
+		if record_read is True:
+			row[2] = recorder(register, "news", str(row[1]), "redirect", database)
+
+		add_wiki_link = recorder(register, "news", str(row[1]), "addLinkInWiki", database)
+		field = {"id":row[0], "title":row[1], "link":row[2], "id_source":row[3], "keyword_id":str(row[4]), "wiki_link":add_wiki_link}
 		not_send_news_list.append(field)
 
 	######### RESULTS SCIENCE : SCIENCE ATTRIBUTES QUERY (LINK + TITLE + KEYWORD ID)
-	query_science = ("SELECT link, title, query_id, id_source, id FROM result_science_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
+	query_science = ("SELECT id, title, link, id_source, query_id FROM result_science_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
 
 	call_science = database.cursor()
 	call_science.execute(query_science, (user_id_comma, user_id_comma, user_id_comma))
-	rows = call_science.fetchall()
+	rows = [list(elem) for elem in list(call_science.fetchall())]
 	call_science.close()
 
 	typeName = "sciences"
 
 	for row in rows:
-		linkId = str(row[4])
-		add_wiki_link = recorder(register, typeName, linkId, recorder_call, database)
-		row = list(row)
-		row.insert(5, row[4])
-		row.insert(4, row[0])
-		row.append(add_wiki_link)
-		not_send_science_list.append(row)
+		if record_read is True:
+			row[2] = recorder(register, "sciences", str(row[1]), "redirect", database)
+
+		add_wiki_link = recorder(register, "sciences", str(row[1]), "addLinkInWiki", database)
+		field = {"id":row[0], "title":row[1], "link":row[2], "id_source":row[3], "query_id":str(row[4]), "wiki_link":add_wiki_link}
+		not_send_science_list.append(field)
 
 	######### RESULTS PATENTS : PATENTS ATTRIBUTES QUERY (LINK + TITLE + ID QUERY WIPO)
-	query_patents = ("SELECT link, title, id_query_wipo, id FROM result_patents_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
+	query_patents = ("SELECT id, title, link, id_source, id_query_wipo FROM result_patents_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
 
 	call_patents = database.cursor()
 	call_patents.execute(query_patents, (user_id_comma, user_id_comma, user_id_comma))
-	rows = call_patents.fetchall()
+	rows = [list(elem) for elem in list(call_patents.fetchall())]
 	call_patents.close()
 
 	typeName = "patents"
 
 	for row in rows:
-		linkId = str(row[3])
-		add_wiki_link = recorder(register, typeName, linkId, recorder_call, database)
-		row = list(row)
-		row.insert(4, row[0])
-		row.append(add_wiki_link)
-		not_send_patents_list.append(row)
+		if record_read is True:
+			row[2] = recorder(register, "patents", str(row[1]), "redirect", database)
 
-	######### LINKS MODIFICATION FOR RECORDS
-	if record_read is True:
-		recorder_call = "redirect"
-
-		for news in not_send_news_list:
-			linkId = news[5]
-			typeName = "news"
-			change_status_link = recorder(register, typeName, linkId, recorder_call, database)
-			news[0] = change_status_link
-
-		for science in not_send_science_list:
-			linkId = str(science[5])
-			typeName = "sciences"
-			change_status_link = recorder(register, typeName, linkId, recorder_call, database)
-			science[0] = change_status_link
-
-		for patent in not_send_patents_list:
-			linkId = str(patent[3])
-			typeName = "patents"
-			change_status_link = recorder(register, typeName, linkId, recorder_call, database)
-			patent[0] = change_status_link
+		add_wiki_link = recorder(register, "patents", str(row[1]), "addLinkInWiki", database)
+		field = {"id":row[0], "title":row[1], "link":row[2], "id_source":row[3], "query_id":str(row[4]), "wiki_link":add_wiki_link}
+		not_send_patents_list.append(field)
 
 	return (not_send_news_list, not_send_science_list, not_send_patents_list)

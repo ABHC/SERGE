@@ -31,6 +31,7 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 	sciencewords_list = []
 	patent_master_queries_list = []
 	news_origin_list = []
+	science_origin_list = []
 	user_id_doubledot = user_id_comma.replace(",", "")+":"
 	user_id_doubledot_percent = "%"+user_id_doubledot+"%"
 	time_units = pydate.split("-")
@@ -67,8 +68,8 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 	call_background.close()
 
 	######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
-	var_FR = ["votre veille du", "liens dans", "ACTUALITÉS", "PUBLICATIONS SCIENTIFIQUES", "BREVETS", "Voir sur le web", "Se&nbsp;désinscrire", "Retrouvez SERGE sur", "Propulsé par"]
-	var_EN = ["your news monitoring of", "links in", "NEWS", "SCIENTIFIC PUBLICATIONS", "PATENTS", "View Online", "Unsubscribe", "Find SERGE on", "Powered by"]
+	var_FR = {"intro_date":"votre veille du", "intro_links":"liens dans", "type_news":"ACTUALITÉS", "type_science":"PUBLICATIONS SCIENTIFIQUES", "type_patents":"BREVETS", "web_serge":"Voir sur le web", "unsubscribe":"Se&nbsp;désinscrire", "github_serge":"Retrouvez SERGE sur", "license_serge":"Propulsé par"}
+	var_EN = {"intro_date":"your news monitoring of", "intro_links":"links in", "type_news":"NEWS", "type_science":"SCIENTIFIC PUBLICATIONS", "type_patents":"PATENTS", "web_serge":"View Online", "unsubscribe":"Unsubscribe", "github_serge":"Find SERGE on", "license_serge":"Powered by"}
 
 	style = """<style type="text/css">
 	/* CLIENT-SPECIFIC STYLES */
@@ -120,9 +121,9 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 		newsletter = newsletterByType(user, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate, style, background_filename)
 
 	elif mail_design[0] == "masterword":
-		query_newswords = "SELECT keyword, id FROM keyword_news_serge WHERE applicable_owners_sources LIKE %s AND active > 0"
-		query_sciencewords = "SELECT query_serge, id FROM queries_science_serge WHERE owners LIKE %s AND active > 0"
-		query_wipo_query = "SELECT query, id FROM queries_wipo_serge WHERE owners LIKE %s AND active > 0"
+		query_newswords = "SELECT id, keyword FROM keyword_news_serge WHERE applicable_owners_sources LIKE %s AND active > 0"
+		query_sciencewords = "SELECT id, query_serge FROM queries_science_serge WHERE owners LIKE %s AND active > 0"
+		query_wipo_query = "SELECT id, query FROM queries_wipo_serge WHERE owners LIKE %s AND active > 0"
 
 		call_words = database.cursor()
 		call_words.execute(query_newswords, (user_id_doubledot_percent, ))
@@ -134,8 +135,8 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 		call_words.close()
 
 		for word_and_attribute in newswords:
-			if ":all@" in word_and_attribute[0]:
-				split_for_all = word_and_attribute[0].split("@")
+			if ":all@" in word_and_attribute[1]:
+				split_for_all = word_and_attribute[1].split("@")
 
 				query_sitename = "SELECT name FROM rss_serge WHERE id = %s"
 
@@ -146,34 +147,39 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 
 				sitename = sitename[0]
 				rebuilt_all = split_for_all[0].replace(":", "").capitalize() + " @ " + sitename.replace(".", "&#8228;")
-				word_and_attribute = (rebuilt_all, word_and_attribute[1])
+				word_and_attribute = (word_and_attribute[0], rebuilt_all)
 
 			newswords_list.append(word_and_attribute)
 
 		for word_and_attribute in sciencewords:
-			human_query = decoder.decodeQuery(word_and_attribute[0])
-			word_and_attribute = (human_query, word_and_attribute[1])
+			human_query = decoder.decodeQuery(word_and_attribute[1])
+			word_and_attribute = (word_and_attribute[0], human_query)
 			sciencewords_list.append(word_and_attribute)
 
 		for word_and_attribute in patents_master_queries:
-			human_query = decoder.decodeQuery(word_and_attribute[0])
-			word_and_attribute = (human_query, word_and_attribute[1])
+			human_query = decoder.decodeQuery(word_and_attribute[1])
+			word_and_attribute = (word_and_attribute[0], human_query)
 			patent_master_queries_list.append(word_and_attribute)
 
 		newsletter = newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list, style, background_filename)
 
 	elif mail_design[0] == "origin":
-		query_news_origin = "SELECT name, id FROM rss_serge WHERE owners like %s and active > 0"
+		query_news_origin = "SELECT id, name FROM rss_serge WHERE owners like %s and active > 0"
 
 		call_origin = database.cursor()
 		call_origin.execute(query_news_origin, (user_id_comma, ))
 		news_origin = call_origin.fetchall()
+		call_origin.execute("SELECT id, name FROM equivalence_science_serge WHERE active > 0")
+		science_origin = call_origin.fetchall()
 		call_origin.close()
 
 		for source_and_attribute in news_origin:
 			news_origin_list.append(source_and_attribute)
 
-		newsletter = newsletterBySource(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list, style, background_filename)
+		for source_and_attribute in science_origin:
+			science_origin_list.append(source_and_attribute)
+
+		newsletter = newsletterBySource(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list, science_origin_list, style, background_filename)
 
 	######### CALL TO highwayToMail FUNCTION
 	handshake.highwayToMail(register, newsletter, priority, pydate)
@@ -223,7 +229,7 @@ def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_p
 	</tr>
 	</table>
 	</td>
-	</tr>""".format(translate_text[0], user.encode('ascii', errors='xmlcharrefreplace'), translate_text[1], pydate, pending_all, style, background_filename[0]))
+	</tr>""".format(translate_text["intro_date"], user.encode('ascii', errors='xmlcharrefreplace'), translate_text["intro_links"], pydate, pending_all, style, background_filename[0]))
 
 	index = 0
 
@@ -242,13 +248,13 @@ def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_p
 		<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
 		<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
 		</td>
-		</tr>""".format(translate_text[2]))
+		</tr>""".format(translate_text["type_news"]))
 
 		while index < pending_news:
 			news_attributes = not_send_news_list[index]
 
-			if news_attributes[1].isupper() is True:
-				news_attributes[1] = news_attributes[1].lower().capitalize()
+			if news_attributes["title"].isupper() is True:
+				news_attributes["title"] = news_attributes["title"].lower().capitalize()
 
 			newsletter = newsletter + ("""<tr>
 			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
@@ -264,7 +270,7 @@ def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_p
 			<td>
 			<br>
 			</td>
-			</tr>""".format(news_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[6]))
+			</tr>""".format(news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes["wiki_link"]))
 			index = index+1
 
 		newsletter = newsletter + ("""</table>
@@ -294,13 +300,13 @@ def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_p
 		<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
 		<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
 		</td>
-		</tr>""".format(translate_text[4]))
+		</tr>""".format(translate_text["type_science"]))
 
 		while index < pending_science:
 			science_attributes = not_send_science_list[index]
 
-			if science_attributes[1].isupper() is True:
-				science_attributes[1] = science_attributes[1].lower().capitalize()
+			if science_attributes["title"].isupper() is True:
+				science_attributes["title"] = science_attributes["title"].lower().capitalize()
 
 			newsletter = newsletter + ("""<tr>
 			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
@@ -316,7 +322,7 @@ def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_p
 			<td>
 			<br>
 			</td>
-			</tr>""".format(science_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[7]))
+			</tr>""".format(science_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes["wiki_link"]))
 			index = index+1
 
 		newsletter = newsletter + ("""</table>
@@ -346,13 +352,13 @@ def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_p
 		<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
 		<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
 		</td>
-		</tr>""".format(translate_text[5]))
+		</tr>""".format(translate_text["type_patents"]))
 
 		while index < pending_patents:
 			patents_attributes = not_send_patents_list[index]
 
-			if patents_attributes[1].isupper() is True:
-				patents_attributes[1] = patents_attributes[1].lower().capitalize()
+			if patents_attributes["title"].isupper() is True:
+				patents_attributes["title"] = patents_attributes["title"].lower().capitalize()
 
 			newsletter = newsletter + ("""<tr>
 			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
@@ -368,7 +374,7 @@ def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_p
 			<td>
 			<br>
 			</td>
-			</tr>""".format(patents_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[5]))
+			</tr>""".format(patents_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes["wiki_link"]))
 			index = index+1
 
 		newsletter = newsletter + ("""</table>
@@ -414,7 +420,7 @@ def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_p
 	</tr>
 	</table>
 	</body>
-	</html>""".format(translate_text[5], translate_text[6], translate_text[7], translate_text[8]))
+	</html>""".format(translate_text["web_serge"], translate_text["unsubscribe"], translate_text["github_serge"], translate_text["license_serge"]))
 
 	return newsletter
 
@@ -463,7 +469,7 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 	</tr>
 	</table>
 	</td>
-	</tr>""".format(translate_text[0], user.encode('ascii', errors='xmlcharrefreplace'), translate_text[1], pydate, pending_all, style, background_filename[0]))
+	</tr>""".format(translate_text["intro_date"], user.encode('ascii', errors='xmlcharrefreplace'), translate_text["intro_links"], pydate, pending_all, style, background_filename[0]))
 
 	index = 0
 	already_in_the_list = []
@@ -472,24 +478,24 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 	if pending_news > 0:
 
 		######### ECRITURE KEYWORDS FOR NEWS
-		for couple_word_attribute in sorted(newswords_list, key=lambda newswords_field: newswords_field[0]):
-			word = couple_word_attribute[0].strip().encode('ascii', errors='xmlcharrefreplace')
-			word_attribute = ","+str(couple_word_attribute[1])+","
+		for couple_word_attribute in sorted(newswords_list, key=lambda newswords_field: newswords_field[1]):
+			word_attribute = ","+str(couple_word_attribute[0])+","
+			word = couple_word_attribute[1].strip().encode('ascii', errors='xmlcharrefreplace')
 			process_result_list = []
 			index = 0
 
 			while index < pending_news:
 				news_attributes = not_send_news_list[index]
 
-				if word_attribute in news_attributes[3] and news_attributes[0] not in already_in_the_list:
+				if word_attribute in news_attributes["keyword_id"] and news_attributes["link"] not in already_in_the_list:
 
-					if news_attributes[1].isupper() is True:
-						process_result = (news_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), news_attributes[6])
+					if news_attributes["title"].isupper() is True:
+						process_result = {"link":news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title":news_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link":news_attributes["wiki_link"]}
 					else:
-						process_result = (news_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[6])
+						process_result = {"link":news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title":news_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link":news_attributes["wiki_link"]}
 
 					process_result_list.append(process_result)
-					already_in_the_list.append(news_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'))
+					already_in_the_list.append(news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'))
 
 				index = index+1
 
@@ -526,7 +532,7 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 					<td>
 					<br>
 					</td>
-					</tr>""".format(results_attributes[0], results_attributes[1], results_attributes[2]))
+					</tr>""".format(results_attributes["link"], results_attributes["title"], results_attributes["wiki_link"]))
 
 				newsletter = newsletter + ("""</table>
 				</td>
@@ -543,21 +549,21 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 	######### ECRITURE SCIENCE
 	if pending_science > 0:
 		######### ECRITURE KEYWORDS FOR SCIENCE
-		for couple_word_attribute in sorted(sciencewords_list, key=lambda sciencewords_field: sciencewords_field[0]):
-			word = couple_word_attribute[0].strip().encode('ascii', errors='xmlcharrefreplace')
-			word_attribute = ","+str(couple_word_attribute[1])+","
+		for couple_word_attribute in sorted(sciencewords_list, key=lambda sciencewords_field: sciencewords_field[1]):
+			word_attribute = ","+str(couple_word_attribute[0])+","
+			word = couple_word_attribute[1].strip().encode('ascii', errors='xmlcharrefreplace')
 			process_result_list = []
 			index = 0
 
 			while index < pending_science:
 				science_attributes = not_send_science_list[index]
 
-				if word_attribute in science_attributes[2] and science_attributes[0] not in process_result_list:
+				if word_attribute in science_attributes["query_id"] and science_attributes["link"] not in process_result_list:
 
-					if science_attributes[1].isupper() is True:
-						process_result = (science_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), science_attributes[7])
+					if science_attributes["title"].isupper() is True:
+						process_result = {"link":science_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title":science_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link":science_attributes["wiki_link"]}
 					else:
-						process_result = (science_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[7])
+						process_result = {"link":science_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title":science_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link":science_attributes["wiki_link"]}
 
 					process_result_list.append(process_result)
 
@@ -596,7 +602,7 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 					<td>
 					<br>
 					</td>
-					</tr>""".format(results_attributes[0], results_attributes[1], results_attributes[2]))
+					</tr>""".format(results_attributes["link"], results_attributes["title"], results_attributes["wiki_link"]))
 
 				newsletter = newsletter + ("""</table>
 				</td>
@@ -613,21 +619,21 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 	######### ECRITURE PATENTS
 	if pending_patents > 0:
 		######### ECRITURE QUERY FOR PATENTS
-		for couple_query_attribute in sorted(patent_master_queries_list, key=lambda query_field: query_field[0]):
-			plain_query = couple_query_attribute[0]
-			query_attribute = ","+str(couple_query_attribute[1])+","
+		for couple_query_attribute in sorted(patent_master_queries_list, key=lambda query_field: query_field[1]):
+			query_attribute = ","+str(couple_query_attribute[0])+","
+			plain_query = couple_query_attribute[1]
 			process_result_list = []
 			index = 0
 
 			while index < pending_patents:
 				patents_attributes = not_send_patents_list[index]
 
-				if query_attribute in patents_attributes[2] and patents_attributes[0] not in process_result_list:
+				if query_attribute in patents_attributes["query_id"] and patents_attributes["link"] not in process_result_list:
 
-					if patents_attributes[1].isupper() is True:
-						process_result = (patents_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), patents_attributes[5])
+					if patents_attributes["title"].isupper() is True:
+						process_result = {"link":patents_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "link":patents_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link":patents_attributes["wiki_link"]}
 					else:
-						process_result = (patents_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[5])
+						process_result = {"link":patents_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title":patents_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link":patents_attributes["wiki_link"]}
 
 					process_result_list.append(process_result)
 
@@ -636,7 +642,6 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 			elements = len(process_result_list)
 
 			if elements > 0:
-				print("ours")
 				newsletter = newsletter + ("""<tr>
 				<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
 				<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
@@ -667,7 +672,7 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 					<td>
 					<br>
 					</td>
-					</tr>""".format(results_attributes[0], results_attributes[1], results_attributes[2]))
+					</tr>""".format(results_attributes["link"], results_attributes["title"], results_attributes["wiki_link"]))
 
 				newsletter = newsletter + ("""</table>
 				</td>
@@ -712,12 +717,12 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 	</tr>
 	</table>
 	</body>
-	</html>""".format(translate_text[5], translate_text[6], translate_text[7], translate_text[8]))
+	</html>""".format(translate_text["web_serge"], translate_text["unsubscribe"], translate_text["github_serge"], translate_text["license_serge"]))
 
 	return newsletter
 
 
-def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list, style, background_filename):
+def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list, science_origin_list, style, background_filename):
 	"""Formatting function for emails, apply the formatting by sources"""
 
 	########### CONNECTION TO SERGE DATABASE
@@ -764,28 +769,28 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 	</tr>
 	</table>
 	</td>
-	</tr>""".format(translate_text[0], user.encode('ascii', errors='xmlcharrefreplace'), translate_text[1], pydate, pending_all, style, background_filename[0]))
+	</tr>""".format(translate_text["intro_date"], user.encode('ascii', errors='xmlcharrefreplace'), translate_text["intro_links"], pydate, pending_all, style, background_filename[0]))
 
 	index = 0
 
-	######### SCIENCE SECTION IN EMAIL
+	######### NEWS SECTION IN EMAIL
 	if pending_news > 0:
 		######### SORT ORIGIN FOR NEWS
-		for couple_source_attribute in sorted(news_origin_list, key=lambda news_origin_field: news_origin_field[0]):
-			origin_name = couple_source_attribute[0]
-			origin_id = couple_source_attribute[1]
+		for couple_source_attribute in sorted(news_origin_list, key=lambda news_origin_field: news_origin_field[1]):
+			origin_id = couple_source_attribute[0]
+			origin_name = couple_source_attribute[1]
 			process_result_list = []
 			index = 0
 
 			while index < pending_news:
 				news_attributes = not_send_news_list[index]
 
-				if origin_id == news_attributes[2]:
+				if origin_id == news_attributes["id_source"]:
 
-					if news_attributes[1].isupper() is True:
-						process_result = (news_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), news_attributes[6])
+					if news_attributes["title"].isupper() is True:
+						process_result = {"link":news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title":news_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link":news_attributes["wiki_link"]}
 					else:
-						process_result = (news_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes[6])
+						process_result = {"link":news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title":news_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link"news_attributes["wiki_link"]}
 
 					process_result_list.append(process_result)
 
@@ -826,7 +831,7 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 					<td>
 					<br>
 					</td>
-					</tr>""".format(results_attributes[0], results_attributes[1], results_attributes[2]))
+					</tr>""".format(results_attributes["link"], results_attributes["title"], results_attributes["wiki_link"]))
 
 				newsletter = newsletter + ("""</table>
 				</td>
@@ -842,34 +847,22 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 
 	######### SCIENCE SECTION IN EMAIL
 	if pending_science > 0:
-
-		######### CREATE A LIST OF ALL SOURCES
-		call_equivalence = database.cursor()
-		call_equivalence.execute("SELECT name, id FROM equivalence_science_serge WHERE active >= 1")
-		rows = call_equivalence.fetchall()
-		call_equivalence.close()
-
-		science_origin_list = []
-
-		for row in rows:
-			science_origin_list.append(row)
-
 		######### SORT BY ORIGIN
-		for science_source_attribute in sorted(science_origin_list, key=lambda science_origin_list: science_origin_list[0]):
-			origin_name = science_source_attribute[0]
-			origin_id = science_source_attribute[1]
+		for science_source_attribute in sorted(science_origin_list, key=lambda science_origin_list: science_origin_list[1]):
+			origin_id = science_source_attribute[0]
+			origin_name = science_source_attribute[1]
 			process_result_list = []
 			index = 0
 
 			while index < pending_science:
 				science_attributes = not_send_science_list[index]
 
-				if origin_id == science_attributes[3]:
+				if origin_id == science_attributes["id_source"]:
 
-					if science_attributes[1].isupper() is True:
-						process_result = (science_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), science_attributes[7])
+					if science_attributes["title"].isupper() is True:
+						process_result = {"link":science_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title":science_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link":science_attributes["wiki_link"]}
 					else:
-						process_result = (science_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes[7])
+						process_result = {"link":science_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title":science_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link":science_attributes["wiki_link"]}
 
 					process_result_list.append(process_result)
 
@@ -910,7 +903,7 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 					<td>
 					<br>
 					</td>
-					</tr>""".format(results_attributes[0], results_attributes[1], results_attributes[2]))
+					</tr>""".format(results_attributes["link"], results_attributes["title"], results_attributes["wiki_link"]))
 
 				newsletter = newsletter + ("""</table>
 				</td>
@@ -944,8 +937,8 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 		while index < pending_patents:
 			patents_attributes = not_send_patents_list[index]
 
-			if patents_attributes[1].isupper() is True:
-				patents_attributes[1] = patents_attributes[1].lower().capitalize()
+			if patents_attributes["title"].isupper() is True:
+				patents_attributes["title"] = patents_attributes["title"].lower().capitalize()
 
 			newsletter = newsletter + ("""<tr>
 			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
@@ -961,7 +954,7 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 			<td>
 			<br>
 			</td>
-			</tr>""".format(patents_attributes[0].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[1].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes[5]))
+			</tr>""".format(patents_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes["wiki_link"]))
 			index = index+1
 
 		newsletter = newsletter + ("""</table>
@@ -1007,6 +1000,6 @@ def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_sen
 	</tr>
 	</table>
 	</body>
-	</html>""".format(translate_text[5], translate_text[6], translate_text[7], translate_text[8]))
+	</html>""".format(translate_text["web_serge"], translate_text["unsubscribe"], translate_text["github_serge"], translate_text["license_serge"]))
 
 	return newsletter
