@@ -131,7 +131,7 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('select15_window1_setting', 'Year', 'Années', NULL, NULL, NULL),
 ('window2_title_setting', 'News management', 'Gestion des actualités', NULL, NULL, NULL),
 ('select1_window2_setting', 'All sources', 'Toutes les sources', NULL, NULL, NULL),
-('select2_window2_setting', 'Add my own source', 'Ajouter ma propre source', NULL, NULL, NULL),
+('select2_window2_setting', 'Add my own source&nbsp;', 'Ajouter ma propre source&nbsp;', NULL, NULL, NULL),
 ('Button1_window2_setting', 'Create my own watch pack', 'Créer mon propre pack de veille', NULL, NULL, NULL),
 ('Button2_window2_setting', 'Add community watch pack', 'Ajouter un pack de veille communautaire', NULL, NULL, NULL),
 ('window3_title_setting', 'Science watch management', 'Gestion de la veille scientifique', NULL, NULL, NULL),
