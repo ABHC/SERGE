@@ -52,7 +52,7 @@ def redAlert(user, register, user_id_comma, not_send_news_list, not_send_science
 	for potential_alert in not_send_news_list:
 		id_list = []
 
-		for alert_id in potential_alert[3].split(","):
+		for alert_id in potential_alert["keyword_id"].split(","):
 			if alert_id != "":
 				id_list.append(alert_id)
 
@@ -77,7 +77,7 @@ def redAlert(user, register, user_id_comma, not_send_news_list, not_send_science
 
 				if "[!ALERT!]" in key_comparator and register in owner_comparator:
 					alert_id_comma = ","+alert_id+","
-					confirmed_alert = (potential_alert[0], potential_alert[1], potential_alert[2], alert_id_comma, potential_alert[4])
+					confirmed_alert = {"id": potential_alert["id"], "title": potential_alert["title"], "link": potential_alert["link"], "id_source": potential_alert["id_source"], "keyword_id": alert_id_comma}
 					alert_news_list.append(confirmed_alert)
 
 	if len(alert_news_list) > 0:
