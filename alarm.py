@@ -61,8 +61,19 @@ def buildAlert(user, user_id_comma, register, alert_news_list, pydate):
 	call_background.close()
 
 	######### VARIABLES FOR ALERT FORMATTING BY LANGUAGE
-	var_FR = {"intro_date": "le", "intro_links": "alertes", "type_news": "ACTUALITÉS", "type_science": "PUBLICATIONS SCIENTIFIQUES", "type_patents": "BREVETS", "web_serge": "Voir sur le web", "unsubscribe": "Se&nbsp;désinscrire", "github_serge": "Retrouvez SERGE sur", "license_serge": "Propulsé par"}
-	var_EN = {"intro_date": "of", "intro_links": "alerts", "type_news": "NEWS", "type_science": "SCIENTIFIC PUBLICATIONS", "type_patents": "PATENTS", "web_serge": "View Online", "unsubscribe": "Unsubscribe", "github_serge": "Find SERGE on", "license_serge": "Powered by"}
+	query_text = "SELECT EN, "+language+" FROM text_content_serge WHERE 1"
+
+	call_text = database.cursor()
+	call_text.execute(query_text, )
+	text = call_text.fetchall()
+	call_text.close()
+
+	translate_text = {}
+
+	for dict_key, content in text:
+		translate_text[dict_key] = content
+
+	translate_text = {"intro_date": translate_text["of"], "intro_links": translate_text["alerts"], "type_news": translate_text["NEWS"], "type_science": translate_text["SCIENTIFIC PUBLICATIONS"], "type_patents": translate_text["PATENTS"], "web_serge": translate_text["View Online"], "unsubscribe": translate_text["unsubscribe"], "github_serge": translate_text["Find SERGE on"], "license_serge": translate_text["Powered by"]}
 
 	style = """<style type="text/css">
 	/* CLIENT-SPECIFIC STYLES */
@@ -100,11 +111,6 @@ def buildAlert(user, user_id_comma, register, alert_news_list, pydate):
 	div[style*="margin: 16px 0;"] { margin: 0 !important; }
 	</style>"""
 
-	try:
-		exec("translate_text"+"="+"var_"+language[0])
-	except NameError:
-		translate_text = var_EN
-
 	######### CALL TO ALERTMAIL FUNCTION
 	if mail_design[0] == "type":
 		alert_news_list = sorted(alert_news_list, key=lambda alert_field: alert_field["title"])
@@ -132,7 +138,9 @@ def buildAlert(user, user_id_comma, register, alert_news_list, pydate):
 
 				sitename = sitename[0]
 				rebuilt_all = split_for_all[0].replace(":", "").capitalize() + " @ " + sitename.replace(".", "&#8228;")
-				word_and_attribute = (word_and_attribute[1], rebuilt_all)
+				word_and_attribute = {"id": ","+str(word_and_attribute[0])+",", "keyword": rebuilt_all.strip().encode('ascii', errors='xmlcharrefreplace')}
+			else:
+				word_and_attribute = {"id": ","+str(word_and_attribute[0])+",", "keyword": word_and_attribute{1}.strip().encode('ascii', errors='xmlcharrefreplace')}
 
 			alertwords_list.append(word_and_attribute)
 
@@ -147,6 +155,7 @@ def buildAlert(user, user_id_comma, register, alert_news_list, pydate):
 		call_origin.close()
 
 		for source_and_attribute in alert_origin:
+			source_and_attribute = {"id": source_and_attribute[0], "name": source_and_attribute[1].strip().encode('ascii', errors='xmlcharrefreplace')}
 			alert_origin_list.append(source_and_attribute)
 
 		alertmail = alertMailBySource(user, translate_text, alert_news_list, pending_alerts, alert_origin_list, style, pydate, background_filename)
@@ -345,16 +354,14 @@ def alertMailByKeyword(user, translate_text, alert_news_list, pending_alerts, al
 
 	######### ECRITURE ALERTS
 	######### ECRITURE KEYWORDS FOR NEWS
-	for couple_word_attribute in sorted(alertwords_list, key=lambda alertswords_field: alertswords_field[0]):
-		word = couple_word_attribute[0].replace("[!ALERT!]", "").strip().encode('ascii', errors='xmlcharrefreplace')
-		word_attribute = ","+str(couple_word_attribute[1])+","
+	for attributes in sorted(alertwords_list, key=lambda alertswords_field: alertswords_field["keyword"]):
 		process_result_list = []
 		index = 0
 
 		while index < pending_alerts:
 			alerts_attributes = alert_news_list[index]
 
-			if word_attribute in alerts_attributes[3] and alerts_attributes[0] not in already_in_the_list:
+			if attributes["id"] in alerts_attributes["keyword_id"] and alerts_attributes["link"] not in already_in_the_list:
 
 				if alerts_attributes["title"].isupper() is True:
 					process_result = {"link": alerts_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": alerts_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link": alerts_attributes["wiki_link"]}
@@ -382,7 +389,7 @@ def alertMailByKeyword(user, translate_text, alert_news_list, pending_alerts, al
 			<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
 			<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
 			</td>
-			</tr>""".format(word.capitalize()))
+			</tr>""".format(attributes["keyword"].capitalize()))
 
 			for results_attributes in process_result_list:
 				alertmail = alertmail + ("""<tr>
@@ -494,21 +501,21 @@ def alertMailBySource(user, translate_text, alert_news_list, pending_alerts, ale
 
 	######### ECRITURE NEWS
 	######### ECRITURE ORIGIN FOR NEWS
-	for couple_source_attribute in sorted(alert_origin_list, key=lambda alert_origin_field: alert_origin_field[0]):
-		origin_name = couple_source_attribute[0]
-		origin_id = couple_source_attribute[1]
+	for attributes in sorted(alert_origin_list, key=lambda alert_origin_field: alert_origin_field["name"]):
 		process_result_list = []
 		index = 0
 
 		while index < pending_alerts:
 			alerts_attributes = alert_news_list[index]
 
-			if alerts_attributes["title"].isupper() is True and origin_id == alerts_attributes["id_source"]:
-				process_result = {"link": alerts_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": alerts_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link": alerts_attributes["wiki_link"]}
-			elif origin_id == alerts_attributes[2]:
-				process_result = {"link": alerts_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": alerts_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link": alerts_attributes["wiki_link"]}
+			if attributes["id"] == alerts_attributes["id_source"]:
 
-			process_result_list.append(process_result)
+				if alerts_attributes["title"].isupper() is True and origin_id == alerts_attributes["id_source"]:
+					process_result = {"link": alerts_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": alerts_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link": alerts_attributes["wiki_link"]}
+				elif origin_id == alerts_attributes[2]:
+					process_result = {"link": alerts_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": alerts_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link": alerts_attributes["wiki_link"]}
+
+				process_result_list.append(process_result)
 
 			index = index+1
 
@@ -528,7 +535,7 @@ def alertMailBySource(user, translate_text, alert_news_list, pending_alerts, ale
 			<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
 			<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
 			</td>
-			</tr>""".format(origin_name.strip().encode('ascii', errors='xmlcharrefreplace')))
+			</tr>""".format(attributes["name"]))
 
 			for results_attributes in process_result_list:
 				alertmail = alertmail + ("""<tr>
@@ -545,7 +552,7 @@ def alertMailBySource(user, translate_text, alert_news_list, pending_alerts, ale
 				<td>
 				<br>
 				</td>
-				</tr>""".format(results_attributes[0], results_attributes[1], results_attributes[2]))
+				</tr>""".format(results_attributes["link"], results_attributes["title"], results_attributes["wiki_link"]))
 
 			alertmail = alertmail + ("""</table>
 			</td>
