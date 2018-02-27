@@ -140,7 +140,7 @@ def buildAlert(user, user_id_comma, register, alert_news_list, pydate):
 				rebuilt_all = split_for_all[0].replace(":", "").capitalize() + " @ " + sitename.replace(".", "&#8228;")
 				word_and_attribute = {"id": ","+str(word_and_attribute[0])+",", "keyword": rebuilt_all.strip().encode('ascii', errors='xmlcharrefreplace')}
 			else:
-				word_and_attribute = {"id": ","+str(word_and_attribute[0])+",", "keyword": word_and_attribute{1}.strip().encode('ascii', errors='xmlcharrefreplace')}
+				word_and_attribute = {"id": ","+str(word_and_attribute[0])+",", "keyword": word_and_attribute[1].strip().encode('ascii', errors='xmlcharrefreplace')}
 
 			alertwords_list.append(word_and_attribute)
 
