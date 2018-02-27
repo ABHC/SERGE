@@ -68,8 +68,19 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 	call_background.close()
 
 	######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
-	var_FR = {"intro_date": "votre veille du", "intro_links": "liens dans", "type_news": "ACTUALITÉS", "type_science": "PUBLICATIONS SCIENTIFIQUES", "type_patents": "BREVETS", "web_serge": "Voir sur le web", "unsubscribe": "Se&nbsp;désinscrire", "github_serge": "Retrouvez SERGE sur", "license_serge": "Propulsé par"}
-	var_EN = {"intro_date": "your news monitoring of", "intro_links": "links in", "type_news": "NEWS", "type_science": "SCIENTIFIC PUBLICATIONS", "type_patents": "PATENTS", "web_serge": "View Online", "unsubscribe": "Unsubscribe", "github_serge": "Find SERGE on", "license_serge": "Powered by"}
+	query_text = "SELECT EN, "+language+" FROM text_content_serge WHERE 1"
+
+	call_text = database.cursor()
+	call_text.execute(query_text, )
+	text = call_text.fetchall()
+	call_text.close()
+
+	translate_text = {}
+
+	for dict_key, content in text:
+		translate_text[dict_key] = content
+
+	translate_text = {"intro_date": translate_text["your news monitoring of"], "intro_links": translate_text["links in"], "type_news": translate_text["NEWS"], "type_science": translate_text["SCIENTIFIC PUBLICATIONS"], "type_patents": translate_text["PATENTS"], "web_serge": translate_text["View Online"], "unsubscribe": translate_text["unsubscribe"], "github_serge": translate_text["Find SERGE on"], "license_serge": translate_text["Powered by"]}
 
 	style = """<style type="text/css">
 	/* CLIENT-SPECIFIC STYLES */
@@ -106,11 +117,6 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 	/* ANDROID CENTER FIX */
 	div[style*="margin: 16px 0;"] { margin: 0 !important; }
 	</style>"""
-
-	try:
-		exec("translate_text"+"="+"var_"+language[0])
-	except NameError:
-		translate_text = var_EN
 
 	######### CALL TO NEWSLETTER FUNCTION
 	if mail_design[0] == "type":
