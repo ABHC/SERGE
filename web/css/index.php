@@ -11,7 +11,7 @@ include('nav.php');
 .body
 {
 	position: relative;
-	margin-top: 35vh;
+	margin-top: 15vh;
 }
 
 .backgroundImage
@@ -22,7 +22,7 @@ include('nav.php');
 	width: 100%;
 	height: 100vh;
 	margin: 0;
-	background: url(../images/background/Earth.png) scroll no-repeat center;
+	background: url(../images/background/intro.png) scroll no-repeat center;
 	background-size: cover;
 	z-index: -1;
 }
@@ -31,12 +31,17 @@ include('nav.php');
 {
 	position: relative;
 	width: 100%;
+	height: calc(100vh - 75px);
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	align-items: flex-end;
 }
 
 h2
 {
-	width: 80%;
-	font-size: 4vw;
+	width: 53%;
+	font-size: 3vw;
 	font-weight: lighter;
 	letter-spacing: 1pt;
 	margin-left: 10%;
@@ -49,13 +54,13 @@ h2
 
 h3
 {
-	width: 70%;
-	font-size: 1.5vw;
+	width: 45%;
+	font-size: 1.3vw;
 	font-weight: lighter;
 	letter-spacing: 1pt;
 	margin-top: 5px;
 	margin-bottom: 14vh;
-	margin-left: 15%;
+	margin-right: 4%;
 	text-align: center;
 	color: rgb(255, 255, 255);
 	text-shadow: 0 0 5px rgb(0, 0, 0);
@@ -117,6 +122,7 @@ h3
 	padding: 5px;
 	margin-left: 15px;
 	margin-right: 15px;
+	cursor: pointer;
 }
 
 .buttonTry:hover
@@ -304,6 +310,37 @@ h5
 }
 
 /* Sign up */
+.pseudoInput
+{
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	border-radius: 3px;
+	background-color: rgba(0,0,0,0.4);
+	width: 50%;
+	margin-right: 25%;
+	margin-bottom: 10px;
+	padding: 10px;
+	color: rgb(230,230,230);
+}
+.pseudoInput .inscription_field
+{
+	height: 35px;
+	width: 68%;
+	font-size: 20px;
+	border-radius: 3px 0 0 3px;
+}
+
+.pseudoInput .buttonTry
+{
+	height: 45px;
+	width: 32%;
+	font-size: 1.5vw;
+	margin: 0;
+	border-radius: 0 3px 3px 0;
+}
+
 #signup
 {
 	width: 100%;
@@ -437,14 +474,14 @@ input
 		min-height: 500px;
 		max-height: 1000px;
 		filter: brightness(0.8);
+		background: url(../images/background/intro_small.png) scroll no-repeat center;
 	}
 
 	.backgroundDetails
 	{
-		height: calc(42vh - 140px);
+		height: calc(52vh - 140px);
 		min-height: 360px;
 		max-height: 860px;
-		padding-top: 10vh;
 		font-family: Verdana, Geneva, sans-serif;
 	}
 
@@ -563,6 +600,18 @@ input
 	{
 		height: 50px;
 		font-size: 30px;
+	}
+}
+@media all and (max-width: 1000px)and (orientation: landscape)
+{
+	.backgroundImage
+	{
+		height: 100vh;
+	}
+
+	.backgroundDetails
+	{
+		height: calc(100vh - 140px);
 	}
 }
 <?php

@@ -6,11 +6,11 @@
 <div class="backgroundDetails">
 	<h2><?php get_t('Save time on your watch with our Serge platform', $bdd); ?></h2>
 	<h3><?php get_t('sub_title_index', $bdd); ?></h3>
-	<div class="buttonArea">
-		<div class="line"></div>
-		<a href="#signup" class="buttonTry"><?php get_t('try1_button_index', $bdd); ?></a>
-		<div class="line"></div>
-	</div>
+	<form method="post" class="pseudoInput" action="index#signup" >
+		<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
+			<input class="inscription_field" type="text" name="reg_pseudo_alone" id="Pseudo" autocomplete="off" value="" placeholder="<?php get_t('input1_signup_index', $bdd); ?>"/>
+			<input type="submit" class="buttonTry" value="<?php get_t('try1_button_index', $bdd); ?>"/>
+	</form>
 </div>
 <?php echo $ErrorMessageCheckMail; ?>
 <div class="body">
@@ -129,7 +129,7 @@
 			<form method="post" action="index#signup" >
 				<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
 				<p class="title_form_inscription" ><?php get_t('input1_signup_index', $bdd); ?><br>
-					<input class="inscription_field" type="text" name="reg_pseudo" id="Pseudo" value="" />
+					<input class="inscription_field" type="text" name="reg_pseudo" id="Pseudo" value="<?php echo $pseudoValue; ?>" />
 				</p>
 
 				<p class="title_form_inscription" ><?php get_t('input2_signup_index', $bdd); ?><br>
@@ -141,7 +141,7 @@
 				</p>
 
 				<p class="title_form_inscription" ><?php get_t('input4_signup_index', $bdd); ?><br>
-					<input class="inscription_field" type="email" name="reg_mail" id="Mail" value=""/>
+					<input class="inscription_field" type="email" name="reg_mail" id="Mail" value="<?php echo $emailValue; ?>"/>
 				</p>
 
 				<div class="title_form_inscription" ><?php get_t('input5_signup_index', $bdd); ?>

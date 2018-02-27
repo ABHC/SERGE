@@ -19,6 +19,7 @@ $unsafeData = array();
 $unsafeData = array_merge($unsafeData, array(array('emailCheckToken', 'emailCheck', 'GET', 'str')));
 $unsafeData = array_merge($unsafeData, array(array('checker', 'checker', 'GET', 'str')));
 
+$unsafeData = array_merge($unsafeData, array(array('pseudo_alone', 'reg_pseudo_alone', 'POST', 'str')));
 $unsafeData = array_merge($unsafeData, array(array('pseudo', 'reg_pseudo', 'POST', 'str')));
 $unsafeData = array_merge($unsafeData, array(array('password', 'reg_password', 'POST', 'str')));
 $unsafeData = array_merge($unsafeData, array(array('repassword', 'reg_repassword', 'POST', 'str')));
@@ -31,9 +32,14 @@ include('controller/dataProcessing.php');
 $nonceTime = $_SERVER['REQUEST_TIME'];
 $nonce     = getNonce($nonceTime);
 
+
+$pseudoValue = $data['pseudo_alone'] ?? '';
+
 if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']) && !empty($data['repassword']) && !empty($data['captcha']))
 {
-	$pseudo       = preg_replace("#[^[:alnum:]-]#",'', $data['pseudo']);
+	$pseudoValue  = $data['pseudo'];
+	$emailValue   = $data['email'];
+	$pseudo       = preg_replace("#[^[:alnum:]-]#", '', $data['pseudo']);
 	$captcha_user = hash('sha256', $data['captcha']);
 
 	if($_SESSION['captcha'] === $captcha_user)
@@ -59,14 +65,17 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 				if(filter_var($data['email'], FILTER_VALIDATE_EMAIL) === FALSE)
 				{
 					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Invalid email <br>';
+					$emailValue   = '';
 				}
 				elseif($pseudoExist)
 				{
 					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Existing pseudo <br>';
+					$pseudoValue  = '';
 				}
 				elseif($emailExist)
 				{
 					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Existing email <br>';
+					$emailValue   = '';
 				}
 				else
 				{
