@@ -4,9 +4,9 @@
 $resultTab    = '';
 $wikiTab      = '';
 $settingTab   = '';
-$mailSent = FALSE;
+$mailSent     = FALSE;
 $errorMessage = '';
-$email = $_SESSION['email'] ?? '';
+$email        = $_SESSION['email'] ?? '';
 
 include('model/get_text.php');
 include('model/get_text_var.php');
