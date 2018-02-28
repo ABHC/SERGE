@@ -41,7 +41,7 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 	query_mail_design = "SELECT mail_design FROM users_table_serge WHERE id = %s"
 
 	call_users = database.cursor()
-	call_users.execute(query_mail_design, (register))
+	call_users.execute(query_mail_design, (register,))
 	mail_design = call_users.fetchone()
 	call_users.close()
 
@@ -49,7 +49,7 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 	query_language = "SELECT language FROM users_table_serge WHERE id = %s"
 
 	call_users = database.cursor()
-	call_users.execute(query_language, (register))
+	call_users.execute(query_language, (register,))
 	language = call_users.fetchone()
 	call_users.close()
 
@@ -57,7 +57,7 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 	query_background = "SELECT background_result FROM users_table_serge WHERE id = %s"
 
 	call_users = database.cursor()
-	call_users.execute(query_background, (register))
+	call_users.execute(query_background, (register,))
 	background = call_users.fetchone()
 	call_users.close()
 
