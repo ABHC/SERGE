@@ -22,7 +22,7 @@ CREATE TABLE `users_table_serge` (
 	`premium_expiration_date` int(11) DEFAULT 0,
 	`email_validation` BOOLEAN NOT NULL DEFAULT 0,
 	`token` varchar(8) COLLATE utf8mb4_bin NOT NULL,
-	`error` text COLLATE utf8mb4_bin DEFAULT NULL,
+	`add_source_status` text COLLATE utf8mb4_bin DEFAULT NULL,
 	PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 

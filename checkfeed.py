@@ -5,6 +5,7 @@
 ######### IMPORT CLASSICAL MODULES
 import sys
 import re
+import time
 import requests
 from urlparse import urlparse
 import feedparser
@@ -216,6 +217,18 @@ def feedMeUp(link, user_id, typeName, pack_id, recursive):
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
+	########### UPDATE THE STATUS OF THE FEEDS RESEARCH
+	insert_status = ("SEARCH FOR "+link)
+	update_users = ("UPDATE users_table_serge SET add_source_status = %s WHERE id = %s")
+
+	update = database.cursor()
+	try:
+		update.execute(update_users, (insert_status, user_id))
+		database.commit()
+	except Exception, except_type:
+		database.rollback()
+		update.close()
+
 	########### LINK CONNEXION
 	req_results = allCheckLong(link)
 	rss_error = req_results[0]
@@ -261,17 +274,29 @@ def feedMeUp(link, user_id, typeName, pack_id, recursive):
 			title = (xmldoc.feed.title.encode('ascii', errors='xmlcharrefreplace'))
 			backgroundLinksAddition(link, user_id, typeName, pack_id, title)
 
-	if rss_error is True and recursive is False:
-		insert_error = ("Serge can't analyse your link")
-		update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
+	elif rss_error is True and recursive is False:
+		insert_status = ("ERROR : Serge can't analyse "+link)
+		update_users = ("UPDATE users_table_serge SET add_source_status = %s WHERE id = %s")
 
 		update = database.cursor()
 		try:
-			update.execute(update_users, (insert_error, user_id))
+			update.execute(update_users, (insert_status, user_id))
 			database.commit()
 		except Exception, except_type:
 			database.rollback()
 		update.close()
+
+	else:
+		insert_status = ("SEARCH COMPLETE")
+		update_users = ("UPDATE users_table_serge SET add_source_status = %s WHERE id = %s")
+
+		update = database.cursor()
+		try:
+			update.execute(update_users, (insert_status, user_id))
+			database.commit()
+		except Exception, except_type:
+			database.rollback()
+			update.close()
 
 
 ########### MAIN
@@ -279,6 +304,7 @@ def feedMeUp(link, user_id, typeName, pack_id, recursive):
 ########### CONNECTION TO SERGE DATABASE
 database = databaseConnection()
 
+########### BEGINNING OF THE CHECKING
 try:
 	link = sys.argv[1]
 	user_id = sys.argv[2]
@@ -292,13 +318,29 @@ except IndexError:
 	sys.stderr.write("Missing arguments in checkfeed call\n")
 	sys.exit()
 
-if validators.url(link) is False:
-	insert_error = ("Serge can't analyse your link")
-	update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
+	########### CHECK THE PROCESS STATUS
+	status_gate = False
+
+	while status_gate is False:
+		query_users = ("SELECT add_source_status FROM users_table_serge WHERE id = %s")
+
+		update = database.cursor()
+		update.execute(query_users, (user_id, ))
+		status = update.fetchone()
+		update.close()
+
+		if "SEARCH FOR" in status[0]:
+			time.sleep(2)
+		else:
+			status_gate = True
+
+if not validators.url(link) is True:
+	insert_status = ("ERROR : Serge can't analyse "+link)
+	update_users = ("UPDATE users_table_serge SET add_source_status = %s WHERE id = %s")
 
 	update = database.cursor()
 	try:
-		update.execute(update_users, (insert_error, user_id))
+		update.execute(update_users, (insert_status, user_id))
 		database.commit()
 	except Exception, except_type:
 		database.rollback()
@@ -309,13 +351,26 @@ number_links = 0
 feedMeUp(link, user_id, typeName, pack_id, False)
 
 if number_links == 0:
-	insert_error = ("No source to add")
-	update_users = ("UPDATE users_table_serge SET error = %s WHERE id = %s")
+	insert_status = ("NO SOURCE TO ADD ON : "+link)
+	update_users = ("UPDATE users_table_serge SET add_source_status = %s WHERE id = %s")
 
 	update = database.cursor()
 	try:
-		update.execute(update_users, (insert_error, user_id))
+		update.execute(update_users, (insert_status, user_id))
 		database.commit()
 	except Exception, except_type:
 		database.rollback()
 	update.close()
+	sys.exit()
+
+########### UPDATE THE STATUS OF THE FEEDS RESEARCH
+insert_status = ("END")
+update_users = ("UPDATE users_table_serge SET add_source_status = %s WHERE id = %s")
+
+update = database.cursor()
+try:
+	update.execute(update_users, (insert_status, user_id))
+	database.commit()
+except Exception, except_type:
+	database.rollback()
+update.close()
