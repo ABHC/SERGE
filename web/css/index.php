@@ -45,8 +45,8 @@ h2
 	font-weight: lighter;
 	letter-spacing: 1pt;
 	margin-left: 10%;
-	margin-top: 19vh;
-	margin-bottom: 5px;
+	margin-top: 1vh;
+	margin-bottom: 8vh;
 	text-align: center;
 	color: rgb(255, 255, 255);
 	text-shadow: 0 0 5px rgb(0, 0, 0);
@@ -59,7 +59,7 @@ h3
 	font-weight: lighter;
 	letter-spacing: 1pt;
 	margin-top: 5px;
-	margin-bottom: 14vh;
+	margin-bottom: 15vh;
 	margin-right: 4%;
 	text-align: center;
 	color: rgb(255, 255, 255);
