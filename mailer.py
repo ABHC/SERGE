@@ -53,8 +53,6 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 	language = call_users.fetchone()
 	call_users.close()
 
-	language = language[0]
-
 	######### BACKGROUND CHOSEN BY USER
 	query_background = "SELECT background_result FROM users_table_serge WHERE id = %s"
 
@@ -70,7 +68,7 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 	call_background.close()
 
 	######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
-	query_text = "SELECT EN, "+language+" FROM text_content_serge WHERE 1"
+	query_text = "SELECT EN, "+language[0]+" FROM text_content_serge WHERE 1"
 
 	call_text = database.cursor()
 	call_text.execute(query_text, )
@@ -80,7 +78,7 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 	translate_text = {}
 
 	for dict_key, content in text:
-		translate_text[dict_key] = content
+		translate_text[dict_key] = content.strip().encode('ascii', errors='xmlcharrefreplace')
 
 	translate_text = {"intro_date": translate_text["your news monitoring of"], "intro_links": translate_text["links in"], "type_news": translate_text["NEWS"], "type_science": translate_text["SCIENTIFIC PUBLICATIONS"], "type_patents": translate_text["PATENTS"], "web_serge": translate_text["View Online"], "unsubscribe": translate_text["Unsubscribe"], "github_serge": translate_text["Find SERGE on"], "license_serge": translate_text["Powered by"]}
 
