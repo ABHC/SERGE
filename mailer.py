@@ -53,6 +53,8 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 	language = call_users.fetchone()
 	call_users.close()
 
+	language = language[0]
+
 	######### BACKGROUND CHOSEN BY USER
 	query_background = "SELECT background_result FROM users_table_serge WHERE id = %s"
 
