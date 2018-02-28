@@ -120,9 +120,9 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 
 	######### CALL TO NEWSLETTER FUNCTION
 	if mail_design[0] == "type":
-		not_send_news_list = sorted(not_send_news_list, key=lambda news_field: news_field[1])
-		not_send_science_list = sorted(not_send_science_list, key=lambda science_field: science_field[1])
-		not_send_patents_list = sorted(not_send_patents_list, key=lambda patents_field: patents_field[1])
+		not_send_news_list = sorted(not_send_news_list, key=lambda news_field: news_field["title"])
+		not_send_science_list = sorted(not_send_science_list, key=lambda science_field: science_field["title"])
+		not_send_patents_list = sorted(not_send_patents_list, key=lambda patents_field: patents_field["title"])
 
 		newsletter = newsletterByType(user, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate, style, background_filename)
 
@@ -557,7 +557,7 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 	######### ECRITURE SCIENCE
 	if pending_science > 0:
 		######### ECRITURE KEYWORDS FOR SCIENCE
-		for attributes in sorted(sciencewords_list, key=lambda sciencewords_field: sciencewords_field[1]):
+		for attributes in sorted(sciencewords_list, key=lambda sciencewords_field: sciencewords_field["query"]):
 			process_result_list = []
 			index = 0
 
@@ -625,7 +625,7 @@ def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_se
 	######### ECRITURE PATENTS
 	if pending_patents > 0:
 		######### ECRITURE QUERY FOR PATENTS
-		for attributes in sorted(patent_master_queries_list, key=lambda query_field: query_field[1]):
+		for attributes in sorted(patent_master_queries_list, key=lambda query_field: query_field["query"]):
 			process_result_list = []
 			index = 0
 
