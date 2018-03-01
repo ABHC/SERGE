@@ -44,9 +44,9 @@ h2
 	font-size: 3vw;
 	font-weight: lighter;
 	letter-spacing: 1pt;
-	margin-left: 10%;
+	margin-right: 0.5vw;
 	margin-top: 1vh;
-	margin-bottom: 8vh;
+	margin-bottom: 9vh;
 	text-align: center;
 	color: rgb(255, 255, 255);
 	text-shadow: 0 0 5px rgb(0, 0, 0);
@@ -60,7 +60,7 @@ h3
 	letter-spacing: 1pt;
 	margin-top: 5px;
 	margin-bottom: 15vh;
-	margin-right: 4%;
+	margin-right: calc(4% + 0.5vw);
 	text-align: center;
 	color: rgb(255, 255, 255);
 	text-shadow: 0 0 5px rgb(0, 0, 0);
@@ -320,7 +320,7 @@ h5
 	background-color: rgba(0,0,0,0.4);
 	width: 50%;
 	margin-right: 25%;
-	margin-bottom: 10px;
+	margin-bottom: 15px;
 	padding: 10px;
 	color: rgb(230,230,230);
 }
