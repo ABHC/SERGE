@@ -263,7 +263,7 @@ def newscast(newscast_args):
 						if post_link is not None:
 							########### ITEM BUILDING
 							post_title = escaping(post_title)
-							item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
+							item = {"title": post_title, "link": post_link, "date": post_date, "source_id": id_rss, "keyword_id": keyword_id_comma2, "owners": owners}
 							item_update = [post_link]
 
 							########### CALL insertOrUpdate FUNCTION
@@ -295,7 +295,7 @@ def newscast(newscast_args):
 						if alter_link is not None:
 							########### ITEM BUILDING
 							post_title = escaping(post_title)
-							item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners)
+							item = {"title": post_title, "link": post_link, "date": post_date, "source_id": id_rss, "keyword_id": keyword_id_comma2, "owners": owners}
 							item_update = [post_link]
 
 							########### CALL insertOrUpdate FUNCTION
@@ -427,7 +427,7 @@ def science(now):
 
 								########### ITEM BUILDING
 								post_title = escaping(post_title)
-								item = (post_title, post_link, post_date, api_id, keyword_id_comma2, owners)
+								item = {"title": post_title, "link": post_link, "date": post_date, "source_id": api_id, "keyword_id": keyword_id_comma2, "owners": owners}
 								item_update = [post_link]
 
 								########### CALL insertOrUpdate FUNCTION
@@ -514,7 +514,7 @@ def science(now):
 
 								########### ITEM BUILDING
 								post_title = escaping(post_title)
-								item = (post_title, post_link, post_date, api_id, keyword_id_comma2, owners)
+								item = {"title": post_title, "link": post_link, "date": post_date, "source_id": api_id, "keyword_id": keyword_id_comma2, "owners": owners}
 								item_update = [post_link]
 
 								########### CALL  FUNCTION
@@ -681,7 +681,7 @@ def patents(now):
 
 						########### ITEM BUILDING
 						post_title = escaping(post_title)
-						item = (post_title, post_link, post_date, id_rss, keyword_id_comma2, owners, legal_abstract, legal_status, lens_link, new_check_date)
+						item = {"title": post_title, "link": post_link, "date": post_date, "source_id": id_rss, "keyword_id": keyword_id_comma2, "owners": owners, "abstract": legal_abstract, "status": legal_status, "check_date": new_check_date}
 						item_update = [legal_abstract, legal_status, lens_link, new_check_date, post_link]
 
 						########### CALL insertOrUpdate FUNCTION
