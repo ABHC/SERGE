@@ -266,4 +266,5 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('If you want to stop deletion, send an email to support@cairn-devices.eu within 48 hours', 'If you want to stop deletion, send an email to support@cairn-devices.eu within 48 hours', 'Si vous voulez arrêter la suppression, envoyez un email à support@cairn-devices.eu dans les 48 heures qui suivent', NULL, NULL, NULL),
 ('alert found', 'alert found', 'alerte trouvée :', NULL, NULL, NULL),
 ('alerts found', 'alerts found', 'alertes trouvées :', NULL, NULL, NULL),
+('Sorry, SMS purchase is not available in beta version', 'Sorry, SMS purchase is not available in beta version', 'Désolé, l\'achat par SMS n\'est pas disponible en version beta', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);

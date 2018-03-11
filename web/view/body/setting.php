@@ -211,7 +211,7 @@
 				</div>
 				<span class="Vseparator"></span>
 				<div>
-					<?php get_t('Remaining number of SMS', $bdd); ?>&nbsp;:&nbsp; 0<?php #echo $quotaSms; ?>
+					<?php get_t('Remaining number of SMS', $bdd); ?>&nbsp;:&nbsp; <?php echo $userSettings['sms_credits']; ?>
 					<a href="purchase?type=SMS" class="purchaseButton"><?php get_t('Add SMS in your account', $bdd); ?></a>
 					<?php get_t('Your SMS payment history', $bdd); ?> :<br>
 					<span class="boxScroll">
@@ -288,7 +288,7 @@
 				</span>
 			</span>
 			<span class="optionFold">
-				<input type="checkbox" name="radio-optionMail" id="unfold-optionMail" value="mail" <?php echo $foldingStateMail; ?>/>
+				<input type="checkbox" name="radio-optionMail" id="unfold-optionMail" value="mail" <?php echo $foldingStateMail ?? ''; ?>/>
 				<div class="optionList">
 					<label for="unfold-optionMail" class="unfoldOption" title="<?php get_t('Premium functionality', $bdd); ?>">
 						<img alt="Premium" src="../images/pictogrammes/pictoPremium.png" class="icoTextSmall"/>&nbsp;<?php get_t('Mail configuration', $bdd); ?>&nbsp;▾
@@ -416,7 +416,7 @@
 						</div>
 					</div>
 				</div>
-				<input type="checkbox" name="radio-optionSMS" id="unfold-optionSMS" value="sms" <?php echo $foldingStateSMS; ?>/>
+				<input type="checkbox" name="radio-optionSMS" id="unfold-optionSMS" value="sms" <?php echo $foldingStateSMS ?? ''; ?>/>
 				<div class="optionList">
 					<label for="unfold-optionSMS" class="unfoldOption" title="<?php get_t('Premium functionality', $bdd); ?>">
 						<img alt="Premium" src="../images/pictogrammes/pictoPremium.png" class="icoTextSmall"/>&nbsp;<?php get_t('SMS configuration', $bdd); ?>&nbsp;▾
@@ -445,7 +445,7 @@
 						</div>
 					</div>
 				</div>
-				<input type="checkbox" name="radio-optionPrivacy" id="unfold-optionPrivacy" value="privacy" <?php echo $foldingStatePrivacy; ?>/>
+				<input type="checkbox" name="radio-optionPrivacy" id="unfold-optionPrivacy" value="privacy" <?php echo $foldingStatePrivacy ?? ''; ?>/>
 				<div class="optionList">
 					<label for="unfold-optionPrivacy" class="unfoldOption">
 						<?php get_t('Privacy configuration', $bdd); ?>&nbsp;▾

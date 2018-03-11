@@ -363,6 +363,33 @@ h5
 	color: rgb(245, 245, 245);
 }
 
+.window
+{
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	border-radius: 3px;
+	background-color: rgba(0,0,0,0.4);
+	width: 60%;
+	padding: 10px;
+	color: rgb(230,230,230);
+	margin-bottom: 5vh;
+	font-size: 25px;
+}
+
+.emoticon
+{
+	position: relative;
+	background-image: url(../images/Desapoinhat.png);
+	width: 30%;
+	height: 200px;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	margin-right: 50px;
+}
+
 /**/
 <?php
 include('footer.php');

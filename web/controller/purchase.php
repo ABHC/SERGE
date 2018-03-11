@@ -18,6 +18,8 @@ include('controller/generateNonce.php');
 
 
 $unsafeData = array();
+$unsafeData = array_merge($unsafeData, array(array('type', 'type', 'GET', 'Az')));
+
 $unsafeData = array_merge($unsafeData, array(array('months', 'months', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('premiumCode', 'premiumCode', 'POST', 'str')));
 $unsafeData = array_merge($unsafeData, array(array('readCGS', 'readCGS', 'POST', 'Az')));

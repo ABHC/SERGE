@@ -224,7 +224,7 @@ $reqReadOwnerSourcesKeywordtmp = read('keyword_news_serge', 'id, keyword, applic
 
 # Read user settings
 $checkCol     = array(array('users', '=', $_SESSION['pseudo'], ''));
-$userSettings = read('users_table_serge', 'id, email, phone_number, password, result_by_email, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, record_read, history_lifetime, background_result, record_read, premium_expiration_date, alert_by_sms', $checkCol, '', $bdd);
+$userSettings = read('users_table_serge', 'id, email, phone_number, password, result_by_email, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, record_read, history_lifetime, background_result, record_read, premium_expiration_date, alert_by_sms, sms_credits', $checkCol, '', $bdd);
 $userSettings = $userSettings[0];
 
 # Remove watchPack
@@ -248,6 +248,8 @@ if ($emailIsCheck)
 		$updateCol = array(array('language', $data['selectLanguage']));
 		$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
 		$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
+
+		$_SESSION['lang'] = $data['selectLanguage'];
 	}
 
 	# Change recieve alert by SMS
@@ -1069,7 +1071,7 @@ $reqReadOwnerSourcesKeywordtmp = read('keyword_news_serge', 'id, keyword, applic
 
 # Read user settings
 $checkCol     = array(array('users', '=', $_SESSION['pseudo'], ''));
-$userSettings = read('users_table_serge', 'id, email, phone_number, password, result_by_email, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, record_read, history_lifetime, background_result, record_read, premium_expiration_date, alert_by_sms', $checkCol, '', $bdd);
+$userSettings = read('users_table_serge', 'id, email, phone_number, password, result_by_email, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, record_read, history_lifetime, background_result, record_read, premium_expiration_date, alert_by_sms, sms_credits', $checkCol, '', $bdd);
 $userSettings = $userSettings[0];
 
 # Sorting links in email

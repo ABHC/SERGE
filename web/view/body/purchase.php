@@ -1,6 +1,19 @@
 <div class="background"></div>
 <div class="body">
 	<?php echo $priceMessageSuccess; ?>
+	<?php
+	if ($data['type'] === 'SMS')
+	{
+		?>
+		<div class="window">
+			<div class="emoticon"></div>
+			<?php get_t('Sorry, SMS purchase is not available in beta version', $bdd); ?>
+		</div>
+		<?php
+	}
+	else
+	{
+	?>
 	<h2><?php get_t('title0_title_purchase', $bdd); ?></h2>
 	<h3><?php get_t('title1_title_purchase', $bdd); ?></h3>
 	<div class="functionality">
@@ -79,5 +92,6 @@
 	</div>
 	<?php
 	}
+}
 	?>
 </div>
