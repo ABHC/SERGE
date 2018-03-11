@@ -388,6 +388,15 @@ if ($_SESSION['type'] === 'create')
 		margin-top: 50px;
 	}
 
+	.title
+	{
+		display: flex;
+		flex-direction: row;
+		justify-content: space-around;
+		align-items: center;
+		width: 100%;
+	}
+
 	.sourceList
 	{
 		display: flex;

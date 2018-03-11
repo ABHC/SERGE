@@ -33,8 +33,10 @@
 		<input type="hidden" name="delEditingPatentQuery" value="<?php echo $delEditingPatentQuery ?? ''; ?>"/>
 
 		<div class="dataPackManagement">
-			<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#cr%C3%A9ation%C3%89dition-dun-pack-de-veille" target="_blank">?</a>
-			<h2><?php get_t('input1_window0_watchpack', $bdd); ?></h2>
+			<div class="title">
+				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#cr%C3%A9ation%C3%89dition-dun-pack-de-veille" target="_blank">?</a>
+				<h2><?php get_t('input1_window0_watchpack', $bdd); ?></h2>
+			</div>
 			<div>
 				<select name="watchPackList" onchange="autoSubmit(this.form);">
 					<option value="0"><?php get_t('select1_window0_watchpack', $bdd); ?>&nbsp;&nbsp;</option>
@@ -102,8 +104,10 @@
 		{
 		?>
 		<div class="keywordManagement">
-			<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#actu" target="_blank">?</a>
-			<h2><?php get_t('window2_title_setting', $bdd); ?></h2>
+			<div class="title">
+				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#actu" target="_blank">?</a>
+				<h2><?php get_t('window2_title_setting', $bdd); ?></h2>
+			</div>
 			<div class="newsInput">
 				<select name="sourceType" id="sourceType">
 					<option value="inputSource"><?php get_t('select2_window2_setting', $bdd); ?></option>
@@ -285,8 +289,10 @@
 		</div>
 
 		<div class="scientificPublicationManagement">
-			<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#scientifique" target="_blank">?</a>
-			<h2><?php get_t('window3_title_setting', $bdd); ?></h2>
+			<div class="title">
+				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#scientifique" target="_blank">?</a>
+				<h2><?php get_t('window3_title_setting', $bdd); ?></h2>
+			</div>
 			<div class="newQueryContainer">
 				<div class="lineQuery">
 				<?php
@@ -493,8 +499,10 @@
 			?>
 		</div>
 		<div class="patentManagement">
-			<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#brevet" target="_blank">?</a>
-			<h2><?php get_t('window4_title_setting', $bdd); ?></h2>
+			<div class="title">
+				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#brevet" target="_blank">?</a>
+				<h2><?php get_t('window4_title_setting', $bdd); ?></h2>
+			</div>
 			<div class="newQueryContainer">
 				<div class="lineQuery">
 				<?php

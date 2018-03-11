@@ -54,8 +54,8 @@
 
 .navSergeSettingLogo
 {
-	width: 50px;
-	height: 50px;
+	width: 92px;
+	height: 55px;
 	margin-right: 10px;
 	margin-left: 10px;
 	background: url(../images/navSettingsIco.png) no-repeat;

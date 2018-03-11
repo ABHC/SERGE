@@ -29,6 +29,7 @@ $unsafeData = array_merge($unsafeData, array(array('sourceType', 'sourceType', '
 $unsafeData = array_merge($unsafeData, array(array('settings', 'settings', 'POST', 'Az')));
 $unsafeData = array_merge($unsafeData, array(array('email', 'email', 'POST', 'email')));
 $unsafeData = array_merge($unsafeData, array(array('backgroundResult', 'backgroundResult', 'POST', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('resultByEmail', 'resultByEmail', 'POST', 'str')));
 $unsafeData = array_merge($unsafeData, array(array('cond', 'cond', 'POST', 'str')));
 $unsafeData = array_merge($unsafeData, array(array('numberLinks', 'numberLinks', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('freq', 'freq', 'POST', '09')));
@@ -64,6 +65,13 @@ $unsafeData = array_merge($unsafeData, array(array('disableQueryPatent', 'disabl
 $unsafeData = array_merge($unsafeData, array(array('activateQueryPatent', 'activateQueryPatent', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('removePack', 'removePack', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('removeWP', 'removeWP', 'POST', 'Az')));
+$unsafeData = array_merge($unsafeData, array(array('resultByEmail', 'resultByEmail', 'POST', 'Az')));
+$unsafeData = array_merge($unsafeData, array(array('tel', 'tel', 'POST', '09')));
+$unsafeData = array_merge($unsafeData, array(array('resultBySMS', 'resultBySMS', 'POST', 'Az')));
+$unsafeData = array_merge($unsafeData, array(array('selectLanguage', 'selectLanguage', 'POST', 'Az')));
+$unsafeData = array_merge($unsafeData, array(array('radio-optionMail', 'radio-optionMail', 'POST', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('radio-optionSMS', 'radio-optionSMS', 'POST', 'str')));
+$unsafeData = array_merge($unsafeData, array(array('radio-optionPrivacy', 'radio-optionPrivacy', 'POST', 'str')));
 
 foreach($_POST as $key => $val)
 {
@@ -136,6 +144,21 @@ if (!empty($data['sourceType']))
 	}
 }
 
+if (!empty($data['radio-optionMail']))
+{
+	$foldingStateMail = 'checked';
+}
+
+if (!empty($data['radio-optionSMS']))
+{
+	$foldingStateSMS = 'checked';
+}
+
+if (!empty($data['radio-optionPrivacy']))
+{
+	$foldingStatePrivacy = 'checked';
+}
+
 # Read science search fields
 include_once('model/readColumns.php');
 
@@ -155,7 +178,7 @@ foreach ($columnsNames as $columnsName)
 
 # Read watchPack used
 $checkCol          = array(array('users', 'l', '%,' . $_SESSION['id'] . ',%', ''));
-$watchPackUsedList = read('watch_pack_serge', 'id, name', $checkCol, 'ORDER BY name', $bdd);
+$watchPackUsedList = read('watch_pack_serge', 'id, name, description, users', $checkCol, 'ORDER BY name', $bdd);
 
 # Read background list
 $type           = 'result';
@@ -201,7 +224,7 @@ $reqReadOwnerSourcesKeywordtmp = read('keyword_news_serge', 'id, keyword, applic
 
 # Read user settings
 $checkCol     = array(array('users', '=', $_SESSION['pseudo'], ''));
-$userSettings = read('users_table_serge', 'id, email, password, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, record_read, history_lifetime, background_result, record_read, premium_expiration_date', $checkCol, '', $bdd);
+$userSettings = read('users_table_serge', 'id, email, phone_number, password, result_by_email, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, record_read, history_lifetime, background_result, record_read, premium_expiration_date, alert_by_sms', $checkCol, '', $bdd);
 $userSettings = $userSettings[0];
 
 # Remove watchPack
@@ -210,8 +233,65 @@ if ($emailIsCheck && !empty($data['removeWP']) && $data['removeWP'] === 'removeW
 	include('model/removeWatchPackForAnUser.php');
 }
 
+if ($emailIsCheck && $userIsPremium && !empty($data['resultByEmail']))
+{
+	$updateCol = array(array('result_by_email', 1));
+	$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
+	$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
+}
+
 if ($emailIsCheck)
 {
+	# Change language
+	if (!empty($data['selectLanguage']) && ($data['selectLanguage'] == 'EN' || $data['selectLanguage'] == 'FR'))
+	{
+		$updateCol = array(array('language', $data['selectLanguage']));
+		$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
+		$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
+	}
+
+	# Change recieve alert by SMS
+	if (!empty($data['resultBySMS']))
+	{
+		$updateCol = array(array('alert_by_sms', TRUE));
+		$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
+		$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
+	}
+	elseif(!empty($data['email']))
+	{
+		$updateCol = array(array('alert_by_sms', 0));
+		$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
+		$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
+	}
+
+	# Change recieve result by mail
+	if (!empty($data['resultByEmail']))
+	{
+		$updateCol = array(array('result_by_email', TRUE));
+		$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
+		$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
+	}
+	elseif(!empty($data['email']))
+	{
+		$updateCol = array(array('result_by_email', 0));
+		$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
+		$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
+	}
+
+	# Change phone number
+	if (!empty($data['tel']))
+	{
+		$checkCol   = array(array('phone_number', '=', $data['tel'], ''));
+		$phoneExist = read('users_table_serge', '', $checkCol, '', $bdd);
+
+		if (!$phoneExist)
+		{
+			$updateCol = array(array('phone_number', $data['tel']));
+			$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
+			$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
+		}
+	}
+
 	# Change email
 	if (!empty($data['email']))
 	{
@@ -976,7 +1056,7 @@ if (!empty($data['extendPatent']))
 # Reading after processing
 # Read watchPack used
 $checkCol          = array(array('users', 'l', '%,' . $_SESSION['id'] . ',%', ''));
-$watchPackUsedList = read('watch_pack_serge', 'id, name', $checkCol, 'ORDER BY name', $bdd);
+$watchPackUsedList = read('watch_pack_serge', 'id, name, description, users', $checkCol, 'ORDER BY name', $bdd);
 
 # Read owner sources
 $checkCol  = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
@@ -989,7 +1069,7 @@ $reqReadOwnerSourcesKeywordtmp = read('keyword_news_serge', 'id, keyword, applic
 
 # Read user settings
 $checkCol     = array(array('users', '=', $_SESSION['pseudo'], ''));
-$userSettings = read('users_table_serge', 'id, email, password, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, record_read, history_lifetime, background_result, record_read, premium_expiration_date', $checkCol, '', $bdd);
+$userSettings = read('users_table_serge', 'id, email, phone_number, password, result_by_email, send_condition, frequency, link_limit, selected_days, selected_hour, mail_design, language, record_read, history_lifetime, background_result, record_read, premium_expiration_date, alert_by_sms', $checkCol, '', $bdd);
 $userSettings = $userSettings[0];
 
 # Sorting links in email
@@ -1108,6 +1188,25 @@ while ($cpt <= 7)
 		$cpt       = 8;
 	}
 	$cpt++;
+}
+
+if ($userSettings['language'] == 'FR')
+{
+	$selectLanguageFR = 'selected';
+}
+else
+{
+	$selectLanguageEN = 'selected';
+}
+
+if ($userSettings['result_by_email'])
+{
+	$checkResultByMail = 'checked';
+}
+
+if ($userSettings['alert_by_sms'])
+{
+	$checkResultBySMS = 'checked';
 }
 
 include('view/nav/nav.php');

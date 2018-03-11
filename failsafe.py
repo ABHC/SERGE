@@ -117,7 +117,7 @@ def checkMate():
 	text_content_serge_numbers = 6
 	miscellaneous_serge_numbers = 2
 	newsletter_table_serge_numbers = 3
-	users_table_serge_numbers = 21
+	users_table_serge_numbers = 24
 	watch_pack_queries_serge_numbers = 4
 	watch_pack_serge_numbers = 10
 	captcha_serge_numbers = 1
@@ -166,7 +166,7 @@ def checkMate():
 	text_content_serge_columns = ["index_name", "EN", "FR", "ES", "DE", "CN"]
 	miscellaneous_serge_columns = ["name", "value"]
 	newsletter_table_serge_columns = ["id", "email", "signup_date"]
-	users_table_serge_columns = ["id", "users", "email", "password", "salt", "signup_date", "last_mail", "send_condition", "frequency", "link_limit", "selected_days", "selected_hour", "mail_design", "language", "record_read", "history_lifetime", "background_result", "premium_expiration_date", "email_validation", "token", "error"]
+	users_table_serge_columns = ["id", "users", "email", "phone_number", "password", "salt", "signup_date", "result_by_email", "last_mail", "send_condition", "frequency", "link_limit", "selected_days", "selected_hour", "mail_design", "language", "record_read", "history_lifetime", "background_result", "alert_by_sms", "premium_expiration_date", "email_validation", "token", "add_source_status"]
 	watch_pack_queries_serge_columns = ["id", "pack_id", "query", "source"]
 	watch_pack_serge_columns = ["id", "search_index", "name", "description", "author", "users", "category", "language", "update_date", "rating"]
 	captcha_serge_columns = ["name"]

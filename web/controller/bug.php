@@ -33,7 +33,7 @@ if (!empty($data['captcha']))
 
 if (!empty($data['email']) && !empty($data['bugDescription']) && $_SESSION['captcha'] === $captcha)
 {
-	# Send email verification
+	# Send email to admin
 	$checkCol        = array(array('name', '=', 'support_email', ''));
 	$bugRepportEmail = read('miscellaneous_serge', 'value', $checkCol, '', $bdd);
 

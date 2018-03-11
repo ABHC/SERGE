@@ -12,248 +12,142 @@
 	?>"/>
 	<input type="hidden" name="delEditingScienceQuery" value="<?php echo $delEditingScienceQuery; ?>"/>
 	<input type="hidden" name="delEditingPatentQuery" value="<?php echo $delEditingPatentQuery; ?>"/>
+	<h1><?php get_t('tab3_title_nav', $bdd); ?></h1>
 	<div class="body">
-		<h1><?php get_t('main_title_setting', $bdd); ?></h1>
-		<div class="communicationResults">
-			<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#options-g%C3%A9n%C3%A9rales" target="_blank">?</a>
-			<h2><?php get_t('window1_title_setting', $bdd); ?></h2>
-			<div class="divRow">
+
+<div class="bodySetting">
+		<div>
+		<div class="selectConfigType">
+			<a href="#premium">
+				<div class="selectConfigTypePremium"><?php get_t('Premium', $bdd); ?></div>
+			</a>
+			<a href="#setting">
+				<div class="selectConfigTypeSetting"><?php get_t('Settings', $bdd); ?></div>
+			</a>
+			<a href="#watchPack">
+				<div class="selectConfigTypeWatchPack"><?php get_t('WatchPack', $bdd); ?></div>
+			</a>
+			<a href="#news">
+				<div class="selectConfigTypeNews"><?php get_t('News', $bdd); ?></div>
+			</a>
+			<a href="#science">
+				<div class="selectConfigTypeScience"><?php get_t('Science', $bdd); ?></div>
+			</a>
+			<a href="#patent">
+				<div class="selectConfigTypePatent"><?php get_t('Patent', $bdd); ?></div>
+			</a>
+		</div>
+		</div>
+
+		<div class="bodyBoard">
+		<div class="board">
+			<h2><?php get_t('Account information', $bdd); ?></h2>
+			<?php get_t('Hello', $bdd); ?>&nbsp;<?php echo $_SESSION['pseudo']; ?>,
+			<div>
 				<div>
 					<div>
-						<h3><?php get_t('input1_window1_setting', $bdd); ?></h3>
-						<div class="align">
-							<input type="email" name="email" id="email" value="<?php echo $userSettings['email']; ?>"/>
-							<input title="<?php get_t('Update email', $bdd); ?>" class="submit" type="submit" value="" />
+						<input type="checkbox" id="modal-controller" class="modal-open" hidden>
+						<label for="modal-controller"><img alt="Premium" src="../images/pictogrammes/pictoPremium.png" class="icoText"/>&nbsp;<?php get_t('Premium presentation', $bdd); ?></label>
+						<div class="modal-wrap">
+							<label for="modal-controller" class="modal-overlay"></label>
+							<div class="modal-body">
+
+								<label for="modal-controller" class="modal-close">&times;</label>
+
+								<input type="radio" name="content-nav" id="modal-content-1" class="modal-radio" checked hidden/>
+								<input type="radio" name="content-nav" id="modal-content-2" class="modal-radio" hidden/>
+								<input type="radio" name="content-nav" id="modal-content-3" class="modal-radio" hidden/>
+
+								<div class="modal-slide content-1">
+									<div class="modal-content">
+										<h2><?php get_t('Premium feature - RSS Feed', $bdd); ?></h2>
+										<div>
+											<div>
+												<?php get_t('functionality7_text_index', $bdd); ?>
+											</div>
+											<div>
+												<h3 title="<?php get_t('Premium functionality', $bdd); ?>"><img alt="Premium" src="../images/pictogrammes/pictoPremium.png" class="icoTextSmall"/>&nbsp;<?php get_t('subtitle6_window1_setting', $bdd); ?></h3>
+												<?php
+												$rssLink = 'https://' . $_SERVER['HTTP_HOST'] . '/rss/' . $token[0]['token'];
+												?>
+												<?php get_t('subsubtitle1_window1_setting', $bdd); ?>
+												<div class="align">
+													<textarea class="falseInput" id="toCopy" ><?php echo $rssLink; ?></textarea>
+													<button class="copyButton" id="copy" title="<?php get_t('Copy RSS feed', $bdd); ?>" type="button" onclick="copyToClipboard('');"></button>
+												</div><br>
+												<?php get_t('subsubtitle2_window1_setting', $bdd); ?>
+												<div class="align">
+													<textarea class="falseInput" id="toCopyS" ><?php echo $rssLink; ?>s</textarea>
+													<button class="copyButton" id="copyS" title="<?php get_t('Copy RSS feed', $bdd); ?>" type="button" onclick="copyToClipboard('S');"></button>
+												</div><br>
+												<?php get_t('subsubtitle3_window1_setting', $bdd); ?>
+												<div class="align">
+													<textarea class="falseInput" id="toCopyP" ><?php echo $rssLink; ?>p</textarea>
+													<button class="copyButton" id="copyP" title="<?php get_t('Copy RSS feed', $bdd); ?>" type="button" onclick="copyToClipboard('P');"></button>
+												</div>
+											</div>
+											<div class="modal-nav">
+												<label for="modal-content-2" class="next-slide">&#8250;</label>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="modal-slide content-2">
+									<div class="modal-content">
+										<h2><?php get_t('Premium feature - Email', $bdd); ?></h2>
+										<div>
+											<div class="modal-nav">
+												<label for="modal-content-1" class="prev-slide">&#8249;</label>
+											</div>
+											<div>
+												<?php get_t('functionality4_text_index', $bdd); ?>
+											</div>
+											<div class="imgPrem imgEmail">
+											</div>
+											<div class="modal-nav">
+												<label for="modal-content-3" class="next-slide">&#8250;</label>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="modal-slide content-3">
+									<div class="modal-content">
+										<h2><?php get_t('Premium feature - SMS', $bdd); ?></h2>
+										<div>
+											<div class="modal-nav">
+												<label for="modal-content-2" class="prev-slide">&#8249;</a>
+											</div>
+											<div>
+													<?php get_t('functionality10_text_index', $bdd); ?>
+											</div>
+											<div class="imgPrem imgSms">
+											</div>
+										</div>
+									</div>
+								</div>
+
+								</div>
+							</div>
 						</div>
-					</div>
-					<h3 ><?php get_t('subtitle1_window1_setting', $bdd); ?></h3>
-					<p class="selectBackgroundBlock">
-						<?php get_t('selectTitle_window1_setting', $bdd); ?>&nbsp;<select size="<?php echo count($backgroundList); ?>" id="selectBackgroundPreview" class="selectBackground" name="backgroundResult" onchange="autoSubmit(this.form);">
-						<?php
-						foreach ($backgroundList as $backgroundName)
-						{
-							if ($userSettings['background_result'] == $backgroundName['name'])
-							{
-								$backgroundSelected = 'selected';
-							}
-							else
-							{
-								$backgroundSelected = '';
-							}
-
-							echo '<option value="' . $backgroundName['name'] . '" ' . $backgroundSelected . ' id="../images/background_preview/' . $backgroundName['filename'] . '">' . $backgroundName['name'] . '</option>' . PHP_EOL;
-						}
-						?>
-							<!--<option value="random">Random</option>-->
-						</select>
-						<?php
-						foreach ($backgroundList as $backgroundName)
-						{
-							echo '<img alt="' . $backgroundName['name'] . '" src=../images/background_preview/' . $backgroundName['filename'] . ' style="display: none;" />';
-						}
-						?>
-					</p>
-				</div>
-				<div>
-					<h3><?php get_t('premiumPart_window1_setting', $bdd); ?></h3>
-					<?php
-					if ($userIsPremium)
-					{
-						get_t('title0_premium_setting', $bdd); echo ' :' . date("d/m/o", $userSettings['premium_expiration_date']); ?><br>
-
-						<a href="purchase" class="extendPremiumButton"><?php get_t('button0_premium_setting', $bdd); ?></a>
-						<?php get_t('title1_premium_setting', $bdd); ?> :<br>
-						<?php
-					}
-					else
-					{
-						?>
-						<a href="purchase" class="extendPremiumButton"><?php get_t('button1_premium_setting', $bdd); ?></a>
-						<?php
-						if (!empty($paymentList))
-						{
-							get_t('title1_premium_setting', $bdd); echo ' :<br>';
-						}
-					}
-					?>
-					<div class="boxScroll">
-						<?php
-						foreach ($paymentList as $payment)
-						{
-							$numberOfMonths = $payment['duration_premium'] / (30*24*3600);
-							$price = $payment['price'] / 100;
-
-							echo '<div><span>' . date("H:i d/m/o", $payment['purchase_date']) . '</span><span>' . $numberOfMonths . ' months' . '</span><span>' . $price . '€</span></div>';
-						}
-						?>
+						<div>
+						<a class="helpMe" href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation" target="_blank">?</a>&nbsp;<a href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation" target="_blank"><?php get_t('User guide', $bdd); ?></a>
 					</div>
 					<?php
 					if (!$emailIsCheck)
 					{
 						?>
-						<div class="redAlert"><div class="redAlertPicto"></div><?php get_t('title2_premium_setting', $bdd); ?></div>
+						<div class="redAlert">
+							<div class="redAlertPicto"></div><?php get_t('title2_premium_setting', $bdd); ?>
+						</div>
 						<?php
 					}
 					?>
 				</div>
-				<div>
-					<h3><?php get_t('subtitle4_window1_setting', $bdd); ?></h3>
-					<div class="align">
-						<div class="switch">
-							<input type="checkbox" id="recordRead" name="recordRead" onchange="autoSubmit(this.form);" value="active" <?php echo $recordRead; ?>>
-							<label for="recordRead" class="slider"></label>
-						</div>
-						<?php get_t('input10_window1_setting', $bdd); ?>
-					</div>
-					<div>
-						<div class="deleteContainer">
-							<div class="deleteLogo"></div>
-							<input title="<?php get_t('Delete', $bdd); ?>" class="deleteButton" type="submit" name="buttonDeleteHistory" value="<?php get_t('input11_window1_setting', $bdd); ?>" />
-							<?php get_t('input11.1_window1_setting', $bdd); ?>
-							<input class="number alpha" name="deleteHistoryValue" type="number" min="1" value="1"/>
-							<select class="selectCommResult Unit" name="deleteHistoryUnit">
-								<option value="hour">
-									<?php get_t('select11_window1_setting', $bdd); ?>
-								</option>
-								<option value="day">
-									<?php get_t('select12_window1_setting', $bdd); ?>
-								</option>
-								<option value="week">
-									<?php get_t('select13_window1_setting', $bdd); ?>
-								</option>
-								<option value="month">
-									<?php get_t('select14_window1_setting', $bdd); ?>
-								</option>
-								<option value="year">
-									<?php get_t('select15_window1_setting', $bdd); ?>
-								</option>
-							</select>
-							<span class="arrDown">▾</span>
-						</div>
-					</div>
-				</div>
-				<div>
-					<h3><?php get_t('subtitle5_window1_setting', $bdd); ?></h3>
-					<p class="align">
-					<select size="<?php echo count($watchPackUsedList)+1; ?>" class="selectBackground" name="removePack">
-					<?php
-					foreach ($watchPackUsedList as $watchPackUsed)
-					{
-						echo '<option value="' . $watchPackUsed['id'] . '">' . ucfirst($watchPackUsed['name']) . '</option>' . PHP_EOL;
-					}
-
-					if (empty($watchPackUsedList))
-					{
-						echo '<option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>'.PHP_EOL;
-						echo '<option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>'.PHP_EOL;
-						echo '<option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>'.PHP_EOL;
-					}
-					?>
-					</select>
-					<input title="<?php get_t('Remove selected watchPack', $bdd); ?>" class="removeWP" type="submit" name="removeWP" value="removeWP" />
-				</p>
-				</div>
+				<span class="Vseparator"></span>
 				<div <?php echo $classNoPremium; ?>>
-					<h3><?php get_t('subtitle2_window1_setting', $bdd); ?></h3>
-					<p>
-						<input type="radio" id="condNbLink" name="cond" onchange="autoSubmit(this.form);" value="link_limit" <?php echo $condNbLink; ?>>
-						<label class="radio dot" for="condNbLink"></label>
-						<?php get_t('input2_window1_setting', $bdd); ?>
-						<input class="number alpha" type="number" name="numberLinks" onchange="autoSubmit(this.form);" min="5" placeholder="50" value="<?php echo $userSettings['link_limit']; ?>"/>
-					</p>
-					<p>
-						<input type="radio" id="condFreq" name="cond" onchange="autoSubmit(this.form);" value="freq" <?php echo $condFreq; ?>>
-						<label class="radio dot" for="condFreq"></label>
-						<?php get_t('input3_window1_setting', $bdd); ?>
-						<input class="number alpha" type="number" name="freq" onchange="autoSubmit(this.form);" min="2" max="500" step="2" placeholder="24" value="<?php echo $userSettings['frequency'] ?? '2'; ?>"/><?php get_t('input4_window1_setting', $bdd); ?>
-					</p>
-					<p>
-						<input type="radio" id="condDate" name="cond" onchange="autoSubmit(this.form);" value="deadline" <?php echo $condDate; ?>>
-						<label class="radio dot" for="condDate"></label>
-						<?php get_t('input5_window1_setting', $bdd); ?>
-						<input class="number alpha" type="number" name="hours" onchange="autoSubmit(this.form);" min="0" max="23" step="2" placeholder="19" value="<?php echo $userSettings['selected_hour']; ?>"/>h
-						<?php get_t('input6_window1_setting', $bdd); ?>
-						<select class="selectCommResult" name="days" onchange="autoSubmit(this.form);">
-							<option value=",1,2,3,4,5," <?php echo $day[0] ?? ''; ?>>
-								<?php get_t('select1_window1_setting', $bdd); ?>
-							</option>
-							<option value=",1,3,5," <?php echo $day[8] ?? ''; ?>>
-								<?php get_t('select2_window1_setting', $bdd); ?>
-							</option>
-							<option value=",1,2,3,4,5,6,7," <?php echo $day[9] ?? ''; ?>>
-								<?php get_t('select3_window1_setting', $bdd); ?>
-							</option>
-							<option value=",1," <?php echo $day[1] ?? ''; ?>>
-								<?php get_t('select4_window1_setting', $bdd); ?>
-							</option>
-							<option value=",2," <?php echo $day[2] ?? ''; ?>>
-								<?php get_t('select5_window1_setting', $bdd); ?>
-							</option>
-							<option value=",3," <?php echo $day[3] ?? ''; ?>>
-								<?php get_t('select6_window1_setting', $bdd); ?>
-							</option>
-							<option value=",4," <?php echo $day[4] ?? ''; ?>>
-								<?php get_t('select7_window1_setting', $bdd); ?>
-							</option>
-							<option value=",5," <?php echo $day[5] ?? ''; ?>>
-								<?php get_t('select8_window1_setting', $bdd); ?>
-							</option>
-							<option value=",6," <?php echo $day[6] ?? ''; ?>>
-								<?php get_t('select9_window1_setting', $bdd); ?>
-							</option>
-							<option value=",7," <?php echo $day[7] ?? ''; ?>>
-								<?php get_t('select10_window1_setting', $bdd); ?>
-							</option>
-						</select>
-						<span class="arrDown">▾</span>
-						<?php get_t('input6.1_window1_setting', $bdd); ?>
-						<select class="selectCommResult" name="secondDay" onchange="autoSubmit(this.form);">
-							<option value=""><?php get_t('select10.1_window1_setting', $bdd); ?></option>
-							<option value="1," <?php echo $day2[1] ?? ''; ?>>
-								<?php get_t('select4_window1_setting', $bdd); ?>
-							</option>
-							<option value="2," <?php echo $day2[2] ?? ''; ?>>
-								<?php get_t('select5_window1_setting', $bdd); ?>
-							</option>
-							<option value="3," <?php echo $day2[3] ?? ''; ?>>
-								<?php get_t('select6_window1_setting', $bdd); ?>
-							</option>
-							<option value="4," <?php echo $day2[4] ?? ''; ?>>
-								<?php get_t('select7_window1_setting', $bdd); ?>
-							</option>
-							<option value="5," <?php echo $day2[5] ?? ''; ?>>
-								<?php get_t('select8_window1_setting', $bdd); ?>
-							</option>
-							<option value="6," <?php echo $day2[6] ?? ''; ?>>
-								<?php get_t('select9_window1_setting', $bdd); ?>
-							</option>
-							<option value="7," <?php echo $day2[7] ?? ''; ?>>
-								<?php get_t('select10_window1_setting', $bdd); ?>
-							</option>
-						</select>
-						<span class="arrDown">▾</span>
-					</p>
-				</div>
-				<div <?php echo $classNoPremium; ?>>
-					<h3><?php get_t('subtitle3_window1_setting', $bdd); ?></h3>
-					<p>
-						<input type="radio" id="orderByKeyword" name="orderBy" onchange="autoSubmit(this.form);" value="masterword" <?php echo $orderByKeyword; ?>>
-						<label class="radio dot" for="orderByKeyword"></label>
-						<?php get_t('input7_window1_setting', $bdd); ?>
-					</p>
-					<p>
-						<input type="radio" id="orderBySource" name="orderBy" onchange="autoSubmit(this.form);" value="origin" <?php echo $orderBySource; ?>>
-						<label class="radio dot" for="orderBySource"></label>
-						<?php get_t('input8_window1_setting', $bdd); ?>
-					</p>
-					<p>
-						<input type="radio" id="orderByAlpha" name="orderBy" onchange="autoSubmit(this.form);" value="type" <?php echo $orderByType; ?>>
-						<label class="radio dot" for="orderByAlpha"></label>
-						<?php get_t('input9_window1_setting', $bdd); ?>
-					</p>
-				</div>
-				<div <?php echo $classNoPremium; ?>>
-					<h3><?php get_t('subtitle6_window1_setting', $bdd); ?></h3>
+					<h3 title="<?php get_t('Premium functionality', $bdd); ?>"><img alt="Premium" src="../images/pictogrammes/pictoPremium.png" class="icoTextSmall"/>&nbsp;<?php get_t('subtitle6_window1_setting', $bdd); ?></h3>
 						<?php
 						$rssLink = 'https://' . $_SERVER['HTTP_HOST'] . '/rss/' . $token[0]['token'];
 						?>
@@ -276,15 +170,379 @@
 			</div>
 		</div>
 
-		<div class="keywordManagement">
-			<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#actu" target="_blank">?</a>
-			<h2><?php get_t('window2_title_setting', $bdd); ?></h2>
+		<div class="board" id="premium">
+			<div>
+				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#options-g%C3%A9n%C3%A9rales" target="_blank">?</a>
+				<h2><?php get_t('Premium', $bdd); ?></h2>
+			</div>
+			<div>
+				<div>
+					<?php
+					if ($userIsPremium)
+					{
+						get_t('title0_premium_setting', $bdd); echo ' : ' . date("d/m/o", $userSettings['premium_expiration_date']); ?><br>
+
+						<a href="purchase" class="purchaseButton"><?php get_t('button0_premium_setting', $bdd); ?></a>
+						<?php get_t('title1_premium_setting', $bdd); ?> :<br>
+						<?php
+					}
+					else
+					{
+						?>
+						<a href="purchase" class="purchaseButton"><?php get_t('button1_premium_setting', $bdd); ?></a>
+						<?php
+						if (!empty($paymentList))
+						{
+							get_t('title1_premium_setting', $bdd); echo ' :<br>';
+						}
+					}
+					?>
+					<span class="boxScroll">
+						<?php
+						foreach ($paymentList as $payment)
+						{
+							$numberOfMonths = $payment['duration_premium'] / (30*24*3600);
+							$price = $payment['price'] / 100;
+
+							echo '<div><span>' . date("H:i d/m/o", $payment['purchase_date']) . '</span><span>' . $numberOfMonths . ' months' . '</span><span>' . $price . '€</span></div>';
+						}
+						?>
+					</span>
+				</div>
+				<span class="Vseparator"></span>
+				<div>
+					<?php get_t('Remaining number of SMS', $bdd); ?>&nbsp;:&nbsp; 0<?php #echo $quotaSms; ?>
+					<a href="purchase?type=SMS" class="purchaseButton"><?php get_t('Add SMS in your account', $bdd); ?></a>
+					<?php get_t('Your SMS payment history', $bdd); ?> :<br>
+					<span class="boxScroll">
+						<?php
+						/*
+						foreach ($smsPaymentList as $payment)
+						{
+							$numberOfSMS = $payment['number_sms'] / (30*24*3600);
+							$price = $payment['price'] / 100;
+
+							echo '<div><span>' . date("d/m/o H:i", $payment['purchase_date']) . '</span><span>' . $numberOfMonths . ' months ' . '</span><span>' . $price . '€</span></div>';
+						}*/
+						?>
+					</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="board" id="setting">
+			<div class="titleBoard">
+				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#options-g%C3%A9n%C3%A9rales" target="_blank">?</a>
+				<h2><?php get_t('Settings', $bdd); ?></h2>
+			</div>
+			<span class="mainSetting">
+				<span class="mainSettingOption">
+					<a class="text_connection" href="connection?action=forgotPassphrase"><img alt="Passphrase" src="../images/pictogrammes/pictoMdp.png" class="icoText"/>&nbsp;<?php get_t('Change your passphrase', $bdd); ?></a>
+				</span>
+				<span class="mainSettingOption">
+					<img alt="Language" src="../images/pictogrammes/pictoLanguage.png" class="icoText"/>&nbsp;<?php get_t('Change your language', $bdd); ?>&nbsp;<select class="shortSelect" name="selectLanguage" onchange="autoSubmit(this.form);">
+						<option value="FR" <?php echo $selectLanguageFR ?? ''; ?>>
+							FR&nbsp;
+						</option>
+						<option value="EN" <?php echo $selectLanguageEN ?? ''; ?>>
+							EN&nbsp;
+						</option>
+					</select>
+					<span class="arrDownBorder">▾</span>
+					<?php
+					#TODO List language
+					?>
+				</span>
+
+				<span class="mainSettingOption">
+					<img alt="Wallpaper" src="../images/pictogrammes/pictoWallpaper.png" class="icoText"/>&nbsp;<?php get_t('selectTitle_window1_setting', $bdd); ?>&nbsp;<select size="<?php echo count($backgroundList); ?>" id="selectBackgroundPreview" class="selectBackground" name="backgroundResult" onchange="autoSubmit(this.form);">
+						<?php
+						foreach ($backgroundList as $backgroundName)
+						{
+							if ($userSettings['background_result'] == $backgroundName['name'])
+							{
+								$backgroundSelected = 'selected';
+							}
+							else
+							{
+								$backgroundSelected = '';
+							}
+
+							echo '<option value="' . $backgroundName['name'] . '" ' . $backgroundSelected . ' id="../images/background_preview/' . $backgroundName['filename'] . '">' . $backgroundName['name'] . '</option>' . PHP_EOL;
+						}
+						?>
+						<!--<option value="random">Random</option>-->
+					</select>
+					<?php
+					foreach ($backgroundList as $backgroundName)
+					{
+						echo '<img alt="' . $backgroundName['name'] . '" src=../images/background_preview/' . $backgroundName['filename'] . ' style="display: none;" />';
+					}
+					?>
+				</span>
+				<span class="mainSettingOption">
+					<span class="Hseparator red"></span>
+				</span>
+				<span class="mainSettingOption">
+					<img alt="Alert" src="../images/pictogrammes/redcross.png" class="icoText"/>&nbsp;<a href="deleteAccount?token=<?php echo $token[0]['token']; ?>" onclick="confirm('<?php get_t('Are you sure you want to delete your account ?', $bdd); ?>');"><?php get_t('Delete my account', $bdd); ?></a>
+				</span>
+			</span>
+			<span class="optionFold">
+				<input type="checkbox" name="radio-optionMail" id="unfold-optionMail" value="mail" <?php echo $foldingStateMail; ?>/>
+				<div class="optionList">
+					<label for="unfold-optionMail" class="unfoldOption" title="<?php get_t('Premium functionality', $bdd); ?>">
+						<img alt="Premium" src="../images/pictogrammes/pictoPremium.png" class="icoTextSmall"/>&nbsp;<?php get_t('Mail configuration', $bdd); ?>&nbsp;▾
+					</label>
+					<label for="unfold-optionMail" class="foldOption" title="<?php get_t('Premium functionality', $bdd); ?>">
+						<img alt="Premium" src="../images/pictogrammes/pictoPremium.png" class="icoTextSmall"/>&nbsp;<?php get_t('Mail configuration', $bdd); ?>&nbsp;▴
+					</label>
+					<div class="option">
+						<div <?php echo $classNoPremium; ?>>
+							<div>
+								<h3><?php get_t('input1_window1_setting', $bdd); ?></h3>
+								<div class="align">
+									<input type="email" name="email" id="email" value="<?php echo $userSettings['email']; ?>"/>
+									<input title="<?php get_t('Update email', $bdd); ?>" class="submit" type="submit" value="" />
+								</div>
+							</div>
+							<div>
+								<h3><?php get_t('subtitle2_window1_setting', $bdd); ?></h3>
+								<p>
+									<input type="radio" id="condNbLink" name="cond" onchange="autoSubmit(this.form);" value="link_limit" <?php echo $condNbLink; ?>>
+									<label class="radio dot" for="condNbLink"></label>
+									<?php get_t('input2_window1_setting', $bdd); ?>
+									<input class="number alpha" type="number" name="numberLinks" onchange="autoSubmit(this.form);" min="5" placeholder="50" value="<?php echo $userSettings['link_limit']; ?>"/>
+								</p>
+								<p>
+									<input type="radio" id="condFreq" name="cond" onchange="autoSubmit(this.form);" value="freq" <?php echo $condFreq; ?>>
+									<label class="radio dot" for="condFreq"></label>
+									<?php get_t('input3_window1_setting', $bdd); ?>
+									<input class="number alpha" type="number" name="freq" onchange="autoSubmit(this.form);" min="2" max="500" step="2" placeholder="24" value="<?php echo $userSettings['frequency'] ?? '2'; ?>"/><?php get_t('input4_window1_setting', $bdd); ?>
+								</p>
+								<p>
+									<input type="radio" id="condDate" name="cond" onchange="autoSubmit(this.form);" value="deadline" <?php echo $condDate; ?>>
+									<label class="radio dot" for="condDate"></label>
+									<?php get_t('input5_window1_setting', $bdd); ?>
+									<input class="number alpha" type="number" name="hours" onchange="autoSubmit(this.form);" min="0" max="23" step="2" placeholder="19" value="<?php echo $userSettings['selected_hour']; ?>"/>h
+									<?php get_t('input6_window1_setting', $bdd); ?>
+									<select class="selectCommResult" name="days" onchange="autoSubmit(this.form);">
+										<option value=",1,2,3,4,5," <?php echo $day[0] ?? ''; ?>>
+											<?php get_t('select1_window1_setting', $bdd); ?>
+										</option>
+										<option value=",1,3,5," <?php echo $day[8] ?? ''; ?>>
+											<?php get_t('select2_window1_setting', $bdd); ?>
+										</option>
+										<option value=",1,2,3,4,5,6,7," <?php echo $day[9] ?? ''; ?>>
+											<?php get_t('select3_window1_setting', $bdd); ?>
+										</option>
+										<option value=",1," <?php echo $day[1] ?? ''; ?>>
+											<?php get_t('select4_window1_setting', $bdd); ?>
+										</option>
+										<option value=",2," <?php echo $day[2] ?? ''; ?>>
+											<?php get_t('select5_window1_setting', $bdd); ?>
+										</option>
+										<option value=",3," <?php echo $day[3] ?? ''; ?>>
+											<?php get_t('select6_window1_setting', $bdd); ?>
+										</option>
+										<option value=",4," <?php echo $day[4] ?? ''; ?>>
+											<?php get_t('select7_window1_setting', $bdd); ?>
+										</option>
+										<option value=",5," <?php echo $day[5] ?? ''; ?>>
+											<?php get_t('select8_window1_setting', $bdd); ?>
+										</option>
+										<option value=",6," <?php echo $day[6] ?? ''; ?>>
+											<?php get_t('select9_window1_setting', $bdd); ?>
+										</option>
+										<option value=",7," <?php echo $day[7] ?? ''; ?>>
+											<?php get_t('select10_window1_setting', $bdd); ?>
+										</option>
+									</select>
+									<span class="arrDown">▾</span>
+									<?php get_t('input6.1_window1_setting', $bdd); ?>
+									<select class="selectCommResult" name="secondDay" onchange="autoSubmit(this.form);">
+										<option value=""><?php get_t('select10.1_window1_setting', $bdd); ?></option>
+										<option value="1," <?php echo $day2[1] ?? ''; ?>>
+											<?php get_t('select4_window1_setting', $bdd); ?>
+										</option>
+										<option value="2," <?php echo $day2[2] ?? ''; ?>>
+											<?php get_t('select5_window1_setting', $bdd); ?>
+										</option>
+										<option value="3," <?php echo $day2[3] ?? ''; ?>>
+											<?php get_t('select6_window1_setting', $bdd); ?>
+										</option>
+										<option value="4," <?php echo $day2[4] ?? ''; ?>>
+											<?php get_t('select7_window1_setting', $bdd); ?>
+										</option>
+										<option value="5," <?php echo $day2[5] ?? ''; ?>>
+											<?php get_t('select8_window1_setting', $bdd); ?>
+										</option>
+										<option value="6," <?php echo $day2[6] ?? ''; ?>>
+											<?php get_t('select9_window1_setting', $bdd); ?>
+										</option>
+										<option value="7," <?php echo $day2[7] ?? ''; ?>>
+											<?php get_t('select10_window1_setting', $bdd); ?>
+										</option>
+									</select>
+									<span class="arrDown">▾</span>
+								</p>
+							</div>
+						</div>
+						<span class="Vseparator"></span>
+						<div <?php echo $classNoPremium; ?>>
+							<div>
+								<h3><?php get_t('Communication of results', $bdd); ?></h3>
+								<div class="align">
+									<input type="checkbox" name="resultByEmail" id="resultByEmail" onchange="autoSubmit(this.form);" value="email" <?php echo $checkResultByMail ?? ''; ?>/><label class="checkbox" for="resultByEmail"></label><?php get_t('Receive your results by email', $bdd); ?>
+								</div>
+							</div>
+							<div>
+								<h3><?php get_t('subtitle3_window1_setting', $bdd); ?></h3>
+								<p>
+									<input type="radio" id="orderByKeyword" name="orderBy" onchange="autoSubmit(this.form);" value="masterword" <?php echo $orderByKeyword; ?>>
+									<label class="radio dot" for="orderByKeyword"></label>
+									<?php get_t('input7_window1_setting', $bdd); ?>
+								</p>
+								<p>
+									<input type="radio" id="orderBySource" name="orderBy" onchange="autoSubmit(this.form);" value="origin" <?php echo $orderBySource; ?>>
+									<label class="radio dot" for="orderBySource"></label>
+									<?php get_t('input8_window1_setting', $bdd); ?>
+								</p>
+								<p>
+									<input type="radio" id="orderByAlpha" name="orderBy" onchange="autoSubmit(this.form);" value="type" <?php echo $orderByType; ?>>
+									<label class="radio dot" for="orderByAlpha"></label>
+									<?php get_t('input9_window1_setting', $bdd); ?>
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<input type="checkbox" name="radio-optionSMS" id="unfold-optionSMS" value="sms" <?php echo $foldingStateSMS; ?>/>
+				<div class="optionList">
+					<label for="unfold-optionSMS" class="unfoldOption" title="<?php get_t('Premium functionality', $bdd); ?>">
+						<img alt="Premium" src="../images/pictogrammes/pictoPremium.png" class="icoTextSmall"/>&nbsp;<?php get_t('SMS configuration', $bdd); ?>&nbsp;▾
+					</label>
+					<label for="unfold-optionSMS" class="foldOption" title="<?php get_t('Premium functionality', $bdd); ?>">
+						<img alt="Premium" src="../images/pictogrammes/pictoPremium.png" class="icoTextSmall"/>&nbsp;<?php get_t('SMS configuration', $bdd); ?>&nbsp;▴
+					</label>
+					<div class="option">
+						<div <?php echo $classNoPremium; ?>>
+							<div>
+								<h3><?php get_t('Your phone number', $bdd); ?></h3>
+								<div class="align">
+									<input type="tel" name="tel" id="tel" value="<?php echo $userSettings['phone_number']; ?>"/>
+									<input title="<?php get_t('Update phone number', $bdd); ?>" class="submit" type="submit" value="" />
+								</div>
+							</div>
+						</div>
+						<span class="Vseparator"></span>
+						<div <?php echo $classNoPremium; ?>>
+							<div>
+								<h3><?php get_t('Communication of results', $bdd); ?></h3>
+								<div class="align">
+									<input type="checkbox" name="resultBySMS" id="resultBySMS" onchange="autoSubmit(this.form);" value="sms" <?php echo $checkResultBySMS ?? ''; ?>/><label class="checkbox" for="resultBySMS"></label><?php get_t('Receive your alerts by SMS', $bdd); ?>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<input type="checkbox" name="radio-optionPrivacy" id="unfold-optionPrivacy" value="privacy" <?php echo $foldingStatePrivacy; ?>/>
+				<div class="optionList">
+					<label for="unfold-optionPrivacy" class="unfoldOption">
+						<?php get_t('Privacy configuration', $bdd); ?>&nbsp;▾
+					</label>
+					<label for="unfold-optionPrivacy" class="foldOption">
+						<?php get_t('Privacy configuration', $bdd); ?>&nbsp;▴
+					</label>
+					<div class="option">
+						<div>
+							<h3><?php get_t('Read monitoring', $bdd); ?></h3>
+							<div class="align">
+								<div class="switch">
+									<input type="checkbox" id="recordRead" name="recordRead" onchange="autoSubmit(this.form);" value="active" <?php echo $recordRead; ?>>
+									<label for="recordRead" class="slider"></label>
+								</div>
+								<?php get_t('input10_window1_setting', $bdd); ?>
+							</div>
+						</div>
+							<span class="Vseparator"></span>
+							<div>
+								<h3><?php get_t('Delete history', $bdd); ?></h3>
+								<div class="deleteContainer">
+									<div class="deleteLogo"></div>
+									<input title="<?php get_t('Delete', $bdd); ?>" class="deleteButton" type="submit" name="buttonDeleteHistory" value="<?php get_t('input11_window1_setting', $bdd); ?>" />
+									<?php get_t('input11.1_window1_setting', $bdd); ?>
+									<input class="number alpha" name="deleteHistoryValue" type="number" min="1" value="1"/>
+									<select class="selectCommResult Unit" name="deleteHistoryUnit">
+										<option value="hour">
+											<?php get_t('select11_window1_setting', $bdd); ?>
+										</option>
+										<option value="day">
+											<?php get_t('select12_window1_setting', $bdd); ?>
+										</option>
+										<option value="week">
+											<?php get_t('select13_window1_setting', $bdd); ?>
+										</option>
+										<option value="month">
+											<?php get_t('select14_window1_setting', $bdd); ?>
+										</option>
+										<option value="year">
+											<?php get_t('select15_window1_setting', $bdd); ?>
+										</option>
+									</select>
+									<span class="arrDown">▾</span>
+								</div>
+							</div>
+						</div>
+					</div>
+			</span>
+		</div>
+
+		<div class="board" id="watchPack">
+			<div class="titleBoard">
+				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#options-g%C3%A9n%C3%A9rales" target="_blank">?</a>
+				<h2><?php get_t('Watchpacks management', $bdd); ?></h2>
+			</div>
+			<span class="inlineButton">
+				<a class="buttonCreatesourcePack" href="watchPack?type=create"><?php get_t('Button1_window2_setting', $bdd); ?></a>
+				<a class="buttonVisiteCommunitySourcePack" href="watchPack?type=add"><?php get_t('Button2_window2_setting', $bdd); ?></a>
+			</span>
+			<?php
+			foreach ($watchPackUsedList as $watchPackUsed)
+			{
+				$Qdisable = '';
+				$titleDisableActivate = var_get_t('Disable', $bdd);
+				$nameClassDisableActivate = 'disable';
+
+				$pattern = ',!' . $_SESSION['id'] . ',';
+				if (preg_match("/$pattern/", $watchPackUsed['users']))
+				{
+					$Qdisable = 'Qdisable';
+					$titleDisableActivate = var_get_t('Activate', $bdd);
+					$nameClassDisableActivate = 'activate';
+				}
+
+				echo '
+				<span class="queryContainer ' . $Qdisable . '">
+					<input type="submit" title="' . var_get_t('Delete', $bdd) . '" class="deleteQuery" name="delQueryScience" value="query' . $watchPackUsed['id'] . '"/>
+					<input type="submit" title="' . $titleDisableActivate . '" class="' . $nameClassDisableActivate . 'Query" name="' . $nameClassDisableActivate . 'QueryScience" value="query' . $watchPackUsed['id'] . '"/>
+				';
+
+				echo '<span title="' . $watchPackUsed['description'] . '">' . $watchPackUsed['name'] . '</span></span>';
+			}
+			?>
+		</div>
+
+		<div class="keywordManagement" id="news">
+			<div class="titleBoard">
+				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#actu" target="_blank">?</a>
+				<h2><?php get_t('window2_title_setting', $bdd); ?></h2>
+			</div>
 			<div class="newsInput">
 				<select name="sourceType" id="sourceType">
 					<option value="inputSource"><?php get_t('select2_window2_setting', $bdd); ?></option>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="url" name="newSource" id="source" placeholder="<?php get_t('Source', $bdd); ?>" />
+				<input type="url" name="newSource" id="source" title="<?php get_t('Any web page, Serge is in charge of finding RSS feeds and diary', $bdd); ?>" placeholder="<?php get_t('Source link', $bdd); ?>" />
 				<input title="<?php get_t('Add new source', $bdd); ?>" class="submit" type="submit" value="" />
 			</div>
 			<?php #echo $ERROR_MESSAGE . '<br>'; ?>
@@ -314,13 +572,8 @@
 					<option value="0"><?php get_t('select1_window2_setting', $bdd); ?></option>
 				</select>
 				<span class="arrDownBorder">▾</span>
-				<input type="text" class="keywordInput" name="newKeyword" id="keyword" placeholder="<?php get_t('Keyword, next keyword, ...', $bdd); ?>" />
+				<input type="text" class="keywordInput" name="newKeyword" id="keyword" title="<?php get_t('Special keywords -- :all to retrieve all links; :alert to receive the result directly overriding the sending conditions', $bdd); ?>" placeholder="<?php get_t('Keyword, next keyword, ...', $bdd); ?>" />
 				<input title="<?php get_t('Add new keyword', $bdd); ?>" class="submit" type="submit" value="" />
-			</div>
-
-			<div class="inlineButton">
-				<a class="buttonCreatesourcePack" href="watchPack?type=create"><?php get_t('Button1_window2_setting', $bdd); ?></a>
-				<a class="buttonVisiteCommunitySourcePack" href="watchPack?type=add"><?php get_t('Button2_window2_setting', $bdd); ?></a>
 			</div>
 
 			<div>
@@ -454,9 +707,11 @@
 			</div>
 		</div>
 
-		<div class="scientificPublicationManagement">
-			<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#scientifique" target="_blank">?</a>
-			<h2><?php get_t('window3_title_setting', $bdd); ?></h2>
+		<div class="scientificPublicationManagement" id="science">
+			<div class="titleBoard">
+				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#scientifique" target="_blank">?</a>
+				<h2><?php get_t('window3_title_setting', $bdd); ?></h2>
+			</div>
 			<div class="newQueryContainer">
 				<div class="lineQuery">
 				<?php
@@ -642,9 +897,12 @@
 			}
 			?>
 		</div>
-		<div class="patentManagement">
-			<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#brevet" target="_blank">?</a>
-			<h2><?php get_t('window4_title_setting', $bdd); ?></h2>
+
+		<div class="patentManagement" id="patent">
+			<div class="titleBoard">
+				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#brevet" target="_blank">?</a>
+				<h2><?php get_t('window4_title_setting', $bdd); ?></h2>
+			</div>
 			<div class="newQueryContainer">
 				<div class="lineQuery">
 				<?php
@@ -945,4 +1203,6 @@
 			?>
 		</div>
 	</div>
+	</div>
+</div>
 </form>

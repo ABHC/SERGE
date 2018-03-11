@@ -11,6 +11,12 @@ body
 	outline: none;
 }
 
+a
+{
+	color: inherit;
+	text-decoration: none;
+}
+
 .align
 {
 	display: flex;
@@ -40,20 +46,25 @@ body
 
 .helpMe
 {
-	position: absolute;
-	float: left;
-	width: 78%;
+	position: relative;
 	color: rgba(255, 255, 255, 0.3);
 	text-decoration: none;
 	font-size: 25px;
+	margin-left: 12px;
+	margin-right: 13px;
 	font-weight: bold;
 	user-select: none;
 }
 
+*:placeholder,
 *::placeholder,
-*::-webkit-input-placeholder,
-*:-ms-input-placeholder,
 *:placeholder-shown,
+::-webkit-input-placeholder,
+:-ms-input-placeholder,
+:-moz-placeholder,
+:placeholder,
+::placeholder,
+:placeholder-shown
 {
 	color: rgb(170,170,170);
 }

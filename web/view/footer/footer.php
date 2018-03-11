@@ -37,7 +37,7 @@
 		<div class="social">
 			<a href="diaspora"><img alt="Diaspora" src="../images/Diaspora.png"/></a>
 			<a href="https://twitter.com/SergeAutomaton"><img alt="Twitter" src="../images/Twitter.png"/></a>
-			<a href="facebook"><img alt="Facebook" src="../images/Facebook.png"/></a>
+			<a href="https://www.facebook.com/Cairn-Devices-139804790006808/"><img alt="Facebook" src="../images/Facebook.png"/></a>
 			<a href="rss"><img alt="RSS" src="../images/RSS.png"/></a>
 		</div>
 	</div>
