@@ -1238,6 +1238,7 @@ Install_Serge()
 	pip install requests
 	pip install validators
 	pip install lxml
+	pip install ovh
 
 	# Download Serge
 	git clone https://github.com/ABHC/SERGE.git
