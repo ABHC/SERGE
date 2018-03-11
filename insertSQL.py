@@ -252,12 +252,12 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 	logger_error = logging.getLogger("error_log")
 
 	########### ITEM EXTRACTION FOR OPERATIONS
-	post_title = item[0]
-	post_link = item[1]
-	post_date = int(item[2])
-	id_rss = item[3]
-	keyword_id_comma2 = item[4]
-	owners = item[5]
+	post_title = item["title"]
+	post_link = item["link"]
+	post_date = int(item["date"])
+	source_id = item["source_id"]
+	keyword_id_comma2 = item["keyword_id"]
+	owners = item["owners"]
 
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
@@ -367,7 +367,7 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 				########### IF JELLY CHECKING IS NEEDED
 				if need_jelly is True:
 					call_data_cheking = database.cursor()
-					call_data_cheking.execute(query_jellychecking, (id_rss, post_date, post_date))
+					call_data_cheking.execute(query_jellychecking, (source_id, post_date, post_date))
 					jellychecking = call_data_cheking.fetchall()
 					call_data_cheking.close()
 
