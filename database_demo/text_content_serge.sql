@@ -264,4 +264,6 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('Premium feature - RSS Feed', 'Premium feature - RSS Feed', 'Fonctionnalité Premium - Flux RSS', NULL, NULL, NULL),
 ('Your account will be deleted within the next 48 hours', 'Your account will be deleted within the next 48 hours', 'Votre compte sera supprimé au cours des prochaines 48 heures', NULL, NULL, NULL),
 ('If you want to stop deletion, send an email to support@cairn-devices.eu within 48 hours', 'If you want to stop deletion, send an email to support@cairn-devices.eu within 48 hours', 'Si vous voulez arrêter la suppression, envoyez un email à support@cairn-devices.eu dans les 48 heures qui suivent', NULL, NULL, NULL),
+('alert found', 'alert found', 'alerte trouvée :', NULL, NULL, NULL),
+('alerts found', 'alerts found', 'alertes trouvées :', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);

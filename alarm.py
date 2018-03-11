@@ -2,7 +2,9 @@
 
 """SERGE alert functions (building and formatting an alert)"""
 
+import ovh
 import MySQLdb
+from math import ceil
 
 ######### IMPORT SERGE SPECIALS MODULES
 import handshake
@@ -598,3 +600,124 @@ def alertMailBySource(user, translate_text, alert_news_list, pending_alerts, ale
 	</html>""".format(translate_text["web_serge"], translate_text["unsubscribe"], translate_text["github_serge"], translate_text["license_serge"]))
 
 	return alertmail
+
+
+def sergeTelecom(user, register, alert_news_list):
+	"""Format a sms message and then send it to the user's phone via the OVH API"""
+
+	########### CONNECTION TO SERGE DATABASE
+	database = handshake.databaseConnection()
+
+	######### PHONE NUMBER OF THE USER
+	query_user_private = "SELECT phone_number, language FROM users_table_serge WHERE id = %s"
+
+	call_users = database.cursor()
+	call_users.execute(query_user_private, (register))
+	user_private = call_users.fetchone()
+	call_users.close()
+
+	phonenumber = user_private[0]
+	language = user_private[1]
+
+	######### SELECT THE TRANSLATION
+	alert_lenght = len(alert_news_list)
+
+	if alert_lenght == 1:
+
+		query_translation = "SELECT "+language+" FROM text_content_serge WHERE EN = 'alert found'"
+
+		call_users = database.cursor()
+		call_users.execute(query_translation, )
+		translation = call_users.fetchone()
+		call_users.close()
+
+		translation = translation[0]
+
+	elif alert_lenght > 1:
+
+		query_translation = "SELECT "+language+" FROM text_content_serge WHERE EN = 'alerts found'"
+
+		call_users = database.cursor()
+		call_users.execute(query_translation, )
+		translation = call_users.fetchone()
+		call_users.close()
+
+		translation = translation[0]
+
+	########### DATA PROCESSING FOR SMS FORMATTING
+	results_string = u""
+
+	for alert_title_link in alert_news_list:
+		alert_title = alert_title_link[0]
+		alert_link = alert_title_link[1]
+		results_string = results_string+alert_title+" : "+alert_link+"\n"
+
+		message = "{0}, {1} {2}\n{3}".format(user[0:10], alert_lenght, translation, results_string)
+
+	######### OVH TOKENS
+	call_tokens = database.cursor()
+	call_tokens.execute("SELECT endpoint, application_key, application_secret, consumer_key FROM sms_tokens")
+	tokens = call_tokens.fetchone()
+	call_tokens.close()
+
+	endpoint = tokens[0]
+	application_key = tokens[1]
+	application_secret = tokens[2]
+	consumer_key = tokens[3]
+
+	######### OVH CLIENT CONNECTION
+	client = ovh.Client(
+		endpoint = endpoint,
+		application_key = application_key,
+		application_secret = application_secret,
+		consumer_key= consumer_key,
+	)
+
+	######### PREPARATION OF THE SEND REQUEST
+	service_name = client.get('/sms')
+	post_sms = "/sms/"+service_name[0]+"/jobs"
+
+	sender_retrieval = "/sms/"+service_name[0]+"/senders"
+	sender = client.get(sender_retrieval)
+
+	######### SEND THE SMS ALERT
+	result_send = client.post(url,
+		charset = 'UTF-8',
+		coding = '7bit',
+		message = message,
+		noStopClause = False,
+		priority = 'high',
+		receivers = [number],
+		senderForResponse = False,
+		validityPeriod = 2880,
+		sender = sender[0]
+	)
+
+	######### COUNT SMS CREDIT USED
+	message_length = float(len(message_length))
+	credit_used = ceil(message_length/160)
+	credit_used = int(credit_used)
+
+	######### SMS CREDITS OF THE USER
+	query_user_credits = "SELECT sms_credits FROM users_table_serge WHERE id = %s"
+
+	call_users = database.cursor()
+	call_users.execute(query_user_credits, (register))
+	user_private = call_users.fetchone()
+	call_users.close()
+
+	user_credits = user_credits[0]
+	user_credits = user_credits - credit_used
+
+	update_credits = ("UPDATE users_table_serge SET sms_credits = %s WHERE id = %s")
+
+	########### USER CREDITS UPDATE
+	update_database = database.cursor()
+	try:
+		update_database.execute(update_credits, (user_credits, register))
+		database.commit()
+	except Exception, except_type:
+		database.rollback()
+		logger_error.error("ROLLBACK AT USER CREDITS IN sergeTelecom")
+		logger_error.error(repr(except_type))
+		update_database.close()

@@ -24,6 +24,8 @@ CREATE TABLE `users_table_serge` (
 	`alert_by_sms` BOOLEAN NOT NULL DEFAULT 0,
 	`premium_expiration_date` int(11) DEFAULT 0,
 	`email_validation` BOOLEAN NOT NULL DEFAULT 0,
+	`sms_authorization` BOOLEAN NOT NULL DEFAULT 0,
+	`sms_credits` int(11) DEFAULT NULL,
 	`token` varchar(8) COLLATE utf8mb4_bin NOT NULL,
 	`add_source_status` text COLLATE utf8mb4_bin DEFAULT NULL,
 	PRIMARY KEY (id)
