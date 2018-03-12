@@ -15,6 +15,7 @@ include('languages.php');
 	<script src="js/scrollPos.js?<?php echo $_SERVER['REQUEST_TIME'];?>"></script>
 	<script src="js/backgroundPreviewAsTitle.js"></script>
 	<script src="js/copyToClipboard.js"></script>
+	<script src="js/confirmDeleteAccount.js"></script>
 	<?php
 	include('favicon.php');
 	?>

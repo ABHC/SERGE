@@ -7,8 +7,8 @@ $settingTab            = '';
 $errorMessage          = '';
 $checkYourEmails       = FALSE;
 $unvalidLink           = FALSE;
-$forgotPassphraseStep0 = FALSE;
-$forgotPassphraseStep1 = FALSE;
+$changePassphraseStep0 = FALSE;
+$changePassphraseStep1 = FALSE;
 
 include('model/get_text.php');
 include('model/get_text_var.php');
@@ -87,9 +87,9 @@ if (!empty($data['pseudo']) && !empty($data['password']))
 }
 
 # Step 0 for reset passphrase ask for email and captacha
-if (!empty($data['action']) && $data['action'] === 'forgotPassphrase')
+if (!empty($data['action']) && $data['action'] === 'changePassphrase')
 {
-	$forgotPassphraseStep0 = TRUE;
+	$changePassphraseStep0 = TRUE;
 
 	# Generate captcha
 	include('model/captcha.php');
@@ -110,14 +110,14 @@ if (!empty($data['action']) && $data['action'] === 'forgotPassphrase')
 	$_SESSION['captcha'] = hash('sha256', $captcha_val);
 }
 # Step 1 for reset passphrase check captcha and email
-elseif (!empty($data['action']) && $data['action'] === 'forgotPassphraseProcessing')
+elseif (!empty($data['action']) && $data['action'] === 'changePassphraseProcessing')
 {
 	if ($_SESSION['captcha'] !== hash('sha256', $data['captcha']))
 	{
 		# Cleaning
 		$_SESSION['captcha'] = '';
 
-		header('Location: connection?action=forgotPassphrase&error=badCaptcha');
+		header('Location: connection?action=changePassphrase&error=badCaptcha');
 		die();
 	}
 
@@ -139,7 +139,7 @@ elseif (!empty($data['action']) && $data['action'] === 'forgotPassphraseProcessi
 
 		# Send email verification
 		$to      = $data['email'];
-		$subject = 'Serge : Passphrase forgot';
+		$subject = 'Serge : Passphrase change';
 		$body    = "By clicking on this link you will reset your passphrase :  $verifyLink";
 
 		include('controller/sendmail.php');

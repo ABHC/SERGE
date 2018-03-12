@@ -1,13 +1,13 @@
 <div class="background"></div>
 <div class="body">
 	<?php
-	if ($forgotPassphraseStep0)
+	if ($changePassphraseStep0)
 	{
 		?>
 		<div class="connection">
-			<span class="title_connection"><?php get_t('title0_forgotPass_connection', $bdd); ?></span>
+			<span class="title_connection"><?php get_t('title0_changePass_connection', $bdd); ?></span>
 
-			<form method="post" action="connection?action=forgotPassphraseProcessing">
+			<form method="post" action="connection?action=changePassphraseProcessing">
 				<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
 
 				<p class="title_form_connection"><?php get_t('input4_signup_index', $bdd); ?></p> <p><input class="connection_field" type="email" name="forg_email" id="Email" value="" /></p>
@@ -25,16 +25,16 @@
 
 				<?php echo $errorMessage; ?>
 				<a class="text_connection" href="index#signup"><?php get_t('noAccount_link_connection', $bdd); ?></a>
-				<input class="submit_connection" type="submit" value="<?php get_t('submit0_forgotPass_connection', $bdd); ?>"/>
+				<input class="submit_connection" type="submit" value="<?php get_t('submit0_changePass_connection', $bdd); ?>"/>
 			</form>
 		</div>
 		<?php
 	}
-	elseif ($forgotPassphraseStep1)
+	elseif ($changePassphraseStep1)
 	{
 		?>
 		<div class="connection">
-			<span class="title_connection"><?php get_t('title1_forgotPass_connection', $bdd); ?></span>
+			<span class="title_connection"><?php get_t('title1_changePass_connection', $bdd); ?></span>
 
 			<form method="post" action="connection?action=resetPassphraseProcessing&token=<?php echo $data['token'];?>&checker=<?php echo $data['checker'];?>">
 				<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
@@ -55,7 +55,7 @@
 				</div>
 
 				<?php echo $errorMessage; ?>
-				<input class="submit_connection" type="submit" value="<?php get_t('title1_forgotPass_connection', $bdd); ?>"/>
+				<input class="submit_connection" type="submit" value="<?php get_t('title1_changePass_connection', $bdd); ?>"/>
 			</form>
 		</div>
 		<?php
@@ -64,7 +64,7 @@
 	{
 		?>
 		<div class="connection">
-			<?php get_t('checkMail_forgotPass_connection', $bdd); ?>
+			<?php get_t('checkMail_changePass_connection', $bdd); ?>
 		</div>
 		<?php
 	}
@@ -72,7 +72,7 @@
 	{
 		?>
 		<div class="connection">
-			<?php get_t('invalidRequest_forgotPass_connection', $bdd); ?>
+			<?php get_t('invalidRequest_changePass_connection', $bdd); ?>
 		</div>
 		<?php
 	}
@@ -87,7 +87,7 @@
 				<p class="title_form_connection"><?php get_t('input1_signin_connection', $bdd); ?></p> <p><input class="connection_field" type="text" name="conn_pseudo" id="Pseudo" value="<?php echo $data['pseudo'] ?? '';?>" /></p>
 				<p class="title_form_connection"><?php get_t('input2_signin_connection', $bdd); ?></p> <p><input class="connection_field" type="password" name="conn_password" id="conn_password" /></p>
 				<?php echo $errorMessage; ?>
-				<a class="text_connection" href="?action=forgotPassphrase"><?php get_t('forgotPass_link_connection', $bdd); ?></a><br>
+				<a class="text_connection" href="?action=changePassphrase"><?php get_t('forgotPass_link_connection', $bdd); ?></a><br>
 				<a class="text_connection" href="index#signup"><?php get_t('noAccount_link_connection', $bdd); ?></a>
 				<input class="submit_connection" type="submit" value="<?php get_t('submit_signin_connection', $bdd); ?>"/>
 			</form>

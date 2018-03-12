@@ -237,7 +237,7 @@
 			</div>
 			<span class="mainSetting">
 				<span class="mainSettingOption">
-					<a class="text_connection" href="connection?action=forgotPassphrase"><img alt="Passphrase" src="../images/pictogrammes/pictoMdp.png" class="icoText"/>&nbsp;<?php get_t('Change your passphrase', $bdd); ?></a>
+					<a class="text_connection" href="connection?action=changePassphrase"><img alt="Passphrase" src="../images/pictogrammes/pictoMdp.png" class="icoText"/>&nbsp;<?php get_t('Change your passphrase', $bdd); ?></a>
 				</span>
 				<span class="mainSettingOption">
 					<img alt="Language" src="../images/pictogrammes/pictoLanguage.png" class="icoText"/>&nbsp;<?php get_t('Change your language', $bdd); ?>&nbsp;<select class="shortSelect" name="selectLanguage" onchange="autoSubmit(this.form);">
@@ -284,7 +284,7 @@
 					<span class="Hseparator red"></span>
 				</span>
 				<span class="mainSettingOption">
-					<img alt="Alert" src="../images/pictogrammes/redcross.png" class="icoText"/>&nbsp;<a href="deleteAccount?token=<?php echo $token[0]['token']; ?>" onclick="confirm('<?php get_t('Are you sure you want to delete your account ?', $bdd); ?>');"><?php get_t('Delete my account', $bdd); ?></a>
+					<img alt="Alert" src="../images/pictogrammes/redcross.png" class="icoText"/>&nbsp;<span class="fakeLink" onclick="confirmDAccount('<?php get_t('Are you sure you want to delete your account ?', $bdd); ?>', '<?php echo $token[0]['token']; ?>');"><?php get_t('Delete my account', $bdd); ?></span>
 				</span>
 			</span>
 			<span class="optionFold">

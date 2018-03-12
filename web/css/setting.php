@@ -50,6 +50,11 @@ include('nav.php');
 	z-index: -1;
 }
 
+.fakeLink
+{
+	cursor: pointer;
+}
+
 .noPremium
 {
 	z-index: -1;

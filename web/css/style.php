@@ -59,12 +59,12 @@ a
 *:placeholder,
 *::placeholder,
 *:placeholder-shown,
-::-webkit-input-placeholder,
-:-ms-input-placeholder,
-:-moz-placeholder,
-:placeholder,
-::placeholder,
-:placeholder-shown
+input::-webkit-input-placeholder,
+input:-ms-input-placeholder,
+input:-moz-placeholder,
+input:placeholder,
+input::placeholder,
+input:placeholder-shown
 {
 	color: rgb(170,170,170);
 }
