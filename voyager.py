@@ -40,22 +40,22 @@ def newscast(newscast_args):
 
 	need_jelly = True
 
-	########### LINK & ID_RSS EXTRACTION
+	########### LINK & SOURCE ID EXTRACTION
 	link = newscast_args[0].strip()
-	id_rss = newscast_args[1]
+	source_id = newscast_args[1]
 	old_etag = newscast_args[2]
 	max_users = newscast_args[3]
 	now = newscast_args[4]
 
-	id_rss = str(id_rss)
-	id_rss_comma = "," + id_rss + ","
-	id_rss_comma_percent = "%," + id_rss + ",%"
+	source_id = str(source_id)
+	source_id_comma = "," + source_id + ","
+	source_id_comma_percent = "%," + source_id + ",%"
 
 	######### CALL TO TABLE keywords_news_serge
 	query = "SELECT id, keyword FROM keyword_news_serge WHERE applicable_owners_sources LIKE %s AND active > 0"
 
 	call_news = database.cursor()
-	call_news.execute(query, (id_rss_comma_percent,))
+	call_news.execute(query, (source_id_comma_percent,))
 	rows = call_news.fetchall()
 	call_news.close()
 
@@ -132,7 +132,7 @@ def newscast(newscast_args):
 			call_news.close()
 			source_owners = source_owners[0]
 
-			second_conditions = (couple_owners_sources for couple_owners_sources in applicable_owners_sources if id_rss_comma in couple_owners_sources)
+			second_conditions = (couple_owners_sources for couple_owners_sources in applicable_owners_sources if source_id_comma in couple_owners_sources)
 
 			keyword_owners = ","
 
@@ -258,12 +258,12 @@ def newscast(newscast_args):
 						query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s, keyword_id = %s, owners = %s WHERE link = %s")
 
 						########### LINK VALIDATION
-						post_link = failDetectorPack.failUniversalCorrectorKit(post_link, id_rss)
+						post_link = failDetectorPack.failUniversalCorrectorKit(post_link, source_id)
 
 						if post_link is not None:
 							########### ITEM BUILDING
 							post_title = escaping(post_title)
-							item = {"title": post_title, "link": post_link, "date": post_date, "source_id": id_rss, "keyword_id": keyword_id_comma2, "owners": owners}
+							item = (post_title, post_link, post_date, source_id, keyword_id_comma2, owners)
 							item_update = [post_link]
 
 							########### CALL insertOrUpdate FUNCTION
@@ -274,7 +274,7 @@ def newscast(newscast_args):
 					if "[!ALERT!]" in keyword:
 						keyword = keyword.replace("[!ALERT!]", "")
 
-					if (re.search('[^a-z]'+re.escape(keyword)+'.{0,3}(\W|$)', post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(keyword)+'.{0,3}(\W|$)', post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(keyword)+'.{0,3}(\W|$)', tags_string, re.IGNORECASE) or re.search('^'+re.escape(':all@'+id_rss)+'$', keyword, re.IGNORECASE)) and owners is not None:
+					if (re.search('[^a-z]'+re.escape(keyword)+'.{0,3}(\W|$)', post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(keyword)+'.{0,3}(\W|$)', post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(keyword)+'.{0,3}(\W|$)', tags_string, re.IGNORECASE) or re.search('^'+re.escape(':all@'+source_id)+'$', keyword, re.IGNORECASE)) and owners is not None:
 
 						########### QUERY FOR DATABASE CHECKING
 						query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s  AND title = %s")
@@ -290,12 +290,12 @@ def newscast(newscast_args):
 						query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s, keyword_id = %s, owners = %s WHERE link = %s")
 
 						########### LINK VALIDATION
-						alter_link = failDetectorPack.failUniversalCorrectorKit(post_link, id_rss)
+						alter_link = failDetectorPack.failUniversalCorrectorKit(post_link, source_id)
 
 						if alter_link is not None:
 							########### ITEM BUILDING
 							post_title = escaping(post_title)
-							item = {"title": post_title, "link": post_link, "date": post_date, "source_id": id_rss, "keyword_id": keyword_id_comma2, "owners": owners}
+							item = (post_title, post_link, post_date, source_id, keyword_id_comma2, owners)
 							item_update = [post_link]
 
 							########### CALL insertOrUpdate FUNCTION
@@ -357,7 +357,7 @@ def science(now):
 				query_id = science_api_pack[0]
 				link = science_api_pack[1]
 				query_api = science_api_pack[2]
-				api_id = science_api_pack[3]
+				source_id = science_api_pack[3]
 				owners = science_api_pack[5]
 
 				logger_info.info(query_api.encode("utf8")+"\n")
@@ -427,7 +427,7 @@ def science(now):
 
 								########### ITEM BUILDING
 								post_title = escaping(post_title)
-								item = {"title": post_title, "link": post_link, "date": post_date, "source_id": api_id, "keyword_id": keyword_id_comma2, "owners": owners}
+								item = (post_title, post_link, post_date, source_id, keyword_id_comma2, owners)
 								item_update = [post_link]
 
 								########### CALL insertOrUpdate FUNCTION
@@ -445,7 +445,7 @@ def science(now):
 				query_id = science_api_pack[0]
 				link = science_api_pack[1]
 				query_api = science_api_pack[2]
-				api_id = science_api_pack[3]
+				source_id = science_api_pack[3]
 				owners = science_api_pack[5]
 
 				logger_info.info(query_api.encode("utf8")+"\n")
@@ -514,7 +514,7 @@ def science(now):
 
 								########### ITEM BUILDING
 								post_title = escaping(post_title)
-								item = {"title": post_title, "link": post_link, "date": post_date, "source_id": api_id, "keyword_id": keyword_id_comma2, "owners": owners}
+								item = (post_title, post_link, post_date, source_id, keyword_id_comma2, owners)
 								item_update = [post_link]
 
 								########### CALL  FUNCTION
@@ -545,7 +545,7 @@ def patents(now):
 	logger_error = logging.getLogger("error_log")
 
 	need_jelly = False
-	id_rss = 1
+	source_id = 1
 
 	logger_info.info("\n\n######### Last Patents Research (patents function) : \n\n")
 
@@ -681,7 +681,7 @@ def patents(now):
 
 						########### ITEM BUILDING
 						post_title = escaping(post_title)
-						item = {"title": post_title, "link": post_link, "date": post_date, "source_id": id_rss, "keyword_id": keyword_id_comma2, "owners": owners, "abstract": legal_abstract, "status": legal_status, "check_date": new_check_date}
+						item = (post_title, post_link, post_date, source_id, keyword_id_comma2, owners, legal_abstract, legal_status, lens_link, new_check_date)
 						item_update = [legal_abstract, legal_status, lens_link, new_check_date, post_link]
 
 						########### CALL insertOrUpdate FUNCTION

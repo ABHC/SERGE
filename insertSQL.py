@@ -14,7 +14,7 @@ from handshake import databaseConnection
 
 
 def ofSourceAndName(now):
-	"""ofSourceAndName check the field 'name' in rss_serge and fill it if it is empty or update it"""
+	"""ofSourceAndName check the field 'name' in rss_serge and fill it if empty or update it"""
 
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
@@ -252,12 +252,12 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 	logger_error = logging.getLogger("error_log")
 
 	########### ITEM EXTRACTION FOR OPERATIONS
-	post_title = item["title"]
-	post_link = item["link"]
-	post_date = int(item["date"])
-	source_id = item["source_id"]
-	keyword_id_comma2 = item["keyword_id"]
-	owners = item["owners"]
+	post_title = item[0]
+	post_link = item[1]
+	post_date = int(item[2])
+	source_id = item[3]
+	keyword_id_comma2 = item[4]
+	owners = item[5]
 
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
