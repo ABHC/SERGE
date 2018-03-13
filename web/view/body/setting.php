@@ -139,7 +139,7 @@
 					{
 						?>
 						<div class="redAlert">
-							<div class="redAlertPicto"></div><?php get_t('title2_premium_setting', $bdd); ?>
+							<div class="redAlertPicto"></div>&nbsp;&nbsp;&nbsp;<?php get_t('title2_premium_setting', $bdd); ?>
 						</div>
 						<?php
 					}
