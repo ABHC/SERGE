@@ -9,7 +9,7 @@ CREATE TABLE `users_table_serge` (
 	`password` text COLLATE utf8mb4_bin NOT NULL,
 	`salt` text COLLATE utf8mb4_bin NOT NULL,
 	`signup_date` int(11) NOT NULL,
-	`result_by_email` BOOLEAN NOT NULL DEFAULT 0,
+	`result_by_email` BOOLEAN NOT NULL DEFAULT 1,
 	`last_mail` int(11) DEFAULT NULL,
 	`send_condition` varchar(15) COLLATE utf8mb4_bin NOT NULL DEFAULT 'link_limit',
 	`frequency` int(11) DEFAULT NULL,
