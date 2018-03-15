@@ -523,8 +523,7 @@
 
 				echo '
 				<span class="queryContainer ' . $Qdisable . '">
-					<input type="submit" title="' . var_get_t('Delete', $bdd) . '" class="deleteQuery" name="delQueryScience" value="query' . $watchPackUsed['id'] . '"/>
-					<input type="submit" title="' . $titleDisableActivate . '" class="' . $nameClassDisableActivate . 'Query" name="' . $nameClassDisableActivate . 'QueryScience" value="query' . $watchPackUsed['id'] . '"/>
+					<input type="submit" title="' . var_get_t('Delete', $bdd) . '" class="deleteQuery" name="removePack" value="' . $watchPackUsed['id'] . '"/>
 				';
 
 				echo '<span title="' . $watchPackUsed['description'] . '">' . $watchPackUsed['name'] . '</span></span>';

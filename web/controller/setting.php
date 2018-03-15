@@ -64,7 +64,6 @@ $unsafeData = array_merge($unsafeData, array(array('delQueryPatent', 'delQueryPa
 $unsafeData = array_merge($unsafeData, array(array('disableQueryPatent', 'disableQueryPatent', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('activateQueryPatent', 'activateQueryPatent', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('removePack', 'removePack', 'POST', '09')));
-$unsafeData = array_merge($unsafeData, array(array('removeWP', 'removeWP', 'POST', 'Az')));
 $unsafeData = array_merge($unsafeData, array(array('resultByEmail', 'resultByEmail', 'POST', 'Az')));
 $unsafeData = array_merge($unsafeData, array(array('tel', 'tel', 'POST', '09')));
 $unsafeData = array_merge($unsafeData, array(array('resultBySMS', 'resultBySMS', 'POST', 'Az')));
@@ -228,7 +227,7 @@ $userSettings = read('users_table_serge', 'id, email, phone_number, password, re
 $userSettings = $userSettings[0];
 
 # Remove watchPack
-if ($emailIsCheck && !empty($data['removeWP']) && $data['removeWP'] === 'removeWP' && !empty($data['removePack']))
+if ($emailIsCheck && !empty($data['removePack']))
 {
 	include('model/removeWatchPackForAnUser.php');
 }
