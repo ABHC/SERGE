@@ -142,6 +142,7 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 														array('signup_date', $_SERVER['REQUEST_TIME']),
 														array('language', $language),
 														array('record_read', 1),
+														array('premium_expiration_date', 1578765313),
 														array('token', $token));
 					$execution = insert('users_table_serge', $insertCol, '', '', $bdd);
 
