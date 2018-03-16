@@ -219,19 +219,11 @@ pool.join()
 logger_info.info("AFFECTATION")
 
 call_users = database.cursor()
-call_users.execute("SELECT users FROM users_table_serge")
-rows = call_users.fetchall()
+call_users.execute("SELECT id, users FROM users_table_serge")
+user_list = call_users.fetchall()
 call_users.close()
 
-user_list_all = []
-
-for row in rows:
-	field = row[0].strip()
-	user_list_all.append(field)
-
-register = 1
-
-for user in user_list_all:
+for register, user in user_list:
 	register = str(register)
 	logger_info.info("USER : " + register)
 	user_id_comma = "%," + register + ",%"
@@ -361,9 +353,6 @@ for user in user_list_all:
 
 	else:
 		logger_info.critical("ERROR : BAD CONDITION")
-
-	register = int(register)
-	register = register+1
 
 ######### EXECUTION TIME
 the_end = time.time()

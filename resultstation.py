@@ -41,7 +41,7 @@ def triage(register, user_id_comma):
 	query_record = "SELECT record_read FROM users_table_serge WHERE id LIKE %s"
 
 	call_users = database.cursor()
-	call_users.execute(query_record, (int(register),))
+	call_users.execute(query_record, (register,))
 	record_read = call_users.fetchone()
 	call_users.close()
 
