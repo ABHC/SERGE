@@ -160,7 +160,7 @@ elseif (!empty($data['action']) && $data['action'] === 'resetPassphrase'
 
 	if ($data['checker'] === $checker)
 	{
-		$forgotPassphraseStep1 = TRUE;
+		$changePassphraseStep1 = TRUE;
 
 		# Generate captcha
 		include('model/captcha.php');
