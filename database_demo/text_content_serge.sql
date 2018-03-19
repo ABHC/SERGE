@@ -24,7 +24,7 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('functionality1_title_index', 'Follow RSS feeds', 'Suivre les flux RSS', NULL, NULL, NULL),
 ('functionality2_title_index', 'Patents', 'Brevets', 'Patentes', NULL, NULL),
 ('functionality3_title_index', 'Scientific publications', 'Publications scientifiques', NULL, NULL, NULL),
-('functionality4_title_index', 'News"Propulsé par"letter', 'Newsletter', NULL, NULL, NULL),
+('functionality4_title_index', 'Newsletter', 'Newsletter', NULL, NULL, NULL),
 ('functionality5_title_index', 'High customisation', 'Haute personnalisation', NULL, NULL, NULL),
 ('functionality6_title_index', 'Effective history', 'Historique efficace', NULL, NULL, NULL),
 ('functionality7_title_index', 'RSS feed', 'Flux RSS', NULL, NULL, NULL),
