@@ -14,7 +14,7 @@ With Serge you can find and create a "Watch pack". A watch pack is a set of medi
 
 Become a Beta tester with full access for free at [vigiserge.eu](https://vigiserge.eu/)
 
-You can check the user's guide [here](https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation) (only in French for now)
+You can check the user's guide [here](https://github.com/ABHC/SERGE/wiki/User's-Guide)
 
 ---
 
