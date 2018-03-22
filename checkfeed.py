@@ -50,7 +50,7 @@ def allCheckLong(link):
 	"""Function for standardized requests to feed and internet pages."""
 
 	try:
-		req = requests.get(link, headers={'User-Agent': "Serge Browser"}, timeout=5)
+		req = requests.get(link, headers={'User-Agent': "Serge Browser"}, timeout=10)
 		req.encoding = "utf8"
 		rss = req.text
 		rss_error = False
