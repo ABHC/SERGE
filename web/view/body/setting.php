@@ -132,7 +132,7 @@
 							</div>
 						</div>
 						<div>
-						<a class="helpMe" href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation" target="_blank">?</a>&nbsp;<a href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation" target="_blank"><?php get_t('User guide', $bdd); ?></a>
+						<a class="helpMe" href="<?php get_t('https://github.com/ABHC/SERGE/wiki/User\'s-Guide', $bdd); ?>" target="_blank">?</a>&nbsp;<a href="<?php get_t('https://github.com/ABHC/SERGE/wiki/User\'s-Guide', $bdd); ?>" target="_blank"><?php get_t('User guide', $bdd); ?></a>
 					</div>
 					<?php
 					if (!$emailIsCheck)
@@ -172,7 +172,7 @@
 
 		<div class="board" id="premium">
 			<div>
-				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#options-g%C3%A9n%C3%A9rales" target="_blank">?</a>
+				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="<?php get_t('https://github.com/ABHC/SERGE/wiki/User\'s-Guide#premium-information', $bdd); ?>" target="_blank">?</a>
 				<h2><?php get_t('Premium', $bdd); ?></h2>
 			</div>
 			<div>
@@ -232,7 +232,7 @@
 
 		<div class="board" id="setting">
 			<div class="titleBoard">
-				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#options-g%C3%A9n%C3%A9rales" target="_blank">?</a>
+				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="<?php get_t('https://github.com/ABHC/SERGE/wiki/User\'s-Guide#settings', $bdd); ?>" target="_blank">?</a>
 				<h2><?php get_t('Settings', $bdd); ?></h2>
 			</div>
 			<span class="mainSetting">
@@ -499,7 +499,7 @@
 
 		<div class="board" id="watchPack">
 			<div class="titleBoard">
-				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#options-g%C3%A9n%C3%A9rales" target="_blank">?</a>
+				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="<?php get_t('https://github.com/ABHC/SERGE/wiki/User\'s-Guide#watchpacks-management', $bdd); ?>" target="_blank">?</a>
 				<h2><?php get_t('Watchpacks management', $bdd); ?></h2>
 			</div>
 			<span class="inlineButton">
@@ -533,7 +533,7 @@
 
 		<div class="keywordManagement" id="news">
 			<div class="titleBoard">
-				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#actu" target="_blank">?</a>
+				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="<?php get_t('https://github.com/ABHC/SERGE/wiki/User\'s-Guide#news', $bdd); ?>" target="_blank">?</a>
 				<h2><?php get_t('window2_title_setting', $bdd); ?></h2>
 			</div>
 			<div class="newsInput">
@@ -708,7 +708,7 @@
 
 		<div class="scientificPublicationManagement" id="science">
 			<div class="titleBoard">
-				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#scientifique" target="_blank">?</a>
+				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="<?php get_t('https://github.com/ABHC/SERGE/wiki/User\'s-Guide#scientific', $bdd); ?>" target="_blank">?</a>
 				<h2><?php get_t('window3_title_setting', $bdd); ?></h2>
 			</div>
 			<div class="newQueryContainer">
@@ -899,7 +899,7 @@
 
 		<div class="patentManagement" id="patent">
 			<div class="titleBoard">
-				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="https://github.com/ABHC/SERGE/wiki/Guide-d'utilisation#brevet" target="_blank">?</a>
+				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="<?php get_t('https://github.com/ABHC/SERGE/wiki/User\'s-Guide#patents', $bdd); ?>" target="_blank">?</a>
 				<h2><?php get_t('window4_title_setting', $bdd); ?></h2>
 			</div>
 			<div class="newQueryContainer">

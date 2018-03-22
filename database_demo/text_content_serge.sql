@@ -267,4 +267,13 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('alert found', 'alert found', 'alerte trouvée :', NULL, NULL, NULL),
 ('alerts found', 'alerts found', 'alertes trouvées :', NULL, NULL, NULL),
 ('Sorry, SMS purchase is not available in beta version', 'Sorry, SMS purchase is not available in beta version', 'Désolé, l\'achat par SMS n\'est pas disponible en version beta', NULL, NULL, NULL),
+('https://github.com/ABHC/SERGE/wiki/User\'s-Guide', 'https://github.com/ABHC/SERGE/wiki/User\'s-Guide', 'https://github.com/ABHC/SERGE/wiki/Guide-d\'utilisation', NULL, NULL, NULL),
+('https://github.com/ABHC/SERGE/wiki/User\'s-Guide#premium-information', 'https://github.com/ABHC/SERGE/wiki/User\'s-Guide#premium-information', 'https://github.com/ABHC/SERGE/wiki/Guide-d\'utilisation#informations-du-premium', NULL, NULL, NULL),
+('https://github.com/ABHC/SERGE/wiki/User\'s-Guide#settings', 'https://github.com/ABHC/SERGE/wiki/User\'s-Guide#settings', 'https://github.com/ABHC/SERGE/wiki/Guide-d\'utilisation#r%C3%A9glages', NULL, NULL, NULL),
+('https://github.com/ABHC/SERGE/wiki/User\'s-Guide#watchpacks-management', 'https://github.com/ABHC/SERGE/wiki/User\'s-Guide#watchpacks-management', 'https://github.com/ABHC/SERGE/wiki/Guide-d\'utilisation#gestion-des-packs-de-veille', NULL, NULL, NULL),
+('https://github.com/ABHC/SERGE/wiki/User\'s-Guide#news', 'https://github.com/ABHC/SERGE/wiki/User\'s-Guide#news', 'https://github.com/ABHC/SERGE/wiki/Guide-d\'utilisation#actualit%C3%A9s', NULL, NULL, NULL),
+('https://github.com/ABHC/SERGE/wiki/User\'s-Guide#scientific', 'https://github.com/ABHC/SERGE/wiki/User\'s-Guide#scientific', 'https://github.com/ABHC/SERGE/wiki/Guide-d\'utilisation#scientifique', NULL, NULL, NULL),
+('https://github.com/ABHC/SERGE/wiki/User\'s-Guide#patents', 'https://github.com/ABHC/SERGE/wiki/User\'s-Guide#patents', 'https://github.com/ABHC/SERGE/wiki/Guide-d\'utilisation#brevet', NULL, NULL, NULL),
+('https://github.com/ABHC/SERGE/wiki/User\'s-Guide#createedit-a-watchpack', 'https://github.com/ABHC/SERGE/wiki/User\'s-Guide#createedit-a-watchpack', 'https://github.com/ABHC/SERGE/wiki/Guide-d\'utilisation#cr%C3%A9ation%C3%89dition-dun-pack-de-veille', NULL, NULL, NULL),
+('https://github.com/ABHC/SERGE/wiki/User\'s-Guide#add-a-watchpack', 'https://github.com/ABHC/SERGE/wiki/User\'s-Guide#add-a-watchpack', 'https://github.com/ABHC/SERGE/wiki/Guide-d\'utilisation#ajout-dun-pack-de-veille', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);
