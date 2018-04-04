@@ -141,7 +141,7 @@
 				</p>
 
 				<p class="title_form_inscription" ><?php get_t('input4_signup_index', $bdd); ?><br>
-					<input class="inscription_field" type="email" name="reg_mail" id="Mail" value="<?php echo $emailValue; ?>"/>
+					<input class="inscription_field" type="email" name="reg_mail" id="Mail" value="<?php echo $emailValue ?? ''; ?>"/>
 				</p>
 
 				<div class="title_form_inscription" ><?php get_t('input5_signup_index', $bdd); ?>

@@ -460,7 +460,7 @@ else
 
 	$selectLanguage = $selectLanguage . PHP_EOL . '</select>';
 
-	if ($emailIsCheck && isset($data['watchPackList']) && $data['watchPackList'] === 0 && empty($data['addNewPack']))
+	if ($emailIsCheck && isset($data['watchPackList']) && $data['watchPackList'] == 0 && empty($data['addNewPack']))
 	{
 		header('Location: watchPack?type=create');
 		die();
@@ -1037,7 +1037,7 @@ else
 			$delEditingPatentQuery = $data['delEditingPatentQuery'];
 		}
 	}
-	elseif ($emailIsCheck && !empty($data['addNewPack']) && isset($data['watchPackList']) && $data['watchPackList'] === 0 && !empty($data['watchPackName']) && !empty($data['watchPackDescription']))
+	elseif ($emailIsCheck && !empty($data['addNewPack']) && isset($data['watchPackList']) && $data['watchPackList'] == 0 && !empty($data['watchPackName']) && !empty($data['watchPackDescription']))
 	{
 		$newWatchPackName = $data['watchPackName'];
 		$language = strtoupper($data['language']);
@@ -1097,7 +1097,7 @@ else
 			$ERRORMESSAGENEWPACKNAME = 'A watch pack with this name already exist, please change the name';
 		}
 	}
-	elseif ($emailIsCheck && !empty($data['addNewPack']) && isset($data['watchPackList']) && $data['watchPackList'] === 0 && (empty($data['watchPackName']) || empty($data['watchPackDescription'])))
+	elseif ($emailIsCheck && !empty($data['addNewPack']) && isset($data['watchPackList']) && $data['watchPackList'] == 0 && (empty($data['watchPackName']) || empty($data['watchPackDescription'])))
 	{
 		$ERRORMESSAGEEMPTYNAMEORDESC = 'You have to enter a name and a description for your watch pack';
 	}

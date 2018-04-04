@@ -52,7 +52,7 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 			# Check size of passphrase
 			if(!isset($data['password']{8}))
 			{
-				$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> ' . var_get_t('errorMessagePassphrase', $bdd) . '<br>';
+				$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=20px /> ' . var_get_t('errorMessagePassphrase', $bdd) . '<br>';
 			}
 			else
 			{
@@ -64,17 +64,17 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 				$emailExist = read('users_table_serge', '', $checkCol, '', $bdd);
 				if(filter_var($data['email'], FILTER_VALIDATE_EMAIL) === FALSE)
 				{
-					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Invalid email <br>';
+					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=20px /> Invalid email <br>';
 					$emailValue   = '';
 				}
 				elseif($pseudoExist)
 				{
-					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Existing pseudo <br>';
+					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=20px /> Existing pseudo <br>';
 					$pseudoValue  = '';
 				}
 				elseif($emailExist)
 				{
-					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> Existing email <br>';
+					$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=20px /> Existing email <br>';
 					$emailValue   = '';
 				}
 				else
@@ -173,12 +173,12 @@ if(!empty($data['pseudo']) && !empty($data['email']) && !empty($data['password']
 		}
 		else
 		{
-			$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> ' . var_get_t('errorMessagePassphrase', $bdd) . '<br>';
+			$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=20px /> ' . var_get_t('errorMessagePassphrase', $bdd) . '<br>';
 		}
 	}
 	else
 	{
-		$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=15px /> ' . var_get_t('errorMessageCaptcha', $bdd) . '<br>';
+		$errorMessage = '<img src="images/pictogrammes/redcross.png" alt="error" width=20px /> ' . var_get_t('errorMessageCaptcha', $bdd) . '<br>';
 		$_SESSION['captcha'] = '';
 	}
 }

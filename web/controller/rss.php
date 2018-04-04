@@ -12,10 +12,13 @@ include('controller/dataProcessing.php');
 $data['token'] = preg_replace("/\.php/", '', $data['token']);
 preg_match("/[A-Fa-f0]{8}/", $data['token'], $token);
 
-$checkCol = array(array('token', '=', $token[0], 'AND'),
-									array('premium_expiration_date', '>', $_SERVER['REQUEST_TIME'], ''));
-$user     = read('users_table_serge', 'id, users', $checkCol, '', $bdd);
-$user     = $user[0];
+if (!empty($token[0]))
+{
+	$checkCol = array(array('token', '=', $token[0], 'AND'),
+	array('premium_expiration_date', '>', $_SERVER['REQUEST_TIME'], ''));
+	$user     = read('users_table_serge', 'id, users', $checkCol, '', $bdd);
+	$user     = $user[0] ?? '';
+}
 
 preg_match("/[sp]$/", $data['token'], $resultType);
 
