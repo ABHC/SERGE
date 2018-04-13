@@ -272,6 +272,10 @@ def feedMeUp(link, user_id, typeName, pack_id, recursive):
 
 		else:
 			title = (xmldoc.feed.title.encode('ascii', errors='xmlcharrefreplace'))
+			if title is None or title == '':
+				parsed = urlparse(link)
+				base = parsed.netloc
+				title = base
 			backgroundLinksAddition(link, user_id, typeName, pack_id, title)
 
 	elif rss_error is True and recursive is False:

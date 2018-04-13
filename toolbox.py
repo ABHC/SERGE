@@ -10,7 +10,7 @@ from logging.handlers import RotatingFileHandler
 
 
 def cemeteriesOfErrors(*exc_info):
-	"""Error hook whose the purpose is to write the traceback in the error log."""
+	"""Error hook whose the purpose is to write the traceback in the error log"""
 
 	######### LOGGER CALL
 	logger_info = logging.getLogger("info_log")
