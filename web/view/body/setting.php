@@ -657,7 +657,7 @@
 					{
 						$applicable_owners_sources = $ownerKeywordList['applicable_owners_sources'];
 						$ownerKeywordList['keyword'] = preg_replace("/^:all@[0-9]+$/", ":All", $ownerKeywordList['keyword']);
-						$ownerKeywordList['keyword'] = preg_replace("/^\[!ALERT!\]/", "&#9888; ", $ownerKeywordList['keyword']);
+						$ownerKeywordList['keyword'] = preg_replace("/^\[!alert!\]/", "&#9888; ", $ownerKeywordList['keyword']);
 						if (preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*," . $ownerSourcesList['id'] . ",[,!0-9,]*\|/", $applicable_owners_sources))
 						{
 							echo

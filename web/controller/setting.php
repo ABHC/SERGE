@@ -484,17 +484,17 @@ if ($emailIsCheck && isset($data['sourceKeyword']) && !empty($data['newKeyword']
 				$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd);
 			}
 		}
-		elseif (preg_match("/^alert:.+/i", $newKeyword) && $sourceId != '0')
+		elseif (preg_match("/^:alert.+/i", $newKeyword) && $sourceId != '0')
 		{
-			$newKeyword    = preg_replace("/alert:/i", '', $newKeyword);
-			$newKeyword    = '[!ALERT!]' . $newKeyword;
+			$newKeyword    = preg_replace("/:alert/i", '', $newKeyword);
+			$newKeyword    = '[!alert!]' . $newKeyword;
 			$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd);
 		}
-		elseif (preg_match("/^alert:.+/i", $newKeyword) && $sourceId === '0')
+		elseif (preg_match("/^:alert.+/i", $newKeyword) && $sourceId === '0')
 		{
 			$updateBDD  = FALSE;
-			$newKeyword = preg_replace("/alert:/i", '', $newKeyword);
-			$newKeyword = '[!ALERT!]' . $newKeyword;
+			$newKeyword = preg_replace("/:alert/i", '', $newKeyword);
+			$newKeyword = '[!alert!]' . $newKeyword;
 			foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
 			{
 				$sourceId      = $ownerSourcesList['id'];
