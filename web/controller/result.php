@@ -63,6 +63,7 @@ $keywordQueryId     = 'keyword_id';
 $queryColumn        = 'keyword';
 $specialColumn      = ', id_source, keyword_id ';
 $displayColumn      = var_get_t('title2News_table_results', $bdd);
+$gType = '';
 
 # Select results type
 if (!empty($data['resultType']))
@@ -111,13 +112,13 @@ if (!empty($data['deleteLink']))
 		if (preg_match("/^delete[0-9]+$/", $key))
 		{
 			$checkCol     = array(array('id', '=', preg_replace("/^delete/", '', $key), ''));
-			$ownersResult = read('result_news_serge', 'owners', $checkCol, '', $bdd);
+			$ownersResult = read($tableName, 'owners', $checkCol, '', $bdd);
 
 			if (!empty($ownersResult))
 			{
 				$updateCol = array(array('owners', preg_replace("/,$pureID,/", ',', $ownersResult[0]['owners'])));
 				$checkCol  = array(array('id', '=', preg_replace("/^delete/", '', $key), ''));
-				$execution = update('result_news_serge', $updateCol, $checkCol, '', $bdd);
+				$execution = update($tableName, $updateCol, $checkCol, '', $bdd);
 			}
 		}
 	}
@@ -263,6 +264,11 @@ if (!empty($data['page']))
 	$actualPageLink = '&page=' . $data['page'];
 	$page           = $data['page'] - 1;
 	$base           = $limit * $page;
+}
+
+if (!empty($data['resultType']))
+{
+	$gType = '?type=' . $data['resultType'];
 }
 
 include('view/nav/nav.php');

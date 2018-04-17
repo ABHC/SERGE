@@ -22,7 +22,7 @@
 		</a>
 	</div>
 
-	<form class="tableContainer" method="post" action="result">
+	<form class="tableContainer" method="post" action="result<?php echo $gType; ?>">
 		<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
 		<div class="table-header">
 			<table>
