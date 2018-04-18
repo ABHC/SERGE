@@ -28,7 +28,7 @@
 			<table>
 				<thead>
 					<tr>
-						<th><input title="<?php get_t('Delete selected links', $bdd); ?>" name="deleteLink" class="submit" type="submit" value="delete" /></th>
+						<th><input type="checkbox" name="selectAll" id="checkAllPage" /><label class="checkbox" for="checkAllPage" onmouseup="checkAllPage();"></label><input title="<?php get_t('Delete selected links', $bdd); ?>" name="deleteLink" class="submit" type="submit" value="delete" /></th>
 						<?php
 						echo '
 						<th><a href="?orderBy=title' . $colOrder['DESC'] . $searchSort . $data['optionalCond'] . $actualPageLink . '&type=' . $type . '">'; get_t('title1_table_results', $bdd);

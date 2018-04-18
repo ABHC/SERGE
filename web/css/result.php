@@ -255,7 +255,12 @@ th:nth-child(7)
 
 th:nth-child(1)
 {
-	width: 40px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	padding-left: 27px;
+	width: 25px;
 }
 
 th:nth-child(2)

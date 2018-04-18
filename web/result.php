@@ -14,6 +14,7 @@ include('languages.php');
 	<?php
 	include('favicon.php');
 	?>
+	<script src="js/checkAllPage.js"></script>
 	<script src="js/piwik/piwik.js"></script>
 </head>
 
