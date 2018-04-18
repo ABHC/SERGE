@@ -8,6 +8,7 @@ import unicodedata
 ######### IMPORT SERGE SPECIALS MODULES
 import decoder
 import handshake
+from random import randrange
 
 
 def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list):
@@ -61,11 +62,29 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 	background = call_users.fetchone()
 	call_users.close()
 
-	query_background_filename = "SELECT filename FROM background_serge WHERE name = %s"
-	call_background = database.cursor()
-	call_background.execute(query_background_filename, (background))
-	background_filename = call_background.fetchone()
-	call_background.close()
+	if background[0] == "random":
+		######### Number of background
+		query_max_background = "SELECT max(id) FROM background_serge WHERE 1"
+		call_background = database.cursor()
+		call_background.execute(query_max_background)
+		max_background_id = call_background.fetchone()
+		call_background.close()
+
+		######### Random number
+		max_background_id = max_background_id[0] + 1
+		random_background_id = randrange(1, max_background_id)
+
+		query_background_filename = "SELECT filename FROM background_serge WHERE id = %s"
+		call_background = database.cursor()
+		call_background.execute(query_background_filename, (random_background_id,))
+		background_filename = call_background.fetchone()
+		call_background.close()
+	else:
+		query_background_filename = "SELECT filename FROM background_serge WHERE name = %s"
+		call_background = database.cursor()
+		call_background.execute(query_background_filename, (background))
+		background_filename = call_background.fetchone()
+		call_background.close()
 
 	######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
 	query_text = "SELECT EN, "+language[0]+" FROM text_content_serge WHERE 1"

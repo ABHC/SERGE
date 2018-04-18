@@ -182,7 +182,7 @@ $watchPackUsedList = read('watch_pack_serge', 'id, name, description, users', $c
 # Read background list
 $type           = 'result';
 $checkCol       = array(array('type', '=', $type, ''));
-$backgroundList = read('background_serge', 'id, name, filename', $checkCol, 'ORDER BY name', $bdd);
+$backgroundList = read('background_serge', 'name, filename', $checkCol, 'ORDER BY name', $bdd);
 
 # Read token
 $checkCol = array(array('id', '=', $_SESSION['id'], ''));
@@ -311,9 +311,8 @@ if ($emailIsCheck)
 	# Change result backgroundList
 	if (!empty($data['backgroundResult']))
 	{
-		$backgroundResult = $data['backgroundResult'];
 		// Update background result
-		$updateCol = array(array('background_result', $backgroundResult));
+		$updateCol = array(array('background_result', $data['backgroundResult']));
 		$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
 		$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
 	}
@@ -484,17 +483,17 @@ if ($emailIsCheck && isset($data['sourceKeyword']) && !empty($data['newKeyword']
 				$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd);
 			}
 		}
-		elseif (preg_match("/^alert:.+/i", $newKeyword) && $sourceId != '0')
+		elseif (preg_match("/^:alert.+/i", $newKeyword) && $sourceId != '0')
 		{
-			$newKeyword    = preg_replace("/alert:/i", '', $newKeyword);
-			$newKeyword    = '[!ALERT!]' . $newKeyword;
+			$newKeyword    = preg_replace("/:alert/i", '', $newKeyword);
+			$newKeyword    = '[!alert!]' . $newKeyword;
 			$ERROR_MESSAGE = addNewKeyword($sourceId, $newKeyword, $ERROR_MESSAGE, $reqReadOwnerSourcestmp, $bdd);
 		}
-		elseif (preg_match("/^alert:.+/i", $newKeyword) && $sourceId === '0')
+		elseif (preg_match("/^:alert.+/i", $newKeyword) && $sourceId === '0')
 		{
 			$updateBDD  = FALSE;
-			$newKeyword = preg_replace("/alert:/i", '', $newKeyword);
-			$newKeyword = '[!ALERT!]' . $newKeyword;
+			$newKeyword = preg_replace("/:alert/i", '', $newKeyword);
+			$newKeyword = '[!alert!]' . $newKeyword;
 			foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
 			{
 				$sourceId      = $ownerSourcesList['id'];

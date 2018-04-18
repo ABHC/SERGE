@@ -257,6 +257,9 @@
 				<span class="mainSettingOption">
 					<img alt="Wallpaper" src="../images/pictogrammes/pictoWallpaper.png" class="icoText"/>&nbsp;<?php get_t('selectTitle_window1_setting', $bdd); ?>&nbsp;<select size="<?php echo count($backgroundList); ?>" id="selectBackgroundPreview" class="selectBackground" name="backgroundResult" onchange="autoSubmit(this.form);">
 						<?php
+						$random['name'] = 'random';
+						$random['filename'] = 'random.png';
+						$backgroundList = array_merge($backgroundList, array($random));
 						foreach ($backgroundList as $backgroundName)
 						{
 							if ($userSettings['background_result'] == $backgroundName['name'])
@@ -271,7 +274,6 @@
 							echo '<option value="' . $backgroundName['name'] . '" ' . $backgroundSelected . ' id="../images/background_preview/' . $backgroundName['filename'] . '">' . $backgroundName['name'] . '</option>' . PHP_EOL;
 						}
 						?>
-						<!--<option value="random">Random</option>-->
 					</select>
 					<?php
 					foreach ($backgroundList as $backgroundName)
@@ -657,7 +659,7 @@
 					{
 						$applicable_owners_sources = $ownerKeywordList['applicable_owners_sources'];
 						$ownerKeywordList['keyword'] = preg_replace("/^:all@[0-9]+$/", ":All", $ownerKeywordList['keyword']);
-						$ownerKeywordList['keyword'] = preg_replace("/^\[!ALERT!\]/", "&#9888; ", $ownerKeywordList['keyword']);
+						$ownerKeywordList['keyword'] = preg_replace("/^\[!alert!\]/", "&#9888; ", $ownerKeywordList['keyword']);
 						if (preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*," . $ownerSourcesList['id'] . ",[,!0-9,]*\|/", $applicable_owners_sources))
 						{
 							echo
