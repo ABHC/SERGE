@@ -271,7 +271,7 @@
 								$backgroundSelected = '';
 							}
 
-							echo '<option value="' . $backgroundName['name'] . '" ' . $backgroundSelected . ' id="../images/background_preview/' . $backgroundName['filename'] . '">' . $backgroundName['name'] . '</option>' . PHP_EOL;
+							echo '<option value="' . $backgroundName['name'] . '" ' . $backgroundSelected . ' id="../images/background_preview/' . $backgroundName['filename'] . '">' . var_get_t($backgroundName['name'], $bdd) . '</option>' . PHP_EOL;
 						}
 						?>
 					</select>
