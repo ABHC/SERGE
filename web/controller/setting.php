@@ -6,6 +6,7 @@ include('model/get_text_var.php');
 include('model/read.php');
 include('model/update.php');
 include('model/insert.php');
+include('model/readStatusOfSourceAddition.php');
 include('controller/generateNonce.php');
 
 // Define variables
@@ -446,6 +447,7 @@ if ($emailIsCheck && !empty($data['buttonDeleteHistory']) && !empty($data['delet
 # Adding new source
 if ($emailIsCheck && !empty($data['sourceType']) && !empty($data['newSource']) && $data['sourceType'] === 'inputSource')
 {
+	include('model/updateStatusOfSourceAdditionLaunch.php');
 	$sourceToTest = escapeshellarg($data['newSource']);
 	$cmd          = 'timeout 150  /usr/bin/python /var/www/Serge/checkfeed.py ' . $sourceToTest . ' ' . $userId . ' setting >> /var/www/Serge/web/logs/error.log 2>&1 &';
 

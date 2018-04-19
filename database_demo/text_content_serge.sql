@@ -293,4 +293,9 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('Milky way', 'Milky way', 'Voie lactée', NULL, NULL, NULL),
 ('Space', 'Space', 'Espace', NULL, NULL, NULL),
 ('random', 'Random', 'Aléatoire', NULL, NULL, NULL),
+('Search for ', 'Search for ', 'Recherche pour ', NULL, NULL, NULL),
+('Error Serge can\'t analyse ', 'Error Serge can\'t analyse ', 'Erreur que Serge ne peut pas analyser ', NULL, NULL, NULL),
+('Search complete', 'Search complete', 'Recherche terminée', NULL, NULL, NULL),
+('No source to add on ', 'No source to add on ', 'Aucune source à ajouter sur ', NULL, NULL, NULL),
+('Search for your link begin :', 'Search for your link begin', 'La recherche pour votre lien commence', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);

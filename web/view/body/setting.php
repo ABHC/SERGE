@@ -8,6 +8,12 @@
 	if (!empty($data['scrollPos']))
 	{
 		echo $data['scrollPos'];
+		$_SESSION['posBeforeRefresh'] = $data['scrollPos'];
+	}
+	elseif (empty($data['scrollPos']) && !empty($_SESSION['posBeforeRefresh']))
+	{
+		echo $_SESSION['posBeforeRefresh'];
+		unset($_SESSION['posBeforeRefresh']);
 	}
 	?>"/>
 	<input type="hidden" name="delEditingScienceQuery" value="<?php echo $delEditingScienceQuery; ?>"/>
@@ -576,7 +582,8 @@
 				<input type="text" class="keywordInput" name="newKeyword" id="keyword" title="<?php get_t('Special keywords -- :all to retrieve all links; :alert to receive the result directly overriding the sending conditions', $bdd); ?>" placeholder="<?php get_t('Keyword, next keyword, ...', $bdd); ?>" />
 				<input title="<?php get_t('Add new keyword', $bdd); ?>" class="submit" type="submit" value="" />
 			</div>
-
+				<iframe src="statusOfSourceAddition" width="100%" height="40" frameborder="0" scrolling="no" marginheight="0" marginwidth="0">
+				</iframe>
 			<div>
 				<?php
 				$cptSource = 0;

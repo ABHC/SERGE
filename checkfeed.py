@@ -218,7 +218,7 @@ def feedMeUp(link, user_id, typeName, pack_id, recursive):
 	database = databaseConnection()
 
 	########### UPDATE THE STATUS OF THE FEEDS RESEARCH
-	insert_status = ("SEARCH FOR "+link)
+	insert_status = ("Search for : "+link)
 	update_users = ("UPDATE users_table_serge SET add_source_status = %s WHERE id = %s")
 
 	update = database.cursor()
@@ -279,7 +279,7 @@ def feedMeUp(link, user_id, typeName, pack_id, recursive):
 			backgroundLinksAddition(link, user_id, typeName, pack_id, title)
 
 	elif rss_error is True and recursive is False:
-		insert_status = ("ERROR : Serge can't analyse "+link)
+		insert_status = ("Error Serge can't analyse : "+link)
 		update_users = ("UPDATE users_table_serge SET add_source_status = %s WHERE id = %s")
 
 		update = database.cursor()
@@ -291,7 +291,7 @@ def feedMeUp(link, user_id, typeName, pack_id, recursive):
 		update.close()
 
 	else:
-		insert_status = ("SEARCH COMPLETE")
+		insert_status = ("Search complete")
 		update_users = ("UPDATE users_table_serge SET add_source_status = %s WHERE id = %s")
 
 		update = database.cursor()
@@ -333,13 +333,13 @@ except IndexError:
 		status = update.fetchone()
 		update.close()
 
-		if "SEARCH FOR" in status[0]:
+		if "Search for" in status[0]:
 			time.sleep(2)
 		else:
 			status_gate = True
 
 if not validators.url(link) is True:
-	insert_status = ("ERROR : Serge can't analyse "+link)
+	insert_status = ("Error Serge can't analyse : "+link)
 	update_users = ("UPDATE users_table_serge SET add_source_status = %s WHERE id = %s")
 
 	update = database.cursor()
@@ -355,7 +355,7 @@ number_links = 0
 feedMeUp(link, user_id, typeName, pack_id, False)
 
 if number_links == 0:
-	insert_status = ("NO SOURCE TO ADD ON : "+link)
+	insert_status = ("No source to add on : "+link)
 	update_users = ("UPDATE users_table_serge SET add_source_status = %s WHERE id = %s")
 
 	update = database.cursor()
