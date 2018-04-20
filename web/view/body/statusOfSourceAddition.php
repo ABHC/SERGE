@@ -9,7 +9,7 @@ if ($test[0] == 'Search for ')
 		$textStatus = preg_replace("/: .+/", "", $status);
 		$link       = preg_replace("/.+ :/", "", $status) ?? '';
 		get_t($textStatus, $bdd);
-		echo $link;
+		echo htmlspecialchars($link);
 		?>
 	</body>
 	<?php
@@ -30,7 +30,7 @@ elseif (!empty($status))
 		$textStatus = preg_replace("/: .+/", "", $status);
 		$link       = preg_replace("/.+ :/", "", $status) ?? '';
 		get_t($textStatus, $bdd);
-		echo $link;
+		echo htmlspecialchars($link);
 		?>
 	</body>
 	<?php
