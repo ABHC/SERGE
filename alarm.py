@@ -2,6 +2,7 @@
 
 """SERGE alert functions (building and formatting an alert)"""
 
+######### IMPORT CLASSICAL MODULES
 import ovh
 import MySQLdb
 from math import ceil
@@ -75,8 +76,9 @@ def buildAlert(user, user_id_comma, register, alert_news_list, pydate):
 	for dict_key, content in text:
 		translate_text[dict_key] = content.strip().encode('ascii', errors='xmlcharrefreplace')
 
-	translate_text = {"intro_date": translate_text["of"], "intro_links": translate_text["alerts"], "type_news": translate_text["NEWS"], "type_science": translate_text["SCIENTIFIC PUBLICATIONS"], "type_patents": translate_text["PATENTS"], "web_serge": translate_text["View Online"], "unsubscribe": translate_text["Unsubscribe"], "github_serge": translate_text["Find SERGE on"], "license_serge": translate_text["Powered by"]}
+	translate_text = {"intro_date": translate_text["of"], "intro_links": translate_text["alerts"], "type_news": translate_text["NEWS"], "type_science": translate_text["SCIENTIFIC PUBLICATIONS"], "type_patents": translate_text["PATENTS"], "web_serge": translate_text["View Online"], "unsubscribe": translate_text["Unsubscribe"], "github_serge": translate_text["Find SERGE on"], "license_serge": translate_text["Powered by"], "alert_title": translate_text["ALERT"]}
 
+	######### DEFINITION OF E-MAIL STYLE
 	style = """<style type="text/css">
 	/* CLIENT-SPECIFIC STYLES */
 	body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
@@ -117,19 +119,27 @@ def buildAlert(user, user_id_comma, register, alert_news_list, pydate):
 	if mail_design[0] == "type":
 		alert_news_list = sorted(alert_news_list, key=lambda alert_field: alert_field["title"])
 
-		alertmail = alertMailByType(user, translate_text, alert_news_list, pending_alerts, style, pydate, background_filename)
+		alertmail = alertMailByType(user, pydate, translate_text, alert_news_list, pending_alerts, style, background_filename)
 
 	elif mail_design[0] == "masterword":
-		query_alertwords = "SELECT id, keyword FROM keyword_news_serge WHERE applicable_owners_sources LIKE %s AND active > 0"
+		alerts_key_list = []
+		alerts_data_key_id = []
+		query_alertwords = "SELECT id, keyword FROM keyword_news_serge WHERE applicable_owners_sources LIKE %s AND id IN %s"
+
+		for alertsdata in alert_news_list:
+			split_id = alertsdata["keyword_id"].split(",")
+			for key_id in split_id:
+				if key_id != "" and key_id not in alerts_data_key_id:
+					alerts_data_key_id.append(key_id)
 
 		call_words = database.cursor()
-		call_words.execute(query_alertwords, (user_id_doubledot_percent, ))
+		call_words.execute(query_alertwords, (user_id_doubledot_percent, alerts_data_key_id))
 		alertwords = call_words.fetchall()
 		call_words.close()
 
-		for word_and_attribute in alertwords:
-			if ":all@" in word_and_attribute[1]:
-				split_for_all = word_and_attribute[1].split("@")
+		for key in alertwords:
+			if ":all@" in key[1]:
+				split_for_all = key[1].split("@")
 
 				query_sitename = "SELECT name FROM rss_serge WHERE id = %s"
 
@@ -139,34 +149,43 @@ def buildAlert(user, user_id_comma, register, alert_news_list, pydate):
 				call_name.close()
 
 				sitename = sitename[0]
-				rebuilt_all = split_for_all[0].replace(":", "").capitalize() + " @ " + sitename.replace(".", "&#8228;")
-				word_and_attribute = {"id": ","+str(word_and_attribute[0])+",", "keyword": rebuilt_all.strip().encode('ascii', errors='xmlcharrefreplace')}
+				rebuilt_all = split_for_all[0].replace(":", "").replace("[!ALERT!]", "").capitalize() + " @ " + sitename.replace(".", "&#8228;")
+				key = {"id": ","+str(key[0])+",", "keyword": rebuilt_all.strip().encode('ascii', errors='xmlcharrefreplace')}
 			else:
-				word_and_attribute = {"id": ","+str(word_and_attribute[0])+",", "keyword": word_and_attribute[1].strip().encode('ascii', errors='xmlcharrefreplace')}
+				key = {"id": ","+str(key[0])+",", "keyword": key[1].strip().encode('ascii', errors='xmlcharrefreplace').replace("[!ALERT!]", "")}
 
-			alertwords_list.append(word_and_attribute)
+			alerts_key_list.append(key)
 
-		alertmail = alertMailByKeyword(user, translate_text, alert_news_list, pending_alerts, alertwords_list, style, pydate, background_filename)
+		alerts_key_list = sorted(alerts_key_list, key=lambda alerts_field: alerts_field["keyword"])
+
+		alertmail = alertMailByKeyword(user, pydate, translate_text, alert_news_list, pending_alerts, alerts_key_list, style, background_filename)
 
 	elif mail_design[0] == "origin":
-		query_news_origin = "SELECT id, name FROM rss_serge WHERE owners like %s and active > 0"
+		alerts_sources_list = []
+		alerts_data_source_id = []
+		query_news_origin = "SELECT id, name FROM rss_serge WHERE id IN %s"
+
+		for patentsdata in alert_news_list:
+			alerts_data_source_id.append(patentsdata["id_source"])
 
 		call_origin = database.cursor()
-		call_origin.execute(query_news_origin, (user_id_comma, ))
+		call_origin.execute(query_news_origin, (alerts_data_source_id, ))
 		alert_origin = call_origin.fetchall()
 		call_origin.close()
 
 		for source_and_attribute in alert_origin:
 			source_and_attribute = {"id": source_and_attribute[0], "name": source_and_attribute[1].strip().encode('ascii', errors='xmlcharrefreplace')}
-			alert_origin_list.append(source_and_attribute)
+			alerts_sources_list.append(source_and_attribute)
 
-		alertmail = alertMailBySource(user, translate_text, alert_news_list, pending_alerts, alert_origin_list, style, pydate, background_filename)
+		alerts_sources_list = sorted(alerts_sources_list, key=lambda alerts_field: alerts_field["name"])
+
+		alertmail = alertMailBySource(user, pydate, translate_text, alert_news_list, pending_alerts, alerts_sources_list, style, background_filename)
 
 	######### CALL TO highwayToMail FUNCTION
 	handshake.highwayToMail(register, alertmail, priority, pydate)
 
 
-def alertMailByType(user, translate_text, alert_news_list, pending_alerts, style, pydate, background_filename):
+def alertMailByType(user, pydate, translate_text, alert_news_list, pending_alerts, style, background_filename):
 	"""Formatting function for alerts, apply the default formatting"""
 
 	######### BANNER AND HELLO
@@ -209,15 +228,13 @@ def alertMailByType(user, translate_text, alert_news_list, pending_alerts, style
 	</td>
 	</tr>
 	<tr>
-	<td bgcolor="#b6082e" align="center" style="background-color: #b6082e; color: #ffffff; margin-bottom: 15px; font-size: 27px;">
-		<h1 style="font-size: 30px; color: #ffffff;">ALERT</h1>
+	<td bgcolor="#b6082e" align="center" style="background-color: #b6082e; color: #ffffff; margin-bottom: 15px; margin-top: 15px; font-size: 27px;">
+		{7}
 	</td>
-	</tr>"
-	""".format(translate_text["intro_date"], user.encode('ascii', errors='xmlcharrefreplace'), translate_text["intro_links"], pydate, pending_alerts, style, background_filename[0]))
+	</tr>
+	""".format(translate_text["intro_date"], user.encode('ascii', errors='xmlcharrefreplace'), translate_text["intro_links"], pydate, pending_alerts, style, background_filename[0], translate_text["alert_title"]))
 
-	index = 0
-
-	######### ECRITURE
+	######### ALERTS SECTION
 	if pending_alerts > 0:
 		alertmail = alertmail + ("""<tr>
 		<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
@@ -234,12 +251,9 @@ def alertMailByType(user, translate_text, alert_news_list, pending_alerts, style
 		</td>
 		</tr>""".format(translate_text["type_news"]))
 
-		while index < pending_alerts:
-			alerts_attributes = alert_news_list[index]
-
-			if alerts_attributes["title"].isupper() is True:
-				alerts_attributes["title"] = alerts_attributes["title"].lower().capitalize()
-
+		######### RESULTS WRITING
+		for result in alert_news_list:
+			######### CREATE NEWS BLOCK
 			alertmail = alertmail + ("""<tr>
 			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
 			&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
@@ -254,9 +268,9 @@ def alertMailByType(user, translate_text, alert_news_list, pending_alerts, style
 			<td>
 			<br>
 			</td>
-			</tr>""".format(alerts_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), alerts_attributes["wiki_link"]))
-			index = index+1
+			</tr>""".format(result["link"].strip().encode('ascii', errors='xmlcharrefreplace'), result["title"].strip().encode('ascii', errors='xmlcharrefreplace'), result["wiki_link"]))
 
+		######### END OF NEWS BLOCK
 		alertmail = alertmail + ("""</table>
 		</td>
 		</tr>
@@ -303,7 +317,7 @@ def alertMailByType(user, translate_text, alert_news_list, pending_alerts, style
 	return alertmail
 
 
-def alertMailByKeyword(user, translate_text, alert_news_list, pending_alerts, alertwords_list, style, pydate, background_filename):
+def alertMailByKeyword(user, pydate, translate_text, alert_news_list, pending_alerts, alerts_key_list, style, background_filename):
 	"""Formatting function for emails, apply the formatting by keywords"""
 
 	######### BANNER AND HELLO
@@ -347,78 +361,64 @@ def alertMailByKeyword(user, translate_text, alert_news_list, pending_alerts, al
 	</tr>
 	<tr>
 	<td bgcolor="#b6082e" align="center" style="background-color: #b6082e; color: #ffffff; margin-bottom: 15px; margin-top: 15px; font-size: 27px;">
-		ALERT
+		{7}
 	</td>
-	</tr>""".format(translate_text["intro_date"], user.encode('ascii', errors='xmlcharrefreplace'), translate_text["intro_links"], pydate, pending_alerts, style, background_filename[0]))
+	</tr>""".format(translate_text["intro_date"], user.encode('ascii', errors='xmlcharrefreplace'), translate_text["intro_links"], pydate, pending_alerts, style, background_filename[0], translate_text["alert_title"]))
 
-	index = 0
+	######### SET SECURITY LIST FOR AVOIDING REPETITION
 	already_in_the_list = []
 
-	######### ECRITURE ALERTS
-	######### ECRITURE KEYWORDS FOR NEWS
-	for attributes in sorted(alertwords_list, key=lambda alertswords_field: alertswords_field["keyword"]):
-		process_result_list = []
-		index = 0
+	######### ALERTS SECTION
+	for key in alerts_key_list:
+		######### LIST RESULTS FILTERING WITH THE USER'S KEYWORD
+		results_list = [elem for elem in alert_news_list if key["id"] in elem["keyword_id"] and elem["link"] not in already_in_the_list]
+		results_list = sorted(results_list, key=lambda alerts_field: alerts_field["title"])
 
-		while index < pending_alerts:
-			alerts_attributes = alert_news_list[index]
+		######### CREATE KEYWORD BLOCK
+		alertmail = alertmail + ("""<tr>
+		<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
+		<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+		<tr>
+		<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+		<table cellspacing="0" cellpadding="0" border="0" width="100%">
+		<tr>
+		<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
+		<table cellspacing="0" cellpadding="0" border="0" width="100%">
+		<tr>
+		<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+		<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
+		</td>
+		</tr>""".format(key["keyword"].capitalize()))
 
-			if attributes["id"] in alerts_attributes["keyword_id"] and alerts_attributes["link"] not in already_in_the_list:
-
-				if alerts_attributes["title"].isupper() is True:
-					process_result = {"link": alerts_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": alerts_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link": alerts_attributes["wiki_link"]}
-				else:
-					process_result = {"link": alerts_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": alerts_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link": alerts_attributes["wiki_link"]}
-
-				process_result_list.append(process_result)
-				already_in_the_list.append(alerts_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'))
-
-			index = index+1
-
-		elements = len(process_result_list)
-
-		if elements > 0:
+		######### RESULTS WRITING
+		for result in results_list:
 			alertmail = alertmail + ("""<tr>
-			<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
-			<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
-			<tr>
-			<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			<table cellspacing="0" cellpadding="0" border="0" width="100%">
-			<tr>
-			<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
-			<table cellspacing="0" cellpadding="0" border="0" width="100%">
-			<tr>
-			<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
+			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+			&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
 			</td>
-			</tr>""".format(attributes["keyword"].capitalize()))
-
-			for results_attributes in process_result_list:
-				alertmail = alertmail + ("""<tr>
-				<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
-				</td>
-				<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
-				<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
-				</a>
-				</td>
-				</tr>
-				<tr>
-				<td>
-				<br>
-				</td>
-				</tr>""".format(results_attributes["link"], results_attributes["title"], results_attributes["wiki_link"]))
-
-			alertmail = alertmail + ("""</table>
+			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+			<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+			<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
+			</a>
 			</td>
 			</tr>
-			</table>
+			<tr>
+			<td>
+			<br>
 			</td>
-			</tr>
-			</table>
-			</td>
-			</tr>""")
+			</tr>""".format(result["link"], result["title"], result["wiki_link"]))
+			already_in_the_list.append(result["link"])
+
+		######### END OF KEYWORD BLOCK
+		alertmail = alertmail + ("""</table>
+		</td>
+		</tr>
+		</table>
+		</td>
+		</tr>
+		</table>
+		</td>
+		</tr>""")
 
 	######### FOOTER
 	alertmail = alertmail + ("""<tr style="!important background-color: #efefef;" bgcolor="#efefef">
@@ -456,7 +456,7 @@ def alertMailByKeyword(user, translate_text, alert_news_list, pending_alerts, al
 	return alertmail
 
 
-def alertMailBySource(user, translate_text, alert_news_list, pending_alerts, alert_origin_list, style, pydate, background_filename):
+def alertMailBySource(user, pydate, translate_text, alert_news_list, pending_alerts, alerts_sources_list, style, background_filename):
 	"""Formatting function for emails, apply the formatting by sources"""
 
 	######### BANNER AND HELLO
@@ -497,74 +497,67 @@ def alertMailBySource(user, translate_text, alert_news_list, pending_alerts, ale
 	</tr>
 	</table>
 	</td>
-	</tr>""".format(translate_text["intro_date"], user.encode('ascii', errors='xmlcharrefreplace'), translate_text["intro_links"], pydate, pending_alerts, style, background_filename[0]))
+	</tr>
+	<tr>
+	<td bgcolor="#b6082e" align="center" style="background-color: #b6082e; color: #ffffff; margin-bottom: 15px; margin-top: 15px; font-size: 27px;">
+		{7}
+	</td>
+	</tr>""".format(translate_text["intro_date"], user.encode('ascii', errors='xmlcharrefreplace'), translate_text["intro_links"], pydate, pending_alerts, style, background_filename[0], translate_text["alert_title"]))
 
-	index = 0
+	######### SET SECURITY LIST FOR AVOIDING REPETITION
+	already_in_the_list = []
 
-	######### ECRITURE NEWS
-	######### ECRITURE ORIGIN FOR NEWS
-	for attributes in sorted(alert_origin_list, key=lambda alert_origin_field: alert_origin_field["name"]):
-		process_result_list = []
-		index = 0
+	######### ALERTS SECTION
+	for source in alerts_sources_list:
+		######### LIST RESULTS FILTERING WITH THE USER'S SOURCE
+		results_list = [elem for elem in alert_news_list if elem["id_source"] == source["id"] and elem["link"] not in already_in_the_list]
+		results_list = sorted(results_list, key=lambda news_field: news_field["title"])
 
-		while index < pending_alerts:
-			alerts_attributes = alert_news_list[index]
+		######### CREATE SOURCE BLOCK
+		alertmail = alertmail + ("""<tr>
+		<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
+		<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+		<tr>
+		<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+		<table cellspacing="0" cellpadding="0" border="0" width="100%">
+		<tr>
+		<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
+		<table cellspacing="0" cellpadding="0" border="0" width="100%">
+		<tr>
+		<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+		<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
+		</td>
+		</tr>""".format(source["name"]))
 
-			if attributes["id"] == alerts_attributes["id_source"]:
-
-				if alerts_attributes["title"].isupper() is True and origin_id == alerts_attributes["id_source"]:
-					process_result = {"link": alerts_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": alerts_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link": alerts_attributes["wiki_link"]}
-				elif origin_id == alerts_attributes[2]:
-					process_result = {"link": alerts_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": alerts_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link": alerts_attributes["wiki_link"]}
-
-				process_result_list.append(process_result)
-
-			index = index+1
-
-		elements = len(process_result_list)
-
-		if elements > 0:
+		######### RESULTS WRITING
+		for result in results_list:
 			alertmail = alertmail + ("""<tr>
-			<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
-			<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
-			<tr>
-			<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			<table cellspacing="0" cellpadding="0" border="0" width="100%">
-			<tr>
-			<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
-			<table cellspacing="0" cellpadding="0" border="0" width="100%">
-			<tr>
-			<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
+			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+			&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
 			</td>
-			</tr>""".format(attributes["name"]))
-
-			for results_attributes in process_result_list:
-				alertmail = alertmail + ("""<tr>
-				<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
-				</td>
-				<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
-				<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
-				</a>
-				</td>
-				</tr>
-				<tr>
-				<td>
-				<br>
-				</td>
-				</tr>""".format(results_attributes["link"], results_attributes["title"], results_attributes["wiki_link"]))
-
-			alertmail = alertmail + ("""</table>
+			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+			<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+			<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
+			</a>
 			</td>
 			</tr>
-			</table>
+			<tr>
+			<td>
+			<br>
 			</td>
-			</tr>
-			</table>
-			</td>
-			</tr>""")
+			</tr>""".format(result["link"], result["title"], result["wiki_link"]))
+			already_in_the_list.append(result["link"])
+
+		######### END OF SOURCE BLOCK
+		alertmail = alertmail + ("""</table>
+		</td>
+		</tr>
+		</table>
+		</td>
+		</tr>
+		</table>
+		</td>
+		</tr>""")
 
 	######### FOOTER
 	alertmail = alertmail + ("""<tr style="!important background-color: #efefef;" bgcolor="#efefef">

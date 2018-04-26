@@ -2,6 +2,7 @@
 
 """insertSQL contains some functions for handshaking with Serge database"""
 
+######### IMPORT CLASSICAL MODULES
 import MySQLdb
 import smtplib
 import time
@@ -12,7 +13,8 @@ from email.mime.text import MIMEText
 def databaseConnection():
 	"""Connexion to Serge database"""
 
-	passSQL = open("/var/www/Serge/permission/password.txt", "r")
+	#passSQL = open("/var/www/Serge/permission/password.txt", "r")
+	passSQL = open("permission/password.txt", "r")
 	passSQL = passSQL.read().strip()
 
 	database = MySQLdb.connect(host="localhost", user="Serge", passwd=passSQL, db="Serge", use_unicode=1, charset="utf8mb4")
@@ -39,6 +41,7 @@ def highwayToMail(register, newsletter, priority, pydate):
 	if expiration_date > verif_time :
 
 		######### SERGE MAIL
+		#sergemail = open("permission/sergemail.txt", "r")
 		sergemail = open("permission/sergemail.txt", "r")
 		fromaddr = sergemail.read().strip()
 		sergemail.close

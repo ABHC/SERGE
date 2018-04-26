@@ -348,7 +348,7 @@ def science(now):
 		owners = serge_science_query[2].strip()
 
 		######### BUILDING REQUEST FOR SCIENCE API
-		request_dictionnary = decoder.requestBuilder(database, query_serge, query_id, owners)
+		request_dictionnary = decoder.requestBuilder(query_serge, query_id, owners)
 
 		######### RESEARCH SCIENCE ON RSS FEEDS WITH FEEDPARSER MODULE
 		for science_api_pack in request_dictionnary.values():
@@ -438,9 +438,7 @@ def science(now):
 				else:
 					logger_info.warning("Error : the feed is unavailable")
 
-		######### RESEARCH SCIENCE ON JSON FEEDS WITH JSON MODULE
-		for science_api_pack in request_dictionnary.values():
-			if science_api_pack[4] == "JSON":
+			elif science_api_pack[4] == "JSON":
 
 				query_id = science_api_pack[0]
 				link = science_api_pack[1]

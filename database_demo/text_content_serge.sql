@@ -276,4 +276,6 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('https://github.com/ABHC/SERGE/wiki/User\'s-Guide#patents', 'https://github.com/ABHC/SERGE/wiki/User\'s-Guide#patents', 'https://github.com/ABHC/SERGE/wiki/Guide-d\'utilisation#brevet', NULL, NULL, NULL),
 ('https://github.com/ABHC/SERGE/wiki/User\'s-Guide#createedit-a-watchpack', 'https://github.com/ABHC/SERGE/wiki/User\'s-Guide#createedit-a-watchpack', 'https://github.com/ABHC/SERGE/wiki/Guide-d\'utilisation#cr%C3%A9ation%C3%89dition-dun-pack-de-veille', NULL, NULL, NULL),
 ('https://github.com/ABHC/SERGE/wiki/User\'s-Guide#add-a-watchpack', 'https://github.com/ABHC/SERGE/wiki/User\'s-Guide#add-a-watchpack', 'https://github.com/ABHC/SERGE/wiki/Guide-d\'utilisation#ajout-dun-pack-de-veille', NULL, NULL, NULL),
+('WIPO : World Intellectual Property Organization', 'WIPO : World Intellectual Property Organization', 'OMPI : Organisation Mondiale de la Propriété Intellectuelle', NULL, NULL, NULL),
+('ALERT', 'ALERT', 'ALERTE', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);
