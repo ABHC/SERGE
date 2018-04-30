@@ -37,12 +37,21 @@ include('style.php');
 include('nav.php');
 ?>
 
+.bodyResult
+{
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	width: 100%;
+}
+
 .body
 {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	min-height: 100vh;
+	margin-right: 70px;
 }
 
 .background
@@ -105,9 +114,19 @@ input[type='text']::placeholder
 	color: rgb(190,190,190);
 }
 
+select
+{
+	width: 70px;
+	height: 20px;
+	background-color: rgba(0, 0, 0, 0);
+	text-decoration: none;
+	border: none;
+}
+
 .selectResultsType
 {
-	position: absolute;
+	position: -webkit-sticky;
+	position: sticky;
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
@@ -115,18 +134,25 @@ input[type='text']::placeholder
 	left: 0;
 	width: 50px;
 	height: auto;
-	margin-top: 20px;
+	top: 20vh;
 }
 
-.selectResultsType a
+.selectExportType
+{
+	z-index: 0;
+}
+
+.selectResultsType a,
+.selectResultsType .selectExportType
 {
 	width: 70px;
-	height: 98px;
+	height: 15vh;
 	background-color: rgba(0, 0, 0, 0.5);
 	text-decoration: none;
 }
 
-.selectResultsType a:hover
+.selectResultsType a:hover,
+.selectResultsType .selectExportType:hover
 {
 	background-color: rgba(0, 0, 0, 0);
 }
@@ -142,7 +168,7 @@ input[type='text']::placeholder
 	justify-content: center;
 	align-items: flex-end;
 	width: 40px;
-	height: 88px;
+	height: 15vh;
 	color: #f9f9ff;
 	text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
 	text-decoration: none;
@@ -169,6 +195,44 @@ input[type='text']::placeholder
 	margin: auto;
 	background: url('../images/icoPatents.png') center no-repeat;
 	background-size: contain;
+}
+
+.selectExportTypeico
+{
+	position: absolute;
+	width: 40px;
+	height: 15vh;
+	margin-left: 15px;
+	background: url('../images/icoExport.png') center no-repeat;
+	background-size: contain;
+	z-index: -1;
+}
+
+.selectExportType select
+{
+	color: white;
+}
+
+.selectExportType select option
+{
+	background-color: rgb(51,59,68);
+	border: none;
+	outline: none;
+	outline-style: none
+}
+
+.exportSpace
+{
+	width: 100%;
+	height: calc(15vh - 20px);
+}
+
+input.exportSpace
+{
+	background-color: rgba(0, 0, 0, 0);
+	border: none;
+	cursor: pointer;
+	z-index: 2;
 }
 
 form.formSearch
@@ -213,6 +277,17 @@ table
 	margin-bottom: 40px;
 }
 
+.submit
+{
+	width: 20px;
+	height: 25px;
+	background: url(../images/Trash.png) center no-repeat;
+	background-size: contain;
+	border: none;
+	outline: none;
+	cursor: pointer;
+}
+
 th
 {
 	flex: 1;
@@ -232,9 +307,25 @@ th a
 	color: #f9f9ff;
 }
 
-th:nth-child(6)
+th:nth-child(1)
 {
-	width: 50px;
+	padding-left: 10px;
+	width: 20px;
+}
+
+th:nth-child(2)
+{
+	width: 10px;
+}
+
+th:nth-child(3)
+{
+	width: 30%;
+}
+
+th:nth-child(4)
+{
+	width: 20%;
 }
 
 th:nth-child(7)
@@ -242,35 +333,9 @@ th:nth-child(7)
 	width: 50px;
 }
 
-.submit
+th:nth-child(8)
 {
-	width: 20px;
-	height: 25px;
-	background: url(../images/Trash.png) center no-repeat;
-	background-size: contain;
-	border: none;
-	outline: none;
-	cursor: pointer;
-}
-
-th:nth-child(1)
-{
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	align-items: center;
-	padding-left: 27px;
-	width: 25px;
-}
-
-th:nth-child(2)
-{
-	width: 30%;
-}
-
-th:nth-child(3)
-{
-	width: 20%;
+	width: 50px;
 }
 
 th:last-child

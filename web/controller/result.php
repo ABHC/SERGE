@@ -14,6 +14,7 @@ $unsafeData = array_merge($unsafeData, array(array('orderBy', 'orderBy', 'GET', 
 $unsafeData = array_merge($unsafeData, array(array('search', 'search', 'GET', 'str')));
 $unsafeData = array_merge($unsafeData, array(array('optionalCond', 'optionalCond', 'GET', 'Az')));
 $unsafeData = array_merge($unsafeData, array(array('deleteLink', 'deleteLink', 'POST', 'Az')));
+$unsafeData = array_merge($unsafeData, array(array('export', 'export', 'POST', 'Az')));
 foreach($_POST as $key => $val)
 {
 	if (preg_match("/^delete[0-9]+$/", $key, $name))
@@ -63,7 +64,6 @@ $keywordQueryId     = 'keyword_id';
 $queryColumn        = 'keyword';
 $specialColumn      = ', id_source, keyword_id ';
 $displayColumn      = var_get_t('title2News_table_results', $bdd);
-$gType = '';
 
 # Select results type
 if (!empty($data['resultType']))
@@ -241,13 +241,142 @@ if (!empty($data['optionalCond']))
 	$data['optionalCond'] = '&optionalCond=' . $data['optionalCond'];
 }
 
-# Warning sensitive variables [SQLI]
-$SELECTRESULT = '(SELECT id, title, link, send_status, read_status, `date`' . $specialColumn . 'FROM ' . $tableName . ' WHERE owners LIKE :user';
-$WP = '';
-$arrayValues = array('user' => '%,' . $_SESSION['id'] . ',%');
-include('controller/searchEngine.php');
+# Export result
+if (!empty($data['export']))
+{
+	if ($data['export'] == 'csv')
+	{
+		$ext = 'csv';
+	}
+	elseif ($data['export'] == 'txt')
+	{
+		$ext = 'txt';
+	}
+	elseif ($data['export'] == 'xml')
+	{
+		$ext = 'xml';
+	}
+	elseif ($data['export'] == 'sql')
+	{
+		$ext = 'sql';
+	}
 
-include('model/readOwnerResult.php');
+	# Warning sensitive variables [SQLI]
+	$SELECTRESULT = '(SELECT title, link, `date` FROM ' . $tableName . ' WHERE owners LIKE :user';
+	$WP = '';
+	$arrayValues = array('user' => '%,' . $_SESSION['id'] . ',%');
+	include('controller/searchEngine.php');
+
+	include('model/readOwnerResult.php');
+
+	$exportFile = fopen('export_' . $_SESSION['id'] . '.php', 'a');
+
+	$codeExportPage = '
+<?php
+set_time_limit(25);
+session_start();
+include(\'controller/accessLimitedToSignInPeople.php\');
+
+$ownerId = ' . $_SESSION['id'] . ';
+
+if ($_SESSION[\'id\'] != $ownerId)
+{
+	die();
+}
+
+if ($_GET[\'ext\'] == \'csv\')
+{
+	$ext = \'.csv\';
+	$typeMIME = \'text/csv\';
+}
+elseif ($_GET[\'ext\'] == \'txt\')
+{
+	$ext = \'.txt\';
+	$typeMIME = \'text/plain\';
+}
+elseif ($_GET[\'ext\'] == \'xml\')
+{
+	$ext = \'.xml\';
+	$typeMIME = \'application/xml\';
+}
+elseif ($_GET[\'ext\'] == \'sql\')
+{
+	$ext = \'.sql\';
+	$typeMIME = \'text/sql\';
+}
+
+header("Content-Description: File Transfer");
+header("Content-Type: $typeMIME\n");
+header("Content-Transfer-Encoding: binary");
+header("Content-disposition: attachment; filename=export_' . $_SESSION['id'] . '$ext");
+header("Content-Length: ".filesize( \'export_' . $_SESSION['id'] . '.php\'));
+header("Cache-Control: no-cache, must-revalidate");
+
+unlink(__FILE__);?>';
+
+	fputs($exportFile, $codeExportPage);
+	$xml = new SimpleXMLElement('<root/>');
+
+	foreach ($readOwnerResults as $lineResult)
+	{
+		if ($data['export'] == 'csv')
+		{
+			unset($lineResult[0]);
+			unset($lineResult[1]);
+			unset($lineResult[2]);
+			fputcsv($exportFile, $lineResult);
+		}
+		elseif ($data['export'] == 'txt')
+		{
+			unset($lineResult[0]);
+			unset($lineResult[1]);
+			unset($lineResult[2]);
+			fputcsv($exportFile, $lineResult, ' ');
+		}
+		elseif ($data['export'] == 'xml')
+		{
+			unset($lineResult[0]);
+			unset($lineResult[1]);
+			unset($lineResult[2]);
+			$lineResult = array_flip($lineResult);
+			array_walk_recursive($lineResult, array($xml, 'addChild'));
+		}
+	}
+
+	if ($data['export'] == 'sql')
+	{
+		$resultSQL = 'INSERT INTO `result_news_serge` (`title`, `link`, `date`) VALUES' . PHP_EOL;
+		foreach ($readOwnerResults as $lineResult)
+		{
+			$resultSQL .= '(\'' . addslashes($lineResult['title']) . '\',\'' . addslashes($lineResult['link']) . '\',\'' . addslashes($lineResult['date']) . '\'),' . PHP_EOL;
+		}
+		$resultSQL = substr($resultSQL, 0, -2);
+		$resultSQL .= ';';
+		fputs($exportFile, $resultSQL);
+	}
+
+	if ($data['export'] == 'xml')
+	{
+		fputs($exportFile, $xml->asXML());
+	}
+
+	fclose($exportFile);
+
+	$filename = 'export_' . $_SESSION['id'] . '?ext=' . $ext;
+	header("Location: $filename");
+
+	die();
+}
+else
+{
+	# Warning sensitive variables [SQLI]
+	$SELECTRESULT = '(SELECT id, title, link, send_status, read_status, `date`' . $specialColumn . 'FROM ' . $tableName . ' WHERE owners LIKE :user';
+	$WP = '';
+	$arrayValues = array('user' => '%,' . $_SESSION['id'] . ',%');
+	include('controller/searchEngine.php');
+
+	include('model/readOwnerResult.php');
+}
 
 # Page number
 if (!empty($data['page']))
@@ -264,11 +393,6 @@ if (!empty($data['page']))
 	$actualPageLink = '&page=' . $data['page'];
 	$page           = $data['page'] - 1;
 	$base           = $limit * $page;
-}
-
-if (!empty($data['resultType']))
-{
-	$gType = '?type=' . $data['resultType'];
 }
 
 include('view/nav/nav.php');

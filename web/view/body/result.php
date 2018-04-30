@@ -2,6 +2,39 @@
 	<div class="subBackground">
 	</div>
 </div>
+<div class="bodyResult">
+	<div>
+		<div class="selectResultsType">
+			<a <?php echo $newsActive; ?> href="result">
+				<div class="selectResultsTypeNews"><?php get_t('title1_type_results', $bdd); ?></div>
+			</a>
+			<a <?php echo $sciencesActive; ?> href="result?type=sciences">
+				<div class="selectResultsTypeSciences"><?php get_t('title2_type_results', $bdd); ?></div>
+			</a>
+			<a <?php echo $patentsActive; ?> href="result?type=patents">
+				<div class="selectResultsTypePatents"><?php get_t('title3_type_results', $bdd); ?></div>
+			</a>
+			<form method="post" class="selectExportType" action="result?page=<?php echo $data['page'] . $searchSort . $data['optionalCond'] . $data['orderBy'] . '&type=' . $type;?>" target="_blank" onsubmit="setTimeout(function(){location.reload();}, 1000);return true;" >
+				<div class="selectExportTypeico"></div>
+				<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
+				<input type="submit" class="exportSpace" title="Export results" value=""/>
+				<select name="export">
+					<option value="csv">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CSV
+					</option>
+					<option value="txt">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TXT
+					</option>
+					<option value="xml">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XML
+					</option>
+					<option value="sql">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SQL
+					</option>
+				</select>
+			</form>
+		</div>
+	</div>
 <div class="body">
 	<h1><?php get_t('title_window0_result', $bdd); ?></h1>
 	<form class="formSearch" method="get" action="result">
@@ -10,25 +43,15 @@
 		<input type="hidden" name="optionalCond" value="<?php echo $data['optionalCond']; ?>"/>
 		<input type="hidden" name="type" value="<?php echo $type; ?>"/>
 	</form>
-	<div class="selectResultsType">
-		<a <?php echo $newsActive; ?> href="result">
-			<div class="selectResultsTypeNews"><?php get_t('title1_type_results', $bdd); ?></div>
-		</a>
-		<a <?php echo $sciencesActive; ?> href="result?type=sciences">
-			<div class="selectResultsTypeSciences"><?php get_t('title2_type_results', $bdd); ?></div>
-		</a>
-		<a <?php echo $patentsActive; ?> href="result?type=patents">
-			<div class="selectResultsTypePatents"><?php get_t('title3_type_results', $bdd); ?></div>
-		</a>
-	</div>
 
-	<form class="tableContainer" method="post" action="result<?php echo $gType; ?>">
+	<form class="tableContainer" method="post" action="result?page=<?php echo $data['page'] . $searchSort . $data['optionalCond'] . $data['orderBy'] . '&type=' . $type;?>">
 		<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
 		<div class="table-header">
 			<table>
 				<thead>
 					<tr>
-						<th><input type="checkbox" name="selectAll" id="checkAllPage" /><label class="checkbox" for="checkAllPage" onmouseup="checkAllPage();"></label><input title="<?php get_t('Delete selected links', $bdd); ?>" name="deleteLink" class="submit" type="submit" value="delete" /></th>
+						<th><input type="checkbox" name="selectAll" id="checkAllPage" /><label class="checkbox" for="checkAllPage" onmouseup="checkAllPage();"></label></th>
+						<th><input title="<?php get_t('Delete selected links', $bdd); ?>" name="deleteLink" class="submit" type="submit" value="delete" /></th>
 						<?php
 						echo '
 						<th><a href="?orderBy=title' . $colOrder['DESC'] . $searchSort . $data['optionalCond'] . $actualPageLink . '&type=' . $type . '">'; get_t('title1_table_results', $bdd);
@@ -376,4 +399,5 @@
 		}
 		?>
 	</div>
+</div>
 </div>

@@ -1,5 +1,4 @@
 <?php
-
 #Reading of id and password
 $secureAccess = fopen('/var/www/Serge/web/.htpasswd', 'r');
 
