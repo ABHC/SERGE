@@ -18,6 +18,7 @@ import sergenet
 import insertSQL
 import failDetectorPack
 from toolbox import escaping
+from toolbox import multikey
 from handshake import databaseConnection
 
 
@@ -201,7 +202,7 @@ def newscast(newscast_args):
 				########### DATA PROCESSING
 				post_title = post_title.strip()
 				post_description = post_description.strip()
-				keyword = keyword.strip()
+				keyword = keyword.replace("[!ALERT!]", "").strip()
 
 				keyword_id_comma = str(keyword_id) + ","
 				keyword_id_comma2 = "," + str(keyword_id) + ","
@@ -214,35 +215,10 @@ def newscast(newscast_args):
 					tagdex = tagdex+1
 
 				########### AGGREGATED KEYWORDS RESEARCH
-				if "+" in keyword:
-					if "[!ALERT!]" in keyword:
-						keyword = keyword.replace("[!ALERT!]", "")
+				aggregated_keywords = multikey(keyword)
 
-					aggregated_keyword = keyword.split("+")
-
-					grain = 0
-					grain_list = []
-					aggregate_size = len(aggregated_keyword)
-
-					while grain < aggregate_size:
-						if aggregated_keyword[grain] != "":
-							grain_list.append(aggregated_keyword[grain])
-						elif aggregated_keyword[grain] == "" and grain != 0 and len(grain_list) != 0:
-							coherent_grain = grain_list[len(grain_list)-1] + "+"
-							grain_list[len(grain_list)-1] = coherent_grain
-
-						grain = grain+1
-
-					aggregated_keyword = tuple(grain_list)
-					redundancy = 0
-
-					for splitkey in aggregated_keyword:
-
-						if (re.search('[^a-z]'+re.escape(splitkey)+'.{0,3}(\W|$)', post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey)+'.{0,3}(\W|$)', post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey)+'.{0,3}(\W|$)', tags_string, re.IGNORECASE)) and owners is not None:
-
-							redundancy = redundancy + 1
-
-					if redundancy == len(aggregated_keyword):
+				for splitkey in aggregated_keywords:
+					if (re.search('[^a-z]'+re.escape(splitkey)+'.{0,3}(\W|$)', post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey)+'.{0,3}(\W|$)', post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey)+'.{0,3}(\W|$)', tags_string, re.IGNORECASE)) and owners is not None:
 
 						########### QUERY FOR DATABASE CHECKING
 						query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s AND title = %s")
@@ -261,38 +237,6 @@ def newscast(newscast_args):
 						post_link = failDetectorPack.failUniversalCorrectorKit(post_link, source_id)
 
 						if post_link is not None:
-							########### ITEM BUILDING
-							post_title = escaping(post_title)
-							item = (post_title, post_link, post_date, source_id, keyword_id_comma2, owners)
-							item_update = [post_link]
-
-							########### CALL insertOrUpdate FUNCTION
-							insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
-
-				########### SIMPLE KEYWORDS RESEARCH
-				else:
-					if "[!ALERT!]" in keyword:
-						keyword = keyword.replace("[!ALERT!]", "")
-
-					if (re.search('[^a-z]'+re.escape(keyword)+'.{0,3}(\W|$)', post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(keyword)+'.{0,3}(\W|$)', post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(keyword)+'.{0,3}(\W|$)', tags_string, re.IGNORECASE) or re.search('^'+re.escape(':all@'+source_id)+'$', keyword, re.IGNORECASE)) and owners is not None:
-
-						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s  AND title = %s")
-						query_link_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
-						query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s AND `date` BETWEEN %s AND (%s+43200)")
-
-						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
-
-						########### QUERIES FOR DATABASE UPDATE
-						query_update = ("UPDATE result_news_serge SET keyword_id = %s, owners = %s WHERE link = %s")
-						query_update_title = ("UPDATE result_news_serge SET title = %s, keyword_id = %s, owners = %s WHERE link = %s")
-						query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s, keyword_id = %s, owners = %s WHERE link = %s")
-
-						########### LINK VALIDATION
-						alter_link = failDetectorPack.failUniversalCorrectorKit(post_link, source_id)
-
-						if alter_link is not None:
 							########### ITEM BUILDING
 							post_title = escaping(post_title)
 							item = (post_title, post_link, post_date, source_id, keyword_id_comma2, owners)

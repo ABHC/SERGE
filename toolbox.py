@@ -51,3 +51,23 @@ def escaping(string):
 	stringEscaped = cgi.escape(h.unescape(string.strip())).encode('utf8', 'xmlcharrefreplace').decode('utf8')
 
 	return stringEscaped
+
+
+def multikey(keyword):
+	"""AGGREGATED KEYWORDS RESEARCH"""
+
+	if "+" in keyword:
+		aggregated_keywords = []
+		keyword = keyword.replace("[!ALERT!]", "")
+		split_aggregate = keyword.split("+")
+
+		for grain in split_aggregate:
+			if grain != "":
+				aggregated_keywords.append(grain)
+			elif grain == "" and len(grain_list) > 0:
+				aggregated_keywords[len(aggregated_keywords)-1] = aggregated_keywords[len(aggregated_keywords)-1] + "+"
+
+	else:
+		aggregated_keywords = [keyword]
+
+	return aggregated_keywords
