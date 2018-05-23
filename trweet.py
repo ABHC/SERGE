@@ -315,7 +315,7 @@ def lakesOfTrweets(attributes):
 			########### SEARCH TRWEET QUERIES
 			query_checking = ("SELECT query_id, owners FROM geo_trweet_serge WHERE trweet_id = %s")
 			query_update = ("UPDATE geo_trweet_serge SET query_id = %s, owners = %s WHERE trweet_id = %s")
-			query_insertion = ("INSERT INTO geo_trweet_serge (query_id, owners, trweet_id, latitude, longitude, country, date) VALUES (%s, %s, %s, %s, %s, %s, %s)")
+			query_insertion = ("INSERT INTO geo_trweet_serge (query_id, owners, trweet_id, latitude, longitude, country, `date`) VALUES (%s, %s, %s, %s, %s, %s, %s)")
 			query_fishing_time = ("UPDATE queries_trweet_serge SET last_launch = %s WHERE id = %s")
 
 			########### ITEM BUILDING
