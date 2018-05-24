@@ -2,9 +2,10 @@
 
 """insertSQL contains some functions for handshaking with Serge database"""
 
+import re
+import time
 import MySQLdb
 import smtplib
-import time
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -12,8 +13,11 @@ from email.mime.text import MIMEText
 def databaseConnection():
 	"""Connexion to Serge database"""
 
-	passSQL = open("/var/www/Serge/permission/password.txt", "r")
-	passSQL = passSQL.read().strip()
+	permissions = open("/var/www/Serge/permission/core_permissions.txt", "r")
+	passSQL = permissions.read().strip()
+	passSQL = re.findall("password: "+'[a-zA-Z0-9@._-]*', passSQL)
+	passSQL = passSQL[0].replace("password: ", "")
+	permissions.close()
 
 	database = MySQLdb.connect(host="localhost", user="Serge", passwd=passSQL, db="Serge", use_unicode=1, charset="utf8mb4")
 
@@ -38,10 +42,22 @@ def highwayToMail(register, newsletter, priority, pydate):
 
 	if expiration_date > verif_time :
 
+		######### SERGE CONFIG FILE READING
+		permissions = open("/var/www/Serge/permission/core_permissions.txt", "r")
+		config_file = permissions.read().strip()
+		permissions.close()
+
 		######### SERGE MAIL
-		sergemail = open("permission/sergemail.txt", "r")
-		fromaddr = sergemail.read().strip()
-		sergemail.close
+		fromaddr = re.findall("serge_mail: "+'[a-zA-Z0-9@._-]*', config_file)
+		fromaddr = fromaddr[0].replace("serge_mail: ", "")
+
+		######### PASSWORD FOR MAIL
+		mdp_mail = re.findall("passmail: "+'[a-zA-Z0-9@._-]*', config_file)
+		mdp_mail = mdp_mail[0].replace("passmail: ", "")
+
+		######### SERGE SERVER ADRESS
+		mailserveraddr = re.findall("passmail: "+'[a-zA-Z0-9@._-]*', config_file)
+		mailserveraddr = mailserveraddr[0].replace("mail_server: ", "")
 
 		######### ADRESSES AND LANGUAGE RECOVERY
 		query_user_infos = "SELECT email, language FROM users_table_serge WHERE id = %s"
@@ -73,14 +89,6 @@ def highwayToMail(register, newsletter, priority, pydate):
 		msg['From'] = fromaddr
 		msg['To'] = toaddr
 		msg['Subject'] = translate_subject
-
-		passmail = open("permission/passmail.txt", "r")
-		mdp_mail = passmail.read().strip()
-		passmail.close()
-
-		mailserver = open("permission/mailserver.txt", "r")
-		mailserveraddr = mailserver.read().strip()
-		mailserver.close()
 
 		######### EMAIL SERVER CONNEXION
 		server = smtplib.SMTP(mailserveraddr, 5025)
