@@ -13,9 +13,9 @@ from email.mime.text import MIMEText
 def databaseConnection():
 	"""Connexion to Serge database"""
 
-	permissions = open("/var/www/Serge/permission/core_permissions.txt", "r")
+	permissions = open("/var/www/Serge/configuration/core_configuration.txt", "r")
 	passSQL = permissions.read().strip()
-	passSQL = re.findall("password: "+'[a-zA-Z0-9@._-]*', passSQL)
+	passSQL = re.findall("password: "+'([^\s]+)', passSQL)
 	passSQL = passSQL[0].replace("password: ", "")
 	permissions.close()
 
@@ -43,21 +43,18 @@ def highwayToMail(register, newsletter, priority, pydate):
 	if expiration_date > verif_time :
 
 		######### SERGE CONFIG FILE READING
-		permissions = open("/var/www/Serge/permission/core_permissions.txt", "r")
+		permissions = open("/var/www/Serge/configuration/core_configuration.txt", "r")
 		config_file = permissions.read().strip()
 		permissions.close()
 
 		######### SERGE MAIL
-		fromaddr = re.findall("serge_mail: "+'[a-zA-Z0-9@._-]*', config_file)
-		fromaddr = fromaddr[0].replace("serge_mail: ", "")
+		fromaddr = re.findall("serge_mail: "+'([^\s]+)', config_file)
 
 		######### PASSWORD FOR MAIL
-		mdp_mail = re.findall("passmail: "+'[a-zA-Z0-9@._-]*', config_file)
-		mdp_mail = mdp_mail[0].replace("passmail: ", "")
+		mdp_mail = re.findall("passmail: "+'([^\s]+)', config_file)
 
 		######### SERGE SERVER ADRESS
-		mailserveraddr = re.findall("passmail: "+'[a-zA-Z0-9@._-]*', config_file)
-		mailserveraddr = mailserveraddr[0].replace("mail_server: ", "")
+		mailserveraddr = re.findall("passmail: "+'([^\s]+)', config_file)
 
 		######### ADRESSES AND LANGUAGE RECOVERY
 		query_user_infos = "SELECT email, language FROM users_table_serge WHERE id = %s"

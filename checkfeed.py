@@ -259,7 +259,14 @@ def feedMeUp(link, user_id, typeName, pack_id, recursive):
 			if recursive is False:
 				base_link = link
 				links = extractFeedLinks(req_results[1])
+				output = []
+
 				for link in links:
+					link = link.split("://")
+					output.append(link[1])
+
+				for path in list(set(output)):
+					link = "https://"+path
 					if validators.url(link):
 						feedMeUp(link, user_id, typeName, pack_id, True)
 					else:
