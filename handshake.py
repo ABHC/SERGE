@@ -16,7 +16,6 @@ def databaseConnection():
 	permissions = open("/var/www/Serge/configuration/core_configuration.txt", "r")
 	passSQL = permissions.read().strip()
 	passSQL = re.findall("password: "+'([^\s]+)', passSQL)
-	passSQL = passSQL[0].replace("password: ", "")
 	permissions.close()
 
 	database = MySQLdb.connect(host="localhost", user="Serge", passwd=passSQL, db="Serge", use_unicode=1, charset="utf8mb4")
