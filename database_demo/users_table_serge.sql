@@ -27,6 +27,7 @@ CREATE TABLE `users_table_serge` (
 	`sms_credits` int(11) DEFAULT 0,
 	`token` varchar(8) COLLATE utf8mb4_bin NOT NULL,
 	`add_source_status` text COLLATE utf8mb4_bin DEFAULT NULL,
+	`req_for_del` int(11) DEFAULT NULL,
 	PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 

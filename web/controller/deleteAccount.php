@@ -43,6 +43,10 @@ if (!empty($data['token']))
 		$body    = 'Delete user number : ' . $_SESSION['id'] . ' with this email : ' . $email;
 
 		include('controller/sendmail.php');
+
+		$updateCol = array(array('req_for_del', $_SERVER['REQUEST_TIME']));
+		$checkCol  = array(array('id', '=', $_SESSION['id'], ''));
+		$execution = update('users_table_serge', $updateCol, $checkCol, '', $bdd);
 	}
 	else
 	{
