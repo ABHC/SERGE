@@ -42,7 +42,7 @@
 					<option value="0"><?php get_t('select1_window0_watchpack', $bdd); ?>&nbsp;&nbsp;</option>
 					<?php
 					# List here watch Pack own by current user
-					$checkCol        = array(array('author', '=', $_SESSION['pseudo'], ''));
+					$checkCol        = array(array('author', '=', $_SESSION['id'], ''));
 					$ownerWatchPacks = read('watch_pack_serge', 'id, name', $checkCol, '', $bdd);
 
 					foreach ($ownerWatchPacks as $ownerWatchPack)
@@ -847,6 +847,10 @@
 							$watchPacks = new ArrayIterator($watchPacks);
 							foreach (new LimitIterator($watchPacks, $base, $limit) as $watchPack)
 							{
+								# Read author name
+								$checkCol            = array(array('author', '=', $_SESSION['id'], ''));
+								$watchPack['author'] = read('users_table_serge', 'users', $checkCol, '', $bdd);
+
 								# Color stars
 								$starTitle = 'Add a star';
 								$colorStar = '';

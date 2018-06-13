@@ -388,7 +388,7 @@ else
 {
 	if (!empty($data['packId']))
 	{
-		$checkCol    = array(array('author', '=', $_SESSION['pseudo'], 'AND'),
+		$checkCol    = array(array('author', '=', $_SESSION['id'], 'AND'),
 												array('id', '=', $data['packId'], ''));
 		$result      = read('watch_pack_serge', 'name, description, category, language', $checkCol, '', $bdd);
 		$packDetails = $result[0] ?? '';
@@ -469,7 +469,7 @@ else
 	elseif ($emailIsCheck && !empty($data['packId']) && !empty($data['addNewPack']) && !empty($data['watchPackName']) && !empty($data['watchPackDescription']))
 	{
 		// Check if watch pack is own by the user
-		$checkCol  = array(array('author', '=', $_SESSION['pseudo'], 'AND'),
+		$checkCol  = array(array('author', '=', $_SESSION['id'], 'AND'),
 											array('id', '=', $data['packId'], ''));
 		$packIsOwn = read('watch_pack_serge', '', $checkCol, '', $bdd);
 
@@ -1059,7 +1059,7 @@ else
 		{
 			$insertCol = array(array('name', mb_strtolower($newWatchPackName)),
 												array('description', $data['watchPackDescription']),
-												array('author', $_SESSION['pseudo']),
+												array('author', $_SESSION['id']),
 												array('users', ','),
 												array('category', $category),
 												array('language', $language),
@@ -1104,7 +1104,7 @@ else
 	elseif (!empty($data['watchPackList']))
 	{
 
-		$checkCol = array(array('author', '=', $_SESSION['pseudo'], 'AND'),
+		$checkCol = array(array('author', '=', $_SESSION['id'], 'AND'),
 											array('id', '=', $data['watchPackList'], ''));
 		$result   = read('watch_pack_serge', 'id', $checkCol, '', $bdd);
 		$result   = $result[0] ?? '';
@@ -1122,7 +1122,7 @@ else
 	if (!empty($data['packId']))
 	{
 
-		$checkCol    = array(array('author', '=', $_SESSION['pseudo'], 'AND'),
+		$checkCol    = array(array('author', '=', $_SESSION['id'], 'AND'),
 												array('id', '=', $data['packId'], ''));
 		$result      = read('watch_pack_serge', 'name, description, category, language', $checkCol, '', $bdd);
 		$packDetails = $result[0] ?? '';

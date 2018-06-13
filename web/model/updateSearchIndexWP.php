@@ -14,7 +14,14 @@ $req->execute();
 
 foreach ($result as $line)
 {
-	$word = $line['name'] . ' ' . $line['description'] . ' ' . $line['author'] . ' ' . $line['category'] . ' ' . $line['language'];
+	// Read author name
+	$req = $bdd->prepare("SELECT users FROM users_table_serge WHERE id = :id");
+	$req->execute(array(
+		'id' => $line['author']));
+		$authorName = $req->fetch();
+		$req->closeCursor();
+
+	$word = $line['name'] . ' ' . $line['description'] . ' ' . $authorName['users'] . ' ' . $line['category'] . ' ' . $line['language'];
 
 	$soundexWord = '';
 	$soundexWord_array = explode(' ', $word);

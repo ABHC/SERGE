@@ -1399,17 +1399,21 @@ SSLStaplingCache shmcb:/tmp/stapling_cache(128000)" > /etc/apache2/sites-availab
 	# Create folder permission
 	mkdir /var/www/Serge/permission
 
+	# Create config file
+	echo "Config File Serge"  > /var/www/Serge/permission/core_configuration.txt
+	echo ""  > /var/www/Serge/permission/core_configuration.txt
+
+	# Give access to database
+	echo "password: $internalPass" > /var/www/Serge/permission/core_configuration.txt
+
 	# Give to Serge access to a mail server
-	echo serge@$domainName > /var/www/Serge/permission/sergemail.txt
-	echo $internalPass > /var/www/Serge/permission/passmail.txt
-	echo "smtp.$domainName" > /var/www/Serge/permission/mailserver.txt
+	echo "passmail: $internalPass" > /var/www/Serge/permission/core_configuration.txt
+	echo "mail_server: smtp.$domainName" > /var/www/Serge/permission/core_configuration.txt
+	echo "serge_adress: serge@$domainName" > /var/www/Serge/permission/core_configuration.txt
 	chown -R Serge:Serge /var/www/Serge/permission/
 
 	echo "serge@$domainName" > /var/www/Serge/web/.mailaddr
 	chown www-data:www-data /var/www/Serge/web/.mailaddr
-
-	# Give access to database
-	echo $internalPass > /var/www/Serge/permission/password.txt
 
 	# Install Trweet
 	# TODO Demander si l'user veux installer Twreet
@@ -1690,7 +1694,11 @@ SSLStaplingCache shmcb:/tmp/stapling_cache(128000)" > /etc/apache2/sites-availab
 	crontab /tmp/crontab.tmp
 	rm /tmp/crontab.tmp
 	echo "#!/bin/bash" > /srv/SergeBackup.sh
-	echo "password=$(cat /var/www/Serge/permission/password.txt)" >> /srv/SergeBackup.sh
+	echo "re='password: ([^" > /srv/SergeBackup.sh
+	echo "]+)'" > /srv/SergeBackup.sh
+	echo "config=\$(cat /var/www/Serge/permission/core_permissions.txt)" > /srv/SergeBackup.sh
+	echo "[[ \$config =~ \$re ]]" > /srv/SergeBackup.sh
+	echo "password=\${BASH_REMATCH[1]}" > /srv/SergeBackup.sh
 	echo "/usr/bin/mysqldump -u Serge -p\$password Serge > /srv/backupSerge/Sergedata_\$( date +\"%Y_%m_%d\" ).sql" >> /srv/SergeBackup.sh
 	echo "password=''"  >> /srv/SergeBackup.sh
 	chown -R Serge:Serge /srv/backupSerge/
