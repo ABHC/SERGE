@@ -1,6 +1,6 @@
 # Back-up
-Enable local back-up: True
-Enable extern back-up: True
+Enable local back-up: False
+Enable extern back-up: False
 Period: 197913
 
 ## Extern back-up
