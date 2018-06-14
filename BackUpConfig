@@ -1,13 +1,13 @@
 # Back-up
-Enable local back-up: False
+Enable local back-up: True
 Enable extern back-up: True
 Period: 197913
 
 ## Extern back-up
 Domain name: monitoring.cairngit.eu
-User: Backup_du_67
-Password: Saumon_du_67
-Folder extern: /srv/backupserge
+User: Backup_du_42
+Password: Awesome&Password&42
+Folder extern: /srv/backupserge/
 
 ## Local back-up
 Folder local: /srv/backupserge/
