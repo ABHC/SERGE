@@ -1,0 +1,10 @@
+# Back-up
+Period: 197913
+
+## Extern back-up
+domain name: monitoring.cairngit.eu
+user: Backup_du_67
+password: Saumon_du_67
+
+## Local back-up
+folder: /srv/backupserge/
