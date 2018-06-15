@@ -42,9 +42,9 @@ def rosetta(now):
 	######### SCIENCE RESEARCH
 	logger_info.info("\n\n######### Last Scientific papers research : \n\n")
 
-	######### CALL TO TABLE queries_science_serge
+	######### CALL TO TABLE inquiries_sciences_serge
 	call_science = database.cursor()
-	call_science.execute("SELECT id, query_serge, owners FROM queries_science_serge WHERE active >= 1")
+	call_science.execute("SELECT id, inquiry, applicable_owners_sources FROM inquiries_sciences_serge WHERE active >= 1")
 	rows = call_science.fetchall()
 	call_science.close()
 
@@ -56,18 +56,18 @@ def rosetta(now):
 
 	for serge_science_query in queries_and_owners_science_list:
 
-		query_id = serge_science_query[0]
+		inquiry_id = serge_science_query[0]
 		query_serge = serge_science_query[1]
 		owners = serge_science_query[2].strip()
 
 		######### BUILDING REQUEST FOR SCIENCE API
-		request_dictionnary = decoder.requestBuilder(database, query_serge, query_id, owners)
+		request_dictionnary = decoder.requestBuilder(database, query_serge, inquiry_id, owners)
 
 		######### RESEARCH SCIENCE ON RSS FEEDS WITH FEEDPARSER MODULE
 		for science_api_pack in request_dictionnary.values():
 			if science_api_pack[4] == "RSS":
 
-				query_id = science_api_pack[0]
+				inquiry_id = science_api_pack[0]
 				link = science_api_pack[1]
 				query_api = science_api_pack[2]
 				source_id = science_api_pack[3]
@@ -122,21 +122,21 @@ def rosetta(now):
 									logger_error.warning(traceback.format_exc())
 									post_date = now
 
-								keyword_id_comma = str(query_id)+","
-								keyword_id_comma2 = ","+str(query_id)+","
+								keyword_id_comma = str(inquiry_id)+","
+								keyword_id_comma2 = ","+str(inquiry_id)+","
 
 								########### QUERY FOR DATABASE CHECKING
-								query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s AND title = %s")
-								query_link_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
-								query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s AND `date` BETWEEN %s AND (%s+43200)")
+								query_checking = ("SELECT inquiry_id, owners FROM result_science_serge WHERE link = %s AND title = %s")
+								query_link_checking = ("SELECT inquiry_id, owners FROM result_science_serge WHERE link = %s")
+								query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE source_id = %s AND `date` BETWEEN %s AND (%s+43200)")
 
 								########### QUERY FOR DATABASE INSERTION
-								query_insertion = ("INSERT INTO result_science_serge(title, link, date, id_source, query_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
+								query_insertion = ("INSERT INTO result_science_serge(title, link, date, source_id, inquiry_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
 
 								########### QUERY FOR DATABASE UPDATE
-								query_update = ("UPDATE result_science_serge SET query_id = %s, owners = %s WHERE link = %s")
-								query_update_title = ("UPDATE result_science_serge SET title = %s, query_id = %s, owners = %s WHERE link = %s")
-								query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s, query_id = %s, owners = %s WHERE link = %s")
+								query_update = ("UPDATE result_science_serge SET inquiry_id = %s, owners = %s WHERE link = %s")
+								query_update_title = ("UPDATE result_science_serge SET title = %s, inquiry_id = %s, owners = %s WHERE link = %s")
+								query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s, inquiry_id = %s, owners = %s WHERE link = %s")
 
 								########### ITEM BUILDING
 								post_title = escaping(post_title)
@@ -155,7 +155,7 @@ def rosetta(now):
 		for science_api_pack in request_dictionnary.values():
 			if science_api_pack[4] == "JSON":
 
-				query_id = science_api_pack[0]
+				inquiry_id = science_api_pack[0]
 				link = science_api_pack[1]
 				query_api = science_api_pack[2]
 				source_id = science_api_pack[3]
@@ -209,21 +209,21 @@ def rosetta(now):
 									logger_error.warning("Error in json retrival of post_date : "+str(json_error))
 									post_date = now
 
-								keyword_id_comma = str(query_id)+","
-								keyword_id_comma2 = ","+str(query_id)+","
+								keyword_id_comma = str(inquiry_id)+","
+								keyword_id_comma2 = ","+str(inquiry_id)+","
 
 								########### QUERY FOR DATABASE CHECKING
-								query_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s AND title = %s")
-								query_link_checking = ("SELECT query_id, owners FROM result_science_serge WHERE link = %s")
-								query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s AND `date` BETWEEN %s AND (%s+43200)")
+								query_checking = ("SELECT inquiry_id, owners FROM result_science_serge WHERE link = %s AND title = %s")
+								query_link_checking = ("SELECT inquiry_id, owners FROM result_science_serge WHERE link = %s")
+								query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE source_id = %s AND `date` BETWEEN %s AND (%s+43200)")
 
 								########### QUERY FOR DATABASE INSERTION
-								query_insertion = ("INSERT INTO result_science_serge(title, link, date, id_source, query_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
+								query_insertion = ("INSERT INTO result_science_serge(title, link, date, source_id, inquiry_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
 
 								########### QUERY FOR DATABASE UPDATE
-								query_update = ("UPDATE result_science_serge SET query_id = %s, owners = %s WHERE link = %s")
-								query_update_title = ("UPDATE result_science_serge SET title = %s, query_id = %s, owners = %s WHERE link = %s")
-								query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s, query_id = %s, owners = %s WHERE link = %s")
+								query_update = ("UPDATE result_science_serge SET inquiry_id = %s, owners = %s WHERE link = %s")
+								query_update_title = ("UPDATE result_science_serge SET title = %s, inquiry_id = %s, owners = %s WHERE link = %s")
+								query_jelly_update = ("UPDATE result_science_serge SET title = %s, link = %s, inquiry_id = %s, owners = %s WHERE link = %s")
 
 								########### ITEM BUILDING
 								post_title = escaping(post_title)
@@ -256,7 +256,7 @@ def sciencespack(register, user_id_comma):
 	record_read = bool(record_read[0])
 
 	######### RESULTS NEWS : NEWS ATTRIBUTES QUERY (LINK + TITLE + ID SOURCE + KEYWORD ID)
-	query_science = ("SELECT id, title, link, id_source, query_id FROM result_science_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
+	query_science = ("SELECT id, title, link, source_id, inquiry_id FROM result_science_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
 
 	call_science = database.cursor()
 	call_science.execute(query_science, (user_id_comma, user_id_comma, user_id_comma))
@@ -272,8 +272,8 @@ def sciencespack(register, user_id_comma):
 		add_wiki_link = toolbox.recorder(register, "sciences", str(row[0]), "addLinkInWiki", database)
 
 		######### SEARCH FOR SOURCE NAME AND COMPLETE REQUEST OF THE USER
-		query_source = "SELECT basename FROM equivalence_science_serge WHERE id = %s"
-		query_inquiry = "SELECT query, applicable_owners_sources FROM queries_science_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
+		query_source = "SELECT basename FROM sources_sciences_serge WHERE id = %s"
+		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_sciences_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
 		item_arguments = {"user_id_comma": user_id_comma, "source_id": row[3], "inquiry_id": str(row[4]).split(",")}, "query_source": query_source, "query_inquiry": query_inquiry}
 

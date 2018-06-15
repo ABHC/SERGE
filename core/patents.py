@@ -47,7 +47,7 @@ def pathfinder(now):
 
 	######### CALL TO TABLE queries_wipo
 	call_patents_key = database.cursor()
-	call_patents_key.execute("SELECT query, id, owners, legal_research FROM queries_wipo_serge WHERE active > 0")
+	call_patents_key.execute("SELECT inquiry, id, applicable_owners_sources, legal_research FROM inquiries_patents_serge WHERE active > 0")
 	matrix_query = call_patents_key.fetchall()
 	call_patents_key.close()
 
@@ -57,7 +57,7 @@ def pathfinder(now):
 		queryception_list.append(queryception)
 
 	for couple_query in queryception_list:
-		id_query_wipo = couple_query[1]
+		inquiry_id = couple_query[1]
 		query_wipo = couple_query[0].strip().encode("utf8")
 		owners = couple_query[2].strip().encode("utf8")
 		legal_research = couple_query[3]
@@ -113,8 +113,8 @@ def pathfinder(now):
 							logger_error.warning(traceback.format_exc())
 							post_date = now
 
-						keyword_id_comma = str(id_query_wipo)+","
-						keyword_id_comma2 = ","+str(id_query_wipo)+","
+						keyword_id_comma = str(inquiry_id)+","
+						keyword_id_comma2 = ","+str(inquiry_id)+","
 
 						########### PRESENCE CHECKING
 						query_presence_checking = ("SELECT legal_check_date, owners FROM result_patents_serge WHERE link = %s")
@@ -163,16 +163,16 @@ def pathfinder(now):
 							new_check_date = None
 
 						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT id_query_wipo, owners FROM result_patents_serge WHERE link = %s AND title = %s")
-						query_link_checking = ("SELECT id_query_wipo, owners FROM result_patents_serge WHERE link = %s")
+						query_checking = ("SELECT inquiry_id, owners FROM result_patents_serge WHERE link = %s AND title = %s")
+						query_link_checking = ("SELECT inquiry_id, owners FROM result_patents_serge WHERE link = %s")
 						query_jellychecking = None
 
 						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_patents_serge (title, link, date, id_source, id_query_wipo, owners, legal_abstract, legal_status, lens_link, legal_check_date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+						query_insertion = ("INSERT INTO result_patents_serge (title, link, date, source_id, inquiry_id, owners, legal_abstract, legal_status, lens_link, legal_check_date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
 						########### QUERY FOR DATABASE UPDATE
-						query_update = ("UPDATE result_patents_serge SET id_query_wipo = %s, owners = %s, legal_abstract = %s, legal_status = %s, lens_link = %s, legal_check_date = %s WHERE link = %s")
-						query_update_title = ("UPDATE result_patents_serge SET title = %s, id_query_wipo = %s, owners = %s, legal_abstract = %s, legal_status = %s, lens_link = %s, legal_check_date = %s WHERE link = %s")
+						query_update = ("UPDATE result_patents_serge SET inquiry_id = %s, owners = %s, legal_abstract = %s, legal_status = %s, lens_link = %s, legal_check_date = %s WHERE link = %s")
+						query_update_title = ("UPDATE result_patents_serge SET title = %s, inquiry_id = %s, owners = %s, legal_abstract = %s, legal_status = %s, lens_link = %s, legal_check_date = %s WHERE link = %s")
 						query_jelly_update = None
 
 						########### ITEM BUILDING
@@ -214,7 +214,7 @@ def patentspack(register, user_id_comma):
 	record_read = bool(record_read[0])
 
 	######### RESULTS NEWS : NEWS ATTRIBUTES QUERY (LINK + TITLE + ID SOURCE + KEYWORD ID)
-	query_patents = ("SELECT id, title, link, id_source, id_query_wipo FROM result_patents_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
+	query_patents = ("SELECT id, title, link, source_id, inquiry_id FROM result_patents_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
 
 	call_patents = database.cursor()
 	call_patents.execute(query_patents, (user_id_comma, user_id_comma, user_id_comma))
@@ -230,8 +230,8 @@ def patentspack(register, user_id_comma):
 		add_wiki_link = toolbox.recorder(register, "patents", str(row[0]), "addLinkInWiki", database)
 
 		######### SEARCH FOR SOURCE NAME AND COMPLETE REQUEST OF THE USER
-		query_source = "SELECT basename FROM equivalence_patents_serge WHERE id = %s"
-		query_inquiry = "SELECT query, applicable_owners_sources FROM queries_wipo_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
+		query_source = "SELECT basename FROM sources_patents_serge WHERE id = %s"
+		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_patents_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
 		item_arguments = {"user_id_comma": user_id_comma, "source_id": row[3], "inquiry_id": str(row[4]).split(",")}, "query_source": query_source, "query_inquiry": query_inquiry}
 
