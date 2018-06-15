@@ -1,12 +1,15 @@
 # -*- coding: utf8 -*-
 
-"""Collection of useful little tools for SERGE"""
+"""Collection of useful tools for SERGE"""
 
 import cgi
 import logging
 import traceback
 from HTMLParser import HTMLParser
 from logging.handlers import RotatingFileHandler
+
+######### IMPORT SERGE SPECIALS MODULES
+from handshake import databaseConnection
 
 
 def cemeteriesOfErrors(*exc_info):
@@ -71,3 +74,59 @@ def multikey(keyword):
 		aggregated_keywords = [keyword]
 
 	return aggregated_keywords
+
+
+def recorder(register, label, linkId, recorder_call, database):
+	"""Creation of "recording links" that update Serge Database or add the article in WikiSerge when clicked"""
+
+	query_domain = ("SELECT value FROM miscellaneous_serge WHERE name = 'domain'")
+
+	call_users = database.cursor()
+	call_users.execute(query_domain, )
+	domain = call_users.fetchone()
+	call_users.close()
+
+	domain = domain[0]
+
+	query_user_secrets = ("SELECT token FROM users_table_serge WHERE id = %s")
+
+	call_users = database.cursor()
+	call_users.execute(query_user_secrets, (register,))
+	token = call_users.fetchone()
+	call_users.close()
+
+	token = token[0]
+	recording_link = "http://" + domain + "/" + recorder_call + "?type=" + label + "&token=" + token + "&id=" + linkId
+
+	return (recording_link)
+
+
+def packaging(item_arguments):
+
+	######### SET VARIABLES
+	user_id_doubledot = user_id_comma.replace(",", "")+":"
+	user_id_doubledot_percent = "%"+user_id_doubledot+"%"
+	inquiry_nb = len(inquiry_id)
+	proceed = True
+
+	######### RETRIEVE THE NAME OF THE SOURCE
+	call_db = database.cursor()
+	call_db.execute(item_arguments["query_source"], (item_arguments["source_id"],))
+	source = call_db.fetchone()
+	call_db.close()
+
+	for inquiry_id in item_arguments["query_inquiry"]:
+		if proceed is True:
+			######### RETRIEVE THE USER REQUEST
+			call_db = database.cursor()
+			call_db.execute(item_arguments["query_inquiry"], (user_id_doubledot_percent,))
+			check = call_db.fetchone()
+			call_db.close()
+
+			if re.search(user+'[0-9,]*'+",8,", check[1]) is not None :
+				check = attributes[0]
+				proceed = False
+
+	attributes = {"source": source, "inquiry": inquiry}
+
+	return attributes
