@@ -221,8 +221,6 @@ def patentspack(register, user_id_comma):
 	rows = [list(elem) for elem in list(call_patents.fetchall())]
 	call_patents.close()
 
-	#TODO appliquer la méthode applicable_owners_sources sur queries science et brevets
-
 	for row in rows:
 		######### CREATE RECORDER LINK AND WIKI LINK
 		if record_read is True:

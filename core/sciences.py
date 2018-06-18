@@ -48,20 +48,18 @@ def rosetta(now):
 	rows = call_science.fetchall()
 	call_science.close()
 
-	queries_and_owners_science_list = []
+	#TODO changer le mode fonctionnement pour vérifier que la requete s'applique bien à la source sur laquelle on travaille ... En fait changer tout le début en s'inspirant de newscast.voyager
+
+	inquiries_list = []
 
 	for row in rows:
-		field = (row[0], row[1].strip(), row[2].strip())
-		queries_and_owners_science_list.append(field)
+		row[2].split()
+		field = {"inquiry_id":row[0], "inquiry": row[1].strip(), "applicable_owners_sources": row[2].strip()}
+		inquiries_list.append(field)
 
-	for serge_science_query in queries_and_owners_science_list:
-
-		inquiry_id = serge_science_query[0]
-		query_serge = serge_science_query[1]
-		owners = serge_science_query[2].strip()
-
+	for inquiry in inquiries_list:
 		######### BUILDING REQUEST FOR SCIENCE API
-		request_dictionnary = decoder.requestBuilder(database, query_serge, inquiry_id, owners)
+		request_dictionnary = decoder.requestBuilder(database, inquiries_list["inquiry"], inquiries_list["inquiry_id"], inquiries_list["applicable_owners_sources"])
 
 		######### RESEARCH SCIENCE ON RSS FEEDS WITH FEEDPARSER MODULE
 		for science_api_pack in request_dictionnary.values():
@@ -69,9 +67,9 @@ def rosetta(now):
 
 				inquiry_id = science_api_pack[0]
 				link = science_api_pack[1]
-				query_api = science_api_pack[2]
+				inquiry = science_api_pack[2]
 				source_id = science_api_pack[3]
-				owners = science_api_pack[5]
+				applicable_owners_sources = science_api_pack[5]
 
 				logger_info.info(query_api.encode("utf8")+"\n")
 
@@ -262,8 +260,6 @@ def sciencespack(register, user_id_comma):
 	call_science.execute(query_science, (user_id_comma, user_id_comma, user_id_comma))
 	rows = [list(elem) for elem in list(call_science.fetchall())]
 	call_science.close()
-
-	#TODO appliquer la méthode applicable_owners_sources sur queries science et brevets
 
 	for row in rows:
 		######### CREATE RECORDER LINK AND WIKI LINK
