@@ -27,3 +27,8 @@ CREATE TABLE `sources_patents_serge` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 SET NAMES utf8mb4;
+
+#TODO compléter la base sources_patents_serge pour la mettre en conformité avec requestBuilder attention aux langues
+
+INSERT INTO `sources_patents_serge` (`id`, `apikey`, `type`, `basename`, `name`, `link`, `prelink`, `postlink`, `AND`, `OR`, `NOT`, `(`, `)`, `quote`, `title`, `author`, `abstract`, `publisher`, `category`, `all`, `active`) VALUES
+(1, NULL, 'RSS', 'wipo', 'WIPO : World Intellectual Property Organization', 'http://www.wipo.int/','https://patentscope.wipo.int/search/rss.jsf?query=', '&office=&rss=true&sortOption=Pub+Date+Desc', '+AND+', '+OR+', '+ANDNOT+', '%28', '%29', '%22', 'ti:', 'au:', 'abs:', 'jr:', 'cat:', 'all:', 1),

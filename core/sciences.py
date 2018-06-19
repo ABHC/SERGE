@@ -48,32 +48,48 @@ def rosetta(now):
 	rows = call_science.fetchall()
 	call_science.close()
 
-	#TODO changer le mode fonctionnement pour vérifier que la requete s'applique bien à la source sur laquelle on travaille ... En fait changer tout le début en s'inspirant de newscast.voyager
-
 	inquiries_list = []
 
 	for row in rows:
-		row[2].split()
-		field = {"inquiry_id":row[0], "inquiry": row[1].strip(), "applicable_owners_sources": row[2].strip()}
+		owners_str = ","
+		sources_str = ","
+		owners_list = []
+		sources_list = []
+
+		for applicable_owners_sources in row[2].split("|"):
+			if applicable_owners_sources != "":
+				split_owners_sources = applicable_owners_sources.split(":")
+				if split_owners_sources[0] != "":
+					owners_list.append(split_owners_sources[0])
+					for source in split_owners_sources[1].split(","):
+						if source != "":
+							sources_list.append(source)
+
+		owners_list = list(set(owners_list))
+		sources_list = list(set(sources_list))
+
+		for owner in owners_list:
+			owners_str = owners_str + owner + ","
+
+		for source in sources_list:
+			sources_str = sources_str + source + ","
+
+		field = {"inquiry_id":row[0], "inquiry": row[1].strip(), "owners": owners_str.strip(), "sources": sources_str.strip()}
 		inquiries_list.append(field)
 
+		builder_queries = {"query_initialyze": "SELECT basename FROM sources_sciences_serge WHERE active >= 1", "query_builder_prime": "SELECT basename, quote FROM sources_sciences_serge WHERE active >= 1", "query_builder_second": "SELECT basename, `"+component+"` FROM sources_sciences_serge WHERE active >= 1", "query_pack": "SELECT basename, prelink, postlink, id, type FROM sources_sciences_serge WHERE active >= 1"}
+
+	######### BUILDING REQUEST FOR SCIENCE API
 	for inquiry in inquiries_list:
-		######### BUILDING REQUEST FOR SCIENCE API
-		request_dictionnary = decoder.requestBuilder(database, inquiries_list["inquiry"], inquiries_list["inquiry_id"], inquiries_list["applicable_owners_sources"])
+		request_dictionnary = decoder.requestBuilder(database, inquiry["inquiry"], inquiry["inquiry_id"], builder_queries)
 
-		######### RESEARCH SCIENCE ON RSS FEEDS WITH FEEDPARSER MODULE
 		for science_api_pack in request_dictionnary.values():
-			if science_api_pack[4] == "RSS":
+			source_comparator = ","+science_api_pack["source_id"]+","
 
-				inquiry_id = science_api_pack[0]
-				link = science_api_pack[1]
-				inquiry = science_api_pack[2]
-				source_id = science_api_pack[3]
-				applicable_owners_sources = science_api_pack[5]
-
-				logger_info.info(query_api.encode("utf8")+"\n")
-
-				req_results = sergenet.aLinkToThePast(link, 'fullcontent')
+			######### RESEARCH SCIENCE ON RSS FEEDS WITH FEEDPARSER MODULE
+			if science_api_pack["type"] == "RSS" and source_comparator in inquiry["sources"]:
+				logger_info.info(science_api_pack["inquiry_raw"].encode("utf8")+"\n")
+				req_results = sergenet.aLinkToThePast(science_api_pack["inquiry_link"], 'fullcontent')
 				feed_content = req_results[0]
 				feed_error = req_results[1]
 
@@ -82,7 +98,7 @@ def rosetta(now):
 						parsed_content = feedparser.parse(feed_content)
 					except Exception, except_type:
 						parsed_content = None
-						logger_error.error("PARSING ERROR IN :"+link+"\n")
+						logger_error.error("PARSING ERROR IN :"+science_api_pack["inquiry_link"]+"\n")
 						logger_error.error(repr(except_type))
 
 					if parsed_content is not None:
@@ -91,7 +107,7 @@ def rosetta(now):
 						logger_info.info("numbers of papers :"+unicode(rangemax_article)+"\n \n")
 
 						if rangemax_article == 0:
-							logger_info.info("VOID QUERY :"+link+"\n\n")
+							logger_info.info("VOID QUERY :"+science_api_pack["inquiry_link"]+"\n\n")
 
 						else:
 							while range_article < rangemax_article:
@@ -101,14 +117,14 @@ def rosetta(now):
 									if post_title == "":
 										post_title = "NO TITLE"
 								except AttributeError:
-									logger_error.warning("BEACON ERROR : missing <title> in "+link)
+									logger_error.warning("BEACON ERROR : missing <title> in "+science_api_pack["inquiry_link"])
 									logger_error.warning(traceback.format_exc())
 									post_title = "NO TITLE"
 
 								try:
 									post_link = parsed_content.entries[range_article].link
 								except AttributeError:
-									logger_error.warning("BEACON ERROR : missing <link> in "+link)
+									logger_error.warning("BEACON ERROR : missing <link> in "+science_api_pack["inquiry_link"])
 									logger_error.warning(traceback.format_exc())
 									post_link = ""
 
@@ -116,17 +132,17 @@ def rosetta(now):
 									post_date = parsed_content.entries[range_article].published_parsed
 									post_date = time.mktime(post_date)
 								except AttributeError:
-									logger_error.warning("BEACON ERROR : missing <date> in "+link)
+									logger_error.warning("BEACON ERROR : missing <date> in "+science_api_pack["inquiry_link"])
 									logger_error.warning(traceback.format_exc())
 									post_date = now
 
-								keyword_id_comma = str(inquiry_id)+","
-								keyword_id_comma2 = ","+str(inquiry_id)+","
+								inquiry_id_comma = str(inquiry["inquiry_id"])+","
+								inquiry_id_comma2 = ","+str(inquiry["inquiry_id"])+","
 
 								########### QUERY FOR DATABASE CHECKING
 								query_checking = ("SELECT inquiry_id, owners FROM result_science_serge WHERE link = %s AND title = %s")
 								query_link_checking = ("SELECT inquiry_id, owners FROM result_science_serge WHERE link = %s")
-								query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE source_id = %s AND `date` BETWEEN %s AND (%s+43200)")
+								query_jellychecking = ("SELECT title, link, inquiry_id, owners FROM result_science_serge WHERE source_id = %s AND `date` BETWEEN %s AND (%s+43200)")
 
 								########### QUERY FOR DATABASE INSERTION
 								query_insertion = ("INSERT INTO result_science_serge(title, link, date, source_id, inquiry_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
@@ -138,30 +154,21 @@ def rosetta(now):
 
 								########### ITEM BUILDING
 								post_title = escaping(post_title)
-								item = (post_title, post_link, post_date, source_id, keyword_id_comma2, owners)
+								item = (post_title, post_link, post_date, science_api_pack["source_id"], inquiry_id_comma2, inquiry["owners"])
 								item_update = [post_link]
 
 								########### CALL insertOrUpdate FUNCTION
-								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
+								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, inquiry_id_comma, need_jelly)
 
 								range_article = range_article + 1
 
 				else:
 					logger_info.warning("Error : the feed is unavailable")
 
-		######### RESEARCH SCIENCE ON JSON FEEDS WITH JSON MODULE
-		for science_api_pack in request_dictionnary.values():
-			if science_api_pack[4] == "JSON":
-
-				inquiry_id = science_api_pack[0]
-				link = science_api_pack[1]
-				query_api = science_api_pack[2]
-				source_id = science_api_pack[3]
-				owners = science_api_pack[5]
-
-				logger_info.info(query_api.encode("utf8")+"\n")
-
-				req_results = sergenet.aLinkToThePast(link, 'fullcontent')
+			######### RESEARCH SCIENCE ON JSON FEEDS WITH JSON MODULE
+			elif science_api_pack["type"] == "JSON" and source_comparator in inquiry["sources"]:
+				logger_info.info(science_api_pack["inquiry_raw"].encode("utf8")+"\n")
+				req_results = sergenet.aLinkToThePast(science_api_pack["inquiry_link"], 'fullcontent')
 				json_content = req_results[0]
 				feed_error = req_results[1]
 
@@ -170,7 +177,7 @@ def rosetta(now):
 						json_data = json.loads(json_content)
 					except Exception, except_type:
 						json_data = None
-						logger_error.error("PARSING ERROR IN :"+link+"\n")
+						logger_error.error("PARSING ERROR IN :"+science_api_pack["inquiry_link"]+"\n")
 						logger_error.error(repr(except_type))
 
 					if "results" in json_data:
@@ -179,7 +186,7 @@ def rosetta(now):
 						logger_info.info("numbers of papers :"+unicode(rangemax_article)+"\n \n")
 
 						if rangemax_article == 0:
-							logger_info.info("VOID QUERY :"+link+"\n\n")
+							logger_info.info("VOID QUERY :"+science_api_pack["inquiry_link"]+"\n\n")
 
 						else:
 							while range_article < rangemax_article:
@@ -207,13 +214,13 @@ def rosetta(now):
 									logger_error.warning("Error in json retrival of post_date : "+str(json_error))
 									post_date = now
 
-								keyword_id_comma = str(inquiry_id)+","
-								keyword_id_comma2 = ","+str(inquiry_id)+","
+								inquiry_id_comma = str(inquiry["inquiry_id"])+","
+								inquiry_id_comma2 = ","+str(inquiry["inquiry_id"])+","
 
 								########### QUERY FOR DATABASE CHECKING
 								query_checking = ("SELECT inquiry_id, owners FROM result_science_serge WHERE link = %s AND title = %s")
 								query_link_checking = ("SELECT inquiry_id, owners FROM result_science_serge WHERE link = %s")
-								query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE source_id = %s AND `date` BETWEEN %s AND (%s+43200)")
+								query_jellychecking = ("SELECT title, link, inquiry_id, owners FROM result_science_serge WHERE source_id = %s AND `date` BETWEEN %s AND (%s+43200)")
 
 								########### QUERY FOR DATABASE INSERTION
 								query_insertion = ("INSERT INTO result_science_serge(title, link, date, source_id, inquiry_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
@@ -225,11 +232,11 @@ def rosetta(now):
 
 								########### ITEM BUILDING
 								post_title = escaping(post_title)
-								item = (post_title, post_link, post_date, source_id, keyword_id_comma2, owners)
+								item = (post_title, post_link, post_date, science_api_pack["source_id"], inquiry_id_comma2, inquiry["owners"])
 								item_update = [post_link]
 
 								########### CALL  FUNCTION
-								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
+								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, inquiry_id_comma, need_jelly)
 
 								range_article = range_article + 1
 

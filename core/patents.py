@@ -6,9 +6,8 @@
 import re
 import time
 import datetime
-import json
-import feedparser
 import traceback
+import feedparser
 from bs4 import BeautifulSoup
 import logging
 
@@ -40,156 +39,139 @@ def pathfinder(now):
 	logger_info = logging.getLogger("info_log")
 	logger_error = logging.getLogger("error_log")
 
+	######### SET USEFUL VARIABLES
+	builder_queries = {"query_initialyze": "SELECT basename FROM sources_patents_serge WHERE active >= 1", "query_builder_prime": "SELECT basename, quote FROM sources_patents_serge WHERE active >= 1", "query_builder_second": "SELECT basename, `"+component+"` FROM sources_patents_serge WHERE active >= 1", "query_pack": "SELECT basename, prelink, postlink, id, type FROM sources_patents_serge WHERE active >= 1"}
 	need_jelly = False
-	source_id = 1
 
 	logger_info.info("\n\n######### Last Patents Research (patents function) : \n\n")
 
-	######### CALL TO TABLE queries_wipo
+	######### SEARCH SAVED QUERIES
 	call_patents_key = database.cursor()
-	call_patents_key.execute("SELECT inquiry, id, applicable_owners_sources, legal_research FROM inquiries_patents_serge WHERE active > 0")
-	matrix_query = call_patents_key.fetchall()
+	call_patents_key.execute("SELECT id, inquiry, applicable_owners_sources, legal_research FROM inquiries_patents_serge WHERE active > 0")
+	rows = call_patents_key.fetchall()
 	call_patents_key.close()
 
-	queryception_list = []
+	inquiries_list = []
 
-	for queryception in matrix_query:
-		queryception_list.append(queryception)
+	######### REBUILD OWNERS AND SOURCES LISTS
+	for row in rows:
+		owners_str = ","
+		sources_str = ","
+		owners_list = []
+		sources_list = []
 
-	for couple_query in queryception_list:
-		inquiry_id = couple_query[1]
-		query_wipo = couple_query[0].strip().encode("utf8")
-		owners = couple_query[2].strip().encode("utf8")
-		legal_research = couple_query[3]
+		for applicable_owners_sources in row[2].split("|"):
+			if applicable_owners_sources != "":
+				split_owners_sources = applicable_owners_sources.split(":")
+				if split_owners_sources[0] != "":
+					owners_list.append(split_owners_sources[0])
+					for source in split_owners_sources[1].split(","):
+						if source != "":
+							sources_list.append(source)
 
-		logger_info.info(query_wipo+"\n")
-		link = ('https://patentscope.wipo.int/search/rss.jsf?query='+query_wipo+'&office=&rss=true&sortOption=Pub+Date+Desc')
+		owners_list = list(set(owners_list))
+		sources_list = list(set(sources_list))
 
-		req_results = sergenet.aLinkToThePast(link, 'fullcontent')
-		rss_wipo = req_results[0]
-		feed_error = req_results[1]
+		for owner in owners_list:
+			owners_str = owners_str + owner + ","
 
-		if feed_error is False:
-			xmldoc = feedparser.parse(rss_wipo)
-			range_article = 0
-			rangemax_article = len(xmldoc.entries)
-			logger_info.info("Link :"+str(link))
-			logger_info.info("Patentscope RSS length :"+unicode(rangemax_article)+"\n \n")
+		for source in sources_list:
+			sources_str = sources_str + source + ","
 
-			######### RESULT FILE PARSING
-			if (xmldoc):
-				if rangemax_article == 0:
-					logger_info.info("VOID QUERY : "+query_wipo+"\n")
+		field = {"inquiry_id":row[0], "inquiry": row[1].strip(), "owners": owners_str.strip(), "sources": sources_str.strip(), "legal_research": legal_research}
+		inquiries_list.append(field)
 
-				else:
-					while range_article < rangemax_article:
+	######### PATENTS RESEARCH
+	for inquiry in inquiries_list:
+		request_dictionnary = decoder.requestBuilder(database, inquiry["inquiry"], inquiry["inquiry_id"], builder_queries)
 
-						try:
-							post_title = xmldoc.entries[range_article].title
-							if post_title == "":
-								post_title = "NO TITLE"
-						except AttributeError:
-							logger_error.warning("BEACON ERROR : missing <title> in "+link)
-							logger_error.warning(traceback.format_exc())
-							post_title = "NO TITLE"
+		#TODO compléter la base sources_patents_serge
+		#link = ('https://patentscope.wipo.int/search/rss.jsf?query='+query_wipo+'&office=&rss=true&sortOption=Pub+Date+Desc')
 
-						try:
-							post_link = xmldoc.entries[range_article].link
-							post_link = post_link.split("&")
-							post_link = post_link[0]
-						except AttributeError:
-							logger_error.warning("BEACON ERROR : missing <link> in "+link)
-							logger_error.warning(traceback.format_exc())
-							post_link = ""
+		for patents_api_pack in request_dictionnary:
+			source_comparator = ","+patents_api_pack["source_id"]+","
 
-						try:
-							post_date = xmldoc.entries[range_article].published_parsed
-							if post_date is not None:
-								post_date = time.mktime(post_date)
-							else:
-								post_date = now
-						except AttributeError:
-							logger_error.warning("BEACON ERROR : missing <date> in "+link)
-							logger_error.warning(traceback.format_exc())
-							post_date = now
+			if patents_api_pack["type"] == "RSS" and source_comparator in inquiry["sources"]:
+				logger_info.info(patents_api_pack["inquiry_raw"]+"\n")
+				req_results = sergenet.aLinkToThePast(link, 'fullcontent')
+				feed_content = req_results[0]
+				feed_error = req_results[1]
 
-						keyword_id_comma = str(inquiry_id)+","
-						keyword_id_comma2 = ","+str(inquiry_id)+","
+				if feed_error is False:
+					try:
+						parsed_content = feedparser.parse(feed_content)
+					except Exception, except_type:
+						parsed_content = None
+						logger_error.error("PARSING ERROR IN :"+patents_api_pack["inquiry_link"]+"\n")
+						logger_error.error(repr(except_type))
 
-						########### PRESENCE CHECKING
-						query_presence_checking = ("SELECT legal_check_date, owners FROM result_patents_serge WHERE link = %s")
+					if parsed_content is not None:
+						range_article = 0
+						rangemax_article = len(parsed_content.entries)
+						logger_info.info("numbers of patents :"+unicode(rangemax_article)+"\n \n")
 
-						call_results_patents = database.cursor()
-						call_results_patents.execute(query_presence_checking, (post_link, ))
-						presence_checking = call_results_patents.fetchone()
-						call_results_patents.close()
-
-						if presence_checking is not None:
-							legal_check_date = presence_checking[0]
-							already_owners = presence_checking[1]
-						else:
-							legal_check_date = None
-							already_owners = None
-
-						if legal_check_date is not None:
-							legal_check_date = float(legal_check_date)
-
-						######### LEGAL STATUS RESEARCH
-						if (legal_research == 1 or legal_research == 2) and owners != "," and legal_check_date is not None and (legal_check_date+15552000) <= now:
-							legal_results = legalScrapper(post_link)
-							legal_abstract = legal_results[0]
-							legal_status = legal_results[1]
-							lens_link = legal_results[2]
-							new_check_date = now
-
-						elif (legal_research == 1 or legal_research == 2) and owners != "," and legal_check_date is None:
-							legal_results = legalScrapper(post_link)
-							legal_abstract = legal_results[0]
-							legal_status = legal_results[1]
-							lens_link = legal_results[2]
-							new_check_date = now
-
-						elif (legal_research == 1 or legal_research == 2) and owners != "," and already_owners is not None and owners != already_owners:
-							legal_results = legalScrapper(post_link)
-							legal_abstract = legal_results[0]
-							legal_status = legal_results[1]
-							lens_link = legal_results[2]
-							new_check_date = now
+						if rangemax_article == 0:
+							logger_info.info("VOID QUERY :"+patents_api_pack["inquiry_link"]+"\n\n")
 
 						else:
-							legal_status = None
-							lens_link = None
-							legal_abstract = None
-							new_check_date = None
+							while range_article < rangemax_article:
+								try:
+									post_title = xmldoc.entries[range_article].title
+									if post_title == "":
+										post_title = "NO TITLE"
+								except AttributeError:
+									logger_error.warning("BEACON ERROR : missing <title> in "+patents_api_pack["inquiry_link"])
+									logger_error.warning(traceback.format_exc())
+									post_title = "NO TITLE"
 
-						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT inquiry_id, owners FROM result_patents_serge WHERE link = %s AND title = %s")
-						query_link_checking = ("SELECT inquiry_id, owners FROM result_patents_serge WHERE link = %s")
-						query_jellychecking = None
+								try:
+									post_link = xmldoc.entries[range_article].link
+									post_link = post_link.split("&")
+									post_link = post_link[0]
+								except AttributeError:
+									logger_error.warning("BEACON ERROR : missing <link> in "+patents_api_pack["inquiry_link"])
+									logger_error.warning(traceback.format_exc())
+									post_link = ""
 
-						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_patents_serge (title, link, date, source_id, inquiry_id, owners, legal_abstract, legal_status, lens_link, legal_check_date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+								try:
+									post_date = xmldoc.entries[range_article].published_parsed
+									if post_date is not None:
+										post_date = time.mktime(post_date)
+									else:
+										post_date = now
+								except AttributeError:
+									logger_error.warning("BEACON ERROR : missing <date> in "+patents_api_pack["inquiry_link"])
+									logger_error.warning(traceback.format_exc())
+									post_date = now
 
-						########### QUERY FOR DATABASE UPDATE
-						query_update = ("UPDATE result_patents_serge SET inquiry_id = %s, owners = %s, legal_abstract = %s, legal_status = %s, lens_link = %s, legal_check_date = %s WHERE link = %s")
-						query_update_title = ("UPDATE result_patents_serge SET title = %s, inquiry_id = %s, owners = %s, legal_abstract = %s, legal_status = %s, lens_link = %s, legal_check_date = %s WHERE link = %s")
-						query_jelly_update = None
+								inquiry_id_comma = str(inquiry["inquiry_id"])+","
+								inquiry_id_comma2 = ","+str(inquiry["inquiry_id"])+","
 
-						########### ITEM BUILDING
-						post_title = escaping(post_title)
-						item = (post_title, post_link, post_date, source_id, keyword_id_comma2, owners, legal_abstract, legal_status, lens_link, new_check_date)
-						item_update = [legal_abstract, legal_status, lens_link, new_check_date, post_link]
+								######### LEGAL STATUS RESEARCH
+								legal_dataset = legalScrapper(post_link, inquiry, now)
 
-						########### CALL insertOrUpdate FUNCTION
-						if (legal_check_date is None or (legal_check_date+15552000) <= now) and legal_status is not None:
+								########### QUERY FOR DATABASE CHECKING
+								query_checking = ("SELECT inquiry_id, owners FROM result_patents_serge WHERE link = %s AND title = %s")
+								query_link_checking = ("SELECT inquiry_id, owners FROM result_patents_serge WHERE link = %s")
+								query_jellychecking = None
 
-							if legal_research == 1 and legal_abstract == "INACTIVE":
-								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
+								########### QUERY FOR DATABASE INSERTION
+								query_insertion = ("INSERT INTO result_patents_serge (title, link, date, source_id, inquiry_id, owners, legal_abstract, legal_status, lens_link, legal_check_date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
-							else:
-								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
+								########### QUERY FOR DATABASE UPDATE
+								query_update = ("UPDATE result_patents_serge SET inquiry_id = %s, owners = %s, legal_abstract = %s, legal_status = %s, lens_link = %s, legal_check_date = %s WHERE link = %s")
+								query_update_title = ("UPDATE result_patents_serge SET title = %s, inquiry_id = %s, owners = %s, legal_abstract = %s, legal_status = %s, lens_link = %s, legal_check_date = %s WHERE link = %s")
+								query_jelly_update = None
 
-						range_article = range_article+1
+								########### ITEM BUILDING
+								post_title = escaping(post_title)
+								item = (post_title, post_link, post_date, patents_api_pack["source_id"], inquiry_id_comma2, inquiry["owners"], legal_dataset["legal_abstract"], legal_dataset["legal_status"], legal_dataset["lens_link"], legal_dataset["new_check_date"])
+								item_update = [legal_dataset["legal_abstract"], legal_dataset["legal_status"], legal_dataset["lens_link"], legal_dataset["new_check_date"], post_link]
+
+								########### CALL insertOrUpdate FUNCTION
+								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, inquiry_id_comma, need_jelly)
+
+								range_article = range_article+1
 
 			else:
 				logger_info.warning("\n Error : the feed is unavailable")
@@ -213,7 +195,7 @@ def patentspack(register, user_id_comma):
 
 	record_read = bool(record_read[0])
 
-	######### RESULTS NEWS : NEWS ATTRIBUTES QUERY (LINK + TITLE + ID SOURCE + KEYWORD ID)
+	######### RESULTS PATENTS : PATENTS ATTRIBUTES QUERY (LINK + TITLE + SOURCE ID + INQUIRY ID)
 	query_patents = ("SELECT id, title, link, source_id, inquiry_id FROM result_patents_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
 
 	call_patents = database.cursor()
@@ -241,80 +223,112 @@ def patentspack(register, user_id_comma):
 	return items_list
 
 
-def legalScrapper(post_link):
+def legalScrapper(post_link, inquiry, now):
 	"""Scrapper for searchin patents publication number on WIPO and legal status on Patent Lens"""
+
+	########### CONNECTION TO SERGE DATABASE
+	database = databaseConnection()
 
 	######### LOGGER CALL
 	logger_info = logging.getLogger("info_log")
 
-	######### GO TO WIPO WEBSITE
-	req_results = sergenet.aLinkToThePast(post_link, 'rss')
-	wipo_rss = req_results[0]
+	########### PRESENCE CHECKING
+	query_presence_checking = ("SELECT legal_check_date, owners FROM result_patents_serge WHERE link = %s")
 
-	######### PARSE HTML
-	wipo_soup = BeautifulSoup(wipo_rss, 'html.parser')
+	call_results_patents = database.cursor()
+	call_results_patents.execute(query_presence_checking, (post_link, ))
+	presence_checking = call_results_patents.fetchone()
+	call_results_patents.close()
 
-	######### SEARCH PATENT PUBLICATION NUMBER
-	try:
-		patent_panel = wipo_soup.find("span", {"id": "resultPanel1"})
-		match_object = re.search('\([^\)]+\)', str(patent_panel))
-		patent_num = match_object.group(0).replace("(", "").replace(")", "")
-		country_code = patent_num[0:2]
-		publication_number = patent_num[2:len(patent_num)]
-	except:
-		country_code = None
-		publication_number = None
-		logger_info.warning("PATENT NUMBER CAN'T BE RECOVERED")
-
-	######### SEARCH PATENT KIND CODE
-	try:
-		patent_kind = wipo_soup.find("td", string = re.compile("Publication Kind"))
-		kind_code = str(patent_kind.find_next("td")).replace("<td>", "").replace("</td>", "")
-	except AttributeError:
-		kind_code = None
-		logger_info.warning("KIND CODE CAN'T BE RECOVERED")
-
-	######### BUILD PATENT LENS LINK
-	if country_code is not None and publication_number is not None and kind_code is not None:
-		lens_link = "https://www.lens.org/lens/patent/"+str(country_code)+"_"+str(publication_number)+"_"+str(kind_code)+"/regulatory"
+	if presence_checking is not None:
+		legal_check_date = presence_checking[0]
+		already_owners = presence_checking[1]
 	else:
-		lens_link = None
+		legal_check_date = None
+		already_owners = None
 
-	######### GO TO PATENT LENS WEBSITE
-	if lens_link is not None:
-		lens_results = sergenet.aLinkToThePast(lens_link, 'rss')
-		lens_rss = lens_results[0]
+	if legal_check_date is not None:
+		legal_check_date = float(legal_check_date)
+
+	######### LEGAL STATUS RESEARCH
+	if (inquiry["legal_research"] == 1 or inquiry["legal_research"] == 2) and inquiry["owners"] != "," and (legal_check_date is None or (legal_check_date+15552000) <= now) :
+
+		######### GO TO WIPO WEBSITE
+		req_results = sergenet.aLinkToThePast(post_link, 'rss')
+		wipo_rss = req_results[0]
 
 		######### PARSE HTML
-		lens_soup = BeautifulSoup(lens_rss, 'html.parser')
-		strong_list = []
+		wipo_soup = BeautifulSoup(wipo_rss, 'html.parser')
 
-		######### SEARCH PATENT LEGAL STATUS
-		for machin in lens_soup.findAll('strong'):
-			strong_list.append(machin)
+		######### SEARCH PATENT PUBLICATION NUMBER
+		try:
+			patent_panel = wipo_soup.find("span", {"id": "resultPanel1"})
+			match_object = re.search('\([^\)]+\)', str(patent_panel))
+			patent_num = match_object.group(0).replace("(", "").replace(")", "")
+			country_code = patent_num[0:2]
+			publication_number = patent_num[2:len(patent_num)]
+		except:
+			country_code = None
+			publication_number = None
+			logger_info.warning("PATENT NUMBER CAN'T BE RECOVERED")
 
-		i = 0
-		cut_index = None
+		######### SEARCH PATENT KIND CODE
+		try:
+			patent_kind = wipo_soup.find("td", string = re.compile("Publication Kind"))
+			kind_code = str(patent_kind.find_next("td")).replace("<td>", "").replace("</td>", "")
+		except AttributeError:
+			kind_code = None
+			logger_info.warning("KIND CODE CAN'T BE RECOVERED")
 
-		for fulltext in strong_list:
-			if "Collection Management:" in fulltext:
-				cut_index = i
-			i = i + 1
+		######### BUILD PATENT LENS LINK
+		if country_code is not None and publication_number is not None and kind_code is not None:
+			lens_link = "https://www.lens.org/lens/patent/"+str(country_code)+"_"+str(publication_number)+"_"+str(kind_code)+"/regulatory"
+		else:
+			lens_link = None
 
-		if cut_index is not None:
-			legal_status = strong_list[cut_index-1]
-			legal_status = str(legal_status).replace("<strong>", "").replace("</strong>", "").replace("+", "").replace("-", "")
-			legal_comparator = legal_status.lower()
-			legal_abstract = decoder.decodeLegal(legal_comparator)
+		######### GO TO PATENT LENS WEBSITE
+		if lens_link is not None:
+			lens_results = sergenet.aLinkToThePast(lens_link, 'rss')
+			lens_rss = lens_results[0]
+
+			######### PARSE HTML
+			lens_soup = BeautifulSoup(lens_rss, 'html.parser')
+			strong_list = []
+
+			######### SEARCH PATENT LEGAL STATUS
+			for machin in lens_soup.findAll('strong'):
+				strong_list.append(machin)
+
+			i = 0
+			cut_index = None
+
+			for fulltext in strong_list:
+				if "Collection Management:" in fulltext:
+					cut_index = i
+				i = i + 1
+
+			if cut_index is not None:
+				legal_status = strong_list[cut_index-1]
+				legal_status = str(legal_status).replace("<strong>", "").replace("</strong>", "").replace("+", "").replace("-", "")
+				legal_comparator = legal_status.lower()
+				legal_abstract = decoder.decodeLegal(legal_comparator)
+			else:
+				legal_abstract = None
+				legal_status = None
+				logger_info.warning("LEGAL STATUS CAN'T BE RECOVERED")
+
+		######### SET VARIABLES TO NONE IF LEGAL STATUS CAN'T BE RECOVERED
 		else:
 			legal_abstract = None
 			legal_status = None
 			logger_info.warning("LEGAL STATUS CAN'T BE RECOVERED")
 
-	######### SET VARIABLES TO NONE IF LEGAL STATUS CAN'T BE RECOVERED
 	else:
-		legal_abstract = None
 		legal_status = None
-		logger_info.warning("LEGAL STATUS CAN'T BE RECOVERED")
+		lens_link = None
+		legal_abstract = None
+		new_check_date = None
 
-	return (legal_abstract, legal_status, lens_link)
+	legal_dataset = {"legal_status": legal_status, "legal_abstract": legal_abstract, "lens_link": lens_link, "new_check_date": new_check_date}
+
+	return (legal_dataset)
