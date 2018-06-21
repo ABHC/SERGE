@@ -364,7 +364,6 @@ unlink(__FILE__);?>';
 
 	$filename = 'export_' . $_SESSION['id'] . '?ext=' . $ext;
 	header("Location: $filename");
-
 	die();
 }
 else
@@ -384,12 +383,12 @@ else
 $checkCol         = array(array('id', '=', $_SESSION['id']));
 $readStatusColumn = read('users_table_serge', 'record_read', $checkCol, '', $bdd);
 
-
 $readStatusColumn = '';
 if ($optionReadStatus)
 {
 	$readStatusColumn = '<th><a href="?optionalCond=read' . $colOrder['OCDESC'] . $searchSort . $data['orderBy'] . '&type=' . $type . '">' . $colOrder['read'] . '</a></th>';
 }
+
 
 # Page number
 if (!empty($data['page']))
