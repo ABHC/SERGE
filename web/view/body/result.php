@@ -309,7 +309,7 @@
 						}
 						elseif ($optionReadStatus)
 						{
-							$amIRead = '<td><img alt="Unread" src="images/iconUnread.png" /></td>';
+							$amIRead = '<td><img id="readStatus' . $result['id'] . '" alt="Unread" src="images/iconUnread.png" /></td>';
 						}
 						else
 						{
@@ -319,7 +319,7 @@
 						if (!empty($recordLink))
 						{
 							$result['link'] = $recordLink . $result['id'];
-							$updatePage = 'onmouseup="document.location.reload(true);"';
+							$updatePage = 'onmouseup="updateReadStatus(' . $result['id'] . ', ' . $type . ');"';
 						}
 
 						echo '
