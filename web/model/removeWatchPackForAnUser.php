@@ -27,7 +27,7 @@ if (!empty($packExist))
 			// Update query with the new owner
 			$userId    = $_SESSION['id'];
 			$updateCol = array(array('owners', preg_replace("/,!*$userId,/", ',', $queryExist['owners'])),
-												array('active', $queryExist['active'] - 1));
+												 array('active', $queryExist['active'] - 1));
 			$checkCol  = array(array('id', '=', $queryExist['id'], ''));
 			$execution = update('queries_science_serge', $updateCol, $checkCol, '', $bdd);
 		}
@@ -55,7 +55,7 @@ if (!empty($packExist))
 			// Update query with new owner
 			$userId    = $_SESSION['id'];
 			$updateCol = array(array('owners', preg_replace("/,!*$userId,/", ',', $queryExist['owners'])),
-												array('active', $queryExist['active'] - 1));
+												 array('active', $queryExist['active'] - 1));
 			$checkCol  = array(array('id', '=', $queryExist['id'], ''));
 			$execution = update('queries_wipo_serge', $updateCol, $checkCol, '', $bdd);
 		}
@@ -83,13 +83,13 @@ if (!empty($packExist))
 			$userId    = $_SESSION['id'];
 			$sourceId  = preg_replace("/,([^$])/", ",!*$1", $couple['source']);
 			$updateCol = array(array('applicable_owners_sources', preg_replace("/(\|$userId:[,0-9+,^\|]*)$sourceId/", '$1,', $queryExist['applicable_owners_sources'])),
-												array('active', $queryExist['active'] - 1));
+												 array('active', $queryExist['active'] - 1));
 			$checkCol  = array(array('id', '=', $queryExist['id'], ''));
 			$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
 		}
 	}
 
-	// Remove unsed sources
+	// Remove unused sources
 	// Read list of sources used by the watch pack
 	$checkCol           = array(array('pack_id', '=', $data['removePack'], 'AND'),
 															array('query', '=' , '[!source!]', ''));
@@ -97,9 +97,9 @@ if (!empty($packExist))
 	$listOfSource_array = explode(',', $result[0]['source']);
 
 	$checkCol        = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'AND'),
-													array('id', 'IN', $listOfSource_array, 'OR'),
-													array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', 'AND'),
-													array('id', 'IN', $listOfSource_array, ''));
+													 array('id', 'IN', $listOfSource_array, 'OR'),
+													 array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', 'AND'),
+													 array('id', 'IN', $listOfSource_array, ''));
 	$sourceWatchPack = read('rss_serge', 'id, owners, active', $checkCol, '', $bdd);
 
 
@@ -114,7 +114,7 @@ if (!empty($packExist))
 			// Remove source
 			$userId    = $_SESSION['id'];
 			$updateCol = array(array('owners', preg_replace("/,!*$userId,/", ',', $source['owners'])),
-												array('active', $source['active'] - 1));
+												 array('active', $source['active'] - 1));
 			$checkCol  = array(array('id', '=', $source['id'], ''));
 			$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
 		}

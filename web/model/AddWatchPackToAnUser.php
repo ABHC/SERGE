@@ -165,7 +165,7 @@ if (!empty($packExist))
 				{
 					// Update with new source
 					$updateCol = array(array('applicable_owners_sources', $queryExist['applicable_owners_sources'] . $_SESSION['id'] . ':' . $couple['source'] . '|'),
-														array('active', $userOwnKeyword['active'] + substr_count($couple['source'], ',') - 1));
+														 array('active', $userOwnKeyword['active'] + substr_count($couple['source'], ',') - 1));
 					$checkCol  = array(array('id', '=', $queryExist['id'], ''));
 					$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
 				}
