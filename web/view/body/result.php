@@ -14,8 +14,7 @@
 			<a <?php echo $patentsActive; ?> href="result?type=patents">
 				<div class="selectResultsTypePatents"><?php get_t('title3_type_results', $bdd); ?></div>
 			</a>
-			<form method="post" class="selectExportType" action="result?page=<?php echo $data['page'] . $searchSort . $data['optionalCond'] . $data['orderBy'] . '&type=' . $type;?>" target="_blank" onsubmit="setTimeout(function(){location.reload();}, 1000);return true;" >
-				<div class="selectExportTypeico"></div>
+			<form class="selectExportType" method="post" action="result?page=<?php echo $data['page'] . $searchSort . $data['optionalCond'] . $data['orderBy'] . '&type=' . $type;?>" target="_blank" onsubmit="window.location.reload();" >
 				<input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
 				<input type="submit" class="exportSpace" title="Export results" value=""/>
 				<select name="export">
@@ -50,8 +49,7 @@
 			<table>
 				<thead>
 					<tr>
-						<th><input type="checkbox" name="selectAll" id="checkAllPage" /><label class="checkbox" for="checkAllPage" onmouseup="checkAllPage();"></label></th>
-						<th><input title="<?php get_t('Delete selected links', $bdd); ?>" name="deleteLink" class="submit" type="submit" value="delete" /></th>
+						<th><input type="checkbox" name="selectAll" id="checkAllPage" /><label class="checkbox" for="checkAllPage" onmouseup="checkAllPage();"></label><input title="<?php get_t('Delete selected links', $bdd); ?>" name="deleteLink" class="submit" type="submit" value="delete" /></th>
 						<?php
 						echo '
 						<th><a href="?orderBy=title' . $colOrder['DESC'] . $searchSort . $data['optionalCond'] . $actualPageLink . '&type=' . $type . '">'; get_t('title1_table_results', $bdd);
@@ -63,9 +61,9 @@
 						<th><a href="?orderBy=date' . $colOrder['DESC'] . $searchSort . $data['optionalCond'] . $actualPageLink . '&type=' . $type . '">';
 						get_t('title4_table_results', $bdd);
 						echo ' ' . $colOrder['date'] . '</a></th>
-						<th><a href="?optionalCond=send' . $colOrder['OCDESC'] . $searchSort . $data['orderBy'] . '&type=' . $type . '">' . $colOrder['send'] . '</a></th>
-						<th><a href="?optionalCond=read' . $colOrder['OCDESC'] . $searchSort . $data['orderBy'] . '&type=' . $type . '">' . $colOrder['read'] . '</a></th>
-						<th><a href="wiki">' . var_get_t('title7_table_results', $bdd) .  '</a></th>';
+						<th><a href="?optionalCond=send' . $colOrder['OCDESC'] . $searchSort . $data['orderBy'] . '&type=' . $type . '">' . $colOrder['send'] . '</a></th>';
+						echo $readStatusColumn;
+						echo '<th><a href="wiki">' . var_get_t('title7_table_results', $bdd) .  '</a></th>';
 						?>
 					</tr>
 				</thead>
@@ -305,13 +303,17 @@
 							$amISend = '<img alt="Not Send" src="images/iconNotSend.png" />';
 						}
 
-						if (preg_match("/$userIdComma/", $result['read_status']))
+						if ($optionReadStatus && preg_match("/$userIdComma/", $result['read_status']))
 						{
-							$amIRead = '<img alt="Read" src="images/iconRead.png" />';
+							$amIRead = '<td><img alt="Read" src="images/iconRead.png" /></td>';
+						}
+						elseif ($optionReadStatus)
+						{
+							$amIRead = '<td><img alt="Unread" src="images/iconUnread.png" /></td>';
 						}
 						else
 						{
-							$amIRead = '<img alt="Unread" src="images/iconUnread.png" />';
+							$amIRead = '';
 						}
 
 						if (!empty($recordLink))
@@ -327,9 +329,9 @@
 							<td>' . $keyword . '</td>
 							<td><a href="' .  $source['link'] . '">' . $source['name'] . '</a></td>
 							<td>' . date("H:i d/m/o", $date) . '</td>
-							<td>' . $amISend . '</td>
-							<td>' . $amIRead . '</td>
-							<td>
+							<td>' . $amISend . '</td>'
+							 . $amIRead .
+							'<td>
 								<a href="addLinkInWiki?link" class="wikiLogo">
 									<img alt="'. var_get_t('Add in wiki', $bdd) . '" title="'. var_get_t('Add in wiki', $bdd) . '" src="../images/iconWikiLight.png"/>
 								</a>

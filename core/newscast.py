@@ -49,7 +49,7 @@ def voyager(newscast_args):
 	source_id_comma_percent = "%," + source_id + ",%"
 
 	######### CALL TO TABLE keywords_news_serge
-	query = "SELECT id, keyword FROM keyword_news_serge WHERE applicable_owners_sources LIKE %s AND active > 0"
+	query = "SELECT id, inquiry FROM inquiries_news_serge WHERE applicable_owners_sources LIKE %s AND active > 0"
 
 	call_news = database.cursor()
 	call_news.execute(query, (source_id_comma_percent,))
@@ -109,11 +109,11 @@ def voyager(newscast_args):
 		prime_conditions = (couple_keyword_attribute for couple_keyword_attribute in keywords_and_id_news_list if missing_flux is False)
 
 		for couple_keyword_attribute in prime_conditions:
-			keyword_id = couple_keyword_attribute[0]
+			inquiry_id = couple_keyword_attribute[0]
 			keyword = couple_keyword_attribute[1]
 
 			########### OWNERS RETRIEVAL
-			query_keyword_parameters = ("SELECT applicable_owners_sources FROM keyword_news_serge WHERE keyword = %s and active > 0")
+			query_keyword_parameters = ("SELECT applicable_owners_sources FROM inquiries_news_serge WHERE inquiry = %s and active > 0")
 
 			call_news = database.cursor()
 			call_news.execute(query_keyword_parameters, (keyword,))
@@ -121,7 +121,7 @@ def voyager(newscast_args):
 			call_news.close()
 			applicable_owners_sources = applicable_owners_sources[0].split("|")
 
-			query_source_owners = ("SELECT owners FROM rss_serge WHERE link = %s and active > 0")
+			query_source_owners = ("SELECT owners FROM sources_news_serge WHERE link = %s and active > 0")
 
 			call_news = database.cursor()
 			call_news.execute(query_source_owners, (link,))
@@ -200,8 +200,8 @@ def voyager(newscast_args):
 				post_description = post_description.strip()
 				keyword = keyword.replace("[!ALERT!]", "").strip()
 
-				keyword_id_comma = str(keyword_id) + ","
-				keyword_id_comma2 = "," + str(keyword_id) + ","
+				inquiry_id_comma = str(inquiry_id) + ","
+				inquiry_id_comma2 = "," + str(inquiry_id) + ","
 
 				tagdex = 0
 				tags_string = ""
@@ -217,17 +217,17 @@ def voyager(newscast_args):
 					if (re.search('[^a-z]'+re.escape(splitkey)+'.{0,3}(\W|$)', post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey)+'.{0,3}(\W|$)', post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey)+'.{0,3}(\W|$)', tags_string, re.IGNORECASE)) and owners is not None:
 
 						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s AND title = %s")
-						query_link_checking = ("SELECT keyword_id, owners FROM result_news_serge WHERE link = %s")
-						query_jellychecking = ("SELECT title, link, keyword_id, owners FROM result_news_serge WHERE id_source = %s AND `date` BETWEEN %s AND (%s+43200)")
+						query_checking = ("SELECT inquiry_id, owners FROM result_news_serge WHERE link = %s AND title = %s")
+						query_link_checking = ("SELECT inquiry_id, owners FROM result_news_serge WHERE link = %s")
+						query_jellychecking = ("SELECT title, link, inquiry_id, owners FROM result_news_serge WHERE source_id = %s AND `date` BETWEEN %s AND (%s+43200)")
 
 						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_news_serge (title, link, date, id_source, keyword_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
+						query_insertion = ("INSERT INTO result_news_serge (title, link, date, source_id, inquiry_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
 
 						########### QUERY FOR DATABASE UPDATE
-						query_update = ("UPDATE result_news_serge SET keyword_id = %s, owners = %s WHERE link = %s")
-						query_update_title = ("UPDATE result_news_serge SET title = %s, keyword_id = %s, owners = %s WHERE link = %s")
-						query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s, keyword_id = %s, owners = %s WHERE link = %s")
+						query_update = ("UPDATE result_news_serge SET inquiry_id = %s, owners = %s WHERE link = %s")
+						query_update_title = ("UPDATE result_news_serge SET title = %s, inquiry_id = %s, owners = %s WHERE link = %s")
+						query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s, inquiry_id = %s, owners = %s WHERE link = %s")
 
 						########### LINK VALIDATION
 						post_link = failDetectorPack.failUniversalCorrectorKit(post_link, source_id)
@@ -235,11 +235,11 @@ def voyager(newscast_args):
 						if post_link is not None:
 							########### ITEM BUILDING
 							post_title = toolbox.escaping(post_title)
-							item = (post_title, post_link, post_date, source_id, keyword_id_comma2, owners)
+							item = (post_title, post_link, post_date, source_id, inquiry_id_comma2, owners)
 							item_update = [post_link]
 
 							########### CALL insertOrUpdate FUNCTION
-							insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly)
+							insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, inquiry_id_comma, need_jelly)
 
 				range_article = range_article + 1
 
@@ -263,14 +263,12 @@ def newspack(register, user_id_comma):
 	record_read = bool(record_read[0])
 
 	######### RESULTS NEWS : NEWS ATTRIBUTES QUERY (LINK + TITLE + ID SOURCE + KEYWORD ID)
-	query_news = ("SELECT id, title, link, id_source, keyword_id FROM result_news_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
+	query_news = ("SELECT id, title, link, source_id, inquiry_id FROM result_news_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
 
 	call_news = database.cursor()
 	call_news.execute(query_news, (user_id_comma, user_id_comma, user_id_comma))
 	rows = [list(elem) for elem in list(call_news.fetchall())]
 	call_news.close()
-
-	#TODO appliquer la méthode applicable_owners_sources sur queries science et brevets
 
 	for row in rows:
 		######### CREATE RECORDER LINK AND WIKI LINK
@@ -279,8 +277,8 @@ def newspack(register, user_id_comma):
 		add_wiki_link = toolbox.recorder(register, "news", str(row[0]), "addLinkInWiki", database)
 
 		######### SEARCH FOR SOURCE NAME AND COMPLETE REQUEST OF THE USER
-		query_source = "SELECT name FROM rss_serge WHERE id = %s"
-		query_inquiry = "SELECT query, applicable_owners_sources FROM keyword_news_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
+		query_source = "SELECT name FROM sources_news_serge WHERE id = %s"
+		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_news_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
 		item_arguments = {"user_id_comma": user_id_comma, "source_id": row[3], "inquiry_id": str(row[4]).split(",")}, "query_source": query_source, "query_inquiry": query_inquiry}
 

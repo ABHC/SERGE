@@ -9,8 +9,8 @@ CREATE TABLE `result_science_serge` (
 	`send_status` VARCHAR(8000) COLLATE utf8mb4_bin DEFAULT ',0,',
 	`read_status` VARCHAR(8000) COLLATE utf8mb4_bin DEFAULT ',0,',
 	`date` text COLLATE utf8mb4_bin DEFAULT NULL,
-	`id_source` int(11) NOT NULL,
-	`query_id` text COLLATE utf8mb4_bin NOT NULL,
+	`source_id` int(11) NOT NULL,
+	`inquiry_id` text COLLATE utf8mb4_bin NOT NULL,
 	`owners` text COLLATE utf8mb4_bin NOT NULL,
 	PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;

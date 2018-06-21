@@ -192,15 +192,15 @@ def decodeLegal(legal_comparator):
 	return legal_abstract
 
 
-def requestBuilder(database, query_serge, query_id, owners):
+def requestBuilder(database, inquiry, inquiry_id, builder_queries):
 	"""Function to build queries corresponding to science APIs from a standardised Serge query"""
 
-	query_serge = query_serge.split("|")
+	inquiry = inquiry.split("|")
 	request_dictionnary = dict()
 
 	######### INITIALIZE THE DICTIONNARY KEY
 	call_equivalence = database.cursor()
-	call_equivalence.execute("SELECT basename FROM equivalence_science_serge WHERE active >= 1")
+	call_equivalence.execute(builder_queries["query_initialyze"])
 	rows = call_equivalence.fetchall()
 	call_equivalence.close()
 
@@ -208,12 +208,12 @@ def requestBuilder(database, query_serge, query_id, owners):
 		request_dictionnary[row[0]] = u""
 
 	######### REQUEST BUILDING
-	for component in query_serge:
+	for component in inquiry:
 		if u"#" in component:
 			component = component.replace("#", "")
 
 			call_equivalence = database.cursor()
-			call_equivalence.execute("SELECT basename, quote FROM equivalence_science_serge WHERE active >= 1")
+			call_equivalence.execute(builder_queries["query_builder_prime"])
 			rows = call_equivalence.fetchall()
 			call_equivalence.close()
 
@@ -224,7 +224,7 @@ def requestBuilder(database, query_serge, query_id, owners):
 					request_dictionnary[row[0]] = request_dictionnary[row[0]] + component
 
 		else:
-			query_call_equivalence = ("SELECT basename, `"+component+"` FROM equivalence_science_serge WHERE active >= 1")
+			query_call_equivalence = (builder_queries["query_builder_second"])
 
 			call_equivalence = database.cursor()
 			call_equivalence.execute(query_call_equivalence)
@@ -234,13 +234,13 @@ def requestBuilder(database, query_serge, query_id, owners):
 			for row in rows:
 				request_dictionnary[row[0]] = request_dictionnary[row[0]] + row[1]
 
-	######### API PACK (QUERY ID, COMPLETE URL, QUERY, ID, TYPE, OWNERS) BUILDING IN DICTIONNARY
+	######### API PACK (INQUIRY ID, INQUIRY, COMPLETE URL, SOURCE ID, TYPE) BUILDING IN DICTIONNARY
 	call_equivalence = database.cursor()
-	call_equivalence.execute("SELECT basename, prelink, postlink, id, type FROM equivalence_science_serge WHERE active >= 1")
+	call_equivalence.execute(builder_queries["query_pack"])
 	rows = call_equivalence.fetchall()
 	call_equivalence.close()
 
 	for row in rows:
-			request_dictionnary[row[0]] = (query_id, row[1] + request_dictionnary[row[0]] + row[2], request_dictionnary[row[0]], row[3], row[4], owners)
+		request_dictionnary[row[0]] = {"inquiry_id": inquiry_id, "inquiry_raw": request_dictionnary[row[0]], "inquiry_link": row[1] + request_dictionnary[row[0]] + row[2], "source_id": row[3], "type": row[4]}
 
 	return request_dictionnary

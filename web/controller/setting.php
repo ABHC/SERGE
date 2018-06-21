@@ -562,7 +562,7 @@ if ($emailIsCheck && !empty($sourceIdAction) && !empty($keywordIdAction) && !emp
 		$applicableOwners = preg_replace($actualOwners, $newOwners, $applicableOwners);
 
 		$updateCol = array(array('applicable_owners_sources', $applicableOwners),
-											array('active', $activeForCurrentKeyword - 1));
+											 array('active', $activeForCurrentKeyword - 1));
 		$checkCol  = array(array('id', '=', $keywordIdAction, ''));
 		$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
 	}
@@ -573,7 +573,7 @@ if ($emailIsCheck && !empty($sourceIdAction) && !empty($keywordIdAction) && !emp
 		$applicableOwners = preg_replace($actualOwners, $newOwners, $applicableOwners);
 
 		$updateCol = array(array('applicable_owners_sources', $applicableOwners),
-											array('active', $activeForCurrentKeyword - 1));
+											 array('active', $activeForCurrentKeyword - 1));
 		$checkCol  = array(array('id', '=', $keywordIdAction, ''));
 		$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
 	}
@@ -584,7 +584,7 @@ if ($emailIsCheck && !empty($sourceIdAction) && !empty($keywordIdAction) && !emp
 		$applicableOwners = preg_replace($actualOwners, $newOwners, $applicableOwners);
 
 		$updateCol = array(array('applicable_owners_sources', $applicableOwners),
-												array('active', $activeForCurrentKeyword + 1));
+											 array('active', $activeForCurrentKeyword + 1));
 		$checkCol  = array(array('id', '=', $keywordIdAction, ''));
 		$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
 	}
@@ -633,7 +633,7 @@ if ($emailIsCheck && !empty($sourceIdAction) && !empty($action))
 	{
 		$userId    = $_SESSION['id'];
 		$updateCol = array(array('owners', preg_replace("/,!*$userId,/", ',', $owners)),
-											array('active', $activeForCurrentSource - 1));
+											 array('active', $activeForCurrentSource - 1));
 		$checkCol  = array(array('id', '=', $sourceIdAction, ''));
 		$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
 	}
@@ -641,7 +641,7 @@ if ($emailIsCheck && !empty($sourceIdAction) && !empty($action))
 	{
 		$userId    = $_SESSION['id'];
 		$updateCol = array(array('owners', preg_replace("/,$userId,/", ",!$userId,", $owners)),
-											array('active', $activeForCurrentSource - 1));
+											 array('active', $activeForCurrentSource - 1));
 		$checkCol  = array(array('id', '=', $sourceIdAction, ''));
 		$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
 	}
@@ -649,7 +649,7 @@ if ($emailIsCheck && !empty($sourceIdAction) && !empty($action))
 	{
 		$userId    = $_SESSION['id'];
 		$updateCol = array(array('owners', preg_replace("/,!$userId,/", ",$userId,", $owners)),
-											array('active', $activeForCurrentSource + 1));
+										   array('active', $activeForCurrentSource + 1));
 		$checkCol  = array(array('id', '=', $sourceIdAction, ''));
 		$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
 	}

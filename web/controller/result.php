@@ -378,6 +378,19 @@ else
 	include('model/readOwnerResult.php');
 }
 
+# Display read status column
+
+## Read if option read status is activated
+$checkCol         = array(array('id', '=', $_SESSION['id']));
+$readStatusColumn = read('users_table_serge', 'record_read', $checkCol, '', $bdd);
+
+
+$readStatusColumn = '';
+if ($optionReadStatus)
+{
+	$readStatusColumn = '<th><a href="?optionalCond=read' . $colOrder['OCDESC'] . $searchSort . $data['orderBy'] . '&type=' . $type . '">' . $colOrder['read'] . '</a></th>';
+}
+
 # Page number
 if (!empty($data['page']))
 {
