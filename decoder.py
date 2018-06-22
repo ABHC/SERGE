@@ -86,7 +86,7 @@ def decodeQuery(ch):
 	non_human_query = non_human_query.replace("PRIORPCTAN:", "PRIOR PCT application number : ")
 	non_human_query = non_human_query.replace("PRIORPCTWo:", "Prior PCT WO number : ")
 	non_human_query = non_human_query.replace("PI:", "Priority datas like : ")
-	non_human_query = non_human_query.replace("PCB:", "Priority country : ")
+	non_human_query = non_human_query.replace("PCN:", "Priority country : ")
 	non_human_query = non_human_query.replace("NP:", "Priority number like : ")
 	non_human_query = non_human_query.replace("DP:", "Publication Date : ")
 	non_human_query = non_human_query.replace("LGP:", "Language publication : ")
