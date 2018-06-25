@@ -1227,6 +1227,7 @@ Install_Postgrey()
 Install_Serge()
 {
 	# Dependancy
+	apt-get -y install php-ssh2
 	apt-get -y install python-pip
 	pip install pip --upgrade pip
 	apt-get -y install libmysqlclient-dev
