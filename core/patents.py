@@ -217,7 +217,7 @@ def patentspack(register, user_id_comma):
 
 		attributes = toolbox.packaging(item_arguments)
 
-		item = {"title": row[1], "description": None, "link": row[2], "label": "patents", "source": attributes["source"], "inquiry": attributes["inquiry"], "wiki_link": add_wiki_link}
+		item = {"title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": None, "link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'), "label": "patents", "source": attributes["source"], "inquiry": attributes["inquiry"], "wiki_link": add_wiki_link}
 		items_list.append(item)
 
 	return items_list
@@ -311,7 +311,7 @@ def legalScrapper(post_link, inquiry, now):
 				legal_status = strong_list[cut_index-1]
 				legal_status = str(legal_status).replace("<strong>", "").replace("</strong>", "").replace("+", "").replace("-", "")
 				legal_comparator = legal_status.lower()
-				legal_abstract = decoder.decodeLegal(legal_comparator)
+				legal_abstract = decodeLegal(legal_comparator)
 			else:
 				legal_abstract = None
 				legal_status = None
@@ -332,3 +332,68 @@ def legalScrapper(post_link, inquiry, now):
 	legal_dataset = {"legal_status": legal_status, "legal_abstract": legal_abstract, "lens_link": lens_link, "new_check_date": new_check_date}
 
 	return (legal_dataset)
+
+
+def decodeLegal(legal_comparator):
+	"""Legal description of patents analysis in order to know if the patents is active or not"""
+
+	######### LIST FOR INACTIVE LEGAL STATUS
+	libre_list = ["patent revoked", "patent withdrawn", "abandonment of patent", "abandonment or withdrawal", "ceased due to", "patent ceased", "complete renunciation", "comple withdrawal", "spc revoked under", "patent expired", "extended patent has ceased", "lapsed due to", "deemed to be withdrawn", "expiry+spc", "expiry+supplementary protection", "expiry+complementary protection certificate", "patent lapsed-:", "§expiry", "§expiry of patent term"]
+
+	legal_abstract = None
+
+	######### START DECODING
+	for legal_keyword in libre_list:
+
+		######### SEARCH FOR MULTIPLE KEYWORDS
+		if "+" in legal_keyword and legal_abstract != "INACTIVE":
+			legal_keys = legal_keyword.split("+")
+			legal_keys_num = len(legal_keys)
+			legal_index = 0
+			keys_find = 0
+
+			while legal_index <= (legal_keys_num - 1):
+				if legal_keys[legal_index] in legal_comparator:
+					keys_find = keys_find + 1
+				legal_index = legal_index + 1
+
+			if keys_find == legal_keys_num:
+				legal_abstract = "INACTIVE"
+			else:
+				legal_abstract = "ACTIVE OR UNCERTAIN"
+
+		######### SEARCH FOR A KEYWORD WITH EXCEPTING SPECIFIC WORDS
+		elif "-" in legal_keyword and legal_abstract != "INACTIVE":
+			legal_keys = legal_keyword.split("-")
+			legal_keys_num = len(legal_keys)
+			legal_index = 1
+			keys_find = 0
+
+			while legal_index <= (legal_keys_num - 1):
+				if legal_keys[0] in legal_comparator and legal_keys[legal_index] not in legal_comparator:
+					keys_find = keys_find + 1
+				legal_index = legal_index + 1
+
+			if keys_find == (legal_keys_num - 1):
+				legal_abstract = "INACTIVE"
+			else:
+				legal_abstract = "ACTIVE OR UNCERTAIN"
+
+		######### SEARCH AN EXACT EXPRESSION
+		elif "§" in legal_keyword and legal_abstract != "INACTIVE":
+			legal_keyword = legal_keyword.split("§")
+			legal_keyword = legal_keyword[1]
+
+			if legal_keyword == legal_comparator:
+				legal_abstract = "INACTIVE"
+			else:
+				legal_abstract = "ACTIVE OR UNCERTAIN"
+
+		######### SEARCH A SPECIFIC EXPRESSION
+		elif legal_abstract != "INACTIVE":
+			if legal_keyword in legal_comparator:
+				legal_abstract = "INACTIVE"
+			else:
+				legal_abstract = "ACTIVE OR UNCERTAIN"
+
+	return legal_abstract

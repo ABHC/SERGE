@@ -228,11 +228,11 @@ for register, user in user_list:
 	logger_info.info("USER : " + register)
 	user_id_comma = "%," + register + ",%"
 
-	results_basket = resultstation.triage(register, user_id_comma)
+	not_send_news_list = newscast.newspack(register, user_id_comma)
+	not_send_science_list = sciences.sciencespack(register, user_id_comma)
+	not_send_patents_list = patents.patentspack(register, user_id_comma)
 
-	not_send_news_list = results_basket[0]
-	not_send_science_list = results_basket[1]
-	not_send_patents_list = results_basket[2]
+	fullResults = not_send_news_list+not_send_science_list+not_send_patents_list
 
 	pending_all = len(not_send_news_list)+len(not_send_science_list)+len(not_send_patents_list)
 

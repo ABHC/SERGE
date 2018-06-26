@@ -115,15 +115,15 @@ def packaging(item_arguments):
 	source = call_db.fetchone()
 	call_db.close()
 
-	for inquiry_id in item_arguments["query_inquiry"]:
-		if proceed is True:
-			######### RETRIEVE THE USER REQUEST
+	######### RETRIEVE THE USER REQUEST
+	if proceed is True:
+		for inquiry_id in item_arguments["inquiry_id"]:
 			call_db = database.cursor()
 			call_db.execute(item_arguments["query_inquiry"], (user_id_doubledot_percent,))
 			check = call_db.fetchone()
 			call_db.close()
 
-			if re.search(user+'[0-9,]*'+",8,", check[1]) is not None :
+			if re.search(user_id_doubledot+'[0-9,]*'+","+inquiry_id+",", check[1]) is not None :
 				check = attributes[0]
 				proceed = False
 

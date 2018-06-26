@@ -282,7 +282,7 @@ def sciencespack(register, user_id_comma):
 
 		attributes = toolbox.packaging(item_arguments)
 
-		item = {"title": row[1], "description": None, "link": row[2], "label": "sciences", "source": attributes["source"], "inquiry": attributes["inquiry"], "wiki_link": add_wiki_link}
+		item = {"title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": None, "link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'), "label": "sciences", "source": attributes["source"], "inquiry": attributes["inquiry"], "wiki_link": add_wiki_link}
 		items_list.append(item)
 
 	return items_list
