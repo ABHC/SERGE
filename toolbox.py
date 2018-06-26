@@ -124,7 +124,7 @@ def packaging(item_arguments):
 			call_db.close()
 
 			if re.search(user_id_doubledot+'[0-9,]*'+","+inquiry_id+",", check[1]) is not None :
-				check = attributes[0]
+				inquiry = check[0]
 				proceed = False
 
 	attributes = {"source": source, "inquiry": inquiry}

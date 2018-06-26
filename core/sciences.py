@@ -37,7 +37,13 @@ def rosetta(now):
 	logger_info = logging.getLogger("info_log")
 	logger_error = logging.getLogger("error_log")
 
+	######### SET USEFUL VARIABLES
 	need_jelly = False
+	builder_queries = dict()
+	builder_queries["query_initialyze"] = "SELECT basename FROM sources_sciences_serge WHERE active >= 1 and type <> 'language'"
+	builder_queries["prime_builder"] = "SELECT basename, quote, `"+component+"` FROM sources_sciences_serge WHERE active >= 1 and type <> 'language'"
+	builder_queries["second_builder"] = "SELECT basename, `"+component+"` FROM sources_sciences_serge WHERE active >= 1 and type <> 'language'"
+	builder_queries["query_pack"] = "SELECT basename, prelink, postlink, id, type FROM sources_sciences_serge WHERE active >= 1 and type <> 'language'"
 
 	######### SCIENCE RESEARCH
 	logger_info.info("\n\n######### Last Scientific papers research : \n\n")
@@ -77,11 +83,9 @@ def rosetta(now):
 		field = {"inquiry_id":row[0], "inquiry": row[1].strip(), "owners": owners_str.strip(), "sources": sources_str.strip()}
 		inquiries_list.append(field)
 
-		builder_queries = {"query_initialyze": "SELECT basename FROM sources_sciences_serge WHERE active >= 1", "query_builder_prime": "SELECT basename, quote FROM sources_sciences_serge WHERE active >= 1", "query_builder_second": "SELECT basename, `"+component+"` FROM sources_sciences_serge WHERE active >= 1", "query_pack": "SELECT basename, prelink, postlink, id, type FROM sources_sciences_serge WHERE active >= 1"}
-
 	######### BUILDING REQUEST FOR SCIENCE API
 	for inquiry in inquiries_list:
-		request_dictionnary = decoder.requestBuilder(database, inquiry["inquiry"], inquiry["inquiry_id"], builder_queries)
+		request_dictionnary = decoder.requestBuilder(inquiry["inquiry"], inquiry["inquiry_id"], builder_queries)
 
 		for science_api_pack in request_dictionnary.values():
 			source_comparator = ","+science_api_pack["source_id"]+","
@@ -275,14 +279,20 @@ def sciencespack(register, user_id_comma):
 		add_wiki_link = toolbox.recorder(register, "sciences", str(row[0]), "addLinkInWiki", database)
 
 		######### SEARCH FOR SOURCE NAME AND COMPLETE REQUEST OF THE USER
-		query_source = "SELECT basename FROM sources_sciences_serge WHERE id = %s"
+		query_source = "SELECT basename FROM sources_sciences_serge WHERE id = %s and type <> 'language'"
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_sciences_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
 		item_arguments = {"user_id_comma": user_id_comma, "source_id": row[3], "inquiry_id": str(row[4]).split(",")}, "query_source": query_source, "query_inquiry": query_inquiry}
 
 		attributes = toolbox.packaging(item_arguments)
 
-		item = {"title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": None, "link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'), "label": "sciences", "source": attributes["source"], "inquiry": attributes["inquiry"], "wiki_link": add_wiki_link}
+		######### TRANSLATE THE INQUIRY
+		trad_args = {"register": register, "inquiry": attributes["inquiry"], "component": "SELECT `"+component+"` FROM sources_sciences_serge WHERE type = 'language' and basename = %s", "quote": "SELECT quote FROM sources_sciences_serge WHERE type = 'language' and basename = %s"}
+
+		human_inquiry = decoder.humanInquiry(trad_args)
+
+		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
+		item = {"title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": None, "link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'), "label": "sciences", "source": attributes["source"], "inquiry": human_inquiry, "wiki_link": add_wiki_link}
 		items_list.append(item)
 
 	return items_list

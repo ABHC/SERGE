@@ -277,13 +277,14 @@ def newspack(register, user_id_comma):
 		add_wiki_link = toolbox.recorder(register, "news", str(row[0]), "addLinkInWiki", database)
 
 		######### SEARCH FOR SOURCE NAME AND COMPLETE REQUEST OF THE USER
-		query_source = "SELECT name FROM sources_news_serge WHERE id = %s"
+		query_source = "SELECT name FROM sources_news_serge WHERE id = %s and type <> 'language'"
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_news_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
 		item_arguments = {"user_id_comma": user_id_comma, "source_id": row[3], "inquiry_id": str(row[4]).split(",")}, "query_source": query_source, "query_inquiry": query_inquiry}
 
 		attributes = toolbox.packaging(item_arguments)
 
+		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
 		item = {"title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": None, "link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'), "label": "news", "source": attributes["source"], "inquiry": attributes["inquiry"], "wiki_link": add_wiki_link}
 		items_list.append(item)
 
