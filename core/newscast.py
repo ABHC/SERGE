@@ -77,7 +77,7 @@ def voyager(newscast_args):
 
 	########### INSERT NEW ETAG IN RSS SERGE
 	if greenlight is True:
-		insertSQL.backToTheFuture(etag, link)
+		backToTheFuture(etag, link)
 
 		########### LINK CONNEXION
 		req_results = sergenet.aLinkToThePast(link, 'fullcontent')
@@ -85,7 +85,7 @@ def voyager(newscast_args):
 		feed_error = req_results[1]
 
 	elif greenlight is False and etag is None:
-		insertSQL.backToTheFuture(etag, link)
+		backToTheFuture(etag, link)
 		feed_error = None
 
 	elif greenlight is False:
@@ -289,3 +289,25 @@ def newspack(register, user_id_comma):
 		items_list.append(item)
 
 	return items_list
+
+
+def backToTheFuture(etag, link):
+	"""backToTheFuture manage the etag update in database."""
+
+	########### CONNECTION TO SERGE DATABASE
+	database = databaseConnection()
+
+	######### ETAG UPDATE IN rss_serge
+	etag_update = ("UPDATE rss_serge SET etag = %s WHERE link = %s")
+
+	call_rss = database.cursor()
+
+	try:
+		call_rss.execute(etag_update, (etag, link))
+		database.commit()
+	except Exception, except_type:
+		database.rollback()
+		logger_error.error("ROLLBACK IN backToTheFuture FUNCTION")
+		logger_error.error(repr(except_type))
+
+	call_rss.close()
