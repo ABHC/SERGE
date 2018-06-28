@@ -440,6 +440,7 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 					insert_data.close()
 
 
+#TODO modifier stairwayToUpdate au niveau des arguments internes et externes et des appels
 def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, predecessor):
 	"""stairwayToUpdate manage the send_status update in database."""
 

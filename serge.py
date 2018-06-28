@@ -42,70 +42,6 @@ logger_info = logging.getLogger("info_log")
 logger_error = logging.getLogger("error_log")
 
 
-def redAlert(user, register, user_id_comma, not_send_news_list, not_send_science_list, not_send_patents_list, now, pydate):
-	"""Management of alerts :
-	- Search for potential alert keywords in results and if some are found redAlert build the list of them and of related news
-	- This list is given to alarm.py for building and formatting the e-mail alert"""
-
-	alert_news_list = []
-
-	for potential_alert in not_send_news_list:
-		id_list = []
-
-		for alert_id in potential_alert["keyword_id"].split(","):
-			if alert_id != "":
-				id_list.append(alert_id)
-
-		for alert_id in id_list:
-			query = "SELECT keyword, applicable_owners_sources FROM keyword_news_serge WHERE id = %s AND active > 0"
-
-			call_keywords = database.cursor()
-			call_keywords.execute(query, (alert_id,))
-			alert_comparator = call_keywords.fetchone()
-			call_keywords.close()
-
-			if alert_comparator is not None:
-				key_comparator = alert_comparator[0]
-				owner_source_comparator = alert_comparator[1]
-				owner_source_comparator = owner_source_comparator.split("|")
-				owner_comparator = []
-
-				for correct_owner in owner_source_comparator:
-					if correct_owner != "":
-						correct_owner = correct_owner[0:1]
-						owner_comparator.append(correct_owner)
-
-				if "[!ALERT!]" in key_comparator and register in owner_comparator:
-					alert_id_comma = ","+alert_id+","
-					confirmed_alert = {"id": potential_alert["id"], "title": potential_alert["title"], "link": potential_alert["link"], "id_source": potential_alert["id_source"], "keyword_id": alert_id_comma, "wiki_link": potential_alert["wiki_link"]}
-					alert_news_list.append(confirmed_alert)
-
-	if len(alert_news_list) > 0:
-		logger_info.info("ALERT PROCESS")
-		not_send_science_list = []
-		not_send_patents_list = []
-		predecessor = "ALARM"
-
-		######### CALL TO buildAlert FUNCTION
-		alarm.buildAlert(user, user_id_comma, register, alert_news_list, pydate)
-
-		######### CALL TO sergeTelecom FUNCTION if enabled
-		query_sms_authorization = "SELECT alert_by_sms FROM users_table_serge WHERE id = %s"
-
-		call_users = database.cursor()
-		call_users.execute(query_sms_authorization, (register))
-		sms_authorization = call_users.fetchone()
-		call_users.close()
-
-		sms_authorization = sms_authorization[0]
-
-		if sms_authorization is True:
-			alarm.sergeTelecom(user, register, alert_news_list)
-
-		######### CALL TO stairwayToUpdate FUNCTION
-		insertSQL.stairwayToUpdate(register, alert_news_list, not_send_science_list, not_send_patents_list, now, predecessor)
-
-
 def extensions(database):
 	"""Call to optionnal function for content research. extensions are listed in miscellaneous_serge."""
 
@@ -227,6 +163,7 @@ for register, user in user_list:
 	register = str(register)
 	logger_info.info("USER : " + register)
 	user_id_comma = "%," + register + ",%"
+	stamps = {"register": register, "user": user, "pydate": pydate, "priority": "NORMAL"}
 
 	not_send_news_list = newscast.newspack(register, user_id_comma)
 	not_send_science_list = sciences.sciencespack(register, user_id_comma)
@@ -268,8 +205,8 @@ for register, user in user_list:
 			logger_info.info("FREQUENCY REACHED")
 			predecessor = "MAILER"
 
-			######### CALL TO buildMail FUNCTION
-			mailer.buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list)
+			######### E-MAIL BUILDING AND SENDING
+			mailer.mailInit(fullResults, stamps)
 
 			######### CALL TO stairwayToUpdate FUNCTION
 			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, predecessor)
@@ -279,7 +216,7 @@ for register, user in user_list:
 
 		elif interval < frequency and pending_all > 0:
 			#########  ALERT MANAGEMENT : CALL TO redAlert FUNCTION
-			redAlert(user, register, user_id_comma, not_send_news_list, not_send_science_list, not_send_patents_list, now, pydate)
+			alarm.redAlert(fullResults, stamps, now)
 
 		else:
 			logger_info.info("FREQUENCY NOT REACHED")
@@ -299,15 +236,15 @@ for register, user in user_list:
 			logger_info.info("LIMIT REACHED")
 			predecessor = "MAILER"
 
-			######### CALL TO buildMail FUNCTION
-			mailer.buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list)
+			######### E-MAIL BUILDING AND SENDING
+			mailer.mailInit(fullResults, stamps)
 
 			######### CALL TO stairwayToUpdate FUNCTION
 			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, predecessor)
 
 		elif pending_all < limit and pending_all > 0:
 			######### ALERT MANAGEMENT : CALL TO redAlert FUNCTION
-			redAlert(user, register, user_id_comma, not_send_news_list, not_send_science_list, not_send_patents_list, now, pydate)
+			alarm.redAlert(fullResults, stamps, now)
 
 		elif pending_all < limit:
 			logger_info.info("LIMIT NOT REACHED")
@@ -331,15 +268,15 @@ for register, user in user_list:
 			logger_info.info("GOOD DAY AND GOOD HOUR")
 			predecessor = "MAILER"
 
-			######### CALL TO buildMail FUNCTION
-			mailer.buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list)
+			######### E-MAIL BUILDING AND SENDING
+			mailer.mailInit(fullResults, stamps)
 
 			######### CALL TO stairwayToUpdate FUNCTION
 			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, predecessor)
 
 		elif hour != some_hour and pending_all > 0:
 			######### ALERT MANAGEMENT : CALL TO redAlert FUNCTION
-			redAlert(user, register, user_id_comma, not_send_news_list, not_send_science_list, not_send_patents_list, now, pydate)
+			alarm.redAlert(fullResults, stamps, now)
 
 		elif pending_all == 0:
 			logger_info.info("NO PENDING NEWS")

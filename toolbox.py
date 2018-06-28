@@ -104,10 +104,10 @@ def recorder(register, label, linkId, recorder_call, database):
 def packaging(item_arguments):
 
 	######### SET VARIABLES
+	classic_inquiries = []
+	alerts_inquiries = []
 	user_id_doubledot = user_id_comma.replace(",", "")+":"
 	user_id_doubledot_percent = "%"+user_id_doubledot+"%"
-	inquiry_nb = len(inquiry_id)
-	proceed = True
 
 	######### RETRIEVE THE NAME OF THE SOURCE
 	call_db = database.cursor()
@@ -116,16 +116,24 @@ def packaging(item_arguments):
 	call_db.close()
 
 	######### RETRIEVE THE USER REQUEST
-	if proceed is True:
-		for inquiry_id in item_arguments["inquiry_id"]:
-			call_db = database.cursor()
-			call_db.execute(item_arguments["query_inquiry"], (user_id_doubledot_percent,))
-			check = call_db.fetchone()
-			call_db.close()
+	for inquiry_id in item_arguments["inquiry_id"]:
+		call_db = database.cursor()
+		call_db.execute(item_arguments["query_inquiry"], (user_id_doubledot_percent,))
+		check = call_db.fetchone()
+		call_db.close()
 
-			if re.search(user_id_doubledot+'[0-9,]*'+","+inquiry_id+",", check[1]) is not None :
-				inquiry = check[0]
-				proceed = False
+		if re.search(user_id_doubledot+'[0-9,]*'+","+inquiry_id+",", check[1]) is not None :
+			if "[!ALERT!]" in check[0]:
+				alerts_inquiries.append(check[0])
+			else:
+				classic_inquiries.append(check[0])
+
+	if len(alerts_inquiries) > 0:
+		inquiry = alerts_inquiries[0]
+	elif len(classic_inquiries) > 0 and len(alerts_inquiries) == 0:
+		inquiry = classic_inquiries[0]
+	else:
+		inquiry = "REMOVED INQUIRY"
 
 	attributes = {"source": source, "inquiry": inquiry}
 
