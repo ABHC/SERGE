@@ -19,7 +19,6 @@ import sys
 import time
 from datetime import datetime as dt
 import datetime
-import MySQLdb
 import logging
 
 ######### IMPORT SERGE SPECIALS MODULES
@@ -209,7 +208,7 @@ for register, user in user_list:
 			mailer.mailInit(fullResults, stamps)
 
 			######### CALL TO stairwayToUpdate FUNCTION
-			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, predecessor)
+			insertSQL.stairwayToUpdate(fullResults, register, now, predecessor)
 
 		elif interval >= frequency and pending_all == 0:
 			logger_info.info("Frequency reached but no pending news")
@@ -240,7 +239,7 @@ for register, user in user_list:
 			mailer.mailInit(fullResults, stamps)
 
 			######### CALL TO stairwayToUpdate FUNCTION
-			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, predecessor)
+			insertSQL.stairwayToUpdate(fullResults, register, now, predecessor)
 
 		elif pending_all < limit and pending_all > 0:
 			######### ALERT MANAGEMENT : CALL TO redAlert FUNCTION
@@ -272,7 +271,7 @@ for register, user in user_list:
 			mailer.mailInit(fullResults, stamps)
 
 			######### CALL TO stairwayToUpdate FUNCTION
-			insertSQL.stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, predecessor)
+			insertSQL.stairwayToUpdate(fullResults, register, now, predecessor)
 
 		elif hour != some_hour and pending_all > 0:
 			######### ALERT MANAGEMENT : CALL TO redAlert FUNCTION

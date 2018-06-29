@@ -2,10 +2,6 @@
 
 """SERGE alert functions (building and formatting an alert)"""
 
-import ovh
-import MySQLdb
-from math import ceil
-
 ######### IMPORT SERGE SPECIALS MODULES
 import mailer
 import handshake
@@ -49,4 +45,4 @@ def redAlert(fullResults, stamps, now):
 			handshake.sergeTelecom(fullResults, stamps)
 
 		######### CALL TO stairwayToUpdate FUNCTION
-		insertSQL.stairwayToUpdate(register, alert_news_list, not_send_science_list, not_send_patents_list, now, predecessor)
+		insertSQL.stairwayToUpdate(fullResults, stamps["register"], now, predecessor)

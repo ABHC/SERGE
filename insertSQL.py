@@ -441,7 +441,7 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 
 
 #TODO modifier stairwayToUpdate au niveau des arguments internes et externes et des appels
-def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, predecessor):
+def stairwayToUpdate(fullResults, register, now, predecessor):
 	"""stairwayToUpdate manage the send_status update in database."""
 
 	########### CONNECTION TO SERGE DATABASE
@@ -450,39 +450,32 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 	######### LOGGER CALL
 	logger_error = logging.getLogger("error_log")
 
-	######### SEND_STATUS UPDATE
-	type_list = ('news', 'science', 'patents')
-	articles = (not_send_news_list, not_send_science_list, not_send_patents_list)
-	cpt = 0
+	######### CHECK AND UPDATE SEND STATUS
+	for result in fullResults:
+		query = ("SELECT send_status FROM result_"+result["label"]+"_serge WHERE id = %s")
 
-	for articles_type in type_list:
-		for attributes in articles[cpt]:
+		call_news = database.cursor()
+		call_news.execute(query, (result["id"],))
+		row = call_news.fetchone()
 
-			query = ("SELECT send_status FROM result_"+articles_type+"_serge WHERE id = %s")
+		send_status = row[0]
+		register_comma = register+","
+		register_comma2 = ","+register+","
 
-			call_news = database.cursor()
-			call_news.execute(query, (attributes["id"],))
-			row = call_news.fetchone()
+		if register_comma2 not in send_status:
+			complete_status = send_status+register_comma
 
-			send_status = row[0]
-			register_comma = register+","
-			register_comma2 = ","+register+","
+			update = ("UPDATE result_"+result["label"]+"_serge SET send_status = %s WHERE id = %s")
 
-			if register_comma2 not in send_status:
-				complete_status = send_status+register_comma
+			try:
+				call_news.execute(update, (complete_status, result["id"]))
+				database.commit()
+			except Exception, except_type:
+				database.rollback()
+				logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
+				logger_error.error(repr(except_type))
 
-				update = ("UPDATE result_"+articles_type+"_serge SET send_status = %s WHERE id = %s")
-
-				try:
-					call_news.execute(update, (complete_status, attributes["id"]))
-					database.commit()
-				except Exception, except_type:
-					database.rollback()
-					logger_error.error("ROLLBACK IN stairwayToUpdate FUNCTION")
-					logger_error.error(repr(except_type))
-
-				call_news.close()
-		cpt += 1
+		call_news.close()
 
 	######### USER last_mail FIELD UPDATE
 	if predecessor == "MAILER":
