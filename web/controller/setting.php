@@ -6,7 +6,7 @@ include('model/get_text_var.php');
 include('model/read.php');
 include('model/update.php');
 include('model/insert.php');
-include('model/readStatusOfSourceAddition.php');
+include('model/readSourceAdditionStatus.php');
 include('controller/generateNonce.php');
 
 // Define variables
@@ -447,7 +447,7 @@ if ($emailIsCheck && !empty($data['buttonDeleteHistory']) && !empty($data['delet
 # Adding new source
 if ($emailIsCheck && !empty($data['sourceType']) && !empty($data['newSource']) && $data['sourceType'] === 'inputSource')
 {
-	include('model/updateStatusOfSourceAdditionLaunch.php');
+	include('model/updateSourceAdditionStatusLaunch.php');
 	$sourceToTest = escapeshellarg($data['newSource']);
 	$cmd          = 'timeout 150  /usr/bin/python /var/www/Serge/checkfeed.py ' . $sourceToTest . ' ' . $userId . ' setting >> /var/www/Serge/web/logs/error.log 2>&1 &';
 
@@ -1209,6 +1209,25 @@ if ($userSettings['result_by_email'])
 if ($userSettings['alert_by_sms'])
 {
 	$checkResultBySMS = 'checked';
+}
+
+# Status of source addition
+include('model/readSourceAdditionStatus.php');
+preg_match("/Search for /", $status, $test);
+if ($test[0] == 'Search for ')
+{
+	echo '<script>updateSourceAdditionStatus();</script>';
+}
+elseif ($status == 'END')
+{
+	$sourceAdditionStatus = 'END';
+}
+elseif (!empty($status))
+{
+	include('model/updateSourceAdditionStatus.php');
+	$textStatus = preg_replace("/: .+/", "", $status);
+	$link       = preg_replace("/.+ :/", "", $status) ?? '';
+ 	$sourceAdditionStatus = var_get_t($textStatus, $bdd) . ' ' . htmlspecialchars($link);
 }
 
 include('view/nav/nav.php');

@@ -40,8 +40,12 @@ def pathfinder(now):
 	logger_error = logging.getLogger("error_log")
 
 	######### SET USEFUL VARIABLES
-	builder_queries = {"query_initialyze": "SELECT basename FROM sources_patents_serge WHERE active >= 1", "query_builder_prime": "SELECT basename, quote FROM sources_patents_serge WHERE active >= 1", "query_builder_second": "SELECT basename, `"+component+"` FROM sources_patents_serge WHERE active >= 1", "query_pack": "SELECT basename, prelink, postlink, id, type FROM sources_patents_serge WHERE active >= 1"}
 	need_jelly = False
+	builder_queries = dict()
+	builder_queries["query_initialyze"] = "SELECT basename FROM sources_patents_serge WHERE active >= 1 and type <> 'language'"
+	builder_queries["prime_builder"] = "SELECT basename, quote, `"+component+"` FROM sources_patents_serge WHERE active >= 1 and type <> 'language'"
+	builder_queries["second_builder"] = "SELECT basename, `"+component+"` FROM sources_patents_serge WHERE active >= 1 and type <> 'language'"
+	builder_queries["query_pack"] = "SELECT basename, prelink, postlink, id, type FROM sources_patents_serge WHERE active >= 1 and type <> 'language'"
 
 	logger_info.info("\n\n######### Last Patents Research (patents function) : \n\n")
 
@@ -83,10 +87,7 @@ def pathfinder(now):
 
 	######### PATENTS RESEARCH
 	for inquiry in inquiries_list:
-		request_dictionnary = decoder.requestBuilder(database, inquiry["inquiry"], inquiry["inquiry_id"], builder_queries)
-
-		#TODO compléter la base sources_patents_serge
-		#link = ('https://patentscope.wipo.int/search/rss.jsf?query='+query_wipo+'&office=&rss=true&sortOption=Pub+Date+Desc')
+		request_dictionnary = decoder.requestBuilder(inquiry["inquiry"], inquiry["inquiry_id"], builder_queries)
 
 		for patents_api_pack in request_dictionnary:
 			source_comparator = ","+patents_api_pack["source_id"]+","
@@ -210,14 +211,20 @@ def patentspack(register, user_id_comma):
 		add_wiki_link = toolbox.recorder(register, "patents", str(row[0]), "addLinkInWiki", database)
 
 		######### SEARCH FOR SOURCE NAME AND COMPLETE REQUEST OF THE USER
-		query_source = "SELECT basename FROM sources_patents_serge WHERE id = %s"
+		query_source = "SELECT basename FROM sources_patents_serge WHERE id = %s and type <> 'language'"
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_patents_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
 		item_arguments = {"user_id_comma": user_id_comma, "source_id": row[3], "inquiry_id": str(row[4]).split(",")}, "query_source": query_source, "query_inquiry": query_inquiry}
 
 		attributes = toolbox.packaging(item_arguments)
 
-		item = {"title": row[1], "description": None, "link": row[2], "label": "patents", "source": attributes["source"], "inquiry": attributes["inquiry"], "wiki_link": add_wiki_link}
+		######### TRANSLATE THE INQUIRY
+		trad_args = {"register": register, "inquiry": attributes["inquiry"], "component": "SELECT `"+component+"` FROM sources_patents_serge WHERE type = 'language' and basename = %s", "quote": "SELECT quote FROM sources_patents_serge WHERE type = 'language' and basename = %s"}
+
+		human_inquiry = decoder.humanInquiry(trad_args)
+
+		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
+		item = {"title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": None, "link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'), "label": "patents", "source": attributes["source"], "inquiry": human_inquiry, "wiki_link": add_wiki_link}
 		items_list.append(item)
 
 	return items_list
@@ -311,7 +318,7 @@ def legalScrapper(post_link, inquiry, now):
 				legal_status = strong_list[cut_index-1]
 				legal_status = str(legal_status).replace("<strong>", "").replace("</strong>", "").replace("+", "").replace("-", "")
 				legal_comparator = legal_status.lower()
-				legal_abstract = decoder.decodeLegal(legal_comparator)
+				legal_abstract = decodeLegal(legal_comparator)
 			else:
 				legal_abstract = None
 				legal_status = None
@@ -332,3 +339,68 @@ def legalScrapper(post_link, inquiry, now):
 	legal_dataset = {"legal_status": legal_status, "legal_abstract": legal_abstract, "lens_link": lens_link, "new_check_date": new_check_date}
 
 	return (legal_dataset)
+
+
+def decodeLegal(legal_comparator):
+	"""Legal description of patents analysis in order to know if the patents is active or not"""
+
+	######### LIST FOR INACTIVE LEGAL STATUS
+	libre_list = ["patent revoked", "patent withdrawn", "abandonment of patent", "abandonment or withdrawal", "ceased due to", "patent ceased", "complete renunciation", "comple withdrawal", "spc revoked under", "patent expired", "extended patent has ceased", "lapsed due to", "deemed to be withdrawn", "expiry+spc", "expiry+supplementary protection", "expiry+complementary protection certificate", "patent lapsed-:", "§expiry", "§expiry of patent term"]
+
+	legal_abstract = None
+
+	######### START DECODING
+	for legal_keyword in libre_list:
+
+		######### SEARCH FOR MULTIPLE KEYWORDS
+		if "+" in legal_keyword and legal_abstract != "INACTIVE":
+			legal_keys = legal_keyword.split("+")
+			legal_keys_num = len(legal_keys)
+			legal_index = 0
+			keys_find = 0
+
+			while legal_index <= (legal_keys_num - 1):
+				if legal_keys[legal_index] in legal_comparator:
+					keys_find = keys_find + 1
+				legal_index = legal_index + 1
+
+			if keys_find == legal_keys_num:
+				legal_abstract = "INACTIVE"
+			else:
+				legal_abstract = "ACTIVE OR UNCERTAIN"
+
+		######### SEARCH FOR A KEYWORD WITH EXCEPTING SPECIFIC WORDS
+		elif "-" in legal_keyword and legal_abstract != "INACTIVE":
+			legal_keys = legal_keyword.split("-")
+			legal_keys_num = len(legal_keys)
+			legal_index = 1
+			keys_find = 0
+
+			while legal_index <= (legal_keys_num - 1):
+				if legal_keys[0] in legal_comparator and legal_keys[legal_index] not in legal_comparator:
+					keys_find = keys_find + 1
+				legal_index = legal_index + 1
+
+			if keys_find == (legal_keys_num - 1):
+				legal_abstract = "INACTIVE"
+			else:
+				legal_abstract = "ACTIVE OR UNCERTAIN"
+
+		######### SEARCH AN EXACT EXPRESSION
+		elif "§" in legal_keyword and legal_abstract != "INACTIVE":
+			legal_keyword = legal_keyword.split("§")
+			legal_keyword = legal_keyword[1]
+
+			if legal_keyword == legal_comparator:
+				legal_abstract = "INACTIVE"
+			else:
+				legal_abstract = "ACTIVE OR UNCERTAIN"
+
+		######### SEARCH A SPECIFIC EXPRESSION
+		elif legal_abstract != "INACTIVE":
+			if legal_keyword in legal_comparator:
+				legal_abstract = "INACTIVE"
+			else:
+				legal_abstract = "ACTIVE OR UNCERTAIN"
+
+	return legal_abstract

@@ -3,12 +3,13 @@
 """insertSQL contains some functions for handshaking with Serge database"""
 
 import re
+import ovh
 import time
 import MySQLdb
 import smtplib
-from email.mime.multipart import MIMEMultipart
+from math import ceil
 from email.mime.text import MIMEText
-
+from email.mime.multipart import MIMEMultipart
 
 def databaseConnection():
 	"""Connexion to Serge database"""
@@ -23,73 +24,120 @@ def databaseConnection():
 	return database
 
 
-def highwayToMail(register, newsletter, priority, pydate):
-	"""Function for emails sending"""
+def sergeTelecom(fullResults, stamps):
+	"""Format a sms message and then send it to the user's phone via the OVH API"""
 
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
-	######### PREMIUM STATUS CHECKING
-	query_status_checking = "SELECT premium_expiration_date FROM users_table_serge WHERE id = %s"
+	######### PHONE NUMBER OF THE USER
+	query_user_private = "SELECT phone_number, language FROM users_table_serge WHERE id = %s"
 
 	call_users = database.cursor()
-	call_users.execute(query_status_checking, (register,))
-	expiration_date = call_users.fetchone()
+	call_users.execute(query_user_private, (stamps["register"]))
+	user_private = call_users.fetchone()
 	call_users.close()
 
-	verif_time = time.time()
+	phonenumber = user_private[0]
+	language = user_private[1]
 
-	if expiration_date > verif_time :
+	######### SELECT THE TRANSLATION
+	alert_lenght = len(fullResults)
 
-		######### SERGE CONFIG FILE READING
-		permissions = open("/var/www/Serge/configuration/core_configuration.txt", "r")
-		config_file = permissions.read().strip()
-		permissions.close()
+	if alert_lenght == 1:
 
-		######### SERGE MAIL
-		fromaddr = re.findall("serge_mail: "+'([^\s]+)', config_file)
-
-		######### PASSWORD FOR MAIL
-		mdp_mail = re.findall("passmail: "+'([^\s]+)', config_file)
-
-		######### SERGE SERVER ADRESS
-		mailserveraddr = re.findall("passmail: "+'([^\s]+)', config_file)
-
-		######### ADRESSES AND LANGUAGE RECOVERY
-		query_user_infos = "SELECT email, language FROM users_table_serge WHERE id = %s"
+		query_translation = "SELECT "+language+" FROM text_content_serge WHERE EN = 'alert found'"
 
 		call_users = database.cursor()
-		call_users.execute(query_user_infos, (register,))
-		user_infos = call_users.fetchone()
+		call_users.execute(query_translation, )
+		translation = call_users.fetchone()
 		call_users.close()
 
-		toaddr = user_infos[0]
+		translation = translation[0]
 
-		######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
-		pydate = " "+pydate
-		if priority == "NORMAL":
-			subject_FR = "[SERGE] Veille Industrielle et Technologique"+pydate
-			subject_EN = "[SERGE] News monitoring and Technological watch"+pydate
-		elif priority == "HIGH":
-			subject_FR = "[ALERTE SERGE] Informations Prioritaires"+pydate
-			subject_EN = "[SERGE] Prioritary Informations"+pydate
+	elif alert_lenght > 1:
 
-		try:
-			exec("translate_subject"+"="+"subject_"+user_infos[1])
-		except NameError:
-			translate_subject = subject_EN
+		query_translation = "SELECT "+language+" FROM text_content_serge WHERE EN = 'alerts found'"
 
-		######### CONTENT WRITING IN EMAIL
-		msg = MIMEText(newsletter, 'html')
+		call_users = database.cursor()
+		call_users.execute(query_translation, )
+		translation = call_users.fetchone()
+		call_users.close()
 
-		msg['From'] = fromaddr
-		msg['To'] = toaddr
-		msg['Subject'] = translate_subject
+		translation = translation[0]
 
-		######### EMAIL SERVER CONNEXION
-		server = smtplib.SMTP(mailserveraddr, 5025)
-		server.starttls()
-		server.login(fromaddr, mdp_mail)
-		text = msg.as_string()
-		server.sendmail(fromaddr, toaddr, text)
-		server.quit()
+	########### DATA PROCESSING FOR SMS FORMATTING
+	results_string = u""
+
+	for alert in fullResults:
+		results_string = results_string + alert["title"] + " : " +alert["link"] + "\n"
+
+		message = "{0}, {1} {2}\n{3}".format(stamps["user"][0:10], alert_lenght, translation, results_string)
+
+	######### OVH TOKENS
+	call_tokens = database.cursor()
+	call_tokens.execute("SELECT endpoint, application_key, application_secret, consumer_key FROM sms_tokens")
+	tokens = call_tokens.fetchone()
+	call_tokens.close()
+
+	endpoint = tokens[0]
+	application_key = tokens[1]
+	application_secret = tokens[2]
+	consumer_key = tokens[3]
+
+	######### OVH CLIENT CONNECTION
+	client = ovh.Client(
+		endpoint = endpoint,
+		application_key = application_key,
+		application_secret = application_secret,
+		consumer_key= consumer_key,
+	)
+
+	######### PREPARATION OF THE SEND REQUEST
+	service_name = client.get('/sms')
+	post_sms = "/sms/"+service_name[0]+"/jobs"
+
+	sender_retrieval = "/sms/"+service_name[0]+"/senders"
+	sender = client.get(sender_retrieval)
+
+	######### SEND THE SMS ALERT
+	result_send = client.post(url,
+		charset = 'UTF-8',
+		coding = '7bit',
+		message = message,
+		noStopClause = False,
+		priority = 'high',
+		receivers = [number],
+		senderForResponse = False,
+		validityPeriod = 2880,
+		sender = sender[0]
+	)
+
+	######### COUNT SMS CREDIT USED
+	message_length = float(len(message_length))
+	credit_used = ceil(message_length/160)
+	credit_used = int(credit_used)
+
+	######### SMS CREDITS OF THE USER
+	query_user_credits = "SELECT sms_credits FROM users_table_serge WHERE id = %s"
+
+	call_users = database.cursor()
+	call_users.execute(query_user_credits, (stamps["register"]))
+	user_private = call_users.fetchone()
+	call_users.close()
+
+	user_credits = user_credits[0]
+	user_credits = user_credits - credit_used
+
+	update_credits = ("UPDATE users_table_serge SET sms_credits = %s WHERE id = %s")
+
+	########### USER CREDITS UPDATE
+	update_database = database.cursor()
+	try:
+		update_database.execute(update_credits, (user_credits, stamps["register"]))
+		database.commit()
+	except Exception, except_type:
+		database.rollback()
+		logger_error.error("ROLLBACK AT USER CREDITS IN sergeTelecom")
+		logger_error.error(repr(except_type))
+		update_database.close()

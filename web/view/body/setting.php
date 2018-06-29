@@ -582,8 +582,10 @@
 				<input type="text" class="keywordInput" name="newKeyword" id="keyword" title="<?php get_t('Special keywords -- :all to retrieve all links; :alert to receive the result directly overriding the sending conditions', $bdd); ?>" placeholder="<?php get_t('Keyword, next keyword, ...', $bdd); ?>" />
 				<input title="<?php get_t('Add new keyword', $bdd); ?>" class="submit" type="submit" value="" />
 			</div>
-				<iframe src="statusOfSourceAddition" width="100%" height="40" frameborder="0" scrolling="no" marginheight="0" marginwidth="0">
-				</iframe>
+			<div>
+				<div id="sourceAdditionStatus">
+					<?php  echo $sourceAdditionStatus ?? ''; ?>
+				</div>
 			<div>
 				<?php
 				$cptSource = 0;

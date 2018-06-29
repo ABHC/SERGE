@@ -2,7 +2,7 @@
 set_time_limit(25);
 session_start();
 include('model/connection_sql.php');
-include('model/readStatusOfSourceAddition.php');
+include('model/readSourceAdditionStatus.php');
 include('languages.php');
 ?>
 
@@ -13,6 +13,6 @@ include('languages.php');
 		<link href="css/sourceStatus" rel="stylesheet"/>
 	</head>
 		<?php
-		include('controller/statusOfSourceAddition.php');
+		include('controller/sourceAdditionStatus.php');
 		?>
 </html>

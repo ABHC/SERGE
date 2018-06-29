@@ -1,202 +1,69 @@
 # -*- coding: utf-8 -*-
 
-"""decoder contains all the functions related to the translation of datas in human language. It also contain a function for build from from a standardised serge request all the correspondant queries for all science API used"""
+"""Serge module for transform Serge universal queries in another form that suits to the situation"""
 
+######### IMPORT SERGE SPECIALS MODULES
+from handshake import databaseConnection
 
-def decodeQuery(ch):
+def humanInquiry(trad_args):
+	"""Translator for translate Serge universal queries into human language according to the language choose by the user"""
 
-	######### GENERAL
-	non_human_query = ch
-	non_human_query = non_human_query.replace("(", "").replace(")", "")
-	non_human_query = non_human_query.replace("+", " ")
-	non_human_query = non_human_query.replace("%22", "\"")
+	inquiry = trad_args["inquiry"].split("|")
 
-	######### PATENTS
+	########### CONNECTION TO SERGE DATABASE
+	database = databaseConnection()
 
-	######### PATENTS LANGUAGES
-	non_human_query = non_human_query.replace("EN_", "English | ")
-	non_human_query = non_human_query.replace("FR_", "French | ")
-	non_human_query = non_human_query.replace("DE_", "German | ")
-	non_human_query = non_human_query.replace("ES_", "Spanish | ")
-	non_human_query = non_human_query.replace("IT_", "Italian | ")
-	non_human_query = non_human_query.replace("PT_", "Portuguese | ")
-	non_human_query = non_human_query.replace("SV_", "Swedish | ")
-	non_human_query = non_human_query.replace("ZH_", "Chinese | ")
-	non_human_query = non_human_query.replace("DA_", "Danish | ")
-	non_human_query = non_human_query.replace("ZH_", "Chinese | ")
-	non_human_query = non_human_query.replace("JA_", "Japanese | ")
-	non_human_query = non_human_query.replace("KO_", "Korean | ")
-	non_human_query = non_human_query.replace("SV_", "Vietnamese | ")
-	non_human_query = non_human_query.replace("RU_", "Russian | ")
-	non_human_query = non_human_query.replace("ET_", "Estonian | ")
-	non_human_query = non_human_query.replace("PL_", "Polish | ")
-	non_human_query = non_human_query.replace("AR_", "Arabic | ")
-	non_human_query = non_human_query.replace("HE_", "Hebrew | ")
+	######### LANGUAGE CHOSEN BY USER
+	query_language = "SELECT language FROM users_table_serge WHERE id = %s"
 
-	######### PATENTS CATEGORY
-	non_human_query = non_human_query.replace("ALLNAMES:", "All names like ")
-	non_human_query = non_human_query.replace("ALLNUM:", "All numbers and ID's like ")
-	non_human_query = non_human_query.replace("AAD:", "Applicant address like ")
-	non_human_query = non_human_query.replace("AADC:", "Applicant address like ")
-	non_human_query = non_human_query.replace("PAA:", "Applicant all data like ")
-	non_human_query = non_human_query.replace("PA:", "Applicant name like ")
-	non_human_query = non_human_query.replace("ANA:", "Applicant nationality : ")
-	non_human_query = non_human_query.replace("ARE:", "Applicant residence : ")
-	non_human_query = non_human_query.replace("AD:", "Application date : ")
-	non_human_query = non_human_query.replace("AN:", "Application number like ")
-	non_human_query = non_human_query.replace("CTR:", "Country : ")
-	non_human_query = non_human_query.replace("DS:", "Designated States : ")
-	non_human_query = non_human_query.replace("CTR:", "Country : ")
-	non_human_query = non_human_query.replace("AB:", "Research in abstract : ")
-	non_human_query = non_human_query.replace("ALL:", "Research in all patents : ")
-	non_human_query = non_human_query.replace("CL:", "Research in claims : ")
-	non_human_query = non_human_query.replace("DE:", "Research in descriptions : ")
-	non_human_query = non_human_query.replace("ALLTXT:", "Research in all the texts : ")
-	non_human_query = non_human_query.replace("TI:", "Research in titles : ")
-	non_human_query = non_human_query.replace("IC_EX:", "Research with patents class code : ")
-	non_human_query = non_human_query.replace("LGF:", "Research in filing Language : ")
-	non_human_query = non_human_query.replace("FP:", "Research in front page : ")
-	non_human_query = non_human_query.replace("GN:", "Grant number like : ")
-	non_human_query = non_human_query.replace("IC:", "Patents class like : ")
-	non_human_query = non_human_query.replace("ICI:", "Patents class inventive like : ")
-	non_human_query = non_human_query.replace("ICN:", "Patents class N-inventive like : ")
-	non_human_query = non_human_query.replace("IPE:", "International Preliminary Examination like : ")
-	non_human_query = non_human_query.replace("ISA:", "International research authority like : ")
-	non_human_query = non_human_query.replace("ISR:", "International search report like like : ")
-	non_human_query = non_human_query.replace("INA:", "Research in all data about the inventor : ")
-	non_human_query = non_human_query.replace("IN:", "Inventor name like : ")
-	non_human_query = non_human_query.replace("IADC:", "Inventor nationality like : ")
-	non_human_query = non_human_query.replace("RPA:", "Research in all datas about the legal representative : ")
-	non_human_query = non_human_query.replace("RCN:", "Country of the legal representative : ")
-	non_human_query = non_human_query.replace("RP:", "Name of the legal representative like : ")
-	non_human_query = non_human_query.replace("RAD:", "Adress of the legal representative like : ")
-	non_human_query = non_human_query.replace("LI:", "licensing availability like : ")
-	non_human_query = non_human_query.replace("PAF:", "Main applicant name like : ")
-	non_human_query = non_human_query.replace("ICF:", "Main patents class like : ")
-	non_human_query = non_human_query.replace("INF:", "Main inventor name like : ")
-	non_human_query = non_human_query.replace("FP:", "Research in front page : ")
-	non_human_query = non_human_query.replace("RPF:", "Main legal representative name like : ")
-	non_human_query = non_human_query.replace("NPA:", "National phase datas like : ")
-	non_human_query = non_human_query.replace("NPAN:", "National phase application number like : ")
-	non_human_query = non_human_query.replace("NPED:", "National phase entry date like : ")
-	non_human_query = non_human_query.replace("NPET:", "National entry type like : ")
-	non_human_query = non_human_query.replace("PN:", "National publication number like : ")
-	non_human_query = non_human_query.replace("OF:", "Office code : ")
-	non_human_query = non_human_query.replace("NPCC:", "National Phase Office Code like : ")
-	non_human_query = non_human_query.replace("PRIORPCTAN:", "PRIOR PCT application number : ")
-	non_human_query = non_human_query.replace("PRIORPCTWo:", "Prior PCT WO number : ")
-	non_human_query = non_human_query.replace("PI:", "Priority datas like : ")
-	non_human_query = non_human_query.replace("PCN:", "Priority country : ")
-	non_human_query = non_human_query.replace("NP:", "Priority number like : ")
-	non_human_query = non_human_query.replace("DP:", "Publication Date : ")
-	non_human_query = non_human_query.replace("LGP:", "Language publication : ")
-	non_human_query = non_human_query.replace("SIS:", "Supplementary International search : ")
-	non_human_query = non_human_query.replace("TPO:", "Third party observation : ")
-	non_human_query = non_human_query.replace("WO:", "WIPO publication number : ")
+	######### SELECT THE CORRECT LANGUAGE
+	call_users = database.cursor()
+	call_users.execute(query_language, (trad_args["inquiry"],))
+	language = call_users.fetchone()
+	call_users.close()
 
-	######### SCIENCE
+	language = language[0]
+	inquiry_translation = u""
 
-	######### SERGE CATEGORIES
-	non_human_query = non_human_query.replace("title|", "Title like ")
-	non_human_query = non_human_query.replace("author|", "Author like ")
-	non_human_query = non_human_query.replace("abstract|", "Abstract like ")
-	non_human_query = non_human_query.replace("publisher|", "Publisher is ")
-	non_human_query = non_human_query.replace("category|", "Category is ")
-	non_human_query = non_human_query.replace("all|", "Search in all datas : ")
+	######### TRANSLATION BUILDING
+	for component in inquiry:
+		if u"#" in component:
+			component = component.replace("#", "")
 
-	non_human_query = non_human_query.replace("|title|", "title like ")
-	non_human_query = non_human_query.replace("|author|", "author like ")
-	non_human_query = non_human_query.replace("|publisher|", "publisher is ")
-	non_human_query = non_human_query.replace("|abstract|", "abstract like ")
-	non_human_query = non_human_query.replace("|category|", "category is ")
-	non_human_query = non_human_query.replace("|all|", "search in all datas : ")
+			call_equivalence = database.cursor()
+			call_equivalence.execute(trad_args["component"])
+			section = call_equivalence.fetchone()
+			call_equivalence.close()
 
-	######### SERGE OPERATORS AND SPECIAL CHARACTERS
-	non_human_query = non_human_query.replace("|AND|", " AND ")
-	non_human_query = non_human_query.replace("|OR|", " OR ")
-	non_human_query = non_human_query.replace("|NOT|", " AND NOT ")
+			call_equivalence = database.cursor()
+			call_equivalence.execute(trad_args["quote"])
+			quote = call_equivalence.fetchone()
+			call_equivalence.close()
 
-	non_human_query = non_human_query.replace("%28", "(").replace("%29", ")")
-	non_human_query = non_human_query.replace("|", "")
-	non_human_query = non_human_query.replace("#", "")
-	non_human_query = non_human_query.replace("NOT", "AND NOT")
-
-	######### EXIT
-	human_query = non_human_query
-
-	return human_query
-
-
-def decodeLegal(legal_comparator):
-	"""Legal description of patents analysis in order to know if the patents is active or not"""
-
-	######### LIST FOR INACTIVE LEGAL STATUS
-	libre_list = ["patent revoked", "patent withdrawn", "abandonment of patent", "abandonment or withdrawal", "ceased due to", "patent ceased", "complete renunciation", "comple withdrawal", "spc revoked under", "patent expired", "extended patent has ceased", "lapsed due to", "deemed to be withdrawn", "expiry+spc", "expiry+supplementary protection", "expiry+complementary protection certificate", "patent lapsed-:", "§expiry", "§expiry of patent term"]
-
-	legal_abstract = None
-
-	######### START DECODING
-	for legal_keyword in libre_list:
-
-		######### SEARCH FOR MULTIPLE KEYWORDS
-		if "+" in legal_keyword and legal_abstract != "INACTIVE":
-			legal_keys = legal_keyword.split("+")
-			legal_keys_num = len(legal_keys)
-			legal_index = 0
-			keys_find = 0
-
-			while legal_index <= (legal_keys_num - 1):
-				if legal_keys[legal_index] in legal_comparator:
-					keys_find = keys_find + 1
-				legal_index = legal_index + 1
-
-			if keys_find == legal_keys_num:
-				legal_abstract = "INACTIVE"
+			if quote[1] is not None:
+				inquiry_translation = inquiry_translation + quote[0] + section[0] + quote[0]
 			else:
-				legal_abstract = "ACTIVE OR UNCERTAIN"
+				inquiry_translation = inquiry_translation + section[0]
 
-		######### SEARCH FOR A KEYWORD WITH EXCEPTING SPECIFIC WORDS
-		elif "-" in legal_keyword and legal_abstract != "INACTIVE":
-			legal_keys = legal_keyword.split("-")
-			legal_keys_num = len(legal_keys)
-			legal_index = 1
-			keys_find = 0
+		else:
+			call_equivalence = database.cursor()
+			call_equivalence.execute(trad_args["component"])
+			section = call_equivalence.fetchone()
+			call_equivalence.close()
 
-			while legal_index <= (legal_keys_num - 1):
-				if legal_keys[0] in legal_comparator and legal_keys[legal_index] not in legal_comparator:
-					keys_find = keys_find + 1
-				legal_index = legal_index + 1
+			inquiry_translation = inquiry_translation + section[0]
 
-			if keys_find == (legal_keys_num - 1):
-				legal_abstract = "INACTIVE"
-			else:
-				legal_abstract = "ACTIVE OR UNCERTAIN"
-
-		######### SEARCH AN EXACT EXPRESSION
-		elif "§" in legal_keyword and legal_abstract != "INACTIVE":
-			legal_keyword = legal_keyword.split("§")
-			legal_keyword = legal_keyword[1]
-
-			if legal_keyword == legal_comparator:
-				legal_abstract = "INACTIVE"
-			else:
-				legal_abstract = "ACTIVE OR UNCERTAIN"
-
-		######### SEARCH A SPECIFIC EXPRESSION
-		elif legal_abstract != "INACTIVE":
-			if legal_keyword in legal_comparator:
-				legal_abstract = "INACTIVE"
-			else:
-				legal_abstract = "ACTIVE OR UNCERTAIN"
-
-	return legal_abstract
+	return inquiry_translation
 
 
-def requestBuilder(database, inquiry, inquiry_id, builder_queries):
-	"""Function to build queries corresponding to science APIs from a standardised Serge query"""
+def requestBuilder(inquiry, inquiry_id, builder_queries):
+	"""Translator for translate Serge universal queries into a specifical API query according to the sources chosen by the user"""
 
 	inquiry = inquiry.split("|")
 	request_dictionnary = dict()
+
+	########### CONNECTION TO SERGE DATABASE
+	database = databaseConnection()
 
 	######### INITIALIZE THE DICTIONNARY KEY
 	call_equivalence = database.cursor()
@@ -213,18 +80,18 @@ def requestBuilder(database, inquiry, inquiry_id, builder_queries):
 			component = component.replace("#", "")
 
 			call_equivalence = database.cursor()
-			call_equivalence.execute(builder_queries["query_builder_prime"])
+			call_equivalence.execute(builder_queries["prime_builder"])
 			rows = call_equivalence.fetchall()
 			call_equivalence.close()
 
 			for row in rows:
 				if row[1] is not None:
-					request_dictionnary[row[0]] = request_dictionnary[row[0]] + row[1] + component + row[1]
+					request_dictionnary[row[0]] = request_dictionnary[row[0]] + row[1] + row[2] + row[1]
 				else:
-					request_dictionnary[row[0]] = request_dictionnary[row[0]] + component
+					request_dictionnary[row[0]] = request_dictionnary[row[0]] + row[2]
 
 		else:
-			query_call_equivalence = (builder_queries["query_builder_second"])
+			query_call_equivalence = (builder_queries["second_builder"])
 
 			call_equivalence = database.cursor()
 			call_equivalence.execute(query_call_equivalence)
@@ -236,7 +103,7 @@ def requestBuilder(database, inquiry, inquiry_id, builder_queries):
 
 	######### API PACK (INQUIRY ID, INQUIRY, COMPLETE URL, SOURCE ID, TYPE) BUILDING IN DICTIONNARY
 	call_equivalence = database.cursor()
-	call_equivalence.execute(builder_queries["query_pack"])
+	call_equivalence.execute(builder_queries["second_builder"])
 	rows = call_equivalence.fetchall()
 	call_equivalence.close()
 
@@ -244,3 +111,242 @@ def requestBuilder(database, inquiry, inquiry_id, builder_queries):
 		request_dictionnary[row[0]] = {"inquiry_id": inquiry_id, "inquiry_raw": request_dictionnary[row[0]], "inquiry_link": row[1] + request_dictionnary[row[0]] + row[2], "source_id": row[3], "type": row[4]}
 
 	return request_dictionnary
+
+
+def pieceOfMail(priority):
+	"""Contains html code for mail building"""
+
+	if priority == "NORMAL":
+		style = """<style type="text/css">
+		/* CLIENT-SPECIFIC STYLES */
+		body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+		table, td{mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+		/* RESET STYLES */
+		img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+		table { border-collapse: collapse !important; }
+		body { background-color: #efefef !important; height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; }
+		/* MOBILE STYLES */
+		@media screen and (max-width: 600px)
+		{
+		.img-max
+		{
+		width: 100% !important;
+		max-width: 100% !important;
+		height: auto !important;
+		}
+		.max-width
+		{
+		max-width: 100% !important;
+		}
+		.mobile-wrapper
+		{
+		width: 85% !important;
+		max-width: 85% !important;
+		}
+		.mobile-padding
+		{
+		padding-left: 5% !important;
+		padding-right: 5% !important;
+		}
+		}
+		/* ANDROID CENTER FIX */
+		div[style*="margin: 16px 0;"] { margin: 0 !important; }
+		</style>"""
+
+		banner = """<!doctype html>
+		<html>
+		<head>
+		<meta charset="UTF-8">
+		<title>Serge your news monitoring of {3}</title>
+		{5}
+		</head>
+		<body style="margin: 0 !important; padding: 0; !important background-color: #efefef;" bgcolor="#efefef">
+		<table border="0" cellpadding="0" cellspacing="0" width="100%" style="!important background-color: #efefef;" bgcolor="#efefef">
+		<tr bgcolor="#205d70" style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/background/{6}') center; background-size: cover;">
+		<td align="center" valign="top" width="100%" style="background-color: rgba(0,0,0,0.2); padding: 20px 10px 2px 10px;" class="mobile-padding">
+		<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+		<tr>
+		<td align="center" valign="top" style="padding: 0; width: 146px; height: 146px;">
+		<img alt="Serge logo" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/SERGE_logo_norm.png" width="146" align="center" style="display: block;"/>
+		</td>
+		</tr>
+		<tr>
+		<td align="center" valign="top" style="padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif;">
+		<h1 style="font-size: 40px; color: #ffffff;margin-bottom: 5px; margin-top: 15px;">Serge</h1>
+		<p style="text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-size: 20px; line-height: 28px; margin: 0;">
+		beats you the news
+		</p>
+		</td>
+		</tr>
+		<tr>
+		<td>
+		<p align="left" style="display: inline-block; text-align: left; width: 20%; text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-family: Open Sans, Helvetica, Arial, sans-serif;font-size: 16px; line-height: 24px; margin: 0; padding: 0;margin-top: 10px;">
+		{1}
+		</p>
+		<p align="right" style="display: inline-block; text-align: right; width: 78%; text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-family: Open Sans, Helvetica, Arial, sans-serif;font-size: 16px; line-height: 24px; margin: 0; padding: 0;margin-top: 10px;">
+		{4} {2} {0} {3}
+		</p>
+		</td>
+		</tr>
+		</table>
+		</td>
+		</tr>"""
+
+	elif priority == "HIGH":
+		style = """<style type="text/css">
+		/* CLIENT-SPECIFIC STYLES */
+		body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+		table, td{mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+		/* RESET STYLES */
+		img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+		table { border-collapse: collapse !important; }
+		body { background-color: #efefef !important; height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; }
+		/* MOBILE STYLES */
+		@media screen and (max-width: 600px)
+		{
+		.img-max
+		{
+		width: 100% !important;
+		max-width: 100% !important;
+		height: auto !important;
+		}
+		.max-width
+		{
+		max-width: 100% !important;
+		}
+		.mobile-wrapper
+		{
+		width: 85% !important;
+		max-width: 85% !important;
+		}
+		.mobile-padding
+		{
+		padding-left: 5% !important;
+		padding-right: 5% !important;
+		}
+		}
+		/* ANDROID CENTER FIX */
+		div[style*="margin: 16px 0;"] { margin: 0 !important; }
+		</style>"""
+
+		banner = """<!doctype html>
+		<html>
+		<head>
+		<meta charset="UTF-8">
+		<title>Serge your news monitoring of {3}</title>
+		{5}
+		</head>
+		<body style="margin: 0 !important; padding: 0; !important background-color: #efefef;" bgcolor="#efefef">
+		<table border="0" cellpadding="0" cellspacing="0" width="100%" style="!important background-color: #efefef;" bgcolor="#efefef">
+		<tr bgcolor="#205d70" style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/background/{6}') center; background-size: cover;">
+		<td align="center" valign="top" width="100%" style="background-color: rgba(0,0,0,0.2); padding: 20px 10px 2px 10px;" class="mobile-padding">
+		<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+		<tr>
+		<td align="center" valign="top" style="padding: 0; width: 146px; height: 146px;">
+		<img alt="Serge logo" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/SERGE_logo_norm.png" width="146" align="center" style="display: block;"/>
+		</td>
+		</tr>
+		<tr>
+		<td align="center" valign="top" style="padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif;">
+		<h1 style="font-size: 40px; color: #ffffff;margin-bottom: 5px; margin-top: 15px;">Serge</h1>
+		<p style="text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-size: 20px; line-height: 28px; margin: 0;">
+		beats you the news
+		</p>
+		</td>
+		</tr>
+		<tr>
+		<td>
+		<p align="left" style="display: inline-block; text-align: left; width: 20%; text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-family: Open Sans, Helvetica, Arial, sans-serif;font-size: 16px; line-height: 24px; margin: 0; padding: 0;margin-top: 10px;">
+		{1}
+		</p>
+		<p align="right" style="display: inline-block; text-align: right; width: 78%; text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-family: Open Sans, Helvetica, Arial, sans-serif;font-size: 16px; line-height: 24px; margin: 0; padding: 0;margin-top: 10px;">
+		{4} {2} {0} {3}
+		</p>
+		</td>
+		</tr>
+		</table>
+		</td>
+		</tr>
+		<tr>
+		<td bgcolor="#b6082e" align="center" style="background-color: #b6082e; color: #ffffff; margin-bottom: 15px; font-size: 27px;">
+			<h1 style="font-size: 30px; color: #ffffff;">ALERT</h1>
+		</td>
+		</tr>"
+		"""
+
+	block = """<tr>
+	<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
+	<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+	<tr>
+	<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+	<table cellspacing="0" cellpadding="0" border="0" width="100%">
+	<tr>
+	<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
+	<table cellspacing="0" cellpadding="0" border="0" width="100%">
+	<tr>
+	<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
+	<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
+	</td>
+	</tr>"""
+
+	elements = """<tr>
+	<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+	&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
+	</td>
+	<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
+	<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+	<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
+	</a>
+	</td>
+	</tr>
+	<tr>
+	<td>
+	<br>
+	</td>
+	</tr>"""
+
+	end_block = """</table>
+	</td>
+	</tr>
+	</table>
+	</td>
+	</tr>
+	</table>
+	</td>
+	</tr>"""
+
+	footer = """<tr style="!important background-color: #efefef;" bgcolor="#efefef">
+	<tr bgcolor="#efefef">
+	<td align="center" valign="top" style="width: 100%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
+	<a style="text-decoration: none; color: #999999;" href=""><img alt="CairnGit" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/CairnGit_logo_norm.png" width="73" align="center" title="CairnGit"/></a>&nbsp;
+	<a style="text-decoration: none; color: #999999;" href=""><img alt="Cairn Devices" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/Cairn_Devices_logo_norm.png" width="73" align="center" title="Cairn Devices"/></a>&nbsp;
+	<a style="text-decoration: none; color: #999999;" href=""><img alt="Serge" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/SERGE_logo_norm.png" width="73" align="center" title="Serge"/></a>
+	</td>
+	</tr>
+	<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px; background-color: #efefef;" bgcolor="#efefef">
+	<tr>
+	<td align="left" valign="center" style="width: 30%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
+	<a style="text-decoration: none; color: #999999;" href="https://cairn-devices.eu"><img alt="Logo Cairn Devices" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_CairnDevices.png" width="130" align="center" /><br>Cairn Devices</a>
+	</td>
+	<td align="center" valign="top" style="padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
+	<p style="font-size: 14px; line-height: 20px;text-align: center;">
+	<br><br>
+	<a href="" style="color: #999999;" target="_blank">{0}</a>
+	&nbsp; &bull; &nbsp;
+	<a href="" style="color: #999999;" target="_blank">{1}</a>
+	</p>
+	</td>
+	<td align="center" valign="center" style="width: 30%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
+	<a style="text-decoration: none; color: #999999;" href="https://github.com/ABHC/SERGE/">{2} <img alt="GitHub" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GitHub.png" width="50" align="center" title="GitHub" /></a><br><br>
+	<a style="text-decoration: none; color: #999999;" href="https://www.gnu.org/licenses/gpl-3.0.fr.html">{3} <img alt="GPLv3" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GPLv3.png" width="50" align="center" title="GPLv3" /></a><br><br>
+	</td>
+	</tr>
+	</table>
+	</tr>
+	</table>
+	</body>
+	</html>"""
+
+	appearance = {"style": style, "banner": banner, "block": block, "elements", "end_block": end_block, "footer": footer}
+
+	return appearance

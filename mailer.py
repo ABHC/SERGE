@@ -4,53 +4,39 @@
 
 import MySQLdb
 import unicodedata
-
-######### IMPORT SERGE SPECIALS MODULES
-import decoder
-import handshake
 from random import randrange
 
+######### IMPORT SERGE SPECIALS MODULES
+from handshake import databaseConnection
 
-def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_send_science_list, not_send_patents_list):
+
+def mailInit(fullResults, stamps):
 	"""Function for mail pre-formatting.
 
-		buildMail retrieves mail building option for the current user and does a pre-formatting of the mail. Then the function calls the building functions for mail."""
+		mailInit retrieves mail building options for the current user and does a pre-formatting of the mail. Then the function calls the building functions for mail."""
 
 	########### CONNECTION TO SERGE DATABASE
 	database = handshake.databaseConnection()
 
-	######### NUMBER OF LINKS IN EACH CATEGORY
-	pending_news = len(not_send_news_list)
-	pending_science = len(not_send_science_list)
-	pending_patents = len(not_send_patents_list)
-
-	######### PRIORITY VARIABLE
-	priority = "NORMAL"
-
-	######### SET LISTS AND VARIABLES FOR MAIL DESIGN
-	newswords_list = []
-	sciencewords_list = []
-	patent_master_queries_list = []
-	news_origin_list = []
-	science_origin_list = []
-	user_id_doubledot = user_id_comma.replace(",", "")+":"
-	user_id_doubledot_percent = "%"+user_id_doubledot+"%"
-	time_units = pydate.split("-")
-	pydate = time_units[2]+"/"+time_units[1]+"/"+time_units[0]
+	######### DATE VARIABLES
+	time_units = stamps["pydate"].split("-")
+	stamps["pydate"] = time_units[2]+"/"+time_units[1]+"/"+time_units[0]
 
 	######### DESIGN CHOSEN BY USER
 	query_mail_design = "SELECT mail_design FROM users_table_serge WHERE id = %s"
 
 	call_users = database.cursor()
-	call_users.execute(query_mail_design, (register,))
+	call_users.execute(query_mail_design, (stamps["register"],))
 	mail_design = call_users.fetchone()
 	call_users.close()
+
+	stamps["mail_design"] = mail_design[0]
 
 	######### LANGUAGE CHOSEN BY USER
 	query_language = "SELECT language FROM users_table_serge WHERE id = %s"
 
 	call_users = database.cursor()
-	call_users.execute(query_language, (register,))
+	call_users.execute(query_language, (stamps["register"],))
 	language = call_users.fetchone()
 	call_users.close()
 
@@ -58,7 +44,7 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 	query_background = "SELECT background_result FROM users_table_serge WHERE id = %s"
 
 	call_users = database.cursor()
-	call_users.execute(query_background, (register,))
+	call_users.execute(query_background, (stamps["register"],))
 	background = call_users.fetchone()
 	call_users.close()
 
@@ -86,6 +72,8 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 		background_filename = call_background.fetchone()
 		call_background.close()
 
+	stamps["background"] = background_filename[0]
+
 	######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
 	query_text = "SELECT EN, "+language[0]+" FROM text_content_serge WHERE 1"
 
@@ -99,926 +87,211 @@ def buildMail(user, user_id_comma, register, pydate, not_send_news_list, not_sen
 	for dict_key, content in text:
 		translate_text[dict_key] = content.strip().encode('ascii', errors='xmlcharrefreplace')
 
-	translate_text = {"intro_date": translate_text["your news monitoring of"], "intro_links": translate_text["links in"], "type_news": translate_text["NEWS"], "type_science": translate_text["SCIENTIFIC PUBLICATIONS"], "type_patents": translate_text["PATENTS"], "web_serge": translate_text["View Online"], "unsubscribe": translate_text["Unsubscribe"], "github_serge": translate_text["Find SERGE on"], "license_serge": translate_text["Powered by"]}
+	if priority == "NORMAL":
+		translate_text = {"intro_date": translate_text["your news monitoring of"], "intro_links": translate_text["links in"], "type_news": translate_text["NEWS"], "type_science": translate_text["SCIENTIFIC PUBLICATIONS"], "type_patents": translate_text["PATENTS"], "web_serge": translate_text["View Online"], "unsubscribe": translate_text["Unsubscribe"], "github_serge": translate_text["Find SERGE on"], "license_serge": translate_text["Powered by"]}
 
-	style = """<style type="text/css">
-	/* CLIENT-SPECIFIC STYLES */
-	body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-	table, td{mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-	/* RESET STYLES */
-	img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
-	table { border-collapse: collapse !important; }
-	body { background-color: #efefef !important; height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; }
-	/* MOBILE STYLES */
-	@media screen and (max-width: 600px)
-	{
-	.img-max
-	{
-	width: 100% !important;
-	max-width: 100% !important;
-	height: auto !important;
-	}
-	.max-width
-	{
-	max-width: 100% !important;
-	}
-	.mobile-wrapper
-	{
-	width: 85% !important;
-	max-width: 85% !important;
-	}
-	.mobile-padding
-	{
-	padding-left: 5% !important;
-	padding-right: 5% !important;
-	}
-	}
-	/* ANDROID CENTER FIX */
-	div[style*="margin: 16px 0;"] { margin: 0 !important; }
-	</style>"""
+	elif priority == "HIGH":
+		translate_text = {"intro_date": translate_text["of"], "intro_links": translate_text["alerts"], "type_news": translate_text["NEWS"], "type_science": translate_text["SCIENTIFIC PUBLICATIONS"], "type_patents": translate_text["PATENTS"], "web_serge": translate_text["View Online"], "unsubscribe": translate_text["Unsubscribe"], "github_serge": translate_text["Find SERGE on"], "license_serge": translate_text["Powered by"]}
 
-	######### CALL TO NEWSLETTER FUNCTION
+	######### LOADING THE E-MAIL APPEARANCE
+	appearance = transcriber.pieceOfMail(stamps["priority"])
+
+	######### E-MAIL BUILDING
+	newsletter = mailBuilder(fullResults, translate_text, stamps, appearance)
+
+	######### E-MAIL SENDING
+	highwayToMail(newsletter, stamps)
+
+
+def mailBuilder(fullResults, translate_text, stamps, appearance):
+	######### PENDING LINKS
+	pending_all = len(fullResults)
+
+	######### SET LABELS LIST
+	labels_list = ["news", "sciences", "patents"]
+	labels_extensions = []
+
+	for result in fullResults:
+		if result["label"] not in labels_core and result["label"] not in labels_extensions:
+			labels_extensions.append(result["label"])
+
+	labels_list = labels_core+labels_extensions
+
+	######### BANNER
+	newsletter = appearance["banner"].format(translate_text["intro_date"], stamps["user"].encode('ascii', errors='xmlcharrefreplace'), translate_text["intro_links"], stamps["pydate"], pending_all, appearance["style"], stamps["background"])
+
+	######### NEWSLETTER BY TYPE
 	if mail_design[0] == "type":
-		not_send_news_list = sorted(not_send_news_list, key=lambda news_field: news_field["title"])
-		not_send_science_list = sorted(not_send_science_list, key=lambda science_field: science_field["title"])
-		not_send_patents_list = sorted(not_send_patents_list, key=lambda patents_field: patents_field["title"])
+		for label in labels_list:
+			results_label = []
 
-		newsletter = newsletterByType(user, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate, style, background_filename)
+			for item in fullResults:
+				if item["label"] == label:
+					results_label.append(item)
 
+			pending_items = len(results_label)
+			results_label = sorted(results_label, key=lambda item: item["title"])
+
+			######### CREATE LABEL BLOCK
+			if pending_items > 0:
+				newsletter = newsletter + (appearance["block"].format(label))
+
+				######### WRITE ALL ITEMS IN LABEL BLOCK
+				for item in results_label:
+					if item["title"].isupper() is True:
+						item["title"] = item["title"].lower().capitalize()
+
+					newsletter = newsletter + (appearance["elements"].format(item["link"].strip().encode('ascii', errors='xmlcharrefreplace'), item["title"].strip().encode('ascii', errors='xmlcharrefreplace'), item["wiki_link"]))
+
+				newsletter = newsletter + (appearance["end_block"])
+
+	######### NEWSLETTER BY KEYWORD
 	elif mail_design[0] == "masterword":
-		query_newswords = "SELECT id, keyword FROM keyword_news_serge WHERE applicable_owners_sources LIKE %s AND active > 0"
-		query_sciencewords = "SELECT id, query_serge FROM queries_science_serge WHERE owners LIKE %s AND active > 0"
-		query_wipo_query = "SELECT id, query FROM queries_wipo_serge WHERE owners LIKE %s AND active > 0"
+		for label in labels_list:
+			results_label = []
 
-		call_words = database.cursor()
-		call_words.execute(query_newswords, (user_id_doubledot_percent, ))
-		newswords = call_words.fetchall()
-		call_words.execute(query_sciencewords, (user_id_comma, ))
-		sciencewords = call_words.fetchall()
-		call_words.execute(query_wipo_query, (user_id_comma, ))
-		patents_master_queries = call_words.fetchall()
-		call_words.close()
+			for item in fullResults:
+				if item["label"] == label:
+					results_label.append(item)
 
-		for word_and_attribute in newswords:
-			if ":all@" in word_and_attribute[1]:
-				split_for_all = word_and_attribute[1].split("@")
+			for item in results_label:
+				inquiries_list = []
 
-				query_sitename = "SELECT name FROM rss_serge WHERE id = %s"
+				if item["inquiry"] not in inquiries_list:
+					inquiries_list.append(item["inquiry"])
 
-				call_name = database.cursor()
-				call_name.execute(query_sitename, (split_for_all[1], ))
-				sitename = call_name.fetchone()
-				call_name.close()
+				inquiries_list.sort()
 
-				sitename = sitename[0]
-				rebuilt_all = split_for_all[0].replace(":", "").capitalize() + " @ " + sitename.replace(".", "&#8228;")
-				word_and_attribute = {"id": ","+str(word_and_attribute[0])+",", "keyword": rebuilt_all.strip().encode('ascii', errors='xmlcharrefreplace')}
-			else:
-				word_and_attribute = {"id": ","+str(word_and_attribute[0])+",", "keyword": word_and_attribute[1].strip().encode('ascii', errors='xmlcharrefreplace')}
+			for inquiry in inquiries_list:
+				results_inquiry = []
 
-			newswords_list.append(word_and_attribute)
+				for item in results_label:
+					if item["inquiry"] == inquiry:
+						results_inquiry.append(item)
 
-		for word_and_attribute in sciencewords:
-			human_query = decoder.decodeQuery(word_and_attribute[1]).encode('ascii', errors='xmlcharrefreplace')
-			word_and_attribute = {"id": ","+str(word_and_attribute[0])+",", "query": human_query}
-			sciencewords_list.append(word_and_attribute)
+				pending_items = len(results_inquiry)
+				results_inquiry = sorted(results_inquiry, key=lambda item: item["title"])
 
-		for word_and_attribute in patents_master_queries:
-			human_query = decoder.decodeQuery(word_and_attribute[1]).encode('ascii', errors='xmlcharrefreplace')
-			word_and_attribute = {"id": ","+str(word_and_attribute[0])+",", "query": human_query}
-			patent_master_queries_list.append(word_and_attribute)
+				######### CREATE INQUIRY BLOCK
+				if pending_items > 0:
+					newsletter = newsletter + (appearance["block"].format(inquiry.capitalize()))
 
-		newsletter = newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list, style, background_filename)
+					######### WRITE ITEMS IN INQUIRY BLOCK
+					for item in results_inquiry:
+						newsletter = newsletter + (appearance["elements"].format(item["link"], item["title"], item["wiki_link"]))
 
+					newsletter = newsletter + appearance["end_block"]
+
+	######### NEWSLETTER BY SOURCE
 	elif mail_design[0] == "origin":
-		query_news_origin = "SELECT id, name FROM rss_serge WHERE owners like %s and active > 0"
+		for label in labels_list:
+			results_label = []
 
-		call_origin = database.cursor()
-		call_origin.execute(query_news_origin, (user_id_comma, ))
-		news_origin = call_origin.fetchall()
-		call_origin.execute("SELECT id, name FROM equivalence_science_serge WHERE active > 0")
-		science_origin = call_origin.fetchall()
-		call_origin.close()
+			for item in fullResults:
+				if item["label"] == label:
+					results_label.append(item)
 
-		for source_and_attribute in news_origin:
-			source_and_attribute = {"id": source_and_attribute[0], "name": source_and_attribute[1].strip().encode('ascii', errors='xmlcharrefreplace')}
-			news_origin_list.append(source_and_attribute)
+			for item in results_label:
+				sources_list = []
 
-		for source_and_attribute in science_origin:
-			source_and_attribute = {"id": source_and_attribute[0], "name": source_and_attribute[1].strip().encode('ascii', errors='xmlcharrefreplace')}
-			science_origin_list.append(source_and_attribute)
+				if item["source"] not in sources_list:
+					sources_list.append(item["source"])
 
-		newsletter = newsletterBySource(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list, science_origin_list, style, background_filename)
+				sources_list.sort()
 
-	######### CALL TO highwayToMail FUNCTION
-	handshake.highwayToMail(register, newsletter, priority, pydate)
+			for source in sources_list:
+				results_source = []
 
+				for item in results_label:
+					if item["source"] == source:
+						results_source.append(item)
 
-def newsletterByType(user, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, translate_text, pydate, style, background_filename):
-	"""Formatting function for emails, apply the default formatting"""
+				pending_items = len(results_source)
+				results_source = sorted(results_source, key=lambda item: item["title"])
 
-	######### PENDING LINKS
-	pending_all = pending_news+pending_science+pending_patents
+				######### CREATE SOURCE BLOCK
+				if pending_items > 0:
+					newsletter = newsletter + (appearance["block"].format(source.capitalize()))
 
-	######### BANNER AND HELLO
-	newsletter = ("""<!doctype html>
-	<html>
-	<head>
-	<meta charset="UTF-8">
-	<title>Serge your news monitoring of {3}</title>
-	{5}
-	</head>
-	<body style="margin: 0 !important; padding: 0; !important background-color: #efefef;" bgcolor="#efefef">
-	<table border="0" cellpadding="0" cellspacing="0" width="100%" style="!important background-color: #efefef;" bgcolor="#efefef">
-	<tr bgcolor="#205d70" style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/background/{6}') center; background-size: cover;">
-	<td align="center" valign="top" width="100%" style="background-color: rgba(0,0,0,0.2); padding: 20px 10px 2px 10px;" class="mobile-padding">
-	<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
-	<tr>
-	<td align="center" valign="top" style="padding: 0; width: 146px; height: 146px;">
-	<img alt="Serge logo" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/SERGE_logo_norm.png" width="146" align="center" style="display: block;"/>
-	</td>
-	</tr>
-	<tr>
-	<td align="center" valign="top" style="padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif;">
-	<h1 style="font-size: 40px; color: #ffffff;margin-bottom: 5px; margin-top: 15px;">Serge</h1>
-	<p style="text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-size: 20px; line-height: 28px; margin: 0;">
-	beats you the news
-	</p>
-	</td>
-	</tr>
-	<tr>
-	<td>
-	<p align="left" style="display: inline-block; text-align: left; width: 20%; text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-family: Open Sans, Helvetica, Arial, sans-serif;font-size: 16px; line-height: 24px; margin: 0; padding: 0;margin-top: 10px;">
-	{1}
-	</p>
-	<p align="right" style="display: inline-block; text-align: right; width: 78%; text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-family: Open Sans, Helvetica, Arial, sans-serif;font-size: 16px; line-height: 24px; margin: 0; padding: 0;margin-top: 10px;">
-	{4} {2} {0} {3}
-	</p>
-	</td>
-	</tr>
-	</table>
-	</td>
-	</tr>""".format(translate_text["intro_date"], user.encode('ascii', errors='xmlcharrefreplace'), translate_text["intro_links"], pydate, pending_all, style, background_filename[0]))
+					######### WRITE ITEMS IN SOURCE BLOCK
+					for item in results_source:
+						newsletter = newsletter + (appearance["elements"].format(item["link"], item["title"], item["wiki_link"]))
 
-	index = 0
-
-	######### ECRITURE NEWS
-	if pending_news > 0:
-		newsletter = newsletter + ("""<tr>
-		<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
-		<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
-		<tr>
-		<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-		<table cellspacing="0" cellpadding="0" border="0" width="100%">
-		<tr>
-		<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
-		<table cellspacing="0" cellpadding="0" border="0" width="100%">
-		<tr>
-		<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-		<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
-		</td>
-		</tr>""".format(translate_text["type_news"]))
-
-		while index < pending_news:
-			news_attributes = not_send_news_list[index]
-
-			if news_attributes["title"].isupper() is True:
-				news_attributes["title"] = news_attributes["title"].lower().capitalize()
-
-			newsletter = newsletter + ("""<tr>
-			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
-			</td>
-			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
-			<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
-			</a>
-			</td>
-			</tr>
-			<tr>
-			<td>
-			<br>
-			</td>
-			</tr>""".format(news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), news_attributes["wiki_link"]))
-			index = index+1
-
-		newsletter = newsletter + ("""</table>
-		</td>
-		</tr>
-		</table>
-		</td>
-		</tr>
-		</table>
-		</td>
-		</tr>""")
-
-	index = 0
-
-	######### ECRITURE SCIENCE
-	if pending_science > 0:
-		newsletter = newsletter + ("""<tr>
-		<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
-		<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
-		<tr>
-		<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-		<table cellspacing="0" cellpadding="0" border="0" width="100%">
-		<tr>
-		<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
-		<table cellspacing="0" cellpadding="0" border="0" width="100%">
-		<tr>
-		<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-		<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
-		</td>
-		</tr>""".format(translate_text["type_science"]))
-
-		while index < pending_science:
-			science_attributes = not_send_science_list[index]
-
-			if science_attributes["title"].isupper() is True:
-				science_attributes["title"] = science_attributes["title"].lower().capitalize()
-
-			newsletter = newsletter + ("""<tr>
-			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
-			</td>
-			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
-			<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
-			</a>
-			</td>
-			</tr>
-			<tr>
-			<td>
-			<br>
-			</td>
-			</tr>""".format(science_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), science_attributes["wiki_link"]))
-			index = index+1
-
-		newsletter = newsletter + ("""</table>
-		</td>
-		</tr>
-		</table>
-		</td>
-		</tr>
-		</table>
-		</td>
-		</tr>""")
-
-	index = 0
-
-	######### ECRITURE PATENTS
-	if pending_patents > 0:
-		newsletter = newsletter + ("""<tr>
-		<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
-		<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
-		<tr>
-		<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-		<table cellspacing="0" cellpadding="0" border="0" width="100%">
-		<tr>
-		<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
-		<table cellspacing="0" cellpadding="0" border="0" width="100%">
-		<tr>
-		<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-		<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
-		</td>
-		</tr>""".format(translate_text["type_patents"]))
-
-		while index < pending_patents:
-			patents_attributes = not_send_patents_list[index]
-
-			if patents_attributes["title"].isupper() is True:
-				patents_attributes["title"] = patents_attributes["title"].lower().capitalize()
-
-			newsletter = newsletter + ("""<tr>
-			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
-			</td>
-			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
-			<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
-			</a>
-			</td>
-			</tr>
-			<tr>
-			<td>
-			<br>
-			</td>
-			</tr>""".format(patents_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes["wiki_link"]))
-			index = index+1
-
-		newsletter = newsletter + ("""</table>
-		</td>
-		</tr>
-		</table>
-		</td>
-		</tr>
-		</table>
-		</td>
-		</tr>""")
-
-	index = 0
+					newsletter = newsletter + appearance["end_block"]
 
 	######### FOOTER
-	newsletter = newsletter + ("""<tr style="!important background-color: #efefef;" bgcolor="#efefef">
-	<tr bgcolor="#efefef">
-	<td align="center" valign="top" style="width: 100%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
-	<a style="text-decoration: none; color: #999999;" href=""><img alt="CairnGit" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/CairnGit_logo_norm.png" width="73" align="center" title="CairnGit"/></a>&nbsp;
-	<a style="text-decoration: none; color: #999999;" href=""><img alt="Cairn Devices" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/Cairn_Devices_logo_norm.png" width="73" align="center" title="Cairn Devices"/></a>&nbsp;
-	<a style="text-decoration: none; color: #999999;" href=""><img alt="Serge" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/SERGE_logo_norm.png" width="73" align="center" title="Serge"/></a>
-	</td>
-	</tr>
-	<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px; background-color: #efefef;" bgcolor="#efefef">
-	<tr>
-	<td align="left" valign="center" style="width: 30%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
-	<a style="text-decoration: none; color: #999999;" href="https://cairn-devices.eu"><img alt="Logo Cairn Devices" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_CairnDevices.png" width="130" align="center" /><br>Cairn Devices</a>
-	</td>
-	<td align="center" valign="top" style="padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
-	<p style="font-size: 14px; line-height: 20px;text-align: center;">
-	<br><br>
-	<a href="" style="color: #999999;" target="_blank">{0}</a>
-	&nbsp; &bull; &nbsp;
-	<a href="" style="color: #999999;" target="_blank">{1}</a>
-	</p>
-	</td>
-	<td align="center" valign="center" style="width: 30%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
-	<a style="text-decoration: none; color: #999999;" href="https://github.com/ABHC/SERGE/">{2} <img alt="GitHub" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GitHub.png" width="50" align="center" title="GitHub" /></a><br><br>
-	<a style="text-decoration: none; color: #999999;" href="https://www.gnu.org/licenses/gpl-3.0.fr.html">{3} <img alt="GPLv3" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GPLv3.png" width="50" align="center" title="GPLv3" /></a><br><br>
-	</td>
-	</tr>
-	</table>
-	</tr>
-	</table>
-	</body>
-	</html>""".format(translate_text["web_serge"], translate_text["unsubscribe"], translate_text["github_serge"], translate_text["license_serge"]))
+	newsletter = newsletter + (appearance["footer"].format(translate_text["web_serge"], translate_text["unsubscribe"], translate_text["github_serge"], translate_text["license_serge"]))
 
 	return newsletter
 
 
-def newsletterByKeyword(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, newswords_list, sciencewords_list, patent_master_queries_list, style, background_filename):
-	"""Formatting function for emails, apply the formatting by keywords"""
-
-	######### PENDING LINKS
-	pending_all = pending_news+pending_science+pending_patents
-
-	######### BANNER AND HELLO
-	newsletter = ("""<!doctype html>
-	<html>
-	<head>
-	<meta charset="UTF-8">
-	<title>Serge your news monitoring of {3}</title>
-	{5}
-	</head>
-	<body style="margin: 0 !important; padding: 0; !important background-color: #efefef;" bgcolor="#efefef">
-	<table border="0" cellpadding="0" cellspacing="0" width="100%" style="!important background-color: #efefef;" bgcolor="#efefef">
-	<tr bgcolor="#205d70" style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/background/{6}') center; background-size: cover;">
-	<td align="center" valign="top" width="100%" style="background-color: rgba(0,0,0,0.2); padding: 20px 10px 2px 10px;" class="mobile-padding">
-	<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
-	<tr>
-	<td align="center" valign="top" style="padding: 0; width: 146px; height: 146px;">
-	<img alt="Serge logo" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/SERGE_logo_norm.png" width="146" align="center" style="display: block;"/>
-	</td>
-	</tr>
-	<tr>
-	<td align="center" valign="top" style="padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif;">
-	<h1 style="font-size: 40px; color: #ffffff;margin-bottom: 5px; margin-top: 15px;">Serge</h1>
-	<p style="text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-size: 20px; line-height: 28px; margin: 0;">
-	beats you the news
-	</p>
-	</td>
-	</tr>
-	<tr>
-	<td>
-	<p align="left" style="display: inline-block; text-align: left; width: 20%; text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-family: Open Sans, Helvetica, Arial, sans-serif;font-size: 16px; line-height: 24px; margin: 0; padding: 0;margin-top: 10px;">
-	{1}
-	</p>
-	<p align="right" style="display: inline-block; text-align: right; width: 78%; text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-family: Open Sans, Helvetica, Arial, sans-serif;font-size: 16px; line-height: 24px; margin: 0; padding: 0;margin-top: 10px;">
-	{4} {2} {0} {3}
-	</p>
-	</td>
-	</tr>
-	</table>
-	</td>
-	</tr>""".format(translate_text["intro_date"], user.encode('ascii', errors='xmlcharrefreplace'), translate_text["intro_links"], pydate, pending_all, style, background_filename[0]))
-
-	index = 0
-	already_in_the_list = []
-
-	######### ECRITURE NEWS
-	if pending_news > 0:
-
-		######### ECRITURE KEYWORDS FOR NEWS
-		for attributes in sorted(newswords_list, key=lambda newswords_field: newswords_field["keyword"]):
-			process_result_list = []
-			index = 0
-
-			while index < pending_news:
-				news_attributes = not_send_news_list[index]
-
-				if attributes["id"] in news_attributes["keyword_id"] and news_attributes["link"] not in already_in_the_list:
-
-					if news_attributes["title"].isupper() is True:
-						process_result = {"link": news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": news_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link": news_attributes["wiki_link"]}
-					else:
-						process_result = {"link": news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": news_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link": news_attributes["wiki_link"]}
-
-					process_result_list.append(process_result)
-					already_in_the_list.append(news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'))
-
-				index = index+1
-
-			elements = len(process_result_list)
-
-			if elements > 0:
-				newsletter = newsletter + ("""<tr>
-				<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
-				<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
-				<tr>
-				<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				<table cellspacing="0" cellpadding="0" border="0" width="100%">
-				<tr>
-				<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
-				<table cellspacing="0" cellpadding="0" border="0" width="100%">
-				<tr>
-				<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
-				</td>
-				</tr>""".format(attributes["keyword"].capitalize()))
-
-				for results_attributes in process_result_list:
-					newsletter = newsletter + ("""<tr>
-					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-					&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
-					</td>
-					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-					<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
-					<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
-					</a>
-					</td>
-					</tr>
-					<tr>
-					<td>
-					<br>
-					</td>
-					</tr>""".format(results_attributes["link"], results_attributes["title"], results_attributes["wiki_link"]))
-
-				newsletter = newsletter + ("""</table>
-				</td>
-				</tr>
-				</table>
-				</td>
-				</tr>
-				</table>
-				</td>
-				</tr>""")
-
-	index = 0
-
-	######### ECRITURE SCIENCE
-	if pending_science > 0:
-		######### ECRITURE KEYWORDS FOR SCIENCE
-		for attributes in sorted(sciencewords_list, key=lambda sciencewords_field: sciencewords_field["query"]):
-			process_result_list = []
-			index = 0
-
-			while index < pending_science:
-				science_attributes = not_send_science_list[index]
-
-				if attributes["id"] in science_attributes["query_id"] and science_attributes["link"] not in process_result_list:
-
-					if science_attributes["title"].isupper() is True:
-						process_result = {"link": science_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": science_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link": science_attributes["wiki_link"]}
-					else:
-						process_result = {"link": science_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": science_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link": science_attributes["wiki_link"]}
-
-					process_result_list.append(process_result)
-
-				index = index+1
-
-			elements = len(process_result_list)
-
-			if elements > 0:
-				newsletter = newsletter + ("""<tr>
-				<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
-				<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
-				<tr>
-				<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				<table cellspacing="0" cellpadding="0" border="0" width="100%">
-				<tr>
-				<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
-				<table cellspacing="0" cellpadding="0" border="0" width="100%">
-				<tr>
-				<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
-				</td>
-				</tr>""".format(attributes["query"]))
-
-				for results_attributes in process_result_list:
-					newsletter = newsletter + ("""<tr>
-					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-					&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
-					</td>
-					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-					<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
-					<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
-					</a>
-					</td>
-					</tr>
-					<tr>
-					<td>
-					<br>
-					</td>
-					</tr>""".format(results_attributes["link"], results_attributes["title"], results_attributes["wiki_link"]))
-
-				newsletter = newsletter + ("""</table>
-				</td>
-				</tr>
-				</table>
-				</td>
-				</tr>
-				</table>
-				</td>
-				</tr>""")
-
-	index = 0
-
-	######### ECRITURE PATENTS
-	if pending_patents > 0:
-		######### ECRITURE QUERY FOR PATENTS
-		for attributes in sorted(patent_master_queries_list, key=lambda query_field: query_field["query"]):
-			process_result_list = []
-			index = 0
-
-			while index < pending_patents:
-				patents_attributes = not_send_patents_list[index]
-
-				if attributes["id"] in patents_attributes["query_id"] and patents_attributes["link"] not in process_result_list:
-
-					if patents_attributes["title"].isupper() is True:
-						process_result = {"link": patents_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "link": patents_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link": patents_attributes["wiki_link"]}
-					else:
-						process_result = {"link": patents_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": patents_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link": patents_attributes["wiki_link"]}
-
-					process_result_list.append(process_result)
-
-				index = index+1
-
-			elements = len(process_result_list)
-
-			if elements > 0:
-				newsletter = newsletter + ("""<tr>
-				<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
-				<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
-				<tr>
-				<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				<table cellspacing="0" cellpadding="0" border="0" width="100%">
-				<tr>
-				<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
-				<table cellspacing="0" cellpadding="0" border="0" width="100%">
-				<tr>
-				<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
-				</td>
-				</tr>""".format(attributes["query"]))
-
-				for results_attributes in process_result_list:
-					newsletter = newsletter + ("""<tr>
-					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-					&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
-					</td>
-					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-					<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
-					<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
-					</a>
-					</td>
-					</tr>
-					<tr>
-					<td>
-					<br>
-					</td>
-					</tr>""".format(results_attributes["link"], results_attributes["title"], results_attributes["wiki_link"]))
-
-				newsletter = newsletter + ("""</table>
-				</td>
-				</tr>
-				</table>
-				</td>
-				</tr>
-				</table>
-				</td>
-				</tr>""")
-
-	index = 0
-
-	######### FOOTER
-	newsletter = newsletter + ("""<tr style="!important background-color: #efefef;" bgcolor="#efefef">
-	<tr bgcolor="#efefef">
-	<td align="center" valign="top" style="width: 100%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
-	<a style="text-decoration: none; color: #999999;" href=""><img alt="CairnGit" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/CairnGit_logo_norm.png" width="73" align="center" title="CairnGit"/></a>&nbsp;
-	<a style="text-decoration: none; color: #999999;" href=""><img alt="Cairn Devices" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/Cairn_Devices_logo_norm.png" width="73" align="center" title="Cairn Devices"/></a>&nbsp;
-	<a style="text-decoration: none; color: #999999;" href=""><img alt="Serge" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/SERGE_logo_norm.png" width="73" align="center" title="Serge"/></a>
-	</td>
-	</tr>
-	<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px; background-color: #efefef;" bgcolor="#efefef">
-	<tr>
-	<td align="left" valign="center" style="width: 30%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
-	<a style="text-decoration: none; color: #999999;" href="https://cairn-devices.eu"><img alt="Logo Cairn Devices" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_CairnDevices.png" width="130" align="center" /><br>Cairn Devices</a>
-	</td>
-	<td align="center" valign="top" style="padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
-	<p style="font-size: 14px; line-height: 20px;text-align: center;">
-	<br><br>
-	<a href="" style="color: #999999;" target="_blank">{0}</a>
-	&nbsp; &bull; &nbsp;
-	<a href="" style="color: #999999;" target="_blank">{1}</a>
-	</p>
-	</td>
-	<td align="center" valign="center" style="width: 30%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
-	<a style="text-decoration: none; color: #999999;" href="https://github.com/ABHC/SERGE/">{2} <img alt="GitHub" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GitHub.png" width="50" align="center" title="GitHub" /></a><br><br>
-	<a style="text-decoration: none; color: #999999;" href="https://www.gnu.org/licenses/gpl-3.0.fr.html">{3} <img alt="GPLv3" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GPLv3.png" width="50" align="center" title="GPLv3" /></a><br><br>
-	</td>
-	</tr>
-	</table>
-	</tr>
-	</table>
-	</body>
-	</html>""".format(translate_text["web_serge"], translate_text["unsubscribe"], translate_text["github_serge"], translate_text["license_serge"]))
-
-	return newsletter
-
-
-def newsletterBySource(user, pydate, translate_text, not_send_news_list, not_send_science_list, not_send_patents_list, pending_news, pending_science, pending_patents, news_origin_list, science_origin_list, style, background_filename):
-	"""Formatting function for emails, apply the formatting by sources"""
+def highwayToMail(newsletter, stamps):
+	"""Function for emails sending"""
 
 	########### CONNECTION TO SERGE DATABASE
-	database = handshake.databaseConnection()
+	database = databaseConnection()
 
-	######### PENDING LINKS
-	pending_all = pending_news+pending_science+pending_patents
+	######### PREMIUM STATUS CHECKING
+	query_status_checking = "SELECT premium_expiration_date FROM users_table_serge WHERE id = %s"
 
-	######### BANNER AND HELLO
-	newsletter = ("""<!doctype html>
-	<html>
-	<head>
-	<meta charset="UTF-8">
-	<title>Serge your news monitoring of {3}</title>
-	{5}
-	</head>
-	<body style="margin: 0 !important; padding: 0; !important background-color: #efefef;" bgcolor="#efefef">
-	<table border="0" cellpadding="0" cellspacing="0" width="100%" style="!important background-color: #efefef;" bgcolor="#efefef">
-	<tr bgcolor="#205d70" style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/background/{6}') center; background-size: cover;">
-	<td align="center" valign="top" width="100%" style="background-color: rgba(0,0,0,0.2); padding: 20px 10px 2px 10px;" class="mobile-padding">
-	<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
-	<tr>
-	<td align="center" valign="top" style="padding: 0; width: 146px; height: 146px;">
-	<img alt="Serge logo" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/SERGE_logo_norm.png" width="146" align="center" style="display: block;"/>
-	</td>
-	</tr>
-	<tr>
-	<td align="center" valign="top" style="padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif;">
-	<h1 style="font-size: 40px; color: #ffffff;margin-bottom: 5px; margin-top: 15px;">Serge</h1>
-	<p style="text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-size: 20px; line-height: 28px; margin: 0;">
-	beats you the news
-	</p>
-	</td>
-	</tr>
-	<tr>
-	<td>
-	<p align="left" style="display: inline-block; text-align: left; width: 20%; text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-family: Open Sans, Helvetica, Arial, sans-serif;font-size: 16px; line-height: 24px; margin: 0; padding: 0;margin-top: 10px;">
-	{1}
-	</p>
-	<p align="right" style="display: inline-block; text-align: right; width: 78%; text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-family: Open Sans, Helvetica, Arial, sans-serif;font-size: 16px; line-height: 24px; margin: 0; padding: 0;margin-top: 10px;">
-	{4} {2} {0} {3}
-	</p>
-	</td>
-	</tr>
-	</table>
-	</td>
-	</tr>""".format(translate_text["intro_date"], user.encode('ascii', errors='xmlcharrefreplace'), translate_text["intro_links"], pydate, pending_all, style, background_filename[0]))
+	call_users = database.cursor()
+	call_users.execute(query_status_checking, (stamps["register"],))
+	expiration_date = call_users.fetchone()
+	call_users.close()
 
-	index = 0
+	verif_time = time.time()
 
-	######### NEWS SECTION IN EMAIL
-	if pending_news > 0:
-		######### SORT ORIGIN FOR NEWS
-		for attributes in sorted(news_origin_list, key=lambda news_origin_field: news_origin_field["name"]):
-			process_result_list = []
-			index = 0
+	if expiration_date > verif_time :
 
-			while index < pending_news:
-				news_attributes = not_send_news_list[index]
+		######### SERGE CONFIG FILE READING
+		permissions = open("/var/www/Serge/configuration/core_configuration.txt", "r")
+		config_file = permissions.read().strip()
+		permissions.close()
 
-				if attributes["id"] == news_attributes["id_source"]:
+		######### SERGE MAIL
+		fromaddr = re.findall("serge_mail: "+'([^\s]+)', config_file)
 
-					if news_attributes["title"].isupper() is True:
-						process_result = {"link": news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": news_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link": news_attributes["wiki_link"]}
-					else:
-						process_result = {"link": news_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": news_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link": news_attributes["wiki_link"]}
+		######### PASSWORD FOR MAIL
+		mdp_mail = re.findall("passmail: "+'([^\s]+)', config_file)
 
-					process_result_list.append(process_result)
+		######### SERGE SERVER ADRESS
+		mailserveraddr = re.findall("passmail: "+'([^\s]+)', config_file)
 
-				index = index+1
+		######### ADRESSES AND LANGUAGE RECOVERY
+		query_user_infos = "SELECT email, language FROM users_table_serge WHERE id = %s"
 
-			elements = len(process_result_list)
+		call_users = database.cursor()
+		call_users.execute(query_user_infos, (stamps["register"],))
+		user_infos = call_users.fetchone()
+		call_users.close()
 
-			if elements > 0:
-				######### WRITE ORIGIN FOR NEWS
-				newsletter = newsletter + ("""<tr>
-				<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
-				<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
-				<tr>
-				<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				<table cellspacing="0" cellpadding="0" border="0" width="100%">
-				<tr>
-				<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
-				<table cellspacing="0" cellpadding="0" border="0" width="100%">
-				<tr>
-				<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
-				</td>
-				</tr>""".format(attributes["name"]))
+		toaddr = user_infos[0]
 
-				######### NEWS WRITING
-				for results_attributes in process_result_list:
-					newsletter = newsletter + ("""<tr>
-					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-					&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
-					</td>
-					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-					<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
-					<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
-					</a>
-					</td>
-					</tr>
-					<tr>
-					<td>
-					<br>
-					</td>
-					</tr>""".format(results_attributes["link"], results_attributes["title"], results_attributes["wiki_link"]))
+		######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
+		pydate = " "+stamps["pydate"]
+		if stamps["priority"] == "NORMAL":
+			subject_FR = "[SERGE] Veille Industrielle et Technologique"+pydate
+			subject_EN = "[SERGE] News monitoring and Technological watch"+pydate
+		elif stamps["priority"] == "HIGH":
+			subject_FR = "[ALERTE SERGE] Informations Prioritaires"+pydate
+			subject_EN = "[SERGE] Prioritary Informations"+pydate
 
-				newsletter = newsletter + ("""</table>
-				</td>
-				</tr>
-				</table>
-				</td>
-				</tr>
-				</table>
-				</td>
-				</tr>""")
+		try:
+			exec("translate_subject"+"="+"subject_"+user_infos[1])
+		except NameError:
+			translate_subject = subject_EN
 
-	index = 0
+		######### CONTENT WRITING IN EMAIL
+		msg = MIMEText(newsletter, 'html')
 
-	######### SCIENCE SECTION IN EMAIL
-	if pending_science > 0:
-		######### SORT BY ORIGIN
-		for attributes in sorted(science_origin_list, key=lambda science_origin_list: science_origin_list["name"]):
-			process_result_list = []
-			index = 0
+		msg['From'] = fromaddr
+		msg['To'] = toaddr
+		msg['Subject'] = translate_subject
 
-			while index < pending_science:
-				science_attributes = not_send_science_list[index]
-
-				if attributes["id"] == science_attributes["id_source"]:
-
-					if science_attributes["title"].isupper() is True:
-						process_result = {"link": science_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": science_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "wiki_link": science_attributes["wiki_link"]}
-					else:
-						process_result = {"link": science_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), "title": science_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), "wiki_link": science_attributes["wiki_link"]}
-
-					process_result_list.append(process_result)
-
-				index = index+1
-
-			elements = len(process_result_list)
-
-			if elements > 0:
-				######### WRITE ORIGIN FOR SCIENCE
-				newsletter = newsletter + ("""<tr>
-				<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
-				<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
-				<tr>
-				<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				<table cellspacing="0" cellpadding="0" border="0" width="100%">
-				<tr>
-				<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
-				<table cellspacing="0" cellpadding="0" border="0" width="100%">
-				<tr>
-				<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-				<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
-				</td>
-				</tr>""".format(attributes["name"]))
-
-				######### SCIENTIFIC PAPERS WRITING
-				for results_attributes in process_result_list:
-					newsletter = newsletter + ("""<tr>
-					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-					&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
-					</td>
-					<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-					<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
-					<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
-					</a>
-					</td>
-					</tr>
-					<tr>
-					<td>
-					<br>
-					</td>
-					</tr>""".format(results_attributes["link"], results_attributes["title"], results_attributes["wiki_link"]))
-
-				newsletter = newsletter + ("""</table>
-				</td>
-				</tr>
-				</table>
-				</td>
-				</tr>
-				</table>
-				</td>
-				</tr>""")
-
-		index = 0
-
-	######### PATENTS SECTION IN EMAIL
-	if pending_patents > 0:
-		newsletter = newsletter + ("""<tr>
-		<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
-		<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
-		<tr>
-		<td align="center" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-		<table cellspacing="0" cellpadding="0" border="0" width="100%">
-		<tr>
-		<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
-		<table cellspacing="0" cellpadding="0" border="0" width="100%">
-		<tr>
-		<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-		<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">OMPI : Organisation Mondiale de la Propriété Intellectuelle</h2>
-		</td>
-		</tr>""")
-
-		while index < pending_patents:
-			patents_attributes = not_send_patents_list[index]
-
-			if patents_attributes["title"].isupper() is True:
-				patents_attributes["title"] = patents_attributes["title"].lower().capitalize()
-
-			newsletter = newsletter + ("""<tr>
-			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
-			</td>
-			<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-			<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
-			<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
-			</a>
-			</td>
-			</tr>
-			<tr>
-			<td>
-			<br>
-			</td>
-			</tr>""".format(patents_attributes["link"].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes["title"].strip().encode('ascii', errors='xmlcharrefreplace'), patents_attributes["wiki_link"]))
-			index = index+1
-
-		newsletter = newsletter + ("""</table>
-		</td>
-		</tr>
-		</table>
-		</td>
-		</tr>
-		</table>
-		</td>
-		</tr>""")
-
-	index = 0
-
-	######### FOOTER
-	newsletter = newsletter + ("""<tr style="!important background-color: #efefef;" bgcolor="#efefef">
-	<tr bgcolor="#efefef">
-	<td align="center" valign="top" style="width: 100%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
-	<a style="text-decoration: none; color: #999999;" href=""><img alt="CairnGit" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/CairnGit_logo_norm.png" width="73" align="center" title="CairnGit"/></a>&nbsp;
-	<a style="text-decoration: none; color: #999999;" href=""><img alt="Cairn Devices" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/Cairn_Devices_logo_norm.png" width="73" align="center" title="Cairn Devices"/></a>&nbsp;
-	<a style="text-decoration: none; color: #999999;" href=""><img alt="Serge" src="https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/SERGE_logo_norm.png" width="73" align="center" title="Serge"/></a>
-	</td>
-	</tr>
-	<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px; background-color: #efefef;" bgcolor="#efefef">
-	<tr>
-	<td align="left" valign="center" style="width: 30%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
-	<a style="text-decoration: none; color: #999999;" href="https://cairn-devices.eu"><img alt="Logo Cairn Devices" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_CairnDevices.png" width="130" align="center" /><br>Cairn Devices</a>
-	</td>
-	<td align="center" valign="top" style="padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
-	<p style="font-size: 14px; line-height: 20px;text-align: center;">
-	<br><br>
-	<a href="" style="color: #999999;" target="_blank">{0}</a>
-	&nbsp; &bull; &nbsp;
-	<a href="" style="color: #999999;" target="_blank">{1}</a>
-	</p>
-	</td>
-	<td align="center" valign="center" style="width: 30%;padding: 0; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #999999;">
-	<a style="text-decoration: none; color: #999999;" href="https://github.com/ABHC/SERGE/">{2} <img alt="GitHub" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GitHub.png" width="50" align="center" title="GitHub" /></a><br><br>
-	<a style="text-decoration: none; color: #999999;" href="https://www.gnu.org/licenses/gpl-3.0.fr.html">{3} <img alt="GPLv3" src="https://raw.githubusercontent.com/ABHC/SERGE/master/logo_GPLv3.png" width="50" align="center" title="GPLv3" /></a><br><br>
-	</td>
-	</tr>
-	</table>
-	</tr>
-	</table>
-	</body>
-	</html>""".format(translate_text["web_serge"], translate_text["unsubscribe"], translate_text["github_serge"], translate_text["license_serge"]))
-
-	return newsletter
+		######### EMAIL SERVER CONNEXION
+		server = smtplib.SMTP(mailserveraddr, 5025)
+		server.starttls()
+		server.login(fromaddr, mdp_mail)
+		text = msg.as_string()
+		server.sendmail(fromaddr, toaddr, text)
+		server.quit()

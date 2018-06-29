@@ -77,7 +77,7 @@ def voyager(newscast_args):
 
 	########### INSERT NEW ETAG IN RSS SERGE
 	if greenlight is True:
-		insertSQL.backToTheFuture(etag, link)
+		backToTheFuture(etag, link)
 
 		########### LINK CONNEXION
 		req_results = sergenet.aLinkToThePast(link, 'fullcontent')
@@ -85,7 +85,7 @@ def voyager(newscast_args):
 		feed_error = req_results[1]
 
 	elif greenlight is False and etag is None:
-		insertSQL.backToTheFuture(etag, link)
+		backToTheFuture(etag, link)
 		feed_error = None
 
 	elif greenlight is False:
@@ -277,14 +277,37 @@ def newspack(register, user_id_comma):
 		add_wiki_link = toolbox.recorder(register, "news", str(row[0]), "addLinkInWiki", database)
 
 		######### SEARCH FOR SOURCE NAME AND COMPLETE REQUEST OF THE USER
-		query_source = "SELECT name FROM sources_news_serge WHERE id = %s"
+		query_source = "SELECT name FROM sources_news_serge WHERE id = %s and type <> 'language'"
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_news_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
 		item_arguments = {"user_id_comma": user_id_comma, "source_id": row[3], "inquiry_id": str(row[4]).split(",")}, "query_source": query_source, "query_inquiry": query_inquiry}
 
 		attributes = toolbox.packaging(item_arguments)
 
-		item = {"title": row[1], "description": None, "link": row[2], "label": "news", "source": attributes["source"], "inquiry": attributes["inquiry"], "wiki_link": add_wiki_link}
+		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
+		item = {"title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": None, "link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'), "label": "news", "source": attributes["source"], "inquiry": attributes["inquiry"], "wiki_link": add_wiki_link}
 		items_list.append(item)
 
 	return items_list
+
+
+def backToTheFuture(etag, link):
+	"""backToTheFuture manage the etag update in database."""
+
+	########### CONNECTION TO SERGE DATABASE
+	database = databaseConnection()
+
+	######### ETAG UPDATE IN rss_serge
+	etag_update = ("UPDATE rss_serge SET etag = %s WHERE link = %s")
+
+	call_rss = database.cursor()
+
+	try:
+		call_rss.execute(etag_update, (etag, link))
+		database.commit()
+	except Exception, except_type:
+		database.rollback()
+		logger_error.error("ROLLBACK IN backToTheFuture FUNCTION")
+		logger_error.error(repr(except_type))
+
+	call_rss.close()

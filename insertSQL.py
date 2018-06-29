@@ -440,6 +440,7 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 					insert_data.close()
 
 
+#TODO modifier stairwayToUpdate au niveau des arguments internes et externes et des appels
 def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_send_patents_list, now, predecessor):
 	"""stairwayToUpdate manage the send_status update in database."""
 
@@ -498,25 +499,3 @@ def stairwayToUpdate(register, not_send_news_list, not_send_science_list, not_se
 			logger_error.error(repr(except_type))
 
 		call_users.close()
-
-
-def backToTheFuture(etag, link):
-	"""backToTheFuture manage the etag update in database."""
-
-	########### CONNECTION TO SERGE DATABASE
-	database = databaseConnection()
-
-	######### ETAG UPDATE IN rss_serge
-	etag_update = ("UPDATE rss_serge SET etag = %s WHERE link = %s")
-
-	call_rss = database.cursor()
-
-	try:
-		call_rss.execute(etag_update, (etag, link))
-		database.commit()
-	except Exception, except_type:
-		database.rollback()
-		logger_error.error("ROLLBACK IN backToTheFuture FUNCTION")
-		logger_error.error(repr(except_type))
-
-	call_rss.close()
