@@ -285,7 +285,7 @@ def newspack(register, user_id_comma):
 		attributes = toolbox.packaging(item_arguments)
 
 		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
-		item = {"title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": None, "link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'), "label": "news", "source": attributes["source"], "inquiry": attributes["inquiry"], "wiki_link": add_wiki_link}
+		item = {"id": row[0], "title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": None, "link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'), "label": "news", "source": attributes["source"], "inquiry": attributes["inquiry"], "wiki_link": add_wiki_link}
 		items_list.append(item)
 
 	return items_list
