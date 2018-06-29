@@ -41,7 +41,7 @@ def checkMate():
 
 	num_tables = num_tables[0]
 
-	if num_tables < 23:
+	if num_tables < 25:
 		logger_error.critical("Missing Tables")
 	else:
 		call_extensions = database.cursor()
