@@ -2,7 +2,6 @@
 
 """Mailer contains all the functions related to the construction and sending of e-mails"""
 
-import MySQLdb
 import unicodedata
 from random import randrange
 

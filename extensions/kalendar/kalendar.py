@@ -3,7 +3,6 @@
 ######### IMPORT CLASSICAL MODULES
 import re
 import time
-import MySQLdb
 import datetime
 
 ######### IMPORT SERGE SPECIALS MODULES

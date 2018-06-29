@@ -4,7 +4,6 @@
 
 import sys
 import logging
-import MySQLdb
 
 ######### IMPORT FROM SERGE MAIN
 from handshake import databaseConnection

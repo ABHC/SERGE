@@ -19,7 +19,6 @@ import sys
 import time
 from datetime import datetime as dt
 import datetime
-import MySQLdb
 import logging
 
 ######### IMPORT SERGE SPECIALS MODULES

@@ -2,10 +2,6 @@
 
 """SERGE alert functions (building and formatting an alert)"""
 
-import ovh
-import MySQLdb
-from math import ceil
-
 ######### IMPORT SERGE SPECIALS MODULES
 import mailer
 import handshake
