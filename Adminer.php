@@ -4,9 +4,6 @@
 /******Database backup********/
 
 /********************************************/
-/*Scanner le fichier de configuration pour  */
-/*savoir si toutes les informations sont ok */
-/*et présentes ******************************/
 /*Gérer aussi les commandes des exec() si   */
 /*elles retournent des erreurs ou pas *******/
 
@@ -27,7 +24,7 @@ $regex = array(
   'domain'           => '#(.|\n|^)+Domain name: ([a-z0-9._-]{2,}\.[a-z]{2,4})(.|\n|$)+#',
   'port'             => '#(.|\n|^)+Port: ([0-9]{2,5})(.|\n|$)+#',
   'user'             => '#(.|\n|^)+User: (.{2,})(.|\n|$)+#',
-  'sshPassword'         => '#(.|\n|^)+SSH Password: (.+)(.|\n|$)+#',
+  'sshPassword'      => '#(.|\n|^)+SSH Password: (.+)(.|\n|$)+#',
   'externFolder'     => '#(.|\n|^)+Folder extern: (/(.+/)+)(.|\n|$)+#'
 );
 //FALSE -> incorrect field or value in the configuration file
@@ -56,7 +53,7 @@ $configuration = array(
   'domain'           => '',
   'port'             => '',
   'user'             => '',
-  'sshPassword'         => '',
+  'sshPassword'      => '',
   'externFolder'     => ''
 );
 //Flags
@@ -80,7 +77,7 @@ foreach($regex as $fields => $value)
 }
 
 /***Error management***/
-//If an enable can't be read -> fatal error
+//If an enable fields can't be read -> fatal error
 if($incorrect['enableLocal'] == TRUE)
 {
   $localFatalError = TRUE;
@@ -90,7 +87,7 @@ if($incorrect['enableExtern'] == TRUE)
   $externFatalError = TRUE;
 }
 
-//If fields can't be read
+//If fields databasePassword, period and lastBackUp can't be read
 if( $incorrect['databasePassword'] == TRUE || $incorrect['period'] == TRUE || $incorrect['lastBackUp'] == TRUE )
 {
   //If one or more enable = true then fatal error
@@ -106,7 +103,7 @@ if( $incorrect['databasePassword'] == TRUE || $incorrect['period'] == TRUE || $i
   }
 }
 
-//If fields can't be read
+//If one these fields can't be read
 if( $incorrect['domain'] == TRUE ||
     $incorrect['port'] == TRUE ||
     $incorrect['user'] == TRUE ||
@@ -120,13 +117,13 @@ if( $incorrect['domain'] == TRUE ||
     $externFatalError = TRUE;
   }
   //enable = false -> warning
-  else
+  else if($configuration['enableExtern'] == 'False')
   {
     echo "$warningMessage\n";
   }
 }
 
-//If fields can't be read
+//If field localFolder can't be read
 if($incorrect['localFolder'] == TRUE)
 {
     //If enable = true -> fatal error
@@ -135,12 +132,13 @@ if($incorrect['localFolder'] == TRUE)
       $localFatalError = TRUE;
     }
     //enable = false -> warning
-    else
+    else if($configuration['enableLocal'] == 'False')
     {
       echo "$warningMessage\n";
     }
 }
 
+//If fatal error -> display all unrecognized fields
 if($localFatalError == TRUE || $externFatalError == TRUE)
 {
   echo "$fatalErrorMessage\n";
@@ -178,14 +176,14 @@ if($localFatalError == TRUE || $externFatalError == TRUE)
     //Send the backup file to the distant server
     $destination = $configuration['externFolder'] . $backUpName;
     //ssh2_scp_send($connection, $backUpName, $destination, 0644);
-    echo "sending\n";
+    echo "sending to ".$configuration['domain']." ".$configuration['port']." ".$configuration['user']." ".$configuration['sshPassword']." ".$configuration['externFolder']."\n";
 
     //If local backup enabled move the backup file to local destination
     if($configuration['enableLocal'] == 'True' && $localFatalError == FALSE )
     {
       $destination = $configuration['localFolder'] . $backUpName;
       //rename($backUpName, $destination);
-      echo "move\n";
+      echo "move to $destination\n";
     }
     //If local backup not enabled remove backup file
     else
