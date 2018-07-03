@@ -91,23 +91,7 @@ if (!empty($data['action']) && $data['action'] === 'changePassphrase')
 {
 	$changePassphraseStep0 = TRUE;
 
-	# Generate captcha
-	include('model/captcha.php');
-
-	$cpt         = 1;
-	$captcha_val = '';
-
-	while ($cpt < 5)
-	{
-		$nb_captcha   = rand(1, 52);
-		$captcha_name = 'images/captcha/'.$nb_captcha.'.png';
-		copy($captcha_name, 'images/captcha/captcha'.$cpt.'.png');
-		$captcha_val  = $captcha_val.$captcha[$nb_captcha-1];
-
-		$cpt++;
-	}
-
-	$_SESSION['captcha'] = hash('sha256', $captcha_val);
+	include('controller/captcha.php');
 }
 # Step 1 for reset passphrase check captcha and email
 elseif (!empty($data['action']) && $data['action'] === 'changePassphraseProcessing')
@@ -162,23 +146,7 @@ elseif (!empty($data['action']) && $data['action'] === 'resetPassphrase'
 	{
 		$changePassphraseStep1 = TRUE;
 
-		# Generate captcha
-		include('model/captcha.php');
-
-		$cpt         = 1;
-		$captcha_val = '';
-
-		while ($cpt < 5)
-		{
-			$nb_captcha   = rand(1, 52);
-			$captcha_name = 'images/captcha/'.$nb_captcha.'.png';
-			copy($captcha_name, 'images/captcha/captcha'.$cpt.'.png');
-			$captcha_val  = $captcha_val.$captcha[$nb_captcha-1];
-
-			$cpt++;
-		}
-
-		$_SESSION['captcha'] = hash('sha256', $captcha_val);
+		include('controller/captcha.php');
 	}
 	else
 	{
