@@ -230,15 +230,15 @@ This comment style is used as the separator of the main sections. There are 2 em
 
 ```css
 /* ======================================================
-	 Section comment block
-	 ====================================================== */
+   Section comment block
+   ====================================================== */
 ```
 
 The following comment style is used as the separator of the subsections of the main sections. It has 2 empty lines before it and 1 empty line after it:
 
 ```css
 /* Sub-section comment block
-	 ====================================================== */
+   ====================================================== */
 ```
 
 This comment style is used for commenting particular page elements. It has 1 empty line before it and no empty lines after it (it is immediately followed by the rules):
