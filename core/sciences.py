@@ -12,7 +12,7 @@ import feedparser
 import traceback
 
 ######### IMPORT SERGE SPECIALS MODULES
-import decoder
+import transcriber
 import toolbox
 import sergenet
 import insertSQL
@@ -85,7 +85,7 @@ def rosetta(now):
 
 	######### BUILDING REQUEST FOR SCIENCE API
 	for inquiry in inquiries_list:
-		request_dictionnary = decoder.requestBuilder(inquiry["inquiry"], inquiry["inquiry_id"], builder_queries)
+		request_dictionnary = transcriber.requestBuilder(inquiry["inquiry"], inquiry["inquiry_id"], builder_queries)
 
 		for science_api_pack in request_dictionnary.values():
 			source_comparator = ","+science_api_pack["source_id"]+","
@@ -289,7 +289,7 @@ def sciencespack(register, user_id_comma):
 		######### TRANSLATE THE INQUIRY
 		trad_args = {"register": register, "inquiry": attributes["inquiry"], "component": "SELECT `"+component+"` FROM sources_sciences_serge WHERE type = 'language' and basename = %s", "quote": "SELECT quote FROM sources_sciences_serge WHERE type = 'language' and basename = %s"}
 
-		human_inquiry = decoder.humanInquiry(trad_args)
+		human_inquiry = transcriber.humanInquiry(trad_args)
 
 		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
 		item = {"id": row[0], "title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": None, "link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'), "label": "sciences", "source": attributes["source"], "inquiry": human_inquiry, "wiki_link": add_wiki_link}
