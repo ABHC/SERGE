@@ -25,7 +25,7 @@ import logging
 import alarm
 import mailer
 import voyager
-import decoder
+import transcriber
 import toolbox
 import sergenet
 import failsafe

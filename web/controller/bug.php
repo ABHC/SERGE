@@ -64,28 +64,11 @@ if (empty($_SESSION['email']) && !empty($data['email']))
 	$email = $data['email'];
 }
 
-# Generate captcha
-include('model/captcha.php');
-
-$cpt         = 1;
-$captcha_val = '';
-
-while ($cpt < 5)
-{
-	$nb_captcha   = rand(1, 52);
-	$captcha_name = 'images/captcha/'.$nb_captcha.'.png';
-	copy($captcha_name, 'images/captcha/captcha'.$cpt.'.png');
-	$captcha_val  = $captcha_val.$captcha[$nb_captcha-1];
-
-	$cpt++;
-}
-
-$_SESSION['captcha'] = hash('sha256', $captcha_val);
+include('controller/captcha.php');
 
 include('view/nav/nav.php');
 
 include('view/body/bug.php');
 
 include('view/footer/footer.php');
-
 ?>

@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 import logging
 
 ######### IMPORT SERGE SPECIALS MODULES
-import decoder
+import transcriber
 import sergenet
 import insertSQL
 import failDetectorPack
@@ -87,7 +87,7 @@ def pathfinder(now):
 
 	######### PATENTS RESEARCH
 	for inquiry in inquiries_list:
-		request_dictionnary = decoder.requestBuilder(inquiry["inquiry"], inquiry["inquiry_id"], builder_queries)
+		request_dictionnary = transcriber.requestBuilder(inquiry["inquiry"], inquiry["inquiry_id"], builder_queries)
 
 		for patents_api_pack in request_dictionnary:
 			source_comparator = ","+patents_api_pack["source_id"]+","
@@ -221,7 +221,7 @@ def patentspack(register, user_id_comma):
 		######### TRANSLATE THE INQUIRY
 		trad_args = {"register": register, "inquiry": attributes["inquiry"], "component": "SELECT `"+component+"` FROM sources_patents_serge WHERE type = 'language' and basename = %s", "quote": "SELECT quote FROM sources_patents_serge WHERE type = 'language' and basename = %s"}
 
-		human_inquiry = decoder.humanInquiry(trad_args)
+		human_inquiry = transcriber.humanInquiry(trad_args)
 
 		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
 		item = {"id": row[0], "title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": None, "link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'), "label": "patents", "source": attributes["source"], "inquiry": human_inquiry, "wiki_link": add_wiki_link}

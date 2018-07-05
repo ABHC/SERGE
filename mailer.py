@@ -6,8 +6,8 @@ import unicodedata
 from random import randrange
 
 ######### IMPORT SERGE SPECIALS MODULES
+from transcriber import pieceOfMail
 from handshake import databaseConnection
-
 
 def mailInit(fullResults, stamps):
 	"""Function for mail pre-formatting.
@@ -93,7 +93,7 @@ def mailInit(fullResults, stamps):
 		translate_text = {"intro_date": translate_text["of"], "intro_links": translate_text["alerts"], "type_news": translate_text["NEWS"], "type_science": translate_text["SCIENTIFIC PUBLICATIONS"], "type_patents": translate_text["PATENTS"], "web_serge": translate_text["View Online"], "unsubscribe": translate_text["Unsubscribe"], "github_serge": translate_text["Find SERGE on"], "license_serge": translate_text["Powered by"]}
 
 	######### LOADING THE E-MAIL APPEARANCE
-	appearance = transcriber.pieceOfMail(stamps["priority"])
+	appearance = pieceOfMail(stamps["priority"])
 
 	######### E-MAIL BUILDING
 	newsletter = mailBuilder(fullResults, translate_text, stamps, appearance)
