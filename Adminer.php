@@ -73,6 +73,7 @@ foreach($regex as $fields => $value)
 }
 
 /***Error management***/
+
 //If an enable fields can't be read -> fatal error
 if($incorrect['enableLocal'] == TRUE)
 {
@@ -147,6 +148,8 @@ if($localFatalError == TRUE || $externFatalError == TRUE)
   error_log("$fatalErrorMessage");
 }
 
+/***Backup building***/
+
   //If extern backup enabled
   if( $configuration['enableExtern'] == 'True' &&
       ( time() - $configuration['lastBackUp'] ) > $configuration['period'] &&
@@ -163,7 +166,6 @@ if($localFatalError == TRUE || $externFatalError == TRUE)
 
     //Creating the backup file
     exec($command, $returnOutput, $returnValue);
-    echo "$command\n";
 
     //Error management of the exec function
     if($returnValue)
@@ -175,13 +177,22 @@ if($localFatalError == TRUE || $externFatalError == TRUE)
     }
 
     //Connecting to the distant server
-    //$connection = ssh2_connect($configuration['domain'], $configuration['port']);
-    //ssh2_auth_password($connection, $configuration['user'], $configuration['sshPassword']);
+    $connection = ssh2_connect($configuration['domain'], $configuration['port']);
+    if(!$connection)
+    {
+      error_log("ERROR: cannot connect to distant server, please check domain name and port");
+    }
+    else if( !ssh2_auth_password($connection, $configuration['user'], $configuration['sshPassword']) )
+    {
+      error_log("ERROR: Bad authentification, please check user and password");
+    }
 
     //Send the backup file to the distant server
     $destination = $configuration['externFolder'] . $backUpName;
-    //ssh2_scp_send($connection, $backUpName, $destination, 0644);
-    echo "sending to ".$configuration['domain']." ".$configuration['port']." ".$configuration['user']." ".$configuration['sshPassword']." ".$configuration['externFolder']."\n";
+    if( !ssh2_scp_send($connection, $backUpName, $destination, 0644) )
+    {
+      error_log("ERROR: cannot send file");
+    }
 
     //If local backup enabled move the backup file to local destination
     if($configuration['enableLocal'] == 'True' && $localFatalError == FALSE )
@@ -191,10 +202,6 @@ if($localFatalError == TRUE || $externFatalError == TRUE)
       {
         error_log("error when moving file");
       }
-      else
-      {
-        echo "move to $destination\n";
-      }
     }
     //If local backup not enabled remove backup file
     else
@@ -202,10 +209,6 @@ if($localFatalError == TRUE || $externFatalError == TRUE)
       if( !unlink($backUpName) )
       {
         error_log("error when removing file");
-      }
-      else
-      {
-        echo "remove\n";
       }
     }
 
@@ -237,7 +240,6 @@ if($localFatalError == TRUE || $externFatalError == TRUE)
 
       //Creating the backup file
       exec($command, $returnOutput, $returnValue);
-      echo "$command\n";
 
       //Error management of the exec function
       if($returnValue)
