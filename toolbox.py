@@ -138,3 +138,19 @@ def packaging(item_arguments):
 	attributes = {"source": source, "inquiry": inquiry}
 
 	return attributes
+
+
+def recordApproval(register, database):
+	"""Search the record_read variable (authorization of )"""
+
+	######### AUTHORIZATION FOR READING RECORDS
+	query_record = "SELECT record_read FROM users_table_serge WHERE id LIKE %s"
+
+	call_users = database.cursor()
+	call_users.execute(query_record, (register,))
+	record_read = call_users.fetchone()
+	call_users.close()
+
+	record_read = bool(record_read[0])
+
+	return record_read

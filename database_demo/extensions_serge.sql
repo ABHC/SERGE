@@ -7,9 +7,9 @@ CREATE TABLE `extension_serge` (
 	`sources_table_name` text COLLATE utf8mb4_bin DEFAULT NULL,
 	`queries_table_name` text COLLATE utf8mb4_bin DEFAULT NULL,
 	`results_table_name` text COLLATE utf8mb4_bin NOT NULL,
-	`label_content` text COLLATE utf8mb4_bin DEFAULT NULL,
-	`label_color` text COLLATE utf8mb4_bin DEFAULT NULL,
-	`label_text_color` text COLLATE utf8mb4_bin DEFAULT NULL,
+	`label_content` text COLLATE utf8mb4_bin NOT NULL,
+	`label_color` text COLLATE utf8mb4_bin NOT NULL,
+	`label_text_color` text COLLATE utf8mb4_bin NOT NULL,
 	`mail_switch` tinyint(1) DEFAULT 0,
 	`general_switch` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;

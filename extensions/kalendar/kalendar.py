@@ -4,12 +4,27 @@
 import re
 import time
 import datetime
+from os import path
 
 ######### IMPORT SERGE SPECIALS MODULES
 import sergenet
-from toolbox import escaping
-from toolbox import multikey
-from handshake import databaseConnection
+import toolbox
+
+
+def limitedConnection():
+	"""Limited connexion to Serge database"""
+
+	filename = path.basename(__file__)
+	limited_user = filename.replace(".py", "")
+
+	permissions = open("/var/www/Serge/configuration/extensions_configuration.txt", "r")
+	passSQL = permissions.read().strip()
+	passSQL = re.findall(filename+"- password: "+'([^\s]+)', passSQL)
+	permissions.close()
+
+	database = MySQLdb.connect(host="localhost", user=limited_user, passwd=passSQL, db="Serge", use_unicode=1, charset="utf8mb4")
+
+	return database
 
 
 def startingPoint():
@@ -36,9 +51,9 @@ def kalendarExplorer():
 	now = time.time()
 	calendars_list = []
 
-	######### CALL TO TABLE calendars_serge
+	######### CALL TO TABLE sources_kalendar_serge
 	call_calendar = database.cursor()
-	call_calendar.execute("SELECT id, link, owners FROM calendars_serge WHERE active >= 1")
+	call_calendar.execute("SELECT id, link, owners FROM sources_kalendar_serge WHERE active >= 1")
 	rows = call_calendar.fetchall()
 	call_calendar.close()
 
@@ -65,13 +80,13 @@ def kalendarExplorer():
 				date = float(0)
 
 			try:
-				summery = event.decoded('summary')
-				if summery == "" or summery is None:
-					summery = "NO TITLE"
-			except (AttributeError, summery == ""):
+				summary = event.decoded('summary')
+				if summary == "" or summary is None:
+					summary = "NO TITLE"
+			except (AttributeError, summary == ""):
 				logger_error.warning("BEACON ERROR : missing <title> in "+calendar["link"])
 				logger_error.warning(traceback.format_exc())
-				summery = "NO TITLE"
+				summary = "NO TITLE"
 
 			try:
 				location = event.decoded('location')
@@ -91,38 +106,38 @@ def kalendarExplorer():
 				logger_error.warning(traceback.format_exc())
 				description = "NO DESCRIPTION"
 
-			full_event = {"name": summery, "date": date, "location": location, "description": description}
+			full_event = {"name": summary, "date": date, "location": location, "description": description}
 
-			if date > now and (summery is not None or summery != "" or summery != "NO TITLE")
+			if date > now and (summary is not None or summary != "" or summary != "NO TITLE")
 				event_list.append(full_event)
 
-		######### KEYWORDS AND OWNERS ATTRIBUTION TO CALENDAR
-		query_keywords_calendars = "SELECT id, keyword, applicable_owners_sources FROM keywords_calendars_serge WHERE applicable_owners_sources LIKE %s AND active >= 1"
+		######### INQUIRIES AND OWNERS ATTRIBUTIONS TO CALENDAR
+		query_keywords_calendars = "SELECT id, inquiry, applicable_owners_sources FROM inquiries_kalendar_serge WHERE applicable_owners_sources LIKE %s AND active >= 1"
 
 		call_calendar = database.cursor()
 		call_calendar.execute(query_keywords_calendars, (calendar["id_sql"],))
 		rows = call_calendar.fetchall()
 		call_calendar.close()
-		calendars_keywords = []
+		calendars_inquiries = []
 
-		for keywords in rows:
-			keywords = {"id": keywords[0], "keywords": keywords[1], "attribution": keywords[2]}
-			calendars_keywords.append(keywords)
+		for inquiry in rows:
+			inquiry = {"id": inquiry[0], "inquiry": inquiry[1], "attribution": inquiry[2]}
+			calendars_inquiries.append(inquiry)
 
-		for keywords in calendars_keywords:
+		for inquiry in calendars_inquiries:
 			attribution_list = []
-			applicable_owners_sources = keywords[attribution]
+			applicable_owners_sources = inquiry[attribution]
 			applicable_owners_sources = applicable_owners_sources.split("|")
 
 			for couple_owners_sources in applicable_owners_sources:
 				if couple_owners_sources != "":
 					couple_owners_sources = couple_owners_sources.split(":")
-					attribution = {"owner": ","+couple_owners_sources[0]+",", "owner_comma": ","+couple_owners_sources[0]+",", "sources": couple_owners_sources[1], "keyword_id": None, "keywords": None}
+					attribution = {"owner": ","+couple_owners_sources[0]+",", "owner_comma": ","+couple_owners_sources[0]+",", "sources": couple_owners_sources[1], "inquiry_id": None, "inquiry": None}
 
 				if attribution["owner_comma"] in calendar["owners"] and calendar["id_comma"] in attribution["sources"]:
-					aggregated_keywords = multikey(keywords["keywords"])
-					attribution["keywords"] = aggregated_keywords
-					attribution["keyword_id"] = ","+keywords["id"]+","
+					aggregated_keywords = toolbox.multikey(inquiry["inquiry"])
+					attribution["inquiry"] = aggregated_keywords
+					attribution["inquiry_id"] = ","+inquiry["id"]+","
 					attribution_list.append(attribution)
 
 		######### KEYWORDS RESEARCH IN CALENDAR
@@ -132,17 +147,17 @@ def kalendarExplorer():
 					if (re.search('[^a-z]'+re.escape(splitkey)+'.{0,3}(\W|$)', event["name"], re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey)+'.{0,3}(\W|$)', event["date"], re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey)+'.{0,3}(\W|$)', event["location"], re.IGNORECASE)) and attribution["owner"] is not None:
 
 						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT keyword_id, owners FROM result_calendars_serge WHERE name = %s AND `date` = %s AND location = %s")
+						query_checking = ("SELECT inquiry_id, owners FROM results_kalendar_serge WHERE name = %s AND `date` = %s AND location = %s")
 
 						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_calendars_serge (name, date, location, id_source, keyword_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
+						query_insertion = ("INSERT INTO results_kalendar_serge (name, date, location, description, id_source, inquiry_id, owners) VALUES (%s, %s, %s, %s, %s, %s, %s)")
 
 						########### QUERIES FOR DATABASE UPDATE
-						query_update = ("UPDATE result_news_serge SET keyword_id = %s, owners = %s WHERE name = %s")
+						query_update = ("UPDATE results_kalendar_serge SET inquiry_id = %s, owners = %s WHERE name = %s")
 
 						########### ITEM BUILDING
-						event["name"] = escaping(event["name"])
-						item = (event["name"], event["date"], event["location"], calendar["id"], attribution["keyword_id"], attribution["owner"])
+						event["name"] = toolbox.escaping(event["name"])
+						item = (event["name"], event["date"], event["location"], event["description"], calendar["id"], attribution["inquiry_id"], attribution["owner"])
 
 						########### CALL insertOrUpdate FUNCTION
 						saveTheDate(query_checking, query_insertion, query_update, item)
@@ -154,7 +169,7 @@ def saveTheDate(query_checking, query_insertion, query_update, item):
 	database = databaseConnection()
 
 	########### ITEM EXTRACTION FOR OPERATIONS
-	event = {"name": item[0], "date": item[1], "location": item[2], "id_source": item[3], "keyword_id": item[4], "owner": item[5]}
+	event = {"name": item[0], "date": item[1], "location": item[2], "id_source": item[3], "inquiry_id": item[4], "owner": item[5]}
 
 	########### DATABASE CHECKING
 	call_data_cheking = database.cursor()
@@ -163,17 +178,17 @@ def saveTheDate(query_checking, query_insertion, query_update, item):
 	call_data_cheking.close()
 
 	if checking is not None:
-		dataset = {"complete_keywords_id": checking[0], "complete_owners": checking[1], "split_owners": checking[1].split(",")}
+		dataset = {"complete_inquiries_id": checking[0], "complete_owners": checking[1], "split_owners": checking[1].split(",")}
 
 		########### NEW ATTRIBUTES CREATION (COMPLETE ID & COMPLETE OWNERS)
-		if event["keyword_id"] not in dataset["complete_keywords_id"]:
-			dataset["complete_keywords_id"] = dataset["complete_keywords_id"]+event["keyword_id"].replace(",","")+","
+		if event["inquiry_id"] not in dataset["complete_inquiries_id"]:
+			dataset["complete_inquiries_id"] = dataset["complete_inquiries_id"]+event["inquiry_id"].replace(",","")+","
 
 		if event["owner"] not in dataset["complete_owners"]:
 			dataset["complete_owners"] = dataset["complete_owners"]+event["owner"].replace(",","")+","
 
 		########### CREATE A SET IN ORDER TO UPDATE THE DATABASE
-		item_update = [dataset["complete_keywords_id"], dataset["complete_owners"], event["name"]]
+		item_update = [dataset["complete_inquiries_id"], dataset["complete_owners"], event["name"]]
 
 		update_data = database.cursor()
 		try:
@@ -197,3 +212,53 @@ def saveTheDate(query_checking, query_insertion, query_update, item):
 			logger_error.error(query_insertion)
 			logger_error.error(repr(except_type))
 		insert_data.clos
+
+
+def resultsPack(register, user_id_comma):
+
+	#TODO add link to vigiserge calendar page when unavailable
+	######### USEFUL VARIABLES
+	filename = path.basename(__file__)
+
+	########### CONNECTION TO SERGE DATABASE
+	database = limitedConnection()
+
+	######### AUTHORIZATION FOR READING RECORDS
+	record_read = toolbox.recordApproval()
+
+	######### AUTHORIZATION FOR READING RECORDS
+	query_label = ("SELECT label_content FROM extensions_serge WHERE name = %s)
+
+	call_calendars = database.cursor()
+	call_calendars.execute(query_label, (filename,))
+	label = (call_calendars.fetchone())[0]
+	call_calendars.close()
+
+	######### RESULTS NEWS : NEWS ATTRIBUTES QUERY (LINK + TITLE + ID SOURCE + KEYWORD ID)
+	query_calendars = ("SELECT id, name, date, location, description, link, source_id, inquiry_id FROM results_kalendar_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
+
+	call_calendars = database.cursor()
+	call_calendars.execute(query_calendars, (user_id_comma, user_id_comma, user_id_comma))
+	rows = [list(elem) for elem in list(call_calendars.fetchall())]
+	call_calendars.close()
+
+	for row in rows:
+		######### CREATE RECORDER LINK AND WIKI LINK
+		if record_read is True and row[5] is not None:
+			row[5] = toolbox.recorder(register, label, str(row[0]), "redirect", database)
+		add_wiki_link = toolbox.recorder(register, label, str(row[0]), "addLinkInWiki", database)
+
+		######### SEARCH FOR SOURCE NAME AND COMPLETE REQUEST OF THE USER
+		query_source = "SELECT name FROM sources_kalendar_serge WHERE id = %s and type <> 'language'"
+		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_kalendar_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
+
+		item_arguments = {"user_id_comma": user_id_comma, "source_id": row[6], "inquiry_id": str(row[7]).split(",")}, "query_source": query_source, "query_inquiry": query_inquiry}
+
+		attributes = toolbox.packaging(item_arguments)
+		description = (row[2] + ", " + row[3] + "\n" + row[4]).strip().encode('ascii', errors='xmlcharrefreplace')
+
+		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
+		item = {"id": row[0], "title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": description, "link": row[5].strip().encode('ascii', errors='xmlcharrefreplace'), "label": label, "source": attributes["source"], "inquiry": attributes["inquiry"], "wiki_link": add_wiki_link}
+		items_list.append(item)
+
+	return items_list
