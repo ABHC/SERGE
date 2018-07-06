@@ -15,7 +15,7 @@ def limitedConnection():
 	"""Limited connexion to Serge database"""
 
 	filename = path.basename(__file__)
-	limited_user = filename.replace(".py", "")
+	limited_user = filename.replace(".py", "").strip()
 
 	permissions = open("/var/www/Serge/configuration/extensions_configuration.txt", "r")
 	passSQL = permissions.read().strip()

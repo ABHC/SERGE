@@ -30,6 +30,7 @@ import toolbox
 import sergenet
 import failsafe
 import insertSQL
+import extensions
 import resultstation
 from handshake import databaseConnection
 
@@ -39,42 +40,6 @@ toolbox.loggerConfig()
 ######### LOGGER CALL
 logger_info = logging.getLogger("info_log")
 logger_error = logging.getLogger("error_log")
-
-
-def extensions(database):
-	"""Call to optionnal function for content research. extensions are listed in miscellaneous_serge."""
-
-	######### CALL TO TABLE miscellaneous_serge
-	call_extensions = database.cursor()
-	call_extensions.execute("SELECT value FROM miscellaneous_serge WHERE name = 'extension'")
-	row = call_extensions.fetchone()
-	call_extensions.close()
-
-	extensions_list = row[0]
-	extensions_list = extensions_list.split("|")
-
-	extensions_names = []
-
-	for extension_entry in extensions_list:
-		if extension_entry != '':
-			extension_entry = extension_entry.split("!")
-			module_name = extension_entry[0]
-			module_state = extension_entry[1]
-
-		if module_state == "activate":
-			extensions_names.append(module_name)
-
-	######### CALL OF EXTENSIONS
-	extProcesses = ()
-	for extension in extensions_names:
-		if extension != "":
-			module = __import__(extension)
-			exec("proc"+extension+" = Process(target=module.startingPoint, args=())")
-			exec("proc"+extension+".start()")
-			exec("extProcesses += (proc"+extension+",)")
-
-	return extProcesses
-
 
 ######### ERROR HOOK DEPLOYMENT
 sys.excepthook = toolbox.cemeteriesOfErrors
@@ -117,7 +82,7 @@ procScience.start()
 procPatents.start()
 
 ######### EXTENSIONS EXECUTION
-extProcesses = extensions(database)
+extProcesses = extensions.extensionLibrary()
 
 logger_info.info("\n\n######### Last News Research (newscast function) : \n\n")
 
@@ -167,8 +132,9 @@ for register, user in user_list:
 	not_send_news_list = newscast.newspack(register, user_id_comma)
 	not_send_science_list = sciences.sciencespack(register, user_id_comma)
 	not_send_patents_list = patents.patentspack(register, user_id_comma)
+	extensions_results = extensions.packThemAll(register, user_id_comma)
 
-	fullResults = not_send_news_list+not_send_science_list+not_send_patents_list
+	fullResults = not_send_news_list+not_send_science_list+not_send_patents_list+extensions_results
 
 	pending_all = len(not_send_news_list)+len(not_send_science_list)+len(not_send_patents_list)
 
