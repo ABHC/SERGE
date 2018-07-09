@@ -152,16 +152,16 @@ def pathfinder(now):
 								legal_dataset = legalScrapper(post_link, inquiry, now)
 
 								########### QUERY FOR DATABASE CHECKING
-								query_checking = ("SELECT inquiry_id, owners FROM result_patents_serge WHERE link = %s AND title = %s")
-								query_link_checking = ("SELECT inquiry_id, owners FROM result_patents_serge WHERE link = %s")
+								query_checking = ("SELECT inquiry_id, owners FROM results_patents_serge WHERE link = %s AND title = %s")
+								query_link_checking = ("SELECT inquiry_id, owners FROM results_patents_serge WHERE link = %s")
 								query_jellychecking = None
 
 								########### QUERY FOR DATABASE INSERTION
-								query_insertion = ("INSERT INTO result_patents_serge (title, link, date, source_id, inquiry_id, owners, legal_abstract, legal_status, lens_link, legal_check_date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+								query_insertion = ("INSERT INTO results_patents_serge (title, link, date, source_id, inquiry_id, owners, legal_abstract, legal_status, lens_link, legal_check_date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
 								########### QUERY FOR DATABASE UPDATE
-								query_update = ("UPDATE result_patents_serge SET inquiry_id = %s, owners = %s, legal_abstract = %s, legal_status = %s, lens_link = %s, legal_check_date = %s WHERE link = %s")
-								query_update_title = ("UPDATE result_patents_serge SET title = %s, inquiry_id = %s, owners = %s, legal_abstract = %s, legal_status = %s, lens_link = %s, legal_check_date = %s WHERE link = %s")
+								query_update = ("UPDATE results_patents_serge SET inquiry_id = %s, owners = %s, legal_abstract = %s, legal_status = %s, lens_link = %s, legal_check_date = %s WHERE link = %s")
+								query_update_title = ("UPDATE results_patents_serge SET title = %s, inquiry_id = %s, owners = %s, legal_abstract = %s, legal_status = %s, lens_link = %s, legal_check_date = %s WHERE link = %s")
 								query_jelly_update = None
 
 								########### ITEM BUILDING
@@ -197,7 +197,7 @@ def patentspack(register, user_id_comma):
 	record_read = bool(record_read[0])
 
 	######### RESULTS PATENTS : PATENTS ATTRIBUTES QUERY (LINK + TITLE + SOURCE ID + INQUIRY ID)
-	query_patents = ("SELECT id, title, link, source_id, inquiry_id FROM result_patents_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
+	query_patents = ("SELECT id, title, link, source_id, inquiry_id FROM results_patents_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
 
 	call_patents = database.cursor()
 	call_patents.execute(query_patents, (user_id_comma, user_id_comma, user_id_comma))
@@ -240,7 +240,7 @@ def legalScrapper(post_link, inquiry, now):
 	logger_info = logging.getLogger("info_log")
 
 	########### PRESENCE CHECKING
-	query_presence_checking = ("SELECT legal_check_date, owners FROM result_patents_serge WHERE link = %s")
+	query_presence_checking = ("SELECT legal_check_date, owners FROM results_patents_serge WHERE link = %s")
 
 	call_results_patents = database.cursor()
 	call_results_patents.execute(query_presence_checking, (post_link, ))

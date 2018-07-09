@@ -1,7 +1,7 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
-CREATE TABLE `result_science_serge` (
+CREATE TABLE `results_news_serge` (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
 	`search_index` text COLLATE utf8mb4_bin DEFAULT NULL,
 	`title` text COLLATE utf8mb4_bin NOT NULL,
@@ -17,4 +17,4 @@ CREATE TABLE `result_science_serge` (
 
 SET NAMES utf8mb4;
 
-ALTER TABLE `result_science_serge` ADD FULLTEXT INDEX `search` (`search_index`);
+ALTER TABLE `results_news_serge` ADD FULLTEXT INDEX `search` (`search_index`);

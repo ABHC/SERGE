@@ -24,14 +24,15 @@ import logging
 ######### IMPORT SERGE SPECIALS MODULES
 import alarm
 import mailer
-import voyager
-import transcriber
 import toolbox
 import sergenet
 import failsafe
 import insertSQL
 import extensions
-import resultstation
+import transcriber
+import core.news
+import core.patents
+import core.sciences
 from handshake import databaseConnection
 
 ######### LOGGER CONFIG
@@ -74,8 +75,8 @@ logger_info.info("\nMax Users : " + str(max_users)+"\n")
 insertSQL.ofSourceAndName(now)
 
 ######### PROCESS CREATION FOR SCIENCE AND PATENTS
-procScience = Process(target=voyager.science, args=(now,))
-procPatents = Process(target=voyager.patents, args=(now,))
+procScience = Process(target=sciences.rosetta, args=(now,))
+procPatents = Process(target=patents.pathfinder, args=(now,))
 
 ######### RESEARCH OF LATEST SCIENTIFIC PUBLICATIONS AND PATENTS
 procScience.start()
@@ -84,7 +85,7 @@ procPatents.start()
 ######### EXTENSIONS EXECUTION
 extProcesses = extensions.extensionLibrary()
 
-logger_info.info("\n\n######### Last News Research (newscast function) : \n\n")
+logger_info.info("\n\n######### Last News Research (news function) : \n\n")
 
 ######### CALL TO TABLE rss_serge
 call_rss = database.cursor()
@@ -102,9 +103,9 @@ for row in rows:
 
 nbProc = int(ceil(0.25 * nbRSS) + 1)
 
-######### PROCESS CREATION FOR NEWSCAST AND RESEARCH OF LATEST NEWS
+######### PROCESS CREATION FOR NEWS AND RESEARCH OF LATEST NEWS
 pool = mp.Pool(processes=nbProc)
-pool.map(voyager.newscast, newscast_args)
+pool.map(news.voyager, newscast_args)
 
 ######### MAIN BLOCKING FOR MULTIPROCESSING
 for processe in extProcesses:
@@ -129,7 +130,7 @@ for register, user in user_list:
 	user_id_comma = "%," + register + ",%"
 	stamps = {"register": register, "user": user, "pydate": pydate, "priority": "NORMAL"}
 
-	not_send_news_list = newscast.newspack(register, user_id_comma)
+	not_send_news_list = news.newspack(register, user_id_comma)
 	not_send_science_list = sciences.sciencespack(register, user_id_comma)
 	not_send_patents_list = patents.patentspack(register, user_id_comma)
 	extensions_results = extensions.packThemAll(register, user_id_comma)

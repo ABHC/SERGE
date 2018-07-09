@@ -217,17 +217,17 @@ def voyager(newscast_args):
 					if (re.search('[^a-z]'+re.escape(splitkey)+'.{0,3}(\W|$)', post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey)+'.{0,3}(\W|$)', post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey)+'.{0,3}(\W|$)', tags_string, re.IGNORECASE)) and owners is not None:
 
 						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT inquiry_id, owners FROM result_news_serge WHERE link = %s AND title = %s")
-						query_link_checking = ("SELECT inquiry_id, owners FROM result_news_serge WHERE link = %s")
-						query_jellychecking = ("SELECT title, link, inquiry_id, owners FROM result_news_serge WHERE source_id = %s AND `date` BETWEEN %s AND (%s+43200)")
+						query_checking = ("SELECT inquiry_id, owners FROM results_news_serge WHERE link = %s AND title = %s")
+						query_link_checking = ("SELECT inquiry_id, owners FROM results_news_serge WHERE link = %s")
+						query_jellychecking = ("SELECT title, link, inquiry_id, owners FROM results_news_serge WHERE source_id = %s AND `date` BETWEEN %s AND (%s+43200)")
 
 						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO result_news_serge (title, link, date, source_id, inquiry_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
+						query_insertion = ("INSERT INTO results_news_serge (title, link, date, source_id, inquiry_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
 
 						########### QUERY FOR DATABASE UPDATE
-						query_update = ("UPDATE result_news_serge SET inquiry_id = %s, owners = %s WHERE link = %s")
-						query_update_title = ("UPDATE result_news_serge SET title = %s, inquiry_id = %s, owners = %s WHERE link = %s")
-						query_jelly_update = ("UPDATE result_news_serge SET title = %s, link = %s, inquiry_id = %s, owners = %s WHERE link = %s")
+						query_update = ("UPDATE results_news_serge SET inquiry_id = %s, owners = %s WHERE link = %s")
+						query_update_title = ("UPDATE results_news_serge SET title = %s, inquiry_id = %s, owners = %s WHERE link = %s")
+						query_jelly_update = ("UPDATE results_news_serge SET title = %s, link = %s, inquiry_id = %s, owners = %s WHERE link = %s")
 
 						########### LINK VALIDATION
 						post_link = failDetectorPack.failUniversalCorrectorKit(post_link, source_id)
@@ -263,7 +263,7 @@ def newspack(register, user_id_comma):
 	record_read = bool(record_read[0])
 
 	######### RESULTS NEWS : NEWS ATTRIBUTES QUERY (LINK + TITLE + ID SOURCE + KEYWORD ID)
-	query_news = ("SELECT id, title, link, source_id, inquiry_id FROM result_news_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
+	query_news = ("SELECT id, title, link, source_id, inquiry_id FROM results_news_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
 
 	call_news = database.cursor()
 	call_news.execute(query_news, (user_id_comma, user_id_comma, user_id_comma))
