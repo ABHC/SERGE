@@ -1,29 +1,28 @@
-var updateReadStatus = function(articleId, type)
+function updateReadStatus(articleId, type)
 {
-	$.ajax({
-		url : 'readStatus',
-		type : 'POST',
-		data : 'articleId=' + articleId + '&type=' + type,
-		dataType : 'text'
-		success : function(amIRead, statut)
+	var glArticleId;
+	glArticleId = articleId;
+	$.get(
+		'model/readStatus.php',
 		{
-			if (amIRead == 'read')
-			{
-				// Update read status logo
-				$(articleId).attr ({
-					src: 'images/iconRead.png',
-					alt: 'Read'
-				});
-			}
+			count : 0,
+			articleId : articleId,
+			type : type
 		},
-		error : function(resultat, statut, erreur)
-		{
+		changeReadStatus,
+		'text'
+	);
 
-		},
-		complete : function(resultat, statut)
+	function changeReadStatus(amIRead, statut)
+	{
+		if (amIRead == 'read')
 		{
-
+			glArticleId = "#readStatus"+glArticleId
+			// Update read status logo
+			$(glArticleId).attr ({
+				src: 'images/iconRead.png',
+				alt: 'Read'
+			});
 		}
-
-	});
-};
+	}
+}
