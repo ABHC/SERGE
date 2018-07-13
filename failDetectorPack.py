@@ -64,16 +64,16 @@ def wwwCase(link):
 		return (alter_link)
 
 
-def domainCase(link, id_source):
+def domainCase(link, source_id):
 
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
 	######### MISSING DOMAIN CASE
-	query_domain = "SELECT link FROM rss_serge WHERE id = %s "
+	query_domain = "SELECT link FROM rss_serge WHERE id = %s"
 
 	call_domain = database.cursor()
-	call_domain.execute(query_domain, (id_source, ))
+	call_domain.execute(query_domain, (source_id, ))
 	rss_link = call_domain.fetchone()
 	call_domain.close()
 
@@ -91,13 +91,13 @@ def domainCase(link, id_source):
 		return (alter_link)
 
 
-def failUniversalCorrectorKit(link, id_source):
+def failUniversalCorrectorKit(link, source_id):
 
 	checklink = vurlExt(link)
 
 	if checklink is False:
 
-		all_cases = [httpsCase(link), httpCase(link), wwwCase(link), domainCase(link, id_source)]
+		all_cases = [httpsCase(link), httpCase(link), wwwCase(link), domainCase(link, source_id)]
 
 		for case in all_cases:
 

@@ -56,7 +56,7 @@ def escaping(string):
 	return stringEscaped
 
 
-def multikey(keyword):
+def aggregatesSupport(keyword):
 	"""AGGREGATED KEYWORDS RESEARCH"""
 
 	if "+" in keyword:
@@ -106,8 +106,7 @@ def packaging(item_arguments):
 	######### SET VARIABLES
 	classic_inquiries = []
 	alerts_inquiries = []
-	user_id_doubledot = user_id_comma.replace(",", "")+":"
-	user_id_doubledot_percent = "%"+user_id_doubledot+"%"
+	user_id_doubledot_percent = "%"+item_arguments["user_id"]+":%"
 
 	######### RETRIEVE THE NAME OF THE SOURCE
 	call_db = database.cursor()
@@ -122,7 +121,7 @@ def packaging(item_arguments):
 		check = call_db.fetchone()
 		call_db.close()
 
-		if re.search(user_id_doubledot+'[0-9,]*'+","+inquiry_id+",", check[1]) is not None :
+		if re.search('[^!A-Za-z]'+user_id+":"+'[0-9!,]*'+","+inquiry_id+",", check[1]) is not None:
 			if "[!ALERT!]" in check[0]:
 				alerts_inquiries.append(check[0])
 			else:

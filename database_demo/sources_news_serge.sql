@@ -6,7 +6,6 @@ CREATE TABLE `sources_news_serge` (
 	`link` text COLLATE utf8mb4_bin NOT NULL,
 	`name` text COLLATE utf8mb4_bin DEFAULT NULL,
 	`favicon` blob,
-	`owners` text COLLATE utf8mb4_bin NOT NULL,
 	`etag` text COLLATE utf8mb4_bin DEFAULT NULL,
 	`active` int(11) NOT NULL,
 	PRIMARY KEY (id)

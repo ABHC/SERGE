@@ -116,9 +116,9 @@ def checkMate():
 	results_patents_serge_numbers = 14
 	results_sciences_serge_numbers = 10
 	sms_tokens_numbers = 4
-	sources_news_serge_numbers = 7
-	sources_patents_serge_numbers = 80
-	sources_sciences_serge_numbers = 22
+	sources_news_serge_numbers = 6
+	sources_patents_serge_numbers = 79
+	sources_sciences_serge_numbers = 21
 	stripe_table_serge_numbers = 4
 	text_content_serge_numbers = 6
 	users_table_serge_numbers = 26
@@ -167,9 +167,9 @@ def checkMate():
 	results_news_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "id_source", "keyword_id", "owners"]
 	results_patents_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "id_source", "id_query_wipo", "owners", "legal_abstract", "legal_status", "lens_link", "legal_check_date"]
 	results_sciences_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "id_source", "query_id", "owners"]
-	sources_news_serge_columns = ["id", "link", "name", "favicon", "owners", "etag", "active"]
-	sources_patents_serge_columns = ["id", "apikey", "type", "basename", "name", "link", "prelink", "postlink", "AND", "OR", "NOT", "(", ")", "quote", "all_names", "all_numbers", "app_adr", "app_adr_ctr", "app_all_data", "app_name", "app_nat", "app_res", "apply_date", "apply_number", "chemical", "country", "designated_state", "english_abstract", "english_all", "english_claims", "english_description", "english_all_txt", "english_title", "class_code", "filling_lang", "front_page", "grant_number", "class", "class_crea", "class_crea_n", "exam_prime", "int_research_aut", "int_report", "inv_all", "inv_name", "inv_nat", "legal_all", "legal_ctr", "legal_name", "legal_adr", "license", "main_app", "main_class", "main_inv", "main_legal", "nat_phase_data", "nat_phase_apply_num", "nat_phase_apply_date", "nat_phase_type", "nat_pub_num", "office", "nat_office", "prior_apply_num", "prior_num", "priority", "priority_ctr", "priority_date", "priority_num", "pub_date", "language", "supplementary", "third_party", "wipo_num", "french_abstract", "french_all", "french_claims", "french_description", "owners", "active"]
-	sources_sciences_serge_columns = ["id", "apikey", "type", "basename", "name", "link", "prelink", "postlink", "AND", "OR", "NOT", "(", ")", "quote", "title", "author", "abstract", "publisher", "category", "all", "owners", "active"]
+	sources_news_serge_columns = ["id", "link", "name", "favicon", "etag", "active"]
+	sources_patents_serge_columns = ["id", "apikey", "type", "basename", "name", "link", "prelink", "postlink", "AND", "OR", "NOT", "(", ")", "quote", "all_names", "all_numbers", "app_adr", "app_adr_ctr", "app_all_data", "app_name", "app_nat", "app_res", "apply_date", "apply_number", "chemical", "country", "designated_state", "english_abstract", "english_all", "english_claims", "english_description", "english_all_txt", "english_title", "class_code", "filling_lang", "front_page", "grant_number", "class", "class_crea", "class_crea_n", "exam_prime", "int_research_aut", "int_report", "inv_all", "inv_name", "inv_nat", "legal_all", "legal_ctr", "legal_name", "legal_adr", "license", "main_app", "main_class", "main_inv", "main_legal", "nat_phase_data", "nat_phase_apply_num", "nat_phase_apply_date", "nat_phase_type", "nat_pub_num", "office", "nat_office", "prior_apply_num", "prior_num", "priority", "priority_ctr", "priority_date", "priority_num", "pub_date", "language", "supplementary", "third_party", "wipo_num", "french_abstract", "french_all", "french_claims", "french_description", "active"]
+	sources_sciences_serge_columns = ["id", "apikey", "type", "basename", "name", "link", "prelink", "postlink", "AND", "OR", "NOT", "(", ")", "quote", "title", "author", "abstract", "publisher", "category", "all", "active"]
 	stripe_table_serge_columns = ["id", "account_name", "secret_key", "publishable_key"]
 	text_content_serge_columns = ["index_name", "EN", "FR", "ES", "DE", "CN"]
 	users_table_serge_columns = ["id", "users", "email", "phone_number", "password", "salt", "signup_date", "result_by_email", "last_mail", "send_condition", "frequency", "link_limit", "selected_days", "selected_hour", "mail_design", "language", "record_read", "history_lifetime", "background_result", "alert_by_sms", "premium_expiration_date", "email_validation", "sms_credits", "token", "add_source_status", "req_for_del"]

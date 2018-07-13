@@ -87,9 +87,9 @@ extProcesses = extensions.extensionLibrary()
 
 logger_info.info("\n\n######### Last News Research (news function) : \n\n")
 
-######### CALL TO TABLE rss_serge
+######### NEWS SOURCES RECOVERY FOR MULTIPROCESSING : ONE SOURCE FOR EACH PROCESS
 call_rss = database.cursor()
-call_rss.execute("SELECT link, id, etag FROM rss_serge WHERE active >= 1")
+call_rss.execute("SELECT id, link, etag FROM sources_news_serge WHERE active >= 1")
 rows = call_rss.fetchall()
 call_rss.close()
 
@@ -98,8 +98,8 @@ newscast_args = []
 nbRSS = 0
 for row in rows:
 	nbRSS += 1
-	field = (row[0], row[1], row[2], max_users, now)
-	newscast_args.append(field)
+	fields = {"source_id": row[0], "source_link": row[1].strip(), "source_etag": row[2], "now": now}
+	newscast_args.append(fields)
 
 nbProc = int(ceil(0.25 * nbRSS) + 1)
 
@@ -116,8 +116,8 @@ procPatents.join()
 pool.close()
 pool.join()
 
-######### AFFECTATION
-logger_info.info("AFFECTATION")
+######### RESULTS ASSIGNMENT TO EACH USER
+logger_info.info("RESULTS ASSIGNMENT")
 
 call_users = database.cursor()
 call_users.execute("SELECT id, users FROM users_table_serge")
@@ -139,7 +139,7 @@ for register, user in user_list:
 
 	pending_all = len(not_send_news_list)+len(not_send_science_list)+len(not_send_patents_list)
 
-	######### SEND CONDITION QUERY
+	######### SEND CONDITION RECOVERY
 	query = "SELECT send_condition FROM users_table_serge WHERE id = %s"
 
 	call_users = database.cursor()
@@ -257,7 +257,7 @@ for register, user in user_list:
 	else:
 		logger_info.critical("ERROR : BAD CONDITION")
 
-######### EXECUTION TIME
+######### EXECUTION TIME CALCULATION
 the_end = time.time()
 exec_time = (the_end - float(now))
 

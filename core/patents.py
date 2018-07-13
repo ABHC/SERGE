@@ -17,7 +17,6 @@ import sergenet
 import insertSQL
 import failDetectorPack
 from toolbox import escaping
-from toolbox import multikey
 from handshake import databaseConnection
 
 
@@ -67,10 +66,10 @@ def pathfinder(now):
 		for applicable_owners_sources in row[2].split("|"):
 			if applicable_owners_sources != "":
 				split_owners_sources = applicable_owners_sources.split(":")
-				if split_owners_sources[0] != "":
+				if split_owners_sources[0] != "" or "!" not in split_owners_sources[0]:
 					owners_list.append(split_owners_sources[0])
 					for source in split_owners_sources[1].split(","):
-						if source != "":
+						if source != "" or "!" not in source:
 							sources_list.append(source)
 
 		owners_list = list(set(owners_list))
@@ -214,7 +213,7 @@ def patentspack(register, user_id_comma):
 		query_source = "SELECT basename FROM sources_patents_serge WHERE id = %s and type <> 'language'"
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_patents_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
-		item_arguments = {"user_id_comma": user_id_comma, "source_id": row[3], "inquiry_id": str(row[4]).split(",")}, "query_source": query_source, "query_inquiry": query_inquiry}
+		item_arguments = {"user_id": register, "source_id": row[3], "inquiry_id": str(row[4]).split(",")}, "query_source": query_source, "query_inquiry": query_inquiry}
 
 		attributes = toolbox.packaging(item_arguments)
 
