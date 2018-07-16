@@ -13,11 +13,27 @@ import datetime
 from handshake import databaseConnection
 
 
+def limitedConnection():
+	"""Limited connexion to Serge database"""
+
+	filename = path.basename(__file__)
+	limited_user = filename.replace(".py", "").strip()
+
+	permissions = open("/var/www/Serge/configuration/extensions_configuration.txt", "r")
+	passSQL = permissions.read().strip()
+	passSQL = re.findall(filename+"- password: "+'([^\s]+)', passSQL)
+	permissions.close()
+
+	database = MySQLdb.connect(host="localhost", user=limited_user, passwd=passSQL, db="Serge", use_unicode=1, charset="utf8mb4")
+
+	return database
+
+
 def twitterConnection():
 	"""Connexion to Twitter API"""
 
 	########### CONNECTION TO SERGE DATABASE
-	database = databaseConnection()
+	database = limitedConnection()
 
 	######### TWITTER TOKENS
 	call_tokens = database.cursor()
@@ -38,7 +54,7 @@ def twitterConnection():
 	return api
 
 
-def rate_limit():
+def rateLimit():
 	"""Twitter rate limits management"""
 
 	api = twitterConnection()
@@ -68,159 +84,99 @@ def startingPoint():
 	######### RESEARCH ON TWITTER
 	logger_info.info("\n\n######### TWITTER EXTENSION \n\n")
 
-	######### CALL TO queries_trweet_serge
+	######### CALL TO inquiries_trweet_serge
 	call_queries = database.cursor()
-	call_queries.execute("SELECT id, query, owners, geo, lang, last_launch FROM queries_trweet_serge WHERE active >= 1")
+	call_queries.execute("SELECT id, type, inquiry, applicable_owners_targets, lang, last_launch FROM inquiries_trweet_serge WHERE active >= 1")
 	rows = call_queries.fetchall()
 	call_queries.close()
 
 	search_list = []
 
 	for row in rows:
-		search_list.append(row)
+		owners = ","
+		targets_list = []
+
+		for applicable_owners_targets in row[3].split("|"):
+			if applicable_owners_targets != "":
+				split_owners_targets = applicable_owners_targets.split(":")
+
+				if split_owners_targets[0] != "" or "!" not in split_owners_targets[0]:
+					owners = owners + split_owners_targets[0] + ","
+
+					for target in split_owners_targets[1].split(","):
+						if target != "" or "!" not in target:
+							targets_list.append(target)
+
+		inquiry = {"id": row[0], "type": row[1], "inquiry": row[2], "applicable_owners_targets": row[3] "owners": owners, "targets": targets_list.sort(), "language": row[4], "last_launch": row[5]}
+		search_list.append(inquiry)
 
 	if len(search_list) > 0:
 
-		######### CALL TO target_trweet_serge
-		call_target = database.cursor()
-		call_target.execute("SELECT id, target_and_query, owners, last_launch FROM target_trweet_serge WHERE active >= 1")
-		rows = call_target.fetchall()
-		call_target.close()
-
-		target_list = []
-
-		for row in rows:
-			target_list.append(row)
-
 		######### SORT LISTS
-		search_list = sorted(search_list, key= lambda search_attributes : search_attributes[5])
-		target_list = sorted(target_list, key= lambda target_attributes : target_attributes[3])
+		search_list = sorted(search_list, key= lambda item : item["last_launch"])
 
 		######### REMAINING CALLS
-		phonebox = rate_limit()
+		rate_limit = rateLimit()
 
-		remaining_search = phonebox[0]
-		remaining_timeline = phonebox[2]
+		remaining_search = rate_limit[0]
+		remaining_timeline = rate_limit[2]
 
 		calls_research_count = 0
 		calls_timeline_count = 0
 
-		######### CALL TO target_trweet_serge
-		call_target = database.cursor()
-		call_target.execute("SELECT id, target_and_query, owners, last_launch FROM target_trweet_serge WHERE active >= 1")
-		rows = call_target.fetchall()
-		call_target.close()
-
-		target_list = []
-
-		for row in rows:
-			target_list.append(row)
-
-		######### SORT LISTS
-		search_list = sorted(search_list, key= lambda search_attributes : search_attributes[5])
-		target_list = sorted(target_list, key= lambda target_attributes : target_attributes[3])
-
-		######### REMAINING CALLS
-		phonebox = rate_limit()
-
-		remaining_search = phonebox[0]
-		remaining_timeline = phonebox[2]
-
-		calls_research_count = 0
-		calls_timeline_count = 0
-
-		######### DEFINING OF THE PATH
-		for attributes in search_list:
-			geo = attributes[3]
-
-			if geo == 1:
+		######### RESEARCH PATH
+		for inquiry in search_list:
+			if inquiry["type"] == "plain":
 
 				if calls_research_count <= remaining_search:
-					trweetFishing(attributes)
+					trweetFishing(inquiry)
 
 				elif calls_research_count > remaining_search:
 					logger_info.info("RATE LIMIT OF RESEARCH METHOD REACHED\n\n")
 
-			elif geo == 0:
+			elif inquiry["type"] == "geo":
 
 				if calls_research_count <= remaining_search:
-					lakesOfTrweets(attributes)
+					lakesOfTrweets(inquiry)
 
 				elif calls_research_count > remaining_search:
 					logger_info.info("RATE LIMIT OF RESEARCH METHOD REACHED\n\n")
 
 			calls_research_count = calls_research_count + 1
 
-		for attributes in target_list:
+		elif inquiry["type"] == "target":
 
-			if calls_timeline_count <= remaining_timeline:
-				trweetTorrent(attributes)
+				if calls_timeline_count <= remaining_timeline:
+					trweetTorrent(inquiry)
 
-			elif calls_timeline_count > remaining_timeline:
-				logger_info.info("RATE LIMIT OF TIMELINE METHOD REACHED\n\n")
+				elif calls_timeline_count > remaining_timeline:
+					logger_info.info("RATE LIMIT OF TIMELINE METHOD REACHED\n\n")
 
-			calls_timeline_count = calls_timeline_count + 1
-
-		logger_info.info("\n\n######### END OF TWITTER EXTENSION EXECUTION \n\n")
-
-		######### DEFINING OF THE PATH
-		for attributes in search_list:
-			geo = attributes[3]
-
-			if geo == 1:
-
-				if calls_research_count <= remaining_search:
-					trweetFishing(attributes)
-
-				elif calls_research_count > remaining_search:
-					logger_info.info("RATE LIMIT OF RESEARCH METHOD REACHED\n\n")
-
-			elif geo == 0:
-
-				if calls_research_count <= remaining_search:
-					lakesOfTrweets(attributes)
-
-				elif calls_research_count > remaining_search:
-					logger_info.info("RATE LIMIT OF RESEARCH METHOD REACHED\n\n")
-
-			calls_research_count = calls_research_count + 1
-
-		for attributes in target_list:
-
-			if calls_timeline_count <= remaining_timeline:
-				trweetTorrent(attributes)
-
-			elif calls_timeline_count > remaining_timeline:
-				logger_info.info("RATE LIMIT OF TIMELINE METHOD REACHED\n\n")
-
-			calls_timeline_count = calls_timeline_count + 1
+				calls_timeline_count = calls_timeline_count + 1
 
 		logger_info.info("\n\n######### END OF TWITTER EXTENSION EXECUTION \n\n")
 
 
-def trweetFishing(attributes):
-	"""The goal of this function is to catch tweets that contains the query saved in the database"""
+def trweetFishing(inquiry):
+	"""The goal of this function is to catch tweets that contains the inquiry saved in the database"""
 
 	########### CONNECTION TO TWITTER API
 	api = twitterConnection()
 
 	########### CONNECTION TO SERGE DATABASE
-	database = databaseConnection()
+	database = limitedConnection()
 
-	query_id = attributes[0]
-	query = attributes[1]
-	owners = attributes[2]
-	lang = attributes[4]
+	########### USEFUL VARIABLES
+	fishing_time = time.time()
+	inquiry_id_comma2 = ","+str(inquiry["id"])+","
 
-	query_id_comma2 = ","+str(query_id)+","
-
-	if lang is None:
-		chirp_list = api.search(q = query, count = 100, show_user = True)
+	########### RESEARCH PLAIN TWEETS
+	if inquiry["language"] is None:
+		chirp_list = api.search(q = inquiry["inquiry"], count = 100, show_user = True)
 
 	else:
-		chirp_list = api.search(q = query, lang = lang , count = 100, show_user = True)
+		chirp_list = api.search(q = inquiry["inquiry"], lang = inquiry["language"] , count = 100, show_user = True)
 
-	fishing_time = time.time()
 
 	for trweet in chirp_list:
 
@@ -234,42 +190,38 @@ def trweetFishing(attributes):
 		link = "https://twitter.com/"+str(pseudo)+"/status/"+str(tweet_id)+"/"
 
 		########### SEARCH TRWEET QUERIES
-		query_checking = ("SELECT query_id, owners FROM result_trweet_serge WHERE link = %s")
-		query_update = ("UPDATE result_trweet_serge SET query_id = %s, owners = %s WHERE link = %s")
-		query_insertion = ("INSERT INTO result_trweet_serge (query_id, owners, author, tweet, date, likes, retweets, link) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
-		query_fishing_time = ("UPDATE queries_trweet_serge SET last_launch = %s WHERE id = %s")
+		query_checking = ("SELECT inquiry_id, owners FROM results_plain_trweet_serge WHERE link = %s")
+		query_update = ("UPDATE results_plain_trweet_serge SET inquiry_id = %s, owners = %s WHERE link = %s")
+		query_insertion = ("INSERT INTO results_plain_trweet_serge (inquiry_id, owners, author, tweet, date, likes, retweets, link) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
+		query_fishing_time = ("UPDATE inquiries_trweet_serge SET last_launch = %s WHERE id = %s")
 
 		########### ITEM BUILDING
-		item = (query_id_comma2, owners, author, tweet, date, likes, retweets, link)
+		item = (inquiry_id_comma2, inquiry["owners"], author, tweet, date, likes, retweets, link)
 		geo_species = False
 
 		########### CALL trweetBucket FUNCTION
-		trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database)
+		trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time)
 
 
-def lakesOfTrweets(attributes):
-	"""The goal of this function is to catch geolocalisation data in tweets that contains the query saved in the database"""
+def lakesOfTrweets(inquiry):
+	"""The goal of this function is to catch geolocalisation data in tweets that contains the inquiry saved in the database"""
 
 	########### CONNECTION TO TWITTER API
 	api = twitterConnection()
 
 	########### CONNECTION TO SERGE DATABASE
-	database = databaseConnection()
+	database = limitedConnection()
 
-	query_id = attributes[0]
-	query = attributes[1]
-	owners = attributes[2]
-	lang = attributes[4]
+	########### USEFUL VARIABLES
+	fishing_time = time.time()
+	inquiry_id_comma2 = ","+str(inquiry["id"])+","
 
-	query_id_comma2 = ","+str(query_id)+","
-
-	if lang is None:
-		shoal = api.search(q = query, count = 100, show_user = False)
+	########### RESEARCH GEOLOCALIZED TWEETS
+	if inquiry["language"] is None:
+		shoal = api.search(q = inquiry["inquiry"], count = 100, show_user = False)
 
 	else:
-		shoal = api.search(q = query, lang = lang , count = 100, show_user = False)
-
-	fishing_time = time.time()
+		shoal = api.search(q = inquiry["inquiry"], lang = inquiry["language"] , count = 100, show_user = False)
 
 	for trweet in shoal :
 
@@ -313,69 +265,76 @@ def lakesOfTrweets(attributes):
 			center_longitude = (center_longitude/4)
 
 			########### SEARCH TRWEET QUERIES
-			query_checking = ("SELECT query_id, owners FROM geo_trweet_serge WHERE trweet_id = %s")
-			query_update = ("UPDATE geo_trweet_serge SET query_id = %s, owners = %s WHERE trweet_id = %s")
-			query_insertion = ("INSERT INTO geo_trweet_serge (query_id, owners, trweet_id, latitude, longitude, country, `date`) VALUES (%s, %s, %s, %s, %s, %s, %s)")
-			query_fishing_time = ("UPDATE queries_trweet_serge SET last_launch = %s WHERE id = %s")
+			query_checking = ("SELECT inquiry_id, owners FROM results_geo_trweet_serge WHERE trweet_id = %s")
+			query_update = ("UPDATE results_geo_trweet_serge SET inquiry_id = %s, owners = %s WHERE trweet_id = %s")
+			query_insertion = ("INSERT INTO results_geo_trweet_serge (inquiry_id, owners, trweet_id, latitude, longitude, country, `date`) VALUES (%s, %s, %s, %s, %s, %s, %s)")
+			query_fishing_time = ("UPDATE inquiries_trweet_serge SET last_launch = %s WHERE id = %s")
 
 			########### ITEM BUILDING
-			item = (query_id, owners, trweet_id, latitude, longitude, country, date)
+			item = (inquiry_id_comma2, inquiry["owners"], trweet_id, latitude, longitude, country, date)
 			geo_species = True
 
 			########### CALL trweetBucket FUNCTION
 			trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database)
 
 
-def trweetTorrent(attributes):
+def trweetTorrent(inquiry):
 	"""The goal of this function is to catch entire timelines or specific tweets in timeline"""
 
 	########### CONNECTION TO TWITTER API
 	api = twitterConnection()
 
 	########### CONNECTION TO SERGE DATABASE
-	database = databaseConnection()
+	database = limitedConnection()
 
-	query_id = attributes[0]
-	target_and_query = attributes[1]
-	owners = attributes[2]
-	last_launch = attributes[3]
+	########### USEFUL VARIABLES
+	target_owners_str = ","
+	target_owners_list = []
+	inquiry_id_comma2 = ","+str(inquiry["id"])+","
 
-	target_and_query = target_and_query.split("|")
-	target = target_and_query[0]
-	query = target_and_query[1]
+	########### RESEARCH TARGETS TIMELINES
+	for target in inquiry["targets"]:
+		raw_target_owners = re.findall('[^!@A-Za-z0-9_]'+'[0-9]*'+":"+'[@A-Za-z0-9_!,]*'+","+target+",", inquiry["applicable_owners_targets"])
 
-	query_id_comma = str(query_id)+","
-	query_id_comma2 = ","+str(query_id)+","
+		for target_owners in raw_target_owners:
+			target_owners = (target_owners.replace("|", "").strip().split(":"))[0]
+			target_owners_str = target_owners_str + target_owners
+			target_owners_list.append(target_owners)
 
-	timeline = api.user_timeline(id = target, count = 50)
+		timeline = api.user_timeline(id = target, count = 50)
 
-	fishing_time = time.time()
+		fishing_time = time.time()
 
-	for trweet in timeline :
+		for trweet in timeline :
+			author = trweet.author.name.encode("utf8")
+			date = trweet.created_at
+			tweet = trweet.text.encode("utf8")
+			retweets = trweet.retweet_count
+			likes = trweet.favorite_count
+			tweet_id = trweet.id
+			pseudo = trweet.author.screen_name.encode("utf8")
+			link = "https://twitter.com/"+str(pseudo)+"/status/"+str(tweet_id)+"/"
 
-		author = trweet.author.name.encode("utf8")
-		date = trweet.created_at
-		tweet = trweet.text.encode("utf8")
-		retweets = trweet.retweet_count
-		likes = trweet.favorite_count
-		tweet_id = trweet.id
-		pseudo = trweet.author.screen_name.encode("utf8")
-		link = "https://twitter.com/"+str(pseudo)+"/status/"+str(tweet_id)+"/"
+			########### AGGREGATED INQUIRIES FORMAT SUPPORT
+			aggregated_inquiries = toolbox.aggregatesSupport(inquiry["inquiry"])
 
-		if (re.search('[^a-z]'+re.escape(query)+'.{0,3}(\W|$)', tweet, re.IGNORECASE) or re.search('^'+re.escape(':all'), query, re.IGNORECASE)) and owners is not None:
+			for fragments in aggregated_inquiries:
+				if (re.search('[^a-z]'+re.escape(aggregated_inquiries)+'.{0,3}(\W|$)', tweet, re.IGNORECASE) or re.search('^'+re.escape(':all')+'$', inquiry["inquiry"], re.IGNORECASE)) and target_owners is not None:
+					fragments_nb += 1
 
-			########### SEARCH TRWEET QUERIES
-			query_checking = ("SELECT query_id, owners FROM timeline_trweet_serge WHERE link = %s")
-			query_update = ("UPDATE timeline_trweet_serge SET query_id = %s, owners = %s WHERE link = %s")
-			query_insertion = ("INSERT INTO timeline_trweet_serge (query_id, owners, author, tweet, date, likes, retweets, link) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
-			query_fishing_time = ("UPDATE target_trweet_serge SET last_launch = %s WHERE id = %s")
+			if fragments_nb == len(aggregated_inquiries):
+				########### SEARCH TRWEET QUERIES
+				query_checking = ("SELECT query_id, owners FROM results_targets_trweet_serge WHERE link = %s")
+				query_update = ("UPDATE results_targets_trweet_serge SET query_id = %s, owners = %s WHERE link = %s")
+				query_insertion = ("INSERT INTO results_targets_trweet_serge (query_id, owners, author, tweet, date, likes, retweets, link) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
+				query_fishing_time = ("UPDATE inquiries_trweet_serge SET last_launch = %s WHERE id = %s")
 
-			########### ITEM BUILDING
-			item = (query_id_comma2, owners, author, tweet, date, likes, retweets, link)
-			geo_species = False
+				########### ITEM BUILDING
+				item = (inquiry_id_comma2, target_owners_str, author, tweet, date, likes, retweets, link)
+				geo_species = False
 
-			########### CALL trweetBucket FUNCTION
-			trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database)
+				########### CALL trweetBucket FUNCTION
+				trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database)
 
 
 def trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database):
