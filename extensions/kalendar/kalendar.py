@@ -135,32 +135,36 @@ def kalendarExplorer():
 					attribution = {"owner": ","+couple_owners_sources[0]+",", "owner_comma": ","+couple_owners_sources[0]+",", "sources": couple_owners_sources[1], "inquiry_id": None, "inquiry": None}
 
 				if attribution["owner_comma"] in calendar["owners"] and calendar["id_comma"] in attribution["sources"]:
-					aggregated_keywords = toolbox.multikey(inquiry["inquiry"])
-					attribution["inquiry"] = aggregated_keywords
+					aggregated_inquiries = toolbox.aggregatesSupport(inquiry["inquiry"])
+					attribution["inquiry"] = aggregated_inquiries
 					attribution["inquiry_id"] = ","+inquiry["id"]+","
 					attribution_list.append(attribution)
 
 		######### KEYWORDS RESEARCH IN CALENDAR
 		for attribution in attribution_list:
 			for event in event_list:
-				for splitkey in aggregated_keywords:
-					if (re.search('[^a-z]'+re.escape(splitkey)+'.{0,3}(\W|$)', event["name"], re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey)+'.{0,3}(\W|$)', event["date"], re.IGNORECASE) or re.search('[^a-z]'+re.escape(splitkey)+'.{0,3}(\W|$)', event["location"], re.IGNORECASE)) and attribution["owner"] is not None:
+				fragments_nb = 0
 
-						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT inquiry_id, owners FROM results_kalendar_serge WHERE name = %s AND `date` = %s AND location = %s")
+				for fragments in aggregated_inquiries:
+					if (re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', event["name"], re.IGNORECASE) or re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', event["date"], re.IGNORECASE) or re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', event["location"], re.IGNORECASE)) and attribution["owner"] is not None:
+						fragments_nb += 1
 
-						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO results_kalendar_serge (name, date, location, description, id_source, inquiry_id, owners) VALUES (%s, %s, %s, %s, %s, %s, %s)")
+				if fragments_nb == len(aggregated_inquiries):
+					########### QUERY FOR DATABASE CHECKING
+					query_checking = ("SELECT inquiry_id, owners FROM results_kalendar_serge WHERE name = %s AND `date` = %s AND location = %s")
 
-						########### QUERIES FOR DATABASE UPDATE
-						query_update = ("UPDATE results_kalendar_serge SET inquiry_id = %s, owners = %s WHERE name = %s")
+					########### QUERY FOR DATABASE INSERTION
+					query_insertion = ("INSERT INTO results_kalendar_serge (name, date, location, description, id_source, inquiry_id, owners) VALUES (%s, %s, %s, %s, %s, %s, %s)")
 
-						########### ITEM BUILDING
-						event["name"] = toolbox.escaping(event["name"])
-						item = (event["name"], event["date"], event["location"], event["description"], calendar["id"], attribution["inquiry_id"], attribution["owner"])
+					########### QUERIES FOR DATABASE UPDATE
+					query_update = ("UPDATE results_kalendar_serge SET inquiry_id = %s, owners = %s WHERE name = %s")
 
-						########### CALL insertOrUpdate FUNCTION
-						saveTheDate(query_checking, query_insertion, query_update, item)
+					########### ITEM BUILDING
+					event["name"] = toolbox.escaping(event["name"])
+					item = (event["name"], event["date"], event["location"], event["description"], calendar["id"], attribution["inquiry_id"], attribution["owner"])
+
+					########### CALL insertOrUpdate FUNCTION
+					saveTheDate(query_checking, query_insertion, query_update, item)
 
 
 def saveTheDate(query_checking, query_insertion, query_update, item):
