@@ -72,29 +72,123 @@ def voyager(newscast_args):
 
 		inquiries_list = []
 
+		######### CREATE OWNERS LIST FOR COUPLE INQUIRY-SOURCE
 		for row in rows:
 			owners_str = ","
-			sources_str = ","
-			owners_list = []
-			sources_list = []
+			raw_owners = re.findall('[^!A-Za-z0-9]'+'[0-9]*'+":"+'[0-9!,]*'+","+newscast_args["source_id"]+",", row[2])
 
-			for applicable_owners_sources in row[2].split("|"):
-				if applicable_owners_sources != "":
-					split_owners_sources = applicable_owners_sources.split(":")
-					if split_owners_sources[0] != "" or "!" not in split_owners_sources[0]:
-						owners_list.append(split_owners_sources[0])
+			for owner in raw_owners:
+				owner = (owner.replace("|", "").strip().split(":"))[0]
+				owners_str = (owners_str + owner + ",").strip()
 
-			owners_list = list(set(owners_list))
-			sources_list = list(set(sources_list))
+			if re.search('^([,]{1}[0-9]+)*[,]{1}$', owners_str) is not None:
+				field = {"inquiry_id":row[0], "inquiry": row[1].strip(), "owners": owners_str}
+				inquiries_list.append(field)
 
-			for owner in owners_list:
-				owners_str = owners_str + owner + ","
+		########### RSS PARSING AND ANALYZE
+		if feed_error is False and len(inquiries_list) > 0:
+			try:
+				xmldoc = feedparser.parse(rss)
+			except Exception, except_type:
+				logger_error.error("PARSING ERROR IN :"+newscast_args["source_link"]+"\n")
+				logger_error.error(repr(except_type))
 
-			for source in sources_list:
-				sources_str = sources_str + source + ","
+			########### RSS ANALYZE
+			rangemax_article = len(xmldoc.entries)
+			range_article = 0
 
-			field = {"inquiry_id":row[0], "inquiry": row[1].strip(), "owners": owners_str.strip(), "sources": sources_str.strip()}
-			inquiries_list.append(field)
+			########### RECOVERY OF ARTICLE'S ATTRIBUTES
+			while range_article < rangemax_article and range_article < 500:
+				try:
+					post_title = (xmldoc.entries[range_article].title).strip()
+					if post_title == "":
+						post_title = "NO TITLE"
+				except (AttributeError, title == ""):
+					logger_error.warning("BEACON ERROR : missing <title> in "+newscast_args["source_link"])
+					logger_error.warning(traceback.format_exc())
+					post_title = "NO TITLE"
+
+				try:
+					post_description = (xmldoc.entries[range_article].description).strip()
+				except AttributeError:
+					logger_error.warning("BEACON ERROR : missing <description> in "+newscast_args["source_link"])
+					logger_error.warning(traceback.format_exc())
+					post_description = ""
+
+				try:
+					post_link = xmldoc.entries[range_article].link
+				except AttributeError:
+					logger_error.warning("BEACON ERROR : missing <link> in "+newscast_args["source_link"])
+					logger_error.warning(traceback.format_exc())
+					post_link = ""
+
+				try:
+					post_date = xmldoc.entries[range_article].published_parsed
+					post_date = time.mktime(post_date)
+				except:
+					logger_error.warning("BEACON ERROR : missing <date> in "+newscast_args["source_link"])
+					logger_error.warning(traceback.format_exc())
+					post_date = newscast_args["now"]
+
+				try:
+					post_tags = xmldoc.entries[range_article].tags
+				except AttributeError:
+					post_tags = []
+
+				try:
+					tagdex = 0
+					tags_string = ""
+
+					while tagdex < len(post_tags):
+						tags_string = tags_string + xmldoc.entries[range_article].tags[tagdex].term.lower() + " "
+						tagdex = tagdex+1
+				except:
+					tags_string = ""
+
+				########### SEARCH FOR NEWS CORRESPONDING TO INQUIRIES
+				for inquiry in inquiries_list:
+					fragments_nb = 0
+					inquiry_id_comma = str(inquiry["inquiry_id"]) + ","
+					inquiry_id_comma2 = "," + str(inquiry["inquiry_id"]) + ","
+					inquiry["inquiry"] = inquiry["inquiry"].replace("[!ALERT!]", "").strip()
+
+					########### AGGREGATED INQUIRIES FORMAT SUPPORT
+					aggregated_inquiries = toolbox.aggregatesSupport(inquiry["inquiry"])
+
+					for fragments in aggregated_inquiries:
+						if (re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', tags_string, re.IGNORECASE)) and inquiry["owners"] is not None:
+							fragments_nb += 1
+
+					if fragments_nb == len(aggregated_inquiries):
+
+						########### QUERY FOR DATABASE CHECKING
+						query_checking = ("SELECT inquiry_id, owners FROM results_news_serge WHERE link = %s AND title = %s")
+						query_link_checking = ("SELECT inquiry_id, owners FROM results_news_serge WHERE link = %s")
+						query_jellychecking = ("SELECT title, link, inquiry_id, owners FROM results_news_serge WHERE source_id = %s AND `date` BETWEEN %s AND (%s+43200)")
+
+						########### QUERY FOR DATABASE INSERTION
+						query_insertion = ("INSERT INTO results_news_serge (title, link, date, source_id, inquiry_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
+
+						########### QUERY FOR DATABASE UPDATE
+						query_update = ("UPDATE results_news_serge SET inquiry_id = %s, owners = %s WHERE link = %s")
+						query_update_title = ("UPDATE results_news_serge SET title = %s, inquiry_id = %s, owners = %s WHERE link = %s")
+						query_jelly_update = ("UPDATE results_news_serge SET title = %s, link = %s, inquiry_id = %s, owners = %s WHERE link = %s")
+
+						########### LINK VALIDATION
+						post_link = failDetectorPack.failUniversalCorrectorKit(post_link, newscast_args["source_id"])
+
+						if post_link is not None:
+							########### ITEM BUILDING
+							post_title = toolbox.escaping(post_title)
+							item = (post_title, post_link, post_date, newscast_args["source_id"], inquiry_id_comma2, inquiry["owners"])
+							item_update = [post_link]
+
+							########### CALL insertOrUpdate FUNCTION
+							insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, inquiry_id_comma, need_jelly)
+
+				range_article = range_article + 1
+
+			range_article = 0
 
 	elif greenlight is False and etag is None:
 		########### INSERT NEW ETAG IN NEWS SOURCES TABLE
@@ -103,115 +197,6 @@ def voyager(newscast_args):
 
 	elif greenlight is False:
 		feed_error = None
-
-	########### LINK CONNEXION
-	if feed_error is False and greenlight is True:
-		missing_flux = False
-
-		########### RSS PARSING
-		try:
-			xmldoc = feedparser.parse(rss)
-		except Exception, except_type:
-			logger_error.error("PARSING ERROR IN :"+newscast_args["source_link"]+"\n")
-			logger_error.error(repr(except_type))
-
-		########### RSS ANALYZE
-		rangemax_article = len(xmldoc.entries)
-		range_article = 0
-
-		while range_article < rangemax_article and range_article < 500:
-
-			########### RECOVERY OF ARTICLE'S ATTRIBUTES
-			try:
-				post_title = (xmldoc.entries[range_article].title).strip()
-				if post_title == "":
-					post_title = "NO TITLE"
-			except (AttributeError, title == ""):
-				logger_error.warning("BEACON ERROR : missing <title> in "+newscast_args["source_link"])
-				logger_error.warning(traceback.format_exc())
-				post_title = "NO TITLE"
-
-			try:
-				post_description = (xmldoc.entries[range_article].description).strip()
-			except AttributeError:
-				logger_error.warning("BEACON ERROR : missing <description> in "+newscast_args["source_link"])
-				logger_error.warning(traceback.format_exc())
-				post_description = ""
-
-			try:
-				post_link = xmldoc.entries[range_article].link
-			except AttributeError:
-				logger_error.warning("BEACON ERROR : missing <link> in "+newscast_args["source_link"])
-				logger_error.warning(traceback.format_exc())
-				post_link = ""
-
-			try:
-				post_date = xmldoc.entries[range_article].published_parsed
-				post_date = time.mktime(post_date)
-			except:
-				logger_error.warning("BEACON ERROR : missing <date> in "+newscast_args["source_link"])
-				logger_error.warning(traceback.format_exc())
-				post_date = newscast_args["now"]
-
-			try:
-				post_tags = xmldoc.entries[range_article].tags
-			except AttributeError:
-				post_tags = []
-
-			try:
-				tagdex = 0
-				tags_string = ""
-
-				while tagdex < len(post_tags):
-					tags_string = tags_string + xmldoc.entries[range_article].tags[tagdex].term.lower() + " "
-					tagdex = tagdex+1
-			except:
-				tags_string = ""
-
-			########### SEARCH FOR NEWS CORRESPONDING TO INQUIRIES
-			for inquiry in inquiries_list:
-				fragments_nb = 0
-				inquiry_id_comma = str(inquiry["inquiry_id"]) + ","
-				inquiry_id_comma2 = "," + str(inquiry["inquiry_id"]) + ","
-				inquiry["inquiry"] = inquiry["inquiry"].replace("[!ALERT!]", "").strip()
-
-				########### AGGREGATED INQUIRIES FORMAT SUPPORT
-				aggregated_inquiries = toolbox.aggregatesSupport(inquiry["inquiry"])
-
-				for fragments in aggregated_inquiries:
-					if (re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', tags_string, re.IGNORECASE)) and inquiry["owners"] is not None:
-						fragments_nb += 1
-
-				if fragments_nb == len(aggregated_inquiries):
-
-					########### QUERY FOR DATABASE CHECKING
-					query_checking = ("SELECT inquiry_id, owners FROM results_news_serge WHERE link = %s AND title = %s")
-					query_link_checking = ("SELECT inquiry_id, owners FROM results_news_serge WHERE link = %s")
-					query_jellychecking = ("SELECT title, link, inquiry_id, owners FROM results_news_serge WHERE source_id = %s AND `date` BETWEEN %s AND (%s+43200)")
-
-					########### QUERY FOR DATABASE INSERTION
-					query_insertion = ("INSERT INTO results_news_serge (title, link, date, source_id, inquiry_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
-
-					########### QUERY FOR DATABASE UPDATE
-					query_update = ("UPDATE results_news_serge SET inquiry_id = %s, owners = %s WHERE link = %s")
-					query_update_title = ("UPDATE results_news_serge SET title = %s, inquiry_id = %s, owners = %s WHERE link = %s")
-					query_jelly_update = ("UPDATE results_news_serge SET title = %s, link = %s, inquiry_id = %s, owners = %s WHERE link = %s")
-
-					########### LINK VALIDATION
-					post_link = failDetectorPack.failUniversalCorrectorKit(post_link, newscast_args["source_id"])
-
-					if post_link is not None:
-						########### ITEM BUILDING
-						post_title = toolbox.escaping(post_title)
-						item = (post_title, post_link, post_date, newscast_args["source_id"], inquiry_id_comma2, inquiry["owners"])
-						item_update = [post_link]
-
-						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, inquiry_id_comma, need_jelly)
-
-			range_article = range_article + 1
-
-		range_article = 0
 
 
 def newspack(register, user_id_comma):

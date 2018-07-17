@@ -288,22 +288,19 @@ def trweetTorrent(inquiry):
 	database = limitedConnection()
 
 	########### USEFUL VARIABLES
-	target_owners_str = ","
-	target_owners_list = []
+	fishing_time = time.time()
 	inquiry_id_comma2 = ","+str(inquiry["id"])+","
 
 	########### RESEARCH TARGETS TIMELINES
 	for target in inquiry["targets"]:
+		target_owners_str = ","
 		raw_target_owners = re.findall('[^!@A-Za-z0-9_]'+'[0-9]*'+":"+'[@A-Za-z0-9_!,]*'+","+target+",", inquiry["applicable_owners_targets"])
 
-		for target_owners in raw_target_owners:
-			target_owners = (target_owners.replace("|", "").strip().split(":"))[0]
-			target_owners_str = target_owners_str + target_owners
-			target_owners_list.append(target_owners)
+		for target_owner in raw_target_owners:
+			target_owner = (target_owner.replace("|", "").strip().split(":"))[0]
+			target_owners_str = target_owners_str + target_owner + ","
 
 		timeline = api.user_timeline(id = target, count = 50)
-
-		fishing_time = time.time()
 
 		for trweet in timeline :
 			author = trweet.author.name.encode("utf8")
@@ -319,7 +316,7 @@ def trweetTorrent(inquiry):
 			aggregated_inquiries = toolbox.aggregatesSupport(inquiry["inquiry"])
 
 			for fragments in aggregated_inquiries:
-				if (re.search('[^a-z]'+re.escape(aggregated_inquiries)+'.{0,3}(\W|$)', tweet, re.IGNORECASE) or re.search('^'+re.escape(':all')+'$', inquiry["inquiry"], re.IGNORECASE)) and target_owners is not None:
+				if (re.search('[^a-z]'+re.escape(aggregated_inquiries)+'.{0,3}(\W|$)', tweet, re.IGNORECASE) or re.search('^'+re.escape(':all')+'$', inquiry["inquiry"], re.IGNORECASE)) and re.search('^([,]{1}[A-Za-z0-9@_]+)*[,]{1}$', owners_str) is not None:
 					fragments_nb += 1
 
 			if fragments_nb == len(aggregated_inquiries):

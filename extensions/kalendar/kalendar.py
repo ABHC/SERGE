@@ -132,7 +132,7 @@ def kalendarExplorer():
 			for couple_owners_sources in applicable_owners_sources:
 				if couple_owners_sources != "":
 					couple_owners_sources = couple_owners_sources.split(":")
-					attribution = {"owner": ","+couple_owners_sources[0]+",", "owner_comma": ","+couple_owners_sources[0]+",", "sources": couple_owners_sources[1], "inquiry_id": None, "inquiry": None}
+					attribution = {"owner": couple_owners_sources[0], "owner_comma": ","+couple_owners_sources[0]+",", "sources": couple_owners_sources[1], "inquiry_id": None, "inquiry": None}
 
 				if attribution["owner_comma"] in calendar["owners"] and calendar["id_comma"] in attribution["sources"]:
 					aggregated_inquiries = toolbox.aggregatesSupport(inquiry["inquiry"])

@@ -57,30 +57,7 @@ def rosetta(now):
 	inquiries_list = []
 
 	for row in rows:
-		owners_str = ","
-		sources_str = ","
-		owners_list = []
-		sources_list = []
-
-		for applicable_owners_sources in row[2].split("|"):
-			if applicable_owners_sources != "":
-				split_owners_sources = applicable_owners_sources.split(":")
-				if split_owners_sources[0] != "" or "!" not in split_owners_sources[0]:
-					owners_list.append(split_owners_sources[0])
-					for source in split_owners_sources[1].split(","):
-						if source != "" or "!" not in source:
-							sources_list.append(source)
-
-		owners_list = list(set(owners_list))
-		sources_list = list(set(sources_list))
-
-		for owner in owners_list:
-			owners_str = owners_str + owner + ","
-
-		for source in sources_list:
-			sources_str = sources_str + source + ","
-
-		field = {"inquiry_id":row[0], "inquiry": row[1].strip(), "owners": owners_str.strip(), "sources": sources_str.strip()}
+		field = {"inquiry_id":row[0], "inquiry": row[1].strip(), "applicable_owners_sources": row[2].strip()}
 		inquiries_list.append(field)
 
 	######### BUILDING REQUEST FOR SCIENCE API
@@ -88,10 +65,18 @@ def rosetta(now):
 		request_dictionnary = transcriber.requestBuilder(inquiry["inquiry"], inquiry["inquiry_id"], builder_queries)
 
 		for science_api_pack in request_dictionnary.values():
-			source_comparator = ","+science_api_pack["source_id"]+","
+			owners_str = ","
+
+			######### CREATE OWNERS LIST FOR COUPLE INQUIRY-SOURCE
+			source_comparator = re.search('[0-9!,]*'+","+science_api_pack["source_id"]+",", inquiry["applicable_owners_sources"])
+			raw_owners = re.findall('[^!A-Za-z0-9]'+'[0-9]*'+":"+'[0-9!,]*'+","+science_api_pack["source_id"]+",", inquiry["applicable_owners_sources"])
+
+			for owner in raw_owners:
+				owner = (owner.replace("|", "").strip().split(":"))[0]
+				owners_str = (owners_str + owner + ",").strip()
 
 			######### RESEARCH SCIENCE ON RSS FEEDS WITH FEEDPARSER MODULE
-			if science_api_pack["type"] == "RSS" and source_comparator in inquiry["sources"]:
+			if science_api_pack["type"] == "RSS" and source_comparator is not None and re.search('^([,]{1}[0-9]+)*[,]{1}$', owners_str) is not None:
 				logger_info.info(science_api_pack["inquiry_raw"].encode("utf8")+"\n")
 				req_results = sergenet.aLinkToThePast(science_api_pack["inquiry_link"], 'fullcontent')
 				feed_content = req_results[0]
@@ -158,7 +143,7 @@ def rosetta(now):
 
 								########### ITEM BUILDING
 								post_title = escaping(post_title)
-								item = (post_title, post_link, post_date, science_api_pack["source_id"], inquiry_id_comma2, inquiry["owners"])
+								item = (post_title, post_link, post_date, science_api_pack["source_id"], inquiry_id_comma2, owners_str)
 								item_update = [post_link]
 
 								########### CALL insertOrUpdate FUNCTION
@@ -170,7 +155,7 @@ def rosetta(now):
 					logger_info.warning("Error : the feed is unavailable")
 
 			######### RESEARCH SCIENCE ON JSON FEEDS WITH JSON MODULE
-			elif science_api_pack["type"] == "JSON" and source_comparator in inquiry["sources"]:
+			elif science_api_pack["type"] == "JSON" and source_comparator is not None re.search('^([,]{1}[0-9]+)*[,]{1}$', owners_str) is not None:
 				logger_info.info(science_api_pack["inquiry_raw"].encode("utf8")+"\n")
 				req_results = sergenet.aLinkToThePast(science_api_pack["inquiry_link"], 'fullcontent')
 				json_content = req_results[0]
@@ -236,7 +221,7 @@ def rosetta(now):
 
 								########### ITEM BUILDING
 								post_title = escaping(post_title)
-								item = (post_title, post_link, post_date, science_api_pack["source_id"], inquiry_id_comma2, inquiry["owners"])
+								item = (post_title, post_link, post_date, science_api_pack["source_id"], inquiry_id_comma2, owners_str)
 								item_update = [post_link]
 
 								########### CALL  FUNCTION

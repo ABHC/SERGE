@@ -58,30 +58,7 @@ def pathfinder(now):
 
 	######### REBUILD OWNERS AND SOURCES LISTS
 	for row in rows:
-		owners_str = ","
-		sources_str = ","
-		owners_list = []
-		sources_list = []
-
-		for applicable_owners_sources in row[2].split("|"):
-			if applicable_owners_sources != "":
-				split_owners_sources = applicable_owners_sources.split(":")
-				if split_owners_sources[0] != "" or "!" not in split_owners_sources[0]:
-					owners_list.append(split_owners_sources[0])
-					for source in split_owners_sources[1].split(","):
-						if source != "" or "!" not in source:
-							sources_list.append(source)
-
-		owners_list = list(set(owners_list))
-		sources_list = list(set(sources_list))
-
-		for owner in owners_list:
-			owners_str = owners_str + owner + ","
-
-		for source in sources_list:
-			sources_str = sources_str + source + ","
-
-		field = {"inquiry_id":row[0], "inquiry": row[1].strip(), "owners": owners_str.strip(), "sources": sources_str.strip(), "legal_research": legal_research}
+		field = {"inquiry_id":row[0], "inquiry": row[1].strip(), "applicable_owners_sources": row[2].strip(), "legal_research": legal_research}
 		inquiries_list.append(field)
 
 	######### PATENTS RESEARCH
@@ -89,9 +66,18 @@ def pathfinder(now):
 		request_dictionnary = transcriber.requestBuilder(inquiry["inquiry"], inquiry["inquiry_id"], builder_queries)
 
 		for patents_api_pack in request_dictionnary:
-			source_comparator = ","+patents_api_pack["source_id"]+","
+			owners_str = ","
 
-			if patents_api_pack["type"] == "RSS" and source_comparator in inquiry["sources"]:
+			######### CREATE OWNERS LIST FOR COUPLE INQUIRY-SOURCE
+			source_comparator = re.search('[0-9!,]*'+","+patents_api_pack["source_id"]+",", inquiry["applicable_owners_sources"])
+			raw_owners = re.findall('[^!A-Za-z0-9]'+'[0-9]*'+":"+'[0-9!,]*'+","+patents_api_pack["source_id"]+",", inquiry["applicable_owners_sources"])
+
+			for owner in raw_owners:
+				owner = (owner.replace("|", "").strip().split(":"))[0]
+				owners_str = owners_str + owner + ","
+
+			######### RESEARCH PATENTS ON RSS FEEDS WITH FEEDPARSER MODULE
+			if patents_api_pack["type"] == "RSS" and source_comparator is not None re.search('^([,]{1}[0-9]+)*[,]{1}$', owners_str) is not None:
 				logger_info.info(patents_api_pack["inquiry_raw"]+"\n")
 				req_results = sergenet.aLinkToThePast(link, 'fullcontent')
 				feed_content = req_results[0]
@@ -148,7 +134,8 @@ def pathfinder(now):
 								inquiry_id_comma2 = ","+str(inquiry["inquiry_id"])+","
 
 								######### LEGAL STATUS RESEARCH
-								legal_dataset = legalScrapper(post_link, inquiry, now)
+								legal_args = {"post_link": post_link, "owners": owners_str, "now": now}
+								legal_dataset = legalScrapper(legal_args, inquiry)
 
 								########### QUERY FOR DATABASE CHECKING
 								query_checking = ("SELECT inquiry_id, owners FROM results_patents_serge WHERE link = %s AND title = %s")
@@ -165,7 +152,7 @@ def pathfinder(now):
 
 								########### ITEM BUILDING
 								post_title = escaping(post_title)
-								item = (post_title, post_link, post_date, patents_api_pack["source_id"], inquiry_id_comma2, inquiry["owners"], legal_dataset["legal_abstract"], legal_dataset["legal_status"], legal_dataset["lens_link"], legal_dataset["new_check_date"])
+								item = (post_title, post_link, post_date, patents_api_pack["source_id"], inquiry_id_comma2, owners_str, legal_dataset["legal_abstract"], legal_dataset["legal_status"], legal_dataset["lens_link"], legal_dataset["new_check_date"])
 								item_update = [legal_dataset["legal_abstract"], legal_dataset["legal_status"], legal_dataset["lens_link"], legal_dataset["new_check_date"], post_link]
 
 								########### CALL insertOrUpdate FUNCTION
@@ -229,7 +216,7 @@ def patentspack(register, user_id_comma):
 	return items_list
 
 
-def legalScrapper(post_link, inquiry, now):
+def legalScrapper(legal_args, inquiry):
 	"""Scrapper for searchin patents publication number on WIPO and legal status on Patent Lens"""
 
 	########### CONNECTION TO SERGE DATABASE
@@ -242,7 +229,7 @@ def legalScrapper(post_link, inquiry, now):
 	query_presence_checking = ("SELECT legal_check_date, owners FROM results_patents_serge WHERE link = %s")
 
 	call_results_patents = database.cursor()
-	call_results_patents.execute(query_presence_checking, (post_link, ))
+	call_results_patents.execute(query_presence_checking, (legal_args["post_link"], ))
 	presence_checking = call_results_patents.fetchone()
 	call_results_patents.close()
 
@@ -257,10 +244,10 @@ def legalScrapper(post_link, inquiry, now):
 		legal_check_date = float(legal_check_date)
 
 	######### LEGAL STATUS RESEARCH
-	if (inquiry["legal_research"] == 1 or inquiry["legal_research"] == 2) and inquiry["owners"] != "," and (legal_check_date is None or (legal_check_date+15552000) <= now) :
+	if (inquiry["legal_research"] == 1 or inquiry["legal_research"] == 2) and legal_args["owners"] != "," and (legal_check_date is None or (legal_check_date+15552000) <= legal_args["now"]) :
 
 		######### GO TO WIPO WEBSITE
-		req_results = sergenet.aLinkToThePast(post_link, 'rss')
+		req_results = sergenet.aLinkToThePast(legal_args["post_link"], 'rss')
 		wipo_rss = req_results[0]
 
 		######### PARSE HTML
