@@ -22,6 +22,7 @@ CREATE TABLE `sources_sciences_serge` (
 	`publisher` text COLLATE utf8mb4_bin DEFAULT NULL,
 	`category` text COLLATE utf8mb4_bin DEFAULT NULL,
 	`all` text COLLATE utf8mb4_bin DEFAULT NULL,
+	`owners` VARCHAR(8000) COLLATE utf8mb4_bin DEFAULT ',',
 	`active` int(11) NOT NULL,
 	PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;

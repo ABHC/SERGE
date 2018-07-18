@@ -80,6 +80,7 @@ CREATE TABLE `sources_patents_serge` (
 	`french_claims` text COLLATE utf8mb4_bin DEFAULT NULL,
 	`french_description` text COLLATE utf8mb4_bin DEFAULT NULL,
 	`french_title` text COLLATE utf8mb4_bin DEFAULT NULL,
+	`owners` VARCHAR(8000) COLLATE utf8mb4_bin DEFAULT ',',
 	`active` int(11) NOT NULL,
 	PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;

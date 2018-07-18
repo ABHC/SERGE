@@ -7,6 +7,7 @@ CREATE TABLE `sources_news_serge` (
 	`name` text COLLATE utf8mb4_bin DEFAULT NULL,
 	`favicon` blob,
 	`etag` text COLLATE utf8mb4_bin DEFAULT NULL,
+	`owners` VARCHAR(8000) COLLATE utf8mb4_bin DEFAULT ',',
 	`active` int(11) NOT NULL,
 	PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
