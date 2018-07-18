@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+sources_news_serge# -*- coding: utf-8 -*-
 
 """insertSQL contains all the functions related to the insertion of datas in SERGE database."""
 
@@ -14,7 +14,7 @@ from handshake import databaseConnection
 
 
 def ofSourceAndName(now):
-	"""ofSourceAndName check the field 'name' in rss_serge and fill it if empty or update it"""
+	"""ofSourceAndName check the field 'name' in sources_news_serge and fill it if empty or update it"""
 
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
@@ -27,7 +27,7 @@ def ofSourceAndName(now):
 
 	######### NUMBER OF SOURCES
 	call_rss = database.cursor()
-	call_rss.execute("SELECT COUNT(id) FROM rss_serge")
+	call_rss.execute("SELECT COUNT(id) FROM sources_news_serge")
 	max_rss = call_rss.fetchone()
 	call_rss.close()
 
@@ -55,7 +55,7 @@ def ofSourceAndName(now):
 	######### BIMENSUAL REFRESH
 	if interval >= 5097600:
 		while num <= max_rss:
-			query = ("SELECT link FROM rss_serge WHERE id = %s")
+			query = ("SELECT link FROM sources_news_serge WHERE id = %s")
 
 			call_rss = database.cursor()
 			call_rss.execute(query, (num, ))
@@ -85,7 +85,7 @@ def ofSourceAndName(now):
 					logger_info.warning("NO TITLE IN :"+link+"\n")
 					source_title = None
 
-				update = ("UPDATE rss_serge SET name = %s WHERE id = %s")
+				update = ("UPDATE sources_news_serge SET name = %s WHERE id = %s")
 
 				update_rss = database.cursor()
 
@@ -114,7 +114,7 @@ def ofSourceAndName(now):
 
 			########### FAVICON UPDATE
 			if icon_error is False:
-				update_favicon = ("UPDATE rss_serge SET favicon = %s WHERE id = %s")
+				update_favicon = ("UPDATE sources_news_serge SET favicon = %s WHERE id = %s")
 
 				########### LINK UPDATE
 				update_rss = database.cursor()
@@ -150,7 +150,7 @@ def ofSourceAndName(now):
 	else:
 		while num <= max_rss:
 
-			query = ("SELECT link, name, favicon FROM rss_serge WHERE id = %s")
+			query = ("SELECT link, name, favicon FROM sources_news_serge WHERE id = %s")
 
 			call_rss = database.cursor()
 			call_rss.execute(query, (num, ))
@@ -186,7 +186,7 @@ def ofSourceAndName(now):
 						logger_info.warning("NO TITLE IN :"+link+"\n")
 						source_title = None
 
-					update = ("UPDATE rss_serge SET name = %s WHERE id = %s")
+					update = ("UPDATE sources_news_serge SET name = %s WHERE id = %s")
 
 					########### UPDATE CALL
 					if source_title != "" and source_title is not None:
@@ -229,7 +229,7 @@ def ofSourceAndName(now):
 
 				########### FAVICON UPDATE
 				if icon_error is False:
-					update_favicon = ("UPDATE rss_serge SET favicon = %s WHERE id = %s")
+					update_favicon = ("UPDATE sources_news_serge SET favicon = %s WHERE id = %s")
 
 					########### UPDATE CALL
 					update_rss = database.cursor()

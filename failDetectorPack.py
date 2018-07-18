@@ -70,7 +70,7 @@ def domainCase(link, source_id):
 	database = databaseConnection()
 
 	######### MISSING DOMAIN CASE
-	query_domain = "SELECT link FROM rss_serge WHERE id = %s"
+	query_domain = "SELECT link FROM sources_news_serge WHERE id = %s"
 
 	call_domain = database.cursor()
 	call_domain.execute(query_domain, (source_id, ))

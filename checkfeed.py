@@ -106,7 +106,7 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 
 	if typeName == "setting":
 		######### CHECK IF THE FEED ALREADY EXIST
-		query_rss = "SELECT owners, active FROM rss_serge WHERE link LIKE %s"
+		query_rss = "SELECT owners, active FROM sources_news_serge WHERE link LIKE %s"
 
 		call_rss = database.cursor()
 		call_rss.execute(query_rss, (link,))
@@ -120,7 +120,7 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 			if user_id_double_comma not in owners:
 				owners = owners + user_id_comma
 				active = active + 1
-				update_rss = ("UPDATE rss_serge SET owners = %s, active = %s WHERE link = %s")
+				update_rss = ("UPDATE sources_news_serge SET owners = %s, active = %s WHERE link = %s")
 
 				update = database.cursor()
 				try:
@@ -135,7 +135,7 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 		else:
 			active = 1
 			rss_item = (link, title, user_id_double_comma, active)
-			query_insertion = ("INSERT INTO rss_serge (link, name, owners, active) VALUES (%s, %s, %s, %s)")
+			query_insertion = ("INSERT INTO sources_news_serge (link, name, owners, active) VALUES (%s, %s, %s, %s)")
 
 			insert_data = database.cursor()
 			try:
@@ -150,7 +150,7 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 	elif typeName == "watchpack":
 
 		######### CHECK IF THE FEED ALREADY EXIST
-		query_rss = "SELECT id FROM rss_serge WHERE link LIKE %s"
+		query_rss = "SELECT id FROM sources_news_serge WHERE link LIKE %s"
 
 		call_rss = database.cursor()
 		call_rss.execute(query_rss, (link,))
@@ -161,9 +161,9 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 			active = 0
 			owners = ","
 			rss_item = (link, title, owners, active)
-			query_insertion = ("INSERT INTO rss_serge (link, name, owners, active) VALUES (%s, %s, %s, %s)")
+			query_insertion = ("INSERT INTO sources_news_serge (link, name, owners, active) VALUES (%s, %s, %s, %s)")
 
-			######### INSERT THE NEW SOURCE IN rss_serge
+			######### INSERT THE NEW SOURCE IN sources_news_serge
 			insert_data = database.cursor()
 			try:
 				insert_data.execute(query_insertion, rss_item)
@@ -174,7 +174,7 @@ def backgroundLinksAddition(link, user_id, typeName, pack_id, title):
 			insert_data.close()
 
 			######### RECOVERY OF THE NEW SOURCE ID
-			query_rss = "SELECT id FROM rss_serge WHERE link LIKE %s"
+			query_rss = "SELECT id FROM sources_news_serge WHERE link LIKE %s"
 
 			call_rss = database.cursor()
 			call_rss.execute(query_rss, (link,))
