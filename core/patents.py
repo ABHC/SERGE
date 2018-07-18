@@ -69,15 +69,14 @@ def pathfinder(now):
 			owners_str = ","
 
 			######### CREATE OWNERS LIST FOR COUPLE INQUIRY-SOURCE
-			source_comparator = re.search('[0-9!,]*'+","+patents_api_pack["source_id"]+",", inquiry["applicable_owners_sources"])
-			raw_owners = re.findall('[^!A-Za-z0-9]'+'[0-9]*'+":"+'[0-9!,]*'+","+patents_api_pack["source_id"]+",", inquiry["applicable_owners_sources"])
+			owners_list = re.findall('\|([0-9]+):[0-9!,]*,'+patents_api_pack["source_id"]+',', inquiry["applicable_owners_sources"])
 
 			for owner in raw_owners:
 				owner = (owner.replace("|", "").strip().split(":"))[0]
 				owners_str = owners_str + owner + ","
 
 			######### RESEARCH PATENTS ON RSS FEEDS WITH FEEDPARSER MODULE
-			if patents_api_pack["type"] == "RSS" and source_comparator is not None re.search('^([,]{1}[0-9]+)*[,]{1}$', owners_str) is not None:
+			if patents_api_pack["type"] == "RSS" and re.search('^(,[0-9]+)+,$', owners_str) is not None:
 				logger_info.info(patents_api_pack["inquiry_raw"]+"\n")
 				req_results = sergenet.aLinkToThePast(link, 'fullcontent')
 				feed_content = req_results[0]

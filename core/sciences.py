@@ -68,15 +68,14 @@ def rosetta(now):
 			owners_str = ","
 
 			######### CREATE OWNERS LIST FOR COUPLE INQUIRY-SOURCE
-			source_comparator = re.search('[0-9!,]*'+","+science_api_pack["source_id"]+",", inquiry["applicable_owners_sources"])
-			raw_owners = re.findall('[^!A-Za-z0-9]'+'[0-9]*'+":"+'[0-9!,]*'+","+science_api_pack["source_id"]+",", inquiry["applicable_owners_sources"])
+			raw_owners = re.findall('\|([0-9]+):[0-9!,]*,'+science_api_pack["source_id"]+',', inquiry["applicable_owners_sources"])
 
 			for owner in raw_owners:
 				owner = (owner.replace("|", "").strip().split(":"))[0]
 				owners_str = (owners_str + owner + ",").strip()
 
 			######### RESEARCH SCIENCE ON RSS FEEDS WITH FEEDPARSER MODULE
-			if science_api_pack["type"] == "RSS" and source_comparator is not None and re.search('^([,]{1}[0-9]+)*[,]{1}$', owners_str) is not None:
+			if science_api_pack["type"] == "RSS" and re.search('^(,[0-9]+)+,$', owners_str) is not None:
 				logger_info.info(science_api_pack["inquiry_raw"].encode("utf8")+"\n")
 				req_results = sergenet.aLinkToThePast(science_api_pack["inquiry_link"], 'fullcontent')
 				feed_content = req_results[0]
@@ -155,7 +154,7 @@ def rosetta(now):
 					logger_info.warning("Error : the feed is unavailable")
 
 			######### RESEARCH SCIENCE ON JSON FEEDS WITH JSON MODULE
-			elif science_api_pack["type"] == "JSON" and source_comparator is not None re.search('^([,]{1}[0-9]+)*[,]{1}$', owners_str) is not None:
+			elif science_api_pack["type"] == "JSON" and source_comparator is not None re.search('^(,[0-9]+)+,$', owners_str) is not None:
 				logger_info.info(science_api_pack["inquiry_raw"].encode("utf8")+"\n")
 				req_results = sergenet.aLinkToThePast(science_api_pack["inquiry_link"], 'fullcontent')
 				json_content = req_results[0]

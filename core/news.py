@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+'^(,[0-9]+)+,$'# -*- coding: utf-8 -*-
 
 """Serge module for news functions"""
 
@@ -75,13 +75,12 @@ def voyager(newscast_args):
 		######### CREATE OWNERS LIST FOR COUPLE INQUIRY-SOURCE
 		for row in rows:
 			owners_str = ","
-			raw_owners = re.findall('[^!A-Za-z0-9]'+'[0-9]*'+":"+'[0-9!,]*'+","+newscast_args["source_id"]+",", row[2])
+			owners_list = re.findall('\|([0-9]+):[0-9!,]*,'+newscast_args["source_id"]+',', row[2])
 
-			for owner in raw_owners:
-				owner = (owner.replace("|", "").strip().split(":"))[0]
-				owners_str = (owners_str + owner + ",").strip()
+			for owner in owners_list:
+				owners_str = owners_str + owner.strip() + ","
 
-			if re.search('^([,]{1}[0-9]+)*[,]{1}$', owners_str) is not None:
+			if re.search('^(,[0-9]+)+,$', owners_str) is not None:
 				field = {"inquiry_id":row[0], "inquiry": row[1].strip(), "owners": owners_str}
 				inquiries_list.append(field)
 
@@ -156,7 +155,7 @@ def voyager(newscast_args):
 					aggregated_inquiries = toolbox.aggregatesSupport(inquiry["inquiry"])
 
 					for fragments in aggregated_inquiries:
-						if (re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', tags_string, re.IGNORECASE)) and inquiry["owners"] is not None:
+						if (re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', tags_string, re.IGNORECASE)):
 							fragments_nb += 1
 
 					if fragments_nb == len(aggregated_inquiries):
@@ -250,8 +249,8 @@ def backToTheFuture(etag, link):
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
-	######### ETAG UPDATE IN rss_serge
-	etag_update = ("UPDATE rss_serge SET etag = %s WHERE link = %s")
+	######### ETAG UPDATE IN DATABASE
+	etag_update = ("UPDATE sources_news_serge SET etag = %s WHERE link = %s")
 
 	call_rss = database.cursor()
 

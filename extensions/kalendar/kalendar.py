@@ -51,14 +51,16 @@ def kalendarExplorer():
 	now = time.time()
 	calendars_list = []
 
+	#TODO supprimer owners de sources kalendat et remplacer le paté sur l'attribution par une regex situé dans le for après la récupération des inquiries
+
 	######### CALL TO TABLE sources_kalendar_serge
 	call_calendar = database.cursor()
-	call_calendar.execute("SELECT id, link, owners FROM sources_kalendar_serge WHERE active >= 1")
+	call_calendar.execute("SELECT id, link FROM sources_kalendar_serge WHERE active >= 1")
 	rows = call_calendar.fetchall()
 	call_calendar.close()
 
 	for calendar in rows:
-		calendar = {"id": calendar[0], "id_comma": ","+calendar[0]+",", "id_sql": "%,"+calendar[0]+",%" "link": calendar[1], "owners": calendar[2]}
+		calendar = {"id": calendar[0], "id_comma": ","+calendar[0]+",", "id_sql": "%,"+calendar[0]+",%" "link": calendar[1]}
 		calendars_list.append(calendar)
 
 	######### GO TO CALENDAR AND PARSING
@@ -112,41 +114,34 @@ def kalendarExplorer():
 				event_list.append(full_event)
 
 		######### INQUIRIES AND OWNERS ATTRIBUTIONS TO CALENDAR
-		query_keywords_calendars = "SELECT id, inquiry, applicable_owners_sources FROM inquiries_kalendar_serge WHERE applicable_owners_sources LIKE %s AND active >= 1"
+		query_inquiries_calendars = "SELECT id, inquiry, applicable_owners_sources FROM inquiries_kalendar_serge WHERE applicable_owners_sources LIKE %s AND active >= 1"
 
 		call_calendar = database.cursor()
-		call_calendar.execute(query_keywords_calendars, (calendar["id_sql"],))
+		call_calendar.execute(query_inquiries_calendars, (calendar["id_sql"],))
 		rows = call_calendar.fetchall()
 		call_calendar.close()
 		calendars_inquiries = []
 
 		for inquiry in rows:
-			inquiry = {"id": inquiry[0], "inquiry": inquiry[1], "attribution": inquiry[2]}
-			calendars_inquiries.append(inquiry)
+			owners_str = ","
+			owners_list = re.findall('\|([0-9]+):[0-9!,]+'+calendar["id"]+',', row[2])
 
-		for inquiry in calendars_inquiries:
-			attribution_list = []
-			applicable_owners_sources = inquiry[attribution]
-			applicable_owners_sources = applicable_owners_sources.split("|")
+			for owner in owners_list:
+				owners_str = owners_str + owner.strip() + ","
 
-			for couple_owners_sources in applicable_owners_sources:
-				if couple_owners_sources != "":
-					couple_owners_sources = couple_owners_sources.split(":")
-					attribution = {"owner": couple_owners_sources[0], "owner_comma": ","+couple_owners_sources[0]+",", "sources": couple_owners_sources[1], "inquiry_id": None, "inquiry": None}
+			if re.search('^(,[0-9]+)+,$', owners_str) is not None:
+				inquiry = {"id": inquiry[0], "inquiry": inquiry[1], "owners": owners_str}
+				calendars_inquiries.append(inquiry)
 
-				if attribution["owner_comma"] in calendar["owners"] and calendar["id_comma"] in attribution["sources"]:
-					aggregated_inquiries = toolbox.aggregatesSupport(inquiry["inquiry"])
-					attribution["inquiry"] = aggregated_inquiries
-					attribution["inquiry_id"] = ","+inquiry["id"]+","
-					attribution_list.append(attribution)
-
-		######### KEYWORDS RESEARCH IN CALENDAR
-		for attribution in attribution_list:
-			for event in event_list:
+		for event in event_list:
+			for inquiry in inquiries_list:
+				########### AGGREGATED INQUIRIES FORMAT SUPPORT
+				aggregated_inquiries = toolbox.aggregatesSupport(inquiry["inquiry"])
 				fragments_nb = 0
 
+				######### INQUIRIES RESEARCH IN CALENDAR
 				for fragments in aggregated_inquiries:
-					if (re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', event["name"], re.IGNORECASE) or re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', event["date"], re.IGNORECASE) or re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', event["location"], re.IGNORECASE)) and attribution["owner"] is not None:
+					if (re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', event["name"], re.IGNORECASE) or re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', event["date"], re.IGNORECASE) or re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', event["location"], re.IGNORECASE)):
 						fragments_nb += 1
 
 				if fragments_nb == len(aggregated_inquiries):
@@ -161,7 +156,7 @@ def kalendarExplorer():
 
 					########### ITEM BUILDING
 					event["name"] = toolbox.escaping(event["name"])
-					item = (event["name"], event["date"], event["location"], event["description"], calendar["id"], attribution["inquiry_id"], attribution["owner"])
+					item = (event["name"], event["date"], event["location"], event["description"], calendar["id"], inquiry["id"], inquiry["owner"])
 
 					########### CALL insertOrUpdate FUNCTION
 					saveTheDate(query_checking, query_insertion, query_update, item)
