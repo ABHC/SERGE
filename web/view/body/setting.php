@@ -825,7 +825,7 @@
 			// Read owner science query
 			$checkCol = array(array("owners", "l", '%,' . $_SESSION['id'] . ',%', "OR"),
 												array("owners", "l", '%,!' . $_SESSION['id'] . ',%', ""));
-			$queries = read('queries_science_serge', 'id, query_serge, owners', $checkCol, 'ORDER BY id DESC', $bdd);
+			$queries = read('inquiries_sciences_serge', 'id, query_serge, owners', $checkCol, 'ORDER BY id DESC', $bdd);
 
 			foreach ($queries as $query)
 			{
@@ -1091,7 +1091,7 @@
 			// Read owner patents queries
 			$checkCol = array(array("owners", "l", '%,' . $_SESSION['id'] . ',%', "OR"),
 												array("owners", "l", '%,!' . $_SESSION['id'] . ',%', ""));
-			$queries = read('queries_wipo_serge', 'id, query, owners', $checkCol, 'ORDER BY id DESC', $bdd);
+			$queries = read('inquiries_patents_serge', 'id, query, owners', $checkCol, 'ORDER BY id DESC', $bdd);
 
 			foreach ($queries as $query)
 			{

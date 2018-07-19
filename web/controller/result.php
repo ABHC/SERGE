@@ -55,14 +55,14 @@ $type               = 'news';
 $newsActive         = 'class="active"';
 $patentsActive      = '';
 $sciencesActive     = '';
-$tableName          = 'result_news_serge';
-$tableNameQuery     = 'keyword_news_serge';
-$tableNameSource    = 'rss_serge';
+$tableName          = 'results_news_serge';
+$tableNameQuery     = 'inquiries_news_serge';
+$tableNameSource    = 'sources_news_serge';
 $ownersColumn       = 'applicable_owners_sources';
 $userId             = '|' . $_SESSION['id'] . ':';
-$keywordQueryId     = 'keyword_id';
+$keywordQueryId     = 'inquiry_id';
 $queryColumn        = 'keyword';
-$specialColumn      = ', id_source, keyword_id ';
+$specialColumn      = ', source_id, inquiry_id ';
 $displayColumn      = var_get_t('title2News_table_results', $bdd);
 
 # Select results type
@@ -74,14 +74,14 @@ if (!empty($data['resultType']))
 		$sciencesActive  = 'class="active"';
 		$patentsActive   = '';
 		$newsActive      = '';
-		$tableName       = 'result_science_serge';
-		$tableNameQuery  = 'queries_science_serge';
-		$tableNameSource = 'equivalence_science_serge';
+		$tableName       = 'results_science_serge';
+		$tableNameQuery  = 'inquiries_sciences_serge';
+		$tableNameSource = 'sources_sciences_serge';
 		$ownersColumn    = 'owners';
 		$userId          = ',' . $_SESSION['id'] . ',';
-		$keywordQueryId  = 'query_id';
+		$keywordQueryId  = 'inquiry_id';
 		$queryColumn     = 'query_serge';
-		$specialColumn   = ',query_id, id_source ';
+		$specialColumn   = ',inquiry_id, source_id ';
 		$displayColumn   = var_get_t('Query', $bdd);
 	}
 	elseif ($data['resultType'] === 'patents')
@@ -90,14 +90,14 @@ if (!empty($data['resultType']))
 		$patentsActive   = 'class="active"';
 		$sciencesActive  = '';
 		$newsActive      = '';
-		$tableName       = 'result_patents_serge';
-		$tableNameQuery  = 'queries_wipo_serge';
-		$tableNameSource = 'patents_sources_serge';
+		$tableName       = 'results_patents_serge';
+		$tableNameQuery  = 'inquiries_patents_serge';
+		$tableNameSource = 'sources_patents_serge';
 		$ownersColumn    = 'owners';
 		$userId          = ',' . $_SESSION['id'] . ',';
-		$keywordQueryId  = 'id_query_wipo';
+		$keywordQueryId  = 'inquiry_id';
 		$queryColumn     = 'query';
-		$specialColumn   = ', id_query_wipo, id_source ';
+		$specialColumn   = ', inquiry_id, source_id ';
 		$displayColumn   = var_get_t('Query', $bdd);
 	}
 }
@@ -174,7 +174,7 @@ if (!empty($data['orderBy']))
 		$colOrder['DESC']   = 'DESC';
 
 		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'ORDER BY id_source';
+		$ORDERBY = 'ORDER BY source_id';
 	}
 	elseif ($data['orderBy'] === 'sourceDESC')
 	{
@@ -182,7 +182,7 @@ if (!empty($data['orderBy']))
 		$colOrder['DESC']   = '';
 
 		# WARNING sensitive variable [SQLI]
-		$ORDERBY = 'ORDER BY id_source DESC';
+		$ORDERBY = 'ORDER BY source_id DESC';
 	}
 	elseif ($data['orderBy'] === 'date')
 	{
@@ -345,7 +345,7 @@ unlink(__FILE__);?>';
 
 	if ($data['export'] == 'sql')
 	{
-		$resultSQL = 'INSERT INTO `result_news_serge` (`title`, `link`, `date`) VALUES' . PHP_EOL;
+		$resultSQL = 'INSERT INTO `results_news_serge` (`title`, `link`, `date`) VALUES' . PHP_EOL;
 		foreach ($readOwnerResults as $lineResult)
 		{
 			$resultSQL .= '(\'' . addslashes($lineResult['title']) . '\',\'' . addslashes($lineResult['link']) . '\',\'' . addslashes($lineResult['date']) . '\'),' . PHP_EOL;

@@ -28,21 +28,21 @@ if (!empty($user))
 	{
 		// read available results
 		$checkCol = array(array('owners', 'l', ',' . $user['id'] . ',', ''));
-		$results = read('result_science_serge', 'title, link, date', $checkCol, 'ORDER BY date DESC LIMIT 30', $bdd);
+		$results = read('results_science_serge', 'title, link, date', $checkCol, 'ORDER BY date DESC LIMIT 30', $bdd);
 		$description = 'Scientifique publication';
 	}
 	elseif ($resultType[0] === 'p')
 	{
 		// read available results
 		$checkCol = array(array('owners', 'l', ',' . $user['id'] . ',', ''));
-		$results = read('result_patents_serge', 'title, link, date', $checkCol, 'ORDER BY date DESC LIMIT 30', $bdd);
+		$results = read('results_patents_serge', 'title, link, date', $checkCol, 'ORDER BY date DESC LIMIT 30', $bdd);
 		$description = 'Patents';
 	}
 	elseif (empty($results))
 	{
 		// read available results
 		$checkCol = array(array('owners', 'l', ',' . $user['id'] . ',', ''));
-		$results = read('result_news_serge', 'title, link, date', $checkCol, 'ORDER BY date DESC LIMIT 30', $bdd);
+		$results = read('results_news_serge', 'title, link, date', $checkCol, 'ORDER BY date DESC LIMIT 30', $bdd);
 		$description = 'General news';
 	}
 

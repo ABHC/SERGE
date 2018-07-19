@@ -217,10 +217,10 @@ if (!$emailIsCheck)
 # Read owner sources
 $checkCol  = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
 									array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
-$reqReadOwnerSourcestmp = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
+$reqReadOwnerSourcestmp = read('sources_news_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 
 $checkCol                      = array(array('applicable_owners_sources', 'l', '%|' . $_SESSION['id'] . ':%', ''));
-$reqReadOwnerSourcesKeywordtmp = read('keyword_news_serge', 'id, keyword, applicable_owners_sources, active', $checkCol, 'ORDER BY keyword', $bdd);
+$reqReadOwnerSourcesKeywordtmp = read('inquiries_news_serge', 'id, keyword, applicable_owners_sources, active', $checkCol, 'ORDER BY keyword', $bdd);
 
 # Read user settings
 $checkCol     = array(array('users', '=', $_SESSION['pseudo'], ''));
@@ -404,7 +404,7 @@ if ($emailIsCheck && !empty($data['buttonDeleteHistory']) && !empty($data['delet
 	# News results
 	$checkCol          = array(array('owners', 'l', $owner, 'AND'),
 														array('date', '>=', $deleteTime, ''));
-	$readResutlToDel = read('result_news_serge', 'id, owners, send_status, read_status', $checkCol, '', $bdd);
+	$readResutlToDel = read('results_news_serge', 'id, owners, send_status, read_status', $checkCol, '', $bdd);
 
 	foreach ($readResutlToDel as $resultToDel)
 	{
@@ -412,13 +412,13 @@ if ($emailIsCheck && !empty($data['buttonDeleteHistory']) && !empty($data['delet
 											array('send_status', preg_replace("/,$userId,/", ',', $resultToDel['send_status'])),
 											array('read_status', preg_replace("/,$userId,/", ',', $resultToDel['read_status'])));
 		$checkCol  = array(array('id', '=', $resultToDel['id'], ''));
-		$execution = update('result_news_serge', $updateCol, $checkCol, '', $bdd);
+		$execution = update('results_news_serge', $updateCol, $checkCol, '', $bdd);
 	}
 
 	# Sciences results
 	$checkCol          = array(array('owners', 'l', $owner, 'AND'),
 														array('date', '>=', $deleteTime, ''));
-	$readResutlToDel = read('result_science_serge', 'id, owners', $checkCol, '', $bdd);
+	$readResutlToDel = read('results_science_serge', 'id, owners', $checkCol, '', $bdd);
 
 	foreach ($readResutlToDel as $resultToDel)
 	{
@@ -426,13 +426,13 @@ if ($emailIsCheck && !empty($data['buttonDeleteHistory']) && !empty($data['delet
 											array('send_status', preg_replace("/,$userId,/", ',', $resultToDel['send_status'])),
 											array('read_status', preg_replace("/,$userId,/", ',', $resultToDel['read_status'])));
 		$checkCol  = array(array('id', '=', $resultToDel['id'], ''));
-		$execution = update('result_science_serge', $updateCol, $checkCol, '', $bdd);
+		$execution = update('results_science_serge', $updateCol, $checkCol, '', $bdd);
 	}
 
 	# Patents results
 	$checkCol          = array(array('owners', 'l', $owner, 'AND'),
 														array('date', '>=', $deleteTime, ''));
-	$readResutlToDel = read('result_patents_serge', 'id, owners', $checkCol, '', $bdd);
+	$readResutlToDel = read('results_patents_serge', 'id, owners', $checkCol, '', $bdd);
 
 	foreach ($readResutlToDel as $resultToDel)
 	{
@@ -440,7 +440,7 @@ if ($emailIsCheck && !empty($data['buttonDeleteHistory']) && !empty($data['delet
 											array('send_status', preg_replace("/,$userId,/", ',', $resultToDel['send_status'])),
 											array('read_status', preg_replace("/,$userId,/", ',', $resultToDel['read_status'])));
 		$checkCol  = array(array('id', '=', $resultToDel['id'], ''));
-		$execution = update('result_patents_serge', $updateCol, $checkCol, '', $bdd);
+		$execution = update('results_patents_serge', $updateCol, $checkCol, '', $bdd);
 	}
 }
 
@@ -564,7 +564,7 @@ if ($emailIsCheck && !empty($sourceIdAction) && !empty($keywordIdAction) && !emp
 		$updateCol = array(array('applicable_owners_sources', $applicableOwners),
 											 array('active', $activeForCurrentKeyword - 1));
 		$checkCol  = array(array('id', '=', $keywordIdAction, ''));
-		$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
+		$execution = update('inquiries_news_serge', $updateCol, $checkCol, '', $bdd);
 	}
 	elseif ($keywordExist && $action === 'disableKeyword')
 	{
@@ -575,7 +575,7 @@ if ($emailIsCheck && !empty($sourceIdAction) && !empty($keywordIdAction) && !emp
 		$updateCol = array(array('applicable_owners_sources', $applicableOwners),
 											 array('active', $activeForCurrentKeyword - 1));
 		$checkCol  = array(array('id', '=', $keywordIdAction, ''));
-		$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
+		$execution = update('inquiries_news_serge', $updateCol, $checkCol, '', $bdd);
 	}
 	elseif ($keywordExist && $action === 'activateKeyword')
 	{
@@ -586,7 +586,7 @@ if ($emailIsCheck && !empty($sourceIdAction) && !empty($keywordIdAction) && !emp
 		$updateCol = array(array('applicable_owners_sources', $applicableOwners),
 											 array('active', $activeForCurrentKeyword + 1));
 		$checkCol  = array(array('id', '=', $keywordIdAction, ''));
-		$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
+		$execution = update('inquiries_news_serge', $updateCol, $checkCol, '', $bdd);
 	}
 	else
 	{
@@ -635,7 +635,7 @@ if ($emailIsCheck && !empty($sourceIdAction) && !empty($action))
 		$updateCol = array(array('owners', preg_replace("/,!*$userId,/", ',', $owners)),
 											 array('active', $activeForCurrentSource - 1));
 		$checkCol  = array(array('id', '=', $sourceIdAction, ''));
-		$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
+		$execution = update('sources_news_serge', $updateCol, $checkCol, '', $bdd);
 	}
 	elseif ($sourceExist && $action === 'disableSource')
 	{
@@ -643,7 +643,7 @@ if ($emailIsCheck && !empty($sourceIdAction) && !empty($action))
 		$updateCol = array(array('owners', preg_replace("/,$userId,/", ",!$userId,", $owners)),
 											 array('active', $activeForCurrentSource - 1));
 		$checkCol  = array(array('id', '=', $sourceIdAction, ''));
-		$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
+		$execution = update('sources_news_serge', $updateCol, $checkCol, '', $bdd);
 	}
 	elseif ($sourceExist && $action === 'activateSource')
 	{
@@ -651,7 +651,7 @@ if ($emailIsCheck && !empty($sourceIdAction) && !empty($action))
 		$updateCol = array(array('owners', preg_replace("/,!$userId,/", ",$userId,", $owners)),
 										   array('active', $activeForCurrentSource + 1));
 		$checkCol  = array(array('id', '=', $sourceIdAction, ''));
-		$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
+		$execution = update('sources_news_serge', $updateCol, $checkCol, '', $bdd);
 	}
 	else
 	{
@@ -664,7 +664,7 @@ if ($emailIsCheck && !empty($data['editQueryScience']))
 {
 	$checkCol = array(array('id', '=', $data['editQueryScience'], 'AND'),
 										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
-	$queryEdit = read('queries_science_serge', 'id, query_serge', $checkCol, '', $bdd);
+	$queryEdit = read('inquiries_sciences_serge', 'id, query_serge', $checkCol, '', $bdd);
 	$queryEdit = $queryEdit[0] ?? '';
 
 	if (!empty($queryEdit))
@@ -720,7 +720,7 @@ if ($emailIsCheck && !empty($data['delEditingScienceQuery']) && !empty($data['sc
 {
 	$checkCol = array(array('id', '=', $data['delEditingScienceQuery'], 'AND'),
 										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
-	$queryEditToDel = read('queries_science_serge', 'id, owners, active', $checkCol, '', $bdd);
+	$queryEditToDel = read('inquiries_sciences_serge', 'id, owners, active', $checkCol, '', $bdd);
 	$queryEditToDel = $queryEditToDel[0] ?? '';
 
 	if (!empty($queryEditToDel))
@@ -729,7 +729,7 @@ if ($emailIsCheck && !empty($data['delEditingScienceQuery']) && !empty($data['sc
 		$updateCol = array(array('owners', preg_replace("/,!*$userId,/", ',', $queryEditToDel['owners'])),
 											array('active', $queryEditToDel['active'] - 1));
 		$checkCol  = array(array('id', '=', $queryEditToDel['id'], ''));
-		$execution = update('queries_science_serge', $updateCol, $checkCol, '', $bdd);
+		$execution = update('inquiries_sciences_serge', $updateCol, $checkCol, '', $bdd);
 	}
 }
 
@@ -815,7 +815,7 @@ if ($emailIsCheck && !empty($data['delQueryScience']))
 										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
 										array('id', '=', $data['delQueryScience'], 'AND'),
 										array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
-	$result = read('queries_science_serge', 'owners, active', $checkCol, '', $bdd);
+	$result = read('inquiries_sciences_serge', 'owners, active', $checkCol, '', $bdd);
 	$result = $result[0] ?? '';
 
 	if (!empty($result))
@@ -824,7 +824,7 @@ if ($emailIsCheck && !empty($data['delQueryScience']))
 		$updateCol = array(array('owners', preg_replace("/,!*$userId,/", ',', $result['owners'])),
 											array('active', $result['active'] - 1));
 		$checkCol  = array(array('id', '=', $data['delQueryScience'], ''));
-		$execution = update('queries_science_serge', $updateCol, $checkCol, '', $bdd);
+		$execution = update('inquiries_sciences_serge', $updateCol, $checkCol, '', $bdd);
 	}
 }
 
@@ -833,7 +833,7 @@ if ($emailIsCheck && !empty($data['disableQueryScience']))
 {
 	$checkCol = array(array('id', '=',$data['disableQueryScience'], 'AND'),
 										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
-	$result   = read('queries_science_serge', 'owners, active', $checkCol, '', $bdd);
+	$result   = read('inquiries_sciences_serge', 'owners, active', $checkCol, '', $bdd);
 	$result   = $result[0] ?? '';
 
 
@@ -844,7 +844,7 @@ if ($emailIsCheck && !empty($data['disableQueryScience']))
 		$updateCol = array(array('owners', preg_replace("/,$userId,/", ",!$userId,", $result['owners'])),
 											array('active', $result['active'] - 1));
 		$checkCol  = array(array('id', '=', $data['disableQueryScience'], ''));
-		$execution = update('queries_science_serge', $updateCol, $checkCol, '', $bdd);
+		$execution = update('inquiries_sciences_serge', $updateCol, $checkCol, '', $bdd);
 	}
 }
 
@@ -853,7 +853,7 @@ if ($emailIsCheck && !empty($data['activateQueryScience']))
 {
 	$checkCol = array(array('id', '=', $data['activateQueryScience'], 'AND'),
 										array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
-	$result = read('queries_science_serge', 'owners, active', $checkCol, '', $bdd);
+	$result = read('inquiries_sciences_serge', 'owners, active', $checkCol, '', $bdd);
 	$result = $result[0] ?? '';
 
 
@@ -863,7 +863,7 @@ if ($emailIsCheck && !empty($data['activateQueryScience']))
 		$updateCol = array(array('owners', preg_replace("/,!$userId,/", ",$userId,", $result['owners'])),
 											array('active', $result['active'] + 1));
 		$checkCol  = array(array('id', '=', $data['activateQueryScience'], ''));
-		$execution = update('queries_science_serge', $updateCol, $checkCol, '', $bdd);
+		$execution = update('inquiries_sciences_serge', $updateCol, $checkCol, '', $bdd);
 	}
 }
 
@@ -872,7 +872,7 @@ if ($emailIsCheck && !empty($data['editQueryPatent']))
 {
 	$checkCol    = array(array('id', '=', $data['editQueryPatent'], 'AND'),
 											array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
-	$queryEdit = read('queries_wipo_serge', 'id, query', $checkCol, '', $bdd);
+	$queryEdit = read('inquiries_patents_serge', 'id, query', $checkCol, '', $bdd);
 	$queryEdit = $queryEdit[0] ?? '';
 
 	if (!empty($queryEdit))
@@ -923,7 +923,7 @@ if ($emailIsCheck && !empty($data['delEditingPatentQuery']) && !empty($data['pat
 {
 	$checkCol = array(array('id', '=', $data['delEditingPatentQuery'], 'AND'),
 										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
-	$queryEditToDel = read('queries_wipo_serge', 'id, owners, active', $checkCol, '', $bdd);
+	$queryEditToDel = read('inquiries_patents_serge', 'id, owners, active', $checkCol, '', $bdd);
 	$queryEditToDel = $queryEditToDel[0] ?? '';
 
 	if (!empty($queryEditToDel))
@@ -932,7 +932,7 @@ if ($emailIsCheck && !empty($data['delEditingPatentQuery']) && !empty($data['pat
 		$updateCol = array(array('owners', preg_replace("/,!*$userId,/", ',', $queryEditToDel['owners'])),
 											array('active', $queryEditToDel['active'] - 1));
 		$checkCol  = array(array('id', '=', $queryEditToDel['id'], ''));
-		$execution = update('queries_wipo_serge', $updateCol, $checkCol, '', $bdd);
+		$execution = update('inquiries_patents_serge', $updateCol, $checkCol, '', $bdd);
 	}
 }
 
@@ -986,7 +986,7 @@ if ($emailIsCheck && !empty($data['delQueryPatent']))
 										array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', 'OR'),
 										array('id', '=', $data['delQueryPatent'], 'AND'),
 										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
-	$result = read('queries_wipo_serge', 'owners, active', $checkCol, '', $bdd);
+	$result = read('inquiries_patents_serge', 'owners, active', $checkCol, '', $bdd);
 	$result = $result[0] ?? '';
 
 	if (!empty($result))
@@ -995,7 +995,7 @@ if ($emailIsCheck && !empty($data['delQueryPatent']))
 		$updateCol = array(array('owners', preg_replace("/,!*$userId,/", ',', $result['owners'])),
 											array('active', $result['active'] - 1));
 		$checkCol  = array(array('id', '=', $data['delQueryPatent'], ''));
-		$execution = update('queries_wipo_serge', $updateCol, $checkCol, '', $bdd);
+		$execution = update('inquiries_patents_serge', $updateCol, $checkCol, '', $bdd);
 	}
 }
 
@@ -1004,7 +1004,7 @@ if ($emailIsCheck && !empty($data['disableQueryPatent']))
 {
 	$checkCol = array(array('id', '=', $data['disableQueryPatent'], 'AND'),
 										array('owners', 'l', '%,' . $_SESSION['id'] . ',%', ''));
-	$result   = read('queries_wipo_serge', 'owners, active', $checkCol, '', $bdd);
+	$result   = read('inquiries_patents_serge', 'owners, active', $checkCol, '', $bdd);
 	$result   = $result[0] ?? '';
 
 	if (!empty($result))
@@ -1013,7 +1013,7 @@ if ($emailIsCheck && !empty($data['disableQueryPatent']))
 		$updateCol = array(array('owners', preg_replace("/,$userId,/", ",!$userId,", $result['owners'])),
 											array('active', $result['active'] - 1));
 		$checkCol  = array(array('id', '=', $data['disableQueryPatent'], ''));
-		$execution = update('queries_wipo_serge', $updateCol, $checkCol, '', $bdd);
+		$execution = update('inquiries_patents_serge', $updateCol, $checkCol, '', $bdd);
 	}
 }
 
@@ -1022,7 +1022,7 @@ if ($emailIsCheck && !empty($data['activateQueryPatent']))
 {
 	$checkCol = array(array('id', '=', $data['activateQueryPatent'], 'AND'),
 										array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
-	$result   = read('queries_wipo_serge', 'owners, active', $checkCol, '', $bdd);
+	$result   = read('inquiries_patents_serge', 'owners, active', $checkCol, '', $bdd);
 	$result   = $result[0] ?? '';
 
 	if (!empty($result))
@@ -1031,7 +1031,7 @@ if ($emailIsCheck && !empty($data['activateQueryPatent']))
 		$updateCol = array(array('owners', preg_replace("/,!$userId,/", ",$userId,", $result['owners'])),
 											array('active', $result['active'] + 1));
 		$checkCol  = array(array('id', '=', $data['activateQueryPatent'], ''));
-		$execution = update('queries_wipo_serge', $updateCol, $checkCol, '', $bdd);
+		$execution = update('inquiries_patents_serge', $updateCol, $checkCol, '', $bdd);
 	}
 }
 
@@ -1063,11 +1063,11 @@ $watchPackUsedList = read('watch_pack_serge', 'id, name, description, users', $c
 # Read owner sources
 $checkCol  = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
 									array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
-$reqReadOwnerSourcestmp = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
+$reqReadOwnerSourcestmp = read('sources_news_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 
 # Read owner keywords
 $checkCol                      = array(array('applicable_owners_sources', 'l', '%|' . $_SESSION['id'] . ':%', ''));
-$reqReadOwnerSourcesKeywordtmp = read('keyword_news_serge', 'id, keyword, applicable_owners_sources, active', $checkCol, 'ORDER BY keyword', $bdd);
+$reqReadOwnerSourcesKeywordtmp = read('inquiries_news_serge', 'id, keyword, applicable_owners_sources, active', $checkCol, 'ORDER BY keyword', $bdd);
 
 # Read user settings
 $checkCol     = array(array('users', '=', $_SESSION['pseudo'], ''));

@@ -21,13 +21,13 @@ if (!empty($data['articleId']) && !empty($data['type']))
 	switch ($data['type'])
 	{
 		case "news":
-		$tableName = 'result_news_serge';
+		$tableName = 'results_news_serge';
 		break;
 		case "sciences":
-		$tableName = 'result_science_serge';
+		$tableName = 'results_science_serge';
 		break;
 		case "patents":
-		$tableName = 'result_patents_serge';
+		$tableName = 'results_patents_serge';
 		break;
 	}
 

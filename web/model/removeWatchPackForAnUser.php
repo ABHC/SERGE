@@ -19,7 +19,7 @@ if (!empty($packExist))
 												array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
 												array('query_serge', '=', $scienceQuery['query'], 'AND'),
 												array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
-		$queryExist = read('queries_science_serge', 'id, owners, active', $checkCol, '', $bdd);
+		$queryExist = read('inquiries_sciences_serge', 'id, owners, active', $checkCol, '', $bdd);
 		$queryExist = $queryExist[0] ?? '';
 
 		if (!empty($queryExist))
@@ -29,7 +29,7 @@ if (!empty($packExist))
 			$updateCol = array(array('owners', preg_replace("/,!*$userId,/", ',', $queryExist['owners'])),
 												 array('active', $queryExist['active'] - 1));
 			$checkCol  = array(array('id', '=', $queryExist['id'], ''));
-			$execution = update('queries_science_serge', $updateCol, $checkCol, '', $bdd);
+			$execution = update('inquiries_sciences_serge', $updateCol, $checkCol, '', $bdd);
 		}
 	}
 
@@ -47,7 +47,7 @@ if (!empty($packExist))
 												array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
 												array('query', '=', $patentQuery['query'], 'AND'),
 												array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
-		$queryExist = read('queries_wipo_serge', 'id, owners, active', $checkCol, '', $bdd);
+		$queryExist = read('inquiries_patents_serge', 'id, owners, active', $checkCol, '', $bdd);
 		$queryExist = $queryExist[0] ?? '';
 
 		if (!empty($queryExist))
@@ -57,7 +57,7 @@ if (!empty($packExist))
 			$updateCol = array(array('owners', preg_replace("/,!*$userId,/", ',', $queryExist['owners'])),
 												 array('active', $queryExist['active'] - 1));
 			$checkCol  = array(array('id', '=', $queryExist['id'], ''));
-			$execution = update('queries_wipo_serge', $updateCol, $checkCol, '', $bdd);
+			$execution = update('inquiries_patents_serge', $updateCol, $checkCol, '', $bdd);
 		}
 	}
 
@@ -74,7 +74,7 @@ if (!empty($packExist))
 		$sourceId   = preg_replace("/,([^$])/", ",!*$1", $couple['source']);
 		$checkCol   = array(array('keyword', '=', strtolower($couple['query']), 'AND'),
 												array('applicable_owners_sources', 'REGEXP', '\\|' . $_SESSION['id'] . ':[,0-9+,^\\|]*' . $sourceId, ''));
-		$queryExist = read('keyword_news_serge', 'id, applicable_owners_sources, active', $checkCol, '', $bdd);
+		$queryExist = read('inquiries_news_serge', 'id, applicable_owners_sources, active', $checkCol, '', $bdd);
 		$queryExist = $queryExist[0] ?? '';
 
 		if (!empty($queryExist))
@@ -85,7 +85,7 @@ if (!empty($packExist))
 			$updateCol = array(array('applicable_owners_sources', preg_replace("/(\|$userId:[,0-9+,^\|]*)$sourceId/", '$1,', $queryExist['applicable_owners_sources'])),
 												 array('active', $queryExist['active'] - 1));
 			$checkCol  = array(array('id', '=', $queryExist['id'], ''));
-			$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
+			$execution = update('inquiries_news_serge', $updateCol, $checkCol, '', $bdd);
 		}
 	}
 
@@ -100,14 +100,14 @@ if (!empty($packExist))
 													 array('id', 'IN', $listOfSource_array, 'OR'),
 													 array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', 'AND'),
 													 array('id', 'IN', $listOfSource_array, ''));
-	$sourceWatchPack = read('rss_serge', 'id, owners, active', $checkCol, '', $bdd);
+	$sourceWatchPack = read('sources_news_serge', 'id, owners, active', $checkCol, '', $bdd);
 
 
 	foreach ($sourceWatchPack as $source)
 	{
 		// Read Keyword if it is own by user and use current source
 		$checkCol     = array(array('applicable_owners_sources', 'REGEXP', '\\|' . $_SESSION['id'] . ':[,0-9+,^\\|]*,!*' . $source['id'] . ',', ''));
-		$sourceIsUsed = read('keyword_news_serge', '', $checkCol, '', $bdd);
+		$sourceIsUsed = read('inquiries_news_serge', '', $checkCol, '', $bdd);
 
 		if (!$sourceIsUsed)
 		{
@@ -116,7 +116,7 @@ if (!empty($packExist))
 			$updateCol = array(array('owners', preg_replace("/,!*$userId,/", ',', $source['owners'])),
 												 array('active', $source['active'] - 1));
 			$checkCol  = array(array('id', '=', $source['id'], ''));
-			$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
+			$execution = update('sources_news_serge', $updateCol, $checkCol, '', $bdd);
 		}
 	}
 

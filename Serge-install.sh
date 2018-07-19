@@ -1333,20 +1333,21 @@ SSLStaplingCache shmcb:/tmp/stapling_cache(128000)" > /etc/apache2/sites-availab
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/admin_table_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/background_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/captcha_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/keyword_news_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/inquiries_news_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/language_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/miscellaneous_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/newsletter_table_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/patents_sources_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/sources_sciences_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/sources_patents_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/premium_code_table_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/price_table_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/purchase_table_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/queries_science_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/queries_wipo_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/result_news_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/result_patents_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/result_science_serge.sql
-	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/rss_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/inquiries_sciences_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/inquiries_patents_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/results_news_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/results_patents_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/results_science_serge.sql
+	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/sources_news_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/science_sources_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/stripe_table_serge.sql
 	mysql -h localhost -p${internalPass} -u Serge Serge < /var/www/Serge/database_demo/text_content_serge.sql

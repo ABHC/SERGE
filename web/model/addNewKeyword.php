@@ -5,7 +5,7 @@ function addNewKeyword(string $sourceId, string $newKeyword, string $ERROR_MESSA
 
 	// Check if keyword is already in bdd
 	$checkCol = array(array('keyword', '=', mb_strtolower($newKeyword), ''));
-	$result   = read('keyword_news_serge', 'id, applicable_owners_sources, active', $checkCol, '', $bdd);
+	$result   = read('inquiries_news_serge', 'id, applicable_owners_sources, active', $checkCol, '', $bdd);
 	$result   = $result[0] ?? '';
 
 	if (empty($result))
@@ -31,7 +31,7 @@ function addNewKeyword(string $sourceId, string $newKeyword, string $ERROR_MESSA
 		$insertCol = array(array('keyword', strtolower($newKeyword)),
 											array('applicable_owners_sources', '|' . $_SESSION['id'] . ':,' . $sourceId . ',|'),
 											array('active', $active));
-		$execution = insert('keyword_news_serge', $insertCol, '', '', $bdd);
+		$execution = insert('inquiries_news_serge', $insertCol, '', '', $bdd);
 	}
 	else
 	{
@@ -102,7 +102,7 @@ function addNewKeyword(string $sourceId, string $newKeyword, string $ERROR_MESSA
 			$updateCol = array(array('applicable_owners_sources', $applicableOwners),
 													array('active', $active));
 			$checkCol  = array(array('id', '=', $result['id'], ''));
-			$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
+			$execution = update('inquiries_news_serge', $updateCol, $checkCol, '', $bdd);
 		}
 	}
 

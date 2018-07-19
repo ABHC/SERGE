@@ -287,7 +287,7 @@
 							$keyword = '<div class="queryContainer">' . $queryDisplay . '</div>';
 						}
 
-						$checkCol = array(array("id", "l", $result['id_source'], ""));
+						$checkCol = array(array("id", "l", $result['source_id'], ""));
 						$source   = read($tableNameSource, 'link, name', $checkCol, '', $bdd);
 						$source   = $source[0];
 

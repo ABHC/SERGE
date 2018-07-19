@@ -137,14 +137,14 @@ $settingTab = 'active';
 $type             = 'add';
 $addActive        = 'class="active"';
 $createActive     = '';
-$tableName        = 'result_science_serge';
-$tableNameQuery   = 'queries_science_serge';
+$tableName        = 'results_science_serge';
+$tableNameQuery   = 'inquiries_sciences_serge';
 $tableNameSource  = 'science_sources_serge';
 $ownersColumn     = 'owners';
 $userId           = ',' . $_SESSION['id'] . ',';
 $keywordQueryId   = 'query_id';
 $queryColumn      = 'query_serge';
-$specialColumn    = ',query_id, id_source ';
+$specialColumn    = ',query_id, source_id ';
 $displayColumn    = 'Query';
 $_SESSION['type'] = 'add';
 $limit            = 15;
@@ -154,14 +154,14 @@ if (!empty($data['type']) && $data['type'] === 'create')
 	$type             = 'create';
 	$createActive     = 'class="active"';
 	$addActive        = '';
-	$tableName        = 'result_science_serge';
-	$tableNameQuery   = 'queries_science_serge';
+	$tableName        = 'results_science_serge';
+	$tableNameQuery   = 'inquiries_sciences_serge';
 	$tableNameSource  = 'science_sources_serge';
 	$ownersColumn     = 'owners';
 	$userId           = ',' . $_SESSION['id'] . ',';
 	$keywordQueryId   = 'query_id';
 	$queryColumn      = 'query_serge';
-	$specialColumn    = ',query_id, id_source ';
+	$specialColumn    = ',query_id, source_id ';
 	$displayColumn    = 'Query';
 	$_SESSION['type'] = 'create';
 	unset($limit);
@@ -414,7 +414,7 @@ else
 		}
 
 		$checkCol       = array(array('id', 'IN', $packSource, ''));
-		$listAllSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
+		$listAllSources = read('sources_news_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 
 		$checkCol    = array(array('pack_id', '=', $data['packId'], 'AND'),
 											array('query', '<>', '[!source!]', ''));
@@ -430,7 +430,7 @@ else
 			}
 		}
 		$checkCol = array(array('id', 'IN', $packSourceUsed, ''));
-		$readPackSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
+		$readPackSources = read('sources_news_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 	}
 	else
 	{
@@ -530,7 +530,7 @@ else
 			foreach ($newKeywordArray as $newKeyword)
 			{
 				$checkCol = array(array('id', '=', $data['sourceKeyword'], ''));
-				$result = read('rss_serge', 'id', $checkCol, '', $bdd);
+				$result = read('sources_news_serge', 'id', $checkCol, '', $bdd);
 				$resultSource = $result[0];
 
 				if (!empty($resultSource))
@@ -564,7 +564,7 @@ else
 	elseif ($emailIsCheck && !empty($data['addNewSource']) && !empty($data['newSource']))
 	{
 		$checkCol     = array(array('link', '=', $data['newSource'], ''));
-		$result       = read('rss_serge', 'id', $checkCol, '', $bdd);
+		$result       = read('sources_news_serge', 'id', $checkCol, '', $bdd);
 		$resultSource = $result[0]['id'] ?? '';
 
 		$checkCol = array(array('query', '=', '[!source!]', 'AND'),
@@ -689,7 +689,7 @@ else
 			{
 
 				$checkCol = array(array('owners', 'l',  '%,' . $_SESSION['id'] . ',%', ''));
-				$result = read('rss_serge', 'id', $checkCol, '', $bdd);
+				$result = read('sources_news_serge', 'id', $checkCol, '', $bdd);
 
 				$isSourceOwned = ',';
 				foreach ($result as $ownerSource)
@@ -1075,7 +1075,7 @@ else
 			// Creation of list of available sources
 			$checkCol = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
 												array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
-			$listAllSources = read('rss_serge', 'id', $checkCol, 'ORDER BY id', $bdd);
+			$listAllSources = read('sources_news_serge', 'id', $checkCol, 'ORDER BY id', $bdd);
 
 			$sources = ',';
 			foreach ($listAllSources as $allSources)
@@ -1148,7 +1148,7 @@ else
 			}
 
 			$checkCol       = array(array('id', 'IN', $packSource, ''));
-			$listAllSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
+			$listAllSources = read('sources_news_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 
 			$checkCol              = array(array('pack_id', '=', $data['packId'], 'AND'),
 			array('query', '<>', '[!source!]', ''));
@@ -1165,7 +1165,7 @@ else
 			}
 
 			$checkCol = array(array('id', 'IN', $packSourceUsed, ''));
-			$readPackSources = read('rss_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
+			$readPackSources = read('sources_news_serge', 'id, link, name, owners, active', $checkCol, 'ORDER BY name', $bdd);
 	}
 }
 include('view/nav/nav.php');

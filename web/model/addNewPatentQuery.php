@@ -6,7 +6,7 @@ function addNewPatentQuery(string $queryPatent, $bdd)
 
 	// Check if science query is already in bdd
 	$checkCol = array(array('query', '=', mb_strtolower($queryPatent), ''));
-	$result = read('queries_wipo_serge', 'id, owners, active', $checkCol, '', $bdd);
+	$result = read('inquiries_patents_serge', 'id, owners, active', $checkCol, '', $bdd);
 	$result = $result[0] ?? '';
 
 	if (empty($result))
@@ -16,7 +16,7 @@ function addNewPatentQuery(string $queryPatent, $bdd)
 		$insertCol = array(array('query', $queryPatent),
 											array('owners', ',' . $_SESSION['id'] . ','),
 											array('active', 1));
-		$execution = insert('queries_wipo_serge', $insertCol, '', '', $bdd);
+		$execution = insert('inquiries_patents_serge', $insertCol, '', '', $bdd);
 	}
 	else
 	{
@@ -30,7 +30,7 @@ function addNewPatentQuery(string $queryPatent, $bdd)
 			$updateCol = array(array('owners', $owners . $_SESSION['id'] . ','),
 													array('active', $result['active'] + 1));
 			$checkCol = array(array('id', '=', $result['id'], ''));
-			$execution = update('queries_wipo_serge', $updateCol, $checkCol, '', $bdd);
+			$execution = update('inquiries_patents_serge', $updateCol, $checkCol, '', $bdd);
 		}
 		else
 		{

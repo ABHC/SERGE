@@ -5,7 +5,7 @@ function addNewScienceQuery(string $queryScience_Serge, $bdd)
 	$ERROR_SCIENCEQUERY = '';
 	// Check if science query is already in bdd
 	$checkCol = array(array('query_serge', '=', mb_strtolower($queryScience_Serge), ''));
-	$result = read('queries_science_serge', 'id, owners, active', $checkCol, '', $bdd);
+	$result = read('inquiries_sciences_serge', 'id, owners, active', $checkCol, '', $bdd);
 	$result = $result[0] ?? '';
 
 	if (empty($result))
@@ -16,7 +16,7 @@ function addNewScienceQuery(string $queryScience_Serge, $bdd)
 			$insertCol = array(array('query_serge', $queryScience_Serge),
 												array('owners', ',' . $_SESSION['id'] . ','),
 												array('active', 1));
-			$execution = insert('queries_science_serge', $insertCol, '', '', $bdd);
+			$execution = insert('inquiries_sciences_serge', $insertCol, '', '', $bdd);
 	}
 	else
 	{
@@ -30,7 +30,7 @@ function addNewScienceQuery(string $queryScience_Serge, $bdd)
 			$updateCol = array(array('owners', $owners . $_SESSION['id'] . ','),
 												array('active', $result['active'] + 1));
 			$checkCol = array(array('id', '=', $result['id'], ''));
-			$execution = update('queries_science_serge', $updateCol, $checkCol, '', $bdd);
+			$execution = update('inquiries_sciences_serge', $updateCol, $checkCol, '', $bdd);
 		}
 		else
 		{

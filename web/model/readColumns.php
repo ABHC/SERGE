@@ -2,7 +2,7 @@
 	# SQL request
 	try
 	{
-		$req = $bdd->prepare("SHOW columns FROM `equivalence_science_serge`");
+		$req = $bdd->prepare("SHOW columns FROM `sources_sciences_serge`");
 		$req->execute();
 		$columnsNames = $req->fetchAll();
 		$req->closeCursor();

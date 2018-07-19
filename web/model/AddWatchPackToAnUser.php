@@ -20,7 +20,7 @@ if (!empty($packExist))
 
 	$checkCol = array(array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
 										array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
-	$ownerSources = read('rss_serge', 'id', $checkCol, '', $bdd);
+	$ownerSources = read('sources_news_serge', 'id', $checkCol, '', $bdd);
 
 	if (!empty($ownerSources))
 	{
@@ -40,14 +40,14 @@ if (!empty($packExist))
 		if (empty($ownerSources) || !in_array($source, $ownerSources_array))
 		{
 			$checkCol     = array(array('id', '=', $source, ''));
-			$sourceOwners = read('rss_serge', 'owners, active', $checkCol, '', $bdd);
+			$sourceOwners = read('sources_news_serge', 'owners, active', $checkCol, '', $bdd);
 			$sourceOwners = $sourceOwners[0]['owners'] ?? '';
 			$sourceActive = $sourceOwners[0]['active'] ?? '';
 
 			$updateCol = array(array('owners', $sourceOwners . $_SESSION['id'] . ','),
 												array('active', $sourceActive + 1));
 			$checkCol  = array(array('id', '=', $source, ''));
-			$execution = update('rss_serge', $updateCol, $checkCol, '', $bdd);
+			$execution = update('sources_news_serge', $updateCol, $checkCol, '', $bdd);
 		}
 	}
 
@@ -65,12 +65,12 @@ if (!empty($packExist))
 											array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
 											array('query_serge', '=', $scienceQuery['query'], 'AND'),
 											array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
-		$queryExist = read('queries_science_serge', '', $checkCol, '', $bdd);
+		$queryExist = read('inquiries_sciences_serge', '', $checkCol, '', $bdd);
 
 		if (!$queryExist)
 		{
 			$checkCol   = array(array('query_serge', '=', $scienceQuery['query'], ''));
-			$queryExist = read('queries_science_serge', 'id, owners, active', $checkCol, '', $bdd);
+			$queryExist = read('inquiries_sciences_serge', 'id, owners, active', $checkCol, '', $bdd);
 			$queryExist = $queryExist[0] ?? '';
 
 			if (!empty($queryExist))
@@ -79,7 +79,7 @@ if (!empty($packExist))
 				$updateCol = array(array('owners', $queryExist['owners'] . $_SESSION['id'] . ','),
 													array('active', $queryExist['active'] + 1));
 				$checkCol  = array(array('id', '=', $queryExist['id'], ''));
-				$execution = update('queries_science_serge', $updateCol, $checkCol, '', $bdd);
+				$execution = update('inquiries_sciences_serge', $updateCol, $checkCol, '', $bdd);
 			}
 			else
 			{
@@ -87,7 +87,7 @@ if (!empty($packExist))
 				$insertCol = array(array('query_serge', $scienceQuery['query']),
 													array('owners', ',' . $_SESSION['id'] . ','),
 													array('active', 1));
-				$execution = insert('queries_science_serge', $insertCol, '', '', $bdd);
+				$execution = insert('inquiries_sciences_serge', $insertCol, '', '', $bdd);
 			}
 		}
 	}
@@ -106,12 +106,12 @@ if (!empty($packExist))
 												array('owners', 'l', '%,' . $_SESSION['id'] . ',%', 'OR'),
 												array('query', '=', $patentQuery['query'], 'AND'),
 												array('owners', 'l', '%,!' . $_SESSION['id'] . ',%', ''));
-		$queryExist = read('queries_wipo_serge', '', $checkCol, '', $bdd);
+		$queryExist = read('inquiries_patents_serge', '', $checkCol, '', $bdd);
 
 		if (!$queryExist)
 		{
 			$checkCol   = array(array('query', '=', $patentQuery['query'], ''));
-			$queryExist = read('queries_wipo_serge', 'id, owners, active', $checkCol, '', $bdd);
+			$queryExist = read('inquiries_patents_serge', 'id, owners, active', $checkCol, '', $bdd);
 			$queryExist = $queryExist[0] ?? '';
 
 			if (!empty($queryExist))
@@ -120,7 +120,7 @@ if (!empty($packExist))
 				$updateCol = array(array('owners', $queryExist['owners'] . $_SESSION['id'] . ','),
 													array('active', $queryExist['active'] + 1));
 				$checkCol  = array(array('id', '=', $queryExist['id'], ''));
-				$execution = update('queries_wipo_serge', $updateCol, $checkCol, '', $bdd);
+				$execution = update('inquiries_patents_serge', $updateCol, $checkCol, '', $bdd);
 			}
 			else
 			{
@@ -128,7 +128,7 @@ if (!empty($packExist))
 				$insertCol = array(array('query', $patentQuery['query']),
 													array('owners', ',' . $_SESSION['id'] . ','),
 													array('active', 1));
-				$execution = insert('queries_wipo_serge', $insertCol, '', '', $bdd);
+				$execution = insert('inquiries_patents_serge', $insertCol, '', '', $bdd);
 			}
 		}
 	}
@@ -146,19 +146,19 @@ if (!empty($packExist))
 		$sourceId   = preg_replace("/,([^$])/", ",!*$1", $couple['source']);
 		$checkCol   = array(array('keyword', '=', strtolower($couple['query']), 'AND'),
 												array('applicable_owners_sources', 'REGEXP', '\\|' . $_SESSION['id'] . ':[,0-9+,^\\|]*' . $sourceId, ''));
-		$queryExist = read('keyword_news_serge', '', $checkCol, '', $bdd);
+		$queryExist = read('inquiries_news_serge', '', $checkCol, '', $bdd);
 
 		if (!$queryExist)
 		{
 			$checkCol   = array(array('keyword', '=', strtolower($couple['query']), ''));
-			$queryExist = read('keyword_news_serge', 'id, applicable_owners_sources', $checkCol, '', $bdd);
+			$queryExist = read('inquiries_news_serge', 'id, applicable_owners_sources', $checkCol, '', $bdd);
 
 			if (!empty($queryExist))
 			{
 				// Check if user already own keyword
 				$checkCol       = array(array('keyword', '=', strtolower($couple['query']), 'AND'),
 																array('applicable_owners_sources', 'l', '%|' . $_SESSION['id'] . ':%', ''));
-				$userOwnKeyword = read('keyword_news_serge', 'id, applicable_owners_sources, active', $checkCol, '', $bdd);
+				$userOwnKeyword = read('inquiries_news_serge', 'id, applicable_owners_sources, active', $checkCol, '', $bdd);
 				$userOwnKeyword = $userOwnKeyword[0] ?? '';
 
 				if (empty($userOwnKeyword))
@@ -167,7 +167,7 @@ if (!empty($packExist))
 					$updateCol = array(array('applicable_owners_sources', $queryExist['applicable_owners_sources'] . $_SESSION['id'] . ':' . $couple['source'] . '|'),
 														 array('active', $userOwnKeyword['active'] + substr_count($couple['source'], ',') - 1));
 					$checkCol  = array(array('id', '=', $queryExist['id'], ''));
-					$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
+					$execution = update('inquiries_news_serge', $updateCol, $checkCol, '', $bdd);
 				}
 				else
 				{
@@ -185,7 +185,7 @@ if (!empty($packExist))
 					$updateCol = array(array('applicable_owners_sources', $allSources),
 														array('active', substr_count($allSources, ',') - 1));
 					$checkCol  = array(array('id', '=', $userOwnKeyword['id'], ''));
-					$execution = update('keyword_news_serge', $updateCol, $checkCol, '', $bdd);
+					$execution = update('inquiries_news_serge', $updateCol, $checkCol, '', $bdd);
 				}
 			}
 			else
@@ -194,7 +194,7 @@ if (!empty($packExist))
 				$insertCol = array(array('keyword', $couple['query']),
 													array('applicable_owners_sources', '|' . $_SESSION['id'] . ':' . $couple['source'] . '|'),
 													array('active', substr_count($couple['source'], ',') - 1));
-				$execution = insert('keyword_news_serge', $insertCol, '', '', $bdd);
+				$execution = insert('inquiries_news_serge', $insertCol, '', '', $bdd);
 			}
 		}
 	}

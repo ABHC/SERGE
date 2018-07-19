@@ -23,15 +23,15 @@ if (!empty($data['linkId']) && !empty($data['token']) && !empty($data['type']))
 	{
 		if ($data['type'] === 'news')
 		{
-			$tableName = 'result_news_serge';
+			$tableName = 'results_news_serge';
 		}
 		elseif ($data['type'] === 'sciences')
 		{
-			$tableName = 'result_science_serge';
+			$tableName = 'results_science_serge';
 		}
 		elseif ($data['type'] === 'patents')
 		{
-			$tableName = 'result_patents_serge';
+			$tableName = 'results_patents_serge';
 		}
 		$checkCol = array(array('id', '=', $data['linkId'], 'AND'),
 		array('owners', 'l', '%,' . $userId . ',%', ''));
