@@ -245,7 +245,7 @@ def ofSourceAndName(now):
 			num = num+1
 
 
-def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, keyword_id_comma, need_jelly):
+def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, inquiry_id_comma, need_jelly):
 	"""insertOrUpdate manage links insertion or data update if the link is already present."""
 
 	######### LOGGER CALL
@@ -256,7 +256,7 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 	post_link = item[1]
 	post_date = int(item[2])
 	source_id = item[3]
-	keyword_id_comma2 = item[4]
+	inquiry_id_comma2 = item[4]
 	owners = item[5]
 
 	########### CONNECTION TO SERGE DATABASE
@@ -274,15 +274,15 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 
 		########### IF COUPLE LINK TITLE IS IN DATABASE
 		if checking is not None:
-			field_id_keyword = checking[0]
+			field_id_inquiry = checking[0]
 			item_owners = checking[1]
 			already_owners_list = owners.split(",")
-			complete_id = field_id_keyword
+			complete_id = field_id_inquiry
 			complete_owners = item_owners
 
 			########### NEW ATTRIBUTES CREATION (COMPLETE ID & COMPLETE OWNERS)
-			if keyword_id_comma2 not in field_id_keyword:
-				complete_id = field_id_keyword+keyword_id_comma
+			if inquiry_id_comma2 not in field_id_inquiry:
+				complete_id = field_id_inquiry+inquiry_id_comma
 
 			split_index = 1
 
@@ -323,15 +323,15 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 			########### IF LINK IS IN DATABASE
 			if checking_link is not None:
 				########### UPDATE WITH TITLE
-				field_id_keyword = checking_link[0]
+				field_id_inquiry = checking_link[0]
 				item_owners = checking_link[1]
 				already_owners_list = owners.split(",")
-				complete_id = field_id_keyword
+				complete_id = field_id_inquiry
 				complete_owners = item_owners
 
 				########### NEW ATTRIBUTES CREATION (COMPLETE ID & COMPLETE OWNERS)
-				if keyword_id_comma2 not in field_id_keyword:
-					complete_id = field_id_keyword+keyword_id_comma
+				if inquiry_id_comma2 not in field_id_inquiry:
+					complete_id = field_id_inquiry+inquiry_id_comma
 
 				split_index = 1
 
@@ -385,19 +385,19 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 						if levenshtein_title_score <= 3 or damerauLevenshtein_title_score <= 3:
 							duplicate = True
 
-							field_id_keyword = jelly[2]
+							field_id_inquiry = jelly[2]
 							item_owners = jelly[3]
 							already_owners_list = owners.split(",")
-							complete_id = field_id_keyword
+							complete_id = field_id_inquiry
 							complete_owners = item_owners
 
 							########### NEW ATTRIBUTES CREATION (COMPLETE ID & COMPLETE OWNERS)
-							if keyword_id_comma2 not in field_id_keyword:
-								complete_id = field_id_keyword+keyword_id_comma
+							if inquiry_id_comma2 not in field_id_inquiry:
+								complete_id = field_id_inquiry+inquiry_id_comma
 
 							########### NEW ATTRIBUTES CREATION (COMPLETE ID & COMPLETE OWNERS)
-							if keyword_id_comma2 not in field_id_keyword:
-								complete_id = field_id_keyword+keyword_id_comma
+							if inquiry_id_comma2 not in field_id_inquiry:
+								complete_id = field_id_inquiry+inquiry_id_comma
 
 							split_index = 1
 

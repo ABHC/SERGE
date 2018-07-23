@@ -51,8 +51,6 @@ def kalendarExplorer():
 	now = time.time()
 	calendars_list = []
 
-	#TODO supprimer owners de sources kalendat et remplacer le paté sur l'attribution par une regex situé dans le for après la récupération des inquiries
-
 	######### CALL TO TABLE sources_kalendar_serge
 	call_calendar = database.cursor()
 	call_calendar.execute("SELECT id, link FROM sources_kalendar_serge WHERE active >= 1")
@@ -149,7 +147,7 @@ def kalendarExplorer():
 					query_checking = ("SELECT inquiry_id, owners FROM results_kalendar_serge WHERE name = %s AND `date` = %s AND location = %s")
 
 					########### QUERY FOR DATABASE INSERTION
-					query_insertion = ("INSERT INTO results_kalendar_serge (name, date, location, description, id_source, inquiry_id, owners) VALUES (%s, %s, %s, %s, %s, %s, %s)")
+					query_insertion = ("INSERT INTO results_kalendar_serge (name, date, location, description, source_id, inquiry_id, owners) VALUES (%s, %s, %s, %s, %s, %s, %s)")
 
 					########### QUERIES FOR DATABASE UPDATE
 					query_update = ("UPDATE results_kalendar_serge SET inquiry_id = %s, owners = %s WHERE name = %s")
@@ -168,7 +166,7 @@ def saveTheDate(query_checking, query_insertion, query_update, item):
 	database = databaseConnection()
 
 	########### ITEM EXTRACTION FOR OPERATIONS
-	event = {"name": item[0], "date": item[1], "location": item[2], "id_source": item[3], "inquiry_id": item[4], "owner": item[5]}
+	event = {"name": item[0], "date": item[1], "location": item[2], "source_id": item[3], "inquiry_id": item[4], "owner": item[5]}
 
 	########### DATABASE CHECKING
 	call_data_cheking = database.cursor()

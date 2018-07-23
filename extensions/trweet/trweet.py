@@ -200,7 +200,7 @@ def trweetFishing(inquiry):
 		geo_species = False
 
 		########### CALL trweetBucket FUNCTION
-		trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time)
+		trweetBucket(item, inquiry_id, inquiry_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time)
 
 
 def lakesOfTrweets(inquiry):
@@ -275,7 +275,7 @@ def lakesOfTrweets(inquiry):
 			geo_species = True
 
 			########### CALL trweetBucket FUNCTION
-			trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database)
+			trweetBucket(item, inquiry_id, inquiry_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database)
 
 
 def trweetTorrent(inquiry):
@@ -321,9 +321,9 @@ def trweetTorrent(inquiry):
 
 			if fragments_nb == len(aggregated_inquiries):
 				########### SEARCH TRWEET QUERIES
-				query_checking = ("SELECT query_id, owners FROM results_targets_trweet_serge WHERE link = %s")
-				query_update = ("UPDATE results_targets_trweet_serge SET query_id = %s, owners = %s WHERE link = %s")
-				query_insertion = ("INSERT INTO results_targets_trweet_serge (query_id, owners, author, tweet, date, likes, retweets, link) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
+				query_checking = ("SELECT inquiry_id, owners FROM results_targets_trweet_serge WHERE link = %s")
+				query_update = ("UPDATE results_targets_trweet_serge SET inquiry_id = %s, owners = %s WHERE link = %s")
+				query_insertion = ("INSERT INTO results_targets_trweet_serge (inquiry_id, owners, author, tweet, date, likes, retweets, link) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
 				query_fishing_time = ("UPDATE inquiries_trweet_serge SET last_launch = %s WHERE id = %s")
 
 				########### ITEM BUILDING
@@ -331,10 +331,10 @@ def trweetTorrent(inquiry):
 				geo_species = False
 
 				########### CALL trweetBucket FUNCTION
-				trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database)
+				trweetBucket(item, inquiry_id, inquiry_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database)
 
 
-def trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database):
+def trweetBucket(item, inquiry_id, inquiry_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database):
 	"""trweetBucket manage tweets insertion or data update if tweets are already present."""
 
 	######### LOGGER CALL
@@ -375,15 +375,15 @@ def trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, que
 
 	########### DATABASE UPDATE
 	elif checking is not None:
-		field_query_id = checking[0]
+		field_inquiry_id = checking[0]
 		query_owners = checking[1]
 		already_owners_list = owners.split(",")
-		complete_id = field_query_id
+		complete_id = field_inquiry_id
 		complete_owners = query_owners
 
 		########### NEW ATTRIBUTES CREATION (COMPLETE ID & COMPLETE OWNERS)
-		if query_id_comma2 not in field_query_id:
-			complete_id = field_query_id + query_id_comma
+		if inquiry_id_comma2 not in field_inquiry_id:
+			complete_id = field_inquiry_id + inquiry_id_comma
 
 		split_index = 1
 
@@ -414,7 +414,7 @@ def trweetBucket(item, query_id, query_id_comma2, geo_species, fishing_time, que
 	########### LAST LAUNCH UPDATE
 	call_launch = database.cursor()
 	try:
-		call_launch.execute(query_fishing_time, (fishing_time, query_id))
+		call_launch.execute(query_fishing_time, (fishing_time, inquiry_id))
 		database.commit()
 	except Exception, except_type:
 		database.rollback()

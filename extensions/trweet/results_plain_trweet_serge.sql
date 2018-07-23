@@ -3,7 +3,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `results_plain_trweet_serge` (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
-	`query_id` text COLLATE utf8mb4_bin NOT NULL,
+	`inquiry_id` text COLLATE utf8mb4_bin NOT NULL,
 	`owners` text COLLATE utf8mb4_bin NOT NULL,
 	`author` text COLLATE utf8mb4_bin NOT NULL,
 	`tweet` text COLLATE utf8mb4_bin,
