@@ -347,6 +347,6 @@ def pieceOfMail(priority):
 	</body>
 	</html>"""
 
-	appearance = {"style": style, "banner": banner, "block": block, "elements", "end_block": end_block, "footer": footer}
+	appearance = {"style": style, "banner": banner, "block": block, "elements": elements, "end_block": end_block, "footer": footer}
 
 	return appearance
