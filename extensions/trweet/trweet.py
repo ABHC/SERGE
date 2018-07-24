@@ -467,25 +467,13 @@ def resultsPack(register, user_id_comma):
 		######### SEARCH FOR SOURCE NAME AND COMPLETE REQUEST OF THE USER
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_trweet_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
-		######### RETRIEVE THE USER REQUEST
-		for inquiry_id in str(trweet[7]).split(","):
-			call_db = database.cursor()
-			call_db.execute(query_inquiry, (inquiry_id, "%"+register+":%",))
-			check = call_db.fetchone()
-			call_db.close()
+		item_arguments = {"user_id": register, "source_id": None, "inquiry_id": str(trweet[7]).split(",")}, "query_source": None, "query_inquiry": query_inquiry, "multisource": False}
 
-			if re.search('[^!A-Za-z]'+user_id+":"+'[0-9!,]*'+","+inquiry_id+",", check[1]) is not None:
-				inquiries_list.append(check[0])
-
-		if len(inquiries_list) > 0:
-			inquiry = alerts_inquiries[0]
-		else:
-			inquiry = "REMOVED INQUIRY"
-
+		attributes = toolbox.packaging(item_arguments)
 		description = (trweet[1] + "\n" + trweet[3] + ", likes : " + trweet[4] + ", retweets : " + trweet[5]).strip().encode('ascii', errors='xmlcharrefreplace')
 
 		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
-		item = {"id": trweet[0], "title": trweet[2].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": description, "link": trweet[6].strip().encode('ascii', errors='xmlcharrefreplace'), "label": label, "source": trweet[1], "inquiry": inquiry, "wiki_link": add_wiki_link}
+		item = {"id": trweet[0], "title": trweet[2].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": description, "link": trweet[6].strip().encode('ascii', errors='xmlcharrefreplace'), "label": label, "source": trweet[1], "inquiry": attributes["inquiry"], "wiki_link": add_wiki_link}
 		results_pack.append(item)
 
 	return results_pack
