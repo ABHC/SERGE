@@ -154,7 +154,7 @@ def rosetta(now):
 					logger_info.warning("Error : the feed is unavailable")
 
 			######### RESEARCH SCIENCE ON JSON FEEDS WITH JSON MODULE
-			elif science_api_pack["type"] == "JSON" and source_comparator is not None re.search('^(,[0-9]+)+,$', owners_str) is not None:
+			elif science_api_pack["type"] == "JSON" and source_comparator is not None and re.search('^(,[0-9]+)+,$', owners_str) is not None:
 				logger_info.info(science_api_pack["inquiry_raw"].encode("utf8")+"\n")
 				req_results = sergenet.aLinkToThePast(science_api_pack["inquiry_link"], 'fullcontent')
 				json_content = req_results[0]
