@@ -30,9 +30,9 @@ import failsafe
 import insertSQL
 import extensions
 import transcriber
-import core.news
-import core.patents
-import core.sciences
+from core import news
+from core import patents
+from core import sciences
 from handshake import databaseConnection
 
 ######### LOGGER CONFIG
