@@ -199,7 +199,7 @@ def patentspack(register, user_id_comma):
 		query_source = "SELECT basename FROM sources_patents_serge WHERE id = %s and type <> 'language'"
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_patents_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
-		item_arguments = {"user_id": register, "source_id": row[3], "inquiry_id": str(row[4]).split(",")}, "query_source": query_source, "query_inquiry": query_inquiry, "multisource": True}
+		item_arguments = {"user_id": register, "source_id": row[3], "inquiry_id": str(row[4]).split(","), "query_source": query_source, "query_inquiry": query_inquiry, "multisource": True}
 
 		attributes = toolbox.packaging(item_arguments)
 

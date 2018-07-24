@@ -250,7 +250,7 @@ def resultsPack(register, user_id_comma):
 		query_source = "SELECT name FROM sources_kalendar_serge WHERE id = %s and type <> 'language'"
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_kalendar_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
-		item_arguments = {"user_id": register, "source_id": row[6], "inquiry_id": str(row[7]).split(",")}, "query_source": query_source, "query_inquiry": query_inquiry, "multisource": True}
+		item_arguments = {"user_id": register, "source_id": row[6], "inquiry_id": str(row[7]).split(","), "query_source": query_source, "query_inquiry": query_inquiry, "multisource": True}
 
 		attributes = toolbox.packaging(item_arguments)
 		description = (row[2] + ", " + row[3] + "\n" + row[4]).strip().encode('ascii', errors='xmlcharrefreplace')

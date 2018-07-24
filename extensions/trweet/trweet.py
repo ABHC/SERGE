@@ -467,7 +467,7 @@ def resultsPack(register, user_id_comma):
 		######### SEARCH FOR SOURCE NAME AND COMPLETE REQUEST OF THE USER
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_trweet_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
-		item_arguments = {"user_id": register, "source_id": None, "inquiry_id": str(trweet[7]).split(",")}, "query_source": None, "query_inquiry": query_inquiry, "multisource": False}
+		item_arguments = {"user_id": register, "source_id": None, "inquiry_id": str(trweet[7]).split(","), "query_source": None, "query_inquiry": query_inquiry, "multisource": False}
 
 		attributes = toolbox.packaging(item_arguments)
 		description = (trweet[1] + "\n" + trweet[3] + ", likes : " + trweet[4] + ", retweets : " + trweet[5]).strip().encode('ascii', errors='xmlcharrefreplace')
