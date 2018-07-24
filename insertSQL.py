@@ -1,4 +1,4 @@
-sources_news_serge# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 """insertSQL contains all the functions related to the insertion of datas in SERGE database."""
 
