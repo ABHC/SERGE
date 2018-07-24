@@ -381,7 +381,7 @@ else
 
 ## Read if option read status is activated
 $checkCol         = array(array('id', '=', $_SESSION['id']));
-$readStatusColumn = read('users_table_serge', 'record_read', $checkCol, '', $bdd);
+$optionReadStatus = read('users_table_serge', 'record_read', $checkCol, '', $bdd);
 
 $readStatusColumn = '';
 if ($optionReadStatus)

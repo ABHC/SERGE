@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 #include('../model/design.php')
 ?>
 
@@ -55,7 +57,7 @@
 	background-size: cover;
 }
 
-.captcha_field
+.captcha-field
 {
 	width: calc(100% - 100px);
 	border-radius: 2px 0px 0px 2px;

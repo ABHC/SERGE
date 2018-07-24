@@ -6,391 +6,58 @@ header('Cache-Control: max-age=31536000, must-revalidate');
 include('style.php');
 
 include('nav.php');
-?>
-
-.body
-{
-	display: flex;
-	flex-direction: column;
-	justify-content: space-around;
-	align-items: center;
-	min-height: 100vh;
-	color: #f9f9ff;
-}
-
-.background
-{
-	position: fixed;
-	top: 0;
-	left: 0;
-	margin: 0;
-	width: 100%;
-	height: 100vh;
-	z-index: -1;
-	background: url('../images/background/dark.png') center no-repeat;
-	background-size: cover;
-}
-
-.subBackground
-{
-	position: fixed;
-	top: 0;
-	left: 0;
-	margin: 0;
-	width: 100%;
-	height: 100vh;
-	z-index: -1;
-}
-
-form
-{
-	width: 100%;
-}
-
-input
-{
-	width: calc(100% - 8px);
-	border-radius: 3px;
-	border: 1px solid rgba(255,255,255, 0.15);
-	padding: 4px;
-	background-color: rgba(255, 255, 255, 0.2);
-	color: #f9f9ff;
-}
-
-.price
-{
-	width: 100%;
-	font-size: 50px;
-	text-align: center;
-}
-
-.purchase
-{
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	align-items: flex-start;
-	border-radius: 3px;
-	background-color: rgba(0,0,0,0.4);
-	width: 40%;
-	padding: 10px;
-	color: rgb(230,230,230);
-}
-
-.title_purchase
-{
-	font-size: 23px;
-	font-weight: bold;
-	margin-top: 5px;
-	margin-bottom: 10px;
-}
-
-.title_form_purchase
-{
-	font-size: 18px;
-}
-
-a.text_purchase
-{
-	text-decoration: none;
-	color: rgb(230,230,230);
-}
-
-.submit_purchase
-{
-	width: 100%;
-	background-color: rgba(84,26,102, 0.55);
-	cursor: pointer;
-	color: rgb(230,230,230);
-	margin-top: 10px;
-}
-
-.submit_purchase:hover
-{
-	background-color: rgba(91, 37, 108, 0.75);
-	color: rgb(255,255,255);
-}
-
-.number
-{
-	width: 35px;
-}
-
-.alpha
-{
-	font-size: 16px;
-	background-color: rgba(0, 0, 0, 0);
-	outline: none;
-	border: none;
-}
-
-a
-{
-	color: rgb(230,230,230);
-}
-
-[type="checkbox"]:not(:checked),
-[type="checkbox"]:checked
-{
-	display: none;
-}
-
-[type="checkbox"]:not(:checked) + label,
-[type="checkbox"]:checked + label
-{
-	position: relative;
-	top: 0;
-	margin-right: 20px;
-	width: 15px;
-	height: 15px;
-}
-
-[type="checkbox"]:not(:checked) + label:before
-{
-	content: '';
-	position: absolute;
-	left: 0;
-	top: 0;
-	height: 15px;
-	width: 15px;
-	border: 1px solid rgba(255,255,255, 0.15);
-	border-radius: 3px;
-	background-color: rgba(255, 255, 255, 0.15);
-	transition: all .3s;
-}
 
 
-[type="checkbox"]:checked + label:before
-{
-	content: '';
-	position: absolute;
-	left: 0;
-	top: 0;
-	height: 15px;
-	width: 15px;
-	border: 1px solid rgba(255,255,255, 0.15);
-	border-radius: 3px;
-	background-color: rgba(255, 255, 255, 0.3);
-	transition: all .3s;
-}
+// atoms
 
-[type="checkbox"]:not(:checked) + label:after
-{
-	content: '';
-	position: absolute;
-	top: 0px;
-	left: 0px;
-}
+include('atoms/a.php');
 
-[type="checkbox"]:checked + label:after
-{
-	content: '✓';
-	position: absolute;
-	top: -8px;
-	left: -1px;
-	font-size: 25px;
-	color: #d5d3d3;
-	text-align: center;
-}
+include('atoms/background.php');
 
-h2
-{
-	font-size: 30px;
-	font-weight: bold;
-	letter-spacing: 1pt;
-	margin-bottom: 0;
-}
+include('atoms/input.php');
 
-h3
-{
-	font-size: 21px;
-	font-weight: lighter;
-	letter-spacing: 1pt;
-	margin-top: 15px;
-	margin-bottom: 0;
-}
+include('atoms/icon-RSS.php');
 
-.functionality
-{
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	width: 100%;
-	margin-top: 50px;
-}
+include('atoms/icon-mail.php');
 
-.premiumFunctionalityLine
-{
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
-	width: 90%;
-	height: 140px;
-	margin-bottom: 8vw;
-}
+include('atoms/icon-SMS.php');
 
-.premiumFunctionalityLine > div
-{
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
-	width: 47%;
-	min-width: 400px;
-	margin-right: 4%;
-	margin-left: 4%;
-}
+include('atoms/icon-twitter.php');
 
-.iconRSS
-{
-	width: 140px;
-	height: 140px;
-	background: url('../images/iconFuncRss.png') no-repeat;
-	background-size: contain;
-	background-position: left bottom;
-}
+include('atoms/h3.php');
 
-.iconPatent
-{
-	width: 140px;
-	height: 140px;
-	background: url('../images/iconFuncPatent.png') no-repeat;
-	background-size: contain;
-	background-position: left bottom;
-}
+include('atoms/h4.php');
 
-.iconScience
-{
-	width: 140px;
-	height: 140px;
-	background: url('../images/iconFuncScience.png') no-repeat;
-	background-size: contain;
-	background-position: left bottom;
-}
+include('atoms/h5.php');
 
-.iconMail
-{
-	width: 140px;
-	height: 140px;
-	background: url('../images/iconFuncMail.png') no-repeat;
-	background-size: contain;
-	background-position: left bottom;
-}
+include('atoms/h6.php');
 
-.iconOption
-{
-	width: 140px;
-	height: 140px;
-	background: url('../images/iconFuncOption.png') no-repeat;
-	background-size: contain;
-	background-position: left bottom;
-}
+include('atoms/submit-button.php');
 
-.iconHistory
-{
-	width: 140px;
-	height: 140px;
-	background: url('../images/iconFuncHistory.png') no-repeat;
-	background-size: contain;
-	background-position: left bottom;
-}
+include('atoms/number.php');
 
-.iconSMS
-{
-	width: 140px;
-	height: 140px;
-	background: url('../images/iconFuncSMS.png') no-repeat;
-	background-size: contain;
-	background-position: left bottom;
-}
+include('atoms/alpha.php');
 
-.iconTwitter
-{
-	width: 140px;
-	height: 140px;
-	background: url('../images/iconFuncTwitter.png') no-repeat;
-	background-size: contain;
-	background-position: left bottom;
-}
+include('atoms/emoticon-sad.php');
 
-.iconWiki
-{
-	width: 140px;
-	height: 140px;
-	background: url('../images/iconFuncWiki.png') no-repeat;
-	background-size: contain;
-	background-position: left bottom;
-}
 
-.iconStats
-{
-	width: 140px;
-	height: 140px;
-	background: url('../images/iconFuncStats.png') no-repeat;
-	background-size: contain;
-	background-position: left bottom;
-}
+// molecules
+include('molecules/checkbox.php');
 
-.functionalityText
-{
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-end;
-	align-items: flex-start;
-	width: 100%;
-	height: 140px;
-	overflow: hidden;
-	font-size: 15px;
-	color: rgb(200, 200, 200);
-}
+include('molecules/functionality-text.php');
 
-.functionalityText div
-{
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: flex-start;
-	height: 120px;
-	width: 100%;
-}
 
-h5
-{
-	font-size: 20px;
-	margin-top: 0px;
-	margin-bottom: 5px;
-	color: rgb(245, 245, 245);
-}
+// organisms
 
-.window
-{
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
-	border-radius: 3px;
-	background-color: rgba(0,0,0,0.4);
-	width: 60%;
-	padding: 10px;
-	color: rgb(230,230,230);
-	margin-bottom: 5vh;
-	font-size: 25px;
-}
+include('organisms/body.php');
 
-.emoticon
-{
-	position: relative;
-	background-image: url(../images/Desapoinhat.png);
-	width: 30%;
-	height: 200px;
-	background-size: contain;
-	background-repeat: no-repeat;
-	background-position: center;
-	margin-right: 50px;
-}
+include('organisms/window.php');
 
-/**/
-<?php
+include('organisms/form-window.php');
+
+include('organisms/functionality-line.php');
+
+
+
 include('footer.php');
 ?>

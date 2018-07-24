@@ -6,48 +6,21 @@ header('Cache-Control: max-age=31536000, must-revalidate');
 include('style.php');
 
 include('nav.php');
-?>
 
-.body
-{
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	align-items: center;
-	min-height: 100vh;
-	color: #f9f9ff;
-}
 
-.background
-{
-	position: fixed;
-	top: 0;
-	left: 0;
-	margin: 0;
-	width: 100%;
-	height: 100vh;
-	z-index: -1;
-	background: url('../images/background/dark.png') center no-repeat;
-	background-size: cover;
-}
+// atoms
 
-.subBackground
-{
-	position: fixed;
-	top: 0;
-	left: 0;
-	margin: 0;
-	width: 100%;
-	height: 100vh;
-	z-index: -1;
-}
+include('atoms/background.php');
 
-.legalText
-{
-	width: 80%;
-	margin-top: 100px;
-}
+include('atoms/h3.php');
 
-<?php
+
+// organisms
+
+include('organisms/body.php');
+
+include('organisms/window.php');
+
+
 include('footer.php');
 ?>

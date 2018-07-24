@@ -1,5 +1,5 @@
 <div class="background">
-	<div class="subBackground">
+	<div class="sub-background">
 	</div>
 </div>
 <form method="post" action="setting">
@@ -18,213 +18,204 @@
 	?>"/>
 	<input type="hidden" name="delEditingScienceQuery" value="<?php echo $delEditingScienceQuery; ?>"/>
 	<input type="hidden" name="delEditingPatentQuery" value="<?php echo $delEditingPatentQuery; ?>"/>
-	<h1><?php get_t('tab3_title_nav', $bdd); ?></h1>
-	<div class="body">
-
-<div class="bodySetting">
+	<div class="body-row">
 		<div>
-		<div class="selectConfigType">
-			<a href="#premium">
-				<div class="selectConfigTypePremium"><?php get_t('Premium', $bdd); ?></div>
-			</a>
-			<a href="#setting">
-				<div class="selectConfigTypeSetting"><?php get_t('Settings', $bdd); ?></div>
-			</a>
-			<a href="#watchPack">
-				<div class="selectConfigTypeWatchPack"><?php get_t('WatchPack', $bdd); ?></div>
-			</a>
-			<a href="#news">
-				<div class="selectConfigTypeNews"><?php get_t('News', $bdd); ?></div>
-			</a>
-			<a href="#science">
-				<div class="selectConfigTypeScience"><?php get_t('Science', $bdd); ?></div>
-			</a>
-			<a href="#patent">
-				<div class="selectConfigTypePatent"><?php get_t('Patent', $bdd); ?></div>
-			</a>
-		</div>
+			<div class="aside-sticky-nav">
+				<a href="#premium">
+					<div class="aside-nav-background selectConfigTypePremium"><?php get_t('Premium', $bdd); ?></div>
+				</a>
+				<a href="#setting">
+					<div class="aside-nav-background selectConfigTypeSetting"><?php get_t('Settings', $bdd); ?></div>
+				</a>
+				<a href="#watchPack">
+					<div class="aside-nav-background selectConfigTypeWatchPack"><?php get_t('WatchPack', $bdd); ?></div>
+				</a>
+				<a href="#news">
+					<div class="aside-nav-background selectConfigTypeNews"><?php get_t('News', $bdd); ?></div>
+				</a>
+			</div>
 		</div>
 
-		<div class="bodyBoard">
-		<div class="board">
-			<h2><?php get_t('Account information', $bdd); ?></h2>
-			<?php get_t('Hello', $bdd); ?>&nbsp;<?php echo $_SESSION['pseudo']; ?>,
-			<div>
+		<div class="body">
+			<div class="board">
+				<h2><?php get_t('Account information', $bdd); ?></h2>
+				<?php get_t('Hello', $bdd); ?>&nbsp;<?php echo $_SESSION['pseudo']; ?>,
 				<div>
 					<div>
-						<input type="checkbox" id="modal-controller" class="modal-open" hidden>
-						<label for="modal-controller"><img alt="Premium" src="../images/pictogrammes/pictoPremium.png" class="icoText"/>&nbsp;<?php get_t('Premium presentation', $bdd); ?></label>
-						<div class="modal-wrap">
-							<label for="modal-controller" class="modal-overlay"></label>
-							<div class="modal-body">
+						<div>
+							<input type="checkbox" id="modal-controller" class="modal-open" hidden>
+							<label for="modal-controller"><img alt="Premium" src="/images/pictogrammes/pictoPremium.png" class="icoText"/>&nbsp;<?php get_t('Premium presentation', $bdd); ?></label>
+							<div class="modal-wrap">
+								<label for="modal-controller" class="modal-overlay"></label>
+								<div class="modal-body">
 
-								<label for="modal-controller" class="modal-close">&times;</label>
+									<label for="modal-controller" class="modal-close">&times;</label>
 
-								<input type="radio" name="content-nav" id="modal-content-1" class="modal-radio" checked hidden/>
-								<input type="radio" name="content-nav" id="modal-content-2" class="modal-radio" hidden/>
-								<input type="radio" name="content-nav" id="modal-content-3" class="modal-radio" hidden/>
+									<input type="radio" name="content-nav" id="modal-content-1" class="modal-radio" checked hidden/>
+									<input type="radio" name="content-nav" id="modal-content-2" class="modal-radio" hidden/>
+									<input type="radio" name="content-nav" id="modal-content-3" class="modal-radio" hidden/>
 
-								<div class="modal-slide content-1">
-									<div class="modal-content">
-										<h2><?php get_t('Premium feature - RSS Feed', $bdd); ?></h2>
-										<div>
+									<div class="modal-slide content-1">
+										<div class="modal-content">
+											<h2><?php get_t('Premium feature - RSS Feed', $bdd); ?></h2>
 											<div>
-												<?php get_t('functionality7_text_index', $bdd); ?>
-											</div>
-											<div>
-												<h3 title="<?php get_t('Premium functionality', $bdd); ?>"><img alt="Premium" src="../images/pictogrammes/pictoPremium.png" class="icoTextSmall"/>&nbsp;<?php get_t('subtitle6_window1_setting', $bdd); ?></h3>
-												<?php
-												$rssLink = 'https://' . $_SERVER['HTTP_HOST'] . '/rss/' . $token[0]['token'];
-												?>
-												<?php get_t('subsubtitle1_window1_setting', $bdd); ?>
-												<div class="align">
-													<textarea class="falseInput" id="toCopy" ><?php echo $rssLink; ?></textarea>
-													<button class="copyButton" id="copy" title="<?php get_t('Copy RSS feed', $bdd); ?>" type="button" onclick="copyToClipboard('');"></button>
-												</div><br>
-												<?php get_t('subsubtitle2_window1_setting', $bdd); ?>
-												<div class="align">
-													<textarea class="falseInput" id="toCopyS" ><?php echo $rssLink; ?>s</textarea>
-													<button class="copyButton" id="copyS" title="<?php get_t('Copy RSS feed', $bdd); ?>" type="button" onclick="copyToClipboard('S');"></button>
-												</div><br>
-												<?php get_t('subsubtitle3_window1_setting', $bdd); ?>
-												<div class="align">
-													<textarea class="falseInput" id="toCopyP" ><?php echo $rssLink; ?>p</textarea>
-													<button class="copyButton" id="copyP" title="<?php get_t('Copy RSS feed', $bdd); ?>" type="button" onclick="copyToClipboard('P');"></button>
+												<div>
+													<?php get_t('functionality7_text_index', $bdd); ?>
+												</div>
+												<div>
+													<h3 title="<?php get_t('Premium functionality', $bdd); ?>"><img alt="Premium" src="../images/pictogrammes/pictoPremium.png" class="icoTextSmall"/>&nbsp;<?php get_t('subtitle6_window1_setting', $bdd); ?></h3>
+													<?php
+													$rssLink = 'https://' . $_SERVER['HTTP_HOST'] . '/rss/' . $token[0]['token'];
+													?>
+													<?php get_t('subsubtitle1_window1_setting', $bdd); ?>
+													<div class="align">
+														<textarea class="falseInput" id="toCopy"><?php echo $rssLink; ?></textarea>
+														<button class="copyButton" id="copy" title="<?php get_t('Copy RSS feed', $bdd); ?>" type="button" onclick="copyToClipboard('');"></button>
+													</div><br>
+													<?php get_t('subsubtitle2_window1_setting', $bdd); ?>
+													<div class="align">
+														<textarea class="falseInput" id="toCopyS"><?php echo $rssLink; ?>s</textarea>
+														<button class="copyButton" id="copyS" title="<?php get_t('Copy RSS feed', $bdd); ?>" type="button" onclick="copyToClipboard('S');"></button>
+													</div><br>
+													<?php get_t('subsubtitle3_window1_setting', $bdd); ?>
+													<div class="align">
+														<textarea class="falseInput" id="toCopyP"><?php echo $rssLink; ?>p</textarea>
+														<button class="copyButton" id="copyP" title="<?php get_t('Copy RSS feed', $bdd); ?>" type="button" onclick="copyToClipboard('P');"></button>
+													</div>
+												</div>
+												<div class="modal-nav">
+													<label for="modal-content-2" class="next-slide">&#8250;</label>
 												</div>
 											</div>
-											<div class="modal-nav">
-												<label for="modal-content-2" class="next-slide">&#8250;</label>
+										</div>
+									</div>
+
+									<div class="modal-slide content-2">
+										<div class="modal-content">
+											<h2><?php get_t('Premium feature - Email', $bdd); ?></h2>
+											<div>
+												<div class="modal-nav">
+													<label for="modal-content-1" class="prev-slide">&#8249;</label>
+												</div>
+												<div>
+													<?php get_t('functionality4_text_index', $bdd); ?>
+												</div>
+												<div class="imgPrem imgEmail">
+												</div>
+												<div class="modal-nav">
+													<label for="modal-content-3" class="next-slide">&#8250;</label>
+												</div>
 											</div>
 										</div>
 									</div>
-								</div>
 
-								<div class="modal-slide content-2">
-									<div class="modal-content">
-										<h2><?php get_t('Premium feature - Email', $bdd); ?></h2>
-										<div>
-											<div class="modal-nav">
-												<label for="modal-content-1" class="prev-slide">&#8249;</label>
-											</div>
+									<div class="modal-slide content-3">
+										<div class="modal-content">
+											<h2><?php get_t('Premium feature - SMS', $bdd); ?></h2>
 											<div>
-												<?php get_t('functionality4_text_index', $bdd); ?>
-											</div>
-											<div class="imgPrem imgEmail">
-											</div>
-											<div class="modal-nav">
-												<label for="modal-content-3" class="next-slide">&#8250;</label>
-											</div>
-										</div>
-									</div>
-								</div>
-
-								<div class="modal-slide content-3">
-									<div class="modal-content">
-										<h2><?php get_t('Premium feature - SMS', $bdd); ?></h2>
-										<div>
-											<div class="modal-nav">
-												<label for="modal-content-2" class="prev-slide">&#8249;</a>
-											</div>
-											<div>
+												<div class="modal-nav">
+													<label for="modal-content-2" class="prev-slide">&#8249;</label>
+												</div>
+												<div>
 													<?php get_t('functionality10_text_index', $bdd); ?>
-											</div>
-											<div class="imgPrem imgSms">
+												</div>
+												<div class="imgPrem imgSms">
+												</div>
 											</div>
 										</div>
 									</div>
-								</div>
 
 								</div>
 							</div>
 						</div>
 						<div>
-						<a class="helpMe" href="<?php get_t('https://github.com/ABHC/SERGE/wiki/User\'s-Guide', $bdd); ?>" target="_blank">?</a>&nbsp;<a href="<?php get_t('https://github.com/ABHC/SERGE/wiki/User\'s-Guide', $bdd); ?>" target="_blank"><?php get_t('User guide', $bdd); ?></a>
-					</div>
-					<?php
-					if (!$emailIsCheck)
-					{
-						?>
-						<div class="redAlert">
-							<div class="redAlertPicto"></div>&nbsp;&nbsp;&nbsp;<?php get_t('title2_premium_setting', $bdd); ?>
+							<a class="helpMe" href="<?php get_t('https://github.com/ABHC/SERGE/wiki/User\'s-Guide', $bdd); ?>" target="_blank">?</a>&nbsp;<a href="<?php get_t('https://github.com/ABHC/SERGE/wiki/User\'s-Guide', $bdd); ?>" target="_blank"><?php get_t('User guide', $bdd); ?></a>
 						</div>
 						<?php
-					}
-					?>
-				</div>
-				<span class="Vseparator"></span>
-				<div <?php echo $classNoPremium; ?>>
-					<h3 title="<?php get_t('Premium functionality', $bdd); ?>"><img alt="Premium" src="../images/pictogrammes/pictoPremium.png" class="icoTextSmall"/>&nbsp;<?php get_t('subtitle6_window1_setting', $bdd); ?></h3>
+						if (!$emailIsCheck)
+						{
+							?>
+							<div class="redAlert">
+								<div class="redAlertPicto"></div>&nbsp;&nbsp;&nbsp;<?php get_t('title2_premium_setting', $bdd); ?>
+							</div>
+							<?php
+						}
+						?>
+					</div>
+					<span class="Vseparator"></span>
+					<div <?php echo $classNoPremium; ?>>
+						<h3 title="<?php get_t('Premium functionality', $bdd); ?>"><img alt="Premium" src="../images/pictogrammes/pictoPremium.png" class="icoTextSmall"/>&nbsp;<?php get_t('subtitle6_window1_setting', $bdd); ?></h3>
 						<?php
 						$rssLink = 'https://' . $_SERVER['HTTP_HOST'] . '/rss/' . $token[0]['token'];
 						?>
 						<?php get_t('subsubtitle1_window1_setting', $bdd); ?>
-					<div class="align">
-						<textarea class="falseInput" id="toCopy" ><?php echo $rssLink; ?></textarea>
-						<button class="copyButton" id="copy" title="<?php get_t('Copy RSS feed', $bdd); ?>" type="button" onclick="copyToClipboard('');"></button>
-					</div><br>
-					<?php get_t('subsubtitle2_window1_setting', $bdd); ?>
-					<div class="align">
-						<textarea class="falseInput" id="toCopyS" ><?php echo $rssLink; ?>s</textarea>
-						<button class="copyButton" id="copyS" title="<?php get_t('Copy RSS feed', $bdd); ?>" type="button" onclick="copyToClipboard('S');"></button>
-					</div><br>
-					<?php get_t('subsubtitle3_window1_setting', $bdd); ?>
-					<div class="align">
-						<textarea class="falseInput" id="toCopyP" ><?php echo $rssLink; ?>p</textarea>
-						<button class="copyButton" id="copyP" title="<?php get_t('Copy RSS feed', $bdd); ?>" type="button" onclick="copyToClipboard('P');"></button>
+						<div class="align">
+							<textarea class="falseInput" id="toCopy"><?php echo $rssLink; ?></textarea>
+							<button class="copyButton" id="copy" title="<?php get_t('Copy RSS feed', $bdd); ?>" type="button" onclick="copyToClipboard('');"></button>
+						</div><br>
+						<?php get_t('subsubtitle2_window1_setting', $bdd); ?>
+						<div class="align">
+							<textarea class="falseInput" id="toCopyS"><?php echo $rssLink; ?>s</textarea>
+							<button class="copyButton" id="copyS" title="<?php get_t('Copy RSS feed', $bdd); ?>" type="button" onclick="copyToClipboard('S');"></button>
+						</div><br>
+						<?php get_t('subsubtitle3_window1_setting', $bdd); ?>
+						<div class="align">
+							<textarea class="falseInput" id="toCopyP"><?php echo $rssLink; ?>p</textarea>
+							<button class="copyButton" id="copyP" title="<?php get_t('Copy RSS feed', $bdd); ?>" type="button" onclick="copyToClipboard('P');"></button>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
 
-		<div class="board" id="premium">
-			<div>
-				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="<?php get_t('https://github.com/ABHC/SERGE/wiki/User\'s-Guide#premium-information', $bdd); ?>" target="_blank">?</a>
-				<h2><?php get_t('Premium', $bdd); ?></h2>
-			</div>
-			<div>
+			<div class="board" id="premium">
 				<div>
-					<?php
-					if ($userIsPremium)
-					{
-						get_t('title0_premium_setting', $bdd); echo ' : ' . date("d/m/o", $userSettings['premium_expiration_date']); ?><br>
-
-						<a href="purchase" class="purchaseButton"><?php get_t('button0_premium_setting', $bdd); ?></a>
-						<?php get_t('title1_premium_setting', $bdd); ?> :<br>
-						<?php
-					}
-					else
-					{
-						?>
-						<a href="purchase" class="purchaseButton"><?php get_t('button1_premium_setting', $bdd); ?></a>
-						<?php
-						if (!empty($paymentList))
-						{
-							get_t('title1_premium_setting', $bdd); echo ' :<br>';
-						}
-					}
-					?>
-					<span class="boxScroll">
-						<?php
-						foreach ($paymentList as $payment)
-						{
-							$numberOfMonths = $payment['duration_premium'] / (30*24*3600);
-							$price = $payment['price'] / 100;
-
-							echo '<div><span>' . date("H:i d/m/o", $payment['purchase_date']) . '</span><span>' . $numberOfMonths . ' months' . '</span><span>' . $price . '€</span></div>';
-						}
-						?>
-					</span>
+					<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="<?php get_t('https://github.com/ABHC/SERGE/wiki/User\'s-Guide#premium-information', $bdd); ?>" target="_blank">?</a>
+					<h2><?php get_t('Premium', $bdd); ?></h2>
 				</div>
-				<span class="Vseparator"></span>
 				<div>
-					<?php get_t('Remaining number of SMS', $bdd); ?>&nbsp;:&nbsp; <?php echo $userSettings['sms_credits']; ?>
-					<a href="purchase?type=SMS" class="purchaseButton"><?php get_t('Add SMS in your account', $bdd); ?></a>
-					<?php get_t('Your SMS payment history', $bdd); ?> :<br>
-					<span class="boxScroll">
+					<div>
 						<?php
-						/*
-						foreach ($smsPaymentList as $payment)
+						if ($userIsPremium)
 						{
+							get_t('title0_premium_setting', $bdd); echo ' : ' . date("d/m/o", $userSettings['premium_expiration_date']); ?><br>
+
+							<a href="purchase" class="purchaseButton"><?php get_t('button0_premium_setting', $bdd); ?></a>
+							<?php get_t('title1_premium_setting', $bdd); ?> :<br>
+							<?php
+						}
+						else
+						{
+							?>
+							<a href="purchase" class="purchaseButton"><?php get_t('button1_premium_setting', $bdd); ?></a>
+							<?php
+							if (!empty($paymentList))
+							{
+								get_t('title1_premium_setting', $bdd); echo ' :<br>';
+							}
+						}
+						?>
+						<div class="boxScroll">
+							<?php
+							foreach ($paymentList as $payment)
+							{
+								$numberOfMonths = $payment['duration_premium'] / (30*24*3600);
+								$price = $payment['price'] / 100;
+
+								echo '<div><span>' . date("H:i d/m/o", $payment['purchase_date']) . '</span><span>' . $numberOfMonths . ' months' . '</span><span>' . $price . '€</span></div>';
+							}
+							?>
+						</div>
+					</div>
+					<span class="Vseparator"></span>
+					<div>
+						<?php get_t('Remaining number of SMS', $bdd); ?>&nbsp;:&nbsp; <?php echo $userSettings['sms_credits']; ?>
+						<a href="purchase?type=SMS" class="purchaseButton"><?php get_t('Add SMS in your account', $bdd); ?></a>
+						<?php get_t('Your SMS payment history', $bdd); ?> :<br>
+						<span class="boxScroll">
+							<?php
+							/*
+							foreach ($smsPaymentList as $payment)
+							{
 							$numberOfSMS = $payment['number_sms'] / (30*24*3600);
 							$price = $payment['price'] / 100;
 
@@ -277,14 +268,14 @@
 								$backgroundSelected = '';
 							}
 
-							echo '<option value="' . $backgroundName['name'] . '" ' . $backgroundSelected . ' id="../images/background_preview/' . $backgroundName['filename'] . '">' . var_get_t($backgroundName['name'], $bdd) . '</option>' . PHP_EOL;
+							echo '<option value="' . $backgroundName['name'] . '" ' . $backgroundSelected . ' id="/images/background_preview/' . $backgroundName['filename'] . '">' . var_get_t($backgroundName['name'], $bdd) . '</option>' . PHP_EOL;
 						}
 						?>
 					</select>
 					<?php
 					foreach ($backgroundList as $backgroundName)
 					{
-						echo '<img alt="' . $backgroundName['name'] . '" src=../images/background_preview/' . $backgroundName['filename'] . ' style="display: none;" />';
+						echo '<img alt="' . $backgroundName['name'] . '" src=/images/background_preview/' . $backgroundName['filename'] . ' style="display: none;" />';
 					}
 					?>
 				</span>
@@ -315,19 +306,19 @@
 							</div>
 							<div>
 								<h3><?php get_t('subtitle2_window1_setting', $bdd); ?></h3>
-								<p>
+								<div>
 									<input type="radio" id="condNbLink" name="cond" onchange="autoSubmit(this.form);" value="link_limit" <?php echo $condNbLink; ?>>
 									<label class="radio dot" for="condNbLink"></label>
 									<?php get_t('input2_window1_setting', $bdd); ?>
 									<input class="number alpha" type="number" name="numberLinks" onchange="autoSubmit(this.form);" min="5" placeholder="50" value="<?php echo $userSettings['link_limit']; ?>"/>
-								</p>
-								<p>
+								</div>
+								<div>
 									<input type="radio" id="condFreq" name="cond" onchange="autoSubmit(this.form);" value="freq" <?php echo $condFreq; ?>>
 									<label class="radio dot" for="condFreq"></label>
 									<?php get_t('input3_window1_setting', $bdd); ?>
 									<input class="number alpha" type="number" name="freq" onchange="autoSubmit(this.form);" min="2" max="500" step="2" placeholder="24" value="<?php echo $userSettings['frequency'] ?? '2'; ?>"/><?php get_t('input4_window1_setting', $bdd); ?>
-								</p>
-								<p>
+								</div>
+								<div>
 									<input type="radio" id="condDate" name="cond" onchange="autoSubmit(this.form);" value="deadline" <?php echo $condDate; ?>>
 									<label class="radio dot" for="condDate"></label>
 									<?php get_t('input5_window1_setting', $bdd); ?>
@@ -392,7 +383,7 @@
 										</option>
 									</select>
 									<span class="arrDown">▾</span>
-								</p>
+								</div>
 							</div>
 						</div>
 						<span class="Vseparator"></span>
@@ -405,21 +396,21 @@
 							</div>
 							<div>
 								<h3><?php get_t('subtitle3_window1_setting', $bdd); ?></h3>
-								<p>
+								<div>
 									<input type="radio" id="orderByKeyword" name="orderBy" onchange="autoSubmit(this.form);" value="masterword" <?php echo $orderByKeyword; ?>>
 									<label class="radio dot" for="orderByKeyword"></label>
 									<?php get_t('input7_window1_setting', $bdd); ?>
-								</p>
-								<p>
+								</div>
+								<div>
 									<input type="radio" id="orderBySource" name="orderBy" onchange="autoSubmit(this.form);" value="origin" <?php echo $orderBySource; ?>>
 									<label class="radio dot" for="orderBySource"></label>
 									<?php get_t('input8_window1_setting', $bdd); ?>
-								</p>
-								<p>
+								</div>
+								<div>
 									<input type="radio" id="orderByAlpha" name="orderBy" onchange="autoSubmit(this.form);" value="type" <?php echo $orderByType; ?>>
 									<label class="radio dot" for="orderByAlpha"></label>
 									<?php get_t('input9_window1_setting', $bdd); ?>
-								</p>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -472,36 +463,36 @@
 								<?php get_t('input10_window1_setting', $bdd); ?>
 							</div>
 						</div>
-							<span class="Vseparator"></span>
-							<div>
-								<h3><?php get_t('Delete history', $bdd); ?></h3>
-								<div class="deleteContainer">
-									<div class="deleteLogo"></div>
-									<input title="<?php get_t('Delete', $bdd); ?>" class="deleteButton" type="submit" name="buttonDeleteHistory" value="<?php get_t('input11_window1_setting', $bdd); ?>" />
-									<?php get_t('input11.1_window1_setting', $bdd); ?>
-									<input class="number alpha" name="deleteHistoryValue" type="number" min="1" value="1"/>
-									<select class="selectCommResult Unit" name="deleteHistoryUnit">
-										<option value="hour">
-											<?php get_t('select11_window1_setting', $bdd); ?>
-										</option>
-										<option value="day">
-											<?php get_t('select12_window1_setting', $bdd); ?>
-										</option>
-										<option value="week">
-											<?php get_t('select13_window1_setting', $bdd); ?>
-										</option>
-										<option value="month">
-											<?php get_t('select14_window1_setting', $bdd); ?>
-										</option>
-										<option value="year">
-											<?php get_t('select15_window1_setting', $bdd); ?>
-										</option>
-									</select>
-									<span class="arrDown">▾</span>
-								</div>
+						<span class="Vseparator"></span>
+						<div>
+							<h3><?php get_t('Delete history', $bdd); ?></h3>
+							<div class="deleteContainer">
+								<div class="deleteLogo"></div>
+								<input title="<?php get_t('Delete', $bdd); ?>" class="deleteButton" type="submit" name="buttonDeleteHistory" value="<?php get_t('input11_window1_setting', $bdd); ?>" />
+								<?php get_t('input11.1_window1_setting', $bdd); ?>
+								<input class="number alpha" name="deleteHistoryValue" type="number" min="1" value="1"/>
+								<select class="selectCommResult Unit" name="deleteHistoryUnit">
+									<option value="hour">
+										<?php get_t('select11_window1_setting', $bdd); ?>
+									</option>
+									<option value="day">
+										<?php get_t('select12_window1_setting', $bdd); ?>
+									</option>
+									<option value="week">
+										<?php get_t('select13_window1_setting', $bdd); ?>
+									</option>
+									<option value="month">
+										<?php get_t('select14_window1_setting', $bdd); ?>
+									</option>
+									<option value="year">
+										<?php get_t('select15_window1_setting', $bdd); ?>
+									</option>
+								</select>
+								<span class="arrDown">▾</span>
 							</div>
 						</div>
 					</div>
+				</div>
 			</span>
 		</div>
 
@@ -531,7 +522,7 @@
 
 				echo '
 				<span class="queryContainer ' . $Qdisable . '">
-					<input type="submit" title="' . var_get_t('Delete', $bdd) . '" class="deleteQuery" name="removePack" value="' . $watchPackUsed['id'] . '"/>
+				<input type="submit" title="' . var_get_t('Delete', $bdd) . '" class="deleteQuery" name="removePack" value="' . $watchPackUsed['id'] . '"/>
 				';
 
 				echo '<span title="' . $watchPackUsed['description'] . '">' . $watchPackUsed['name'] . '</span></span>';
@@ -586,112 +577,113 @@
 				<div id="sourceAdditionStatus">
 					<?php  echo $sourceAdditionStatus ?? ''; ?>
 				</div>
-			<div>
-				<?php
-				$cptSource = 0;
-				foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
-				{
-					$ownerSourcesList['name'] = preg_replace("/\[!NEW!\]/", "", $ownerSourcesList['name']);
-					if (empty($ownerSourcesList['name']))
+				<div>
+					<?php
+					$cptSource = 0;
+					foreach ($reqReadOwnerSourcestmp as $ownerSourcesList)
 					{
-						preg_match("/^https?:\/\/[^\/]*\//", $ownerSourcesList['link'], $sourceNameBaseLink);
-						$ownerSourcesList['name'] = preg_replace("/(https?|\/|:)/", "", $sourceNameBaseLink[0]);
-					}
-					preg_match("/./", ucfirst($ownerSourcesList['name']), $rssFirstLetter);
-
-					if ($actualLetter != $rssFirstLetter[0])
-					{
-						$foldSourceName = 'radio-s' . $rssFirstLetter[0];
-						$amICheckFoldSource = '';
-						if (isset($_SESSION[$foldSourceName]) && $_SESSION[$foldSourceName] == $rssFirstLetter[0])
+						$ownerSourcesList['name'] = preg_replace("/\[!NEW!\]/", "", $ownerSourcesList['name']);
+						if (empty($ownerSourcesList['name']))
 						{
-							$amICheckFoldSource = 'checked';
+							preg_match("/^https?:\/\/[^\/]*\//", $ownerSourcesList['link'], $sourceNameBaseLink);
+							$ownerSourcesList['name'] = preg_replace("/(https?|\/|:)/", "", $sourceNameBaseLink[0]);
 						}
+						preg_match("/./", ucfirst($ownerSourcesList['name']), $rssFirstLetter);
 
-						$actualLetter = $rssFirstLetter[0];
+						if ($actualLetter != $rssFirstLetter[0])
+						{
+							$foldSourceName = 'radio-s' . $rssFirstLetter[0];
+							$amICheckFoldSource = '';
+							if (isset($_SESSION[$foldSourceName]) && $_SESSION[$foldSourceName] == $rssFirstLetter[0])
+							{
+								$amICheckFoldSource = 'checked';
+							}
 
-						echo '
-						</div>
-						<input type="checkbox" name="radio-s' . $rssFirstLetter[0] . '" id="unfold-s' . $rssFirstLetter[0] . '" value="' . $rssFirstLetter[0] . '" ' . $amICheckFoldSource . '/>' . PHP_EOL.
-						'<div class="sourceList" >' . PHP_EOL.
+							$actualLetter = $rssFirstLetter[0];
+
+							echo '
+							</div>
+							<input type="checkbox" name="radio-s' . $rssFirstLetter[0] . '" id="unfold-s' . $rssFirstLetter[0] . '" value="' . $rssFirstLetter[0] . '" ' . $amICheckFoldSource . '/>' . PHP_EOL.
+							'<div class="sourceList">' . PHP_EOL.
 							'<label for="unfold-s' . $rssFirstLetter[0] . '" class="unfoldTag">' . PHP_EOL.
-								$rssFirstLetter[0] . ' ▾'.
+							$rssFirstLetter[0] . ' ▾'.
 							'</label>' . PHP_EOL.
 							'<label for="unfold-s' . $rssFirstLetter[0] . '" class="foldTag">' . PHP_EOL.
-								$rssFirstLetter[0] . ' ▴'.
+							$rssFirstLetter[0] . ' ▴'.
 							'</label>' . PHP_EOL;
-					}
+						}
 
-					$foldKeywordName = 'radio-ks' . $ownerSourcesList['id'];
-					$amICheckFoldKeyword = '';
-					if (isset($_SESSION[$foldKeywordName]) && $_SESSION[$foldKeywordName] == $ownerSourcesList['id'])
-					{
-						$amICheckFoldKeyword = 'checked';
-					}
+						$foldKeywordName = 'radio-ks' . $ownerSourcesList['id'];
+						$amICheckFoldKeyword = '';
+						if (isset($_SESSION[$foldKeywordName]) && $_SESSION[$foldKeywordName] == $ownerSourcesList['id'])
+						{
+							$amICheckFoldKeyword = 'checked';
+						}
 
-					if (preg_match("/," . $_SESSION['id'] . ",/", $ownerSourcesList['owners']))
-					{
-						echo
-						'<div class="tagSource Tactive" id="ks' . $ownerSourcesList['id'] . '">' . PHP_EOL.
+						if (preg_match("/," . $_SESSION['id'] . ",/", $ownerSourcesList['owners']))
+						{
+							echo
+							'<div class="tagSource Tactive" id="ks' . $ownerSourcesList['id'] . '">' . PHP_EOL.
 							'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delSource" value="source' . $ownerSourcesList['id'] . '&"/>' . PHP_EOL.
 							'<input type="submit" title="' . var_get_t('Disable', $bdd) . '" name="disableSource" value="source' . $ownerSourcesList['id']. '&"/>' . PHP_EOL.
 							'<a href="' . $ownerSourcesList['link']. '" target="_blank">'.
-								ucfirst($ownerSourcesList['name']).
+							ucfirst($ownerSourcesList['name']).
 							'</a>' . PHP_EOL.
-						'</div>' . PHP_EOL;
-					}
-					elseif (preg_match("/,!" . $_SESSION['id'] . ",/", $ownerSourcesList['owners']))
-					{
-						echo
-						'<div class="tagSource Tdisable" id="ks' . $ownerSourcesList['id'] . '">' . PHP_EOL.
+							'</div>' . PHP_EOL;
+						}
+						elseif (preg_match("/,!" . $_SESSION['id'] . ",/", $ownerSourcesList['owners']))
+						{
+							echo
+							'<div class="tagSource Tdisable" id="ks' . $ownerSourcesList['id'] . '">' . PHP_EOL.
 							'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delSource" value="source' . $ownerSourcesList['id'] . '&"/>' . PHP_EOL.
 							'<input type="submit" title="' . var_get_t('Activate', $bdd) . '" name="activateSource" value="source' . $ownerSourcesList['id']. '&"/>' . PHP_EOL.
 							'<a href="' . $ownerSourcesList['link']. '" target="_blank">'.
-								ucfirst($ownerSourcesList['name']).
+							ucfirst($ownerSourcesList['name']).
 							'</a>' . PHP_EOL.
-						'</div>' . PHP_EOL;
-					}
+							'</div>' . PHP_EOL;
+						}
 
-					echo
-					'<input type="checkbox" name="radio-ks' . $ownerSourcesList['id'] . '" id="unfold-ks' . $ownerSourcesList['id'] . '" value="' . $ownerSourcesList['id'] . '" ' . $amICheckFoldKeyword . '/>' . PHP_EOL.
-					'<div class="keywordList" id="keywordList' . $ownerSourcesList['id'] . '">' . PHP_EOL.
+						echo
+						'<input type="checkbox" name="radio-ks' . $ownerSourcesList['id'] . '" id="unfold-ks' . $ownerSourcesList['id'] . '" value="' . $ownerSourcesList['id'] . '" ' . $amICheckFoldKeyword . '/>' . PHP_EOL.
+						'<div class="keywordList" id="keywordList' . $ownerSourcesList['id'] . '">' . PHP_EOL.
 						'<label for="unfold-ks' . $ownerSourcesList['id'] . '" id="unfold' . $ownerSourcesList['id'] . '" class="unfoldTag">'.
-							var_get_t('Unfold keyword list', $bdd) . ' ▾'.
+						var_get_t('Unfold keyword list', $bdd) . ' ▾'.
 						'</label>' . PHP_EOL.
 						'<label for="unfold-ks' . $ownerSourcesList['id'] . '" id="fold' . $ownerSourcesList['id'] . '" class="foldTag">'.
-							var_get_t('Fold keyword list', $bdd) . ' ▴'.
+						var_get_t('Fold keyword list', $bdd) . ' ▴'.
 						'</label>' . PHP_EOL;
 
-					# Keyword loop
-					$cptKeyword = 0;
-					foreach ($reqReadOwnerSourcesKeywordtmp as $ownerKeywordList)
-					{
-						$applicable_owners_sources = $ownerKeywordList['applicable_owners_sources'];
-						$ownerKeywordList['keyword'] = preg_replace("/^:all@[0-9]+$/", ":All", $ownerKeywordList['keyword']);
-						$ownerKeywordList['keyword'] = preg_replace("/^\[!alert!\]/", "&#9888; ", $ownerKeywordList['keyword']);
-						if (preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*," . $ownerSourcesList['id'] . ",[,!0-9,]*\|/", $applicable_owners_sources))
+						# Keyword loop
+						$cptKeyword = 0;
+						foreach ($reqReadOwnerSourcesKeywordtmp as $ownerKeywordList)
 						{
-							echo
-							'<div class="tag Tactive">' . PHP_EOL.
+							$applicable_owners_sources = $ownerKeywordList['applicable_owners_sources'];
+							$ownerKeywordList['keyword'] = preg_replace("/^:all@[0-9]+$/", ":All", $ownerKeywordList['keyword']);
+							$ownerKeywordList['keyword'] = preg_replace("/^\[!alert!\]/", "&#9888; ", $ownerKeywordList['keyword']);
+							if (preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*," . $ownerSourcesList['id'] . ",[,!0-9,]*\|/", $applicable_owners_sources))
+							{
+								echo
+								'<div class="tag Tactive">' . PHP_EOL.
 								'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>' . PHP_EOL.
 								'<input type="submit" title="' . var_get_t('Disable', $bdd) . '" name="disableKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>' . PHP_EOL.
 								'<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">'.
 								ucfirst($ownerKeywordList['keyword']) . '<span class="hiddenFont">,</span>'.
 								'</a>' . PHP_EOL.
-							'</div>' . PHP_EOL;
-							$cptKeyword++;
-						}
-						elseif (preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*,!" . $ownerSourcesList['id'] . ",[,!0-9,]*\|/", $applicable_owners_sources))
-						{
-							echo
-							'<div class="tag Tdisable">' . PHP_EOL.
+								'</div>' . PHP_EOL;
+								$cptKeyword++;
+							}
+							elseif (preg_match("/\|" . $_SESSION['id'] . ":[,!0-9,]*,!" . $ownerSourcesList['id'] . ",[,!0-9,]*\|/", $applicable_owners_sources))
+							{
+								echo
+								'<div class="tag Tdisable">' . PHP_EOL.
 								'<input type="submit" title="' . var_get_t('Delete', $bdd) . '" name="delKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>' . PHP_EOL.
 								'<input type="submit" title="' . var_get_t('Activate', $bdd) . '" name="activateKeyword" value="source'. $ownerSourcesList['id'] . '&keyword' . $ownerKeywordList['id'] . '&"/>' . PHP_EOL.
 								'<a href="setting?keyword=keyword' . $ownerKeywordList['id'] . '">'.
-									ucfirst($ownerKeywordList['keyword']) . '<span class="hiddenFont">,</span>'.
+								ucfirst($ownerKeywordList['keyword']) . '<span class="hiddenFont">,</span>'.
 								'</a>' . PHP_EOL.
-							'</div>' . PHP_EOL;
-							$cptKeyword++;
+								'</div>' . PHP_EOL;
+								$cptKeyword++;
+							}
 						}
 					}
 					echo '</div>' . PHP_EOL;
@@ -852,239 +844,7 @@
 
 				# Input submit for query edit
 				echo '<input type="submit" class="noDisplay" id="editQueryScience' . $queryId . '" name="editQueryScience" value="' . $queryId . '"/>';
-
-				foreach ($selected as $searchField => $selectedSearchField)
-				{
-					$queryFieldsName[$searchField] = $searchField;
-				}
-
-				$query = urldecode($query['query_serge']);
-
-				preg_match_all("/([^\|]+)\|*/", $query, $queryFields);
-				foreach ($queryFields[1] as $fields)
-				{
-					preg_match("/^\(/", $fields, $openParenthesisDisplay);
-					if (!empty($openParenthesisDisplay[0]))
-					{
-						$queryDisplay = $queryDisplay . '
-						<label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="queryParenthesisView">(</label>';
-					}
-
-					if (!empty($queryFieldsName[$fields]))
-					{
-						$queryDisplay = $queryDisplay . '
-						<label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="queryTypeView">' . ucfirst(var_get_t($queryFieldsName[$fields], $bdd)) . '
-						</label>';
-					}
-
-					preg_match("/#.+/", $fields, $fieldInput);
-					if (!empty($fieldInput[0]))
-					{
-						$fieldInput = preg_replace("/#/", "", $fieldInput[0]);
-						$queryDisplay = $queryDisplay . '
-						<label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="queryKeywordView">' . $fieldInput . '
-						</label>';
-					}
-
-					preg_match("/^\)/", $fields, $closeParenthesisDisplay);
-					if (!empty($closeParenthesisDisplay[0]))
-					{
-						$queryDisplay = $queryDisplay . '
-						<label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="queryParenthesisView">)
-						</label>';
-					}
-
-					preg_match("/^(AND|OR|NOT)$/", $fields, $logicalConnector);
-					if (!empty($logicalConnector[1]))
-					{
-						preg_match("/.{2,3}/", $logicalConnector[1], $logicalConnector);
-						$queryDisplay = $queryDisplay . '
-						<label title="' . var_get_t('Edit query', $bdd) . '" for="editQueryScience' . $queryId . '" class="query' . ucfirst(strtolower($logicalConnector[0])) . 'View">' . $logicalConnector[0] . '
-						</label>';
-					}
-				}
-				echo $queryDisplay . '</div>';
-			}
-			?>
-		</div>
-
-		<div class="patentManagement" id="patent">
-			<div class="titleBoard">
-				<a class="helpMe" title="<?php get_t('User guide', $bdd); ?>"  href="<?php get_t('https://github.com/ABHC/SERGE/wiki/User\'s-Guide#patents', $bdd); ?>" target="_blank">?</a>
-				<h2><?php get_t('window4_title_setting', $bdd); ?></h2>
-			</div>
-			<div class="newQueryContainer">
-				<div class="lineQuery">
-				<?php
-				$cpt = 0;
-				$logicalConnector = '';
-
-				while ($cpt < $_SESSION['cptPatentQuery'])
-				{
-					echo $logicalConnector;
-
-					if (intval($cpt/3) === ($cpt/3) && $cpt != 0)
-					{
-						echo '</div>';
-					}
-
-					if (intval($cpt/3) === ($cpt/3) && $cpt != 0)
-					{
-						echo '<div class="lineQuery">';
-					}
-
-					if (intval($cpt/3) === ($cpt/3) && $cpt != 0)
-					{
-						echo '<div class="ghostSpace"></div>';
-					}
-
-					$selected['ALLNAMES'] = '';
-					$selected['ALLNUM'] = '';
-					$selected['AAD'] = '';
-					$selected['AADC'] = '';
-					$selected['PAA'] = '';
-					$selected['PA'] = '';
-					$selected['ANA'] = '';
-					$selected['ARE'] = '';
-					$selected['AD'] = '';
-					$selected['AN'] = '';
-					$selected['CHEM'] = '';
-					$selected['CTR'] = '';
-					$selected['DS'] = '';
-					$selected['EN_AB'] = '';
-					$selected['EN_ALL'] = '';
-					$selected['EN_CL'] = '';
-					$selected['EN_DE'] = '';
-					$selected['EN_ALLTXT'] = '';
-					$selected['EN_TI'] = '';
-					$selected['IC_EX'] = '';
-					$selected['LGF'] = '';
-					$selected['FP'] = '';
-					$selected['GN'] = '';
-					$selected['IC'] = '';
-					$selected['ICI'] = '';
-					$selected['ICN'] = '';
-					$selected['IPE'] = '';
-					$selected['ISA'] = '';
-					$selected['ISR'] = '';
-					$selected['INA'] = '';
-					$selected['IN'] = '';
-					$selected['IADC'] = '';
-					$selected['RPA'] = '';
-					$selected['RCN'] = '';
-					$selected['RP'] = '';
-					$selected['RAD'] = '';
-					$selected['LI'] = '';
-					$selected['PAF'] = '';
-					$selected['ICF'] = '';
-					$selected['INF'] = '';
-					$selected['RPF'] = '';
-					$selected['NPA'] = '';
-					$selected['NPAN'] = '';
-					$selected['NPED'] = '';
-					$selected['NPET'] = '';
-					$selected['PN'] = '';
-					$selected['OF'] = '';
-					$selected['NPCC'] = '';
-					$selected['PRIORPCTAN'] = '';
-					$selected['PRIORPCTWO'] = '';
-					$selected['PI'] = '';
-					$selected['PCN'] = '';
-					$selected['PD'] = '';
-					$selected['NP'] = '';
-					$selected['DP'] = '';
-					$selected['LGP'] = '';
-					$selected['SIS'] = '';
-					$selected['TPO'] = '';
-					$selected['WO'] = '';
-					if (!empty($data['patentType' . $cpt]))
-					{
-						$selected[$data['patentType' . $cpt]] = 'selected';
-					}
-
-					$data['patentQuery' . $cpt] = $data['patentQuery' . $cpt] ?? '';
-					echo '
-				<select title="' . var_get_t('Type', $bdd) . '" class="queryType" name="patentType' . $cpt . '" id="patentType' . $cpt . '">
-					<option value="ALLNAMES" ' . $selected['ALLNAMES'] . '>All Names</option>
-					<option value="ALLNUM" ' . $selected['ALLNUM'] . '>All Numbers and IDs</option>
-					<option value="AAD" ' . $selected['AAD'] . '>Applicant Address</option>
-					<option value="AADC" ' . $selected['AADC'] . '>Applicant Address Country</option>
-					<option value="PAA" ' . $selected['PAA'] . '>Applicant All Data</option>
-					<option value="PA" ' . $selected['PA'] . '>Applicant Name</option>
-					<option value="ANA" ' . $selected['ANA'] . '>Applicant Nationality</option>
-					<option value="ARE" ' . $selected['ARE'] . '>Applicant Residence</option>
-					<option value="AD" ' . $selected['AD'] . '>Application Date</option>
-					<option value="AN" ' . $selected['AN'] . '>Application Number</option>
-					<option value="CHEM" ' . $selected['CHEM'] . '>Chemical</option>
-					<option value="CTR" ' . $selected['CTR'] . '>Country</option>
-					<option value="DS" ' . $selected['DS'] . '>Designated States</option>
-					<option value="EN_AB" ' . $selected['EN_AB'] . '>English Abstract</option>
-					<option value="EN_ALL" ' . $selected['EN_ALL'] . '>English All</option>
-					<option value="EN_CL" ' . $selected['EN_CL'] . '>English Claims</option>
-					<option value="EN_DE" ' . $selected['EN_DE'] . '>English Description</option>
-					<option value="EN_ALLTXT" ' . $selected['EN_ALLTXT'] . '>English Text</option>
-					<option value="EN_TI" ' . $selected['EN_TI'] . '>English Title</option>
-					<option value="EN_EX" ' . $selected['IC_EX'] . '>Exact IPC code</option>
-					<option value="LGF" ' . $selected['LGF'] . '>Filing Language</option>
-					<option value="FP" ' . $selected['FP'] . '>Front Page(FP)</option>
-					<option value="GN" ' . $selected['GN'] . '>Grant Number</option>
-					<option value="IC" ' . $selected['IC'] . '>International Class</option>
-					<option value="ICI" ' . $selected['ICI'] . '>International Class Inventive</option>
-					<option value="ICN" ' . $selected['ICN'] . '>International Class N-Inventive</option>
-					<option value="IPE" ' . $selected['IPE'] . '>International Preliminary Examination</option>
-					<option value="ISA" ' . $selected['ISA'] . '>International Search Authority</option>
-					<option value="ISR" ' . $selected['ISR'] . '>International Search Report</option>
-					<option value="INA" ' . $selected['INA'] . '>Inventor All Data</option>
-					<option value="IN" ' . $selected['IN'] . '>Inventor Name</option>
-					<option value="IADC" ' . $selected['IADC'] . '>Inventor Nationality</option>
-					<option value="RPA" ' . $selected['RPA'] . '>Legal Representative All Data</option>
-					<option value="RCN" ' . $selected['RCN'] . '>Legal Representative Country</option>
-					<option value="RP" ' . $selected['RP'] . '>Legal Representative Name</option>
-					<option value="RAD" ' . $selected['RAD'] . '>Legal Representative Address</option>
-					<option value="LI" ' . $selected['LI'] . '>Licensing availability</option>
-					<option value="PAF" ' . $selected['PAF'] . '>Main Applicant Name</option>
-					<option value="ICF" ' . $selected['ICF'] . '>Main International Class</option>
-					<option value="INF" ' . $selected['INF'] . '>Main Inventor Name</option>
-					<option value="RPF" ' . $selected['RPF'] . '>Main Legal Rep Name</option>
-					<option value="NPA" ' . $selected['NPA'] . '>National Phase All Data</option>
-					<option value="NPAN" ' . $selected['NPAN'] . '>National Phase Application Number</option>
-					<option value="NPED" ' . $selected['NPED'] . '>National Phase Entry Date</option>
-					<option value="NPET" ' . $selected['NPET'] . '>National Phase Entry Type</option>
-					<option value="PN" ' . $selected['PN'] . '>National Publication Number</option>
-					<option value="OF" ' . $selected['OF'] . '>Office Code</option>
-					<option value="NPCC" ' . $selected['NPCC'] . '>National Phase Office Code</option>
-					<option value="PRIORPCTAN" ' . $selected['PRIORPCTAN'] . '>Prior PCT Application Number</option>
-					<option value="PRIORPCTWO" ' . $selected['PRIORPCTWO'] . '>Prior PCT WO Number</option>
-					<option value="PI" ' . $selected['PI'] . '>Priority All Data</option>
-					<option value="PCN" ' . $selected['PCN'] . '>Priority Country</option>
-					<option value="PD" ' . $selected['PD'] . '>Priority Date</option>
-					<option value="NP" ' . $selected['NP'] . '>Priority Number</option>
-					<option value="DP" ' . $selected['DP'] . '>Publication Date</option>
-					<option value="LGP" ' . $selected['LGP'] . '>Publication Language</option>
-					<option value="SIS" ' . $selected['SIS'] . '>Supplementary International Search</option>
-					<option value="TPO" ' . $selected['TPO'] . '>Third Party Observation</option>
-					<option value="WO" ' . $selected['WO'] . '>WIPO Publication Number</option>
-				</select>
-				<span class="arrDownBorder">▾</span>
-				<input type="text" class="query" name="patentQuery' . $cpt . '" id="patentQuery' . $cpt . '" placeholder="' . var_get_t('Keyword', $bdd) . '" value="' . $data['patentQuery' . $cpt] . '" />';
-
-				$cpt++;
-
-				$checked = '';
-				if (!empty($data['andOrPatent' . $cpt]) && $data['andOrPatent' . $cpt] === 'OR')
-				{
-					$checked = 'checked';
-				}
-
-				$logicalConnector = '
-				<input type="checkbox" id="patentAndOr' . $cpt . '" name="andOrPatent' . $cpt . '" value="OR" ' . $checked . '>
-				<label class="andOr" for="patentAndOr' . $cpt . '"></label>';
-				}
-				?>
-				<input title="<?php get_t('Extend', $bdd); ?>" class="extend" type="submit" id="extend" name="extendPatent" value=">>" />
-				<input title="<?php get_t('Add new patents query', $bdd); ?>" class="submit" type="submit" name="patentQuerySubmit" value="add" />
-			</div>
-			</div>
+						echo '</div>' . PHP_EOL;
 			<?php echo $ERROR_PATENTQUERY ?? ''; ?>
 			<?php
 
@@ -1212,7 +972,4 @@
 			}
 			?>
 		</div>
-	</div>
-	</div>
-</div>
-</form>
+	</form>

@@ -34,7 +34,7 @@ if ($_SESSION['type'] === 'create')
 		background-size: cover;
 	}
 
-	.subBackground
+	.sub-background
 	{
 		position: fixed;
 		top: 0;
@@ -1696,7 +1696,7 @@ else
 		background-size: cover;
 	}
 
-	.subBackground
+	.sub-background
 	{
 		position: fixed;
 		top: 0;

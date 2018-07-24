@@ -7,15 +7,30 @@ header('Cache-Control: max-age=31536000, must-revalidate');
 include('style.php');
 
 include('nav.php');
+
+
+// atoms
+
+include('atoms/red.php');
+
+
+// molecules
+
+include('molecules/aside-sticky-nav.php');
+
+include('molecules/aside-nav-background.php');
+
+
+// organisms
+
+include('organisms/body.php');
+
+include('organisms/body-row.php');
+
+
+
 ?>
-
-/* Color */
-.red
-{
-	background-color: rgb(153, 29, 33);
-}
-/* END Color */
-
+/*
 .body
 {
 	display: flex;
@@ -24,7 +39,7 @@ include('nav.php');
 	align-items: center;
 	min-height: 100vh;
 	color: #f9f9ff;
-}
+}*/
 
 .background
 {
@@ -39,7 +54,7 @@ include('nav.php');
 	background-size: cover;
 }
 
-.subBackground
+.sub-background
 {
 	position: fixed;
 	top: 0;

@@ -6,13 +6,14 @@
 	height: 75px;
 }
 
-.navBlockContainer
+.nav-block-container
 {
 	display: flex;
 	justify-content: flex-end;
+	flex: 1;
 }
 
-.navBlock
+.nav-block
 {
 	display: flex;
 	justify-content: flex-start;
@@ -25,54 +26,54 @@
 	min-width: 150px;
 }
 
-.navBlock:hover
+.nav-block:hover
 {
 	background: none;
 	color: rgb(255, 255, 255);
 	border-bottom: 1px solid rgba(255,255,255,0);
 }
 
-.navCairnDevicesLogo
+.nav-cairn-devices-logo
 {
 	width: 70px;
 	height: 70px;
 	margin-right: 10px;
 	margin-left: 10px;
-	background: url(../images/SERGE_logo_norm_nav.png) center no-repeat;
+	background: url(/images/SERGE_logo_norm_nav.svg) center no-repeat;
 	background-size: cover;
 }
 
-.navResultSergeLogo
+.nav-result-serge-logo
 {
 	width: 70px;
-	height: 53px;
+	height: 70px;
 	margin-right: 10px;
 	margin-left: 10px;
-	background: url(../images/navResultIco.png) no-repeat;
+	background: url(/images/navResultsIco.svg) no-repeat;
 	background-size: contain;
 }
 
-.navSergeSettingLogo
+.nav-serge-setting-logo
 {
-	width: 92px;
-	height: 55px;
+	width: 70px;
+	height: 70px;
 	margin-right: 10px;
 	margin-left: 10px;
-	background: url(../images/navSettingsIco.png) no-repeat;
+	background: url(/images/navSettingsIco.svg) no-repeat;
 	background-size: contain;
 }
 
-.navWikiLogo
+.nav-wiki-logo
 {
-	width: 60px;
-	height: 44px;
+	width: 70px;
+	height: 70px;
 	margin-right: 10px;
 	margin-left: 10px;
-	background: url(../images/navWikiIco.png) no-repeat;
+	background: url(/images/navWikiIco.svg) no-repeat;
 	background-size: contain;
 }
 
-.navTitle
+.nav-title
 {
 	font-size: 15px;
 	text-decoration: none;
@@ -80,18 +81,18 @@
 	text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
 }
 
-.navlogo
+.nav-logo
 {
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
-	flex: 1;
+	flex: 0.7;
 	background-color: rgba(0, 0, 0, 0.6);
 	border-bottom: 1px solid rgba(255,255,255,0.25);
 	text-decoration: none;
 }
 
-.navBlock.active
+.nav-block.active
 {
 	background: none;
 	color: rgb(255, 255, 255);
@@ -105,36 +106,36 @@
 		height: 140px;
 	}
 
-	.navTitle
+	.nav-title
 	{
 		font-size: 25px;
 		text-align: center;
 	}
 
-	.navlogo > .navTitle
+	.nav-logo > .nav-title
 	{
 		width: 60%;
 	}
 
-	.navCairnDevicesLogo
+	.nav-cairn-devices-logo
 	{
 		width: 90px;
 		height: 90px;
 		margin-right: 5px;
 	}
 
-	.navResultSergeLogo
+	.nav-result-serge-logo
 	{
 		width: 124px;
 	}
 
-	.navSergeSettingLogo
+	.nav-serge-setting-logo
 	{
 		width: 79px;
 		height: 79px;
 	}
 
-	.navWikiLogo
+	.nav-wiki-logo
 	{
 		width: 95px;
 		height: 79px;

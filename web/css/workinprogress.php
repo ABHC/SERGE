@@ -21,7 +21,7 @@ include('nav.php');
 	background-size: cover;
 }
 
-.subBackground
+.sub-background
 {
 	position: fixed;
 	top: 0;

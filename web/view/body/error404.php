@@ -1,7 +1,7 @@
 <div class="background">
-	<div class="subBackground"></div>
+	<div class="sub-background"></div>
 </div>
 
-<div class="body">
+<div class="body error-page">
 
 </div>

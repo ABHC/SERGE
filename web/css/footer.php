@@ -47,7 +47,7 @@ a.bugFooterLogo
 {
 	width: 90px;
 	height: 105px;
-	background: url('../images/bug.png') center no-repeat;
+	background: url('/images/bug.png') center no-repeat;
 	background-size: contain;
 }
 

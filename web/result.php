@@ -17,6 +17,7 @@ include('languages.php');
 	<script src="https://code.jquery.com/jquery.min.js"></script>
 	<script src="js/checkAllPage.js"></script>
 	<script src="js/piwik/piwik.js"></script>
+	<script src="js/updateReadStatus.js?<?php echo rand(1,100); ?>"></script>
 </head>
 
 <body>
