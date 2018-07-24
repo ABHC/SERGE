@@ -14,7 +14,7 @@ from email.mime.multipart import MIMEMultipart
 def databaseConnection():
 	"""Connexion to Serge database"""
 
-	permissions = open("/var/www/Serge/configuration/core_configuration.txt", "r")
+	permissions = open("/var/www/Serge/configuration/core_configuration", "r")
 	passSQL = permissions.read().strip()
 	passSQL = re.findall("password: "+'([^\s]+)', passSQL)
 	permissions.close()

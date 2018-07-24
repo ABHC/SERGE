@@ -243,7 +243,7 @@ def highwayToMail(newsletter, stamps):
 	if expiration_date > verif_time :
 
 		######### SERGE CONFIG FILE READING
-		permissions = open("/var/www/Serge/configuration/core_configuration.txt", "r")
+		permissions = open("/var/www/Serge/configuration/core_configuration", "r")
 		config_file = permissions.read().strip()
 		permissions.close()
 

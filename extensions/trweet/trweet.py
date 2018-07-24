@@ -19,7 +19,7 @@ def limitedConnection():
 	filename = path.basename(__file__)
 	limited_user = filename.replace(".py", "").strip()
 
-	permissions = open("/var/www/Serge/configuration/extensions_configuration.txt", "r")
+	permissions = open("/var/www/Serge/configuration/extensions_configuration", "r")
 	passSQL = permissions.read().strip()
 	passSQL = re.findall(filename+"- password: "+'([^\s]+)', passSQL)
 	permissions.close()
