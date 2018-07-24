@@ -214,8 +214,9 @@ def saveTheDate(query_checking, query_insertion, query_update, item):
 def resultsPack(register, user_id_comma):
 
 	#TODO add link to vigiserge calendar page when unavailable
-	######### USEFUL VARIABLES
+	######### FILENAME RECOVERY AND RESULTs PACK CREATION
 	filename = path.basename(__file__)
+	results_pack = []
 
 	########### CONNECTION TO SERGE DATABASE
 	database = limitedConnection()
@@ -231,7 +232,7 @@ def resultsPack(register, user_id_comma):
 	label = (call_calendars.fetchone())[0]
 	call_calendars.close()
 
-	######### RESULTS NEWS : NEWS ATTRIBUTES QUERY (LINK + TITLE + ID SOURCE + KEYWORD ID)
+	######### RESULTS FOR CALENDARS : EVENTS ATTRIBUTES RECOVERY
 	query_calendars = ("SELECT id, name, date, location, description, link, source_id, inquiry_id FROM results_kalendar_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
 
 	call_calendars = database.cursor()
@@ -249,13 +250,13 @@ def resultsPack(register, user_id_comma):
 		query_source = "SELECT name FROM sources_kalendar_serge WHERE id = %s and type <> 'language'"
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_kalendar_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
-		item_arguments = {"user_id_comma": user_id_comma, "source_id": row[6], "inquiry_id": str(row[7]).split(",")}, "query_source": query_source, "query_inquiry": query_inquiry}
+		item_arguments = {"user_id": register, "source_id": row[6], "inquiry_id": str(row[7]).split(",")}, "query_source": query_source, "query_inquiry": query_inquiry}
 
 		attributes = toolbox.packaging(item_arguments)
 		description = (row[2] + ", " + row[3] + "\n" + row[4]).strip().encode('ascii', errors='xmlcharrefreplace')
 
 		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
 		item = {"id": row[0], "title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": description, "link": row[5].strip().encode('ascii', errors='xmlcharrefreplace'), "label": label, "source": attributes["source"], "inquiry": attributes["inquiry"], "wiki_link": add_wiki_link}
-		items_list.append(item)
+		results_pack.append(item)
 
-	return items_list
+	return results_pack

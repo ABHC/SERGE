@@ -37,7 +37,7 @@ def twitterConnection():
 
 	######### TWITTER TOKENS
 	call_tokens = database.cursor()
-	call_tokens.execute("SELECT consumer_key, consumer_secret, access_token, access_token_secret FROM trweet_tokens")
+	call_tokens.execute("SELECT consumer_key, consumer_secret, access_token, access_token_secret FROM credentials_trweet_serge")
 	tokens = call_tokens.fetchone()
 	call_tokens.close()
 
@@ -422,3 +422,70 @@ def trweetBucket(item, inquiry_id, inquiry_id_comma2, geo_species, fishing_time,
 		logger_error.error(query_update)
 		logger_error.error(repr(except_type))
 	call_launch.close()
+
+
+def resultsPack(register, user_id_comma):
+
+	######### FILENAME RECOVERY AND RESULTS PACK CREATION
+	filename = path.basename(__file__)
+	results_pack = []
+	inquiries_list = []
+
+	########### CONNECTION TO SERGE DATABASE
+	database = limitedConnection()
+
+	######### AUTHORIZATION FOR READING RECORDS
+	record_read = toolbox.recordApproval()
+
+	######### AUTHORIZATION FOR READING RECORDS
+	query_label = ("SELECT label_content FROM extensions_serge WHERE name = %s)
+
+	call_calendars = database.cursor()
+	call_calendars.execute(query_label, (filename,))
+	label = (call_calendars.fetchone())[0]
+	call_calendars.close()
+
+	######### RESULTS FOR TRWEET : TWEETS ATTRIBUTES RECOVERY FOR PLAIN TRWEETS
+	query_plain = ("SELECT id, author, tweet, date, likes, retweets, link, inquiry_id FROM results_plain_trweet_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
+	query_targets = ("SELECT id, author, tweet, date, likes, retweets, link, inquiry_id FROM results_targets_trweet_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
+
+	call_trweets = database.cursor()
+	call_trweets.execute(query_plain, (user_id_comma, user_id_comma, user_id_comma))
+	plain_trweets = [list(elem) for elem in list(call_trweets.fetchall())]
+	call_trweets.execute(query_targets, (user_id_comma, user_id_comma, user_id_comma))
+	targets_trweets = [list(elem) for elem in list(call_trweets.fetchall())]
+	call_trweets.close()
+
+	full_trweets = plain_trweets + targets_trweets
+
+	for trweet in full_trweets:
+		######### CREATE RECORDER LINK AND WIKI LINK
+		if record_read is True and trweet[6] is not None:
+			trweet[6] = toolbox.recorder(register, label, str(trweet[0]), "redirect", database)
+		add_wiki_link = toolbox.recorder(register, label, str(trweet[0]), "addLinkInWiki", database)
+
+		######### SEARCH FOR SOURCE NAME AND COMPLETE REQUEST OF THE USER
+		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_trweet_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
+
+		######### RETRIEVE THE USER REQUEST
+		for inquiry_id in str(trweet[7]).split(","):
+			call_db = database.cursor()
+			call_db.execute(query_inquiry, (inquiry_id, "%"+register+":%",))
+			check = call_db.fetchone()
+			call_db.close()
+
+			if re.search('[^!A-Za-z]'+user_id+":"+'[0-9!,]*'+","+inquiry_id+",", check[1]) is not None:
+				inquiries_list.append(check[0])
+
+		if len(inquiries_list) > 0:
+			inquiry = alerts_inquiries[0]
+		else:
+			inquiry = "REMOVED INQUIRY"
+
+		description = (trweet[1] + "\n" + trweet[3] + ", likes : " + trweet[4] + ", retweets : " + trweet[5]).strip().encode('ascii', errors='xmlcharrefreplace')
+
+		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
+		item = {"id": trweet[0], "title": trweet[2].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": description, "link": trweet[6].strip().encode('ascii', errors='xmlcharrefreplace'), "label": label, "source": trweet[1], "inquiry": inquiry, "wiki_link": add_wiki_link}
+		results_pack.append(item)
+
+	return results_pack

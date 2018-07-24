@@ -117,7 +117,7 @@ def packaging(item_arguments):
 	######### RETRIEVE THE USER REQUEST
 	for inquiry_id in item_arguments["inquiry_id"]:
 		call_db = database.cursor()
-		call_db.execute(item_arguments["query_inquiry"], (user_id_doubledot_percent,))
+		call_db.execute(item_arguments["query_inquiry"], (inquiry_id, user_id_doubledot_percent,))
 		check = call_db.fetchone()
 		call_db.close()
 
