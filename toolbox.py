@@ -109,10 +109,13 @@ def packaging(item_arguments):
 	user_id_doubledot_percent = "%"+item_arguments["user_id"]+":%"
 
 	######### RETRIEVE THE NAME OF THE SOURCE
-	call_db = database.cursor()
-	call_db.execute(item_arguments["query_source"], (item_arguments["source_id"],))
-	source = call_db.fetchone()
-	call_db.close()
+	if item_arguments["multisource"] is True:
+		call_db = database.cursor()
+		call_db.execute(item_arguments["query_source"], (item_arguments["source_id"],))
+		source = call_db.fetchone()
+		call_db.close()
+	else:
+		source = None
 
 	######### RETRIEVE THE USER REQUEST
 	for inquiry_id in item_arguments["inquiry_id"]:

@@ -232,7 +232,7 @@ def newspack(register, user_id_comma):
 		query_source = "SELECT name FROM sources_news_serge WHERE id = %s and type <> 'language'"
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_news_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
-		item_arguments = {"user_id": register, "source_id": row[3], "inquiry_id": str(row[4]).split(",")}, "query_source": query_source, "query_inquiry": query_inquiry}
+		item_arguments = {"user_id": register, "source_id": row[3], "inquiry_id": str(row[4]).split(",")}, "query_source": query_source, "query_inquiry": query_inquiry, "multisource": True}
 
 		attributes = toolbox.packaging(item_arguments)
 
