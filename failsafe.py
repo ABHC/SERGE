@@ -150,7 +150,7 @@ def checkMate():
 	results_news_serge_numbers = 10
 	results_patents_serge_numbers = 14
 	results_sciences_serge_numbers = 10
-	credentials_sms_numbers = 4
+	credentials_sms_serge_numbers = 4
 	sources_news_serge_numbers = 7
 	sources_patents_serge_numbers = 80
 	sources_sciences_serge_numbers = 22
@@ -201,7 +201,7 @@ def checkMate():
 	premium_code_table_serge_columns = ["id", "code", "creation_date", "users", "duration_premium", "expiration_date"]
 	price_table_serge_columns = ["id", "price", "currency", "type"]
 	purchase_table_serge_columns = ["id", "user_id", "purchase_date", "duration_premium", "invoice_number", "price", "premium_code_id", "bank_details"]
-	credentials_sms_columns = ["endpoint", "application_key", "application_secret", "consumer_key"]
+	credentials_sms_serge_columns = ["endpoint", "application_key", "application_secret", "consumer_key"]
 	results_news_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "source_id", "inquiry_id", "owners"]
 	results_patents_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "source_id", "inquiry_id", "owners", "legal_abstract", "legal_status", "lens_link", "legal_check_date"]
 	results_sciences_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "source_id", "inquiry_id", "owners"]
