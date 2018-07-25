@@ -129,7 +129,7 @@ def checkMate():
 
 			if len(supplementary_tables_list) > 0:
 				for supplementary_table in supplementary_tables_list:
-					supplementary_str = supplementary_str + supplementary_table_name + ", "
+					supplementary_str = supplementary_str + supplementary_table + ", "
 
 			sys.exit()
 
