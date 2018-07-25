@@ -56,7 +56,7 @@ def checkMate():
 
 	######### EXPECTED TABLES
 	expected_tables_list = ["admin_table_serge", "background_serge", "captcha_serge", "extensions_serge", "inquiries_news_serge",
-	"inquiries_patents_serge", "inquiries_sciences_serge", "language_serge", "miscellaneous_serge", "newsletter_table_serge", "premium_code_table_serge", "price_table_serge", "purchase_table_serge", "results_news_serge", "results_patents_serge", "results_sciences_serge", "sms_tokens", "sources_news_serge", "sources_patents_serge", "sources_sciences_serge", "stripe_table_serge", "text_content_serge", "users_table_serge", "watch_pack_queries_serge", "watch_pack_serge"]
+	"inquiries_patents_serge", "inquiries_sciences_serge", "language_serge", "miscellaneous_serge", "newsletter_table_serge", "premium_code_table_serge", "price_table_serge", "purchase_table_serge", "results_news_serge", "results_patents_serge", "results_sciences_serge", "credentials_sms", "sources_news_serge", "sources_patents_serge", "sources_sciences_serge", "stripe_table_serge", "text_content_serge", "users_table_serge", "watch_pack_queries_serge", "watch_pack_serge"]
 
 	checking = database.cursor()
 	checking.execute("SELECT sources_table_name, inquiries_table_name, results_table_name, optionnal_tables_names FROM extensions_serge")
@@ -73,69 +73,66 @@ def checkMate():
 					expected_tables_list.append(optionnal_tables_name.strip())
 
 	######### CHECK NUMBER AND NAMES OF TABLES
-	if num_tables < 25:
-		logger_error.critical("Missing Tables")
+	checking = database.cursor()
+	checking.execute("SELECT optionnal_tables FROM extensions_serge WHERE general_switch = 1")
+	rows = checking.fetchall()
+	checking.close()
+
+	for row in rows:
+		optionnal_tables = optionnal_tables + row[0]
+
+	if num_tables == (25 + optionnal_tables):
+		logger_info.info("Number of tables : check")
+		wrong_names_list = []
+		wrong_str = ""
+
+		for table_name in tables_name_list:
+			if table_name not in expected_tables_list:
+				wrong_names_list.append(table_name)
+
+		if len(wrong_names_list) > 0:
+			for wrong_name in wrong_names_list:
+				wrong_str = wrong_str + wrong_name + ", "
+
+			logger_error.critical(str(len(wrong_names_list))+" wrong table(s) name : "+wrong_str)
+			sys.exit()
+
+	elif num_tables < (25 + optionnal_tables):
+		logger_error.critical("Missing Tables, for at least one extension")
+		missing_tables_list = []
+		miss_str = ""
+
+		for expected_table in expected_tables_list:
+			if expected_table not in tables_name_list:
+				missing_tables_list.append(expected_table)
+
+		for missing_table in missing_tables_list:
+			missing_str = missing_str + missing_table + ", "
+
+		logger_error.critical(str(len(missing_tables_list)) + " missing tables : "+ missing_str)
+		sys.exit()
+
+	elif num_tables > (25 + optionnal_tables):
+		logger_error.critical("Too Much Tables")
+
+		supplementary_tables_list = []
+		supplementary_str = ""
+
+		for table_name in tables_name_list:
+			if table_name not in expected_tables_list:
+				supplementary_tables_list.append(table_name)
+
+		if len(supplementary_tables_list) > 0:
+			for supplementary_table in supplementary_tables_list:
+				supplementary_str = supplementary_str + supplementary_table + ", "
+
+		logger_error.critical(str(len(supplementary_tables_list)) + " supplementary tables : "+supplementary_str)
+		sys.exit()
+
 	else:
-		checking = database.cursor()
-		checking.execute("SELECT optionnal_tables FROM extensions_serge WHERE general_switch = 1")
-		rows = checking.fetchall()
-		checking.close()
-
-		for row in rows:
-			optionnal_tables = optionnal_tables + row[0]
-
-		if num_tables == (25 + optionnal_tables):
-			logger_info.info("Number of tables : check")
-			wrong_names_list = []
-			wrong_str = ""
-
-			for table_name in tables_name_list:
-				if table_name not in expected_tables_list:
-					wrong_names_list.append(table_name)
-
-			if len(wrong_names_list) > 0:
-				for wrong_name in wrong_names_list:
-					wrong_str = wrong_str + wrong_name + ", "
-
-				logger_error.critical(str(len(wrong_names_list))+" wrong table(s) name : "+wrong_str)
-				sys.exit()
-
-		elif num_tables < (25 + optionnal_tables):
-			logger_error.critical("Missing Tables, for at least one extension")
-			missing_tables_list = []
-			miss_str = ""
-
-			for expected_table in expected_tables_list:
-				if expected_table not in tables_name_list:
-					missing_tables_list.append(expected_table)
-
-			for missing_table in missing_tables_list:
-				missing_str = missing_str + missing_table + ", "
-
-			logger_error.critical(str(len(missing_tables_list)) + " missing tables : "+ missing_str)
-			sys.exit()
-
-		elif num_tables > (25 + optionnal_tables):
-			logger_error.critical("Too Much Tables")
-
-			supplementary_tables_list = []
-			supplementary_str = ""
-
-			for table_name in tables_name_list:
-				if table_name not in expected_tables_list:
-					supplementary_tables_list.append(table_name)
-
-			if len(supplementary_tables_list) > 0:
-				for supplementary_table in supplementary_tables_list:
-					supplementary_str = supplementary_str + supplementary_table + ", "
-
-			logger_error.critical(str(len(supplementary_tables_list)) + " supplementary tables : "+supplementary_str)
-			sys.exit()
-
-		else:
-			logger_error.critical("UNEXPECTED ERROR")
-			logger_error.critical("variable value : "+str(num_tables))
-			sys.exit()
+		logger_error.critical("UNEXPECTED ERROR")
+		logger_error.critical("variable value : "+str(num_tables))
+		sys.exit()
 
 	######### CHECKING TABLES' NUMBER OF COLUMNS
 	admin_table_serge_numbers = 3
@@ -154,7 +151,7 @@ def checkMate():
 	results_news_serge_numbers = 10
 	results_patents_serge_numbers = 14
 	results_sciences_serge_numbers = 10
-	sms_tokens_numbers = 4
+	credentials_sms_numbers = 4
 	sources_news_serge_numbers = 7
 	sources_patents_serge_numbers = 80
 	sources_sciences_serge_numbers = 22
@@ -205,7 +202,7 @@ def checkMate():
 	premium_code_table_serge_columns = ["id", "code", "creation_date", "users", "duration_premium", "expiration_date"]
 	price_table_serge_columns = ["id", "price", "currency", "type"]
 	purchase_table_serge_columns = ["id", "user_id", "purchase_date", "duration_premium", "invoice_number", "price", "premium_code_id", "bank_details"]
-	sms_tokens_columns = ["endpoint", "application_key", "application_secret", "consumer_key"]
+	credentials_sms_columns = ["endpoint", "application_key", "application_secret", "consumer_key"]
 	results_news_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "source_id", "inquiry_id", "owners"]
 	results_patents_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "source_id", "inquiry_id", "owners", "legal_abstract", "legal_status", "lens_link", "legal_check_date"]
 	results_sciences_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "source_id", "inquiry_id", "owners"]
