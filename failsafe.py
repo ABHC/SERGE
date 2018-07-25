@@ -101,7 +101,6 @@ def checkMate():
 				sys.exit()
 
 		elif num_tables < (25 + optionnal_tables):
-			logger_info.info("Missing Tables, for at least one extension")
 			logger_error.critical("Missing Tables, for at least one extension")
 			missing_tables_list = []
 			miss_str = ""
@@ -117,7 +116,6 @@ def checkMate():
 			sys.exit()
 
 		elif num_tables > (25 + optionnal_tables):
-			logger_info.info("Too Much Tables")
 			logger_error.critical("Too Much Tables")
 
 			supplementary_tables_list = []
@@ -131,6 +129,7 @@ def checkMate():
 				for supplementary_table in supplementary_tables_list:
 					supplementary_str = supplementary_str + supplementary_table + ", "
 
+			logger_error.critical(len(supplementary_tables_list) + " supplementary tables : "+expected_table)
 			sys.exit()
 
 		else:
