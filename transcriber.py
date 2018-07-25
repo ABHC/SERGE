@@ -76,13 +76,15 @@ def requestBuilder(inquiry, inquiry_id, builder_queries):
 
 	######### REQUEST BUILDING
 	for component in inquiry:
+		full_builder = builder_queries["start_builder"] + " `" + component + "` " + builder_queries["end_builder"]
+
+		call_equivalence = database.cursor()
+		call_equivalence.execute(full_builder)
+		rows = call_equivalence.fetchall()
+		call_equivalence.close()
+
 		if u"#" in component:
 			component = component.replace("#", "")
-
-			call_equivalence = database.cursor()
-			call_equivalence.execute(builder_queries["prime_builder"])
-			rows = call_equivalence.fetchall()
-			call_equivalence.close()
 
 			for row in rows:
 				if row[1] is not None:
@@ -91,19 +93,12 @@ def requestBuilder(inquiry, inquiry_id, builder_queries):
 					request_dictionnary[row[0]] = request_dictionnary[row[0]] + row[2]
 
 		else:
-			query_call_equivalence = (builder_queries["second_builder"])
-
-			call_equivalence = database.cursor()
-			call_equivalence.execute(query_call_equivalence)
-			rows = call_equivalence.fetchall()
-			call_equivalence.close()
-
 			for row in rows:
-				request_dictionnary[row[0]] = request_dictionnary[row[0]] + row[1]
+				request_dictionnary[row[0]] = request_dictionnary[row[0]] + row[2]
 
 	######### API PACK (INQUIRY ID, INQUIRY, COMPLETE URL, SOURCE ID, TYPE) BUILDING IN DICTIONNARY
 	call_equivalence = database.cursor()
-	call_equivalence.execute(builder_queries["second_builder"])
+	call_equivalence.execute(builder_queries["query_pack"])
 	rows = call_equivalence.fetchall()
 	call_equivalence.close()
 

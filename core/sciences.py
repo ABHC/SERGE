@@ -41,8 +41,8 @@ def rosetta(now):
 	need_jelly = False
 	builder_queries = dict()
 	builder_queries["query_initialyze"] = "SELECT basename FROM sources_sciences_serge WHERE active >= 1 and type <> 'language'"
-	builder_queries["prime_builder"] = "SELECT basename, quote, `"+component+"` FROM sources_sciences_serge WHERE active >= 1 and type <> 'language'"
-	builder_queries["second_builder"] = "SELECT basename, `"+component+"` FROM sources_sciences_serge WHERE active >= 1 and type <> 'language'"
+	builder_queries["start_builder"] = "SELECT basename, quote,"
+	builder_queries["end_builder"] = "FROM sources_sciences_serge WHERE active >= 1 and type <> 'language'"
 	builder_queries["query_pack"] = "SELECT basename, prelink, postlink, id, type FROM sources_sciences_serge WHERE active >= 1 and type <> 'language'"
 
 	######### SCIENCE RESEARCH
