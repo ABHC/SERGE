@@ -1,4 +1,4 @@
-checking# -*- coding: utf8 -*-
+# -*- coding: utf8 -*-
 
 """failsafe contains all the functions related to the database verification."""
 
