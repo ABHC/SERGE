@@ -21,7 +21,7 @@ def limitedConnection():
 
 	permissions = open("/var/www/Serge/configuration/extensions_configuration", "r")
 	passSQL = permissions.read().strip()
-	passSQL = re.findall(filename+"- password: "+'([^\s]+)', passSQL)
+	passSQL = (re.findall(filename+"- password: "+'([^\s]+)', passSQL))[0]
 	permissions.close()
 
 	database = MySQLdb.connect(host="localhost", user=limited_user, passwd=passSQL, db="Serge", use_unicode=1, charset="utf8mb4")

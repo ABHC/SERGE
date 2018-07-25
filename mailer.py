@@ -248,13 +248,13 @@ def highwayToMail(newsletter, stamps):
 		permissions.close()
 
 		######### SERGE MAIL
-		fromaddr = re.findall("serge_mail: "+'([^\s]+)', config_file)
+		fromaddr = (re.findall("serge_mail: "+'([^\s]+)', config_file))[0]
 
 		######### PASSWORD FOR MAIL
-		mdp_mail = re.findall("passmail: "+'([^\s]+)', config_file)
+		mdp_mail = (re.findall("passmail: "+'([^\s]+)', config_file))[0]
 
 		######### SERGE SERVER ADRESS
-		mailserveraddr = re.findall("passmail: "+'([^\s]+)', config_file)
+		mailserveraddr = (re.findall("passmail: "+'([^\s]+)', config_file))[0]
 
 		######### ADRESSES AND LANGUAGE RECOVERY
 		query_user_infos = "SELECT email, language FROM users_table_serge WHERE id = %s"
