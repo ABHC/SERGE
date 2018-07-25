@@ -100,7 +100,7 @@ def checkMate():
 	elif num_tables < (25 + optionnal_tables):
 		logger_error.critical("Missing Tables, for at least one extension")
 		missing_tables_list = []
-		miss_str = ""
+		missing_str = ""
 
 		for expected_table in expected_tables_list:
 			if expected_table not in tables_name_list:
@@ -109,7 +109,7 @@ def checkMate():
 		for missing_table in missing_tables_list:
 			missing_str = missing_str + missing_table + ", "
 
-		logger_error.critical(str(len(missing_tables_list)) + " missing tables : "+ missing_str)
+		logger_error.critical(str(len(missing_tables_list)) + " missing tables : " + missing_str)
 		sys.exit()
 
 	elif num_tables > (25 + optionnal_tables):
@@ -170,22 +170,22 @@ def checkMate():
 
 		numbers_columns = numbers_columns[0]
 
-		exec("expected_number"+"="+name+"_numbers")
+		exec("expected_number" + "=" + name + "_numbers")
 
 		if numbers_columns == expected_number:
-			logger_info.info("Number of columns in "+name+" : check")
+			logger_info.info("Number of columns in " + name + " : check")
 		else:
-			logger_error.critical("Number of columns in "+name+" : FALSE")
+			logger_error.critical("Number of columns in " + name + " : FALSE")
 
 			if numbers_columns < expected_number:
-				logger_error.critical("Missing columns in "+name)
+				logger_error.critical("Missing columns in " + name)
 				sys.exit()
 			elif numbers_columns > expected_number:
-				logger_error.critical("Too much columns in "+name)
+				logger_error.critical("Too much columns in " + name)
 				sys.exit()
 			else:
-				logger_error.critical("UNEXPECTED ERROR in "+name)
-				logger_error.critical("numbers of columns : "+str(numbers_columns))
+				logger_error.critical("UNEXPECTED ERROR in " + name)
+				logger_error.critical("numbers of columns : " + str(numbers_columns))
 				sys.exit()
 
 	######### CHECKING TABLES COLUMNS' NAMES
@@ -227,12 +227,12 @@ def checkMate():
 		for column_name in columns_fields:
 			columns_names_list.append(column_name[0])
 
-		exec("expected_columns"+"="+name+"_columns")
+		exec("expected_columns" + "=" + name + "_columns")
 
 		for column in columns_names_list:
 
 			if column in expected_columns:
-				logger_info.info(str(column)+" column in "+str(name)+" : check")
+				logger_info.info(str(column)+" column in " + str(name) + " : check")
 			else:
-				logger_error.critical(str(column)+" column NOT IN "+str(name))
+				logger_error.critical(str(column)+" column NOT IN " + str(name))
 				sys.exit()
