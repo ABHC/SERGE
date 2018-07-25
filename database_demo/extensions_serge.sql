@@ -8,6 +8,7 @@ CREATE TABLE `extensions_serge` (
 	`sources_table_name` text COLLATE utf8mb4_bin DEFAULT NULL,
 	`inquiries_table_name` text COLLATE utf8mb4_bin DEFAULT NULL,
 	`results_table_name` text COLLATE utf8mb4_bin NOT NULL,
+	`optionnal_tables_names` text COLLATE utf8mb4_bin NOT NULL,
 	`label_content` text COLLATE utf8mb4_bin NOT NULL,
 	`label_color` text COLLATE utf8mb4_bin NOT NULL,
 	`label_text_color` text COLLATE utf8mb4_bin NOT NULL,
