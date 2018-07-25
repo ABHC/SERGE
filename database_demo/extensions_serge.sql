@@ -2,7 +2,7 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
 CREATE TABLE `extensions_serge` (
-	`id` int(11) NOT NULL AUTO_INCREMENT,,
+	`id` int(11) NOT NULL AUTO_INCREMENT,
 	`name` text COLLATE utf8mb4_bin NOT NULL,
 	`sources_table_name` text COLLATE utf8mb4_bin DEFAULT NULL,
 	`queries_table_name` text COLLATE utf8mb4_bin DEFAULT NULL,
