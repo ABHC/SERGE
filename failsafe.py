@@ -191,7 +191,7 @@ def checkMate():
 	admin_table_serge_columns = ["id", "admin", "email"]
 	background_serge_columns = ["id", "name", "filename", "type"]
 	captcha_serge_columns = ["name"]
-	extensions_serge_columns = ["id", "name", "optionnal_tables," "sources_table_name", "inquiries_table_name", "results_table_name", "optionnal_tables_names", "label_content", "label_color", "label_text_color", "mail_switch", "general_switch"]
+	extensions_serge_columns = ["id", "name", "optionnal_tables", "sources_table_name", "inquiries_table_name", "results_table_name", "optionnal_tables_names", "label_content", "label_color", "label_text_color", "mail_switch", "general_switch"]
 	inquiries_news_serge_columns = ["id", "inquiry", "applicable_owners_sources", "active"]
 	inquiries_patents_serge_columns = ["id", "inquiry", "legal_research", "applicable_owners_sources", "active"]
 	inquiries_sciences_serge_columns = ["id", "inquiry", "applicable_owners_sources", "active"]
