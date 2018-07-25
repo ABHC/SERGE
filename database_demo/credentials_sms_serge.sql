@@ -1,7 +1,7 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
-CREATE TABLE `credentials_sms` (
+CREATE TABLE `credentials_sms_serge` (
 	`endpoint` text COLLATE utf8mb4_bin NOT NULL,
 	`application_key` text COLLATE utf8mb4_bin NOT NULL,
 	`application_secret` text COLLATE utf8mb4_bin NOT NULL,

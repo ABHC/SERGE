@@ -25,18 +25,16 @@ def checkMate():
 	logger_info = logging.getLogger("info_log")
 	logger_error = logging.getLogger("error_log")
 
-	serge = "%serge%"
-	database_name = "Serge"
-	tables_name_list = []
-
 	######### PREPARED REQUESTS
-	check_tables = ("SELECT count(table_name) FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = %s AND table_name LIKE %s")
+	check_tables = ("SELECT COUNT(table_name) FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = %s AND table_name LIKE %s")
 	check_tables_name = ("SHOW TABLES")
-	check_ext_tables_names = ("SELECT sources_table_name, inquiries_table_name, results_table_name, optionnal_tables_names FROM extensions_serge")
 	check_numbers_columns = ("SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = %s AND table_name = %s")
 	check_columns_name = ("SELECT column_name FROM information_schema.columns WHERE table_schema = %s AND table_name = %s")
 
 	######### NUMBERS OF TABLES
+	serge = "%serge%"
+	database_name = "Serge"
+
 	checking = database.cursor()
 	checking.execute(check_tables, (database_name, serge))
 	num_tables = checking.fetchone()
@@ -51,12 +49,13 @@ def checkMate():
 	name_tables = checking.fetchall()
 	checking.close()
 
+	tables_name_list = []
+
 	for name in name_tables:
 		tables_name_list.append(name[0])
 
 	######### EXPECTED TABLES
-	expected_tables_list = ["admin_table_serge", "background_serge", "captcha_serge", "extensions_serge", "inquiries_news_serge",
-	"inquiries_patents_serge", "inquiries_sciences_serge", "language_serge", "miscellaneous_serge", "newsletter_table_serge", "premium_code_table_serge", "price_table_serge", "purchase_table_serge", "results_news_serge", "results_patents_serge", "results_sciences_serge", "credentials_sms", "sources_news_serge", "sources_patents_serge", "sources_sciences_serge", "stripe_table_serge", "text_content_serge", "users_table_serge", "watch_pack_queries_serge", "watch_pack_serge"]
+	expected_tables_list = ["admin_table_serge", "background_serge", "captcha_serge", "credentials_sms_serge", "extensions_serge", "inquiries_news_serge", "inquiries_patents_serge", "inquiries_sciences_serge", "language_serge", "miscellaneous_serge", "newsletter_table_serge", "premium_code_table_serge", "price_table_serge", "purchase_table_serge", "results_news_serge", "results_patents_serge", "results_sciences_serge", "sources_news_serge", "sources_patents_serge", "sources_sciences_serge", "stripe_table_serge", "text_content_serge", "users_table_serge", "watch_pack_queries_serge", "watch_pack_serge"]
 
 	checking = database.cursor()
 	checking.execute("SELECT sources_table_name, inquiries_table_name, results_table_name, optionnal_tables_names FROM extensions_serge")

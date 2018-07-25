@@ -76,7 +76,7 @@ def sergeTelecom(fullResults, stamps):
 
 	######### OVH TOKENS
 	call_tokens = database.cursor()
-	call_tokens.execute("SELECT endpoint, application_key, application_secret, consumer_key FROM credentials_sms")
+	call_tokens.execute("SELECT endpoint, application_key, application_secret, consumer_key FROM credentials_sms_serge")
 	tokens = call_tokens.fetchone()
 	call_tokens.close()
 
