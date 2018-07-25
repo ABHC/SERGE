@@ -97,7 +97,7 @@ def checkMate():
 				for wrong_name in wrong_names_list:
 					wrong_str = wrong_str + wrong_name + ", "
 
-				logger_error.critical(len(wrong_names_list)+" wrong table(s) name : "+table_name)
+				logger_error.critical(len(wrong_names_list)+" wrong table(s) name : "+wrong_str)
 				sys.exit()
 
 		elif num_tables < (25 + optionnal_tables):
@@ -112,7 +112,7 @@ def checkMate():
 			for missing_table in missing_tables_list:
 				missing_str = missing_str + missing_table + ", "
 
-			logger_error.critical(len(missing_tables_list) + " missing tables : "+expected_table)
+			logger_error.critical(len(missing_tables_list) + " missing tables : "+missing_str)
 			sys.exit()
 
 		elif num_tables > (25 + optionnal_tables):
@@ -129,7 +129,7 @@ def checkMate():
 				for supplementary_table in supplementary_tables_list:
 					supplementary_str = supplementary_str + supplementary_table + ", "
 
-			logger_error.critical(len(supplementary_tables_list) + " supplementary tables : "+expected_table)
+			logger_error.critical(len(supplementary_tables_list) + " supplementary tables : "+supplementary_str)
 			sys.exit()
 
 		else:
