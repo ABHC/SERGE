@@ -4,8 +4,9 @@ SET time_zone = "+00:00";
 CREATE TABLE `extensions_serge` (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
 	`name` text COLLATE utf8mb4_bin NOT NULL,
+	`optionnal_tables` int(11) NOT NULL,
 	`sources_table_name` text COLLATE utf8mb4_bin DEFAULT NULL,
-	`queries_table_name` text COLLATE utf8mb4_bin DEFAULT NULL,
+	`inquiries_table_name` text COLLATE utf8mb4_bin DEFAULT NULL,
 	`results_table_name` text COLLATE utf8mb4_bin NOT NULL,
 	`label_content` text COLLATE utf8mb4_bin NOT NULL,
 	`label_color` text COLLATE utf8mb4_bin NOT NULL,

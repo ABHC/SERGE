@@ -19,7 +19,7 @@ def extensionLibrary():
 
 	######### CALL TO TABLE miscellaneous_serge
 	call_extensions = database.cursor()
-	call_extensions.execute("SELECT value FROM miscellaneous_serge WHERE general_switch = 1")
+	call_extensions.execute("SELECT name FROM extensions_serge WHERE general_switch = 1")
 	row = call_extensions.fetchall()
 	call_extensions.close()
 
