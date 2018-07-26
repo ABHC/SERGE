@@ -58,7 +58,7 @@ def pathfinder(now):
 
 	######### REBUILD OWNERS AND SOURCES LISTS
 	for row in rows:
-		field = {"inquiry_id":row[0], "inquiry": row[1].strip(), "applicable_owners_sources": row[2].strip(), "legal_research": legal_research}
+		field = {"inquiry_id":row[0], "inquiry": row[1].strip(), "applicable_owners_sources": row[2].strip(), "legal_research": row[3]}
 		inquiries_list.append(field)
 
 	######### PATENTS RESEARCH
