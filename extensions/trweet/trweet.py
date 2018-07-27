@@ -96,16 +96,16 @@ def startingPoint():
 		owners = ","
 		targets_list = []
 
-		for applicable_owners_targets in row[3].split("|"):
-			if applicable_owners_targets != "":
-				split_owners_targets = applicable_owners_targets.split(":")
+		for applicable_owners_targets in filter(None, row[3].split("|")):
 
-				if split_owners_targets[0] != "" or "!" not in split_owners_targets[0]:
-					owners = owners + split_owners_targets[0] + ","
+			split_owners_targets = filter(None, applicable_owners_targets.split(":"))
 
-					for target in split_owners_targets[1].split(","):
-						if target != "" or "!" not in target:
-							targets_list.append(target)
+			if "!" not in split_owners_targets[0]:
+				owners = owners + split_owners_targets[0] + ","
+
+				for target in filter(None, split_owners_targets[1].split(",")):
+					if "!" not in target:
+						targets_list.append(target)
 
 		inquiry = {"id": row[0], "type": row[1], "inquiry": row[2], "applicable_owners_targets": row[3] "owners": owners, "targets": targets_list.sort(), "language": row[4], "last_launch": row[5]}
 		search_list.append(inquiry)
@@ -370,7 +370,7 @@ def trweetBucket(item, inquiry_id, inquiry_id_comma2, fishing_time, query_checki
 	elif checking is not None:
 		field_inquiry_id = checking[0]
 		query_owners = checking[1]
-		already_owners_list = owners.split(",")
+		already_owners_list = filter(None, owners.split(","))
 		complete_id = field_inquiry_id
 		complete_owners = query_owners
 
@@ -460,7 +460,7 @@ def resultsPack(register, user_id_comma):
 		######### SEARCH FOR SOURCE NAME AND COMPLETE REQUEST OF THE USER
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_trweet_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
-		item_arguments = {"user_id": register, "source_id": None, "inquiry_id": str(trweet[7]).split(","), "query_source": None, "query_inquiry": query_inquiry, "multisource": False}
+		item_arguments = {"user_id": register, "source_id": None, "inquiry_id": filter(None, str(trweet[7]).split(",")), "query_source": None, "query_inquiry": query_inquiry, "multisource": False}
 
 		attributes = toolbox.packaging(item_arguments)
 		description = (trweet[1] + "\n" + trweet[3] + ", likes : " + trweet[4] + ", retweets : " + trweet[5]).strip().encode('ascii', errors='xmlcharrefreplace')

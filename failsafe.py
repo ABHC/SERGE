@@ -65,7 +65,7 @@ def checkMate():
 	for row in rows:
 		if row is not None:
 			expected_tables_list.append(row[0], row[1], row[2], row[3])
-			optionnal_tables_names_list = row[4].split("|")
+			optionnal_tables_names_list = filter(None, row[4].split("|"))
 
 			for optionnal_tables_name in optionnal_tables_names_list:
 				if optionnal_tables_name != "":

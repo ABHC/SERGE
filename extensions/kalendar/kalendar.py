@@ -175,7 +175,7 @@ def saveTheDate(query_checking, query_insertion, query_update, item):
 	call_data_cheking.close()
 
 	if checking is not None:
-		dataset = {"complete_inquiries_id": checking[0], "complete_owners": checking[1], "split_owners": checking[1].split(",")}
+		dataset = {"complete_inquiries_id": checking[0], "complete_owners": checking[1], "split_owners": filter(None, checking[1].split(","))}
 
 		########### NEW ATTRIBUTES CREATION (COMPLETE ID & COMPLETE OWNERS)
 		if event["inquiry_id"] not in dataset["complete_inquiries_id"]:
@@ -250,7 +250,7 @@ def resultsPack(register, user_id_comma):
 		query_source = "SELECT name FROM sources_kalendar_serge WHERE id = %s and type <> 'language'"
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_kalendar_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
-		item_arguments = {"user_id": register, "source_id": row[6], "inquiry_id": str(row[7]).split(","), "query_source": query_source, "query_inquiry": query_inquiry, "multisource": True}
+		item_arguments = {"user_id": register, "source_id": row[6], "inquiry_id": filter(None, str(row[7]).split(",")), "query_source": query_source, "query_inquiry": query_inquiry, "multisource": True}
 
 		attributes = toolbox.packaging(item_arguments)
 		description = (row[2] + ", " + row[3] + "\n" + row[4]).strip().encode('ascii', errors='xmlcharrefreplace')

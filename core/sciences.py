@@ -69,8 +69,8 @@ def rosetta(now):
 			raw_owners = re.findall('\|([0-9]+):[0-9!,]*,'+api_pack["source_id"]+',', inquiry["applicable_owners_sources"])
 
 			for owner in raw_owners:
-				owner = (owner.replace("|", "").strip().split(":"))[0]
-				owners_str = (owners_str + owner + ",").strip()
+				owner = filter(None, owner.replace("|", "").strip().split(":"))
+				owners_str = (owners_str + owner[0] + ",").strip()
 
 			######### RESEARCH SCIENCE ON RSS FEEDS WITH FEEDPARSER MODULE
 			if api_pack["type"] == "RSS" and re.search('^(,[0-9]+)+,$', owners_str) is not None:
@@ -264,7 +264,7 @@ def sciencespack(register, user_id_comma):
 		query_source = "SELECT basename FROM sources_sciences_serge WHERE id = %s and type <> 'language'"
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_sciences_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
-		item_arguments = {"user_id": register, "source_id": row[3], "inquiry_id": str(row[4]).split(","), "query_source": query_source, "query_inquiry": query_inquiry, "multisource": True}
+		item_arguments = {"user_id": register, "source_id": row[3], "inquiry_id": filter(None, str(row[4]).split(",")), "query_source": query_source, "query_inquiry": query_inquiry, "multisource": True}
 
 		attributes = toolbox.packaging(item_arguments)
 

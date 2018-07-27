@@ -276,7 +276,7 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 		if checking is not None:
 			field_id_inquiry = checking[0]
 			item_owners = checking[1]
-			already_owners_list = owners.split(",")
+			already_owners_list = filter(None, owners.split(","))
 			complete_id = field_id_inquiry
 			complete_owners = item_owners
 
@@ -325,7 +325,7 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 				########### UPDATE WITH TITLE
 				field_id_inquiry = checking_link[0]
 				item_owners = checking_link[1]
-				already_owners_list = owners.split(",")
+				already_owners_list = filter(None, owners.split(","))
 				complete_id = field_id_inquiry
 				complete_owners = item_owners
 
@@ -387,7 +387,7 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 
 							field_id_inquiry = jelly[2]
 							item_owners = jelly[3]
-							already_owners_list = owners.split(",")
+							already_owners_list = filter(None, owners.split(","))
 							complete_id = field_id_inquiry
 							complete_owners = item_owners
 
