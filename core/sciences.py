@@ -39,11 +39,6 @@ def rosetta(now):
 
 	######### SET USEFUL VARIABLES
 	need_jelly = False
-	builder_queries = dict()
-	builder_queries["query_initialyze"] = "SELECT basename FROM sources_sciences_serge WHERE active >= 1 and type <> 'language'"
-	builder_queries["start_builder"] = "SELECT basename, quote,"
-	builder_queries["end_builder"] = "FROM sources_sciences_serge WHERE active >= 1 and type <> 'language'"
-	builder_queries["query_pack"] = "SELECT basename, prelink, postlink, id, type FROM sources_sciences_serge WHERE active >= 1 and type <> 'language'"
 
 	######### SCIENCE RESEARCH
 	logger_info.info("\n\n######### Last Scientific papers research : \n\n")
@@ -62,22 +57,25 @@ def rosetta(now):
 
 	######### BUILDING REQUEST FOR SCIENCE API
 	for inquiry in inquiries_list:
-		request_dictionnary = transcriber.requestBuilder(inquiry["inquiry"], inquiry["inquiry_id"], builder_queries)
 
-		for science_api_pack in request_dictionnary.values():
+		query_dataset = "SELECT id, type, basename, prelink, postlink, quote FROM sources_sciences_serge WHERE active >= 1 and type <> 'language'"
+		query_builder = "FROM sources_sciences_serge WHERE id = %s"
+		inquiries_set = transcriber.requestBuilder(inquiry["inquiry"], query_dataset, query_builder)
+
+		for api_pack in inquiries_set:
 			owners_str = ","
 
 			######### CREATE OWNERS LIST FOR COUPLE INQUIRY-SOURCE
-			raw_owners = re.findall('\|([0-9]+):[0-9!,]*,'+science_api_pack["source_id"]+',', inquiry["applicable_owners_sources"])
+			raw_owners = re.findall('\|([0-9]+):[0-9!,]*,'+api_pack["source_id"]+',', inquiry["applicable_owners_sources"])
 
 			for owner in raw_owners:
 				owner = (owner.replace("|", "").strip().split(":"))[0]
 				owners_str = (owners_str + owner + ",").strip()
 
 			######### RESEARCH SCIENCE ON RSS FEEDS WITH FEEDPARSER MODULE
-			if science_api_pack["type"] == "RSS" and re.search('^(,[0-9]+)+,$', owners_str) is not None:
-				logger_info.info(science_api_pack["inquiry_raw"].encode("utf8")+"\n")
-				req_results = sergenet.aLinkToThePast(science_api_pack["inquiry_link"], 'fullcontent')
+			if api_pack["type"] == "RSS" and re.search('^(,[0-9]+)+,$', owners_str) is not None:
+				logger_info.info(api_pack["inquiry_api"].encode("utf8")+"\n")
+				req_results = sergenet.aLinkToThePast(api_pack["inquiry_link"], 'fullcontent')
 				feed_content = req_results[0]
 				feed_error = req_results[1]
 
@@ -86,7 +84,7 @@ def rosetta(now):
 						parsed_content = feedparser.parse(feed_content)
 					except Exception, except_type:
 						parsed_content = None
-						logger_error.error("PARSING ERROR IN :"+science_api_pack["inquiry_link"]+"\n")
+						logger_error.error("PARSING ERROR IN :"+api_pack["inquiry_link"]+"\n")
 						logger_error.error(repr(except_type))
 
 					if parsed_content is not None:
@@ -95,7 +93,7 @@ def rosetta(now):
 						logger_info.info("numbers of papers :"+unicode(rangemax_article)+"\n \n")
 
 						if rangemax_article == 0:
-							logger_info.info("VOID QUERY :"+science_api_pack["inquiry_link"]+"\n\n")
+							logger_info.info("VOID QUERY :"+api_pack["inquiry_link"]+"\n\n")
 
 						else:
 							while range_article < rangemax_article:
@@ -105,14 +103,14 @@ def rosetta(now):
 									if post_title == "":
 										post_title = "NO TITLE"
 								except AttributeError:
-									logger_error.warning("BEACON ERROR : missing <title> in "+science_api_pack["inquiry_link"])
+									logger_error.warning("BEACON ERROR : missing <title> in "+api_pack["inquiry_link"])
 									logger_error.warning(traceback.format_exc())
 									post_title = "NO TITLE"
 
 								try:
 									post_link = parsed_content.entries[range_article].link
 								except AttributeError:
-									logger_error.warning("BEACON ERROR : missing <link> in "+science_api_pack["inquiry_link"])
+									logger_error.warning("BEACON ERROR : missing <link> in "+api_pack["inquiry_link"])
 									logger_error.warning(traceback.format_exc())
 									post_link = ""
 
@@ -120,7 +118,7 @@ def rosetta(now):
 									post_date = parsed_content.entries[range_article].published_parsed
 									post_date = time.mktime(post_date)
 								except AttributeError:
-									logger_error.warning("BEACON ERROR : missing <date> in "+science_api_pack["inquiry_link"])
+									logger_error.warning("BEACON ERROR : missing <date> in "+api_pack["inquiry_link"])
 									logger_error.warning(traceback.format_exc())
 									post_date = now
 
@@ -142,7 +140,7 @@ def rosetta(now):
 
 								########### ITEM BUILDING
 								post_title = escaping(post_title)
-								item = (post_title, post_link, post_date, science_api_pack["source_id"], inquiry_id_comma2, owners_str)
+								item = (post_title, post_link, post_date, api_pack["source_id"], inquiry_id_comma2, owners_str)
 								item_update = [post_link]
 
 								########### CALL insertOrUpdate FUNCTION
@@ -154,9 +152,9 @@ def rosetta(now):
 					logger_info.warning("Error : the feed is unavailable")
 
 			######### RESEARCH SCIENCE ON JSON FEEDS WITH JSON MODULE
-			elif science_api_pack["type"] == "JSON" and source_comparator is not None and re.search('^(,[0-9]+)+,$', owners_str) is not None:
-				logger_info.info(science_api_pack["inquiry_raw"].encode("utf8")+"\n")
-				req_results = sergenet.aLinkToThePast(science_api_pack["inquiry_link"], 'fullcontent')
+			elif api_pack["type"] == "JSON" and source_comparator is not None and re.search('^(,[0-9]+)+,$', owners_str) is not None:
+				logger_info.info(api_pack["inquiry_raw"].encode("utf8")+"\n")
+				req_results = sergenet.aLinkToThePast(api_pack["inquiry_link"], 'fullcontent')
 				json_content = req_results[0]
 				feed_error = req_results[1]
 
@@ -165,7 +163,7 @@ def rosetta(now):
 						json_data = json.loads(json_content)
 					except Exception, except_type:
 						json_data = None
-						logger_error.error("PARSING ERROR IN :"+science_api_pack["inquiry_link"]+"\n")
+						logger_error.error("PARSING ERROR IN :"+api_pack["inquiry_link"]+"\n")
 						logger_error.error(repr(except_type))
 
 					if "results" in json_data:
@@ -174,7 +172,7 @@ def rosetta(now):
 						logger_info.info("numbers of papers :"+unicode(rangemax_article)+"\n \n")
 
 						if rangemax_article == 0:
-							logger_info.info("VOID QUERY :"+science_api_pack["inquiry_link"]+"\n\n")
+							logger_info.info("VOID QUERY :"+api_pack["inquiry_link"]+"\n\n")
 
 						else:
 							while range_article < rangemax_article:
@@ -220,7 +218,7 @@ def rosetta(now):
 
 								########### ITEM BUILDING
 								post_title = escaping(post_title)
-								item = (post_title, post_link, post_date, science_api_pack["source_id"], inquiry_id_comma2, owners_str)
+								item = (post_title, post_link, post_date, api_pack["source_id"], inquiry_id_comma2, owners_str)
 								item_update = [post_link]
 
 								########### CALL  FUNCTION
@@ -271,7 +269,7 @@ def sciencespack(register, user_id_comma):
 		attributes = toolbox.packaging(item_arguments)
 
 		######### TRANSLATE THE INQUIRY
-		trad_args = {"register": register, "inquiry": attributes["inquiry"], "component": "SELECT `"+component+"` FROM sources_sciences_serge WHERE type = 'language' and basename = %s", "quote": "SELECT quote FROM sources_sciences_serge WHERE type = 'language' and basename = %s"}
+		trad_args = {"register": register, "inquiry": attributes["inquiry"], "query_dataset": "SELECT quote FROM sources_sciences_serge WHERE type = 'language' and basename = %s", "query_builder": "FROM sources_sciences_serge WHERE type = 'language' and basename = %s"}
 
 		human_inquiry = transcriber.humanInquiry(trad_args)
 

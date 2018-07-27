@@ -40,11 +40,6 @@ def pathfinder(now):
 
 	######### SET USEFUL VARIABLES
 	need_jelly = False
-	builder_queries = dict()
-	builder_queries["query_initialyze"] = "SELECT basename FROM sources_patents_serge WHERE active >= 1 and type <> 'language'"
-	builder_queries["start_builder"] = "SELECT basename, quote,"
-	builder_queries["end_builder"] = "FROM sources_patents_serge WHERE active >= 1 and type <> 'language'"
-	builder_queries["query_pack"] = "SELECT basename, prelink, postlink, id, type FROM sources_patents_serge WHERE active >= 1 and type <> 'language'"
 
 	logger_info.info("\n\n######### Last Patents Research (patents function) : \n\n")
 
@@ -63,21 +58,24 @@ def pathfinder(now):
 
 	######### PATENTS RESEARCH
 	for inquiry in inquiries_list:
-		request_dictionnary = transcriber.requestBuilder(inquiry["inquiry"], inquiry["inquiry_id"], builder_queries)
 
-		for patents_api_pack in request_dictionnary:
+		query_dataset = "SELECT id, type, basename, prelink, postlink, quote FROM sources_patents_serge WHERE active >= 1 and type <> 'language'"
+		query_builder = "FROM sources_patents_serge WHERE id = %s"
+		inquiries_set = transcriber.requestBuilder(inquiry["inquiry"], query_dataset, query_builder)
+
+		for api_pack in inquiries_set:
 			owners_str = ","
 
 			######### CREATE OWNERS LIST FOR COUPLE INQUIRY-SOURCE
-			owners_list = re.findall('\|([0-9]+):[0-9!,]*,'+patents_api_pack["source_id"]+',', inquiry["applicable_owners_sources"])
+			owners_list = re.findall('\|([0-9]+):[0-9!,]*,'+api_pack["source_id"]+',', inquiry["applicable_owners_sources"])
 
 			for owner in raw_owners:
 				owner = (owner.replace("|", "").strip().split(":"))[0]
 				owners_str = owners_str + owner + ","
 
 			######### RESEARCH PATENTS ON RSS FEEDS WITH FEEDPARSER MODULE
-			if patents_api_pack["type"] == "RSS" and re.search('^(,[0-9]+)+,$', owners_str) is not None:
-				logger_info.info(patents_api_pack["inquiry_raw"]+"\n")
+			if api_pack["type"] == "RSS" and re.search('^(,[0-9]+)+,$', owners_str) is not None:
+				logger_info.info(api_pack["inquiry_api"]+"\n")
 				req_results = sergenet.aLinkToThePast(link, 'fullcontent')
 				feed_content = req_results[0]
 				feed_error = req_results[1]
@@ -87,7 +85,7 @@ def pathfinder(now):
 						parsed_content = feedparser.parse(feed_content)
 					except Exception, except_type:
 						parsed_content = None
-						logger_error.error("PARSING ERROR IN :"+patents_api_pack["inquiry_link"]+"\n")
+						logger_error.error("PARSING ERROR IN :"+api_pack["inquiry_link"]+"\n")
 						logger_error.error(repr(except_type))
 
 					if parsed_content is not None:
@@ -96,7 +94,7 @@ def pathfinder(now):
 						logger_info.info("numbers of patents :"+unicode(rangemax_article)+"\n \n")
 
 						if rangemax_article == 0:
-							logger_info.info("VOID QUERY :"+patents_api_pack["inquiry_link"]+"\n\n")
+							logger_info.info("VOID QUERY :"+api_pack["inquiry_link"]+"\n\n")
 
 						else:
 							while range_article < rangemax_article:
@@ -105,7 +103,7 @@ def pathfinder(now):
 									if post_title == "":
 										post_title = "NO TITLE"
 								except AttributeError:
-									logger_error.warning("BEACON ERROR : missing <title> in "+patents_api_pack["inquiry_link"])
+									logger_error.warning("BEACON ERROR : missing <title> in "+api_pack["inquiry_link"])
 									logger_error.warning(traceback.format_exc())
 									post_title = "NO TITLE"
 
@@ -114,7 +112,7 @@ def pathfinder(now):
 									post_link = post_link.split("&")
 									post_link = post_link[0]
 								except AttributeError:
-									logger_error.warning("BEACON ERROR : missing <link> in "+patents_api_pack["inquiry_link"])
+									logger_error.warning("BEACON ERROR : missing <link> in "+api_pack["inquiry_link"])
 									logger_error.warning(traceback.format_exc())
 									post_link = ""
 
@@ -125,7 +123,7 @@ def pathfinder(now):
 									else:
 										post_date = now
 								except AttributeError:
-									logger_error.warning("BEACON ERROR : missing <date> in "+patents_api_pack["inquiry_link"])
+									logger_error.warning("BEACON ERROR : missing <date> in "+api_pack["inquiry_link"])
 									logger_error.warning(traceback.format_exc())
 									post_date = now
 
@@ -151,7 +149,7 @@ def pathfinder(now):
 
 								########### ITEM BUILDING
 								post_title = escaping(post_title)
-								item = (post_title, post_link, post_date, patents_api_pack["source_id"], inquiry_id_comma2, owners_str, legal_dataset["legal_abstract"], legal_dataset["legal_status"], legal_dataset["lens_link"], legal_dataset["new_check_date"])
+								item = (post_title, post_link, post_date, api_pack["source_id"], inquiry_id_comma2, owners_str, legal_dataset["legal_abstract"], legal_dataset["legal_status"], legal_dataset["lens_link"], legal_dataset["new_check_date"])
 								item_update = [legal_dataset["legal_abstract"], legal_dataset["legal_status"], legal_dataset["lens_link"], legal_dataset["new_check_date"], post_link]
 
 								########### CALL insertOrUpdate FUNCTION
@@ -204,7 +202,7 @@ def patentspack(register, user_id_comma):
 		attributes = toolbox.packaging(item_arguments)
 
 		######### TRANSLATE THE INQUIRY
-		trad_args = {"register": register, "inquiry": attributes["inquiry"], "component": "SELECT `"+component+"` FROM sources_patents_serge WHERE type = 'language' and basename = %s", "quote": "SELECT quote FROM sources_patents_serge WHERE type = 'language' and basename = %s"}
+		trad_args = {"register": register, "inquiry": attributes["inquiry"], "query_dataset": "SELECT quote FROM sources_patents_serge WHERE type = 'language' and basename = %s", "query_builder": "FROM sources_patents_serge WHERE type = 'language' and basename = %s"}
 
 		human_inquiry = transcriber.humanInquiry(trad_args)
 

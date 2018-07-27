@@ -8,7 +8,7 @@ from handshake import databaseConnection
 def humanInquiry(trad_args):
 	"""Translator for translate Serge universal queries into human language according to the language choose by the user"""
 
-	inquiry = trad_args["inquiry"].split("|")
+	inquiry = filter(None, trad_args["inquiry"].split("|"))
 
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
@@ -18,94 +18,82 @@ def humanInquiry(trad_args):
 
 	######### SELECT THE CORRECT LANGUAGE
 	call_users = database.cursor()
-	call_users.execute(query_language, (trad_args["inquiry"],))
+	call_users.execute(query_language, (trad_args["register"],))
 	language = call_users.fetchone()
 	call_users.close()
 
-	language = language[0]
+	call_equivalence = database.cursor()
+	call_equivalence.execute(trad_args["query_dataset"], (language[0],))
+	quote = call_equivalence.fetchone()
+	call_equivalence.close()
+
 	inquiry_translation = u""
 
 	######### TRANSLATION BUILDING
 	for component in inquiry:
+
 		if u"#" in component:
-			component = component.replace("#", "")
-
-			call_equivalence = database.cursor()
-			call_equivalence.execute(trad_args["component"])
-			section = call_equivalence.fetchone()
-			call_equivalence.close()
-
-			call_equivalence = database.cursor()
-			call_equivalence.execute(trad_args["quote"])
-			quote = call_equivalence.fetchone()
-			call_equivalence.close()
-
-			if quote[1] is not None:
-				inquiry_translation = inquiry_translation + quote[0] + section[0] + quote[0]
+			if quote[0] is None:
+				inquiry_translation = inquiry_translation + component.replace("#", "")
 			else:
-				inquiry_translation = inquiry_translation + section[0]
+				inquiry_translation = inquiry_translation + quote[0] + component.replace("#", "") + quote[0]
 
 		else:
+			full_builder = "SELECT" + " `" + component + "` " + trad_args["query_builder"]
+
 			call_equivalence = database.cursor()
-			call_equivalence.execute(trad_args["component"])
-			section = call_equivalence.fetchone()
+			call_equivalence.execute(full_builder, (language[0],))
+			translate_component = call_equivalence.fetchone()
 			call_equivalence.close()
 
-			inquiry_translation = inquiry_translation + section[0]
+			inquiry_translation = inquiry_translation + translate_component[0]
 
 	return inquiry_translation
 
 
-def requestBuilder(inquiry, inquiry_id, builder_queries):
+def requestBuilder(inquiry, query_dataset, query_builder):
 	"""Translator for translate Serge universal queries into a specifical API query according to the sources chosen by the user"""
 
-	inquiry = inquiry.split("|")
-	request_dictionnary = dict()
+	inquiry = filter(None, inquiry.split("|"))
+	inquiries_set = []
 
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
 	######### INITIALIZE THE DICTIONNARY KEY
 	call_equivalence = database.cursor()
-	call_equivalence.execute(builder_queries["query_initialyze"])
+	call_equivalence.execute(query_dataset)
 	rows = call_equivalence.fetchall()
 	call_equivalence.close()
 
 	for row in rows:
-		request_dictionnary[row[0]] = u""
+		request = {"source_id": row[0], "type": row[1], "basename": row[2], "inquiry_api": "", "inquiry_link": ""}
+		quote = row[5]
 
-	######### REQUEST BUILDING
-	for component in inquiry:
-		full_builder = builder_queries["start_builder"] + " `" + component + "` " + builder_queries["end_builder"]
+		######### REQUEST BUILDING
+		for component in inquiry:
 
-		call_equivalence = database.cursor()
-		call_equivalence.execute(full_builder)
-		rows = call_equivalence.fetchall()
-		call_equivalence.close()
-
-		if u"#" in component:
-			component = component.replace("#", "")
-
-			for row in rows:
-				if row[1] is not None:
-					request_dictionnary[row[0]] = request_dictionnary[row[0]] + row[1] + row[2] + row[1]
+			if u"#" in component:
+				if quote is None:
+					request["inquiry_api"] = request["inquiry_api"] + component.replace("#", "")
 				else:
-					request_dictionnary[row[0]] = request_dictionnary[row[0]] + row[2]
+					request["inquiry_api"] = request["inquiry_api"] + quote + component.replace("#", "") + quote
 
-		else:
-			for row in rows:
-				request_dictionnary[row[0]] = request_dictionnary[row[0]] + row[2]
+			else:
+				full_builder = "SELECT" + " `" + component + "` " + query_builder
 
-	######### API PACK (INQUIRY ID, INQUIRY, COMPLETE URL, SOURCE ID, TYPE) BUILDING IN DICTIONNARY
-	call_equivalence = database.cursor()
-	call_equivalence.execute(builder_queries["query_pack"])
-	rows = call_equivalence.fetchall()
-	call_equivalence.close()
+				call_equivalence = database.cursor()
+				call_equivalence.execute(full_builder, (request["source_id"], ))
+				translate_component = call_equivalence.fetchone()
+				call_equivalence.close()
 
-	for row in rows:
-		request_dictionnary[row[0]] = {"inquiry_id": inquiry_id, "inquiry_raw": request_dictionnary[row[0]], "inquiry_link": row[1] + request_dictionnary[row[0]] + row[2], "source_id": row[3], "type": row[4]}
+				request["inquiry_api"] = request["inquiry_api"] + translate_component[0]
 
-	return request_dictionnary
+		######### INQUIRIES SET (INQUIRY ID, INQUIRY, COMPLETE URL, SOURCE ID, TYPE) COMPLETION
+		request["inquiry_link"] = row[3] + request["inquiry_api"] + row[4]
+		inquiries_set.append(request)
+
+	return inquiries_set
 
 
 def pieceOfMail(priority):

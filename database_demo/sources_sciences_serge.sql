@@ -30,11 +30,11 @@ CREATE TABLE `sources_sciences_serge` (
 SET NAMES utf8mb4;
 
 INSERT INTO `sources_sciences_serge` (`id`, `apikey`, `type`, `basename`, `name`, `link`, `prelink`, `postlink`, `AND`, `OR`, `NOT`, `(`, `)`, `quote`, `title`, `author`, `abstract`, `publisher`, `category`, `all`, `active`) VALUES
-(1, NULL, 'language', 'EN', NULL, NULL, NULL, NULL, 'AND', 'OR', 'AND NOT', '(', ')', '"', 'title like : ', 'author like : ', 'abstract like : ', 'publisher is : ', 'category is :', 'search in all datas : ', 1),
-(2, NULL, 'language', 'FR', NULL, NULL, NULL, NULL, 'ET', 'OU', 'EXCLUS', '(', ')', '"', 'dans le titre : ', 'auteur : ', 'Dans le résumé : ', 'éditeur : ', 'categorie : ', 'dans tous les champs : ', 1),
-(3, NULL, 'language', 'ES', NULL, NULL, NULL, NULL, 'AND', 'OR', 'AND NOT', '(', ')', '"', '', '', '', '', '', '', 0),
-(4, NULL, 'language', 'DE', NULL, NULL, NULL, NULL, 'AND', 'OR', 'AND NOT', '(', ')', '"', '', '', '', '', '', '', 0),
-(5, NULL, 'language', 'CN', NULL, NULL, NULL, NULL, 'AND', 'OR', 'AND NOT', '(', ')', '"', '', '', '', '', '', '', 0),
+(1, NULL, 'language', 'EN', NULL, NULL, NULL, NULL, ' AND ', ' OR ', ' AND NOT ', '(', ')', '"', 'title like : ', 'author like : ', 'abstract like : ', 'publisher is : ', 'category is :', 'search in all datas : ', 1),
+(2, NULL, 'language', 'FR', NULL, NULL, NULL, NULL, ' ET ', ' OU ', ' EXCLUS ', '(', ')', '"', 'dans le titre : ', 'auteur : ', 'Dans le résumé : ', 'éditeur : ', 'categorie : ', 'dans tous les champs : ', 1),
+(3, NULL, 'language', 'ES', NULL, NULL, NULL, NULL, ' AND ', ' OR ', ' AND NOT ', '(', ')', '"', '', '', '', '', '', '', 0),
+(4, NULL, 'language', 'DE', NULL, NULL, NULL, NULL, ' AND ', ' OR ', ' AND NOT ', '(', ')', '"', '', '', '', '', '', '', 0),
+(5, NULL, 'language', 'CN', NULL, NULL, NULL, NULL, ' AND ', ' OR ', ' AND NOT ', '(', ')', '"', '', '', '', '', '', '', 0),
 (6, NULL, 'RSS', 'arxiv', 'ArXiv.org', 'http://arxiv.org/','http://export.arxiv.org/api/query?search_query=', '&sortBy=lastUpdatedDate&start=0&max_results=20', '+AND+', '+OR+', '+ANDNOT+', '%28', '%29', '%22', 'ti:', 'au:', 'abs:', 'jr:', 'cat:', 'all:', 1),
 (7, NULL, 'JSON', 'doaj', 'DOAJ - Directory of Open Access Journals', 'https://doaj.org/', 'https://doaj.org/api/v1/search/articles/', '?pageSize=20&sort=last_updated%3Adesc', ' AND ', ' OR ', ' AND NOT ', '%28', '%29', '%22', 'bibjson.title', 'bibjson.author.name', 'bibjson.abstract', 'bibjson.publisher', 'bibjson.subject.term', 'bibjson.abstract', 1),
 (8, NULL, 'RSS', 'hal', 'HAL - Archives Ouvertes', 'http://api.archives-ouvertes.fr', 'http://api.archives-ouvertes.fr/search/?q=', '&wt=rss&rows=20', '+AND+', '+OR+', '+NOT+', '(', ')', NULL, 'title_autocomplete:', 'authFullName_t:', 'abstract_t:', 'journalTitle_t:', 'text:', 'text:', 1),
