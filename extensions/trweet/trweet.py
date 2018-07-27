@@ -158,7 +158,7 @@ def startingPoint():
 
 
 def trweetFishing(inquiry):
-	"""The goal of this function is to catch tweets that contains the inquiry saved in the database"""
+	"""The goal of this function is to catch tweets that contains the inquiry saved in the database (PlAIN TYPE TRWEETS)"""
 
 	########### CONNECTION TO TWITTER API
 	api = twitterConnection()
@@ -185,26 +185,29 @@ def trweetFishing(inquiry):
 		tweet = trweet.text.encode("utf8")
 		retweets = trweet.retweet_count
 		likes = trweet.favorite_count
-		tweet_id = trweet.id
+		trweet_id = trweet.id
 		pseudo = trweet.author.screen_name.encode("utf8")
-		link = "https://twitter.com/"+str(pseudo)+"/status/"+str(tweet_id)+"/"
+		link = "https://twitter.com/"+str(pseudo)+"/status/"+str(trweet_id)+"/"
+
+		########### HASH TWEET ID
+		salt = "blackSalt"
+		trweet_id = hashlib.sha256(salt + ":" + str(trweet_id)).hexdigest()
 
 		########### SEARCH TRWEET QUERIES
-		query_checking = ("SELECT inquiry_id, owners FROM results_plain_trweet_serge WHERE link = %s")
-		query_update = ("UPDATE results_plain_trweet_serge SET inquiry_id = %s, owners = %s WHERE link = %s")
-		query_insertion = ("INSERT INTO results_plain_trweet_serge (inquiry_id, owners, author, tweet, date, likes, retweets, link) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
+		query_checking = ("SELECT inquiry_id, owners FROM results_trweet_serge WHERE trweet_id = %s")
+		query_update = ("UPDATE results_trweet_serge SET inquiry_id = %s, owners = %s WHERE trweet_id = %s and type = 'plain'")
+		query_insertion = ("INSERT INTO results_trweet_serge (type, author, tweet, date, likes, retweets, latitude, longitude, country, link, trweet_id, inquiry_id, owners) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 		query_fishing_time = ("UPDATE inquiries_trweet_serge SET last_launch = %s WHERE id = %s")
 
 		########### ITEM BUILDING
-		item = (inquiry_id_comma2, inquiry["owners"], author, tweet, date, likes, retweets, link)
-		geo_species = False
+		item = ("plain", author, tweet, date, likes, retweets, None, None, None, link, trweet_id, inquiry_id_comma2, inquiry["owners"])
 
 		########### CALL trweetBucket FUNCTION
 		trweetBucket(item, inquiry_id, inquiry_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time)
 
 
 def lakesOfTrweets(inquiry):
-	"""The goal of this function is to catch geolocalisation data in tweets that contains the inquiry saved in the database"""
+	"""The goal of this function is to catch geolocalisation data in tweets that contains the inquiry saved in the database (PlAIN TYPE TRWEETS)"""
 
 	########### CONNECTION TO TWITTER API
 	api = twitterConnection()
@@ -235,9 +238,9 @@ def lakesOfTrweets(inquiry):
 		date = time.mktime(date)
 
 		########### HASH TWEET ID
-		tweet_id = trweet.id
+		trweet_id = trweet.id
 		salt = "blackSalt"
-		trweet_id = hashlib.sha256(salt + ":" + str(tweet_id)).hexdigest()
+		trweet_id = hashlib.sha256(salt + ":" + str(trweet_id)).hexdigest()
 
 		########### SET COORDINATES LISTS
 		longitudes_list = []
@@ -265,21 +268,20 @@ def lakesOfTrweets(inquiry):
 			center_longitude = (center_longitude/4)
 
 			########### SEARCH TRWEET QUERIES
-			query_checking = ("SELECT inquiry_id, owners FROM results_geo_trweet_serge WHERE trweet_id = %s")
-			query_update = ("UPDATE results_geo_trweet_serge SET inquiry_id = %s, owners = %s WHERE trweet_id = %s")
-			query_insertion = ("INSERT INTO results_geo_trweet_serge (inquiry_id, owners, trweet_id, latitude, longitude, country, `date`) VALUES (%s, %s, %s, %s, %s, %s, %s)")
+			query_checking = ("SELECT inquiry_id, owners FROM results_trweet_serge WHERE trweet_id = %s")
+			query_update = ("UPDATE results_trweet_serge SET inquiry_id = %s, owners = %s WHERE trweet_id = %s and type = 'plain'")
+			query_insertion = ("INSERT INTO results_trweet_serge (type, author, tweet, date, likes, retweets, latitude, longitude, country, link, trweet_id, inquiry_id, owners) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 			query_fishing_time = ("UPDATE inquiries_trweet_serge SET last_launch = %s WHERE id = %s")
 
 			########### ITEM BUILDING
-			item = (inquiry_id_comma2, inquiry["owners"], trweet_id, latitude, longitude, country, date)
-			geo_species = True
+			item = ("geo", None, None, date, None, None, center_latitude, center_longitude, country, None, trweet_id, inquiry_id_comma2, inquiry["owners"])
 
 			########### CALL trweetBucket FUNCTION
 			trweetBucket(item, inquiry_id, inquiry_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database)
 
 
 def trweetTorrent(inquiry):
-	"""The goal of this function is to catch entire timelines or specific tweets in timeline"""
+	"""The goal of this function is to catch entire timelines or specific tweets in timeline (TARGETS TYPE TRWEETS)"""
 
 	########### CONNECTION TO TWITTER API
 	api = twitterConnection()
@@ -308,9 +310,13 @@ def trweetTorrent(inquiry):
 			tweet = trweet.text.encode("utf8")
 			retweets = trweet.retweet_count
 			likes = trweet.favorite_count
-			tweet_id = trweet.id
+			trweet_id = trweet.id
 			pseudo = trweet.author.screen_name.encode("utf8")
-			link = "https://twitter.com/"+str(pseudo)+"/status/"+str(tweet_id)+"/"
+			link = "https://twitter.com/"+str(pseudo)+"/status/"+str(trweet_id)+"/"
+
+			########### HASH TWEET ID
+			salt = "blackSalt"
+			trweet_id = hashlib.sha256(salt + ":" + str(trweet_id)).hexdigest()
 
 			########### AGGREGATED INQUIRIES FORMAT SUPPORT
 			aggregated_inquiries = toolbox.aggregatesSupport(inquiry["inquiry"])
@@ -321,42 +327,29 @@ def trweetTorrent(inquiry):
 
 			if fragments_nb == len(aggregated_inquiries):
 				########### SEARCH TRWEET QUERIES
-				query_checking = ("SELECT inquiry_id, owners FROM results_targets_trweet_serge WHERE link = %s")
-				query_update = ("UPDATE results_targets_trweet_serge SET inquiry_id = %s, owners = %s WHERE link = %s")
-				query_insertion = ("INSERT INTO results_targets_trweet_serge (inquiry_id, owners, author, tweet, date, likes, retweets, link) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
+				query_checking = ("SELECT inquiry_id, owners FROM results_trweet_serge WHERE trweet_id = %s")
+				query_update = ("UPDATE results_trweet_serge SET inquiry_id = %s, owners = %s WHERE trweet_id = %s and type = %s")
+				query_insertion = ("INSERT INTO results_trweet_serge (type, author, tweet, date, likes, retweets, latitude, longitude, country, link, trweet_id, inquiry_id, owners) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 				query_fishing_time = ("UPDATE inquiries_trweet_serge SET last_launch = %s WHERE id = %s")
 
 				########### ITEM BUILDING
-				item = (inquiry_id_comma2, target_owners_str, author, tweet, date, likes, retweets, link)
-				geo_species = False
+				item = ("targets", author, tweet, date, likes, retweets, None, None, None, link, trweet_id, inquiry_id_comma2, inquiry["owners"])
 
 				########### CALL trweetBucket FUNCTION
 				trweetBucket(item, inquiry_id, inquiry_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database)
 
 
-def trweetBucket(item, inquiry_id, inquiry_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database):
+def trweetBucket(item, inquiry_id, inquiry_id_comma2, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database):
 	"""trweetBucket manage tweets insertion or data update if tweets are already present."""
 
 	######### LOGGER CALL
 	logger_info = logging.getLogger("info_log")
 	logger_error = logging.getLogger("error_log")
 
-	if geo_species is False:
-		link = item[7]
-	elif geo_species is True:
-		trweet_id = item[2]
-
-	owners = item[1]
-
 	########### DATABASE CHECKING
 	call_data_cheking = database.cursor()
-
-	if geo_species is False:
-		call_data_cheking.execute(query_checking, (link, ))
-	elif geo_species is True:
-		call_data_cheking.execute(query_checking, (trweet_id, ))
-
-	checking = call_data_cheking.fetchone()
+	call_data_cheking.execute(query_checking, (trweet_id, ))
+	checking = call_data_cheking.fetchall()
 	call_data_cheking.close()
 
 	########### DATABASE INSERTION
