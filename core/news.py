@@ -75,7 +75,7 @@ def voyager(newscast_args):
 		######### CREATE OWNERS LIST FOR COUPLE INQUIRY-SOURCE
 		for row in rows:
 			owners_str = ","
-			owners_list = re.findall('\|([0-9]+):[0-9!,]*,'+newscast_args["source_id"]+',', row[2])
+			owners_list = re.findall('\|([0-9]+):[0-9!,]*,'+str(newscast_args["source_id"])+',', row[2])
 
 			for owner in owners_list:
 				owners_str = owners_str + owner.strip() + ","

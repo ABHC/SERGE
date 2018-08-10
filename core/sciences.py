@@ -66,7 +66,7 @@ def rosetta(now):
 			owners_str = ","
 
 			######### CREATE OWNERS LIST FOR COUPLE INQUIRY-SOURCE
-			raw_owners = re.findall('\|([0-9]+):[0-9!,]*,'+api_pack["source_id"]+',', inquiry["applicable_owners_sources"])
+			raw_owners = re.findall('\|([0-9]+):[0-9!,]*,'+str(api_pack["source_id"])+',', inquiry["applicable_owners_sources"])
 
 			for owner in raw_owners:
 				owner = filter(None, owner.replace("|", "").strip().split(":"))

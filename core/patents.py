@@ -67,7 +67,7 @@ def pathfinder(now):
 			owners_str = ","
 
 			######### CREATE OWNERS LIST FOR COUPLE INQUIRY-SOURCE
-			owners_list = re.findall('\|([0-9]+):[0-9!,]*,'+api_pack["source_id"]+',', inquiry["applicable_owners_sources"])
+			owners_list = re.findall('\|([0-9]+):[0-9!,]*,'+str(api_pack["source_id"])+',', inquiry["applicable_owners_sources"])
 
 			for owner in raw_owners:
 				owner = filter(None, owner.replace("|", "").strip().split(":"))
