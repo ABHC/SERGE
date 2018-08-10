@@ -1,4 +1,4 @@
-'^(,[0-9]+)+,$'# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 """Serge module for news functions"""
 
