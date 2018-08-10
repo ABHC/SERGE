@@ -76,7 +76,7 @@ def pathfinder(now):
 			######### RESEARCH PATENTS ON RSS FEEDS WITH FEEDPARSER MODULE
 			if api_pack["type"] == "RSS" and re.search('^(,[0-9]+)+,$', owners_str) is not None:
 				logger_info.info(api_pack["inquiry_api"]+"\n")
-				req_results = sergenet.aLinkToThePast(link, 'fullcontent')
+				req_results = sergenet.aLinkToThePast(api_pack["inquiry_link"], 'fullcontent')
 				feed_content = req_results[0]
 				feed_error = req_results[1]
 
