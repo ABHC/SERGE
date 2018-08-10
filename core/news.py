@@ -87,19 +87,19 @@ def voyager(newscast_args):
 		########### RSS PARSING AND ANALYZE
 		if feed_error is False and len(inquiries_list) > 0:
 			try:
-				xmldoc = feedparser.parse(rss)
+				parsed_content = feedparser.parse(rss)
 			except Exception, except_type:
 				logger_error.error("PARSING ERROR IN :"+newscast_args["source_link"]+"\n")
 				logger_error.error(repr(except_type))
 
 			########### RSS ANALYZE
-			rangemax_article = len(xmldoc.entries)
+			rangemax_article = len(parsed_content.entries)
 			range_article = 0
 
 			########### RECOVERY OF ARTICLE'S ATTRIBUTES
 			while range_article < rangemax_article and range_article < 500:
 				try:
-					post_title = (xmldoc.entries[range_article].title).strip()
+					post_title = (parsed_content.entries[range_article].title).strip()
 					if post_title == "":
 						post_title = "NO TITLE"
 				except (AttributeError, title == ""):
@@ -108,21 +108,21 @@ def voyager(newscast_args):
 					post_title = "NO TITLE"
 
 				try:
-					post_description = (xmldoc.entries[range_article].description).strip()
+					post_description = (parsed_content.entries[range_article].description).strip()
 				except AttributeError:
 					logger_error.warning("BEACON ERROR : missing <description> in "+newscast_args["source_link"])
 					logger_error.warning(traceback.format_exc())
 					post_description = ""
 
 				try:
-					post_link = xmldoc.entries[range_article].link
+					post_link = parsed_content.entries[range_article].link
 				except AttributeError:
 					logger_error.warning("BEACON ERROR : missing <link> in "+newscast_args["source_link"])
 					logger_error.warning(traceback.format_exc())
 					post_link = ""
 
 				try:
-					post_date = xmldoc.entries[range_article].published_parsed
+					post_date = parsed_content.entries[range_article].published_parsed
 					post_date = time.mktime(post_date)
 				except:
 					logger_error.warning("BEACON ERROR : missing <date> in "+newscast_args["source_link"])
@@ -130,7 +130,7 @@ def voyager(newscast_args):
 					post_date = newscast_args["now"]
 
 				try:
-					post_tags = xmldoc.entries[range_article].tags
+					post_tags = parsed_content.entries[range_article].tags
 				except AttributeError:
 					post_tags = []
 
@@ -139,7 +139,7 @@ def voyager(newscast_args):
 					tags_string = ""
 
 					while tagdex < len(post_tags):
-						tags_string = tags_string + xmldoc.entries[range_article].tags[tagdex].term.lower() + " "
+						tags_string = tags_string + parsed_content.entries[range_article].tags[tagdex].term.lower() + " "
 						tagdex = tagdex+1
 				except:
 					tags_string = ""

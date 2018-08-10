@@ -99,7 +99,7 @@ def pathfinder(now):
 						else:
 							while range_article < rangemax_article:
 								try:
-									post_title = xmldoc.entries[range_article].title
+									post_title = parsed_content.entries[range_article].title
 									if post_title == "":
 										post_title = "NO TITLE"
 								except AttributeError:
@@ -108,7 +108,7 @@ def pathfinder(now):
 									post_title = "NO TITLE"
 
 								try:
-									post_link = xmldoc.entries[range_article].link
+									post_link = parsed_content.entries[range_article].link
 									post_link = post_link.split("&")
 									post_link = post_link[0]
 								except AttributeError:
@@ -117,7 +117,7 @@ def pathfinder(now):
 									post_link = ""
 
 								try:
-									post_date = xmldoc.entries[range_article].published_parsed
+									post_date = parsed_content.entries[range_article].published_parsed
 									if post_date is not None:
 										post_date = time.mktime(post_date)
 									else:
