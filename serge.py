@@ -28,7 +28,7 @@ import toolbox
 import sergenet
 import failsafe
 import insertSQL
-import extensions
+import extensionsManager
 import transcriber
 from core import news
 from core import patents
