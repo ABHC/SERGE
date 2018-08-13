@@ -9,6 +9,7 @@ from math import ceil
 ######### IMPORT SERGE SPECIALS MODULES
 from handshake import databaseConnection
 
+
 def extensionLibrary():
 	"""Call to optionnal function for content research. extensions are listed in miscellaneous_serge."""
 
@@ -20,22 +21,24 @@ def extensionLibrary():
 	######### CALL TO TABLE miscellaneous_serge
 	call_extensions = database.cursor()
 	call_extensions.execute("SELECT name FROM extensions_serge WHERE general_switch = 1")
-	row = call_extensions.fetchall()
+	rows = call_extensions.fetchall()
 	call_extensions.close()
 
 	for row in rows:
 		extensions_list.append(row[0].replace(".py", "").strip())
 
 	######### CALL OF EXTENSIONS CORE
-	extProcesses = ()
-	for extension in extensions_list:
-		if extension != "":
-			module = __from__ extensionsManager __import__(extension)
-			exec("proc"+extension+" = Process(target=module.startingPoint, args=())")
-			exec("proc"+extension+".start()")
-			exec("extProcesses += (proc"+extension+",)")
+	if extensions_list:
+		extProcesses = ()
+		for extension in extensions_list:
+			if extension != "":
+				exec("import extensions."+extension+"."+extension+" as "+extension)
+				exec("proc"+extension+" = Process(target="+extension+".startingPoint, args=())")
+				exec("proc"+extension+".start()")
+				exec("extProcesses += (proc"+extension+",)")
 
 	return extProcesses
+
 
 def packThemAll(register, user_id_comma):
 	"""Retrieve all extensions results pack"""
