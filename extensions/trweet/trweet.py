@@ -9,9 +9,6 @@ import logging
 import hashlib
 import datetime
 
-######### IMPORT SERGE SPECIALS MODULES
-from handshake import databaseConnection
-
 
 def limitedConnection():
 	"""Limited connexion to Serge database"""
@@ -76,7 +73,7 @@ def startingPoint():
 	"""A kind of main"""
 
 	########### CONNECTION TO SERGE DATABASE
-	database = databaseConnection()
+	database = limitedConnection()
 
 	######### LOGGER CALL
 	logger_info = logging.getLogger("info_log")
@@ -107,7 +104,7 @@ def startingPoint():
 					if "!" not in target:
 						targets_list.append(target)
 
-		inquiry = {"id": row[0], "type": row[1], "inquiry": row[2], "applicable_owners_targets": row[3] "owners": owners, "targets": targets_list.sort(), "language": row[4], "last_launch": row[5]}
+		inquiry = {"id": row[0], "type": row[1], "inquiry": row[2], "applicable_owners_targets": row[3], "owners": owners, "targets": targets_list.sort(), "language": row[4], "last_launch": row[5]}
 		search_list.append(inquiry)
 
 	if len(search_list) > 0:

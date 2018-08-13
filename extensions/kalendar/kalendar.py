@@ -48,7 +48,7 @@ def startingPoint():
 def kalendarExplorer(now):
 
 	########### CONNECTION TO SERGE DATABASE
-	database = databaseConnection()
+	database = limitedConnection()
 
 	######### VARIABLES NEEDED
 	calendars_list = []
@@ -165,7 +165,7 @@ def kalendarExplorer(now):
 def saveTheDate(query_checking, query_insertion, query_update, item):
 
 	########### CONNECTION TO SERGE DATABASE
-	database = databaseConnection()
+	database = limitedConnection()
 
 	########### ITEM EXTRACTION FOR OPERATIONS
 	event = {"name": item[0], "date": item[1], "location": item[2], "source_id": item[3], "inquiry_id": item[4], "owner": item[5]}
