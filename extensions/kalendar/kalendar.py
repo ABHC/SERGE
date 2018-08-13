@@ -108,7 +108,7 @@ def kalendarExplorer():
 
 			full_event = {"name": summary, "date": date, "location": location, "description": description}
 
-			if date > now and (summary is not None or summary != "" or summary != "NO TITLE")
+			if date > now and (summary is not None or summary != "" or summary != "NO TITLE"):
 				event_list.append(full_event)
 
 		######### INQUIRIES AND OWNERS ATTRIBUTIONS TO CALENDAR
