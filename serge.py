@@ -83,7 +83,7 @@ procScience.start()
 procPatents.start()
 
 ######### EXTENSIONS EXECUTION
-extProcesses = extensions.extensionLibrary()
+extProcesses = extensionsManager.extensionLibrary()
 
 logger_info.info("\n\n######### Last News Research (news function) : \n\n")
 
