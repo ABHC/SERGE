@@ -220,9 +220,10 @@ def rosetta(now):
 								post_title = escaping(post_title)
 								item = (post_title, post_link, post_date, api_pack["source_id"], inquiry_id_comma2, owners_str)
 								item_update = [post_link]
+								item_dict = {"post_title": post_title, "post_link": post_link, "post_date": post_date, "source_id": api_pack["source_id"], "inquiry_id_comma": inquiry_id_comma2, "owners": owners_str}
 
 								########### CALL  FUNCTION
-								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, inquiry_id_comma, need_jelly)
+								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item_dict, item_update, inquiry_id_comma, need_jelly)
 
 								range_article = range_article + 1
 

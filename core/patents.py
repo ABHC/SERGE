@@ -151,9 +151,10 @@ def pathfinder(now):
 								post_title = escaping(post_title)
 								item = (post_title, post_link, post_date, now, api_pack["source_id"], inquiry_id_comma2, owners_str, legal_dataset["legal_abstract"], legal_dataset["legal_status"], legal_dataset["lens_link"], legal_dataset["new_check_date"])
 								item_update = [legal_dataset["legal_abstract"], legal_dataset["legal_status"], legal_dataset["lens_link"], legal_dataset["new_check_date"], post_link]
+								item_dict = {"post_title": post_title, "post_link": post_link, "post_date": post_date, "now": now, "source_id": api_pack["source_id"], "inquiry_id_comma": inquiry_id_comma2, "owners": owners_str, "legal_abstract": legal_dataset["legal_abstract"], "legal_status": legal_dataset["legal_status"], "lens_link": legal_dataset["lens_link"], "new_check_date": legal_dataset["new_check_date"]}
 
 								########### CALL insertOrUpdate FUNCTION
-								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, inquiry_id_comma, need_jelly)
+								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item_dict, item_update, inquiry_id_comma, need_jelly)
 
 								range_article = range_article+1
 
