@@ -14,6 +14,7 @@ def extensionLibrary():
 	"""Call to optionnal function for content research. extensions are listed in miscellaneous_serge."""
 
 	extensions_list = []
+	extProcesses = []
 
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
@@ -37,7 +38,7 @@ def extensionLibrary():
 				exec("proc"+extension+".start()")
 				exec("extProcesses += (proc"+extension+",)")
 
-		return extProcesses
+	return extProcesses
 
 
 def packThemAll(register, user_id_comma):
