@@ -10,27 +10,11 @@ import hashlib
 import datetime
 
 
-def limitedConnection():
-	"""Limited connexion to Serge database"""
-
-	filename = path.basename(__file__)
-	limited_user = filename.replace(".py", "").strip()
-
-	permissions = open("/var/www/Serge/configuration/extensions_configuration", "r")
-	passSQL = permissions.read().strip()
-	passSQL = (re.findall(filename+"- password: "+'([^\s]+)', passSQL))[0]
-	permissions.close()
-
-	database = MySQLdb.connect(host="localhost", user=limited_user, passwd=passSQL, db="Serge", use_unicode=1, charset="utf8mb4")
-
-	return database
-
-
 def twitterConnection():
 	"""Connexion to Twitter API"""
 
 	########### CONNECTION TO SERGE DATABASE
-	database = limitedConnection()
+	database = limitedConnection(path.basename(__file__))
 
 	######### TWITTER TOKENS
 	call_tokens = database.cursor()
@@ -73,7 +57,7 @@ def startingPoint():
 	"""A kind of main"""
 
 	########### CONNECTION TO SERGE DATABASE
-	database = limitedConnection()
+	database = limitedConnection(path.basename(__file__))
 
 	######### LOGGER CALL
 	logger_info = logging.getLogger("info_log")
@@ -161,7 +145,7 @@ def trweetFishing(inquiry):
 	api = twitterConnection()
 
 	########### CONNECTION TO SERGE DATABASE
-	database = limitedConnection()
+	database = limitedConnection(path.basename(__file__))
 
 	########### USEFUL VARIABLES
 	fishing_time = time.time()
@@ -210,7 +194,7 @@ def lakesOfTrweets(inquiry):
 	api = twitterConnection()
 
 	########### CONNECTION TO SERGE DATABASE
-	database = limitedConnection()
+	database = limitedConnection(path.basename(__file__))
 
 	########### USEFUL VARIABLES
 	fishing_time = time.time()
@@ -284,7 +268,7 @@ def trweetTorrent(inquiry):
 	api = twitterConnection()
 
 	########### CONNECTION TO SERGE DATABASE
-	database = limitedConnection()
+	database = limitedConnection(path.basename(__file__))
 
 	########### USEFUL VARIABLES
 	fishing_time = time.time()
@@ -416,22 +400,17 @@ def trweetBucket(item, inquiry_id, inquiry_id_comma2, fishing_time, query_checki
 
 def resultsPack(register, user_id_comma):
 
-	######### FILENAME RECOVERY AND RESULTS PACK CREATION
-	filename = path.basename(__file__)
+	######### RESULTS PACK CREATION
 	results_pack = []
-	inquiries_list = []
 
 	########### CONNECTION TO SERGE DATABASE
-	database = limitedConnection()
-
-	######### AUTHORIZATION FOR READING RECORDS
-	record_read = toolbox.recordApproval()
+	database = limitedConnection(path.basename(__file__))
 
 	######### AUTHORIZATION FOR READING RECORDS
 	query_label = ("SELECT label_content FROM extensions_serge WHERE name = %s)
 
 	call_calendars = database.cursor()
-	call_calendars.execute(query_label, (filename,))
+	call_calendars.execute(query_label, (path.basename(__file__),))
 	label = (call_calendars.fetchone())[0]
 	call_calendars.close()
 
@@ -449,11 +428,6 @@ def resultsPack(register, user_id_comma):
 	full_trweets = plain_trweets + targets_trweets
 
 	for trweet in full_trweets:
-		######### CREATE RECORDER LINK AND WIKI LINK
-		if record_read is True and trweet[6] is not None:
-			trweet[6] = toolbox.recorder(register, label, str(trweet[0]), "redirect", database)
-		add_wiki_link = toolbox.recorder(register, label, str(trweet[0]), "addLinkInWiki", database)
-
 		######### SEARCH FOR SOURCE NAME AND COMPLETE REQUEST OF THE USER
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_trweet_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
@@ -463,7 +437,7 @@ def resultsPack(register, user_id_comma):
 		description = (trweet[1] + "\n" + trweet[3] + ", likes : " + trweet[4] + ", retweets : " + trweet[5]).strip().encode('ascii', errors='xmlcharrefreplace')
 
 		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
-		item = {"id": trweet[0], "title": trweet[2].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": description, "link": trweet[6].strip().encode('ascii', errors='xmlcharrefreplace'), "label": label, "source": trweet[1], "inquiry": attributes["inquiry"], "wiki_link": add_wiki_link}
+		item = {"id": trweet[0], "title": trweet[2].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": description, "link": trweet[6].strip().encode('ascii', errors='xmlcharrefreplace'), "label": label, "source": trweet[1], "inquiry": attributes["inquiry"], "wiki_link": None}
 		results_pack.append(item)
 
 	return results_pack

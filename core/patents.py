@@ -169,16 +169,6 @@ def patentspack(register, user_id_comma):
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
-	######### PERMISSION FOR RECORDS
-	query_record = "SELECT record_read FROM users_table_serge WHERE id LIKE %s"
-
-	call_users = database.cursor()
-	call_users.execute(query_record, (register,))
-	record_read = call_users.fetchone()
-	call_users.close()
-
-	record_read = bool(record_read[0])
-
 	######### RESULTS PATENTS : PATENTS ATTRIBUTES QUERY (LINK + TITLE + SOURCE ID + INQUIRY ID)
 	query_patents = ("SELECT id, title, link, source_id, inquiry_id FROM results_patents_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
 
@@ -188,11 +178,6 @@ def patentspack(register, user_id_comma):
 	call_patents.close()
 
 	for row in rows:
-		######### CREATE RECORDER LINK AND WIKI LINK
-		if record_read is True:
-			row[2] = toolbox.recorder(register, "patents", str(row[0]), "redirect", database)
-		add_wiki_link = toolbox.recorder(register, "patents", str(row[0]), "addLinkInWiki", database)
-
 		######### SEARCH FOR SOURCE NAME AND COMPLETE REQUEST OF THE USER
 		query_source = "SELECT basename FROM sources_patents_serge WHERE id = %s and type <> 'language'"
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_patents_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
@@ -207,7 +192,7 @@ def patentspack(register, user_id_comma):
 		human_inquiry = transcriber.humanInquiry(trad_args)
 
 		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
-		item = {"id": row[0], "title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": None, "link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'), "label": "patents", "source": attributes["source"], "inquiry": human_inquiry, "wiki_link": add_wiki_link}
+		item = {"id": row[0], "title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": None, "link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'), "label": "patents", "source": attributes["source"], "inquiry": human_inquiry, "wiki_link": None}
 		items_list.append(item)
 
 	return items_list

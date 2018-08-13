@@ -6,10 +6,11 @@ import unicodedata
 from random import randrange
 
 ######### IMPORT SERGE SPECIALS MODULES
+import restricted
 from transcriber import pieceOfMail
 from handshake import databaseConnection
 
-def mailInit(fullResults, stamps):
+def mailInit(fullResults, register, stamps):
 	"""Function for mail pre-formatting.
 
 		mailInit retrieves mail building options for the current user and does a pre-formatting of the mail. Then the function calls the building functions for mail."""
@@ -91,6 +92,15 @@ def mailInit(fullResults, stamps):
 
 	elif priority == "HIGH":
 		translate_text = {"intro_date": translate_text["of"], "intro_links": translate_text["alerts"], "type_news": translate_text["NEWS"], "type_science": translate_text["SCIENTIFIC PUBLICATIONS"], "type_patents": translate_text["PATENTS"], "web_serge": translate_text["View Online"], "unsubscribe": translate_text["Unsubscribe"], "github_serge": translate_text["Find SERGE on"], "license_serge": translate_text["Powered by"]}
+
+	######### ADD RECORDER LINKS IN FULL RESULTS
+	record_read = restricted.recordApproval(register, database)
+
+	for item in fullResults:
+		if record_read is True:
+			item["link"] = toolbox.recorder(register, item["label"], str(item["id"]), "redirect", database)
+
+			item["wiki_link"] = toolbox.recorder(register, item["label"], str(item["id"]), "addLinkInWiki", database)
 
 	######### LOADING THE E-MAIL APPEARANCE
 	appearance = pieceOfMail(stamps["priority"])

@@ -12,22 +12,6 @@ import sergenet
 import toolbox
 
 
-def limitedConnection():
-	"""Limited connexion to Serge database"""
-
-	filename = path.basename(__file__)
-	limited_user = filename.replace(".py", "").strip()
-
-	permissions = open("/var/www/Serge/configuration/extensions_configuration", "r")
-	passSQL = permissions.read().strip()
-	passSQL = (re.findall(filename+"- password: "+'([^\s]+)', passSQL))[0]
-	permissions.close()
-
-	database = MySQLdb.connect(host="localhost", user=limited_user, passwd=passSQL, db="Serge", use_unicode=1, charset="utf8mb4")
-
-	return database
-
-
 def startingPoint():
 	"""A kind of main"""
 
@@ -48,7 +32,7 @@ def startingPoint():
 def kalendarExplorer(now):
 
 	########### CONNECTION TO SERGE DATABASE
-	database = limitedConnection()
+	database = limitedConnection(path.basename(__file__))
 
 	######### VARIABLES NEEDED
 	calendars_list = []
@@ -165,7 +149,7 @@ def kalendarExplorer(now):
 def saveTheDate(query_checking, query_insertion, query_update, item):
 
 	########### CONNECTION TO SERGE DATABASE
-	database = limitedConnection()
+	database = limitedConnection(path.basename(__file__))
 
 	########### ITEM EXTRACTION FOR OPERATIONS
 	event = {"name": item[0], "date": item[1], "location": item[2], "source_id": item[3], "inquiry_id": item[4], "owner": item[5]}
@@ -216,21 +200,17 @@ def saveTheDate(query_checking, query_insertion, query_update, item):
 def resultsPack(register, user_id_comma):
 
 	#TODO add link to vigiserge calendar page when unavailable
-	######### FILENAME RECOVERY AND RESULTs PACK CREATION
-	filename = path.basename(__file__)
+	######### RESULTS PACK CREATION
 	results_pack = []
 
 	########### CONNECTION TO SERGE DATABASE
-	database = limitedConnection()
+	database = limitedConnection(path.basename(__file__))
 
-	######### AUTHORIZATION FOR READING RECORDS
-	record_read = toolbox.recordApproval()
-
-	######### AUTHORIZATION FOR READING RECORDS
+	######### LABEL RECOVER
 	query_label = ("SELECT label_content FROM extensions_serge WHERE name = %s")
 
 	call_calendars = database.cursor()
-	call_calendars.execute(query_label, (filename,))
+	call_calendars.execute(query_label, (path.basename(__file__),))
 	label = (call_calendars.fetchone())[0]
 	call_calendars.close()
 
@@ -243,11 +223,6 @@ def resultsPack(register, user_id_comma):
 	call_calendars.close()
 
 	for row in rows:
-		######### CREATE RECORDER LINK AND WIKI LINK
-		if record_read is True and row[5] is not None:
-			row[5] = toolbox.recorder(register, label, str(row[0]), "redirect", database)
-		add_wiki_link = toolbox.recorder(register, label, str(row[0]), "addLinkInWiki", database)
-
 		######### SEARCH FOR SOURCE NAME AND COMPLETE REQUEST OF THE USER
 		query_source = "SELECT name FROM sources_kalendar_serge WHERE id = %s and type <> 'language'"
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_kalendar_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
@@ -258,7 +233,7 @@ def resultsPack(register, user_id_comma):
 		description = (row[2] + ", " + row[3] + "\n" + row[4]).strip().encode('ascii', errors='xmlcharrefreplace')
 
 		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
-		item = {"id": row[0], "title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": description, "link": row[5].strip().encode('ascii', errors='xmlcharrefreplace'), "label": label, "source": attributes["source"], "inquiry": attributes["inquiry"], "wiki_link": add_wiki_link}
+		item = {"id": row[0], "title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": description, "link": row[5].strip().encode('ascii', errors='xmlcharrefreplace'), "label": label, "source": attributes["source"], "inquiry": attributes["inquiry"], "wiki_link": None}
 		results_pack.append(item)
 
 	return results_pack

@@ -8,7 +8,7 @@ import handshake
 from insertSQL import stairwayToUpdate
 
 
-def redAlert(fullResults, stamps, now):
+def redAlert(fullResults, register, stamps, now):
 	"""Management of alerts :
 	- Search for potential alert keywords in results and if some are found redAlert build the list of them and of related news
 	- This list is given to alarm.py for building and formatting the e-mail alert"""
@@ -29,7 +29,7 @@ def redAlert(fullResults, stamps, now):
 		stamps["priority"] = "HIGH"
 
 		######### CALL TO buildAlert FUNCTION
-		mailer.mailInit(fullResults, stamps)
+		mailer.mailInit(fullResults, register, stamps)
 
 		######### CALL TO sergeTelecom FUNCTION if enabled
 		query_sms_authorization = "SELECT alert_by_sms FROM users_table_serge WHERE id = %s"

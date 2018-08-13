@@ -172,7 +172,7 @@ for register, user in user_list:
 			predecessor = "MAILER"
 
 			######### E-MAIL BUILDING AND SENDING
-			mailer.mailInit(fullResults, stamps)
+			mailer.mailInit(fullResults, register, stamps)
 
 			######### CALL TO stairwayToUpdate FUNCTION
 			insertSQL.stairwayToUpdate(fullResults, register, now, predecessor)
@@ -182,7 +182,7 @@ for register, user in user_list:
 
 		elif interval < frequency and pending_all > 0:
 			#########  ALERT MANAGEMENT : CALL TO redAlert FUNCTION
-			alarm.redAlert(fullResults, stamps, now)
+			alarm.redAlert(fullResults, register, stamps, now)
 
 		else:
 			logger_info.info("FREQUENCY NOT REACHED")
@@ -203,14 +203,14 @@ for register, user in user_list:
 			predecessor = "MAILER"
 
 			######### E-MAIL BUILDING AND SENDING
-			mailer.mailInit(fullResults, stamps)
+			mailer.mailInit(fullResults, register, stamps)
 
 			######### CALL TO stairwayToUpdate FUNCTION
 			insertSQL.stairwayToUpdate(fullResults, register, now, predecessor)
 
 		elif pending_all < limit and pending_all > 0:
 			######### ALERT MANAGEMENT : CALL TO redAlert FUNCTION
-			alarm.redAlert(fullResults, stamps, now)
+			alarm.redAlert(fullResults, register, stamps, now)
 
 		elif pending_all < limit:
 			logger_info.info("LIMIT NOT REACHED")
@@ -235,14 +235,14 @@ for register, user in user_list:
 			predecessor = "MAILER"
 
 			######### E-MAIL BUILDING AND SENDING
-			mailer.mailInit(fullResults, stamps)
+			mailer.mailInit(fullResults, register, stamps)
 
 			######### CALL TO stairwayToUpdate FUNCTION
 			insertSQL.stairwayToUpdate(fullResults, register, now, predecessor)
 
 		elif hour != some_hour and pending_all > 0:
 			######### ALERT MANAGEMENT : CALL TO redAlert FUNCTION
-			alarm.redAlert(fullResults, stamps, now)
+			alarm.redAlert(fullResults, register, stamps, now)
 
 		elif pending_all == 0:
 			logger_info.info("NO PENDING NEWS")

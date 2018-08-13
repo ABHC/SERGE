@@ -8,9 +8,6 @@ import traceback
 from HTMLParser import HTMLParser
 from logging.handlers import RotatingFileHandler
 
-######### IMPORT SERGE SPECIALS MODULES
-from handshake import databaseConnection
-
 
 def cemeteriesOfErrors(*exc_info):
 	"""Error hook whose the purpose is to write the traceback in the error log"""
@@ -47,6 +44,21 @@ def loggerConfig():
 	logger_info.info("SERGE INFO LOG ")
 
 
+def limitedConnection(filename):
+	"""Limited connexion to Serge database"""
+
+	limited_user = filename.replace(".py", "").strip()
+
+	permissions = open("/var/www/Serge/configuration/extensions_configuration_"+limited_user, "r")
+	passSQL = permissions.read().strip()
+	passSQL = (re.findall("password: "+'([^\s]+)', passSQL))[0]
+	permissions.close()
+
+	database = MySQLdb.connect(host="localhost", user=limited_user, passwd=passSQL, db="Serge", use_unicode=1, charset="utf8mb4")
+
+	return database
+
+
 def escaping(string):
 	"""The purpose of this function is the escaping of special characters like & in contents titles."""
 
@@ -74,31 +86,6 @@ def aggregatesSupport(keyword):
 		aggregated_keywords = [keyword]
 
 	return aggregated_keywords
-
-
-def recorder(register, label, linkId, recorder_call, database):
-	"""Creation of "recording links" that update Serge Database or add the article in WikiSerge when clicked"""
-
-	query_domain = ("SELECT value FROM miscellaneous_serge WHERE name = 'domain'")
-
-	call_users = database.cursor()
-	call_users.execute(query_domain, )
-	domain = call_users.fetchone()
-	call_users.close()
-
-	domain = domain[0]
-
-	query_user_secrets = ("SELECT token FROM users_table_serge WHERE id = %s")
-
-	call_users = database.cursor()
-	call_users.execute(query_user_secrets, (register,))
-	token = call_users.fetchone()
-	call_users.close()
-
-	token = token[0]
-	recording_link = "http://" + domain + "/" + recorder_call + "?type=" + label + "&token=" + token + "&id=" + linkId
-
-	return (recording_link)
 
 
 def packaging(item_arguments):
@@ -140,19 +127,3 @@ def packaging(item_arguments):
 	attributes = {"source": source, "inquiry": inquiry}
 
 	return attributes
-
-
-def recordApproval(register, database):
-	"""Search the record_read variable (authorization of )"""
-
-	######### AUTHORIZATION FOR READING RECORDS
-	query_record = "SELECT record_read FROM users_table_serge WHERE id LIKE %s"
-
-	call_users = database.cursor()
-	call_users.execute(query_record, (register,))
-	record_read = call_users.fetchone()
-	call_users.close()
-
-	record_read = bool(record_read[0])
-
-	return record_read
