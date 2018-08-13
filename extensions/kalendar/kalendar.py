@@ -229,7 +229,7 @@ def resultsPack(register, user_id_comma):
 
 		item_arguments = {"user_id": register, "source_id": row[6], "inquiry_id": filter(None, str(row[7]).split(",")), "query_source": query_source, "query_inquiry": query_inquiry, "multisource": True}
 
-		attributes = toolbox.packaging(item_arguments)
+		attributes = toolbox.packaging(item_arguments, connection)
 		description = (row[2] + ", " + row[3] + "\n" + row[4]).strip().encode('ascii', errors='xmlcharrefreplace')
 
 		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER

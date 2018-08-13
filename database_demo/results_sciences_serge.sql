@@ -9,6 +9,7 @@ CREATE TABLE `results_sciences_serge` (
 	`send_status` VARCHAR(8000) COLLATE utf8mb4_bin DEFAULT ',0,',
 	`read_status` VARCHAR(8000) COLLATE utf8mb4_bin DEFAULT ',0,',
 	`date` text COLLATE utf8mb4_bin DEFAULT NULL,
+	`serge_date` text COLLATE utf8mb4_bin NOT NULL,
 	`source_id` int(11) NOT NULL,
 	`inquiry_id` text COLLATE utf8mb4_bin NOT NULL,
 	`owners` text COLLATE utf8mb4_bin NOT NULL,

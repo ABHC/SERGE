@@ -131,7 +131,7 @@ def rosetta(now):
 								query_jellychecking = ("SELECT title, link, inquiry_id, owners FROM results_sciences_serge WHERE source_id = %s AND `date` BETWEEN %s AND (%s+43200)")
 
 								########### QUERY FOR DATABASE INSERTION
-								query_insertion = ("INSERT INTO results_sciences_serge(title, link, date, source_id, inquiry_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
+								query_insertion = ("INSERT INTO results_sciences_serge(title, link, date, serge_date, source_id, inquiry_id, owners) VALUES(%s, %s, %s, %s, %s, %s, %s)")
 
 								########### QUERY FOR DATABASE UPDATE
 								query_update = ("UPDATE results_sciences_serge SET inquiry_id = %s, owners = %s WHERE link = %s")
@@ -140,7 +140,7 @@ def rosetta(now):
 
 								########### ITEM BUILDING
 								post_title = escaping(post_title)
-								item = (post_title, post_link, post_date, api_pack["source_id"], inquiry_id_comma2, owners_str)
+								item = (post_title, post_link, post_date, now, api_pack["source_id"], inquiry_id_comma2, owners_str)
 								item_update = [post_link]
 
 								########### CALL insertOrUpdate FUNCTION
@@ -251,7 +251,7 @@ def sciencespack(register, user_id_comma):
 
 		item_arguments = {"user_id": register, "source_id": row[3], "inquiry_id": filter(None, str(row[4]).split(",")), "query_source": query_source, "query_inquiry": query_inquiry, "multisource": True}
 
-		attributes = toolbox.packaging(item_arguments)
+		attributes = toolbox.packaging(item_arguments, database)
 
 		######### TRANSLATE THE INQUIRY
 		trad_args = {"register": register, "inquiry": attributes["inquiry"], "query_dataset": "SELECT quote FROM sources_sciences_serge WHERE type = 'language' and basename = %s", "query_builder": "FROM sources_sciences_serge WHERE type = 'language' and basename = %s"}

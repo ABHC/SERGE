@@ -435,7 +435,7 @@ def resultsPack(register, user_id_comma):
 
 		item_arguments = {"user_id": register, "source_id": None, "inquiry_id": filter(None, str(trweet[7]).split(",")), "query_source": None, "query_inquiry": query_inquiry, "multisource": False}
 
-		attributes = toolbox.packaging(item_arguments)
+		attributes = toolbox.packaging(item_arguments, connection)
 		description = (trweet[1] + "\n" + trweet[3] + ", likes : " + trweet[4] + ", retweets : " + trweet[5]).strip().encode('ascii', errors='xmlcharrefreplace')
 
 		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER

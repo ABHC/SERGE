@@ -166,7 +166,7 @@ def voyager(newscast_args):
 						query_jellychecking = ("SELECT title, link, inquiry_id, owners FROM results_news_serge WHERE source_id = %s AND `date` BETWEEN %s AND (%s+43200)")
 
 						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO results_news_serge (title, link, date, source_id, inquiry_id, owners) VALUES (%s, %s, %s, %s, %s, %s)")
+						query_insertion = ("INSERT INTO results_news_serge (title, link, date, serge_date, source_id, inquiry_id, owners) VALUES (%s, %s, %s, %s, %s, %s, %s)")
 
 						########### QUERY FOR DATABASE UPDATE
 						query_update = ("UPDATE results_news_serge SET inquiry_id = %s, owners = %s WHERE link = %s")
@@ -179,7 +179,7 @@ def voyager(newscast_args):
 						if post_link is not None:
 							########### ITEM BUILDING
 							post_title = toolbox.escaping(post_title)
-							item = (post_title, post_link, post_date, newscast_args["source_id"], inquiry_id_comma2, inquiry["owners"])
+							item = (post_title, post_link, post_date, newscast_args["now"], newscast_args["source_id"], inquiry_id_comma2, inquiry["owners"])
 							item_update = [post_link]
 
 							########### CALL insertOrUpdate FUNCTION
@@ -219,7 +219,7 @@ def newspack(register, user_id_comma):
 
 		item_arguments = {"user_id": register, "source_id": row[3], "inquiry_id": filter(None, str(row[4]).split(",")), "query_source": query_source, "query_inquiry": query_inquiry, "multisource": True}
 
-		attributes = toolbox.packaging(item_arguments)
+		attributes = toolbox.packaging(item_arguments, database)
 
 		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
 		item = {"id": row[0], "title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": None, "link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'), "label": "news", "source": attributes["source"], "inquiry": attributes["inquiry"], "wiki_link": None}

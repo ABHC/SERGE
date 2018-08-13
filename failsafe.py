@@ -147,9 +147,9 @@ def checkMate():
 	premium_code_table_serge_numbers = 6
 	price_table_serge_numbers = 4
 	purchase_table_serge_numbers = 8
-	results_news_serge_numbers = 10
-	results_patents_serge_numbers = 14
-	results_sciences_serge_numbers = 10
+	results_news_serge_numbers = 11
+	results_patents_serge_numbers = 15
+	results_sciences_serge_numbers = 11
 	credentials_sms_serge_numbers = 4
 	sources_news_serge_numbers = 7
 	sources_patents_serge_numbers = 80
@@ -202,9 +202,9 @@ def checkMate():
 	price_table_serge_columns = ["id", "price", "currency", "type"]
 	purchase_table_serge_columns = ["id", "user_id", "purchase_date", "duration_premium", "invoice_number", "price", "premium_code_id", "bank_details"]
 	credentials_sms_serge_columns = ["endpoint", "application_key", "application_secret", "consumer_key"]
-	results_news_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "source_id", "inquiry_id", "owners"]
-	results_patents_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "source_id", "inquiry_id", "owners", "legal_abstract", "legal_status", "lens_link", "legal_check_date"]
-	results_sciences_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "source_id", "inquiry_id", "owners"]
+	results_news_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "serge_date", "source_id", "inquiry_id", "owners"]
+	results_patents_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "serge_date", "source_id", "inquiry_id", "owners", "legal_abstract", "legal_status", "lens_link", "legal_check_date"]
+	results_sciences_serge_columns = ["id", "search_index", "title", "link", "send_status", "read_status", "date", "serge_date", "source_id", "inquiry_id", "owners"]
 	sources_news_serge_columns = ["id", "link", "name", "favicon", "etag", "owners", "active"]
 	sources_patents_serge_columns = ["id", "apikey", "type", "basename", "name", "link", "prelink", "postlink", "AND", "OR", "NOT", "(", ")", "quote", "all_names", "all_numbers", "app_adr", "app_adr_ctr", "app_all_data", "app_name", "app_nat", "app_res", "apply_date", "apply_number", "chemical", "country", "designated_state", "english_abstract", "english_all", "english_claims", "english_description", "english_all_txt", "english_title", "class_code", "filling_lang", "front_page", "grant_number", "class", "class_crea", "class_crea_n", "exam_prime", "int_research_aut", "int_report", "inv_all", "inv_name", "inv_nat", "legal_all", "legal_ctr", "legal_name", "legal_adr", "license", "main_app", "main_class", "main_inv", "main_legal", "nat_phase_data", "nat_phase_apply_num", "nat_phase_apply_date", "nat_phase_type", "nat_pub_num", "office", "nat_office", "prior_apply_num", "prior_num", "priority", "priority_ctr", "priority_date", "priority_num", "pub_date", "language", "supplementary", "third_party", "wipo_num", "french_abstract", "french_all", "french_claims", "french_description", "french_title", "owners", "active"]
 	sources_sciences_serge_columns = ["id", "apikey", "type", "basename", "name", "link", "prelink", "postlink", "AND", "OR", "NOT", "(", ")", "quote", "title", "author", "abstract", "publisher", "category", "all", "owners", "active"]

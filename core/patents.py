@@ -140,7 +140,7 @@ def pathfinder(now):
 								query_jellychecking = None
 
 								########### QUERY FOR DATABASE INSERTION
-								query_insertion = ("INSERT INTO results_patents_serge (title, link, date, source_id, inquiry_id, owners, legal_abstract, legal_status, lens_link, legal_check_date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+								query_insertion = ("INSERT INTO results_patents_serge (title, link, date, serge_date, source_id, inquiry_id, owners, legal_abstract, legal_status, lens_link, legal_check_date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
 								########### QUERY FOR DATABASE UPDATE
 								query_update = ("UPDATE results_patents_serge SET inquiry_id = %s, owners = %s, legal_abstract = %s, legal_status = %s, lens_link = %s, legal_check_date = %s WHERE link = %s")
@@ -149,7 +149,7 @@ def pathfinder(now):
 
 								########### ITEM BUILDING
 								post_title = escaping(post_title)
-								item = (post_title, post_link, post_date, api_pack["source_id"], inquiry_id_comma2, owners_str, legal_dataset["legal_abstract"], legal_dataset["legal_status"], legal_dataset["lens_link"], legal_dataset["new_check_date"])
+								item = (post_title, post_link, post_date, now, api_pack["source_id"], inquiry_id_comma2, owners_str, legal_dataset["legal_abstract"], legal_dataset["legal_status"], legal_dataset["lens_link"], legal_dataset["new_check_date"])
 								item_update = [legal_dataset["legal_abstract"], legal_dataset["legal_status"], legal_dataset["lens_link"], legal_dataset["new_check_date"], post_link]
 
 								########### CALL insertOrUpdate FUNCTION
@@ -184,7 +184,7 @@ def patentspack(register, user_id_comma):
 
 		item_arguments = {"user_id": register, "source_id": row[3], "inquiry_id": filter(None, str(row[4]).split(",")), "query_source": query_source, "query_inquiry": query_inquiry, "multisource": True}
 
-		attributes = toolbox.packaging(item_arguments)
+		attributes = toolbox.packaging(item_arguments, database)
 
 		######### TRANSLATE THE INQUIRY
 		trad_args = {"register": register, "inquiry": attributes["inquiry"], "query_dataset": "SELECT quote FROM sources_patents_serge WHERE type = 'language' and basename = %s", "query_builder": "FROM sources_patents_serge WHERE type = 'language' and basename = %s"}

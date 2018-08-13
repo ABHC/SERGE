@@ -2,7 +2,9 @@
 
 """Collection of useful tools for SERGE"""
 
+import re
 import cgi
+import MySQLdb
 import logging
 import traceback
 from HTMLParser import HTMLParser
@@ -47,7 +49,7 @@ def loggerConfig():
 def limitedConnection(filename):
 	"""Limited connexion to Serge database"""
 
-	limited_user = filename.replace(".pyc", "").replace(".py", "").strip()
+	limited_user = filename.replace(".py", "").strip()
 
 	permissions = open("/var/www/Serge/configuration/extensions_configuration_"+limited_user, "r")
 	passSQL = permissions.read().strip()
@@ -79,7 +81,7 @@ def aggregatesSupport(keyword):
 		for grain in split_aggregate:
 			if grain != "":
 				aggregated_keywords.append(grain)
-			elif grain == "" and len(grain_list) > 0:
+			elif grain == "" and len(aggregated_keywords) > 0:
 				aggregated_keywords[len(aggregated_keywords)-1] = aggregated_keywords[len(aggregated_keywords)-1] + "+"
 
 	else:
@@ -88,7 +90,7 @@ def aggregatesSupport(keyword):
 	return aggregated_keywords
 
 
-def packaging(item_arguments):
+def packaging(item_arguments, database):
 
 	######### SET VARIABLES
 	classic_inquiries = []
