@@ -221,7 +221,7 @@ def ofSourceAndName(now):
 
 				########### FAVICON REPLACEMENT IF ERRORS OCCURS
 				if icon_error is True:
-					favicon_link = "https://www.google.com/s2/favicons?domain=LienDuFluxAvecOuSanshttp"
+					favicon_link = "https://www.google.com/s2/favicons?domain=null"
 
 					favicon_results = sergenet.aLinkToThePast(favicon_link, 'favicon')
 					icon = req_results[0]
