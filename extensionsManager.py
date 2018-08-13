@@ -37,7 +37,7 @@ def extensionLibrary():
 				exec("proc"+extension+".start()")
 				exec("extProcesses += (proc"+extension+",)")
 
-	return extProcesses
+		return extProcesses
 
 
 def packThemAll(register, user_id_comma):
