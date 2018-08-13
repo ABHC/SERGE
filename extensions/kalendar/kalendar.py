@@ -32,7 +32,7 @@ def startingPoint():
 def kalendarExplorer(now):
 
 	########### CONNECTION TO SERGE DATABASE
-	database = limitedConnection(path.basename(__file__))
+	database = toolbox.limitedConnection(path.basename(__file__))
 
 	######### VARIABLES NEEDED
 	calendars_list = []
@@ -149,7 +149,7 @@ def kalendarExplorer(now):
 def saveTheDate(query_checking, query_insertion, query_update, item):
 
 	########### CONNECTION TO SERGE DATABASE
-	database = limitedConnection(path.basename(__file__))
+	database = toolbox.limitedConnection(path.basename(__file__))
 
 	########### ITEM EXTRACTION FOR OPERATIONS
 	event = {"name": item[0], "date": item[1], "location": item[2], "source_id": item[3], "inquiry_id": item[4], "owner": item[5]}
@@ -204,7 +204,7 @@ def resultsPack(register, user_id_comma):
 	results_pack = []
 
 	########### CONNECTION TO SERGE DATABASE
-	database = limitedConnection(path.basename(__file__))
+	database = toolbox.limitedConnection(path.basename(__file__))
 
 	######### LABEL RECOVER
 	query_label = ("SELECT label_content FROM extensions_serge WHERE name = %s")

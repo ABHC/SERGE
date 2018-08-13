@@ -9,12 +9,14 @@ import logging
 import hashlib
 import datetime
 
+######### IMPORT SERGE SPECIALS MODULES
+import toolbox
 
 def twitterConnection():
 	"""Connexion to Twitter API"""
 
 	########### CONNECTION TO SERGE DATABASE
-	database = limitedConnection(path.basename(__file__))
+	database = toolbox.limitedConnection(path.basename(__file__))
 
 	######### TWITTER TOKENS
 	call_tokens = database.cursor()
@@ -57,7 +59,7 @@ def startingPoint():
 	"""A kind of main"""
 
 	########### CONNECTION TO SERGE DATABASE
-	database = limitedConnection(path.basename(__file__))
+	database = toolbox.limitedConnection(path.basename(__file__))
 
 	######### LOGGER CALL
 	logger_info = logging.getLogger("info_log")
@@ -145,7 +147,7 @@ def trweetFishing(inquiry):
 	api = twitterConnection()
 
 	########### CONNECTION TO SERGE DATABASE
-	database = limitedConnection(path.basename(__file__))
+	database = toolbox.limitedConnection(path.basename(__file__))
 
 	########### USEFUL VARIABLES
 	fishing_time = time.time()
@@ -194,7 +196,7 @@ def lakesOfTrweets(inquiry):
 	api = twitterConnection()
 
 	########### CONNECTION TO SERGE DATABASE
-	database = limitedConnection(path.basename(__file__))
+	database = toolbox.limitedConnection(path.basename(__file__))
 
 	########### USEFUL VARIABLES
 	fishing_time = time.time()
@@ -268,7 +270,7 @@ def trweetTorrent(inquiry):
 	api = twitterConnection()
 
 	########### CONNECTION TO SERGE DATABASE
-	database = limitedConnection(path.basename(__file__))
+	database = toolbox.limitedConnection(path.basename(__file__))
 
 	########### USEFUL VARIABLES
 	fishing_time = time.time()
@@ -404,7 +406,7 @@ def resultsPack(register, user_id_comma):
 	results_pack = []
 
 	########### CONNECTION TO SERGE DATABASE
-	database = limitedConnection(path.basename(__file__))
+	database = toolbox.limitedConnection(path.basename(__file__))
 
 	######### AUTHORIZATION FOR READING RECORDS
 	query_label = ("SELECT label_content FROM extensions_serge WHERE name = %s)
