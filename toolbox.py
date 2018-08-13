@@ -47,7 +47,7 @@ def loggerConfig():
 def limitedConnection(filename):
 	"""Limited connexion to Serge database"""
 
-	limited_user = filename.replace(".py", "").strip()
+	limited_user = filename.replace(".pyc", "").replace(".py", "").strip()
 
 	permissions = open("/var/www/Serge/configuration/extensions_configuration_"+limited_user, "r")
 	passSQL = permissions.read().strip()
