@@ -19,7 +19,7 @@ CREATE TABLE `users_table_serge` (
 	`mail_design` varchar(15) COLLATE utf8mb4_bin NOT NULL DEFAULT 'masterword',
 	`language` varchar(2) COLLATE utf8mb4_bin DEFAULT 'EN',
 	`record_read` BOOLEAN NOT NULL DEFAULT 1,
-	`history_lifetime` int(11) DEFAULT 12,
+	`history_lifetime` int(11) DEFAULT NULL,
 	`background_result` varchar(15) COLLATE utf8mb4_bin NOT NULL DEFAULT 'Skyscrapers',
 	`alert_by_sms` BOOLEAN NOT NULL DEFAULT 0,
 	`premium_expiration_date` int(11) DEFAULT 0,
