@@ -30,7 +30,7 @@ def extensionLibrary():
 	extProcesses = ()
 	for extension in extensions_list:
 		if extension != "":
-			module = __from__ extensions __import__(extension)
+			module = __from__ extensionsManager __import__(extension)
 			exec("proc"+extension+" = Process(target=module.startingPoint, args=())")
 			exec("proc"+extension+".start()")
 			exec("extProcesses += (proc"+extension+",)")
