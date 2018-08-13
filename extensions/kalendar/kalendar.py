@@ -225,7 +225,7 @@ def resultsPack(register, user_id_comma):
 	record_read = toolbox.recordApproval()
 
 	######### AUTHORIZATION FOR READING RECORDS
-	query_label = ("SELECT label_content FROM extensions_serge WHERE name = %s):
+	query_label = ("SELECT label_content FROM extensions_serge WHERE name = %s")
 
 	call_calendars = database.cursor()
 	call_calendars.execute(query_label, (filename,))
