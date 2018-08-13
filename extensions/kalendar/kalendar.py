@@ -31,6 +31,8 @@ def limitedConnection():
 def startingPoint():
 	"""A kind of main"""
 
+	now = time.time()
+
 	######### LOGGER CALL
 	logger_info = logging.getLogger("info_log")
 	logger_error = logging.getLogger("error_log")
@@ -40,16 +42,15 @@ def startingPoint():
 	logger_info.info(time.asctime(time.gmtime(now))+"\n")
 
 	######### RESEARCH IN iCALENDARS
-	kalendarExplorer()
+	kalendarExplorer(now)
 
 
-def kalendarExplorer():
+def kalendarExplorer(now):
 
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
 	######### VARIABLES NEEDED
-	now = time.time()
 	calendars_list = []
 
 	######### CALL TO TABLE sources_kalendar_serge
