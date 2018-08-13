@@ -58,7 +58,7 @@ def kalendarExplorer():
 	call_calendar.close()
 
 	for calendar in rows:
-		calendar = {"id": calendar[0], "id_comma": ","+calendar[0]+",", "id_sql": "%,"+calendar[0]+",%" "link": calendar[1]}
+		calendar = {"id": calendar[0], "id_comma": ","+calendar[0]+",", "id_sql": "%,"+calendar[0]+",%", "link": calendar[1]}
 		calendars_list.append(calendar)
 
 	######### GO TO CALENDAR AND PARSING
