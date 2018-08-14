@@ -12,11 +12,11 @@ from bs4 import BeautifulSoup
 import logging
 
 ######### IMPORT SERGE SPECIALS MODULES
-import transcriber
+import toolbox
 import sergenet
 import insertSQL
+import transcriber
 import failDetectorPack
-from toolbox import escaping
 from handshake import databaseConnection
 
 
