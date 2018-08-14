@@ -52,7 +52,11 @@ def rosetta(now):
 	inquiries_list = []
 
 	for row in rows:
-		field = {"inquiry_id":row[0], "inquiry": row[1].strip(), "applicable_owners_sources": row[2].strip()}
+		field = {
+		"inquiry_id": row[0],
+		"inquiry": row[1].strip(),
+		"applicable_owners_sources": row[2].strip()}
+
 		inquiries_list.append(field)
 
 	######### BUILDING REQUEST FOR SCIENCE API
@@ -126,7 +130,14 @@ def rosetta(now):
 								inquiry_id_comma2 = ","+str(inquiry["inquiry_id"])+","
 
 								########### ITEM BUILDING
-								item = {"title": post_title, "link": post_link, "date": post_date, "serge_date": now, "source_id": api_pack["source_id"], "inquiry_id": inquiry_id_comma2, "owners": owners_str}
+								item = {
+								"title": post_title,
+								"link": post_link,
+								"date": post_date,
+								"serge_date": now,
+								"source_id": api_pack["source_id"],
+								"inquiry_id": inquiry_id_comma2,
+								"owners": owners_str}
 
 								item_columns = str(tuple(item.keys())).replace("'","")
 								item_update = [post_link]
@@ -205,7 +216,13 @@ def rosetta(now):
 								inquiry_id_comma2 = ","+str(inquiry["inquiry_id"])+","
 
 								########### ITEM BUILDING
-								item = {"title": post_title, "link": post_link, "date": post_date, "serge_date": now, "source_id": api_pack["source_id"], "inquiry_id": inquiry_id_comma2, "owners": owners_str}
+								item = {
+								"title": post_title,
+								"link": post_link, "date": post_date,
+								"serge_date": now,
+								"source_id": api_pack["source_id"],
+								"inquiry_id": inquiry_id_comma2,
+								"owners": owners_str}
 
 								item_columns = str(tuple(item.keys())).replace("'","")
 								item_update = [post_link]
@@ -251,17 +268,36 @@ def sciencespack(register, user_id_comma):
 		query_source = "SELECT basename FROM sources_sciences_serge WHERE id = %s and type <> 'language'"
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_sciences_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
-		item_arguments = {"user_id": register, "source_id": row[3], "inquiry_id": filter(None, str(row[4]).split(",")), "query_source": query_source, "query_inquiry": query_inquiry, "multisource": True}
+		item_arguments = {
+		"user_id": register,
+		"source_id": row[3],
+		"inquiry_id": filter(None, str(row[4]).split(",")),
+		"query_source": query_source,
+		"query_inquiry": query_inquiry,
+		"multisource": True}
 
 		attributes = toolbox.packaging(item_arguments, database)
 
 		######### TRANSLATE THE INQUIRY
-		trad_args = {"register": register, "inquiry": attributes["inquiry"], "query_dataset": "SELECT quote FROM sources_sciences_serge WHERE type = 'language' and basename = %s", "query_builder": "FROM sources_sciences_serge WHERE type = 'language' and basename = %s"}
+		trad_args = {
+		"register": register,
+		"inquiry": attributes["inquiry"],
+		"query_dataset": "SELECT quote FROM sources_sciences_serge WHERE type = 'language' and basename = %s",
+		"query_builder": "FROM sources_sciences_serge WHERE type = 'language' and basename = %s"}
 
 		human_inquiry = transcriber.humanInquiry(trad_args)
 
 		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
-		item = {"id": row[0], "title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": None, "link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'), "label": "sciences", "source": attributes["source"], "inquiry": human_inquiry, "wiki_link": None}
+		item = {
+		"id": row[0],
+		"title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(),
+		"description": None,
+		"link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'),
+		"label": "sciences",
+		"source": attributes["source"],
+		"inquiry": human_inquiry,
+		"wiki_link": None}
+
 		items_list.append(item)
 
 	return items_list

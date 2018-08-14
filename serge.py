@@ -97,9 +97,14 @@ newscast_args = []
 
 nbRSS = 0
 for row in rows:
-	nbRSS += 1
-	fields = {"source_id": row[0], "source_link": row[1].strip(), "source_etag": row[2], "now": now}
+	fields = {
+	"source_id": row[0],
+	"source_link": row[1].strip(),
+	"source_etag": row[2],
+	"now": now}
+
 	newscast_args.append(fields)
+	nbRSS += 1
 
 nbProc = int(ceil(0.25 * nbRSS) + 1)
 
@@ -128,7 +133,12 @@ for register, user in user_list:
 	register = str(register)
 	logger_info.info("USER : " + register)
 	user_id_comma = "%," + register + ",%"
-	stamps = {"register": register, "user": user, "pydate": pydate, "priority": "NORMAL"}
+
+	stamps = {
+	"register": register,
+	"user": user,
+	"pydate": pydate,
+	"priority": "NORMAL"}
 
 	not_send_news_list = news.newspack(register, user_id_comma)
 	not_send_science_list = sciences.sciencespack(register, user_id_comma)

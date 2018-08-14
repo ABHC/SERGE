@@ -81,7 +81,11 @@ def voyager(newscast_args):
 				owners_str = owners_str + owner.strip() + ","
 
 			if re.search('^(,[0-9]+)+,$', owners_str) is not None:
-				field = {"inquiry_id":row[0], "inquiry": row[1].strip(), "owners": owners_str}
+				field = {
+				"inquiry_id": row[0],
+				"inquiry": row[1].strip(),
+				"owners": owners_str}
+
 				inquiries_list.append(field)
 
 		########### RSS PARSING AND ANALYZE
@@ -164,7 +168,14 @@ def voyager(newscast_args):
 					if fragments_nb == len(aggregated_inquiries) and post_link is not None:
 
 						########### ITEM BUILDING
-						item = {"title": post_title, "link": post_link, "date": post_date, "serge_date": newscast_args["now"], "source_id": newscast_args["source_id"], "inquiry_id": inquiry_id_comma2, "owners": inquiry["owners"]}
+						item = {
+						"title": post_title,
+						"link": post_link,
+						"date": post_date,
+						"serge_date": newscast_args["now"],
+						"source_id": newscast_args["source_id"],
+						"inquiry_id": inquiry_id_comma2,
+						"owners": inquiry["owners"]}
 
 						item_columns = str(tuple(item.keys())).replace("'","")
 						item_update = [post_link]
@@ -217,12 +228,27 @@ def newspack(register, user_id_comma):
 		query_source = "SELECT name FROM sources_news_serge WHERE id = %s and type <> 'language'"
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_news_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
-		item_arguments = {"user_id": register, "source_id": row[3], "inquiry_id": filter(None, str(row[4]).split(",")), "query_source": query_source, "query_inquiry": query_inquiry, "multisource": True}
+		item_arguments = {
+		"user_id": register,
+		"source_id": row[3],
+		"inquiry_id": filter(None, str(row[4]).split(",")),
+		"query_source": query_source,
+		"query_inquiry": query_inquiry,
+		"multisource": True}
 
 		attributes = toolbox.packaging(item_arguments, database)
 
 		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
-		item = {"id": row[0], "title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": None, "link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'), "label": "news", "source": attributes["source"], "inquiry": attributes["inquiry"], "wiki_link": None}
+		item = {
+		"id": row[0],
+		"title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(),
+		"description": None,
+		"link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'),
+		"label": "news",
+		"source": attributes["source"],
+		"inquiry": attributes["inquiry"],
+		"wiki_link": None}
+
 		items_list.append(item)
 
 	return items_list

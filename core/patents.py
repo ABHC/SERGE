@@ -53,7 +53,12 @@ def pathfinder(now):
 
 	######### REBUILD OWNERS AND SOURCES LISTS
 	for row in rows:
-		field = {"inquiry_id":row[0], "inquiry": row[1].strip(), "applicable_owners_sources": row[2].strip(), "legal_research": row[3]}
+		field = {
+		"inquiry_id": row[0],
+		"inquiry": row[1].strip(),
+		"applicable_owners_sources": row[2].strip(),
+		"legal_research": row[3]}
+
 		inquiries_list.append(field)
 
 	######### PATENTS RESEARCH
@@ -131,11 +136,26 @@ def pathfinder(now):
 								inquiry_id_comma2 = ","+str(inquiry["inquiry_id"])+","
 
 								######### LEGAL STATUS RESEARCH
-								legal_args = {"post_link": post_link, "owners": owners_str, "now": now}
+								legal_args = {
+								"post_link": post_link,
+								"owners": owners_str,
+								"now": now}
+
 								legal_dataset = legalScrapper(legal_args, inquiry)
 
 								########### ITEM BUILDING
-								item = {"title": post_title, "link": post_link, "date": date, "serge_date": now, "source_id": api_pack["source_id"], "inquiry_id": inquiry_id_comma2, "owners": owners_str, "legal_abstract": legal_dataset["legal_abstract"], "legal_status": legal_dataset["legal_status"], "lens_link": legal_dataset["lens_link"], "legal_check_date": legal_dataset["new_check_date"]}
+								item = {
+								"title": post_title,
+								"link": post_link,
+								"date": date,
+								"serge_date": now,
+								"source_id": api_pack["source_id"],
+								"inquiry_id": inquiry_id_comma2,
+								"owners": owners_str,
+								"legal_abstract": legal_dataset["legal_abstract"],
+								"legal_status": legal_dataset["legal_status"],
+								"lens_link": legal_dataset["lens_link"],
+								"legal_check_date": legal_dataset["new_check_date"]}
 
 								item_columns = str(tuple(item.keys())).replace("'","")
 								item_update = [legal_dataset["legal_abstract"], legal_dataset["legal_status"], legal_dataset["lens_link"], legal_dataset["new_check_date"], post_link]
@@ -183,17 +203,36 @@ def patentspack(register, user_id_comma):
 		query_source = "SELECT basename FROM sources_patents_serge WHERE id = %s and type <> 'language'"
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_patents_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
-		item_arguments = {"user_id": register, "source_id": row[3], "inquiry_id": filter(None, str(row[4]).split(",")), "query_source": query_source, "query_inquiry": query_inquiry, "multisource": True}
+		item_arguments = {
+		"user_id": register,
+		"source_id": row[3],
+		"inquiry_id": filter(None, str(row[4]).split(",")),
+		"query_source": query_source,
+		"query_inquiry": query_inquiry,
+		"multisource": True}
 
 		attributes = toolbox.packaging(item_arguments, database)
 
 		######### TRANSLATE THE INQUIRY
-		trad_args = {"register": register, "inquiry": attributes["inquiry"], "query_dataset": "SELECT quote FROM sources_patents_serge WHERE type = 'language' and basename = %s", "query_builder": "FROM sources_patents_serge WHERE type = 'language' and basename = %s"}
+		trad_args = {
+		"register": register,
+		"inquiry": attributes["inquiry"],
+		"query_dataset": "SELECT quote FROM sources_patents_serge WHERE type = 'language' and basename = %s",
+		"query_builder": "FROM sources_patents_serge WHERE type = 'language' and basename = %s"}
 
 		human_inquiry = transcriber.humanInquiry(trad_args)
 
 		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
-		item = {"id": row[0], "title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": None, "link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'), "label": "patents", "source": attributes["source"], "inquiry": human_inquiry, "wiki_link": None}
+		item = {
+		"id": row[0],
+		"title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(),
+		"description": None,
+		"link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'),
+		"label": "patents",
+		"source": attributes["source"],
+		"inquiry": human_inquiry,
+		"wiki_link": None}
+
 		items_list.append(item)
 
 	return items_list
@@ -305,7 +344,11 @@ def legalScrapper(legal_args, inquiry):
 		legal_abstract = None
 		new_check_date = None
 
-	legal_dataset = {"legal_status": legal_status, "legal_abstract": legal_abstract, "lens_link": lens_link, "new_check_date": new_check_date}
+	legal_dataset = {
+	"legal_status": legal_status,
+	"legal_abstract": legal_abstract,
+	"lens_link": lens_link,
+	"new_check_date": new_check_date}
 
 	return (legal_dataset)
 
