@@ -92,7 +92,7 @@ def kalendarExplorer(now):
 				logger_error.warning(traceback.format_exc())
 				description = "NO DESCRIPTION"
 
-			full_event = {"name": summary, "date": date, "location": location, "description": description}
+			full_event = {"name": toolbox.escaping(summary), "date": date, "location": location, "description": description}
 
 			if date > now and (summary is not None or summary != "" or summary != "NO TITLE"):
 				event_list.append(full_event)
@@ -129,18 +129,27 @@ def kalendarExplorer(now):
 						fragments_nb += 1
 
 				if fragments_nb == len(aggregated_inquiries):
+
+					########### ITEM BUILDING
+					item = {
+					"name": event["name"],
+					"date": event["date"],
+					"location": event["location"],
+					"description": event["description"],
+					"source_id": calendar["id"],
+					"inquiry_id": inquiry["id"],
+					"owners": inquiry["owner"]}
+
+					item_columns = str(tuple(item.keys())).replace("'","")
+
 					########### QUERY FOR DATABASE CHECKING
 					query_checking = ("SELECT inquiry_id, owners FROM results_kalendar_serge WHERE name = %s AND `date` = %s AND location = %s")
 
 					########### QUERY FOR DATABASE INSERTION
-					query_insertion = ("INSERT INTO results_kalendar_serge (name, date, location, description, source_id, inquiry_id, owners) VALUES (%s, %s, %s, %s, %s, %s, %s)")
+					query_insertion = ("INSERT INTO results_kalendar_serge" + item_columns + " VALUES (%s, %s, %s, %s, %s, %s, %s)")
 
 					########### QUERIES FOR DATABASE UPDATE
 					query_update = ("UPDATE results_kalendar_serge SET inquiry_id = %s, owners = %s WHERE name = %s")
-
-					########### ITEM BUILDING
-					event["name"] = toolbox.escaping(event["name"])
-					item = (event["name"], event["date"], event["location"], event["description"], calendar["id"], inquiry["id"], inquiry["owner"])
 
 					########### CALL insertOrUpdate FUNCTION
 					saveTheDate(query_checking, query_insertion, query_update, item)
@@ -187,7 +196,7 @@ def saveTheDate(query_checking, query_insertion, query_update, item):
 	elif checking is None:
 		insert_data = database.cursor()
 		try:
-			insert_data.execute(query_insertion, item)
+			insert_data.execute(query_insertion, item.values())
 			database.commit()
 		except Exception, except_type:
 			database.rollback()

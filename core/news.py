@@ -99,7 +99,7 @@ def voyager(newscast_args):
 			########### RECOVERY OF ARTICLE'S ATTRIBUTES
 			while range_article < rangemax_article and range_article < 500:
 				try:
-					post_title = (parsed_content.entries[range_article].title).strip()
+					post_title = toolbox.escaping((parsed_content.entries[range_article].title).strip())
 					if post_title == "":
 						post_title = "NO TITLE"
 				except (AttributeError, title == ""):
@@ -144,6 +144,9 @@ def voyager(newscast_args):
 				except:
 					tags_string = ""
 
+				########### LINK VALIDATION
+				post_link = failDetectorPack.failUniversalCorrectorKit(post_link, newscast_args["source_id"])
+
 				########### SEARCH FOR NEWS CORRESPONDING TO INQUIRIES
 				for inquiry in inquiries_list:
 					fragments_nb = 0
@@ -158,7 +161,13 @@ def voyager(newscast_args):
 						if (re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', tags_string, re.IGNORECASE)):
 							fragments_nb += 1
 
-					if fragments_nb == len(aggregated_inquiries):
+					if fragments_nb == len(aggregated_inquiries) and post_link is not None:
+
+						########### ITEM BUILDING
+						item = {"title": post_title, "link": post_link, "date": post_date, "serge_date": newscast_args["now"], "source_id": newscast_args["source_id"], "inquiry_id": inquiry_id_comma2, "owners": inquiry["owners"]}
+
+						item_columns = str(tuple(item.keys())).replace("'","")
+						item_update = [post_link]
 
 						########### QUERY FOR DATABASE CHECKING
 						query_checking = ("SELECT inquiry_id, owners FROM results_news_serge WHERE link = %s AND title = %s")
@@ -166,25 +175,15 @@ def voyager(newscast_args):
 						query_jellychecking = ("SELECT title, link, inquiry_id, owners FROM results_news_serge WHERE source_id = %s AND `date` BETWEEN %s AND (%s+43200)")
 
 						########### QUERY FOR DATABASE INSERTION
-						query_insertion = ("INSERT INTO results_news_serge (title, link, date, serge_date, source_id, inquiry_id, owners) VALUES (%s, %s, %s, %s, %s, %s, %s)")
+						query_insertion = ("INSERT INTO results_news_serge " + item_columns + " VALUES (%s, %s, %s, %s, %s, %s, %s)")
 
 						########### QUERY FOR DATABASE UPDATE
 						query_update = ("UPDATE results_news_serge SET inquiry_id = %s, owners = %s WHERE link = %s")
 						query_update_title = ("UPDATE results_news_serge SET title = %s, inquiry_id = %s, owners = %s WHERE link = %s")
 						query_jelly_update = ("UPDATE results_news_serge SET title = %s, link = %s, inquiry_id = %s, owners = %s WHERE link = %s")
 
-						########### LINK VALIDATION
-						post_link = failDetectorPack.failUniversalCorrectorKit(post_link, newscast_args["source_id"])
-
-						if post_link is not None:
-							########### ITEM BUILDING
-							post_title = toolbox.escaping(post_title)
-							item = (post_title, post_link, post_date, newscast_args["now"], newscast_args["source_id"], inquiry_id_comma2, inquiry["owners"])
-							item_update = [post_link]
-							item_dict = {"post_title": post_title, "post_title": post_link, "post_date": post_date, "now": newscast_args["now"], "source_id": newscast_args["source_id"], "inquiry_id_comma": inquiry_id_comma2, "owners": inquiry["owners"]}
-
-							########### CALL insertOrUpdate FUNCTION
-							insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item_dict, item_update, inquiry_id_comma, need_jelly)
+						########### CALL insertOrUpdate FUNCTION
+						insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, inquiry_id_comma, need_jelly)
 
 				range_article = range_article + 1
 

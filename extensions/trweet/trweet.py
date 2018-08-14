@@ -176,14 +176,29 @@ def trweetFishing(inquiry):
 		salt = "blackSalt"
 		trweet_id = hashlib.sha256(salt + ":" + str(trweet_id)).hexdigest()
 
+		########### ITEM BUILDING
+		item = {
+		"type": "plain",
+		"author": author,
+		"tweet": tweet,
+		"date": date,
+		"likes": likes,
+		"retweets": retweets,
+		"latitude": None,
+		"longitude": None,
+		"country": None,
+		"link": link,
+		"trweet_id": trweet_id,
+		"inquiry_id": inquiry_id_comma2,
+		"owners": inquiry["owners"]}
+
+		item_columns = str(tuple(item.keys())).replace("'","")
+
 		########### SEARCH TRWEET QUERIES
 		query_checking = ("SELECT inquiry_id, owners FROM results_trweet_serge WHERE trweet_id = %s")
 		query_update = ("UPDATE results_trweet_serge SET inquiry_id = %s, owners = %s WHERE trweet_id = %s and type = 'plain'")
-		query_insertion = ("INSERT INTO results_trweet_serge (type, author, tweet, date, likes, retweets, latitude, longitude, country, link, trweet_id, inquiry_id, owners) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+		query_insertion = ("INSERT INTO results_trweet_serge" + item_columns + " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 		query_fishing_time = ("UPDATE inquiries_trweet_serge SET last_launch = %s WHERE id = %s")
-
-		########### ITEM BUILDING
-		item = ("plain", author, tweet, date, likes, retweets, None, None, None, link, trweet_id, inquiry_id_comma2, inquiry["owners"])
 
 		########### CALL trweetBucket FUNCTION
 		trweetBucket(item, inquiry_id, inquiry_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time)
@@ -250,14 +265,29 @@ def lakesOfTrweets(inquiry):
 			center_latitude = (center_latitude/4)
 			center_longitude = (center_longitude/4)
 
+			########### ITEM BUILDING
+			item = {
+			"type": "geo",
+			"author": None,
+			"tweet": None,
+			"date": date,
+			"likes": None,
+			"retweets": None,
+			"latitude": center_latitude,
+			"longitude": center_longitude,
+			"country": country,
+			"link": None,
+			"trweet_id": trweet_id,
+			"inquiry_id": inquiry_id_comma2,
+			"owners": inquiry["owners"]}
+
+			item_columns = str(tuple(item.keys())).replace("'","")
+
 			########### SEARCH TRWEET QUERIES
 			query_checking = ("SELECT inquiry_id, owners FROM results_trweet_serge WHERE trweet_id = %s")
 			query_update = ("UPDATE results_trweet_serge SET inquiry_id = %s, owners = %s WHERE trweet_id = %s and type = 'plain'")
-			query_insertion = ("INSERT INTO results_trweet_serge (type, author, tweet, date, likes, retweets, latitude, longitude, country, link, trweet_id, inquiry_id, owners) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+			query_insertion = ("INSERT INTO results_trweet_serge " + item_columns + " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 			query_fishing_time = ("UPDATE inquiries_trweet_serge SET last_launch = %s WHERE id = %s")
-
-			########### ITEM BUILDING
-			item = ("geo", None, None, date, None, None, center_latitude, center_longitude, country, None, trweet_id, inquiry_id_comma2, inquiry["owners"])
 
 			########### CALL trweetBucket FUNCTION
 			trweetBucket(item, inquiry_id, inquiry_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database)
@@ -309,14 +339,30 @@ def trweetTorrent(inquiry):
 					fragments_nb += 1
 
 			if fragments_nb == len(aggregated_inquiries):
+
+				########### ITEM BUILDING
+				item = {
+				"type": "targets",
+				"author": author,
+				"tweet": tweet,
+				"date": date,
+				"likes": likes,
+				"retweets": retweets,
+				"latitude": None,
+				"longitude": None,
+				"country": None,
+				"link": link,
+				"trweet_id": trweet_id,
+				"inquiry_id": inquiry_id_comma2,
+				"owners": inquiry["owners"]}
+
+				item_columns = str(tuple(item.keys())).replace("'","")
+
 				########### SEARCH TRWEET QUERIES
 				query_checking = ("SELECT inquiry_id, owners FROM results_trweet_serge WHERE trweet_id = %s")
 				query_update = ("UPDATE results_trweet_serge SET inquiry_id = %s, owners = %s WHERE trweet_id = %s and type = %s")
-				query_insertion = ("INSERT INTO results_trweet_serge (type, author, tweet, date, likes, retweets, latitude, longitude, country, link, trweet_id, inquiry_id, owners) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+				query_insertion = ("INSERT INTO results_trweet_serge " + item_columns + " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 				query_fishing_time = ("UPDATE inquiries_trweet_serge SET last_launch = %s WHERE id = %s")
-
-				########### ITEM BUILDING
-				item = ("targets", author, tweet, date, likes, retweets, None, None, None, link, trweet_id, inquiry_id_comma2, inquiry["owners"])
 
 				########### CALL trweetBucket FUNCTION
 				trweetBucket(item, inquiry_id, inquiry_id_comma2, geo_species, fishing_time, query_checking, query_update, query_insertion, query_fishing_time, database)
@@ -340,7 +386,7 @@ def trweetBucket(item, inquiry_id, inquiry_id_comma2, fishing_time, query_checki
 		insert_data = database.cursor()
 
 		try:
-			insert_data.execute(query_insertion, item)
+			insert_data.execute(query_insertion, item.values())
 			database.commit()
 		except Exception, except_type:
 			database.rollback()

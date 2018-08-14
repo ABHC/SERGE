@@ -99,7 +99,7 @@ def rosetta(now):
 							while range_article < rangemax_article:
 
 								try:
-									post_title = parsed_content.entries[range_article].title
+									post_title = toolbox.escaping(parsed_content.entries[range_article].title)
 									if post_title == "":
 										post_title = "NO TITLE"
 								except AttributeError:
@@ -125,23 +125,24 @@ def rosetta(now):
 								inquiry_id_comma = str(inquiry["inquiry_id"])+","
 								inquiry_id_comma2 = ","+str(inquiry["inquiry_id"])+","
 
+								########### ITEM BUILDING
+								item = {"title": post_title, "link": post_link, "date": post_date, "serge_date": now, "source_id": api_pack["source_id"], "inquiry_id": inquiry_id_comma2, "owners": owners_str}
+
+								item_columns = str(tuple(item.keys())).replace("'","")
+								item_update = [post_link]
+
 								########### QUERY FOR DATABASE CHECKING
 								query_checking = ("SELECT inquiry_id, owners FROM results_sciences_serge WHERE link = %s AND title = %s")
 								query_link_checking = ("SELECT inquiry_id, owners FROM results_sciences_serge WHERE link = %s")
 								query_jellychecking = ("SELECT title, link, inquiry_id, owners FROM results_sciences_serge WHERE source_id = %s AND `date` BETWEEN %s AND (%s+43200)")
 
 								########### QUERY FOR DATABASE INSERTION
-								query_insertion = ("INSERT INTO results_sciences_serge(title, link, date, serge_date, source_id, inquiry_id, owners) VALUES(%s, %s, %s, %s, %s, %s, %s)")
+								query_insertion = ("INSERT INTO results_sciences_serge " + item_columns + " VALUES(%s, %s, %s, %s, %s, %s, %s)")
 
 								########### QUERY FOR DATABASE UPDATE
 								query_update = ("UPDATE results_sciences_serge SET inquiry_id = %s, owners = %s WHERE link = %s")
 								query_update_title = ("UPDATE results_sciences_serge SET title = %s, inquiry_id = %s, owners = %s WHERE link = %s")
 								query_jelly_update = ("UPDATE results_sciences_serge SET title = %s, link = %s, inquiry_id = %s, owners = %s WHERE link = %s")
-
-								########### ITEM BUILDING
-								post_title = escaping(post_title)
-								item = (post_title, post_link, post_date, now, api_pack["source_id"], inquiry_id_comma2, owners_str)
-								item_update = [post_link]
 
 								########### CALL insertOrUpdate FUNCTION
 								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, inquiry_id_comma, need_jelly)
@@ -177,7 +178,7 @@ def rosetta(now):
 						else:
 							while range_article < rangemax_article:
 								try:
-									post_title = json_data["results"][range_article]["bibjson"]["title"]
+									post_title = toolbox.escaping(json_data["results"][range_article]["bibjson"]["title"])
 									if post_title == "":
 										post_title = "NO TITLE"
 								except Exception as json_error:
@@ -203,27 +204,27 @@ def rosetta(now):
 								inquiry_id_comma = str(inquiry["inquiry_id"])+","
 								inquiry_id_comma2 = ","+str(inquiry["inquiry_id"])+","
 
+								########### ITEM BUILDING
+								item = {"title": post_title, "link": post_link, "date": post_date, "serge_date": now, "source_id": api_pack["source_id"], "inquiry_id": inquiry_id_comma2, "owners": owners_str}
+
+								item_columns = str(tuple(item.keys())).replace("'","")
+								item_update = [post_link]
+
 								########### QUERY FOR DATABASE CHECKING
 								query_checking = ("SELECT inquiry_id, owners FROM results_sciences_serge WHERE link = %s AND title = %s")
 								query_link_checking = ("SELECT inquiry_id, owners FROM results_sciences_serge WHERE link = %s")
 								query_jellychecking = ("SELECT title, link, inquiry_id, owners FROM results_sciences_serge WHERE source_id = %s AND `date` BETWEEN %s AND (%s+43200)")
 
 								########### QUERY FOR DATABASE INSERTION
-								query_insertion = ("INSERT INTO results_sciences_serge(title, link, date, source_id, inquiry_id, owners) VALUES(%s, %s, %s, %s, %s, %s)")
+								query_insertion = ("INSERT INTO results_sciences_serge " + item_columns + " VALUES(%s, %s, %s, %s, %s, %s, %s)")
 
 								########### QUERY FOR DATABASE UPDATE
 								query_update = ("UPDATE results_sciences_serge SET inquiry_id = %s, owners = %s WHERE link = %s")
 								query_update_title = ("UPDATE results_sciences_serge SET title = %s, inquiry_id = %s, owners = %s WHERE link = %s")
 								query_jelly_update = ("UPDATE results_sciences_serge SET title = %s, link = %s, inquiry_id = %s, owners = %s WHERE link = %s")
 
-								########### ITEM BUILDING
-								post_title = escaping(post_title)
-								item = (post_title, post_link, post_date, api_pack["source_id"], inquiry_id_comma2, owners_str)
-								item_update = [post_link]
-								item_dict = {"post_title": post_title, "post_link": post_link, "post_date": post_date, "source_id": api_pack["source_id"], "inquiry_id_comma": inquiry_id_comma2, "owners": owners_str}
-
-								########### CALL  FUNCTION
-								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item_dict, item_update, inquiry_id_comma, need_jelly)
+								########### CALL insertOrUpdate FUNCTION
+								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, inquiry_id_comma, need_jelly)
 
 								range_article = range_article + 1
 
