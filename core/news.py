@@ -225,7 +225,7 @@ def newspack(register, user_id_comma):
 
 	for row in rows:
 		######### SEARCH FOR SOURCE NAME AND COMPLETE REQUEST OF THE USER
-		query_source = "SELECT name FROM sources_news_serge WHERE id = %s and type <> 'language'"
+		query_source = "SELECT name FROM sources_news_serge WHERE id = %s"
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_news_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
 		item_arguments = {
