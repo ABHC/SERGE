@@ -147,7 +147,7 @@ def pathfinder(now):
 								item = {
 								"title": post_title,
 								"link": post_link,
-								"date": date,
+								"date": post_date,
 								"serge_date": now,
 								"source_id": api_pack["source_id"],
 								"inquiry_id": inquiry_id_comma2,
