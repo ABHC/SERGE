@@ -61,7 +61,7 @@ $tableNameSource    = 'sources_news_serge';
 $ownersColumn       = 'applicable_owners_sources';
 $userId             = '|' . $_SESSION['id'] . ':';
 $keywordQueryId     = 'inquiry_id';
-$queryColumn        = 'keyword';
+$queryColumn        = 'inquiry';
 $specialColumn      = ', source_id, inquiry_id ';
 $displayColumn      = var_get_t('title2News_table_results', $bdd);
 
@@ -81,7 +81,7 @@ if (!empty($data['resultType']))
 		$userId          = ',' . $_SESSION['id'] . ',';
 		$keywordQueryId  = 'inquiry_id';
 		$queryColumn     = 'query_serge';
-		$specialColumn   = ',inquiry_id, source_id ';
+		$specialColumn   = ', inquiry_id, source_id ';
 		$displayColumn   = var_get_t('Query', $bdd);
 	}
 	elseif ($data['resultType'] === 'patents')
