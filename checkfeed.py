@@ -38,7 +38,7 @@ def extractFeedLinks(html, feed_links_attributes=FEED_LINKS_ATTRIBUTES):
 	"""Function for extracting all the RSS feeds present on the page given by the user"""
 
 	soup = BeautifulSoup(html, "lxml")
-	links = []
+
 	for attrs in feed_links_attributes:
 		for link in list(set(soup.find_all(['link', 'a'], dict(attrs)))):
 			href = dict(link.attrs).get('href', '')
