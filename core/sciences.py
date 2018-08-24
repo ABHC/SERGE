@@ -20,7 +20,7 @@ from handshake import databaseConnection
 
 
 def rosetta(now):
-	"""Function for last patents published by science APIs
+	"""Function for last papers published by science APIs
 
 		Process :
 		- Retrieval of SERGE normalized queries
@@ -55,16 +55,16 @@ def rosetta(now):
 		field = {
 		"inquiry_id": row[0],
 		"inquiry": row[1].strip(),
-		"applicable_owners_sources": row[2].strip()}
+		"applicable_owners_sources": row[2].strip(),
+		"sources_list": list(set(re.findall(',([0-9]+)', row[2])))}
 
 		inquiries_list.append(field)
 
 	######### BUILDING REQUEST FOR SCIENCE API
 	for inquiry in inquiries_list:
-
-		query_dataset = "SELECT id, type, basename, prelink, postlink, quote FROM sources_sciences_serge WHERE active >= 1 and type <> 'language'"
+		query_dataset = "SELECT type, basename, prelink, postlink, quote FROM sources_sciences_serge WHERE id = %s and active >= 1 and type <> 'language'"
 		query_builder = "FROM sources_sciences_serge WHERE id = %s"
-		inquiries_set = transcriber.requestBuilder(inquiry["inquiry"], query_dataset, query_builder)
+		inquiries_set = transcriber.requestBuilder(inquiry, query_dataset, query_builder)
 
 		for api_pack in inquiries_set:
 			owners_str = ","
@@ -164,8 +164,8 @@ def rosetta(now):
 					logger_info.warning("Error : the feed is unavailable")
 
 			######### RESEARCH SCIENCE ON JSON FEEDS WITH JSON MODULE
-			elif api_pack["type"] == "JSON" and source_comparator is not None and re.search('^(,[0-9]+)+,$', owners_str) is not None:
-				logger_info.info(api_pack["inquiry_raw"].encode("utf8")+"\n")
+			elif api_pack["type"] == "JSON" and re.search('^(,[0-9]+)+,$', owners_str) is not None:
+				logger_info.info(api_pack["inquiry_api"].encode("utf8")+"\n")
 				req_results = sergenet.aLinkToThePast(api_pack["inquiry_link"], 'fullcontent')
 				json_content = req_results[0]
 				feed_error = req_results[1]
@@ -252,6 +252,9 @@ def rosetta(now):
 def sciencespack(register, user_id_comma):
 	"""Triage by lists of news, of science publications and of patents to send. Update of these lists if user authorize records of links that was read."""
 
+	######### RESULTS PACK CREATION
+	results_pack = []
+
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
@@ -265,7 +268,7 @@ def sciencespack(register, user_id_comma):
 
 	for row in rows:
 		######### SEARCH FOR SOURCE NAME AND COMPLETE REQUEST OF THE USER
-		query_source = "SELECT basename FROM sources_sciences_serge WHERE id = %s and type <> 'language'"
+		query_source = "SELECT basename, owners FROM sources_sciences_serge WHERE id = %s and type <> 'language'"
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_sciences_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
 		item_arguments = {
@@ -278,26 +281,28 @@ def sciencespack(register, user_id_comma):
 
 		attributes = toolbox.packaging(item_arguments, database)
 
-		######### TRANSLATE THE INQUIRY
-		trad_args = {
-		"register": register,
-		"inquiry": attributes["inquiry"],
-		"query_dataset": "SELECT quote FROM sources_sciences_serge WHERE type = 'language' and basename = %s",
-		"query_builder": "FROM sources_sciences_serge WHERE type = 'language' and basename = %s"}
+		if attributes["inquiry"] is not None:
 
-		human_inquiry = transcriber.humanInquiry(trad_args)
+			######### TRANSLATE THE INQUIRY
+			trad_args = {
+			"register": register,
+			"inquiry": attributes["inquiry"],
+			"query_dataset": "SELECT quote FROM sources_sciences_serge WHERE type = 'language' and basename = %s",
+			"query_builder": "FROM sources_sciences_serge WHERE type = 'language' and basename = %s"}
 
-		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
-		item = {
-		"id": row[0],
-		"title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(),
-		"description": None,
-		"link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'),
-		"label": "sciences",
-		"source": attributes["source"],
-		"inquiry": human_inquiry,
-		"wiki_link": None}
+			human_inquiry = transcriber.humanInquiry(trad_args)
 
-		items_list.append(item)
+			######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
+			item = {
+			"id": row[0],
+			"title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(),
+			"description": None,
+			"link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'),
+			"label": "sciences",
+			"source": attributes["source"],
+			"inquiry": human_inquiry.lower(),
+			"wiki_link": None}
 
-	return items_list
+			results_pack.append(item)
+
+	return results_pack
