@@ -173,7 +173,6 @@ def mailBuilder(full_results, translate_text, stamps, appearance):
 
 			if len(inquiries_list) > 0:
 				inquiries_list = sorted(list(set(inquiries_list)))
-				print inquiries_list
 
 			for inquiry in inquiries_list:
 				results_inquiry = []
@@ -187,7 +186,6 @@ def mailBuilder(full_results, translate_text, stamps, appearance):
 
 				######### CREATE INQUIRY BLOCK
 				if pending_items > 0:
-					print inquiry
 					newsletter = newsletter + (appearance["block"].format(unquote(inquiry).decode('utf8').capitalize().encode('ascii', errors='xmlcharrefreplace')))
 
 					######### WRITE ITEMS IN INQUIRY BLOCK
