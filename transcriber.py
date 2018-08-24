@@ -54,24 +54,26 @@ def humanInquiry(trad_args):
 def requestBuilder(inquiry, query_dataset, query_builder):
 	"""Translator for translate Serge universal queries into a specifical API query according to the sources chosen by the user"""
 
-	inquiry = filter(None, inquiry.split("|"))
+	inquiry_serge = filter(None, inquiry["inquiry"].split("|"))
 	inquiries_set = []
 
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
-	######### INITIALIZE THE DICTIONNARY KEY
-	call_equivalence = database.cursor()
-	call_equivalence.execute(query_dataset)
-	rows = call_equivalence.fetchall()
-	call_equivalence.close()
+	########### RECOVER INFORMATION ABOUT SOURCES
+	for source in inquiry["sources_list"]:
+		call_equivalence = database.cursor()
+		call_equivalence.execute(query_dataset, (source, ))
+		row = call_equivalence.fetchone()
+		call_equivalence.close()
 
-	for row in rows:
-		request = {"source_id": row[0], "type": row[1], "basename": row[2], "inquiry_api": "", "inquiry_link": ""}
-		quote = row[5]
+		######### INITIALIZE ONE DICTIONNARY FOR EACH ACTIVE API RELATED TO THE INQUIRY
+		request = {"source_id": source, "type": row[0], "basename": row[1], "inquiry_api": "", "inquiry_link": ""}
+		inquiries_set.append(request)
+		quote = row[4]
 
 		######### REQUEST BUILDING
-		for component in inquiry:
+		for component in inquiry_serge:
 
 			if u"#" in component:
 				if quote is None:
@@ -89,8 +91,8 @@ def requestBuilder(inquiry, query_dataset, query_builder):
 
 				request["inquiry_api"] = request["inquiry_api"] + translate_component[0]
 
-		######### INQUIRIES SET (INQUIRY ID, INQUIRY, COMPLETE URL, SOURCE ID, TYPE) COMPLETION
-		request["inquiry_link"] = row[3] + request["inquiry_api"] + row[4]
+		######### API LINK BUILDING
+		request["inquiry_link"] = row[2] + request["inquiry_api"] + row[3]
 		inquiries_set.append(request)
 
 	return inquiries_set
@@ -330,6 +332,12 @@ def pieceOfMail(priority):
 	</body>
 	</html>"""
 
-	appearance = {"style": style, "banner": banner, "block": block, "elements": elements, "end_block": end_block, "footer": footer}
+	appearance = {
+	"style": style,
+	"banner": banner,
+	"block": block,
+	"elements": elements,
+	"end_block": end_block,
+	"footer": footer}
 
 	return appearance

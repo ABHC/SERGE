@@ -18,6 +18,7 @@ def cemeteriesOfErrors(*exc_info):
 	logger_info = logging.getLogger("info_log")
 	logger_error = logging.getLogger("error_log")
 
+	######### ERROR HOOK
 	colderror = "".join(traceback.format_exception(*exc_info))
 	logger_error.critical(colderror+"\n\n")
 	logger_error.critical("SERGE END : CRITICAL FAILURE\n")
@@ -49,14 +50,30 @@ def loggerConfig():
 def limitedConnection(filename):
 	"""Limited connexion to Serge database"""
 
+	######### LOGGER CALL
+	logger_info = logging.getLogger("info_log")
+	logger_error = logging.getLogger("error_log")
+
+	######### A LIMITED USER CORRESPONDS TO AN EXTENSION AND IS DEFINED ACCORDING TO IT
 	limited_user = filename.replace(".py", "").strip()
 
-	permissions = open("/var/www/Serge/configuration/extensions_configuration_"+limited_user, "r")
-	passSQL = permissions.read().strip()
-	passSQL = (re.findall("password: "+'([^\s]+)', passSQL))[0]
-	permissions.close()
+	######### RETRIEVE THE CREDENTIALS
+	try:
+		permissions = open("/var/www/Serge/configuration/extensions_configuration_" + limited_user, "r")
+		passSQL = permissions.read().strip()
+		passSQL = (re.findall("password: "+'([^\s]+)', passSQL))[0]
+		permissions.close()
+	except Exception, except_type:
+		logger_error.warning("CREDENTIALS RECOVERY FAIL FOR USER : " + limited_user)
+		logger_error.warning("CREDENTIALS RECOVERY FAIL DETAILS : " + Exception + ", "+ except_type)
 
-	database = MySQLdb.connect(host="localhost", user=limited_user, passwd=passSQL, db="Serge", use_unicode=1, charset="utf8mb4")
+	######### DATABASE CONNECTION
+	try:
+		database = MySQLdb.connect(host="localhost", user=limited_user, passwd=passSQL, db="Serge", use_unicode=1, charset="utf8mb4")
+		logger_info.info(limited_user + "IS CONNECTED TO DATABASE")
+	except Exception, except_type:
+		logger_error.warning("DATABASE CONNECTION FAIL FOR USER : " + limited_user)
+		logger_error.warning("DATABASE CONNECTION FAIL DETAILS : " + Exception + ", "+ except_type)
 
 	return database
 
@@ -91,13 +108,18 @@ def aggregatesSupport(keyword):
 
 
 def packaging(item_arguments, database):
+	"""Standardized information retrieval function in order to create result packs"""
+
+	######### LOGGER CALL
+	logger_info = logging.getLogger("info_log")
+	logger_error = logging.getLogger("error_log")
 
 	######### SET VARIABLES
 	classic_inquiries = []
 	alerts_inquiries = []
-	user_id_doubledot_percent = "%"+item_arguments["user_id"]+":%"
+	user_id_doubledot_percent = "%" + item_arguments["user_id"] + ":%"
 
-	######### RETRIEVE THE NAME OF THE SOURCE
+	######### RETRIEVE THE NAME OF THE SOURCE AND OWNERSHIP STATUS
 	if item_arguments["multisource"] is True:
 		call_db = database.cursor()
 		call_db.execute(item_arguments["query_source"], (item_arguments["source_id"],))
@@ -106,6 +128,12 @@ def packaging(item_arguments, database):
 	else:
 		source = None
 
+	if source is not None:
+		if "," + item_arguments["user_id"] + "," in source[1]:
+			ownership = True
+		else:
+			ownership = False
+
 	######### RETRIEVE THE USER REQUEST
 	for inquiry_id in item_arguments["inquiry_id"]:
 		call_db = database.cursor()
@@ -113,19 +141,24 @@ def packaging(item_arguments, database):
 		check = call_db.fetchone()
 		call_db.close()
 
-		if re.search('[^!A-Za-z]'+user_id+":"+'[0-9!,]*'+","+inquiry_id+",", check[1]) is not None:
-			if "[!ALERT!]" in check[0]:
+		if (check is not None and
+		re.search('[^!A-Za-z]' + item_arguments["user_id"] + ":" + '[0-9!,]*' + "," + str(item_arguments["source_id"]) + ",", check[1])
+		is not None):
+			if "[!ALERT!]" in check[0] and ownership is True:
 				alerts_inquiries.append(check[0])
-			else:
+			elif ownership is True:
 				classic_inquiries.append(check[0])
+			elif ownership is False:
+				logger_error.warning("FAIL OF OWNERSHIP DOUBLE CHECK (PACKAGING)")
+				logger_error.warning("USER ID : " + str(item_arguments["user_id"]) + ", SOURCE ID : " + str(item_arguments["source_id"]) + ", INQUIRY ID: " + str(item_arguments["inquiry_id"]))
 
 	if len(alerts_inquiries) > 0:
 		inquiry = alerts_inquiries[0]
 	elif len(classic_inquiries) > 0 and len(alerts_inquiries) == 0:
 		inquiry = classic_inquiries[0]
 	else:
-		inquiry = "REMOVED INQUIRY"
+		inquiry = None
 
-	attributes = {"source": source, "inquiry": inquiry}
+	attributes = {"source": source[0], "inquiry": inquiry}
 
 	return attributes

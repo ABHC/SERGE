@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""Serge module for news functions"""
+"""Serge core module for news functions"""
 
 ######### IMPORT CLASSICAL MODULES
 import re
@@ -212,6 +212,9 @@ def voyager(newscast_args):
 def newspack(register, user_id_comma):
 	"""Triage by lists of news, of science publications and of patents to send. Update of these lists if user authorize records of links that was read."""
 
+	######### RESULTS PACK CREATION
+	results_pack = []
+
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
@@ -225,7 +228,7 @@ def newspack(register, user_id_comma):
 
 	for row in rows:
 		######### SEARCH FOR SOURCE NAME AND COMPLETE REQUEST OF THE USER
-		query_source = "SELECT name FROM sources_news_serge WHERE id = %s"
+		query_source = "SELECT name, owners FROM sources_news_serge WHERE id = %s"
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_news_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
 		item_arguments = {
@@ -238,20 +241,22 @@ def newspack(register, user_id_comma):
 
 		attributes = toolbox.packaging(item_arguments, database)
 
-		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
-		item = {
-		"id": row[0],
-		"title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(),
-		"description": None,
-		"link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'),
-		"label": "news",
-		"source": attributes["source"],
-		"inquiry": attributes["inquiry"],
-		"wiki_link": None}
+		if attributes["inquiry"] is not None:
 
-		items_list.append(item)
+			######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
+			item = {
+			"id": row[0],
+			"title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(),
+			"description": None,
+			"link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'),
+			"label": "news",
+			"source": attributes["source"],
+			"inquiry": attributes["inquiry"].lower(),
+			"wiki_link": None}
 
-	return items_list
+			results_pack.append(item)
+
+	return results_pack
 
 
 def backToTheFuture(etag, link):

@@ -7,6 +7,7 @@ import sys
 import logging
 import feedparser
 import jellyfish
+from urlparse import urlparse
 
 ######### IMPORT FROM SERGE MAIN
 import sergenet
@@ -158,12 +159,12 @@ def ofSourceAndName(now):
 			call_rss.close()
 
 			link = rows[0]
-			rss_name = rows[1]
+			source_name = rows[1]
 			favicon = rows[2]
 			refresh_string = "[!NEW!]"
 			favicon_link = "https://www.google.com/s2/favicons?domain="+link
 
-			if rss_name is None or refresh_string in rss_name:
+			if source_name is None or refresh_string in source_name:
 
 				########### RSS FEED RECOVERY
 				req_results = sergenet.aLinkToThePast(link, 'fullcontent')
@@ -200,8 +201,20 @@ def ofSourceAndName(now):
 							logger_error.error(repr(except_type))
 						update_rss.close()
 
+					elif source_name is not None:
+						source_title = source_name.replace("[!NEW!]", "")
+						update_rss = database.cursor()
+						try:
+							update_rss.execute(update, (source_title, num))
+							database.commit()
+						except Exception, except_type:
+							database.rollback()
+							logger_error.error("ROLLBACK AT LINK UPDATE IN ofSourceAndName")
+							logger_error.error(repr(except_type))
+						update_rss.close()
+
 					else:
-						source_title = rss_name.replace("[!NEW!]", "")
+						source_title = (urlparse(link)).netloc
 						update_rss = database.cursor()
 						try:
 							update_rss.execute(update, (source_title, num))
@@ -432,7 +445,7 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 					insert_data.close()
 
 
-def stairwayToUpdate(fullResults, register, now, predecessor):
+def stairwayToUpdate(full_results, register, now, predecessor):
 	"""stairwayToUpdate manage the send_status update in database."""
 
 	########### CONNECTION TO SERGE DATABASE
@@ -442,8 +455,8 @@ def stairwayToUpdate(fullResults, register, now, predecessor):
 	logger_error = logging.getLogger("error_log")
 
 	######### CHECK AND UPDATE SEND STATUS
-	for result in fullResults:
-		query = ("SELECT send_status FROM result_"+result["label"]+"_serge WHERE id = %s")
+	for result in full_results:
+		query = ("SELECT send_status FROM results_"+result["label"]+"_serge WHERE id = %s")
 
 		call_news = database.cursor()
 		call_news.execute(query, (result["id"],))
@@ -456,7 +469,7 @@ def stairwayToUpdate(fullResults, register, now, predecessor):
 		if register_comma2 not in send_status:
 			complete_status = send_status+register_comma
 
-			update = ("UPDATE result_"+result["label"]+"_serge SET send_status = %s WHERE id = %s")
+			update = ("UPDATE results_"+result["label"]+"_serge SET send_status = %s WHERE id = %s")
 
 			try:
 				call_news.execute(update, (complete_status, result["id"]))

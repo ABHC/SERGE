@@ -20,6 +20,7 @@ import time
 from datetime import datetime as dt
 import datetime
 import logging
+from random import shuffle
 
 ######### IMPORT SERGE SPECIALS MODULES
 import alarm
@@ -49,7 +50,7 @@ sys.excepthook = toolbox.cemeteriesOfErrors
 database = databaseConnection()
 
 ######### TIME VARIABLES DECLARATION
-now = time.time()                                 #NOW IS A TIMESTAMPS
+now = int(time.time())                            #NOW IS A TIMESTAMPS
 pydate = datetime.date.today()                    #PYDATE IS A DATE (YYYY-MM-DD)
 isoweekday = datetime.date.isoweekday(pydate)     #ISOWEEKDAY IS AN INTEGER BETWEEN 1 AND 7 (MONDAY=1, SUNDAY=7)
 today = ","+str(isoweekday)+","                   #TODAY IS A STRING
@@ -106,6 +107,7 @@ for row in rows:
 	newscast_args.append(fields)
 	nbRSS += 1
 
+shuffle(newscast_args)
 nbProc = int(ceil(0.25 * nbRSS) + 1)
 
 ######### PROCESS CREATION FOR NEWS AND RESEARCH OF LATEST NEWS
@@ -134,31 +136,35 @@ for register, user in user_list:
 	logger_info.info("USER : " + register)
 	user_id_comma = "%," + register + ",%"
 
-	stamps = {
-	"register": register,
-	"user": user,
-	"pydate": pydate,
-	"priority": "NORMAL"}
-
-	not_send_news_list = news.newspack(register, user_id_comma)
-	not_send_science_list = sciences.sciencespack(register, user_id_comma)
-	not_send_patents_list = patents.patentspack(register, user_id_comma)
-	extensions_results = extensions.packThemAll(register, user_id_comma)
-
-	fullResults = not_send_news_list+not_send_science_list+not_send_patents_list+extensions_results
-
-	pending_all = len(not_send_news_list)+len(not_send_science_list)+len(not_send_patents_list)
-
 	######### SEND CONDITION RECOVERY
-	query = "SELECT send_condition FROM users_table_serge WHERE id = %s"
+	query = "SELECT result_by_email, send_condition FROM users_table_serge WHERE id = %s"
 
 	call_users = database.cursor()
 	call_users.execute(query, (register,))
 	condition = call_users.fetchone()
 	call_users.close()
 
+	emailing = bool(condition[0])
+
+	######### STAMPS AND RESULTS PACK CREATION FOR E-MAILING
+	if emailing is True:
+		stamps = {
+		"register": register,
+		"user": user,
+		"pydate": pydate,
+		"priority": "NORMAL"}
+
+		news_results = news.newspack(register, user_id_comma)
+		patents_results = patents.patentspack(register, user_id_comma)
+		sciences_results = sciences.sciencespack(register, user_id_comma)
+		extensions_results = extensionsManager.packThemAll(register, user_id_comma)
+
+		full_results = news_results+patents_results+sciences_results+extensions_results
+
+		pending_all = len(full_results)
+
 	######### FREQUENCY CONDITION
-	if condition[0] == "freq":
+	if emailing is True and condition[1] == "freq":
 		query_freq = "SELECT frequency FROM users_table_serge WHERE id = %s"
 		query_last_mail = "SELECT last_mail FROM users_table_serge WHERE id = %s"
 
@@ -182,23 +188,23 @@ for register, user in user_list:
 			predecessor = "MAILER"
 
 			######### E-MAIL BUILDING AND SENDING
-			mailer.mailInit(fullResults, register, stamps)
+			mailer.mailInit(full_results, register, stamps)
 
 			######### CALL TO stairwayToUpdate FUNCTION
-			insertSQL.stairwayToUpdate(fullResults, register, now, predecessor)
+			insertSQL.stairwayToUpdate(full_results, register, now, predecessor)
 
 		elif interval >= frequency and pending_all == 0:
 			logger_info.info("Frequency reached but no pending news")
 
 		elif interval < frequency and pending_all > 0:
 			#########  ALERT MANAGEMENT : CALL TO redAlert FUNCTION
-			alarm.redAlert(fullResults, register, stamps, now)
+			alarm.redAlert(full_results, register, stamps, now)
 
 		else:
 			logger_info.info("FREQUENCY NOT REACHED")
 
 	######### LINK LIMIT CONDITION
-	elif condition[0] == "link_limit":
+	elif emailing is True and condition[1] == "link_limit":
 		query = "SELECT link_limit FROM users_table_serge WHERE id = %s"
 
 		call_users = database.cursor()
@@ -213,20 +219,20 @@ for register, user in user_list:
 			predecessor = "MAILER"
 
 			######### E-MAIL BUILDING AND SENDING
-			mailer.mailInit(fullResults, register, stamps)
+			mailer.mailInit(full_results, register, stamps)
 
 			######### CALL TO stairwayToUpdate FUNCTION
-			insertSQL.stairwayToUpdate(fullResults, register, now, predecessor)
+			insertSQL.stairwayToUpdate(full_results, register, now, predecessor)
 
 		elif pending_all < limit and pending_all > 0:
 			######### ALERT MANAGEMENT : CALL TO redAlert FUNCTION
-			alarm.redAlert(fullResults, register, stamps, now)
+			alarm.redAlert(full_results, register, stamps, now)
 
 		elif pending_all < limit:
 			logger_info.info("LIMIT NOT REACHED")
 
 	######### DEADLINE CONDITION
-	elif condition[0] == "deadline":
+	elif emailing is True and condition[1] == "deadline":
 		query_days = "SELECT selected_days FROM users_table_serge WHERE id = %s"
 		query_hour = "SELECT selected_hour FROM users_table_serge WHERE id = %s"
 
@@ -245,14 +251,14 @@ for register, user in user_list:
 			predecessor = "MAILER"
 
 			######### E-MAIL BUILDING AND SENDING
-			mailer.mailInit(fullResults, register, stamps)
+			mailer.mailInit(full_results, register, stamps)
 
 			######### CALL TO stairwayToUpdate FUNCTION
-			insertSQL.stairwayToUpdate(fullResults, register, now, predecessor)
+			insertSQL.stairwayToUpdate(full_results, register, now, predecessor)
 
 		elif hour != some_hour and pending_all > 0:
 			######### ALERT MANAGEMENT : CALL TO redAlert FUNCTION
-			alarm.redAlert(fullResults, register, stamps, now)
+			alarm.redAlert(full_results, register, stamps, now)
 
 		elif pending_all == 0:
 			logger_info.info("NO PENDING NEWS")
@@ -260,15 +266,12 @@ for register, user in user_list:
 		else:
 			logger_info.info("BAD DAY OR/AND BAD HOUR")
 
-	######### WEB CONDITION
-	elif condition[0] == "web":
-		logger_info.info("WEB CONDITION")
-
-	else:
-		logger_info.critical("ERROR : BAD CONDITION")
+	######### IF AN ERROR OCCUR
+	elif emailing is True and (condition[1] != "freq" or condition[1] != "link_limit" or condition[1] != "deadline"):
+		logger_info.critical("ERROR : WRONG CONDITION IN send_condition COLUMN")
 
 ######### EXECUTION TIME CALCULATION
-the_end = time.time()
+the_end = int(time.time())
 exec_time = (the_end - float(now))
 
 logger_info.info("Timelog timestamp update")

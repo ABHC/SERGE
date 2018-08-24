@@ -6,10 +6,8 @@ import re
 import ovh
 import time
 import MySQLdb
-import smtplib
 from math import ceil
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+
 
 def databaseConnection():
 	"""Connexion to Serge database"""
@@ -24,7 +22,7 @@ def databaseConnection():
 	return database
 
 
-def sergeTelecom(fullResults, stamps):
+def sergeTelecom(full_results, stamps):
 	"""Format a sms message and then send it to the user's phone via the OVH API"""
 
 	########### CONNECTION TO SERGE DATABASE
@@ -42,7 +40,7 @@ def sergeTelecom(fullResults, stamps):
 	language = user_private[1]
 
 	######### SELECT THE TRANSLATION
-	alert_lenght = len(fullResults)
+	alert_lenght = len(full_results)
 
 	if alert_lenght == 1:
 
@@ -69,7 +67,7 @@ def sergeTelecom(fullResults, stamps):
 	########### DATA PROCESSING FOR SMS FORMATTING
 	results_string = u""
 
-	for alert in fullResults:
+	for alert in full_results:
 		results_string = results_string + alert["title"] + " : " +alert["link"] + "\n"
 
 		message = "{0}, {1} {2}\n{3}".format(stamps["user"][0:10], alert_lenght, translation, results_string)

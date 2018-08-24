@@ -8,7 +8,7 @@ import handshake
 from insertSQL import stairwayToUpdate
 
 
-def redAlert(fullResults, register, stamps, now):
+def redAlert(full_results, register, stamps, now):
 	"""Management of alerts :
 	- Search for potential alert keywords in results and if some are found redAlert build the list of them and of related news
 	- This list is given to alarm.py for building and formatting the e-mail alert"""
@@ -18,18 +18,18 @@ def redAlert(fullResults, register, stamps, now):
 
 	alerts_list = []
 
-	for item in fullResults:
+	for item in full_results:
 		if "[!ALERT!]" in item["inquiry"]:
 			alerts_list.append(item)
 
 	if len(alerts_list) > 0:
 		logger_info.info("ALERT PROCESS")
-		fullResults = alerts_list
+		full_results = alerts_list
 		predecessor = "ALARM"
 		stamps["priority"] = "HIGH"
 
 		######### CALL TO buildAlert FUNCTION
-		mailer.mailInit(fullResults, register, stamps)
+		mailer.mailInit(full_results, register, stamps)
 
 		######### CALL TO sergeTelecom FUNCTION if enabled
 		query_sms_authorization = "SELECT alert_by_sms FROM users_table_serge WHERE id = %s"
@@ -42,7 +42,7 @@ def redAlert(fullResults, register, stamps, now):
 		sms_authorization = sms_authorization[0]
 
 		if sms_authorization is True:
-			handshake.sergeTelecom(fullResults, stamps)
+			handshake.sergeTelecom(full_results, stamps)
 
 		######### CALL TO stairwayToUpdate FUNCTION
-		insertSQL.stairwayToUpdate(fullResults, stamps["register"], now, predecessor)
+		insertSQL.stairwayToUpdate(full_results, stamps["register"], now, predecessor)

@@ -55,21 +55,52 @@ def checkMate():
 		tables_name_list.append(name[0])
 
 	######### EXPECTED TABLES
-	expected_tables_list = ["admin_table_serge", "background_serge", "captcha_serge", "credentials_sms_serge", "extensions_serge", "inquiries_news_serge", "inquiries_patents_serge", "inquiries_sciences_serge", "language_serge", "miscellaneous_serge", "newsletter_table_serge", "premium_code_table_serge", "price_table_serge", "purchase_table_serge", "results_news_serge", "results_patents_serge", "results_sciences_serge", "sources_news_serge", "sources_patents_serge", "sources_sciences_serge", "stripe_table_serge", "text_content_serge", "users_table_serge", "watch_pack_queries_serge", "watch_pack_serge"]
+	expected_tables_list = [
+	"admin_table_serge",
+	"background_serge",
+	"captcha_serge",
+	"credentials_sms_serge",
+	"extensions_serge",
+	"inquiries_news_serge",
+	"inquiries_patents_serge",
+	"inquiries_sciences_serge",
+	"language_serge",
+	"miscellaneous_serge",
+	"newsletter_table_serge",
+	"premium_code_table_serge",
+	"price_table_serge",
+	"purchase_table_serge",
+	"results_news_serge",
+	"results_patents_serge",
+	"results_sciences_serge",
+	"sources_news_serge",
+	"sources_patents_serge",
+	"sources_sciences_serge",
+	"stripe_table_serge",
+	"text_content_serge",
+	"users_table_serge",
+	"watch_pack_queries_serge",
+	"watch_pack_serge"]
 
-	checking = database.cursor()
-	checking.execute("SELECT sources_table_name, inquiries_table_name, results_table_name, optionnal_tables_names FROM extensions_serge")
-	rows = checking.fetchall()
-	checking.close()
+	try:
+		checking = database.cursor()
+		checking.execute("SELECT sources_table_name, inquiries_table_name, results_table_name, optionnal_tables_names FROM extensions_serge")
+		rows = checking.fetchall()
+		checking.close()
 
-	for row in rows:
-		if row is not None:
-			expected_tables_list.append(row[0], row[1], row[2], row[3])
-			optionnal_tables_names_list = filter(None, row[4].split("|"))
+		for row in rows:
+			if row is not None:
+				expected_tables_list.append(row[0], row[1], row[2], row[3])
+				optionnal_tables_names_list = filter(None, row[4].split("|"))
 
-			for optionnal_tables_name in optionnal_tables_names_list:
-				if optionnal_tables_name != "":
-					expected_tables_list.append(optionnal_tables_name.strip())
+				for optionnal_tables_name in optionnal_tables_names_list:
+					if optionnal_tables_name != "":
+						expected_tables_list.append(optionnal_tables_name.strip())
+
+	except Exception, except_type:
+		logger_error.critical("MISSING TABLE : extensions_serge is not in database")
+		sys.exit()
+
 
 	######### CHECK NUMBER AND NAMES OF TABLES
 	checking = database.cursor()

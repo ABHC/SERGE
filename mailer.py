@@ -2,21 +2,27 @@
 
 """Mailer contains all the functions related to the construction and sending of e-mails"""
 
+import re
+import time
+import smtplib
 import unicodedata
 from random import randrange
+from requests.utils import unquote
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 ######### IMPORT SERGE SPECIALS MODULES
 import restricted
 from transcriber import pieceOfMail
 from handshake import databaseConnection
 
-def mailInit(fullResults, register, stamps):
+def mailInit(full_results, register, stamps):
 	"""Function for mail pre-formatting.
 
 		mailInit retrieves mail building options for the current user and does a pre-formatting of the mail. Then the function calls the building functions for mail."""
 
 	########### CONNECTION TO SERGE DATABASE
-	database = handshake.databaseConnection()
+	database = databaseConnection()
 
 	######### DATE VARIABLES
 	time_units = stamps["pydate"].split("-")
@@ -87,40 +93,42 @@ def mailInit(fullResults, register, stamps):
 	for dict_key, content in text:
 		translate_text[dict_key] = content.strip().encode('ascii', errors='xmlcharrefreplace')
 
-	if priority == "NORMAL":
+	if stamps["priority"] == "NORMAL":
 		translate_text = {"intro_date": translate_text["your news monitoring of"], "intro_links": translate_text["links in"], "type_news": translate_text["NEWS"], "type_science": translate_text["SCIENTIFIC PUBLICATIONS"], "type_patents": translate_text["PATENTS"], "web_serge": translate_text["View Online"], "unsubscribe": translate_text["Unsubscribe"], "github_serge": translate_text["Find SERGE on"], "license_serge": translate_text["Powered by"]}
 
-	elif priority == "HIGH":
+	elif stamps["priority"] == "HIGH":
 		translate_text = {"intro_date": translate_text["of"], "intro_links": translate_text["alerts"], "type_news": translate_text["NEWS"], "type_science": translate_text["SCIENTIFIC PUBLICATIONS"], "type_patents": translate_text["PATENTS"], "web_serge": translate_text["View Online"], "unsubscribe": translate_text["Unsubscribe"], "github_serge": translate_text["Find SERGE on"], "license_serge": translate_text["Powered by"]}
 
 	######### ADD RECORDER LINKS IN FULL RESULTS
 	record_read = restricted.recordApproval(register, database)
 
-	for item in fullResults:
+	for item in full_results:
 		if record_read is True:
-			item["link"] = toolbox.recorder(register, item["label"], str(item["id"]), "redirect", database)
+			item["link"] = restricted.recorder(register, item["label"], str(item["id"]), "redirect", database)
 
-			item["wiki_link"] = toolbox.recorder(register, item["label"], str(item["id"]), "addLinkInWiki", database)
+			item["wiki_link"] = restricted.recorder(register, item["label"], str(item["id"]), "addLinkInWiki", database)
 
 	######### LOADING THE E-MAIL APPEARANCE
 	appearance = pieceOfMail(stamps["priority"])
 
 	######### E-MAIL BUILDING
-	newsletter = mailBuilder(fullResults, translate_text, stamps, appearance)
+	newsletter = mailBuilder(full_results, translate_text, stamps, appearance)
 
 	######### E-MAIL SENDING
 	highwayToMail(newsletter, stamps)
 
 
-def mailBuilder(fullResults, translate_text, stamps, appearance):
+def mailBuilder(full_results, translate_text, stamps, appearance):
+	"""Assembling search results and code portions from PieceOfMail to build the email"""
+
 	######### PENDING LINKS
-	pending_all = len(fullResults)
+	pending_all = len(full_results)
 
 	######### SET LABELS LIST
-	labels_list = ["news", "sciences", "patents"]
+	labels_core = ["news", "sciences", "patents"]
 	labels_extensions = []
 
-	for result in fullResults:
+	for result in full_results:
 		if result["label"] not in labels_core and result["label"] not in labels_extensions:
 			labels_extensions.append(result["label"])
 
@@ -130,11 +138,11 @@ def mailBuilder(fullResults, translate_text, stamps, appearance):
 	newsletter = appearance["banner"].format(translate_text["intro_date"], stamps["user"].encode('ascii', errors='xmlcharrefreplace'), translate_text["intro_links"], stamps["pydate"], pending_all, appearance["style"], stamps["background"])
 
 	######### NEWSLETTER BY TYPE
-	if mail_design[0] == "type":
+	if stamps["mail_design"] == "type":
 		for label in labels_list:
 			results_label = []
 
-			for item in fullResults:
+			for item in full_results:
 				if item["label"] == label:
 					results_label.append(item)
 
@@ -155,27 +163,23 @@ def mailBuilder(fullResults, translate_text, stamps, appearance):
 				newsletter = newsletter + (appearance["end_block"])
 
 	######### NEWSLETTER BY KEYWORD
-	elif mail_design[0] == "masterword":
+	elif stamps["mail_design"] == "masterword":
 		for label in labels_list:
-			results_label = []
+			inquiries_list = []
 
-			for item in fullResults:
-				if item["label"] == label:
-					results_label.append(item)
-
-			for item in results_label:
-				inquiries_list = []
-
-				if item["inquiry"] not in inquiries_list:
+			for item in full_results:
+				if item["inquiry"] not in inquiries_list and item["label"] == label:
 					inquiries_list.append(item["inquiry"])
 
-				inquiries_list.sort()
+			if len(inquiries_list) > 0:
+				inquiries_list = sorted(list(set(inquiries_list)))
+				print inquiries_list
 
 			for inquiry in inquiries_list:
 				results_inquiry = []
 
-				for item in results_label:
-					if item["inquiry"] == inquiry:
+				for item in full_results:
+					if item["inquiry"] == inquiry and item["label"] == label:
 						results_inquiry.append(item)
 
 				pending_items = len(results_inquiry)
@@ -183,36 +187,32 @@ def mailBuilder(fullResults, translate_text, stamps, appearance):
 
 				######### CREATE INQUIRY BLOCK
 				if pending_items > 0:
-					newsletter = newsletter + (appearance["block"].format(inquiry.capitalize()))
+					print inquiry
+					newsletter = newsletter + (appearance["block"].format(unquote(inquiry).decode('utf8').capitalize().encode('ascii', errors='xmlcharrefreplace')))
 
 					######### WRITE ITEMS IN INQUIRY BLOCK
 					for item in results_inquiry:
 						newsletter = newsletter + (appearance["elements"].format(item["link"], item["title"], item["wiki_link"]))
+						#TODO mettre des encode ascii machin truc sur les élément du dico item
 
 					newsletter = newsletter + appearance["end_block"]
 
 	######### NEWSLETTER BY SOURCE
-	elif mail_design[0] == "origin":
+	elif stamps["mail_design"] == "origin":
 		for label in labels_list:
-			results_label = []
+			sources_list = []
 
-			for item in fullResults:
-				if item["label"] == label:
-					results_label.append(item)
-
-			for item in results_label:
-				sources_list = []
-
-				if item["source"] not in sources_list:
+			for item in full_results:
+				if item["source"] not in sources_list and item["label"] == label:
 					sources_list.append(item["source"])
 
-				sources_list.sort()
+			sources_list.sort()
 
 			for source in sources_list:
 				results_source = []
 
-				for item in results_label:
-					if item["source"] == source:
+				for item in full_results:
+					if item["source"] == source and item["label"] == label:
 						results_source.append(item)
 
 				pending_items = len(results_source)
@@ -248,9 +248,7 @@ def highwayToMail(newsletter, stamps):
 	expiration_date = call_users.fetchone()
 	call_users.close()
 
-	verif_time = time.time()
-
-	if expiration_date > verif_time :
+	if expiration_date > time.time() :
 
 		######### SERGE CONFIG FILE READING
 		permissions = open("/var/www/Serge/configuration/core_configuration", "r")
@@ -258,13 +256,13 @@ def highwayToMail(newsletter, stamps):
 		permissions.close()
 
 		######### SERGE MAIL
-		fromaddr = (re.findall("serge_mail: "+'([^\s]+)', config_file))[0]
+		fromaddr = (re.findall("serge_adress: "+'([^\s]+)', config_file))[0]
 
 		######### PASSWORD FOR MAIL
 		mdp_mail = (re.findall("passmail: "+'([^\s]+)', config_file))[0]
 
 		######### SERGE SERVER ADRESS
-		mailserveraddr = (re.findall("passmail: "+'([^\s]+)', config_file))[0]
+		mailserveraddr = (re.findall("mail_server: "+'([^\s]+)', config_file))[0]
 
 		######### ADRESSES AND LANGUAGE RECOVERY
 		query_user_infos = "SELECT email, language FROM users_table_serge WHERE id = %s"

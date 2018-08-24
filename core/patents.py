@@ -57,6 +57,7 @@ def pathfinder(now):
 		"inquiry_id": row[0],
 		"inquiry": row[1].strip(),
 		"applicable_owners_sources": row[2].strip(),
+		"sources_list": list(set(re.findall(',([0-9]+)', row[2]))),
 		"legal_research": row[3]}
 
 		inquiries_list.append(field)
@@ -64,9 +65,9 @@ def pathfinder(now):
 	######### PATENTS RESEARCH
 	for inquiry in inquiries_list:
 
-		query_dataset = "SELECT id, type, basename, prelink, postlink, quote FROM sources_patents_serge WHERE active >= 1 and type <> 'language'"
+		query_dataset = "SELECT type, basename, prelink, postlink, quote FROM sources_patents_serge WHERE id = %s and active >= 1 and type <> 'language'"
 		query_builder = "FROM sources_patents_serge WHERE id = %s"
-		inquiries_set = transcriber.requestBuilder(inquiry["inquiry"], query_dataset, query_builder)
+		inquiries_set = transcriber.requestBuilder(inquiry, query_dataset, query_builder)
 
 		for api_pack in inquiries_set:
 			owners_str = ","
@@ -187,6 +188,9 @@ def pathfinder(now):
 def patentspack(register, user_id_comma):
 	"""Triage by lists of news, of science publications and of patents to send. Update of these lists if user authorize records of links that was read."""
 
+	######### RESULTS PACK CREATION
+	results_pack = []
+
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
@@ -200,7 +204,7 @@ def patentspack(register, user_id_comma):
 
 	for row in rows:
 		######### SEARCH FOR SOURCE NAME AND COMPLETE REQUEST OF THE USER
-		query_source = "SELECT basename FROM sources_patents_serge WHERE id = %s and type <> 'language'"
+		query_source = "SELECT basename, owners FROM sources_patents_serge WHERE id = %s and type <> 'language'"
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_patents_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
 		item_arguments = {
@@ -213,29 +217,31 @@ def patentspack(register, user_id_comma):
 
 		attributes = toolbox.packaging(item_arguments, database)
 
-		######### TRANSLATE THE INQUIRY
-		trad_args = {
-		"register": register,
-		"inquiry": attributes["inquiry"],
-		"query_dataset": "SELECT quote FROM sources_patents_serge WHERE type = 'language' and basename = %s",
-		"query_builder": "FROM sources_patents_serge WHERE type = 'language' and basename = %s"}
+		if attributes["inquiry"] is not None:
 
-		human_inquiry = transcriber.humanInquiry(trad_args)
+			######### TRANSLATE THE INQUIRY
+			trad_args = {
+			"register": register,
+			"inquiry": attributes["inquiry"],
+			"query_dataset": "SELECT quote FROM sources_patents_serge WHERE type = 'language' and basename = %s",
+			"query_builder": "FROM sources_patents_serge WHERE type = 'language' and basename = %s"}
 
-		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
-		item = {
-		"id": row[0],
-		"title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(),
-		"description": None,
-		"link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'),
-		"label": "patents",
-		"source": attributes["source"],
-		"inquiry": human_inquiry,
-		"wiki_link": None}
+			human_inquiry = transcriber.humanInquiry(trad_args)
 
-		items_list.append(item)
+			######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
+			item = {
+			"id": row[0],
+			"title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(),
+			"description": None,
+			"link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'),
+			"label": "patents",
+			"source": attributes["source"],
+			"inquiry": human_inquiry.lower(),
+			"wiki_link": None}
 
-	return items_list
+			results_pack.append(item)
+
+	return results_pack
 
 
 def legalScrapper(legal_args, inquiry):
