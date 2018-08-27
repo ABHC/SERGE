@@ -5,11 +5,12 @@
 ######### IMPORT CLASSICAL MODULES
 import re
 import time
+import logging
 import datetime
 import traceback
 import feedparser
 from bs4 import BeautifulSoup
-import logging
+from requests.utils import unquote
 
 ######### IMPORT SERGE SPECIALS MODULES
 import toolbox
@@ -231,9 +232,9 @@ def patentspack(register, user_id_comma):
 			######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
 			item = {
 			"id": row[0],
-			"title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(),
+			"title": unquote(row[1].strip().encode('utf8')).decode('utf8').encode('ascii', errors = 'xmlcharrefreplace').lower().capitalize(),
 			"description": None,
-			"link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'),
+			"link": row[2].strip().encode('ascii', errors = 'xmlcharrefreplace'),
 			"label": "patents",
 			"source": attributes["source"],
 			"inquiry": human_inquiry.lower(),

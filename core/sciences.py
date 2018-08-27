@@ -10,6 +10,7 @@ import logging
 import datetime
 import feedparser
 import traceback
+from requests.utils import unquote
 
 ######### IMPORT SERGE SPECIALS MODULES
 import transcriber
@@ -295,9 +296,9 @@ def sciencespack(register, user_id_comma):
 			######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
 			item = {
 			"id": row[0],
-			"title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(),
+			"title": unquote(row[1].strip().encode('utf8')).decode('utf8').encode('ascii', errors = 'xmlcharrefreplace').lower().capitalize(),
 			"description": None,
-			"link": row[2].strip().encode('ascii', errors='xmlcharrefreplace'),
+			"link": row[2].strip().encode('ascii', errors = 'xmlcharrefreplace'),
 			"label": "sciences",
 			"source": attributes["source"],
 			"inquiry": human_inquiry.lower(),

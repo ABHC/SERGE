@@ -94,10 +94,10 @@ def mailInit(full_results, register, stamps):
 		translate_text[dict_key] = content.strip().encode('ascii', errors='xmlcharrefreplace')
 
 	if stamps["priority"] == "NORMAL":
-		translate_text = {"intro_date": translate_text["your news monitoring of"], "intro_links": translate_text["links in"], "type_news": translate_text["NEWS"], "type_science": translate_text["SCIENTIFIC PUBLICATIONS"], "type_patents": translate_text["PATENTS"], "web_serge": translate_text["View Online"], "unsubscribe": translate_text["Unsubscribe"], "github_serge": translate_text["Find SERGE on"], "license_serge": translate_text["Powered by"]}
+		translate_text = {"intro_date": translate_text["your news monitoring of"], "intro_links": translate_text["links in"], "type_news": translate_text["News"], "type_sciences": translate_text["Scientific Publications"], "type_patents": translate_text["Patents"], "web_serge": translate_text["View Online"], "unsubscribe": translate_text["Unsubscribe"], "github_serge": translate_text["Find SERGE on"], "license_serge": translate_text["Powered by"]}
 
 	elif stamps["priority"] == "HIGH":
-		translate_text = {"intro_date": translate_text["of"], "intro_links": translate_text["alerts"], "type_news": translate_text["NEWS"], "type_science": translate_text["SCIENTIFIC PUBLICATIONS"], "type_patents": translate_text["PATENTS"], "web_serge": translate_text["View Online"], "unsubscribe": translate_text["Unsubscribe"], "github_serge": translate_text["Find SERGE on"], "license_serge": translate_text["Powered by"]}
+		translate_text = {"intro_date": translate_text["of"], "intro_links": translate_text["alerts"], "type_news": translate_text["News"], "type_science": translate_text["Scientific Publications"], "type_patents": translate_text["Patents"], "web_serge": translate_text["View Online"], "unsubscribe": translate_text["Unsubscribe"], "github_serge": translate_text["Find SERGE on"], "license_serge": translate_text["Powered by"]}
 
 	######### ADD RECORDER LINKS IN FULL RESULTS
 	record_read = restricted.recordApproval(register, database)
@@ -121,6 +121,9 @@ def mailInit(full_results, register, stamps):
 def mailBuilder(full_results, translate_text, stamps, appearance):
 	"""Assembling search results and code portions from PieceOfMail to build the email"""
 
+	########### CONNECTION TO SERGE DATABASE
+	database = databaseConnection()
+
 	######### PENDING LINKS
 	pending_all = len(full_results)
 
@@ -141,6 +144,8 @@ def mailBuilder(full_results, translate_text, stamps, appearance):
 	if stamps["mail_design"] == "type":
 		for label in labels_list:
 			results_label = []
+			print label
+			print "type_"+label
 
 			for item in full_results:
 				if item["label"] == label:
@@ -150,8 +155,18 @@ def mailBuilder(full_results, translate_text, stamps, appearance):
 			results_label = sorted(results_label, key=lambda item: item["title"])
 
 			######### CREATE LABEL BLOCK
+			if ("type_" + label) in translate_text:
+				label_title = translate_text["type_" + label]
+				print "OK"
+			else:
+				label_title = label
+				print "NO TRANSLATION"
+
+			print ("TRANSLATION : " + translate_text["type_"+label])
+
+			######### CREATE LABEL BLOCK
 			if pending_items > 0:
-				newsletter = newsletter + (appearance["block"].format(label))
+				newsletter = newsletter + (appearance["block"].format(unquote(label_title.encode('utf8')).decode('utf8').capitalize().encode('ascii', errors = 'xmlcharrefreplace')))
 
 				######### WRITE ALL ITEMS IN LABEL BLOCK
 				for item in results_label:
@@ -186,7 +201,7 @@ def mailBuilder(full_results, translate_text, stamps, appearance):
 
 				######### CREATE INQUIRY BLOCK
 				if pending_items > 0:
-					newsletter = newsletter + (appearance["block"].format(unquote(inquiry).decode('utf8').capitalize().encode('ascii', errors='xmlcharrefreplace')))
+					newsletter = newsletter + (appearance["block"].format(unquote(inquiry.encode('utf8')).decode('utf8').capitalize().encode('ascii', errors = 'xmlcharrefreplace')))
 
 					######### WRITE ITEMS IN INQUIRY BLOCK
 					for item in results_inquiry:
@@ -218,7 +233,7 @@ def mailBuilder(full_results, translate_text, stamps, appearance):
 
 				######### CREATE SOURCE BLOCK
 				if pending_items > 0:
-					newsletter = newsletter + (appearance["block"].format(source.capitalize()))
+					newsletter = newsletter + (appearance["block"].format(unquote(source.encode('utf8')).decode('utf8').capitalize().encode('ascii', errors = 'xmlcharrefreplace')))
 
 					######### WRITE ITEMS IN SOURCE BLOCK
 					for item in results_source:
