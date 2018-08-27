@@ -15,7 +15,7 @@ import toolbox
 def startingPoint():
 	"""A kind of main"""
 
-	now = time.time()
+	now = int(time.time())
 
 	######### LOGGER CALL
 	logger_info = logging.getLogger("info_log")

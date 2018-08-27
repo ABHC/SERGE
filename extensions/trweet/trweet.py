@@ -127,7 +127,7 @@ def startingPoint():
 
 			calls_research_count = calls_research_count + 1
 
-		elif inquiry["type"] == "target":
+			elif inquiry["type"] == "target":
 
 				if calls_timeline_count <= remaining_timeline:
 					trweetTorrent(inquiry)
@@ -150,7 +150,7 @@ def trweetFishing(inquiry):
 	database = toolbox.limitedConnection(path.basename(__file__))
 
 	########### USEFUL VARIABLES
-	fishing_time = time.time()
+	fishing_time = int(time.time())
 	inquiry_id_comma2 = ","+str(inquiry["id"])+","
 
 	########### RESEARCH PLAIN TWEETS
@@ -214,7 +214,7 @@ def lakesOfTrweets(inquiry):
 	database = toolbox.limitedConnection(path.basename(__file__))
 
 	########### USEFUL VARIABLES
-	fishing_time = time.time()
+	fishing_time = int(time.time())
 	inquiry_id_comma2 = ","+str(inquiry["id"])+","
 
 	########### RESEARCH GEOLOCALIZED TWEETS
@@ -303,7 +303,7 @@ def trweetTorrent(inquiry):
 	database = toolbox.limitedConnection(path.basename(__file__))
 
 	########### USEFUL VARIABLES
-	fishing_time = time.time()
+	fishing_time = (time.time())
 	inquiry_id_comma2 = ","+str(inquiry["id"])+","
 
 	########### RESEARCH TARGETS TIMELINES
