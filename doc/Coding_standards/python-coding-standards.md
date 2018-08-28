@@ -20,7 +20,7 @@ Python Coding Standards you must follow when writing Python in the Serge project
 
 ## Terminology
 
-A *variable* is an element containing alphanumeric values. A variable can contain one or more other variables. A variable has a *type* that is determined by what it contains (numbers, texts, variables). A variable containing other variables has one of the following types: *list*, *tuple* or *dictionary*.
+A *variable* is an element containing alphanumeric values. A variable can contain one or more other variables. A variable has a *type* determined by what it contains (numbers, texts, variables). A variable containing other variables has one of the following types: *list*, *tuple* or *dictionary*.
 
 A *logic gate* is an instruction containing the logical operators _if_, _else_, _and_, _or_, _not_. A *loop* is an instruction containing the _for_ and _while_ operators.
 
@@ -114,7 +114,7 @@ list = [value1, value2, value3]
 Or if you need to create a large list :
 
 ```Python
-list = []
+list = [
 value1,
 value2,
 value3,
@@ -124,13 +124,13 @@ value4]
 ### Tuples
 
 ```Python
-list = (value1, value2, value3)
+tuple = (value1, value2, value3)
 ```
 
-Or if you need to create a large list :
+Or if you need to create a large tuple :
 
 ```Python
-list = (
+tuple = (
 value1,
 value2,
 value3,
