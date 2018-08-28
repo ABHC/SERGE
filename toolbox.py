@@ -20,7 +20,7 @@ def cemeteriesOfErrors(*exc_info):
 
 	######### ERROR HOOK
 	colderror = "".join(traceback.format_exception(*exc_info))
-	logger_error.critical(colderror+"\n\n")
+	logger_error.critical(colderror + "\n\n")
 	logger_error.critical("SERGE END : CRITICAL FAILURE\n")
 
 
@@ -61,11 +61,11 @@ def limitedConnection(filename):
 	try:
 		permissions = open("/var/www/Serge/configuration/extensions_configuration_" + limited_user, "r")
 		passSQL = permissions.read().strip()
-		passSQL = (re.findall("password: "+'([^\s]+)', passSQL))[0]
+		passSQL = (re.findall("password: " + '([^\s]+)', passSQL))[0]
 		permissions.close()
 	except Exception, except_type:
 		logger_error.warning("CREDENTIALS RECOVERY FAIL FOR USER : " + limited_user)
-		logger_error.warning("CREDENTIALS RECOVERY FAIL DETAILS : " + Exception + ", "+ except_type)
+		logger_error.warning("CREDENTIALS RECOVERY FAIL DETAILS : " + Exception + ", " + except_type)
 
 	######### DATABASE CONNECTION
 	try:
@@ -73,7 +73,7 @@ def limitedConnection(filename):
 		logger_info.info(limited_user + "IS CONNECTED TO DATABASE")
 	except Exception, except_type:
 		logger_error.warning("DATABASE CONNECTION FAIL FOR USER : " + limited_user)
-		logger_error.warning("DATABASE CONNECTION FAIL DETAILS : " + Exception + ", "+ except_type)
+		logger_error.warning("DATABASE CONNECTION FAIL DETAILS : " + Exception + ", " + except_type)
 
 	return database
 
@@ -99,7 +99,7 @@ def aggregatesSupport(keyword):
 			if grain != "":
 				aggregated_keywords.append(grain)
 			elif grain == "" and len(aggregated_keywords) > 0:
-				aggregated_keywords[len(aggregated_keywords)-1] = aggregated_keywords[len(aggregated_keywords)-1] + "+"
+				aggregated_keywords[len(aggregated_keywords) - 1] = aggregated_keywords[len(aggregated_keywords) - 1] + "+"
 
 	else:
 		aggregated_keywords = [keyword]
@@ -159,6 +159,8 @@ def packaging(item_arguments, database):
 	else:
 		inquiry = None
 
-	attributes = {"source": source[0], "inquiry": inquiry}
+	attributes = {
+	"source": source[0],
+	"inquiry": inquiry}
 
 	return attributes

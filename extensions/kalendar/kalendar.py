@@ -23,7 +23,7 @@ def startingPoint():
 
 	######### WRITE IN LOGGER
 	logger_info.info("\n\n######### Icalendar research : \n\n")
-	logger_info.info(time.asctime(time.gmtime(now))+"\n")
+	logger_info.info(time.asctime(time.gmtime(now)) + "\n")
 
 	######### RESEARCH IN iCALENDARS
 	kalendarExplorer(now)
@@ -44,7 +44,11 @@ def kalendarExplorer(now):
 	call_calendar.close()
 
 	for calendar in rows:
-		calendar = {"id": calendar[0], "id_comma": ","+calendar[0]+",", "id_sql": "%,"+calendar[0]+",%", "link": calendar[1]}
+		calendar =
+		"id": calendar[0],
+		"id_comma": "," + calendar[0] + ",",
+		"id_sql": "%," + calendar[0] + ",%",
+		"link": calendar[1]}
 		calendars_list.append(calendar)
 
 	######### GO TO CALENDAR AND PARSING
@@ -61,7 +65,7 @@ def kalendarExplorer(now):
 				if date == "" or date is None:
 					date = float(0)
 			except:
-				logger_error.warning("BEACON ERROR : missing <date> in "+calendar["link"])
+				logger_error.warning("BEACON ERROR : missing <date> in " + calendar["link"])
 				logger_error.warning(traceback.format_exc())
 				date = float(0)
 
@@ -70,7 +74,7 @@ def kalendarExplorer(now):
 				if summary == "" or summary is None:
 					summary = "NO TITLE"
 			except (AttributeError, summary == ""):
-				logger_error.warning("BEACON ERROR : missing <title> in "+calendar["link"])
+				logger_error.warning("BEACON ERROR : missing <title> in " + calendar["link"])
 				logger_error.warning(traceback.format_exc())
 				summary = "NO TITLE"
 
@@ -79,7 +83,7 @@ def kalendarExplorer(now):
 				if location == "" or location is None:
 					location = "NO LOCATION"
 			except (AttributeError, location == ""):
-				logger_error.warning("BEACON ERROR : missing <location> in "+calendar["link"])
+				logger_error.warning("BEACON ERROR : missing <location> in " + calendar["link"])
 				logger_error.warning(traceback.format_exc())
 				location = "NO LOCATION"
 
@@ -88,11 +92,15 @@ def kalendarExplorer(now):
 				if description == "" or description is None:
 					description = "NO DESCRIPTION"
 			except (AttributeError, description == ""):
-				logger_error.warning("BEACON ERROR : missing <description> in "+calendar["link"])
+				logger_error.warning("BEACON ERROR : missing <description> in " + calendar["link"])
 				logger_error.warning(traceback.format_exc())
 				description = "NO DESCRIPTION"
 
-			full_event = {"name": toolbox.escaping(summary), "date": date, "location": location, "description": description}
+			full_event = {
+			"name": toolbox.escaping(summary),
+			"date": date,
+			"location": location,
+			"description": description}
 
 			if date > now and (summary is not None or summary != "" or summary != "NO TITLE"):
 				event_list.append(full_event)
@@ -108,13 +116,16 @@ def kalendarExplorer(now):
 
 		for inquiry in rows:
 			owners_str = ","
-			owners_list = re.findall('\|([0-9]+):[0-9!,]+'+calendar["id"]+',', row[2])
+			owners_list = re.findall('\|([0-9]+):[0-9!,]+' + calendar["id"] + ',', row[2])
 
 			for owner in owners_list:
 				owners_str = owners_str + owner.strip() + ","
 
 			if re.search('^(,[0-9]+)+,$', owners_str) is not None:
-				inquiry = {"id": inquiry[0], "inquiry": inquiry[1], "owners": owners_str}
+				inquiry = {
+				"id": inquiry[0],
+				"inquiry": inquiry[1],
+				"owners": owners_str}
 				calendars_inquiries.append(inquiry)
 
 		for event in event_list:
@@ -125,7 +136,7 @@ def kalendarExplorer(now):
 
 				######### INQUIRIES RESEARCH IN CALENDAR
 				for fragments in aggregated_inquiries:
-					if (re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', event["name"], re.IGNORECASE) or re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', event["date"], re.IGNORECASE) or re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', event["location"], re.IGNORECASE)):
+					if (re.search('[^a-z]' + re.escape(fragments) + '.{0,3}(\W|$)', event["name"], re.IGNORECASE) or re.search('[^a-z]' + re.escape(fragments) + '.{0,3}(\W|$)', event["date"], re.IGNORECASE) or re.search('[^a-z]' + re.escape(fragments) + '.{0,3}(\W|$)', event["location"], re.IGNORECASE)):
 						fragments_nb += 1
 
 				if fragments_nb == len(aggregated_inquiries):
@@ -161,7 +172,13 @@ def saveTheDate(query_checking, query_insertion, query_update, item):
 	database = toolbox.limitedConnection(path.basename(__file__))
 
 	########### ITEM EXTRACTION FOR OPERATIONS
-	event = {"name": item[0], "date": item[1], "location": item[2], "source_id": item[3], "inquiry_id": item[4], "owner": item[5]}
+	event = {
+	"name": item[0],
+	"date": item[1],
+	"location": item[2],
+	"source_id": item[3],
+	"inquiry_id": item[4],
+	"owner": item[5]}
 
 	########### DATABASE CHECKING
 	call_data_cheking = database.cursor()
@@ -170,14 +187,17 @@ def saveTheDate(query_checking, query_insertion, query_update, item):
 	call_data_cheking.close()
 
 	if checking is not None:
-		dataset = {"complete_inquiries_id": checking[0], "complete_owners": checking[1], "split_owners": filter(None, checking[1].split(","))}
+		dataset = {
+		"complete_inquiries_id": checking[0],
+		"complete_owners": checking[1],
+		"split_owners": filter(None, checking[1].split(","))}
 
 		########### NEW ATTRIBUTES CREATION (COMPLETE ID & COMPLETE OWNERS)
 		if event["inquiry_id"] not in dataset["complete_inquiries_id"]:
-			dataset["complete_inquiries_id"] = dataset["complete_inquiries_id"]+event["inquiry_id"].replace(",","")+","
+			dataset["complete_inquiries_id"] = dataset["complete_inquiries_id"] + event["inquiry_id"].replace(",","") + ","
 
 		if event["owner"] not in dataset["complete_owners"]:
-			dataset["complete_owners"] = dataset["complete_owners"]+event["owner"].replace(",","")+","
+			dataset["complete_owners"] = dataset["complete_owners"] + event["owner"].replace(",","") + ","
 
 		########### CREATE A SET IN ORDER TO UPDATE THE DATABASE
 		item_update = [dataset["complete_inquiries_id"], dataset["complete_owners"], event["name"]]
@@ -236,13 +256,27 @@ def resultsPack(register, user_id_comma):
 		query_source = "SELECT name FROM sources_kalendar_serge WHERE id = %s and type <> 'language'"
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_kalendar_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
-		item_arguments = {"user_id": register, "source_id": row[6], "inquiry_id": filter(None, str(row[7]).split(",")), "query_source": query_source, "query_inquiry": query_inquiry, "multisource": True}
+		item_arguments = {
+		"user_id": register,
+		"source_id": row[6],
+		"inquiry_id": filter(None, str(row[7]).split(",")),
+		"query_source": query_source,
+		"query_inquiry": query_inquiry,
+		"multisource": True}
 
 		attributes = toolbox.packaging(item_arguments, connection)
 		description = (row[2] + ", " + row[3] + "\n" + row[4]).strip().encode('ascii', errors='xmlcharrefreplace')
 
 		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
-		item = {"id": row[0], "title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": description, "link": row[5].strip().encode('ascii', errors='xmlcharrefreplace'), "label": label, "source": attributes["source"], "inquiry": attributes["inquiry"], "wiki_link": None}
+		item = {
+		"id": row[0],
+		"title": row[1].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(),
+		"description": description,
+		"link": row[5].strip().encode('ascii', errors='xmlcharrefreplace'),
+		"label": label,
+		"source": attributes["source"], 
+		"inquiry": attributes["inquiry"],
+		"wiki_link": None}
 		results_pack.append(item)
 
 	return results_pack

@@ -14,7 +14,7 @@ def databaseConnection():
 
 	permissions = open("/var/www/Serge/configuration/core_configuration", "r")
 	passSQL = permissions.read().strip()
-	passSQL = (re.findall("Database Password: "+'([^\s]+)', passSQL))[0]
+	passSQL = (re.findall("Database Password: " + '([^\s]+)', passSQL))[0]
 	permissions.close()
 
 	database = MySQLdb.connect(host="localhost", user="Serge", passwd=passSQL, db="Serge", use_unicode=1, charset="utf8mb4")
@@ -44,7 +44,7 @@ def sergeTelecom(full_results, stamps):
 
 	if alert_lenght == 1:
 
-		query_translation = "SELECT "+language+" FROM text_content_serge WHERE EN = 'alert found'"
+		query_translation = "SELECT " + language + " FROM text_content_serge WHERE EN = 'alert found'"
 
 		call_users = database.cursor()
 		call_users.execute(query_translation, )
@@ -55,7 +55,7 @@ def sergeTelecom(full_results, stamps):
 
 	elif alert_lenght > 1:
 
-		query_translation = "SELECT "+language+" FROM text_content_serge WHERE EN = 'alerts found'"
+		query_translation = "SELECT " + language + " FROM text_content_serge WHERE EN = 'alerts found'"
 
 		call_users = database.cursor()
 		call_users.execute(query_translation, )
@@ -68,7 +68,7 @@ def sergeTelecom(full_results, stamps):
 	results_string = u""
 
 	for alert in full_results:
-		results_string = results_string + alert["title"] + " : " +alert["link"] + "\n"
+		results_string = results_string + alert["title"] + " : " + alert["link"] + "\n"
 
 		message = "{0}, {1} {2}\n{3}".format(stamps["user"][0:10], alert_lenght, translation, results_string)
 
@@ -93,9 +93,9 @@ def sergeTelecom(full_results, stamps):
 
 	######### PREPARATION OF THE SEND REQUEST
 	service_name = client.get('/sms')
-	post_sms = "/sms/"+service_name[0]+"/jobs"
+	post_sms = "/sms/" + service_name[0] + "/jobs"
 
-	sender_retrieval = "/sms/"+service_name[0]+"/senders"
+	sender_retrieval = "/sms/" + service_name[0] + "/senders"
 	sender = client.get(sender_retrieval)
 
 	######### SEND THE SMS ALERT

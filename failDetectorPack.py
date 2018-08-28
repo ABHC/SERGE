@@ -28,7 +28,7 @@ def httpsCase(link):
 	split_link = link.split("https")
 	alter_link = split_link[len(split_link)-1]
 	alter_link = alter_link.replace("://", "").replace("//", "")
-	alter_link = "https://"+alter_link
+	alter_link = "https://" + alter_link
 
 	checklink = vurlExt(alter_link)
 
@@ -42,7 +42,7 @@ def httpCase(link):
 	split_link = link.split("http")
 	alter_link = split_link[len(split_link)-1]
 	alter_link = alter_link.replace("://", "").replace("s//", "").replace("//", "")
-	alter_link = "http://"+alter_link
+	alter_link = "http://" + alter_link
 
 	checklink = vurlExt(alter_link)
 
@@ -56,7 +56,7 @@ def wwwCase(link):
 	split_link = link.split("www.")
 	alter_link = split_link[len(split_link)-1]
 	alter_link = alter_link.replace("://", "").replace("//", "")
-	alter_link = "www."+alter_link
+	alter_link = "www." + alter_link
 
 	checklink = vurlExt(alter_link)
 
@@ -83,7 +83,7 @@ def domainCase(link, source_id):
 	protocol = parsed.scheme
 	domain = parsed.netloc
 	link = link.strip("/")
-	alter_link = protocol+"://"+domain+"/"+link
+	alter_link = protocol + "://" + domain + "/" + link
 
 	checklink = vurlExt(alter_link)
 

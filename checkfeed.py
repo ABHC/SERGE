@@ -218,7 +218,7 @@ def feedMeUp(link, user_id, typeName, pack_id, recursive):
 	database = databaseConnection()
 
 	########### UPDATE THE STATUS OF THE FEEDS RESEARCH
-	insert_status = ("Search for : "+link)
+	insert_status = ("Search for : " + link)
 	update_users = ("UPDATE users_table_serge SET add_source_status = %s WHERE id = %s")
 
 	update = database.cursor()
@@ -266,15 +266,15 @@ def feedMeUp(link, user_id, typeName, pack_id, recursive):
 					output.append(link[1])
 
 				for path in list(set(output)):
-					link = "https://"+path
+					link = "https://" + path
 					if validators.url(link):
 						feedMeUp(link, user_id, typeName, pack_id, True)
 					else:
-						link = link[0].strip("/")+link[1:]
+						link = link[0].strip("/") + link[1:]
 						parsed = urlparse(base_link)
 						protocol = parsed.scheme
 						base = parsed.netloc
-						link = protocol+"://"+base+"/"+link
+						link = protocol + "://" + base + "/" + link
 						feedMeUp(link, user_id, typeName, pack_id, True)
 
 		else:
@@ -286,7 +286,7 @@ def feedMeUp(link, user_id, typeName, pack_id, recursive):
 			backgroundLinksAddition(link, user_id, typeName, pack_id, title)
 
 	elif rss_error is True and recursive is False:
-		insert_status = ("Error Serge can't analyse : "+link)
+		insert_status = ("Error Serge can't analyse : " + link)
 		update_users = ("UPDATE users_table_serge SET add_source_status = %s WHERE id = %s")
 
 		update = database.cursor()
@@ -346,7 +346,7 @@ except IndexError:
 			status_gate = True
 
 if not validators.url(link) is True:
-	insert_status = ("Error Serge can't analyse : "+link)
+	insert_status = ("Error Serge can't analyse : " + link)
 	update_users = ("UPDATE users_table_serge SET add_source_status = %s WHERE id = %s")
 
 	update = database.cursor()
@@ -362,7 +362,7 @@ number_links = 0
 feedMeUp(link, user_id, typeName, pack_id, False)
 
 if number_links == 0:
-	insert_status = ("No source to add on : "+link)
+	insert_status = ("No source to add on : " + link)
 	update_users = ("UPDATE users_table_serge SET add_source_status = %s WHERE id = %s")
 
 	update = database.cursor()

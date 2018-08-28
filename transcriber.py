@@ -68,7 +68,13 @@ def requestBuilder(inquiry, query_dataset, query_builder):
 		call_equivalence.close()
 
 		######### INITIALIZE ONE DICTIONNARY FOR EACH ACTIVE API RELATED TO THE INQUIRY
-		request = {"source_id": source, "type": row[0], "basename": row[1], "inquiry_api": "", "inquiry_link": ""}
+		request = {
+		"source_id": source,
+		"type": row[0],
+		"basename": row[1],
+		"inquiry_api": "",
+		"inquiry_link": ""}
+		
 		inquiries_set.append(request)
 		quote = row[4]
 

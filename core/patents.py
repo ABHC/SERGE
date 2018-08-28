@@ -74,7 +74,7 @@ def pathfinder(now):
 			owners_str = ","
 
 			######### CREATE OWNERS LIST FOR COUPLE INQUIRY-SOURCE
-			owners_list = re.findall('\|([0-9]+):[0-9!,]*,'+str(api_pack["source_id"])+',', inquiry["applicable_owners_sources"])
+			owners_list = re.findall('\|([0-9]+):[0-9!,]*,' + str(api_pack["source_id"]) + ',', inquiry["applicable_owners_sources"])
 
 			for owner in owners_list:
 				owner = filter(None, owner.replace("|", "").strip().split(":"))
@@ -82,7 +82,7 @@ def pathfinder(now):
 
 			######### RESEARCH PATENTS ON RSS FEEDS WITH FEEDPARSER MODULE
 			if api_pack["type"] == "RSS" and re.search('^(,[0-9]+)+,$', owners_str) is not None:
-				logger_info.info(api_pack["inquiry_api"]+"\n")
+				logger_info.info(api_pack["inquiry_api"] + "\n")
 				req_results = sergenet.aLinkToThePast(api_pack["inquiry_link"], 'fullcontent')
 				feed_content = req_results[0]
 				feed_error = req_results[1]
@@ -92,16 +92,16 @@ def pathfinder(now):
 						parsed_content = feedparser.parse(feed_content)
 					except Exception, except_type:
 						parsed_content = None
-						logger_error.error("PARSING ERROR IN :"+api_pack["inquiry_link"]+"\n")
+						logger_error.error("PARSING ERROR IN :" + api_pack["inquiry_link"] + "\n")
 						logger_error.error(repr(except_type))
 
 					if parsed_content is not None:
 						range_article = 0
 						rangemax_article = len(parsed_content.entries)
-						logger_info.info("numbers of patents :"+unicode(rangemax_article)+"\n \n")
+						logger_info.info("numbers of patents :" + unicode(rangemax_article) + "\n \n")
 
 						if rangemax_article == 0:
-							logger_info.info("VOID QUERY :"+api_pack["inquiry_link"]+"\n\n")
+							logger_info.info("VOID QUERY :" + api_pack["inquiry_link"] + "\n\n")
 
 						else:
 							while range_article < rangemax_article:
@@ -110,7 +110,7 @@ def pathfinder(now):
 									if post_title == "":
 										post_title = "NO TITLE"
 								except AttributeError:
-									logger_error.warning("BEACON ERROR : missing <title> in "+api_pack["inquiry_link"])
+									logger_error.warning("BEACON ERROR : missing <title> in " + api_pack["inquiry_link"])
 									logger_error.warning(traceback.format_exc())
 									post_title = "NO TITLE"
 
@@ -119,7 +119,7 @@ def pathfinder(now):
 									post_link = post_link.split("&")
 									post_link = post_link[0]
 								except AttributeError:
-									logger_error.warning("BEACON ERROR : missing <link> in "+api_pack["inquiry_link"])
+									logger_error.warning("BEACON ERROR : missing <link> in " + api_pack["inquiry_link"])
 									logger_error.warning(traceback.format_exc())
 									post_link = ""
 
@@ -130,12 +130,12 @@ def pathfinder(now):
 									else:
 										post_date = now
 								except AttributeError:
-									logger_error.warning("BEACON ERROR : missing <date> in "+api_pack["inquiry_link"])
+									logger_error.warning("BEACON ERROR : missing <date> in " + api_pack["inquiry_link"])
 									logger_error.warning(traceback.format_exc())
 									post_date = now
 
-								inquiry_id_comma = str(inquiry["inquiry_id"])+","
-								inquiry_id_comma2 = ","+str(inquiry["inquiry_id"])+","
+								inquiry_id_comma = str(inquiry["inquiry_id"]) + ","
+								inquiry_id_comma2 = "," + str(inquiry["inquiry_id"]) + ","
 
 								######### LEGAL STATUS RESEARCH
 								legal_args = {
@@ -159,8 +159,14 @@ def pathfinder(now):
 								"lens_link": legal_dataset["lens_link"],
 								"legal_check_date": legal_dataset["new_check_date"]}
 
+								item_update = [
+								legal_dataset["legal_abstract"],
+								legal_dataset["legal_status"],
+								legal_dataset["lens_link"],
+								legal_dataset["new_check_date"],
+								post_link]
+								
 								item_columns = str(tuple(item.keys())).replace("'","")
-								item_update = [legal_dataset["legal_abstract"], legal_dataset["legal_status"], legal_dataset["lens_link"], legal_dataset["new_check_date"], post_link]
 
 								########### QUERY FOR DATABASE CHECKING
 								query_checking = ("SELECT inquiry_id, owners FROM results_patents_serge WHERE link = %s AND title = %s")
@@ -178,7 +184,7 @@ def pathfinder(now):
 								########### CALL insertOrUpdate FUNCTION
 								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, inquiry_id_comma, need_jelly)
 
-								range_article = range_article+1
+								range_article = range_article + 1
 
 			else:
 				logger_info.warning("\n Error : the feed is unavailable")
@@ -273,7 +279,7 @@ def legalScrapper(legal_args, inquiry):
 		legal_check_date = float(legal_check_date)
 
 	######### LEGAL STATUS RESEARCH
-	if (inquiry["legal_research"] == 1 or inquiry["legal_research"] == 2) and legal_args["owners"] != "," and (legal_check_date is None or (legal_check_date+15552000) <= legal_args["now"]) :
+	if (inquiry["legal_research"] == 1 or inquiry["legal_research"] == 2) and legal_args["owners"] != "," and (legal_check_date is None or (legal_check_date + 15552000) <= legal_args["now"]) :
 
 		######### GO TO WIPO WEBSITE
 		req_results = sergenet.aLinkToThePast(legal_args["post_link"], 'rss')
@@ -304,7 +310,8 @@ def legalScrapper(legal_args, inquiry):
 
 		######### BUILD PATENT LENS LINK
 		if country_code is not None and publication_number is not None and kind_code is not None:
-			lens_link = "https://www.lens.org/lens/patent/"+str(country_code)+"_"+str(publication_number)+"_"+str(kind_code)+"/regulatory"
+			lens_link = ("https://www.lens.org/lens/patent/" + str(country_code) + "_" +
+			str(publication_number) + "_" + str(kind_code) + "/regulatory")
 		else:
 			lens_link = None
 
@@ -330,7 +337,7 @@ def legalScrapper(legal_args, inquiry):
 				i = i + 1
 
 			if cut_index is not None:
-				legal_status = strong_list[cut_index-1]
+				legal_status = strong_list[cut_index - 1]
 				legal_status = str(legal_status).replace("<strong>", "").replace("</strong>", "").replace("+", "").replace("-", "")
 				legal_comparator = legal_status.lower()
 				legal_abstract = decodeLegal(legal_comparator)

@@ -33,10 +33,10 @@ def extensionLibrary():
 		extProcesses = ()
 		for extension in extensions_list:
 			if extension != "":
-				exec("import extensions."+extension+"."+extension+" as "+extension)
-				exec("proc"+extension+" = Process(target="+extension+".startingPoint, args=())")
-				exec("proc"+extension+".start()")
-				exec("extProcesses += (proc"+extension+",)")
+				exec("import extensions." + extension + "." + extension + " as " + extension)
+				exec("proc" + extension + " = Process(target=" + extension + ".startingPoint, args=())")
+				exec("proc" + extension + ".start()")
+				exec("extProcesses += (proc" + extension + ",)")
 
 	return extProcesses
 

@@ -53,12 +53,12 @@ database = databaseConnection()
 now = int(time.time())                            #NOW IS A TIMESTAMPS
 pydate = datetime.date.today()                    #PYDATE IS A DATE (YYYY-MM-DD)
 isoweekday = datetime.date.isoweekday(pydate)     #ISOWEEKDAY IS AN INTEGER BETWEEN 1 AND 7 (MONDAY=1, SUNDAY=7)
-today = ","+str(isoweekday)+","                   #TODAY IS A STRING
+today = "," + str(isoweekday) + ","                   #TODAY IS A STRING
 current = dt.now()                                #CURRENT IS A DATE (YYYY-MM-DD hh-mm-ss.ssssss)
 hour = current.hour                               #HOUR IS AN INTEGER BETWEEN 0 AND 23
 pydate = unicode(pydate)                          #TRANSFORM PYDATE INTO UNICODE
 
-logger_info.info(time.asctime(time.gmtime(now))+"\n")
+logger_info.info(time.asctime(time.gmtime(now)) + "\n")
 
 ######### DATABASE INTERGRITY CHECKING
 failsafe.checkMate()
@@ -70,7 +70,7 @@ max_users = call_users.fetchone()
 call_users.close()
 
 max_users = int(max_users[0])
-logger_info.info("\nMax Users : " + str(max_users)+"\n")
+logger_info.info("\nMax Users : " + str(max_users) + "\n")
 
 ######### RSS SERGE UPDATE
 insertSQL.ofSourceAndName(now)
@@ -159,7 +159,7 @@ for register, user in user_list:
 		sciences_results = sciences.sciencespack(register, user_id_comma)
 		extensions_results = extensionsManager.packThemAll(register, user_id_comma)
 
-		full_results = news_results+patents_results+sciences_results+extensions_results
+		full_results = news_results + patents_results + sciences_results + extensions_results
 
 		pending_all = len(full_results)
 
@@ -275,4 +275,4 @@ the_end = int(time.time())
 exec_time = (the_end - float(now))
 
 logger_info.info("Timelog timestamp update")
-logger_info.info("SERGE END : NOMINAL EXECUTION ("+str(exec_time)+" sec)\n")
+logger_info.info("SERGE END : NOMINAL EXECUTION (" + str(exec_time) + " sec)\n")

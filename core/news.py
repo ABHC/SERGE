@@ -49,7 +49,7 @@ def voyager(newscast_args):
 		greenlight = False
 	else:
 		greenlight = False
-		logger_error.critical("UNKNOWN ERROR WITH ETAG IN :"+newscast_args["source_link"]+"\n")
+		logger_error.critical("UNKNOWN ERROR WITH ETAG IN :" + newscast_args["source_link"] + "\n")
 
 	########### THE SEARCH IS EXECUTED OR NOT ACCORDING TO THE SOURCE'S ETAG
 	if greenlight is True:
@@ -94,7 +94,7 @@ def voyager(newscast_args):
 			try:
 				parsed_content = feedparser.parse(rss)
 			except Exception, except_type:
-				logger_error.error("PARSING ERROR IN :"+newscast_args["source_link"]+"\n")
+				logger_error.error("PARSING ERROR IN :" + newscast_args["source_link"] + "\n")
 				logger_error.error(repr(except_type))
 
 			########### RSS ANALYZE
@@ -108,21 +108,21 @@ def voyager(newscast_args):
 					if post_title == "":
 						post_title = "NO TITLE"
 				except (AttributeError, title == ""):
-					logger_error.warning("BEACON ERROR : missing <title> in "+newscast_args["source_link"])
+					logger_error.warning("BEACON ERROR : missing <title> in " + newscast_args["source_link"])
 					logger_error.warning(traceback.format_exc())
 					post_title = "NO TITLE"
 
 				try:
 					post_description = (parsed_content.entries[range_article].description).strip()
 				except AttributeError:
-					logger_error.warning("BEACON ERROR : missing <description> in "+newscast_args["source_link"])
+					logger_error.warning("BEACON ERROR : missing <description> in " + newscast_args["source_link"])
 					logger_error.warning(traceback.format_exc())
 					post_description = ""
 
 				try:
 					post_link = parsed_content.entries[range_article].link
 				except AttributeError:
-					logger_error.warning("BEACON ERROR : missing <link> in "+newscast_args["source_link"])
+					logger_error.warning("BEACON ERROR : missing <link> in " + newscast_args["source_link"])
 					logger_error.warning(traceback.format_exc())
 					post_link = ""
 
@@ -130,7 +130,7 @@ def voyager(newscast_args):
 					post_date = parsed_content.entries[range_article].published_parsed
 					post_date = time.mktime(post_date)
 				except:
-					logger_error.warning("BEACON ERROR : missing <date> in "+newscast_args["source_link"])
+					logger_error.warning("BEACON ERROR : missing <date> in " + newscast_args["source_link"])
 					logger_error.warning(traceback.format_exc())
 					post_date = newscast_args["now"]
 
@@ -145,7 +145,7 @@ def voyager(newscast_args):
 
 					while tagdex < len(post_tags):
 						tags_string = tags_string + parsed_content.entries[range_article].tags[tagdex].term.lower() + " "
-						tagdex = tagdex+1
+						tagdex = tagdex + 1
 				except:
 					tags_string = ""
 
@@ -163,7 +163,7 @@ def voyager(newscast_args):
 					aggregated_inquiries = toolbox.aggregatesSupport(inquiry["inquiry"])
 
 					for fragments in aggregated_inquiries:
-						if (re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', post_title, re.IGNORECASE) or re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', post_description, re.IGNORECASE) or re.search('[^a-z]'+re.escape(fragments)+'.{0,3}(\W|$)', tags_string, re.IGNORECASE)):
+						if (re.search('[^a-z]' + re.escape(fragments) + '.{0,3}(\W|$)', post_title, re.IGNORECASE) or re.search('[^a-z]' + re.escape(fragments) + '.{0,3}(\W|$)', post_description, re.IGNORECASE) or re.search('[^a-z]' + re.escape(fragments) + '.{0,3}(\W|$)', tags_string, re.IGNORECASE)):
 							fragments_nb += 1
 
 					if fragments_nb == len(aggregated_inquiries) and post_link is not None:
@@ -184,7 +184,7 @@ def voyager(newscast_args):
 						########### QUERY FOR DATABASE CHECKING
 						query_checking = ("SELECT inquiry_id, owners FROM results_news_serge WHERE link = %s AND title = %s")
 						query_link_checking = ("SELECT inquiry_id, owners FROM results_news_serge WHERE link = %s")
-						query_jellychecking = ("SELECT title, link, inquiry_id, owners FROM results_news_serge WHERE source_id = %s AND `date` BETWEEN %s AND (%s+43200)")
+						query_jellychecking = ("SELECT title, link, inquiry_id, owners FROM results_news_serge WHERE source_id = %s AND `date` BETWEEN %s AND (%s + 43200)")
 
 						########### QUERY FOR DATABASE INSERTION
 						query_insertion = ("INSERT INTO results_news_serge " + item_columns + " VALUES (%s, %s, %s, %s, %s, %s, %s)")

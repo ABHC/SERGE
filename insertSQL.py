@@ -33,7 +33,7 @@ def ofSourceAndName(now):
 	call_rss.close()
 
 	max_rss = int(max_rss[0])
-	logger_info.info("Max RSS : " + str(max_rss)+"\n")
+	logger_info.info("Max RSS : " + str(max_rss) + "\n")
 
 	######### LAST BIMENSUAL RESEARCH
 	try:
@@ -51,7 +51,7 @@ def ofSourceAndName(now):
 
 	######### SEARCH FOR SOURCE NAME
 	num = 1
-	interval = float(now)-last_refresh
+	interval = float(now) - last_refresh
 
 	######### BIMENSUAL REFRESH
 	if interval >= 5097600:
@@ -64,7 +64,7 @@ def ofSourceAndName(now):
 			call_rss.close()
 
 			link = rows[0]
-			favicon_link = "https://www.google.com/s2/favicons?domain="+link
+			favicon_link = "https://www.google.com/s2/favicons?domain=" + link
 
 			########### RSS FEED RECOVERY
 			req_results = sergenet.aLinkToThePast(link, 'fullcontent')
@@ -76,14 +76,14 @@ def ofSourceAndName(now):
 				try:
 					xmldoc = feedparser.parse(rss)
 				except AttributeError:
-					logger_error.error("PARSING ERROR IN :"+link+"\n")
+					logger_error.error("PARSING ERROR IN :" + link + "\n")
 
 				########### SOURCE TITLE RETRIEVAL
 				try:
 					source_title = xmldoc.feed.title
 					source_title = source_title.capitalize()
 				except AttributeError:
-					logger_info.warning("NO TITLE IN :"+link+"\n")
+					logger_info.warning("NO TITLE IN :" + link + "\n")
 					source_title = None
 
 				update = ("UPDATE sources_news_serge SET name = %s WHERE id = %s")
@@ -128,7 +128,7 @@ def ofSourceAndName(now):
 					logger_error.error(repr(except_type))
 				update_rss.close()
 
-			num = num+1
+			num = num + 1
 
 		now = unicode(now)
 
@@ -162,7 +162,7 @@ def ofSourceAndName(now):
 			source_name = rows[1]
 			favicon = rows[2]
 			refresh_string = "[!NEW!]"
-			favicon_link = "https://www.google.com/s2/favicons?domain="+link
+			favicon_link = "https://www.google.com/s2/favicons?domain=" + link
 
 			if source_name is None or refresh_string in source_name:
 
@@ -177,14 +177,14 @@ def ofSourceAndName(now):
 					try:
 						xmldoc = feedparser.parse(rss)
 					except AttributeError:
-						logger_error.error("PARSING ERROR IN :"+link+"\n")
+						logger_error.error("PARSING ERROR IN :" + link + "\n")
 
 					########### SOURCE TITLE RETRIEVAL
 					try:
 						source_title = xmldoc.feed.title
 						source_title = source_title.capitalize()
 					except AttributeError:
-						logger_info.warning("NO TITLE IN :"+link+"\n")
+						logger_info.warning("NO TITLE IN :" + link + "\n")
 						source_title = None
 
 					update = ("UPDATE sources_news_serge SET name = %s WHERE id = %s")
@@ -255,7 +255,7 @@ def ofSourceAndName(now):
 						logger_error.error(repr(except_type))
 					update_rss.close()
 
-			num = num+1
+			num = num + 1
 
 
 def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, inquiry_id_comma, need_jelly):
@@ -287,18 +287,18 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 
 			########### NEW ATTRIBUTES CREATION (COMPLETE ID & COMPLETE OWNERS)
 			if item["inquiry_id"] not in field_id_inquiry:
-				complete_id = field_id_inquiry+inquiry_id_comma
+				complete_id = field_id_inquiry + inquiry_id_comma
 
 			split_index = 1
 
-			while split_index < (len(already_owners_list)-1):
-				already_owner = ","+already_owners_list[split_index]+","
-				add_owner = already_owners_list[split_index]+","
+			while split_index < (len(already_owners_list) - 1):
+				already_owner = "," + already_owners_list[split_index] + ","
+				add_owner = already_owners_list[split_index] + ","
 
 				if already_owner not in item_owners:
-					complete_owners = complete_owners+add_owner
+					complete_owners = complete_owners + add_owner
 
-				split_index = split_index+1
+				split_index = split_index + 1
 
 			########### ITEM UPDATE MODIFICATION (ADD complete_id AND complete_owners)
 			item_update_second = []
@@ -336,18 +336,18 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 
 				########### NEW ATTRIBUTES CREATION (COMPLETE ID & COMPLETE OWNERS)
 				if item["inquiry_id"] not in field_id_inquiry:
-					complete_id = field_id_inquiry+inquiry_id_comma
+					complete_id = field_id_inquiry + inquiry_id_comma
 
 				split_index = 1
 
-				while split_index < (len(already_owners_list)-1):
-					already_owner = ","+already_owners_list[split_index]+","
-					add_owner = already_owners_list[split_index]+","
+				while split_index < (len(already_owners_list) - 1):
+					already_owner = "," + already_owners_list[split_index] + ","
+					add_owner = already_owners_list[split_index] + ","
 
 					if already_owner not in item_owners:
-						complete_owners = complete_owners+add_owner
+						complete_owners = complete_owners + add_owner
 
-					split_index = split_index+1
+					split_index = split_index + 1
 
 				########### ITEM UPDATE MODIFICATION (ADD complete_id, complete_owners AND TITLE)
 				item_update_second = []
@@ -398,22 +398,22 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 
 							########### NEW ATTRIBUTES CREATION (COMPLETE ID & COMPLETE OWNERS)
 							if item["inquiry_id"] not in field_id_inquiry:
-								complete_id = field_id_inquiry+inquiry_id_comma
+								complete_id = field_id_inquiry + inquiry_id_comma
 
 							########### NEW ATTRIBUTES CREATION (COMPLETE ID & COMPLETE OWNERS)
 							if item["inquiry_id"] not in field_id_inquiry:
-								complete_id = field_id_inquiry+inquiry_id_comma
+								complete_id = field_id_inquiry + inquiry_id_comma
 
 							split_index = 1
 
-							while split_index < (len(already_owners_list)-1):
-								already_owner = ","+already_owners_list[split_index]+","
-								add_owner = already_owners_list[split_index]+","
+							while split_index < (len(already_owners_list) - 1):
+								already_owner = "," + already_owners_list[split_index] + ","
+								add_owner = already_owners_list[split_index] + ","
 
 								if already_owner not in item_owners:
-									complete_owners = complete_owners+add_owner
+									complete_owners = complete_owners + add_owner
 
-								split_index = split_index+1
+								split_index = split_index + 1
 
 							########### JELLY UPDATE
 							########### MODIFICATED TITLE : ATTRIBUTES UPDATE
@@ -456,20 +456,20 @@ def stairwayToUpdate(full_results, register, now, predecessor):
 
 	######### CHECK AND UPDATE SEND STATUS
 	for result in full_results:
-		query = ("SELECT send_status FROM results_"+result["label"]+"_serge WHERE id = %s")
+		query = ("SELECT send_status FROM results_" + result["label"] + "_serge WHERE id = %s")
 
 		call_news = database.cursor()
 		call_news.execute(query, (result["id"],))
 		row = call_news.fetchone()
 
 		send_status = row[0]
-		register_comma = register+","
-		register_comma2 = ","+register+","
+		register_comma = register + ","
+		register_comma2 = "," + register + ","
 
 		if register_comma2 not in send_status:
-			complete_status = send_status+register_comma
+			complete_status = send_status + register_comma
 
-			update = ("UPDATE results_"+result["label"]+"_serge SET send_status = %s WHERE id = %s")
+			update = ("UPDATE results_" + result["label"] + "_serge SET send_status = %s WHERE id = %s")
 
 			try:
 				call_news.execute(update, (complete_status, result["id"]))

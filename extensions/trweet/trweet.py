@@ -90,7 +90,15 @@ def startingPoint():
 					if "!" not in target:
 						targets_list.append(target)
 
-		inquiry = {"id": row[0], "type": row[1], "inquiry": row[2], "applicable_owners_targets": row[3], "owners": owners, "targets": targets_list.sort(), "language": row[4], "last_launch": row[5]}
+		inquiry = {
+		"id": row[0],
+		"type": row[1],
+		"inquiry": row[2],
+		"applicable_owners_targets": row[3],
+		"owners": owners,
+		"targets": targets_list.sort(),
+		"language": row[4],
+		"last_launch": row[5]}
 		search_list.append(inquiry)
 
 	if len(search_list) > 0:
@@ -151,7 +159,7 @@ def trweetFishing(inquiry):
 
 	########### USEFUL VARIABLES
 	fishing_time = int(time.time())
-	inquiry_id_comma2 = ","+str(inquiry["id"])+","
+	inquiry_id_comma2 = "," + str(inquiry["id"]) + ","
 
 	########### RESEARCH PLAIN TWEETS
 	if inquiry["language"] is None:
@@ -170,7 +178,7 @@ def trweetFishing(inquiry):
 		likes = trweet.favorite_count
 		trweet_id = trweet.id
 		pseudo = trweet.author.screen_name.encode("utf8")
-		link = "https://twitter.com/"+str(pseudo)+"/status/"+str(trweet_id)+"/"
+		link = "https://twitter.com/" + str(pseudo) + "/status/" + str(trweet_id) + "/"
 
 		########### HASH TWEET ID
 		salt = "blackSalt"
@@ -215,7 +223,7 @@ def lakesOfTrweets(inquiry):
 
 	########### USEFUL VARIABLES
 	fishing_time = int(time.time())
-	inquiry_id_comma2 = ","+str(inquiry["id"])+","
+	inquiry_id_comma2 = "," + str(inquiry["id"]) + ","
 
 	########### RESEARCH GEOLOCALIZED TWEETS
 	if inquiry["language"] is None:
@@ -304,12 +312,12 @@ def trweetTorrent(inquiry):
 
 	########### USEFUL VARIABLES
 	fishing_time = (time.time())
-	inquiry_id_comma2 = ","+str(inquiry["id"])+","
+	inquiry_id_comma2 = "," + str(inquiry["id"]) + ","
 
 	########### RESEARCH TARGETS TIMELINES
 	for target in inquiry["targets"]:
 		target_owners_str = ","
-		raw_target_owners = re.findall('[^!@A-Za-z0-9_]'+'[0-9]*'+":"+'[@A-Za-z0-9_!,]*'+","+target+",", inquiry["applicable_owners_targets"])
+		raw_target_owners = re.findall('[^!@A-Za-z0-9_]' + '[0-9]*' + ":" + '[@A-Za-z0-9_!,]*' + "," + target + ",", inquiry["applicable_owners_targets"])
 
 		for target_owner in raw_target_owners:
 			target_owner = (target_owner.replace("|", "").strip().split(":"))[0]
@@ -325,7 +333,7 @@ def trweetTorrent(inquiry):
 			likes = trweet.favorite_count
 			trweet_id = trweet.id
 			pseudo = trweet.author.screen_name.encode("utf8")
-			link = "https://twitter.com/"+str(pseudo)+"/status/"+str(trweet_id)+"/"
+			link = "https://twitter.com/" + str(pseudo) + "/status/" + str(trweet_id) + "/"
 
 			########### HASH TWEET ID
 			salt = "blackSalt"
@@ -335,7 +343,7 @@ def trweetTorrent(inquiry):
 			aggregated_inquiries = toolbox.aggregatesSupport(inquiry["inquiry"])
 
 			for fragments in aggregated_inquiries:
-				if (re.search('[^a-z]'+re.escape(aggregated_inquiries)+'.{0,3}(\W|$)', tweet, re.IGNORECASE) or re.search('^'+re.escape(':all')+'$', inquiry["inquiry"], re.IGNORECASE)) and re.search('^([,]{1}[A-Za-z0-9@_]+)*[,]{1}$', owners_str) is not None:
+				if (re.search('[^a-z]' + re.escape(aggregated_inquiries) + '.{0,3}(\W|$)', tweet, re.IGNORECASE) or re.search('^' + re.escape(':all') + '$', inquiry["inquiry"], re.IGNORECASE)) and re.search('^([,]{1}[A-Za-z0-9@_]+)*[,]{1}$', owners_str) is not None:
 					fragments_nb += 1
 
 			if fragments_nb == len(aggregated_inquiries):
@@ -410,13 +418,13 @@ def trweetBucket(item, inquiry_id, inquiry_id_comma2, fishing_time, query_checki
 		split_index = 1
 
 		while split_index < (len(already_owners_list)-1):
-			already_owner = ","+already_owners_list[split_index]+","
-			add_owner = already_owners_list[split_index]+","
+			already_owner = "," + already_owners_list[split_index] + ","
+			add_owner = already_owners_list[split_index] + ","
 
 			if already_owner not in query_owners:
 				complete_owners = complete_owners + add_owner
 
-			split_index = split_index+1
+			split_index = split_index + 1
 
 		########### OWNERS & ID UPDATE
 		update_data = database.cursor()
@@ -479,13 +487,27 @@ def resultsPack(register, user_id_comma):
 		######### SEARCH FOR SOURCE NAME AND COMPLETE REQUEST OF THE USER
 		query_inquiry = "SELECT inquiry, applicable_owners_sources FROM inquiries_trweet_serge WHERE id = %s AND applicable_owners_sources LIKE %s AND active > 0"
 
-		item_arguments = {"user_id": register, "source_id": None, "inquiry_id": filter(None, str(trweet[7]).split(",")), "query_source": None, "query_inquiry": query_inquiry, "multisource": False}
+		item_arguments = {
+		"user_id": register,
+		"source_id": None,
+		"inquiry_id": filter(None, str(trweet[7]).split(",")),
+		"query_source": None,
+		"query_inquiry": query_inquiry,
+		"multisource": False}
 
 		attributes = toolbox.packaging(item_arguments, connection)
 		description = (trweet[1] + "\n" + trweet[3] + ", likes : " + trweet[4] + ", retweets : " + trweet[5]).strip().encode('ascii', errors='xmlcharrefreplace')
 
 		######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
-		item = {"id": trweet[0], "title": trweet[2].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(), "description": description, "link": trweet[6].strip().encode('ascii', errors='xmlcharrefreplace'), "label": label, "source": trweet[1], "inquiry": attributes["inquiry"], "wiki_link": None}
+		item = {
+		"id": trweet[0],
+		"title": trweet[2].strip().encode('ascii', errors='xmlcharrefreplace').lower().capitalize(),
+		"description": description,
+		"link": trweet[6].strip().encode('ascii', errors='xmlcharrefreplace'),
+		"label": label,
+		"source": trweet[1],
+		"inquiry": attributes["inquiry"],
+		"wiki_link": None}
 		results_pack.append(item)
 
 	return results_pack

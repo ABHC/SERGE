@@ -26,7 +26,7 @@ def mailInit(full_results, register, stamps):
 
 	######### DATE VARIABLES
 	time_units = stamps["pydate"].split("-")
-	stamps["pydate"] = time_units[2]+"/"+time_units[1]+"/"+time_units[0]
+	stamps["pydate"] = time_units[2] + "/" + time_units[1] + "/" + time_units[0]
 
 	######### DESIGN CHOSEN BY USER
 	query_mail_design = "SELECT mail_design FROM users_table_serge WHERE id = %s"
@@ -81,7 +81,7 @@ def mailInit(full_results, register, stamps):
 	stamps["background"] = background_filename[0]
 
 	######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
-	query_text = "SELECT EN, "+language[0]+" FROM text_content_serge WHERE 1"
+	query_text = "SELECT EN, " + language[0] + " FROM text_content_serge WHERE 1"
 
 	call_text = database.cursor()
 	call_text.execute(query_text, )
@@ -94,10 +94,28 @@ def mailInit(full_results, register, stamps):
 		translate_text[dict_key] = content.strip().encode('ascii', errors='xmlcharrefreplace')
 
 	if stamps["priority"] == "NORMAL":
-		translate_text = {"intro_date": translate_text["your news monitoring of"], "intro_links": translate_text["links in"], "type_news": translate_text["News"], "type_sciences": translate_text["Scientific Publications"], "type_patents": translate_text["Patents"], "web_serge": translate_text["View Online"], "unsubscribe": translate_text["Unsubscribe"], "github_serge": translate_text["Find SERGE on"], "license_serge": translate_text["Powered by"]}
+		translate_text = {
+		"intro_date": translate_text["your news monitoring of"],
+		"intro_links": translate_text["links in"],
+		"type_news": translate_text["News"],
+		"type_sciences": translate_text["Scientific Publications"],
+		"type_patents": translate_text["Patents"],
+		"web_serge": translate_text["View Online"],
+		"unsubscribe": translate_text["Unsubscribe"],
+		"github_serge": translate_text["Find SERGE on"],
+		"license_serge": translate_text["Powered by"]}
 
 	elif stamps["priority"] == "HIGH":
-		translate_text = {"intro_date": translate_text["of"], "intro_links": translate_text["alerts"], "type_news": translate_text["News"], "type_science": translate_text["Scientific Publications"], "type_patents": translate_text["Patents"], "web_serge": translate_text["View Online"], "unsubscribe": translate_text["Unsubscribe"], "github_serge": translate_text["Find SERGE on"], "license_serge": translate_text["Powered by"]}
+		translate_text = {
+		"intro_date": translate_text["of"],
+		"intro_links": translate_text["alerts"],
+		"type_news": translate_text["News"],
+		"type_science": translate_text["Scientific Publications"],
+		"type_patents": translate_text["Patents"],
+		"web_serge": translate_text["View Online"],
+		"unsubscribe": translate_text["Unsubscribe"],
+		"github_serge": translate_text["Find SERGE on"],
+		"license_serge": translate_text["Powered by"]}
 
 	######### ADD RECORDER LINKS IN FULL RESULTS
 	record_read = restricted.recordApproval(register, database)
@@ -135,7 +153,7 @@ def mailBuilder(full_results, translate_text, stamps, appearance):
 		if result["label"] not in labels_core and result["label"] not in labels_extensions:
 			labels_extensions.append(result["label"])
 
-	labels_list = labels_core+labels_extensions
+	labels_list = labels_core + labels_extensions
 
 	######### BANNER
 	newsletter = appearance["banner"].format(translate_text["intro_date"], stamps["user"].encode('ascii', errors='xmlcharrefreplace'), translate_text["intro_links"], stamps["pydate"], pending_all, appearance["style"], stamps["background"])
@@ -145,7 +163,7 @@ def mailBuilder(full_results, translate_text, stamps, appearance):
 		for label in labels_list:
 			results_label = []
 			print label
-			print "type_"+label
+			print "type_" + label
 
 			for item in full_results:
 				if item["label"] == label:
@@ -162,7 +180,7 @@ def mailBuilder(full_results, translate_text, stamps, appearance):
 				label_title = label
 				print "NO TRANSLATION"
 
-			print ("TRANSLATION : " + translate_text["type_"+label])
+			print ("TRANSLATION : " + translate_text["type_" + label])
 
 			######### CREATE LABEL BLOCK
 			if pending_items > 0:
@@ -269,13 +287,13 @@ def highwayToMail(newsletter, stamps):
 		permissions.close()
 
 		######### SERGE MAIL
-		fromaddr = (re.findall("serge_adress: "+'([^\s]+)', config_file))[0]
+		fromaddr = (re.findall("serge_adress: " + '([^\s]+)', config_file))[0]
 
 		######### PASSWORD FOR MAIL
-		mdp_mail = (re.findall("passmail: "+'([^\s]+)', config_file))[0]
+		mdp_mail = (re.findall("passmail: " + '([^\s]+)', config_file))[0]
 
 		######### SERGE SERVER ADRESS
-		mailserveraddr = (re.findall("mail_server: "+'([^\s]+)', config_file))[0]
+		mailserveraddr = (re.findall("mail_server: " + '([^\s]+)', config_file))[0]
 
 		######### ADRESSES AND LANGUAGE RECOVERY
 		query_user_infos = "SELECT email, language FROM users_table_serge WHERE id = %s"
@@ -288,16 +306,16 @@ def highwayToMail(newsletter, stamps):
 		toaddr = user_infos[0]
 
 		######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
-		pydate = " "+stamps["pydate"]
+		pydate = " " + stamps["pydate"]
 		if stamps["priority"] == "NORMAL":
-			subject_FR = "[SERGE] Veille Industrielle et Technologique"+pydate
-			subject_EN = "[SERGE] News monitoring and Technological watch"+pydate
+			subject_FR = "[SERGE] Veille Industrielle et Technologique" + pydate
+			subject_EN = "[SERGE] News monitoring and Technological watch" + pydate
 		elif stamps["priority"] == "HIGH":
-			subject_FR = "[ALERTE SERGE] Informations Prioritaires"+pydate
-			subject_EN = "[SERGE] Prioritary Informations"+pydate
+			subject_FR = "[ALERTE SERGE] Informations Prioritaires" + pydate
+			subject_EN = "[SERGE] Prioritary Informations" + pydate
 
 		try:
-			exec("translate_subject"+"="+"subject_"+user_infos[1])
+			exec("translate_subject = subject_" + user_infos[1])
 		except NameError:
 			translate_subject = subject_EN
 
