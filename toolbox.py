@@ -164,3 +164,22 @@ def packaging(item_arguments, database):
 	"inquiry": inquiry}
 
 	return attributes
+
+def stylishLabel(label, database):
+	"""Standardized call to modules_serge in order to add label settings in result packs and create stylish labels"""
+
+	######### LABEL SETTINGS RECOVER
+	query_label = ("SELECT label_content, label_color, label_text_color FROM modules_serge WHERE name = %s")
+
+	call_modules = database.cursor()
+	call_modules.execute(query_label, (label,))
+	label_settings = (call_modules.fetchone())
+	call_modules.close()
+
+	label_design = {
+	"label_content": label_settings[0],
+	"label_color": label_settings[1],
+	"label_text_color": label_settings[2]
+	}
+
+	return label_design

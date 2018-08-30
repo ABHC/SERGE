@@ -298,4 +298,7 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('Search complete', 'Search complete', 'Recherche terminée', NULL, NULL, NULL),
 ('No source to add on ', 'No source to add on ', 'Aucune source à ajouter sur ', NULL, NULL, NULL),
 ('Search for your link begin :', 'Search for your link begin', 'La recherche pour votre lien commence', NULL, NULL, NULL),
+('> news', 'NEWS', 'ACTUS', NULL, NULL, NULL),
+('> patents', 'PATENTS', 'BREVETS', NULL, NULL, NULL),
+('> sciences', 'SCIENCES', 'SCIENCES', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);

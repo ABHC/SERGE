@@ -9,6 +9,7 @@ import logging
 import datetime
 import traceback
 import feedparser
+from os import path
 from bs4 import BeautifulSoup
 from requests.utils import unquote
 
@@ -165,7 +166,7 @@ def pathfinder(now):
 								legal_dataset["lens_link"],
 								legal_dataset["new_check_date"],
 								post_link]
-								
+
 								item_columns = str(tuple(item.keys())).replace("'","")
 
 								########### QUERY FOR DATABASE CHECKING
@@ -200,6 +201,10 @@ def patentspack(register, user_id_comma):
 
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
+
+	######### LABEL SETTINGS RECOVERY
+	label = ((path.basename(__file__)).split("."))[0]
+	label_design = toolbox.stylishLabel(label, database)
 
 	######### RESULTS PATENTS : PATENTS ATTRIBUTES QUERY (LINK + TITLE + SOURCE ID + INQUIRY ID)
 	query_patents = ("SELECT id, title, link, source_id, inquiry_id FROM results_patents_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
@@ -246,6 +251,7 @@ def patentspack(register, user_id_comma):
 			"inquiry": human_inquiry.lower(),
 			"wiki_link": None}
 
+			item.update(label_design)
 			results_pack.append(item)
 
 	return results_pack

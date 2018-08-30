@@ -235,13 +235,9 @@ def resultsPack(register, user_id_comma):
 	########### CONNECTION TO SERGE DATABASE
 	database = toolbox.limitedConnection(path.basename(__file__))
 
-	######### LABEL RECOVER
-	query_label = ("SELECT label_content FROM extensions_serge WHERE name = %s")
-
-	call_calendars = database.cursor()
-	call_calendars.execute(query_label, (path.basename(__file__),))
-	label = (call_calendars.fetchone())[0]
-	call_calendars.close()
+	######### LABEL SETTINGS RECOVERY
+	label = ((path.basename(__file__)).split("."))[0]
+	label_design = toolbox.stylishLabel(label, database)
 
 	######### RESULTS FOR CALENDARS : EVENTS ATTRIBUTES RECOVERY
 	query_calendars = ("SELECT id, name, date, location, description, link, source_id, inquiry_id FROM results_kalendar_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
@@ -274,9 +270,11 @@ def resultsPack(register, user_id_comma):
 		"description": description,
 		"link": row[5].strip().encode('ascii', errors='xmlcharrefreplace'),
 		"label": label,
-		"source": attributes["source"], 
+		"source": attributes["source"],
 		"inquiry": attributes["inquiry"],
 		"wiki_link": None}
+
+		item.update(label_design)
 		results_pack.append(item)
 
 	return results_pack

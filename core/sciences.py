@@ -10,6 +10,7 @@ import logging
 import datetime
 import feedparser
 import traceback
+from os import path
 from requests.utils import unquote
 
 ######### IMPORT SERGE SPECIALS MODULES
@@ -259,6 +260,10 @@ def sciencespack(register, user_id_comma):
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
+	######### LABEL SETTINGS RECOVERY
+	label = ((path.basename(__file__)).split("."))[0]
+	label_design = toolbox.stylishLabel(label, database)
+
 	######### RESULTS NEWS : NEWS ATTRIBUTES QUERY (LINK + TITLE + ID SOURCE + KEYWORD ID)
 	query_science = ("SELECT id, title, link, source_id, inquiry_id FROM results_sciences_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
 
@@ -304,6 +309,7 @@ def sciencespack(register, user_id_comma):
 			"inquiry": human_inquiry.lower(),
 			"wiki_link": None}
 
+			item.update(label_design)
 			results_pack.append(item)
 
 	return results_pack

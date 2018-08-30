@@ -21,7 +21,7 @@ def extensionLibrary():
 
 	######### CALL TO TABLE miscellaneous_serge
 	call_extensions = database.cursor()
-	call_extensions.execute("SELECT name FROM extensions_serge WHERE general_switch = 1")
+	call_extensions.execute("SELECT name FROM modules_serge WHERE id > 3 and general_switch = 1")
 	rows = call_extensions.fetchall()
 	call_extensions.close()
 
@@ -51,7 +51,7 @@ def packThemAll(register, user_id_comma):
 
 	######### CALL TO TABLE miscellaneous_serge
 	call_extensions = database.cursor()
-	call_extensions.execute("SELECT name FROM extensions_serge WHERE general_switch = 1 and mail_switch = 1")
+	call_extensions.execute("SELECT name FROM modules_serge WHERE id > 3 and general_switch = 1 and mail_switch = 1")
 	rows = call_extensions.fetchall()
 	call_extensions.close()
 

@@ -9,6 +9,7 @@ import logging
 import datetime
 import traceback
 import feedparser
+from os import path
 from requests.utils import unquote
 
 ######### IMPORT SERGE SPECIALS MODULES
@@ -219,6 +220,10 @@ def newspack(register, user_id_comma):
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
+	######### LABEL SETTINGS RECOVERY
+	label = ((path.basename(__file__)).split("."))[0]
+	label_design = toolbox.stylishLabel(label, database)
+
 	######### RESULTS NEWS : NEWS ATTRIBUTES QUERY (LINK + TITLE + SOURCE ID + INQUIRY ID)
 	query_news = ("SELECT id, title, link, source_id, inquiry_id FROM results_news_serge WHERE (send_status NOT LIKE %s AND read_status NOT LIKE %s AND owners LIKE %s)")
 
@@ -250,11 +255,12 @@ def newspack(register, user_id_comma):
 			"title": unquote(row[1].strip().encode('utf8')).decode('utf8').encode('ascii', errors = 'xmlcharrefreplace').lower().capitalize(),
 			"description": None,
 			"link": row[2].strip().encode('ascii', errors = 'xmlcharrefreplace'),
-			"label": "news",
+			"label": label,
 			"source": attributes["source"],
 			"inquiry": attributes["inquiry"].lower(),
 			"wiki_link": None}
 
+			item.update(label_design)
 			results_pack.append(item)
 
 	return results_pack

@@ -53,7 +53,7 @@ database = databaseConnection()
 now = int(time.time())                            #NOW IS A TIMESTAMPS
 pydate = datetime.date.today()                    #PYDATE IS A DATE (YYYY-MM-DD)
 isoweekday = datetime.date.isoweekday(pydate)     #ISOWEEKDAY IS AN INTEGER BETWEEN 1 AND 7 (MONDAY=1, SUNDAY=7)
-today = "," + str(isoweekday) + ","                   #TODAY IS A STRING
+today = "," + str(isoweekday) + ","               #TODAY IS A STRING
 current = dt.now()                                #CURRENT IS A DATE (YYYY-MM-DD hh-mm-ss.ssssss)
 hour = current.hour                               #HOUR IS AN INTEGER BETWEEN 0 AND 23
 pydate = unicode(pydate)                          #TRANSFORM PYDATE INTO UNICODE

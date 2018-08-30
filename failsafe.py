@@ -60,7 +60,7 @@ def checkMate():
 	"background_serge",
 	"captcha_serge",
 	"credentials_sms_serge",
-	"extensions_serge",
+	"modules_serge",
 	"inquiries_news_serge",
 	"inquiries_patents_serge",
 	"inquiries_sciences_serge",
@@ -84,7 +84,7 @@ def checkMate():
 
 	try:
 		checking = database.cursor()
-		checking.execute("SELECT sources_table_name, inquiries_table_name, results_table_name, optionnal_tables_names FROM extensions_serge")
+		checking.execute("SELECT sources_table_name, inquiries_table_name, results_table_name, optionnal_tables_names FROM modules_serge WHERE id > 3")
 		rows = checking.fetchall()
 		checking.close()
 
@@ -98,13 +98,13 @@ def checkMate():
 						expected_tables_list.append(optionnal_tables_name.strip())
 
 	except Exception, except_type:
-		logger_error.critical("MISSING TABLE : extensions_serge is not in database")
+		logger_error.critical("MISSING TABLE : modules_serge is not in database")
 		sys.exit()
 
 
 	######### CHECK NUMBER AND NAMES OF TABLES
 	checking = database.cursor()
-	checking.execute("SELECT optionnal_tables FROM extensions_serge WHERE general_switch = 1")
+	checking.execute("SELECT optionnal_tables FROM modules_serge WHERE id > 3 and general_switch = 1")
 	rows = checking.fetchall()
 	checking.close()
 
@@ -168,7 +168,7 @@ def checkMate():
 	admin_table_serge_numbers = 3
 	background_serge_numbers = 4
 	captcha_serge_numbers = 1
-	extensions_serge_numbers = 12
+	modules_serge_numbers = 12
 	inquiries_news_serge_numbers = 4
 	inquiries_patents_serge_numbers = 5
 	inquiries_sciences_serge_numbers = 4
@@ -232,7 +232,7 @@ def checkMate():
 
 	captcha_serge_columns = ["name"]
 
-	extensions_serge_columns = [
+	modules_serge_columns = [
 	"id",
 	"name",
 	"optionnal_tables",

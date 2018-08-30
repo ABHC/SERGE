@@ -28,41 +28,27 @@ def mailInit(full_results, register, stamps):
 	time_units = stamps["pydate"].split("-")
 	stamps["pydate"] = time_units[2] + "/" + time_units[1] + "/" + time_units[0]
 
-	######### DESIGN CHOSEN BY USER
-	query_mail_design = "SELECT mail_design FROM users_table_serge WHERE id = %s"
+	######### LANGUAGE, DESIGN AND BACKGROUND CHOSEN BY USER
+	query_user_settings = "SELECT language, mail_design, background_result FROM users_table_serge WHERE id = %s"
 
 	call_users = database.cursor()
-	call_users.execute(query_mail_design, (stamps["register"],))
-	mail_design = call_users.fetchone()
+	call_users.execute(query_user_settings, (stamps["register"],))
+	user_settings = call_users.fetchone()
 	call_users.close()
 
-	stamps["mail_design"] = mail_design[0]
+	stamps["mail_design"] = user_settings[1]
 
-	######### LANGUAGE CHOSEN BY USER
-	query_language = "SELECT language FROM users_table_serge WHERE id = %s"
+	######### RECOVER BACKGROUND FILENAME
+	if user_settings[2] == "random":
 
-	call_users = database.cursor()
-	call_users.execute(query_language, (stamps["register"],))
-	language = call_users.fetchone()
-	call_users.close()
-
-	######### BACKGROUND CHOSEN BY USER
-	query_background = "SELECT background_result FROM users_table_serge WHERE id = %s"
-
-	call_users = database.cursor()
-	call_users.execute(query_background, (stamps["register"],))
-	background = call_users.fetchone()
-	call_users.close()
-
-	if background[0] == "random":
-		######### Number of background
+		######### NUMBER OF BACKGROUND
 		query_max_background = "SELECT max(id) FROM background_serge WHERE 1"
 		call_background = database.cursor()
 		call_background.execute(query_max_background)
 		max_background_id = call_background.fetchone()
 		call_background.close()
 
-		######### Random number
+		######### RANDOM NUMBER
 		max_background_id = max_background_id[0] + 1
 		random_background_id = randrange(1, max_background_id)
 
@@ -74,14 +60,14 @@ def mailInit(full_results, register, stamps):
 	else:
 		query_background_filename = "SELECT filename FROM background_serge WHERE name = %s"
 		call_background = database.cursor()
-		call_background.execute(query_background_filename, (background))
+		call_background.execute(query_background_filename, (user_settings[2],))
 		background_filename = call_background.fetchone()
 		call_background.close()
 
 	stamps["background"] = background_filename[0]
 
-	######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
-	query_text = "SELECT EN, " + language[0] + " FROM text_content_serge WHERE 1"
+	######### BUILDING THE TRANSLATION DICTIONNARY ACCORDING TO THE CHOSEN LANGUAGE
+	query_text = "SELECT EN, " + user_settings[0] + " FROM text_content_serge WHERE 1"
 
 	call_text = database.cursor()
 	call_text.execute(query_text, )
@@ -121,10 +107,22 @@ def mailInit(full_results, register, stamps):
 	record_read = restricted.recordApproval(register, database)
 
 	for item in full_results:
+
+		######### ADD RECORDER LINKS IN FULL RESULTS
 		if record_read is True:
 			item["link"] = restricted.recorder(register, item["label"], str(item["id"]), "redirect", database)
 
 			item["wiki_link"] = restricted.recorder(register, item["label"], str(item["id"]), "addLinkInWiki", database)
+
+		######### BUILDING THE TRANSLATION DICTIONNARY ACCORDING TO THE CHOSEN LANGUAGE
+		query_label_content = "SELECT EN, " + user_settings[0] + " FROM text_content_serge WHERE index_name = %s"
+
+		call_text = database.cursor()
+		call_text.execute(query_text, )
+		translate_label = call_text.fetchone()
+		call_text.close()
+
+		item["label_content"] = translate_label[0]
 
 	######### LOADING THE E-MAIL APPEARANCE
 	appearance = pieceOfMail(stamps["priority"])
