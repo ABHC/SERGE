@@ -1,0 +1,132 @@
+{
+	"serge.py": [
+	"os",
+	"multiprocessing",
+	"math",
+	"re",
+	"sys",
+	"time",
+	"datetime",
+	"logging",
+	"traceback",
+	"feedparser",
+	"requests",
+	"random"
+	],
+
+	"news.py": [
+	"os",
+	"re",
+	"time",
+	"logging",
+	"datetime",
+	"traceback",
+	"feedparser",
+	"requests"
+	],
+
+	"patents.py": [
+	"os",
+	"re",
+	"time",
+	"logging",
+	"datetime",
+	"traceback",
+	"feedparser",
+	"requests",
+	"bs4"
+	],
+
+	"sciences.py": [
+	"os",
+	"re",
+	"time",
+	"json",
+	"logging",
+	"datetime",
+	"traceback",
+	"feedparser",
+	"requests"
+	],
+
+	"alarm.py": [
+	null
+	],
+
+	"checkfeed.py": [
+	"sys",
+	"re",
+	"time",
+	"requests",
+	"urlparse",
+	"feedparser",
+	"validators",
+	"bs4"
+	],
+
+	"extensionsManager.py": [
+	"os",
+	"multiprocessing",
+	"math"
+	],
+
+	"failDetectorPack.py": [
+	"re",
+	"sys",
+	"urlparse",
+	"validators"
+	],
+
+	"failsafe.py": [
+	"sys",
+	"logging"
+	],
+
+	"handshake.py": [
+	"re",
+	"ovh",
+	"time",
+	"MySQLdb",
+	"math"
+	],
+
+	"insertSQL.py": [
+	"sys",
+	"logging",
+	"feedparser",
+	"jellyfish",
+	"urlparse"
+	],
+
+	"mailer.py": [
+	"re",
+	"time",
+	"smtplib",
+	"unicodedata",
+	"random",
+	"requests",
+	"email"
+	],
+
+	"restricted.py": [
+	null
+	],
+
+	"sergenet.py": [
+	"requests",
+	"logging"
+	],
+
+	"toolbox.py": [
+	"re",
+	"cgi",
+	"MySQLdb",
+	"logging",
+	"traceback",
+	"HTMLParser"
+	],
+
+	"transcriber.py": [
+	null
+	]
+}
