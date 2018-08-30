@@ -75,53 +75,82 @@ logger_info.info("\nMax Users : " + str(max_users) + "\n")
 ######### RSS SERGE UPDATE
 insertSQL.ofSourceAndName(now)
 
-######### PROCESS CREATION FOR SCIENCE AND PATENTS
-procScience = Process(target=sciences.rosetta, args=(now,))
-procPatents = Process(target=patents.pathfinder, args=(now,))
+######### CHECKING STATUS OF CORE MODULES
+call_modules = database.cursor()
+call_modules.execute("SELECT name, general_switch FROM modules_serge WHERE id <= 3")
+modules_switch = (call_modules.fetchall())
+call_modules.close()
 
-######### RESEARCH OF LATEST SCIENTIFIC PUBLICATIONS AND PATENTS
-procScience.start()
-procPatents.start()
+i = 0
+core = {
+"news": None,
+"patents": None,
+"sciences": None}
+
+while i < 3:
+	for module in modules_switch:
+		if module[0] == (core.keys())[i]:
+			core[module[0]] = bool(module[1])
+	i += 1
+
+######### ACTIVE CORE MODULES PROCESS LIST
+coreProcesses = []
+
+######### PROCESS CREATION FOR NEWS AND RESEARCH OF LATEST NEWS
+if core["news"] is True:
+	newscast_args = []
+	nbRSS = 0
+
+	######### NEWS SOURCES RECOVERY FOR MULTIPROCESSING : ONE SOURCE FOR EACH PROCESS
+	call_rss = database.cursor()
+	call_rss.execute("SELECT id, link, etag FROM sources_news_serge WHERE active >= 1")
+	rows = call_rss.fetchall()
+	call_rss.close()
+
+	for row in rows:
+		fields = {
+		"source_id": row[0],
+		"source_link": row[1].strip(),
+		"source_etag": row[2],
+		"now": now}
+
+		newscast_args.append(fields)
+		nbRSS += 1
+
+	######### SHUFFLE SOURCES : SERGE IS NOT MISTAKEN AS A DDOS ATTACK
+	shuffle(newscast_args)
+
+	######### POOL CREATION AND LAUNCH
+	nbProc = int(ceil(0.25 * nbRSS) + 1)
+	pool = mp.Pool(processes=nbProc)
+	pool.map(news.voyager, newscast_args)
+	coreProcesses.append({"pool": True, "process": pool})
+
+	logger_info.info("\n\n######### Last News Research (news function) : \n\n")
+
+######### PROCESS CREATION FOR PATENTS AND RESEARCH OF LATEST PATENTS
+if core["patents"] is True:
+	procPatents = Process(target=patents.pathfinder, args=(now,))
+	procPatents.start()
+	coreProcesses.append({"pool": False, "process": procPatents})
+
+######### PROCESS CREATION FOR SCIENCES AND RESEARCH OF LATEST SCIENTIFIC PUBLICATIONS
+if core["sciences"] is True:
+	procScience = Process(target=sciences.rosetta, args=(now,))
+	procScience.start()
+	coreProcesses.append({"pool": False, "process": procScience})
 
 ######### EXTENSIONS EXECUTION
 extProcesses = extensionsManager.extensionLibrary()
 
-logger_info.info("\n\n######### Last News Research (news function) : \n\n")
-
-######### NEWS SOURCES RECOVERY FOR MULTIPROCESSING : ONE SOURCE FOR EACH PROCESS
-call_rss = database.cursor()
-call_rss.execute("SELECT id, link, etag FROM sources_news_serge WHERE active >= 1")
-rows = call_rss.fetchall()
-call_rss.close()
-
-newscast_args = []
-
-nbRSS = 0
-for row in rows:
-	fields = {
-	"source_id": row[0],
-	"source_link": row[1].strip(),
-	"source_etag": row[2],
-	"now": now}
-
-	newscast_args.append(fields)
-	nbRSS += 1
-
-shuffle(newscast_args)
-nbProc = int(ceil(0.25 * nbRSS) + 1)
-
-######### PROCESS CREATION FOR NEWS AND RESEARCH OF LATEST NEWS
-pool = mp.Pool(processes=nbProc)
-pool.map(news.voyager, newscast_args)
-
 ######### MAIN BLOCKING FOR MULTIPROCESSING
-for processe in extProcesses:
-	processe.join()
+for process in coreProcesses:
+	if process["pool"] is True:
+		process["process"].close()
+	process["process"].join()
 
-procScience.join()
-procPatents.join()
-pool.close()
-pool.join()
+for process in extProcesses:
+	process.join()
 
 ######### RESULTS ASSIGNMENT TO EACH USER
 logger_info.info("RESULTS ASSIGNMENT")
