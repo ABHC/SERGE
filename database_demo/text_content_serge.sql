@@ -301,4 +301,5 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('> news', 'NEWS', 'ACTUS', NULL, NULL, NULL),
 ('> patents', 'PATENTS', 'BREVETS', NULL, NULL, NULL),
 ('> sciences', 'SCIENCES', 'SCIENCES', NULL, NULL, NULL),
+('Inquiry', 'Inquiry', 'Requête', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);
