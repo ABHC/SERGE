@@ -7,37 +7,36 @@ include('web/model/update.php');
 //Reading database
 $tableName = 'users_table_serge';
 $fieldToRead = 'id,history_lifetime';
-$readDatabase = read($tableName, $fieldToRead, array(), '', $bdd);
+$readDatabase = read($tableName, $fieldToRead, array(), 'AND `history_lifetime` IS NOT NULL', $bdd);
 
 $tableName = 'results_news_serge';
 $fieldToRead = 'id,send_status,read_status,serge_date,owners';
-$readDatabaseResultsNews = read($tableName, $fieldToRead, array(), 'LIMIT 5', $bdd);
+$readDatabaseResultsNews = read($tableName, $fieldToRead, array(), '', $bdd);
 
 foreach($readDatabase as $user)
 {
-  if( $user['history_lifetime'] != NULL )
+  foreach($readDatabaseResultsNews as $key => $result)
   {
-    foreach($readDatabaseResultsNews as $result)
+    $regex = '#,'.$user['id'].',#';
+
+    if( ( preg_match($regex , $result['owners']) ) && ( time() - $result['serge_date'] > $user['history_lifetime'] ) )
     {
-        $afterReplaceOwner = preg_replace('#,'.$user['id'].',#', ',', $result['owners']);
-
-        if( ( $afterReplaceOwner != $result['owners'] ) && ( time() - $result['serge_date'] > $user['history_lifetime'] ) )
-        {
-          $afterReplaceSend = preg_replace('#,'.$user['id'].',#', ',', $result['send_status']);
-          $afterReplaceRead = preg_replace('#,'.$user['id'].',#', ',', $result['read_status']);
-
-          echo "line changed\n";
-        }
-        else
-        {
-          echo "line not changed\n";
-        }
+      $readDatabaseResultsNews[$key]['send_status'] = preg_replace($regex, ',', $result['send_status']);
+      $readDatabaseResultsNews[$key]['read_status'] = preg_replace($regex, ',', $result['read_status']);
+      $readDatabaseResultsNews[$key]['owners']      = preg_replace($regex, ',', $result['owners']);
     }
   }
-  else
-  {
-    echo "line not changed because history lifetime = NULL\n";
-  }
+}
+
+foreach($readDatabaseResultsNews as $line)
+{
+  $tableToWrite = 'results_news_serge';
+  $updateCol = array(array( 'send_status', $line['send_status'] ),
+                     array( 'read_status', $line['read_status'] ),
+                     array( 'owners',      $line['owners']      )
+                    );
+  $checkCol = array(array('id', '=', $line['id'], ''));
+  update($tableToWrite, $updateCol, $checkCol, '', $bdd);
 }
 
 ?>
