@@ -7,7 +7,7 @@ include('web/model/update.php');
 //Reading database
 $tableName = 'users_table_serge';
 $fieldToRead = 'id,signup_date,email_validation,req_for_del';
-$readDatabase = read($tableName, $fieldToRead, array(), '', $bdd);
+$readDatabase = read($tableName, $fieldToRead, array(array('email_validation', '=', 0, '')), 'OR `req_for_del` IS NOT NULL', $bdd);
 
 foreach($readDatabase as $line)
 {
@@ -34,7 +34,8 @@ foreach($readDatabase as $line)
     {
       error_log($e->getMessage(), 0);
     }
-
+    
   }
 }
+
 ?>
