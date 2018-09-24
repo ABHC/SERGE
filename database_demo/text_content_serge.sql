@@ -227,7 +227,7 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('github_serge', 'Find SERGE on', 'Retrouvez SERGE sur', NULL, NULL, NULL),
 ('license_serge', 'Powered by', 'Propulsé par', NULL, NULL, NULL),
 ('intro_date_alarm', 'of', 'le', NULL, NULL, NULL),
-('intro_links_alarm', 'alerts', 'alertes', NULL, NULL, NULL),
+('intro_links_alarm', 'alert(s)', 'alerte(s)', NULL, NULL, NULL),
 ('Account information', 'Account information', 'Informations du compte', NULL, NULL, NULL),
 ('Premium', 'Premium', 'Premium', NULL, NULL, NULL),
 ('Settings', 'Settings', 'Réglages', NULL, NULL, NULL),
@@ -302,4 +302,9 @@ En faisant des recherches dans l\'actualité, les brevets et les publications sc
 ('> patents', 'PATENTS', 'BREVETS', NULL, NULL, NULL),
 ('> sciences', 'SCIENCES', 'SCIENCES', NULL, NULL, NULL),
 ('Inquiry', 'Inquiry', 'Requête', NULL, NULL, NULL),
+('mail_beacon', '[SERGE]', '[SERGE]', NULL, NULL, NULL),
+('alerts_mail_beacon', '[SERGE ALERT]', '[ALERTE SERGE]', NULL, NULL, NULL),
+('subject', 'News monitoring and Technological watch', 'Veille Industrielle et Technologique', NULL, NULL, NULL),
+('alerts_subject', 'Prioritary Informations', 'Informations Prioritaires', NULL, NULL, NULL),
+('alerts_sub_banner', 'ALERT', 'ALERTE', NULL, NULL, NULL),
 ('', '', '', NULL, NULL, NULL);
