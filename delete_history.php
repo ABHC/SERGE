@@ -1,8 +1,5 @@
 <?php
-
-include('permission/connection_sql.php');
-include('web/model/read.php');
-include('web/model/update.php');
+//must be included in delete_user.php file
 
 //Reading database
 $tableName = 'users_table_serge';
@@ -11,31 +8,54 @@ $readDatabase = read($tableName, $fieldToRead, array(), 'AND `history_lifetime` 
 
 $tableName = 'results_news_serge';
 $fieldToRead = 'id,send_status,read_status,serge_date,owners';
-$readDatabaseResultsNews = read($tableName, $fieldToRead, array(), '', $bdd);
+$resultsNews = read($tableName, $fieldToRead, array(), 'LIMIT 25', $bdd);
+
+$deleteHistory = array();
 
 foreach($readDatabase as $user)
 {
-  foreach($readDatabaseResultsNews as $key => $result)
+  foreach($resultsNews as $key => $result)
   {
     $regex = '#,'.$user['id'].',#';
 
     if( ( preg_match($regex , $result['owners']) ) && ( time() - $result['serge_date'] > $user['history_lifetime'] ) )
     {
-      $readDatabaseResultsNews[$key]['send_status'] = preg_replace($regex, ',', $result['send_status']);
-      $readDatabaseResultsNews[$key]['read_status'] = preg_replace($regex, ',', $result['read_status']);
-      $readDatabaseResultsNews[$key]['owners']      = preg_replace($regex, ',', $result['owners']);
+      $deleteHistory[] = $result['id'];
+
+      $resultsNews[$key]['send_status'] = preg_replace($regex, ',', $resultsNews[$key]['send_status']);
+      $resultsNews[$key]['read_status'] = preg_replace($regex, ',', $resultsNews[$key]['read_status']);
+      $resultsNews[$key]['owners']      = preg_replace($regex, ',', $resultsNews[$key]['owners']);
     }
   }
 }
 
-foreach($readDatabaseResultsNews as $line)
+foreach($userDeleted as $user)
 {
+  foreach($resultsNews as $key => $result)
+  {
+    $regex = '#,'.$user.',#';
+
+    if( preg_match($regex , $result['owners']) )
+    {
+      $deleteHistory[] = $result['id'];
+
+      $resultsNews[$key]['send_status'] = preg_replace($regex, ',', $resultsNews[$key]['send_status']);
+      $resultsNews[$key]['read_status'] = preg_replace($regex, ',', $resultsNews[$key]['read_status']);
+      $resultsNews[$key]['owners']      = preg_replace($regex, ',', $resultsNews[$key]['owners']);
+    }
+  }
+}
+
+foreach($deleteHistory as $line)
+{
+  $key = array_search($line, array_column($resultsNews, 'id'));
+
   $tableToWrite = 'results_news_serge';
-  $updateCol = array(array( 'send_status', $line['send_status'] ),
-                     array( 'read_status', $line['read_status'] ),
-                     array( 'owners',      $line['owners']      )
+  $updateCol = array(array( 'send_status', $resultsNews[$key]['send_status'] ),
+                     array( 'read_status', $resultsNews[$key]['read_status'] ),
+                     array( 'owners',      $resultsNews[$key]['owners']      )
                     );
-  $checkCol = array(array('id', '=', $line['id'], ''));
+  $checkCol = array(array('id', '=', $line, ''));
   update($tableToWrite, $updateCol, $checkCol, '', $bdd);
 }
 

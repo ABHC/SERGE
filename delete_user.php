@@ -9,6 +9,8 @@ $tableName = 'users_table_serge';
 $fieldToRead = 'id,signup_date,email_validation,req_for_del';
 $readDatabase = read($tableName, $fieldToRead, array(array('email_validation', '=', 0, '')), 'OR `req_for_del` IS NOT NULL', $bdd);
 
+$userDeleted = array();
+
 foreach($readDatabase as $line)
 {
   //48 hours * 3600 = 172800 seconds
@@ -20,6 +22,7 @@ foreach($readDatabase as $line)
     )
   {
 
+    $userDeleted[] = $line['id'];
     //Building query
     $queryDeleteLine = "DELETE FROM $tableName WHERE id = ".$line['id'];
 
@@ -34,8 +37,11 @@ foreach($readDatabase as $line)
     {
       error_log($e->getMessage(), 0);
     }
-    
+
   }
 }
+
+//In order to delete the history of the deleted user, the file delete_history.php must be included
+include('delete_history.php');
 
 ?>
