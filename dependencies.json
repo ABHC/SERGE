@@ -50,7 +50,7 @@
 	],
 
 	"alarm.py": [
-	null
+	"logging"
 	],
 
 	"checkfeed.py": [
@@ -123,6 +123,7 @@
 	"MySQLdb",
 	"logging",
 	"traceback",
+	"collections",
 	"HTMLParser"
 	],
 

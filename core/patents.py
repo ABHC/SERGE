@@ -40,12 +40,9 @@ def pathfinder(now):
 	logger_info = logging.getLogger("info_log")
 	logger_error = logging.getLogger("error_log")
 
-	######### SET USEFUL VARIABLES
-	need_jelly = False
-
 	logger_info.info("\n\n######### Last Patents Research (patents function) : \n\n")
 
-	######### SEARCH SAVED QUERIES
+	######### SEARCH SAVED INQUIRIES
 	call_patents_key = database.cursor()
 	call_patents_key.execute("SELECT id, inquiry, applicable_owners_sources, legal_research FROM inquiries_patents_serge WHERE active > 0")
 	rows = call_patents_key.fetchall()
@@ -135,9 +132,6 @@ def pathfinder(now):
 									logger_error.warning(traceback.format_exc())
 									post_date = now
 
-								inquiry_id_comma = str(inquiry["inquiry_id"]) + ","
-								inquiry_id_comma2 = "," + str(inquiry["inquiry_id"]) + ","
-
 								######### LEGAL STATUS RESEARCH
 								legal_args = {
 								"post_link": post_link,
@@ -153,37 +147,38 @@ def pathfinder(now):
 								"date": post_date,
 								"serge_date": now,
 								"source_id": api_pack["source_id"],
-								"inquiry_id": inquiry_id_comma2,
+								"inquiry_id": str(inquiry["inquiry_id"]),
 								"owners": owners_str,
 								"legal_abstract": legal_dataset["legal_abstract"],
 								"legal_status": legal_dataset["legal_status"],
 								"lens_link": legal_dataset["lens_link"],
 								"legal_check_date": legal_dataset["new_check_date"]}
 
-								item_update = [
+								update_parameters = {
+								"need_jelly" : False,
+								"auxiliary_update" : [
 								legal_dataset["legal_abstract"],
 								legal_dataset["legal_status"],
 								legal_dataset["lens_link"],
-								legal_dataset["new_check_date"],
-								post_link]
+								legal_dataset["new_check_date"]]}
 
 								item_columns = str(tuple(item.keys())).replace("'","")
 
 								########### QUERY FOR DATABASE CHECKING
-								query_checking = ("SELECT inquiry_id, owners FROM results_patents_serge WHERE link = %s AND title = %s")
-								query_link_checking = ("SELECT inquiry_id, owners FROM results_patents_serge WHERE link = %s")
+								query_checking = ("SELECT inquiry_id, owners FROM results_patents_serge WHERE link = %s AND title = %s AND source_id = %s")
+								query_link_checking = ("SELECT inquiry_id, owners FROM results_patents_serge WHERE link = %s AND source_id = %s")
 								query_jellychecking = None
 
 								########### QUERY FOR DATABASE INSERTION
 								query_insertion = ("INSERT INTO results_patents_serge " + item_columns + " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
 								########### QUERY FOR DATABASE UPDATE
-								query_update = ("UPDATE results_patents_serge SET inquiry_id = %s, owners = %s, legal_abstract = %s, legal_status = %s, lens_link = %s, legal_check_date = %s WHERE link = %s")
-								query_update_title = ("UPDATE results_patents_serge SET title = %s, inquiry_id = %s, owners = %s, legal_abstract = %s, legal_status = %s, lens_link = %s, legal_check_date = %s WHERE link = %s")
+								query_update = ("UPDATE results_patents_serge SET inquiry_id = %s, owners = %s, legal_abstract = %s, legal_status = %s, lens_link = %s, legal_check_date = %s WHERE link = %s AND source_id = %s")
+								query_update_title = ("UPDATE results_patents_serge SET title = %s, inquiry_id = %s, owners = %s, legal_abstract = %s, legal_status = %s, lens_link = %s, legal_check_date = %s WHERE link = %s AND source_id = %s")
 								query_jelly_update = None
 
 								########### CALL insertOrUpdate FUNCTION
-								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, inquiry_id_comma, need_jelly)
+								insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, update_parameters)
 
 								range_article = range_article + 1
 
@@ -243,7 +238,7 @@ def patentspack(register, user_id_comma):
 			######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
 			item = {
 			"id": row[0],
-			"title": unquote(row[1].strip().encode('utf8')).decode('utf8').encode('ascii', errors = 'xmlcharrefreplace').lower().capitalize(),
+			"title": unquote(row[1].strip().encode('utf8')).decode('utf8').encode('ascii', errors = 'xmlcharrefreplace'),
 			"description": None,
 			"link": row[2].strip().encode('ascii', errors = 'xmlcharrefreplace'),
 			"label": "patents",

@@ -7,6 +7,7 @@ import cgi
 import MySQLdb
 import logging
 import traceback
+from collections import Counter
 from HTMLParser import HTMLParser
 from logging.handlers import RotatingFileHandler
 
@@ -165,6 +166,7 @@ def packaging(item_arguments, database):
 
 	return attributes
 
+
 def stylishLabel(label, database):
 	"""Standardized call to modules_serge in order to add label settings in result packs and create stylish labels"""
 
@@ -183,3 +185,24 @@ def stylishLabel(label, database):
 	}
 
 	return label_design
+
+def strainer(pack, discriminant_key):
+	"""Function to delete duplicates in a dictionary list. The functions handle duplications of variables associated with a specific key."""
+
+	######### MAP THE PACK AND COUNT DUPLICATIONS
+ 	pack_values = [item[discriminant_key] for item in pack]
+	occurrences = Counter(pack_values)
+
+	for duplication, duplication_count in occurrences.items():
+		while duplication_count > 1:
+
+			######### SECOND MAPPING OF PACK : EACH VARIABLES IS ASSOCIATED TO ITS INDEX IN DICTIONNARY
+			strain_values = {i: ([item[discriminant_key] for item in pack])[i] for i in range(len(pack))}
+
+			######### LIST OF DUPLICATIONS INDEX
+			erase = [index for index, var in strain_values.items() if duplication == var]
+
+			del pack[erase[0]]
+			duplication_count = duplication_count - 1
+
+	return pack

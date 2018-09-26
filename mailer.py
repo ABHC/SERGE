@@ -77,15 +77,23 @@ def mailInit(full_results, register, stamps):
 	translate_text = {}
 
 	for dict_key, content in text:
-		translate_text[dict_key] = content.strip().encode('ascii', errors='xmlcharrefreplace')
+		if content is None:
+			translate_text[dict_key] = dict_key.strip().encode('ascii', errors='xmlcharrefreplace')
+		else:
+			translate_text[dict_key] = content.strip().encode('ascii', errors='xmlcharrefreplace')
 
 	if stamps["priority"] == "NORMAL":
 		translate_text = {
+		"beacon": translate_text["[SERGE]"],
+		"subject": translate_text["News monitoring and Technological watch"],
 		"intro_date": translate_text["your news monitoring of"],
 		"intro_links": translate_text["links in"],
+		"sub_banner": None,
 		"type_news": translate_text["News"],
 		"type_sciences": translate_text["Scientific Publications"],
 		"type_patents": translate_text["Patents"],
+		"inquiry_hover" : translate_text["Inquiry"],
+		"source_hover" : translate_text["Source"],
 		"web_serge": translate_text["View Online"],
 		"unsubscribe": translate_text["Unsubscribe"],
 		"github_serge": translate_text["Find SERGE on"],
@@ -93,15 +101,23 @@ def mailInit(full_results, register, stamps):
 
 	elif stamps["priority"] == "HIGH":
 		translate_text = {
+		"beacon": translate_text["[SERGE ALERT]"],
+		"subject": translate_text["Prioritary Informations"],
 		"intro_date": translate_text["of"],
-		"intro_links": translate_text["alerts"],
+		"intro_links": translate_text["alert(s)"],
+		"sub_banner": translate_text["ALERT"],
 		"type_news": translate_text["News"],
 		"type_science": translate_text["Scientific Publications"],
 		"type_patents": translate_text["Patents"],
+		"inquiry_hover" : translate_text["Inquiry"],
+		"source_hover" : translate_text["Source"],
 		"web_serge": translate_text["View Online"],
 		"unsubscribe": translate_text["Unsubscribe"],
 		"github_serge": translate_text["Find SERGE on"],
 		"license_serge": translate_text["Powered by"]}
+
+	######### CREATE E-MAIL SUBJECT IN STAMPS
+	stamps["subject"] =  translate_text["beacon"] + " " + translate_text["subject"] + " " + stamps["pydate"]
 
 	######### ADD RECORDER LINKS IN FULL RESULTS
 	record_read = restricted.recordApproval(register, database)
@@ -118,11 +134,14 @@ def mailInit(full_results, register, stamps):
 		query_label_content = "SELECT EN, " + user_settings[0] + " FROM text_content_serge WHERE index_name = %s"
 
 		call_text = database.cursor()
-		call_text.execute(query_text, )
+		call_text.execute(query_label_content, (item["label_content"],))
 		translate_label = call_text.fetchone()
 		call_text.close()
 
-		item["label_content"] = translate_label[0]
+		if translate_label[1] is None:
+			item["label_content"] = translate_label[0]
+		else:
+			item["label_content"] = translate_label[1]
 
 	######### LOADING THE E-MAIL APPEARANCE
 	appearance = pieceOfMail(stamps["priority"])
@@ -148,20 +167,24 @@ def mailBuilder(full_results, translate_text, stamps, appearance):
 	labels_extensions = []
 
 	for result in full_results:
+		result["inquiry"] = result["inquiry"].replace("[!ALERT!]", "").strip()
+
 		if result["label"] not in labels_core and result["label"] not in labels_extensions:
 			labels_extensions.append(result["label"])
 
 	labels_list = labels_core + labels_extensions
 
 	######### BANNER
-	newsletter = appearance["banner"].format(translate_text["intro_date"], stamps["user"].encode('ascii', errors='xmlcharrefreplace'), translate_text["intro_links"], stamps["pydate"], pending_all, appearance["style"], stamps["background"])
+	newsletter = appearance["banner"].format(stamps["pydate"], appearance["style"], stamps["background"], stamps["user"].encode('ascii', errors='xmlcharrefreplace'), pending_all, translate_text["intro_links"], translate_text["intro_date"])
+
+	######### SUB BANNER
+	if translate_text["sub_banner"] is not None:
+		newsletter = newsletter + (appearance["sub_banner"].format(stamps["sub_banner_color"], str(translate_text["sub_banner"])))
 
 	######### NEWSLETTER BY TYPE
 	if stamps["mail_design"] == "type":
 		for label in labels_list:
 			results_label = []
-			print label
-			print "type_" + label
 
 			for item in full_results:
 				if item["label"] == label:
@@ -173,12 +196,8 @@ def mailBuilder(full_results, translate_text, stamps, appearance):
 			######### CREATE LABEL BLOCK
 			if ("type_" + label) in translate_text:
 				label_title = translate_text["type_" + label]
-				print "OK"
 			else:
 				label_title = label
-				print "NO TRANSLATION"
-
-			print ("TRANSLATION : " + translate_text["type_" + label])
 
 			######### CREATE LABEL BLOCK
 			if pending_items > 0:
@@ -189,7 +208,9 @@ def mailBuilder(full_results, translate_text, stamps, appearance):
 					if item["title"].isupper() is True:
 						item["title"] = item["title"].lower().capitalize()
 
-					newsletter = newsletter + (appearance["elements"].format(item["link"].strip().encode('ascii', errors='xmlcharrefreplace'), item["title"].strip().encode('ascii', errors='xmlcharrefreplace'), item["wiki_link"]))
+					tooltip = (translate_text["source_hover"] + " : " + item["source"] + " | " + translate_text["inquiry_hover"] + " : " + item["inquiry"])
+
+					newsletter = newsletter + (appearance["elements"].format(tooltip, item["link"], item["title"], item["wiki_link"]))
 
 				newsletter = newsletter + (appearance["end_block"])
 
@@ -221,8 +242,12 @@ def mailBuilder(full_results, translate_text, stamps, appearance):
 
 					######### WRITE ITEMS IN INQUIRY BLOCK
 					for item in results_inquiry:
-						newsletter = newsletter + (appearance["elements"].format(item["link"], item["title"], item["wiki_link"]))
-						#TODO mettre des encode ascii machin truc sur les élément du dico item
+						if item["title"].isupper() is True:
+							item["title"] = item["title"].lower().capitalize()
+
+						tooltip = unquote((translate_text["source_hover"] + " : " + item["source"]).strip().encode('utf8')).decode('utf8').encode('ascii', errors = 'xmlcharrefreplace')
+
+						newsletter = newsletter + (appearance["elements"].format(tooltip, item["link"], item["title"], item["wiki_link"]))
 
 					newsletter = newsletter + appearance["end_block"]
 
@@ -253,12 +278,21 @@ def mailBuilder(full_results, translate_text, stamps, appearance):
 
 					######### WRITE ITEMS IN SOURCE BLOCK
 					for item in results_source:
-						newsletter = newsletter + (appearance["elements"].format(item["link"], item["title"], item["wiki_link"]))
+						if item["title"].isupper() is True:
+							item["title"] = item["title"].lower().capitalize()
+
+						tooltip = translate_text["inquiry_hover"] + " : " + item["inquiry"]
+
+						newsletter = newsletter + (appearance["elements"].format(tooltip, item["link"], item["title"], item["wiki_link"]))
 
 					newsletter = newsletter + appearance["end_block"]
 
 	######### FOOTER
 	newsletter = newsletter + (appearance["footer"].format(translate_text["web_serge"], translate_text["unsubscribe"], translate_text["github_serge"], translate_text["license_serge"]))
+
+	newsfile = open("newsfile.txt", "w")
+	newsfile.write(newsletter)
+	newsfile.close()
 
 	return newsletter
 
@@ -294,7 +328,7 @@ def highwayToMail(newsletter, stamps):
 		mailserveraddr = (re.findall("mail_server: " + '([^\s]+)', config_file))[0]
 
 		######### ADRESSES AND LANGUAGE RECOVERY
-		query_user_infos = "SELECT email, language FROM users_table_serge WHERE id = %s"
+		query_user_infos = "SELECT email FROM users_table_serge WHERE id = %s"
 
 		call_users = database.cursor()
 		call_users.execute(query_user_infos, (stamps["register"],))
@@ -303,26 +337,12 @@ def highwayToMail(newsletter, stamps):
 
 		toaddr = user_infos[0]
 
-		######### VARIABLES FOR MAIL FORMATTING BY LANGUAGE
-		pydate = " " + stamps["pydate"]
-		if stamps["priority"] == "NORMAL":
-			subject_FR = "[SERGE] Veille Industrielle et Technologique" + pydate
-			subject_EN = "[SERGE] News monitoring and Technological watch" + pydate
-		elif stamps["priority"] == "HIGH":
-			subject_FR = "[ALERTE SERGE] Informations Prioritaires" + pydate
-			subject_EN = "[SERGE] Prioritary Informations" + pydate
-
-		try:
-			exec("translate_subject = subject_" + user_infos[1])
-		except NameError:
-			translate_subject = subject_EN
-
 		######### CONTENT WRITING IN EMAIL
 		msg = MIMEText(newsletter, 'html')
 
 		msg['From'] = fromaddr
 		msg['To'] = toaddr
-		msg['Subject'] = translate_subject
+		msg['Subject'] = stamps["subject"]
 
 		######### EMAIL SERVER CONNEXION
 		server = smtplib.SMTP(mailserveraddr, 5025)

@@ -258,7 +258,7 @@ def ofSourceAndName(now):
 			num = num + 1
 
 
-def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, inquiry_id_comma, need_jelly):
+def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, update_parameters):
 	"""insertOrUpdate manage links insertion or data update if the link is already present."""
 
 	######### LOGGER CALL
@@ -268,10 +268,11 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 	database = databaseConnection()
 
 	########### CHECK IF LINK OR TITLE IS EMPTY
-	if item["title"] != "" and item["link"] != "":
+	if item["title"] != "" or item["link"] != "":
+
 		########### DATABASE CHECKING LINK AND TITLE
 		call_data_cheking = database.cursor()
-		call_data_cheking.execute(query_checking, (item["link"], item["title"]))
+		call_data_cheking.execute(query_checking, (item["link"], item["title"], item["source_id"]))
 		checking = call_data_cheking.fetchone()
 		call_data_cheking.close()
 
@@ -279,36 +280,26 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 
 		########### IF COUPLE LINK TITLE IS IN DATABASE
 		if checking is not None:
-			field_id_inquiry = checking[0]
-			item_owners = checking[1]
-			already_owners_list = filter(None, item["owners"].split(","))
-			complete_id = field_id_inquiry
-			complete_owners = item_owners
+			complete_inquiries_id = checking[0]
+			complete_owners = checking[1]
+			current_inquiries = filter(None, checking[0].split(","))
+			current_owners = filter(None, checking[1].split(","))
+			item_owners = filter(None, item["owners"].split(","))
 
 			########### NEW ATTRIBUTES CREATION (COMPLETE ID & COMPLETE OWNERS)
-			if item["inquiry_id"] not in field_id_inquiry:
-				complete_id = field_id_inquiry + inquiry_id_comma
+			if item["inquiry_id"] not in current_inquiries:
+				complete_inquiries_id = ("," + (",".join(current_inquiries)) + "," + item["inquiry_id"] + ",")
 
-			split_index = 1
-
-			while split_index < (len(already_owners_list) - 1):
-				already_owner = "," + already_owners_list[split_index] + ","
-				add_owner = already_owners_list[split_index] + ","
-
-				if already_owner not in item_owners:
-					complete_owners = complete_owners + add_owner
-
-				split_index = split_index + 1
+			for owner in item_owners:
+				if owner not in current_owners:
+					complete_owners = ("," + (",".join(current_owners)) + "," + owner + ",")
 
 			########### ITEM UPDATE MODIFICATION (ADD complete_id AND complete_owners)
-			item_update_second = []
-			item_update_second.append(complete_id)
-			item_update_second.append(complete_owners)
-			item_update_second.extend(item_update)
+			item_update = [complete_inquiries_id, complete_owners] + update_parameters["auxiliary_update"] + [item["link"], item["source_id"]]
 
 			update_data = database.cursor()
 			try:
-				update_data.execute(query_update, (item_update_second))
+				update_data.execute(query_update, (item_update))
 				database.commit()
 			except Exception, except_type:
 				database.rollback()
@@ -319,46 +310,37 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 
 		########### IF COUPLE LINK TITLE IS NOT IN DATABASE
 		elif checking is None:
+
 			########### DATABASE CHECKING ONLY LINK
 			call_data_cheking = database.cursor()
-			call_data_cheking.execute(query_link_checking, (item["link"], ))
+			call_data_cheking.execute(query_link_checking, (item["link"], item["source_id"]))
 			checking_link = call_data_cheking.fetchone()
 			call_data_cheking.close()
 
 			########### IF LINK IS IN DATABASE
 			if checking_link is not None:
-				########### UPDATE WITH TITLE
-				field_id_inquiry = checking_link[0]
-				item_owners = checking_link[1]
-				already_owners_list = filter(None, item["owners"].split(","))
-				complete_id = field_id_inquiry
-				complete_owners = item_owners
+
+				########## UPDATE WITH TITLE
+				complete_inquiries_id = checking_link[0]
+				complete_owners = checking_link[1]
+				current_inquiries = filter(None, checking_link[0].split(","))
+				current_owners = filter(None, checking_link[1].split(","))
+				item_owners = filter(None, item["owners"].split(","))
 
 				########### NEW ATTRIBUTES CREATION (COMPLETE ID & COMPLETE OWNERS)
-				if item["inquiry_id"] not in field_id_inquiry:
-					complete_id = field_id_inquiry + inquiry_id_comma
+				if item["inquiry_id"] not in current_inquiries:
+					complete_inquiries_id = ("," + (",".join(current_inquiries)) + "," + item["inquiry_id"] + ",")
 
-				split_index = 1
-
-				while split_index < (len(already_owners_list) - 1):
-					already_owner = "," + already_owners_list[split_index] + ","
-					add_owner = already_owners_list[split_index] + ","
-
-					if already_owner not in item_owners:
-						complete_owners = complete_owners + add_owner
-
-					split_index = split_index + 1
+				for owner in item_owners:
+					if owner not in current_owners:
+						complete_owners = ("," + (",".join(current_owners)) + "," + owner + ",")
 
 				########### ITEM UPDATE MODIFICATION (ADD complete_id, complete_owners AND TITLE)
-				item_update_second = []
-				item_update_second.append(item["title"])
-				item_update_second.append(complete_id)
-				item_update_second.append(complete_owners)
-				item_update_second.extend(item_update)
+				item_update = [item["title"], complete_inquiries_id, complete_owners] + update_parameters["auxiliary_update"] + [item["link"], item["source_id"]]
 
 				update_data = database.cursor()
 				try:
-					update_data.execute(query_update_title, (item_update_second))
+					update_data.execute(query_update_title, (item_update))
 					database.commit()
 				except Exception, except_type:
 					database.rollback()
@@ -369,8 +351,9 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 
 			########### IF LINK IS NOT IN DATABASE
 			elif checking_link is None:
+
 				########### IF JELLY CHECKING IS NEEDED
-				if need_jelly is True:
+				if update_parameters["need_jelly"] is True:
 					call_data_cheking = database.cursor()
 					call_data_cheking.execute(query_jellychecking, (item["source_id"], item["date"], item["date"]))
 					jellychecking = call_data_cheking.fetchall()
@@ -390,36 +373,25 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 						if levenshtein_title_score <= 3 or damerauLevenshtein_title_score <= 3:
 							duplicate = True
 
-							field_id_inquiry = jelly[2]
-							item_owners = jelly[3]
-							already_owners_list = filter(None, item["owners"].split(","))
-							complete_id = field_id_inquiry
-							complete_owners = item_owners
+							complete_inquiries_id = jelly[2]
+							complete_owners = jelly[3]
+							current_inquiries = filter(None, jelly[2].split(","))
+							current_owners = filter(None, jelly[3].split(","))
+							item_owners = filter(None, item["owners"].split(","))
 
 							########### NEW ATTRIBUTES CREATION (COMPLETE ID & COMPLETE OWNERS)
-							if item["inquiry_id"] not in field_id_inquiry:
-								complete_id = field_id_inquiry + inquiry_id_comma
+							if item["inquiry_id"] not in current_inquiries:
+								complete_inquiries_id = ("," + (",".join(current_inquiries)) + "," + item["inquiry_id"] + ",")
 
-							########### NEW ATTRIBUTES CREATION (COMPLETE ID & COMPLETE OWNERS)
-							if item["inquiry_id"] not in field_id_inquiry:
-								complete_id = field_id_inquiry + inquiry_id_comma
-
-							split_index = 1
-
-							while split_index < (len(already_owners_list) - 1):
-								already_owner = "," + already_owners_list[split_index] + ","
-								add_owner = already_owners_list[split_index] + ","
-
-								if already_owner not in item_owners:
-									complete_owners = complete_owners + add_owner
-
-								split_index = split_index + 1
+							for owner in item_owners:
+								if owner not in current_owners:
+									complete_owners = ("," + (",".join(current_owners)) + "," + owner + ",")
 
 							########### JELLY UPDATE
 							########### MODIFICATED TITLE : ATTRIBUTES UPDATE
 							update_data = database.cursor()
 							try:
-								update_data.execute(query_jelly_update, (item["title"], item["link"], complete_id, complete_owners, jelly_link))
+								update_data.execute(query_jelly_update, (item["title"], item["link"], complete_inquiries_id, complete_owners, jelly_link, item["source_id"]))
 								database.commit()
 							except Exception, except_type:
 								database.rollback()
@@ -433,6 +405,7 @@ def insertOrUpdate(query_checking, query_link_checking, query_jellychecking, que
 				########### IF JELLYCHECKING IS NOT NEEDED
 				########### ADD LINK IN DATABASE
 				if duplicate is False:
+
 					insert_data = database.cursor()
 					try:
 						insert_data.execute(query_insertion, item.values())

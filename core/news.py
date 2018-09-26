@@ -37,8 +37,6 @@ def voyager(newscast_args):
 	######### LOGGER CALL
 	logger_error = logging.getLogger("error_log")
 
-	need_jelly = True
-
 	########### ETAG COMPARISON
 	etag_results = sergenet.aLinkToThePast(newscast_args["source_link"], 'etag')
 	etag = etag_results[0]
@@ -156,8 +154,6 @@ def voyager(newscast_args):
 				########### SEARCH FOR NEWS CORRESPONDING TO INQUIRIES
 				for inquiry in inquiries_list:
 					fragments_nb = 0
-					inquiry_id_comma = str(inquiry["inquiry_id"]) + ","
-					inquiry_id_comma2 = "," + str(inquiry["inquiry_id"]) + ","
 					inquiry["inquiry"] = inquiry["inquiry"].replace("[!ALERT!]", "").strip()
 
 					########### AGGREGATED INQUIRIES FORMAT SUPPORT
@@ -176,27 +172,30 @@ def voyager(newscast_args):
 						"date": post_date,
 						"serge_date": newscast_args["now"],
 						"source_id": newscast_args["source_id"],
-						"inquiry_id": inquiry_id_comma2,
+						"inquiry_id": str(inquiry["inquiry_id"]),
 						"owners": inquiry["owners"]}
 
+						update_parameters = {
+						"need_jelly" : True,
+						"auxiliary_update" : []}
+
 						item_columns = str(tuple(item.keys())).replace("'","")
-						item_update = [post_link]
 
 						########### QUERY FOR DATABASE CHECKING
-						query_checking = ("SELECT inquiry_id, owners FROM results_news_serge WHERE link = %s AND title = %s")
-						query_link_checking = ("SELECT inquiry_id, owners FROM results_news_serge WHERE link = %s")
+						query_checking = ("SELECT inquiry_id, owners FROM results_news_serge WHERE link = %s AND title = %s AND source_id = %s")
+						query_link_checking = ("SELECT inquiry_id, owners FROM results_news_serge WHERE link = %s AND source_id = %s")
 						query_jellychecking = ("SELECT title, link, inquiry_id, owners FROM results_news_serge WHERE source_id = %s AND `date` BETWEEN %s AND (%s + 43200)")
 
 						########### QUERY FOR DATABASE INSERTION
 						query_insertion = ("INSERT INTO results_news_serge " + item_columns + " VALUES (%s, %s, %s, %s, %s, %s, %s)")
 
 						########### QUERY FOR DATABASE UPDATE
-						query_update = ("UPDATE results_news_serge SET inquiry_id = %s, owners = %s WHERE link = %s")
-						query_update_title = ("UPDATE results_news_serge SET title = %s, inquiry_id = %s, owners = %s WHERE link = %s")
-						query_jelly_update = ("UPDATE results_news_serge SET title = %s, link = %s, inquiry_id = %s, owners = %s WHERE link = %s")
+						query_update = ("UPDATE results_news_serge SET inquiry_id = %s, owners = %s WHERE link = %s AND source_id = %s")
+						query_update_title = ("UPDATE results_news_serge SET title = %s, inquiry_id = %s, owners = %s WHERE link = %s AND source_id = %s")
+						query_jelly_update = ("UPDATE results_news_serge SET title = %s, link = %s, inquiry_id = %s, owners = %s WHERE link = %s AND source_id = %s")
 
 						########### CALL insertOrUpdate FUNCTION
-						insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, item_update, inquiry_id_comma, need_jelly)
+						insertSQL.insertOrUpdate(query_checking, query_link_checking, query_jellychecking, query_insertion, query_update, query_update_title, query_jelly_update, item, update_parameters)
 
 				range_article = range_article + 1
 
@@ -252,12 +251,12 @@ def newspack(register, user_id_comma):
 			######### ITEM ATTRIBUTES PUT IN A PACK FOR TRANSMISSION TO USER
 			item = {
 			"id": row[0],
-			"title": unquote(row[1].strip().encode('utf8')).decode('utf8').encode('ascii', errors = 'xmlcharrefreplace').lower().capitalize(),
+			"title": unquote(row[1].strip().encode('utf8')).decode('utf8').encode('ascii', errors = 'xmlcharrefreplace'),
 			"description": None,
 			"link": row[2].strip().encode('ascii', errors = 'xmlcharrefreplace'),
 			"label": label,
 			"source": attributes["source"],
-			"inquiry": attributes["inquiry"].lower(),
+			"inquiry": attributes["inquiry"],
 			"wiki_link": None}
 
 			item.update(label_design)

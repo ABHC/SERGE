@@ -2,9 +2,13 @@
 
 """SERGE alert functions (building and formatting an alert)"""
 
+######### IMPORT CLASSICAL MODULES
+import logging
+
 ######### IMPORT SERGE SPECIALS MODULES
 import mailer
 import handshake
+from toolbox import strainer
 from insertSQL import stairwayToUpdate
 
 
@@ -13,23 +17,26 @@ def redAlert(full_results, register, stamps, now):
 	- Search for potential alert keywords in results and if some are found redAlert build the list of them and of related news
 	- This list is given to alarm.py for building and formatting the e-mail alert"""
 
+	######### LOGGER CALL
+	logger_info = logging.getLogger("info_log")
+
 	########### CONNECTION TO SERGE DATABASE
 	database = handshake.databaseConnection()
 
-	alerts_list = []
+	######### SORTING ALERTS
+	upstream_alerts = [item for item in full_results if "[!ALERT!]" in item["inquiry"]]
 
-	for item in full_results:
-		if "[!ALERT!]" in item["inquiry"]:
-			alerts_list.append(item)
+	######### ERASE DUPLICATIONS (SAME LINK, DIFFERENT SOURCE ID) FROM UPSTREAM
+	full_alerts = strainer(upstream_alerts[:], "link")
 
-	if len(alerts_list) > 0:
+	if len(full_alerts) > 0:
 		logger_info.info("ALERT PROCESS")
-		full_results = alerts_list
 		predecessor = "ALARM"
 		stamps["priority"] = "HIGH"
+		stamps["sub_banner_color"] = "#b6082e"
 
 		######### CALL TO buildAlert FUNCTION
-		mailer.mailInit(full_results, register, stamps)
+		mailer.mailInit(full_alerts, register, stamps)
 
 		######### CALL TO sergeTelecom FUNCTION if enabled
 		query_sms_authorization = "SELECT alert_by_sms FROM users_table_serge WHERE id = %s"
@@ -42,7 +49,7 @@ def redAlert(full_results, register, stamps, now):
 		sms_authorization = sms_authorization[0]
 
 		if sms_authorization is True:
-			handshake.sergeTelecom(full_results, stamps)
+			handshake.sergeTelecom(full_alerts, stamps)
 
 		######### CALL TO stairwayToUpdate FUNCTION
-		insertSQL.stairwayToUpdate(full_results, stamps["register"], now, predecessor)
+		stairwayToUpdate(full_alerts, stamps["register"], now, predecessor)

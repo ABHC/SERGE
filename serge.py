@@ -181,14 +181,19 @@ for register, user in user_list:
 		"register": register,
 		"user": user,
 		"pydate": pydate,
-		"priority": "NORMAL"}
+		"priority": "NORMAL",
+		"sub_banner_color": None}
 
 		news_results = news.newspack(register, user_id_comma)
 		patents_results = patents.patentspack(register, user_id_comma)
 		sciences_results = sciences.sciencespack(register, user_id_comma)
 		extensions_results = extensionsManager.packThemAll(register, user_id_comma)
 
-		full_results = news_results + patents_results + sciences_results + extensions_results
+		######### ASSEMBLING THE RESULTS PACK
+		upstream_results = news_results + patents_results + sciences_results + extensions_results
+
+		######### ERASE DUPLICATIONS (SAME LINK, DIFFERENT SOURCE ID) FROM UPSTREAM
+		full_results = toolbox.strainer(upstream_results[:], "link")
 
 		pending_all = len(full_results)
 
@@ -220,7 +225,7 @@ for register, user in user_list:
 			mailer.mailInit(full_results, register, stamps)
 
 			######### CALL TO stairwayToUpdate FUNCTION
-			insertSQL.stairwayToUpdate(full_results, register, now, predecessor)
+			insertSQL.stairwayToUpdate(upstream_results, register, now, predecessor)
 
 		elif interval >= frequency and pending_all == 0:
 			logger_info.info("Frequency reached but no pending news")
@@ -251,7 +256,7 @@ for register, user in user_list:
 			mailer.mailInit(full_results, register, stamps)
 
 			######### CALL TO stairwayToUpdate FUNCTION
-			insertSQL.stairwayToUpdate(full_results, register, now, predecessor)
+			insertSQL.stairwayToUpdate(upstream_results, register, now, predecessor)
 
 		elif pending_all < limit and pending_all > 0:
 			######### ALERT MANAGEMENT : CALL TO redAlert FUNCTION
@@ -283,7 +288,7 @@ for register, user in user_list:
 			mailer.mailInit(full_results, register, stamps)
 
 			######### CALL TO stairwayToUpdate FUNCTION
-			insertSQL.stairwayToUpdate(full_results, register, now, predecessor)
+			insertSQL.stairwayToUpdate(upstream_results, register, now, predecessor)
 
 		elif hour != some_hour and pending_all > 0:
 			######### ALERT MANAGEMENT : CALL TO redAlert FUNCTION

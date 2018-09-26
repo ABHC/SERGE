@@ -74,7 +74,7 @@ def requestBuilder(inquiry, query_dataset, query_builder):
 		"basename": row[1],
 		"inquiry_api": "",
 		"inquiry_link": ""}
-		
+
 		inquiries_set.append(request)
 		quote = row[4]
 
@@ -108,52 +108,16 @@ def pieceOfMail(priority):
 	"""Contains html code for mail building"""
 
 	if priority == "NORMAL":
-		style = """<style type="text/css">
-		/* CLIENT-SPECIFIC STYLES */
-		body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-		table, td{mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-		/* RESET STYLES */
-		img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
-		table { border-collapse: collapse !important; }
-		body { background-color: #efefef !important; height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; }
-		/* MOBILE STYLES */
-		@media screen and (max-width: 600px)
-		{
-		.img-max
-		{
-		width: 100% !important;
-		max-width: 100% !important;
-		height: auto !important;
-		}
-		.max-width
-		{
-		max-width: 100% !important;
-		}
-		.mobile-wrapper
-		{
-		width: 85% !important;
-		max-width: 85% !important;
-		}
-		.mobile-padding
-		{
-		padding-left: 5% !important;
-		padding-right: 5% !important;
-		}
-		}
-		/* ANDROID CENTER FIX */
-		div[style*="margin: 16px 0;"] { margin: 0 !important; }
-		</style>"""
-
 		banner = """<!doctype html>
 		<html>
 		<head>
 		<meta charset="UTF-8">
-		<title>Serge your news monitoring of {3}</title>
-		{5}
+		<title>Serge your news monitoring of {0}</title>
+		{1}
 		</head>
 		<body style="margin: 0 !important; padding: 0; !important background-color: #efefef;" bgcolor="#efefef">
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" style="!important background-color: #efefef;" bgcolor="#efefef">
-		<tr bgcolor="#205d70" style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/background/{6}') center; background-size: cover;">
+		<tr bgcolor="#205d70" style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/background/{2}') center; background-size: cover;">
 		<td align="center" valign="top" width="100%" style="background-color: rgba(0,0,0,0.2); padding: 20px 10px 2px 10px;" class="mobile-padding">
 		<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
 		<tr>
@@ -172,10 +136,10 @@ def pieceOfMail(priority):
 		<tr>
 		<td>
 		<p align="left" style="display: inline-block; text-align: left; width: 20%; text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-family: Open Sans, Helvetica, Arial, sans-serif;font-size: 16px; line-height: 24px; margin: 0; padding: 0;margin-top: 10px;">
-		{1}
+		{3}
 		</p>
 		<p align="right" style="display: inline-block; text-align: right; width: 78%; text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-family: Open Sans, Helvetica, Arial, sans-serif;font-size: 16px; line-height: 24px; margin: 0; padding: 0;margin-top: 10px;">
-		{4} {2} {0} {3}
+		{4} {5} {6} {0}
 		</p>
 		</td>
 		</tr>
@@ -184,52 +148,16 @@ def pieceOfMail(priority):
 		</tr>"""
 
 	elif priority == "HIGH":
-		style = """<style type="text/css">
-		/* CLIENT-SPECIFIC STYLES */
-		body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-		table, td{mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-		/* RESET STYLES */
-		img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
-		table { border-collapse: collapse !important; }
-		body { background-color: #efefef !important; height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; }
-		/* MOBILE STYLES */
-		@media screen and (max-width: 600px)
-		{
-		.img-max
-		{
-		width: 100% !important;
-		max-width: 100% !important;
-		height: auto !important;
-		}
-		.max-width
-		{
-		max-width: 100% !important;
-		}
-		.mobile-wrapper
-		{
-		width: 85% !important;
-		max-width: 85% !important;
-		}
-		.mobile-padding
-		{
-		padding-left: 5% !important;
-		padding-right: 5% !important;
-		}
-		}
-		/* ANDROID CENTER FIX */
-		div[style*="margin: 16px 0;"] { margin: 0 !important; }
-		</style>"""
-
 		banner = """<!doctype html>
 		<html>
 		<head>
 		<meta charset="UTF-8">
-		<title>Serge your news monitoring of {3}</title>
-		{5}
+		<title>Serge your news monitoring of {0}</title>
+		{1}
 		</head>
 		<body style="margin: 0 !important; padding: 0; !important background-color: #efefef;" bgcolor="#efefef">
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" style="!important background-color: #efefef;" bgcolor="#efefef">
-		<tr bgcolor="#205d70" style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/background/{6}') center; background-size: cover;">
+		<tr bgcolor="#205d70" style="background: url('https://raw.githubusercontent.com/ABHC/SERGE/master/web/images/background/{2}') center; background-size: cover;">
 		<td align="center" valign="top" width="100%" style="background-color: rgba(0,0,0,0.2); padding: 20px 10px 2px 10px;" class="mobile-padding">
 		<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
 		<tr>
@@ -248,22 +176,58 @@ def pieceOfMail(priority):
 		<tr>
 		<td>
 		<p align="left" style="display: inline-block; text-align: left; width: 20%; text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-family: Open Sans, Helvetica, Arial, sans-serif;font-size: 16px; line-height: 24px; margin: 0; padding: 0;margin-top: 10px;">
-		{1}
+		{3}
 		</p>
 		<p align="right" style="display: inline-block; text-align: right; width: 78%; text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);color: #cbd1dd; font-family: Open Sans, Helvetica, Arial, sans-serif;font-size: 16px; line-height: 24px; margin: 0; padding: 0;margin-top: 10px;">
-		{4} {2} {0} {3}
+		{4} {5} {6} {0}
 		</p>
 		</td>
 		</tr>
 		</table>
 		</td>
-		</tr>
-		<tr>
-		<td bgcolor="#b6082e" align="center" style="background-color: #b6082e; color: #ffffff; margin-bottom: 15px; font-size: 27px;">
-			<h1 style="font-size: 30px; color: #ffffff;">ALERT</h1>
-		</td>
-		</tr>"
-		"""
+		</tr>"""
+
+	style = """<style type="text/css">
+	/* CLIENT-SPECIFIC STYLES */
+	body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+	table, td{mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+	/* RESET STYLES */
+	img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+	table { border-collapse: collapse !important; }
+	body { background-color: #efefef !important; height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; }
+	/* MOBILE STYLES */
+	@media screen and (max-width: 600px)
+	{
+	.img-max
+	{
+	width: 100% !important;
+	max-width: 100% !important;
+	height: auto !important;
+	}
+	.max-width
+	{
+	max-width: 100% !important;
+	}
+	.mobile-wrapper
+	{
+	width: 85% !important;
+	max-width: 85% !important;
+	}
+	.mobile-padding
+	{
+	padding-left: 5% !important;
+	padding-right: 5% !important;
+	}
+	}
+	/* ANDROID CENTER FIX */
+	div[style*="margin: 16px 0;"] { margin: 0 !important; }
+	</style>"""
+
+	sub_banner =  """<tr>
+	<td bgcolor="{0}" align="center" style="background-color: {0}; color: #ffffff; margin-bottom: 15px; font-size: 27px;">
+	<h1 style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 30px; color: #ffffff; margin: 2px;">{1}</h1>
+	</td>
+	</tr>"""
 
 	block = """<tr>
 	<td align="center" height="100%" valign="top" width="100%" bgcolor="#efefef" style="padding: 20px 15px;" class="mobile-padding">
@@ -282,10 +246,10 @@ def pieceOfMail(priority):
 
 	elements = """<tr>
 	<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-	&#8226;&nbsp;<a style="text-decoration: none;color: black;" href="{0}">{1}</a>
+	&#8226;&nbsp;<a style="text-decoration: none;color: black;" title="{0}" href="{1}">{2}</a>
 	</td>
 	<td align="left" style="margin-left: 10px;font-family: Open Sans, Helvetica, Arial, sans-serif;">
-	<a href="{2}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
+	<a href="{3}" target="_blank" style="float: right;border-radius: 20px; background-color: #70adc9; padding: 1px 13px; border: 1px solid #70adc9;">
 	<img alt="W" src="https://raw.githubusercontent.com/ABHC/SERGE/master/iconWikiLight.png" width="18" align="center" title="Add in the wiki" />
 	</a>
 	</td>
@@ -341,6 +305,7 @@ def pieceOfMail(priority):
 	appearance = {
 	"style": style,
 	"banner": banner,
+	"sub_banner": sub_banner,
 	"block": block,
 	"elements": elements,
 	"end_block": end_block,
