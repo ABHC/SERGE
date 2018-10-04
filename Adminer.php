@@ -4,7 +4,7 @@
 /******Database backup********/
 
 //Reading config file
-$filename = '/home/ruffenach/Serge/SERGE/permission/core_configuration.txt';
+$filename = 'configuration/core_configuration.txt';
 $handle = fopen($filename, 'r+');
 $contents = fread($handle, filesize($filename));
 
