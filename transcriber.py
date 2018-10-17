@@ -239,8 +239,8 @@ def pieceOfMail(priority):
 	<td align="center" bgcolor="#ffffff" style="border-radius: 0 0 3px 3px; padding: 25px;">
 	<table cellspacing="0" cellpadding="0" border="0" width="100%">
 	<tr>
-	<td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif;">
-	<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px;">{0}</h2>
+	<td style="font-family: Open Sans, Helvetica, Arial, sans-serif"; align="center"; width= "100%";>
+	<h2 style="font-size: 20px; color: #444444; margin: 0; padding-bottom: 10px; text-align: center; width: 100%;">{0}</h2>
 	</td>
 	</tr>"""
 

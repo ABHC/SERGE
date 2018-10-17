@@ -193,7 +193,7 @@ def mailBuilder(full_results, translate_text, stamps, appearance):
 			pending_items = len(results_label)
 			results_label = sorted(results_label, key=lambda item: item["title"])
 
-			######### CREATE LABEL BLOCK
+			######### DEFINE LABEL
 			if ("type_" + label) in translate_text:
 				label_title = translate_text["type_" + label]
 			else:

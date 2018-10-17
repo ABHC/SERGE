@@ -186,6 +186,7 @@ def stylishLabel(label, database):
 
 	return label_design
 
+
 def strainer(pack, discriminant_key):
 	"""Function to delete duplicates in a dictionary list. The functions handle duplications of variables associated with a specific key."""
 
