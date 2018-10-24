@@ -1,5 +1,5 @@
 <?php
-//must be included in delete_user.php file
+//must be included after delete_user.php file
 
 //Reading database
 $tableName = 'users_table_serge';

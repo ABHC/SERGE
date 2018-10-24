@@ -1,8 +1,4 @@
 <?php
-/******Adminer******/
-
-/******Database backup********/
-
 //Reading config file
 $filename = 'configuration/core_configuration.txt';
 $handle = fopen($filename, 'r+');

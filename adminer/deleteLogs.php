@@ -5,7 +5,6 @@
 // ErrorLog "|/usr/bin/rotatelogs -l ${APACHE_LOG_DIR}/error_%Y-%m-%d.log 86400"
 // for access log :
 // CustomLog "|/usr/bin/rotatelogs -l ${APACHE_LOG_DIR}/access_%Y-%m-%d.log 86400" combined
-// pour chaque ErrorLog et CustomLog changer par ces lignes ci dessus (à enlever dans le futur)
 
 // both works with the program rotatelogs
 // -l => work with local time instead of GMT

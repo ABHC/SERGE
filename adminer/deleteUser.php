@@ -41,7 +41,4 @@ foreach($readDatabase as $line)
   }
 }
 
-//In order to delete the history of the deleted user, the file delete_history.php must be included
-include('delete_history.php');
-
 ?>
