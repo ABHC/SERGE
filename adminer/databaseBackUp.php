@@ -1,7 +1,15 @@
 <?php
+
+/*
+This script will make a backup of Serge' SQL database.
+This script begin to read the configuration file called "core_configuration" in the configuration folder.
+According to the configuration, this script will build backups of the SQL database
+A backup can be local and/or to an extern server.
+*/
+
 //Reading config file
-$filename = 'configuration/core_configuration.txt';
-$handle = fopen($filename, 'r+');
+$filename = '/var/www/Serge/configuration/core_configuration.txt';
+$handle   = fopen($filename, 'r+');
 $contents = fread($handle, filesize($filename));
 
 //Initialize arrays and variables
@@ -19,6 +27,7 @@ $regex = array(
   'sshPassword'      => '#(.|\n|^)+SSH Password: (.+)(.|\n|$)+#',
   'externFolder'     => '#(.|\n|^)+Folder extern: (/(.+/)+)(.|\n|$)+#'
 );
+
 //TRUE -> incorrect field or value in the configuration file
 //FALSE -> correct field with a correct value in the configuration file
 $incorrect = array(
@@ -34,6 +43,7 @@ $incorrect = array(
   'sshPassword'      => FALSE,
   'externFolder'     => FALSE
 );
+
 //Values of the configuration file
 $configuration = array(
   'enableExtern'     => '',
@@ -48,12 +58,14 @@ $configuration = array(
   'sshPassword'      => '',
   'externFolder'     => ''
 );
+
 //Flags
-$localFatalError = FALSE;
+$localFatalError  = FALSE;
 $externFatalError = FALSE;
+
 //Messages
 $fatalErrorMessage = 'FATAL ERROR: could not find field or value is not correct in these fields ';
-$warningMessage = 'WARNING: Informations in configuration file are not correct but you did not enable backup, so It is good.';
+$warningMessage    = 'WARNING: Informations in configuration file are not correct but you did not enable backup, so It is good.';
 
 //Checking configuration file
 foreach($regex as $fields => $value)
@@ -80,58 +92,58 @@ if($incorrect['enableExtern'] == TRUE)
   $externFatalError = TRUE;
 }
 
-//If fields databasePassword, period and lastBackUp can't be read
+//If fields databasePassword, period and lastBackUp can't be read then
+//If one or more enable = true then fatal error
+//Else if enable = false, display warning
 if( $incorrect['databasePassword'] == TRUE || $incorrect['period'] == TRUE || $incorrect['lastBackUp'] == TRUE )
 {
-  //If one or more enable = true then fatal error
   if( $configuration['enableLocal'] == 'True' || $configuration['enableExtern'] == 'True' )
   {
     $externFatalError = TRUE;
     $localFatalError = TRUE;
   }
-  //If enable = false, display warning
   else if($configuration['enableExtern'] == 'False' && $configuration['enableLocal'] == 'False')
   {
     error_log("$warningMessage");
   }
 }
 
-//If one these fields can't be read
-if( $incorrect['domain'] == TRUE ||
-    $incorrect['port'] == TRUE ||
-    $incorrect['user'] == TRUE ||
-    $incorrect['sshPassword'] == TRUE ||
+//If one these fields (domain, port, user, sshPassword, externFolder) can't be read then
+//If enable = true -> fatal error
+//Else if enable = false -> warning
+if( $incorrect['domain']       == TRUE ||
+    $incorrect['port']         == TRUE ||
+    $incorrect['user']         == TRUE ||
+    $incorrect['sshPassword']  == TRUE ||
     $incorrect['externFolder'] == TRUE
   )
 {
-  //If enable = true -> fatal error
   if($configuration['enableExtern'] == 'True')
   {
     $externFatalError = TRUE;
   }
-  //enable = false -> warning
   else if($configuration['enableExtern'] == 'False')
   {
     error_log("$warningMessage");
   }
 }
 
-//If field localFolder can't be read
+//If field localFolder can't be read then
+//If enable = true -> fatal error
+//else if enable = false -> warning
 if($incorrect['localFolder'] == TRUE)
 {
-  //If enable = true -> fatal error
   if($configuration['enableLocal'] == 'True')
   {
     $localFatalError = TRUE;
   }
-  //enable = false -> warning
   else if($configuration['enableLocal'] == 'False')
   {
     error_log("$warningMessage");
   }
 }
 
-//If fatal error -> display all unrecognized fields
+//If fatal error then display all unrecognized fields
 if($localFatalError == TRUE || $externFatalError == TRUE)
 {
   foreach ($incorrect as $fields => $value)
@@ -144,21 +156,21 @@ if($localFatalError == TRUE || $externFatalError == TRUE)
   error_log("$fatalErrorMessage");
 }
 
-/***Backup building***/
+/*****Backup building*****/
 
-  //If extern backup enabled
+  //If extern backup enabled and over than the period duration and no fatal error then make backup file
   if( $configuration['enableExtern'] == 'True' &&
       ( time() - $configuration['lastBackUp'] ) > $configuration['period'] &&
       $externFatalError == FALSE
     )
   {
     //Creating the name of the backup
-    $date = date('dMY');
+    $date       = date('dMY');
     $backUpName = "Sergedata_$date.sql";
 
     //Building the backup command
     $backUpCommand = '/usr/bin/mysqldump -u Serge -p' . $configuration['databasePassword'] . ' Serge 2>&1 > ';
-    $command = $backUpCommand . $backUpName;
+    $command       = $backUpCommand . $backUpName;
 
     //Creating the backup file
     exec($command, $returnOutput, $returnValue);
@@ -209,9 +221,9 @@ if($localFatalError == TRUE || $externFatalError == TRUE)
     }
 
     //Updating the last backup fields of the core configuration file
-    $time = time();
+    $time            = time();
     $regexLastBackup = '#(Last backup:) ([0-9]+)#';
-    $contents = preg_replace($regexLastBackup, "$1 $time", $contents);
+    $contents        = preg_replace($regexLastBackup, "$1 $time", $contents);
     rewind($handle);
     fwrite($handle, $contents);
     fclose($handle);
@@ -219,20 +231,20 @@ if($localFatalError == TRUE || $externFatalError == TRUE)
   //If extern backup not enabled
   else
   {
-    //If local backup enabled
+    //If local backup enabled and over than the period duration and no fatal error then make backup file
     if( $configuration['enableLocal'] == 'True' &&
         ( time() - $configuration['lastBackUp'] ) > $configuration['period'] &&
         $localFatalError == FALSE
       )
     {
       //Creating the name of the backup
-      $date = date('dMY');
-      $backUpName = "Sergedata_$date.sql";
+      $date        = date('dMY');
+      $backUpName  = "Sergedata_$date.sql";
       $destination = $configuration['localFolder'] . $backUpName;
 
       //Building the backup command
       $backUpCommand = '/usr/bin/mysqldump -u Serge -p' . $configuration['databasePassword'] . ' Serge 2>&1 > ';
-      $command = $backUpCommand . $destination;
+      $command       = $backUpCommand . $destination;
 
       //Creating the backup file
       exec($command, $returnOutput, $returnValue);
@@ -247,9 +259,9 @@ if($localFatalError == TRUE || $externFatalError == TRUE)
       }
 
       //Updating the last backup fields of the core configuration file
-      $time = time();
+      $time            = time();
       $regexLastBackup = '#(Last backup:) ([0-9]+)#';
-      $contents = preg_replace($regexLastBackup, "$1 $time", $contents);
+      $contents        = preg_replace($regexLastBackup, "$1 $time", $contents);
       rewind($handle);
       fwrite($handle, $contents);
       fclose($handle);

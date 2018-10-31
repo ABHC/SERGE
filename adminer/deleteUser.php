@@ -1,15 +1,18 @@
 <?php
 
-include('permission/connection_sql.php');
-include('web/model/read.php');
-include('web/model/update.php');
+/*
+This script will delete all users that correspond to one of these two conditions
+either the user didn't validate his account within 2 days after his registration
+either the user requested to delete his account and didn't cancel his request within 2 days
+*/
 
 //Reading database
-$tableName = 'users_table_serge';
-$fieldToRead = 'id,signup_date,email_validation,req_for_del';
+$tableName    = 'users_table_serge';
+$fieldToRead  = 'id,signup_date,email_validation,req_for_del';
 $readDatabase = read($tableName, $fieldToRead, array(array('email_validation', '=', 0, '')), 'OR `req_for_del` IS NOT NULL', $bdd);
 
-$userDeleted = array();
+//In order to collect all users deleted to delete their history later
+$userDeleted  = array();
 
 foreach($readDatabase as $line)
 {
@@ -21,8 +24,8 @@ foreach($readDatabase as $line)
       ( ($line['req_for_del'] != NULL)   && (time() - $line['req_for_del']) > 172800 )
     )
   {
-
     $userDeleted[] = $line['id'];
+
     //Building query
     $queryDeleteLine = "DELETE FROM $tableName WHERE id = ".$line['id'];
 

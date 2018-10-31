@@ -6,6 +6,12 @@ delete history of user, delete logs and look for new update for Serge.
 All these functions are split into different files in order to have a better understanding.
 */
 
+//Adding connection and functions
+include('/var/www/Serge/web/model/connection_sql.php');
+include('/var/www/Serge/web/model/read.php');
+include('/var/www/Serge/web/model/update.php');
+
+
 include('databaseBackUp.php');
 
 include('deleteUser.php');
