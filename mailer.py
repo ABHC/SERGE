@@ -7,9 +7,9 @@ import time
 import smtplib
 import unicodedata
 from random import randrange
-from requests.utils import unquote
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from requests.utils import unquote
 
 ######### IMPORT SERGE SPECIALS MODULES
 import restricted
@@ -92,8 +92,8 @@ def mailInit(full_results, register, stamps):
 		"type_news": translate_text["News"],
 		"type_sciences": translate_text["Scientific Publications"],
 		"type_patents": translate_text["Patents"],
-		"inquiry_hover" : translate_text["Inquiry"],
-		"source_hover" : translate_text["Source"],
+		"inquiry_hover": translate_text["Inquiry"],
+		"source_hover": translate_text["Source"],
 		"web_serge": translate_text["View Online"],
 		"unsubscribe": translate_text["Unsubscribe"],
 		"github_serge": translate_text["Find SERGE on"],
@@ -109,15 +109,15 @@ def mailInit(full_results, register, stamps):
 		"type_news": translate_text["News"],
 		"type_science": translate_text["Scientific Publications"],
 		"type_patents": translate_text["Patents"],
-		"inquiry_hover" : translate_text["Inquiry"],
-		"source_hover" : translate_text["Source"],
+		"inquiry_hover": translate_text["Inquiry"],
+		"source_hover": translate_text["Source"],
 		"web_serge": translate_text["View Online"],
 		"unsubscribe": translate_text["Unsubscribe"],
 		"github_serge": translate_text["Find SERGE on"],
 		"license_serge": translate_text["Powered by"]}
 
 	######### CREATE E-MAIL SUBJECT IN STAMPS
-	stamps["subject"] =  translate_text["beacon"] + " " + translate_text["subject"] + " " + stamps["pydate"]
+	stamps["subject"] = translate_text["beacon"] + " " + translate_text["subject"] + " " + stamps["pydate"]
 
 	######### ADD RECORDER LINKS IN FULL RESULTS
 	record_read = restricted.recordApproval(register, database)
@@ -311,7 +311,7 @@ def highwayToMail(newsletter, stamps):
 	expiration_date = call_users.fetchone()
 	call_users.close()
 
-	if expiration_date > time.time() :
+	if expiration_date > time.time():
 
 		######### SERGE CONFIG FILE READING
 		permissions = open("/var/www/Serge/configuration/core_configuration", "r")
