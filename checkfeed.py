@@ -13,7 +13,7 @@ import validators
 from bs4 import BeautifulSoup
 
 ######### IMPORT SERGE SPECIALS MODULES
-from handshake import databaseConnection
+from restricted import databaseConnection
 
 FEED_LINKS_ATTRIBUTES = (
 	(('type', 'application/rss+xml'),),

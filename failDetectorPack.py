@@ -7,7 +7,7 @@ from urlparse import urlparse
 from validators import url as vurl
 
 ######### IMPORT FROM SERGE MAIN
-from handshake import databaseConnection
+from restricted import databaseConnection
 
 
 def vurlExt(link):

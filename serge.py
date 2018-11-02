@@ -34,7 +34,7 @@ import transcriber
 from core import news
 from core import patents
 from core import sciences
-from handshake import databaseConnection
+from restricted import databaseConnection
 
 ######### LOGGER CONFIG
 toolbox.loggerConfig()
@@ -50,15 +50,15 @@ sys.excepthook = toolbox.cemeteriesOfErrors
 database = databaseConnection()
 
 ######### TIME VARIABLES DECLARATION
-now = int(time.time())                            #NOW IS A TIMESTAMPS
-pydate = datetime.date.today()                    #PYDATE IS A DATE (YYYY-MM-DD)
-isoweekday = datetime.date.isoweekday(pydate)     #ISOWEEKDAY IS AN INTEGER BETWEEN 1 AND 7 (MONDAY=1, SUNDAY=7)
-today = "," + str(isoweekday) + ","               #TODAY IS A STRING
-current = dt.now()                                #CURRENT IS A DATE (YYYY-MM-DD hh-mm-ss.ssssss)
-hour = current.hour                               #HOUR IS AN INTEGER BETWEEN 0 AND 23
-pydate = unicode(pydate)                          #TRANSFORM PYDATE INTO UNICODE
+now = int(time.time())                            # NOW IS A TIMESTAMPS
+pydate = datetime.date.today()                    # PYDATE IS A DATE (YYYY-MM-DD)
+isoweekday = datetime.date.isoweekday(pydate)     # ISOWEEKDAY INTEGER BETWEEN 1 AND 7 (MONDAY=1)
+today = "," + str(isoweekday) + ","               # TODAY IS A STRING
+current = dt.now()                                # CURRENT IS A DATE (YYYY-MM-DD hh-mm-ss.ssssss)
+hour = current.hour                               # HOUR IS AN INTEGER BETWEEN 0 AND 23
+pydate = unicode(pydate)                          # TRANSFORM PYDATE INTO UNICODE
 
-logger_info.info(time.asctime(time.gmtime(now)) + "\n")
+logger_info.info(str(time.asctime(time.gmtime(now)) + "\n"))
 
 ######### DATABASE INTERGRITY CHECKING
 failsafe.checkMate()
@@ -70,7 +70,7 @@ max_users = call_users.fetchone()
 call_users.close()
 
 max_users = int(max_users[0])
-logger_info.info("\nMax Users : " + str(max_users) + "\n")
+logger_info.info(str("\nMax Users : " + str(max_users) + "\n"))
 
 ######### RSS SERGE UPDATE
 insertSQL.ofSourceAndName(now)
@@ -162,7 +162,7 @@ call_users.close()
 
 for register, user in user_list:
 	register = str(register)
-	logger_info.info("USER : " + register)
+	logger_info.info(str("USER : " + register))
 	user_id_comma = "%," + register + ",%"
 
 	######### SEND CONDITION RECOVERY
@@ -301,7 +301,9 @@ for register, user in user_list:
 			logger_info.info("BAD DAY OR/AND BAD HOUR")
 
 	######### IF AN ERROR OCCUR
-	elif emailing is True and (condition[1] != "freq" or condition[1] != "link_limit" or condition[1] != "deadline"):
+	elif (emailing is True and (condition[1] != "freq" or
+					condition[1] != "link_limit" or
+					condition[1] != "deadline")):
 		logger_info.critical("ERROR : WRONG CONDITION IN send_condition COLUMN")
 
 ######### EXECUTION TIME CALCULATION
@@ -309,4 +311,4 @@ the_end = int(time.time())
 exec_time = (the_end - float(now))
 
 logger_info.info("Timelog timestamp update")
-logger_info.info("SERGE END : NOMINAL EXECUTION (" + str(exec_time) + " sec)\n")
+logger_info.info(str("SERGE END : NOMINAL EXECUTION (" + str(exec_time) + " sec)\n"))

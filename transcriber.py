@@ -3,7 +3,7 @@
 """Serge module for transform Serge universal queries in another form that suits to the situation"""
 
 ######### IMPORT SERGE SPECIALS MODULES
-from handshake import databaseConnection
+from restricted import databaseConnection
 
 def humanInquiry(trad_args):
 	"""Translator for translate Serge universal queries into human language according to the language choose by the user"""

@@ -7,7 +7,7 @@ from multiprocessing import Process
 from math import ceil
 
 ######### IMPORT SERGE SPECIALS MODULES
-from handshake import databaseConnection
+from restricted import databaseConnection
 
 
 def extensionLibrary():

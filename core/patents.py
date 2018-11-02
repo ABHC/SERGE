@@ -19,7 +19,7 @@ import sergenet
 import insertSQL
 import transcriber
 import failDetectorPack
-from handshake import databaseConnection
+from restricted import databaseConnection
 
 
 def pathfinder(now):

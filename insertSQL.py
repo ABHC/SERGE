@@ -11,7 +11,7 @@ from urlparse import urlparse
 
 ######### IMPORT FROM SERGE MAIN
 import sergenet
-from handshake import databaseConnection
+from restricted import databaseConnection
 
 
 def ofSourceAndName(now):

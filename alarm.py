@@ -7,21 +7,25 @@ import logging
 
 ######### IMPORT SERGE SPECIALS MODULES
 import mailer
-import handshake
 from toolbox import strainer
 from insertSQL import stairwayToUpdate
+from restricted import sergeTelecom
+from restricted import databaseConnection
 
 
 def redAlert(full_results, register, stamps, now):
-	"""Management of alerts :
-	- Search for potential alert keywords in results and if some are found redAlert build the list of them and of related news
-	- This list is given to alarm.py for building and formatting the e-mail alert"""
+	"""Alerts management.
+
+	- Search for potential alert keywords in results and if some are
+	found redAlert build the list of them and of related news
+	- This list is given to alarm.py for building and formatting the e-mail alert
+	"""
 
 	######### LOGGER CALL
 	logger_info = logging.getLogger("info_log")
 
 	########### CONNECTION TO SERGE DATABASE
-	database = handshake.databaseConnection()
+	database = databaseConnection()
 
 	######### SORTING ALERTS
 	upstream_alerts = [item for item in full_results if "[!ALERT!]" in item["inquiry"]]
@@ -49,7 +53,7 @@ def redAlert(full_results, register, stamps, now):
 		sms_authorization = sms_authorization[0]
 
 		if sms_authorization is True:
-			handshake.sergeTelecom(full_alerts, stamps)
+			sergeTelecom(full_alerts, stamps)
 
 		######### CALL TO stairwayToUpdate FUNCTION
 		stairwayToUpdate(full_alerts, stamps["register"], now, predecessor)

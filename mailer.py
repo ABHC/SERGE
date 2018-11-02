@@ -14,7 +14,8 @@ from requests.utils import unquote
 ######### IMPORT SERGE SPECIALS MODULES
 import restricted
 from transcriber import pieceOfMail
-from handshake import databaseConnection
+from restricted import databaseConnection
+
 
 def mailInit(full_results, register, stamps):
 	"""Function for mail pre-formatting.

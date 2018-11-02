@@ -10,7 +10,7 @@ import traceback
 from logging.handlers import RotatingFileHandler
 
 ######### IMPORT SERGE SPECIALS MODULES
-from handshake import databaseConnection
+from restricted import databaseConnection
 
 
 def inspectorNotebook():

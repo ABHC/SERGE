@@ -6,7 +6,7 @@ import sys
 import logging
 
 ######### IMPORT FROM SERGE MAIN
-from handshake import databaseConnection
+from restricted import databaseConnection
 
 
 def checkMate():

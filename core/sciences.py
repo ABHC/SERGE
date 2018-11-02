@@ -18,7 +18,7 @@ import transcriber
 import toolbox
 import sergenet
 import insertSQL
-from handshake import databaseConnection
+from restricted import databaseConnection
 
 
 def rosetta(now):

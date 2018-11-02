@@ -17,7 +17,7 @@ import toolbox
 import sergenet
 import insertSQL
 import failDetectorPack
-from handshake import databaseConnection
+from restricted import databaseConnection
 
 
 def voyager(newscast_args):
