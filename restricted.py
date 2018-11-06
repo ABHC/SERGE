@@ -1,6 +1,6 @@
 # -*- coding: utf8 -*-
 
-"""Collection of restricted tools for SERGE"""
+"""Collection of restricted tools for SERGE."""
 
 import re
 import ovh
@@ -37,6 +37,10 @@ def sergeTelecom(full_results, stamps):
 	########### CONNECTION TO SERGE DATABASE
 	database = databaseConnection()
 
+	######### CREATE VALIDATORS
+	connection_validator = None
+	send_validator = None
+
 	######### PHONE NUMBER OF THE USER
 	query_user_private = "SELECT phone_number, language FROM users_table_serge WHERE id = %s"
 
@@ -48,110 +52,139 @@ def sergeTelecom(full_results, stamps):
 	phonenumber = user_private[0]
 	language = user_private[1]
 
-	######### SELECT THE TRANSLATION
-	alert_lenght = len(full_results)
+	if phonenumber is not None:
 
-	if alert_lenght == 1:
+		######### SELECT THE TRANSLATION
+		alert_lenght = len(full_results)
 
-		query_translation = "SELECT " + language + " FROM text_content_serge WHERE EN = 'alert found'"
+		if alert_lenght == 1:
 
-		call_users = database.cursor()
-		call_users.execute(query_translation, )
-		translation = call_users.fetchone()
-		call_users.close()
+			query_translation = "SELECT EN," + language + " FROM text_content_serge WHERE EN = 'alert found'"
 
-		translation = translation[0]
+		elif alert_lenght > 1:
 
-	elif alert_lenght > 1:
-
-		query_translation = "SELECT " + language + " FROM text_content_serge WHERE EN = 'alerts found'"
+			query_translation = (
+			"SELECT EN," + language + " FROM text_content_serge WHERE EN = 'alerts found'")
 
 		call_users = database.cursor()
 		call_users.execute(query_translation, )
 		translation = call_users.fetchone()
 		call_users.close()
 
-		translation = translation[0]
+		if translation[1] is not None:
+			translation = translation[1]
+		else:
+			translation = translation[0]
 
-	########### DATA PROCESSING FOR SMS FORMATTING
-	results_string = u""
+		########### DATA PROCESSING FOR SMS FORMATTING
+		results_string = u""
 
-	for alert in full_results:
-		results_string = results_string + alert["title"] + " : " + alert["link"] + "\n"
+		for alert in full_results:
+			results_string = results_string + alert["title"] + " : " + alert["link"] + "\n"
 
-		message = "{0}, {1} {2}\n{3}".format(
-		stamps["user"][0:10],
-		alert_lenght,
-		translation,
-		results_string)
+		message = (
+		unicode(stamps["user"][0:10]) +
+		u", " +
+		unicode(alert_lenght) +
+		u" " +
+		unicode(translation) +
+		u"\n" +
+		unicode(results_string))
 
-	######### OVH TOKENS
-	call_tokens = database.cursor()
-	call_tokens.execute("SELECT endpoint, application_key, application_secret, consumer_key FROM credentials_sms_serge")
-	tokens = call_tokens.fetchone()
-	call_tokens.close()
+		######### OVH TOKENS
+		call_tokens = database.cursor()
+		call_tokens.execute(
+		"SELECT endpoint, application_key, application_secret, consumer_key FROM credentials_sms_serge")
+		tokens = call_tokens.fetchone()
+		call_tokens.close()
 
-	endpoint = tokens[0]
-	application_key = tokens[1]
-	application_secret = tokens[2]
-	consumer_key = tokens[3]
+		endpoint = tokens[0]
+		application_key = tokens[1]
+		application_secret = tokens[2]
+		consumer_key = tokens[3]
 
-	######### OVH CLIENT CONNECTION
-	client = ovh.Client(
-		endpoint=endpoint,
-		application_key=application_key,
-		application_secret=application_secret,
-		consumer_key=consumer_key,
-	)
+		######### OVH CLIENT CONNECTION
+		try:
+			client = ovh.Client(
+				endpoint=endpoint,
+				application_key=application_key,
+				application_secret=application_secret,
+				consumer_key=consumer_key,
+			)
 
-	######### PREPARATION OF THE SEND REQUEST
-	service_name = client.get('/sms')
-	post_sms = "/sms/" + service_name[0] + "/jobs"
+			connection_validator = True
 
-	sender_retrieval = "/sms/" + service_name[0] + "/senders"
-	sender = client.get(sender_retrieval)
+		except Exception, except_type:
+			logger_error.error("\nCONNECTION TO OVH API FAIL")
+			logger_error.error(str("connection error details : ") + str(except_type) + str("\n"))
+			connection_validator = False
 
-	######### SEND THE SMS ALERT
-	result_send = client.post(url,
-		charset='UTF-8',
-		coding='7bit',
-		message=message,
-		noStopClause=False,
-		priority='high',
-		receivers=[phonenumber],
-		senderForResponse=False,
-		validityPeriod=2880,
-		sender=sender[0]
-	)
+		if connection_validator is True:
 
-	######### COUNT SMS CREDIT USED
-	message_length = float(len(message))
-	credit_used = ceil(message_length/160)
-	credit_used = int(credit_used)
+			######### PREPARATION OF THE SEND REQUEST
+			service_name = client.get('/sms')
+			post_url = "/sms/" + service_name[0] + "/jobs"
 
-	######### SMS CREDITS OF THE USER
-	query_user_credits = "SELECT sms_credits FROM users_table_serge WHERE id = %s"
+			sender_retrieval = "/sms/" + service_name[0] + "/senders"
+			sender = client.get(sender_retrieval)
 
-	call_users = database.cursor()
-	call_users.execute(query_user_credits, (stamps["register"]))
-	user_private = call_users.fetchone()
-	call_users.close()
+			try:
+				######### SEND THE SMS ALERT
+				result_send = client.post(
+					post_url,
+					charset='UTF-8',
+					coding='7bit',
+					message=message,
+					noStopClause=False,
+					priority='high',
+					receivers=[phonenumber],
+					senderForResponse=False,
+					validityPeriod=2880,
+					sender=sender[0]
+				)
 
-	user_credits = user_private[0]
-	user_credits = user_credits - credit_used
+				if result_send["invalidReceivers"]:
+					send_validator = False
+				else:
+					send_validator = True
 
-	update_credits = ("UPDATE users_table_serge SET sms_credits = %s WHERE id = %s")
+			except Exception, except_type:
+				logger_error.error(str("\nSMS not send to user : ") + str(stamps["user"]))
+				logger_error.error(str("SMS error details : ") + str(except_type) + str("\n"))
+				send_validator = False
 
-	########### USER CREDITS UPDATE
-	update_database = database.cursor()
-	try:
-		update_database.execute(update_credits, (user_credits, stamps["register"]))
-		database.commit()
-	except Exception, except_type:
-		database.rollback()
-		logger_error.error("ROLLBACK AT USER CREDITS IN sergeTelecom")
-		logger_error.error(repr(except_type))
-		update_database.close()
+			######### COUNT SMS CREDIT USED
+			if send_validator is True:
+
+				credit_used = int(result_send["totalCreditsRemoved"])
+
+				######### SMS CREDITS OF THE USER
+				query_user_credits = "SELECT sms_credits FROM users_table_serge WHERE id = %s"
+
+				call_users = database.cursor()
+				call_users.execute(query_user_credits, (stamps["register"]))
+				user_private = call_users.fetchone()
+				call_users.close()
+
+				user_credits = user_private[0]
+				user_credits = user_credits - credit_used
+
+				update_credits = ("UPDATE users_table_serge SET sms_credits = %s WHERE id = %s")
+
+				########### USER CREDITS UPDATE
+				update_database = database.cursor()
+				try:
+					update_database.execute(update_credits, (user_credits, stamps["register"]))
+					database.commit()
+				except Exception, except_type:
+					database.rollback()
+					logger_error.error("ROLLBACK AT USER CREDITS IN sergeTelecom")
+					logger_error.error(repr(except_type))
+					update_database.close()
+
+	else:
+		logger_error.critical("SERGE TELECOM CRITICAL FAILURE")
+		logger_error.critical(str(stamps["user"]) + str(" phonenumber not fill in database\n"))
 
 
 def recordApproval(register, database):

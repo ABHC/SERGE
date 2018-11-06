@@ -33,7 +33,7 @@ def redAlert(full_results, register, stamps, now):
 	######### ERASE DUPLICATIONS (SAME LINK, DIFFERENT SOURCE ID) FROM UPSTREAM
 	full_alerts = strainer(upstream_alerts[:], "link")
 
-	if len(full_alerts) > 0:
+	if full_alerts:
 		logger_info.info("ALERT PROCESS")
 		predecessor = "ALARM"
 		stamps["priority"] = "HIGH"
@@ -50,7 +50,7 @@ def redAlert(full_results, register, stamps, now):
 		sms_authorization = call_users.fetchone()
 		call_users.close()
 
-		sms_authorization = sms_authorization[0]
+		sms_authorization = bool(sms_authorization[0])
 
 		if sms_authorization is True:
 			sergeTelecom(full_alerts, stamps)
