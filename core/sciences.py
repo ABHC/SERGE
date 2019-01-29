@@ -4,9 +4,9 @@
 
 ######### IMPORT CLASSICAL MODULES
 import re
-import time
 import json
 import logging
+import calendar
 import datetime
 import feedparser
 import traceback
@@ -118,7 +118,7 @@ def rosetta(now):
 
 								try:
 									post_date = parsed_content.entries[range_article].published_parsed
-									post_date = time.mktime(post_date)
+									post_date = calendar.timegm(post_date)
 								except AttributeError:
 									logger_error.warning("BEACON ERROR : missing <date> in " + api_pack["inquiry_link"])
 									logger_error.warning(traceback.format_exc())
@@ -205,7 +205,7 @@ def rosetta(now):
 									post_date = post_date.replace("T", " ").replace("Z", " ").strip()
 									human_date = datetime.datetime.strptime(post_date, "%Y-%m-%d %H:%M:%S")
 									post_date = human_date.timetuple()
-									post_date = time.mktime(post_date)
+									post_date = calendar.timegm(post_date)
 								except Exception as json_error:
 									logger_error.warning("Error in json retrival of post_date : "+str(json_error))
 									post_date = now
