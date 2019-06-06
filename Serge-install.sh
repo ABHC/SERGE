@@ -2115,9 +2115,6 @@ action = %(action_mwlc)s' >> /etc/fail2ban/jail.local
 		#  Secure shared memory
 		echo "tmpfs     /run/shm     tmpfs     defaults,noexec,nosuid     0     0" >> /etc/fstab
 
-		# Stop IP spoofing
-		echo "nospoof on" >> /etc/host.conf
-
 		# No expose PHP
 		sed -i "s/expose_php = On/expose_php = Off/g" /etc/php/7.0/cli/php.ini
 
